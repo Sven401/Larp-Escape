@@ -1,0 +1,256 @@
+#include <Wire.h>              // For I2C communication
+#include <Adafruit_MCP23X17.h> // For MCP23X17 GPIO expander
+#include <Adafruit_PN532.h>    // For PN532 RFID reader
+#include <SPI.h>               // For SPI communication
+
+// MCP23X17 setup
+Adafruit_MCP23X17 mcp1; // First MCP23017
+Adafruit_MCP23X17 mcp2; // Second MCP23017
+
+#define PN532_SCK (18)  // Clock pin
+#define PN532_MOSI (23) // Master Out Slave In pin
+#define PN532_MISO (19) // Master In Slave Out pin
+#define PN532_SS (5)    // Slave Select pin
+#define PN532_IRQ (27)
+
+const int DELAY_BETWEEN_CARDS = 500;
+long timeLastCardRead = 0;
+boolean readerDisabled = false;
+int irqCurr;
+int irqPrev;
+
+// Initialize PN532 with SPI and IRQ/RESET pins (no IRQ/RESET for SPI)
+Adafruit_PN532 nfc(PN532_SS); // Using SS pin for SPI
+
+void startListeningToNFC();
+void handleCardDetected();
+
+// Variables to store previous states
+static uint16_t prevGpioStates[3] = {0xFFFF, 0xFFFF, 0xFFFF}; // Assuming 3 expanders, initialize to all high
+
+void printGpioStates(Adafruit_MCP23X17 &mcp, int expanderIndex) {
+    // Read current GPIO state
+    uint16_t gpioState = mcp.readGPIOAB();
+    
+    // Port B
+    for (int8_t pin = 15; pin >= 8; pin--) {
+        bool currentState = (gpioState & (1 << pin)) != 0;
+        bool previousState = (prevGpioStates[expanderIndex] & (1 << pin)) != 0;
+
+        if (currentState != previousState) {
+            Serial.print("Expander ");
+            Serial.print(expanderIndex + 1);
+            Serial.print(", Pin ");
+            Serial.print(pin);
+            Serial.print(" changed from ");
+            Serial.print(previousState ? "HIGH" : "LOW");
+            Serial.print(" to ");
+            Serial.println(currentState ? "HIGH" : "LOW");
+        }
+    }
+
+    // Port A
+    for (int8_t pin = 7; pin >= 0; pin--) {
+        bool currentState = (gpioState & (1 << pin)) != 0;
+        bool previousState = (prevGpioStates[expanderIndex] & (1 << pin)) != 0;
+
+        if (currentState != previousState) {
+            Serial.print("Expander ");
+            Serial.print(expanderIndex + 1);
+            Serial.print(", Pin ");
+            Serial.print(pin);
+            Serial.print(" changed from ");
+            Serial.print(previousState ? "HIGH" : "LOW");
+            Serial.print(" to ");
+            Serial.println(currentState ? "HIGH" : "LOW");
+        }
+    }
+
+    // Update previous state for next iteration
+    prevGpioStates[expanderIndex] = gpioState;
+}
+
+
+void setup()
+{
+    Wire.begin();
+    Serial.begin(115200);
+    Serial.println("Initializing...");
+
+    // Scan for I2C devices
+    byte error, address;
+    int nDevices;
+    Serial.println("Scanning...");
+    nDevices = 0;
+    for (address = 1; address < 127; address++)
+    {
+        Wire.beginTransmission(address);
+        error = Wire.endTransmission();
+        if (error == 0)
+        {
+            Serial.print("I2C device found at address 0x");
+            if (address < 16)
+            {
+                Serial.print("0");
+            }
+            Serial.println(address, HEX);
+            nDevices++;
+        }
+        else if (error == 4)
+        {
+            Serial.print("Unknown error at address 0x");
+            if (address < 16)
+            {
+                Serial.print("0");
+            }
+            Serial.println(address, HEX);
+        }
+    }
+    if (nDevices == 0)
+    {
+        Serial.println("No I2C devices found\n");
+    }
+    else
+    {
+        Serial.println("done\n");
+    }
+    Wire.end();
+
+    // Initialize first MCP23X17
+    if (!mcp1.begin_I2C(0x20))
+    { // Adjust address as needed
+        Serial.println("Error: First MCP23XXX not found.");
+        while (1)
+            ;
+    }
+    Serial.println("First MCP23017 found!");
+
+    // Initialize second MCP23X17
+    if (!mcp2.begin_I2C(0x21))
+    { // Adjust address as needed
+        Serial.println("Error: Second MCP23XXX not found.");
+        while (1)
+            ;
+    }
+    Serial.println("Second MCP23017 found!");
+
+    // Set all pins on both MCP23X17 to INPUT
+    for (int8_t pin = 0; pin <= 15; pin++)
+    {
+        mcp1.pinMode(pin, INPUT);
+        mcp2.pinMode(pin, INPUT);
+    }
+
+    // Initialize PN532 with SPI
+    nfc.begin(); // No parameters needed for SPI
+    uint32_t versiondata = nfc.getFirmwareVersion();
+    if (!versiondata)
+    {
+        Serial.println("Didn't find PN53x board");
+        while (1)
+            ;
+    }
+    Serial.print("Found PN5");
+    Serial.println((versiondata >> 24) & 0xFF, HEX);
+    Serial.print("Firmware version: ");
+    Serial.print((versiondata >> 16) & 0xFF, DEC);
+    Serial.print('.');
+    Serial.println((versiondata >> 8) & 0xFF, DEC);
+
+    nfc.setPassiveActivationRetries(0xFF); // Max retry attempts to find card
+    Serial.println("Waiting for an ISO14443A card...");
+    nfc.SAMConfig();
+
+    pinMode(27, INPUT_PULLUP);
+
+    startListeningToNFC();
+}
+
+void loop()
+{
+    
+    printGpioStates(mcp1, 0);
+    printGpioStates(mcp2, 1);
+
+    if (readerDisabled)
+    {
+        if (millis() - timeLastCardRead > DELAY_BETWEEN_CARDS)
+        {
+            readerDisabled = false;
+            startListeningToNFC();
+        }
+    }
+    else
+    {
+        irqCurr = digitalRead(PN532_IRQ);
+
+        // When the IRQ is pulled low - the reader has got something for us.
+        if (irqCurr == LOW && irqPrev == HIGH)
+        {
+            Serial.println(digitalRead(27));
+            Serial.println("Got NFC IRQ");
+            handleCardDetected();
+        }
+
+        irqPrev = irqCurr;
+    }
+}
+
+void startListeningToNFC()
+{
+    // Reset our IRQ indicators
+    irqPrev = irqCurr = HIGH;
+
+    Serial.println("Starting passive read for an ISO14443A Card ...");
+    if (!nfc.startPassiveTargetIDDetection(PN532_MIFARE_ISO14443A))
+    {
+        Serial.println("No card found. Waiting...");
+    }
+    else
+    {
+        Serial.println("Card already present.");
+        handleCardDetected();
+    }
+}
+
+void handleCardDetected()
+{
+    uint8_t success = false;
+    uint8_t uid[] = {0, 0, 0, 0, 0, 0, 0}; // Buffer to store the returned UID
+    uint8_t uidLength;                     // Length of the UID (4 or 7 bytes depending on ISO14443A card type)
+
+    // read the NFC tag's info
+    success = nfc.readDetectedPassiveTargetID(uid, &uidLength);
+    Serial.println(success ? "Read successful" : "Read failed (not a card?)");
+
+    if (success)
+    {
+        // Display some basic information about the card
+        Serial.println("Found an ISO14443A card");
+        Serial.print("  UID Length: ");
+        Serial.print(uidLength, DEC);
+        Serial.println(" bytes");
+        Serial.print("  UID Value: ");
+        nfc.PrintHex(uid, uidLength);
+
+        if (uidLength == 4)
+        {
+            // We probably have a Mifare Classic card ...
+            uint32_t cardid = uid[0];
+            cardid <<= 8;
+            cardid |= uid[1];
+            cardid <<= 8;
+            cardid |= uid[2];
+            cardid <<= 8;
+            cardid |= uid[3];
+            Serial.print("Seems to be a Mifare Classic card #");
+            Serial.println(cardid);
+        }
+        Serial.println("");
+
+        timeLastCardRead = millis();
+    }
+
+    // The reader will be enabled again after DELAY_BETWEEN_CARDS ms will pass.
+    readerDisabled = true;
+}
