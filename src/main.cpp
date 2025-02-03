@@ -9,7 +9,7 @@ MCPHandler mcpHandler1(mcp1, mcpConfigs[0]);
 MCPHandler mcpHandler2(mcp2, mcpConfigs[1]);
 Adafruit_MCP23X17 mcp1;
 Adafruit_MCP23X17 mcp2;
-GameState gameState;
+std::vector<OptionConfig> options = getDefaultOptions();
 
 void setup()
 {
@@ -17,6 +17,7 @@ void setup()
     Wire.begin();
 
     Serial.print("Beginning");
+    setupTransitions();
 
     // Initialize components
     mcpHandler1.begin(0x20);
@@ -37,4 +38,6 @@ void loop()
 
     nfcReader.loop();
     Serial.println();
+    gameState.run();
+    Serial.print(gameState.currentState);
 }
