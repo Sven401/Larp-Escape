@@ -6,11 +6,11 @@
 std::vector<OptionConfig> getDefaultOptions()
 {
     return {
-        OptionConfig(1, "Puppenspieler:in", {
-                                                ButtonPair("Spinne", "Tier", 1, A, 101),
-                                                ButtonPair("Marionette", "Gegenstand", 1, H, 102),
-                                                ButtonPair("Lila", "Farbe", 4, E, 103),
-                                            },
+        OptionConfig(PUPPENSPIELERID, "Puppenspieler:in", {
+                                                              ButtonPair("Spinne", "Tier", 1, A, 101),
+                                                              ButtonPair("Marionette", "Gegenstand", 1, H, 102),
+                                                              ButtonPair("Lila", "Farbe", 4, E, 103),
+                                                          },
                      200),
 
         OptionConfig(2, "Krieger:in", {
