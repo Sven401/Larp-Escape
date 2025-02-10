@@ -1,11 +1,11 @@
 // GameState.h
 #pragma once
 #include <StateMachine.h>
-#include <DFRobotDFPlayerMini.h>
+//#include <DFRobotDFPlayerMini.h>
 #include "OptionConfig.h"
 #include "OptionDefinitions.h"
 
-extern DFRobotDFPlayerMini myDFPlayer;
+//extern DFRobotDFPlayerMini myDFPlayer;
 
 // Zustandsvariablen
 int roundCounter = 0;                                    // Zählt die abgeschlossenen Spielrunden
@@ -16,40 +16,61 @@ std::vector<OptionConfig> options = getDefaultOptions(); // Game options
 
 StateMachine gameState = StateMachine();
 
-// Definierte Zustände
-State *Idle = gameState.addState(&stateIdle);
-State *WaitingForCrystals = gameState.addState(&stateWaitingForCrystals);
-State *FirstCrystalPlaced = gameState.addState(&stateFirstCrystalPlaced);
-State *SecondCrystalPlaced = gameState.addState(&stateSecondCrystalPlaced);
-State *ThirdCrystalPlaced = gameState.addState(&stateThirdCrystalPlaced);
-State *GameCompleted = gameState.addState(&stateGameCompleted);
-State *ErrorState = gameState.addState(&stateErrorState);
-
-void setupTransitions()
+// --- Helper Functions ---
+int getKeyStone()
 {
-    Idle->addTransition(&transitionToWaitingForCrystals, WaitingForCrystals);
-    Idle->addTransition(&transitionToError, ErrorState);
+    // Logic to read the RFID from the actual reader
+    // Simulate the process with a dummy value
+    return 1; // This would return the current keyStone based on the RFID reader
+}
 
-    WaitingForCrystals->addTransition(&transitionToFirstCrystal, FirstCrystalPlaced);
-    WaitingForCrystals->addTransition(&transitionToError, ErrorState);
+int getCrystal()
+{
+    // Simulate a crystal placement
+    return 1; // This would get the current crystal from the user
+}
 
-    FirstCrystalPlaced->addTransition(&transitionToSecondCrystal, SecondCrystalPlaced);
-    FirstCrystalPlaced->addTransition(&transitionToError, ErrorState);
+ColLetter getColLetter(int crystal)
+{
+    // Logic to convert a crystal to its column letter (A, B, C...)
+    return A; // For now, return a static value
+}
+bool isValidCrystal(int position)
+{
+    int crystal = getCrystal(); // Here we scan the keyboard for the pressed button.
 
-    SecondCrystalPlaced->addTransition(&transitionToThirdCrystal, ThirdCrystalPlaced);
-    SecondCrystalPlaced->addTransition(&transitionToError, ErrorState);
+    if (crystal == -1)
+    {
+        return false;
+    }
+    
+    for (const auto &option : options)
+    {
+        if (option.getRFID() == currentKeyStone)
+        {
+            if (option.isValidCrystal(crystal, getColLetter(crystal)))
+            {
+                correctCrystals++;
+                return position == correctCrystals;
+            }
+        }
+    }
 
-    ThirdCrystalPlaced->addTransition(&transitionToGameCompleted, GameCompleted);
-    ThirdCrystalPlaced->addTransition(&transitionToError, ErrorState);
-
-    GameCompleted->addTransition(&transitionToIdle, Idle);
-    ErrorState->addTransition(&transitionToIdle, Idle);
+    Serial.println("Falscher Kristall! Spiele Fehlermeldung.");
+    //myDFPlayer.play(99); // Fehlermeldung
+    errorState = true;
+    return false;
+}
+bool gameReset()
+{
+    // Logic for resetting the game, for example, clearing all states
+    return true;
 }
 
 // --- STATES ---
 void stateIdle()
 {
-    Serial.println("Warten auf Schlüsselstein...");
+    //Serial.println("Warten auf Schlüsselstein...");
     correctCrystals = 0;
     errorState = false;
 }
@@ -63,32 +84,32 @@ void stateWaitingForCrystals()
 
 void stateFirstCrystalPlaced()
 {
-    Serial.println("Erster Lesekristall korrekt erkannt.");
-    myDFPlayer.play(1);
+    //Serial.println("Erster Lesekristall korrekt erkannt.");
+    //myDFPlayer.play(1);
 }
 
 void stateSecondCrystalPlaced()
 {
-    Serial.println("Zweiter Lesekristall korrekt erkannt.");
-    myDFPlayer.play(2);
+    //Serial.println("Zweiter Lesekristall korrekt erkannt.");
+    //myDFPlayer.play(2);
 }
 
 void stateThirdCrystalPlaced()
 {
-    Serial.println("Dritter Lesekristall korrekt erkannt. Spiele Bonus-Audio.");
-    myDFPlayer.play(3);
+    //Serial.println("Dritter Lesekristall korrekt erkannt. Spiele Bonus-Audio.");
+    //myDFPlayer.play(3);
 }
 
 void stateGameCompleted()
 {
-    Serial.println("Spielrunde abgeschlossen!");
+    //Serial.println("Spielrunde abgeschlossen!");
     roundCounter++;
 }
 
 void stateErrorState()
 {
-    Serial.println("Fehler erkannt! Spiele Fehlermeldung.");
-    myDFPlayer.play(99); // Fehlermeldung
+    //Serial.println("Fehler erkannt! Spiele Fehlermeldung.");
+    //myDFPlayer.play(99); // Fehlermeldung
     errorState = true;
 }
 
@@ -134,57 +155,32 @@ bool transitionToIdle()
     return gameReset();
 }
 
-// --- ERROR HANDLING ---
-bool isValidCrystal(int position)
+// Definierte Zustände
+State *Idle = gameState.addState(&stateIdle);
+State *WaitingForCrystals = gameState.addState(&stateWaitingForCrystals);
+State *FirstCrystalPlaced = gameState.addState(&stateFirstCrystalPlaced);
+State *SecondCrystalPlaced = gameState.addState(&stateSecondCrystalPlaced);
+State *ThirdCrystalPlaced = gameState.addState(&stateThirdCrystalPlaced);
+State *GameCompleted = gameState.addState(&stateGameCompleted);
+State *ErrorState = gameState.addState(&stateErrorState);
+
+void setupTransitions()
 {
-    int crystal = getCrystal(); // Here we scan the keyboard for the pressed button.
+    Idle->addTransition(&transitionToWaitingForCrystals, WaitingForCrystals);
+    Idle->addTransition(&transitionToError, ErrorState);
 
-    if (crystal == -1)
-    {
-        return false;
-    }
+    WaitingForCrystals->addTransition(&transitionToFirstCrystal, FirstCrystalPlaced);
+    WaitingForCrystals->addTransition(&transitionToError, ErrorState);
 
-    // Now check against the currentKeyStone selected.
-    for (const auto &option : options)
-    {
-        if (option.getRFID() == currentKeyStone)
-        {
-            if (option.isValidCrystal(crystal, getColLetter(crystal)))
-            {
-                correctCrystals++;
-                return position == correctCrystals;
-            }
-        }
-    }
+    FirstCrystalPlaced->addTransition(&transitionToSecondCrystal, SecondCrystalPlaced);
+    FirstCrystalPlaced->addTransition(&transitionToError, ErrorState);
 
-    Serial.println("Falscher Kristall! Spiele Fehlermeldung.");
-    myDFPlayer.play(99); // Fehlermeldung
-    errorState = true;
-    return false;
-}
+    SecondCrystalPlaced->addTransition(&transitionToThirdCrystal, ThirdCrystalPlaced);
+    SecondCrystalPlaced->addTransition(&transitionToError, ErrorState);
 
-// --- Helper Functions ---
-int getKeyStone()
-{
-    // Logic to read the RFID from the actual reader
-    // Simulate the process with a dummy value
-    return 1; // This would return the current keyStone based on the RFID reader
-}
+    ThirdCrystalPlaced->addTransition(&transitionToGameCompleted, GameCompleted);
+    ThirdCrystalPlaced->addTransition(&transitionToError, ErrorState);
 
-int getCrystal()
-{
-    // Simulate a crystal placement
-    return 1; // This would get the current crystal from the user
-}
-
-ColLetter getColLetter(int crystal)
-{
-    // Logic to convert a crystal to its column letter (A, B, C...)
-    return A; // For now, return a static value
-}
-
-bool gameReset()
-{
-    // Logic for resetting the game, for example, clearing all states
-    return true;
+    GameCompleted->addTransition(&transitionToIdle, Idle);
+    ErrorState->addTransition(&transitionToIdle, Idle);
 }

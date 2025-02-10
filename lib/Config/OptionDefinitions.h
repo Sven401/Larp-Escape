@@ -6,8 +6,9 @@
 std::vector<OptionConfig> getDefaultOptions()
 {
     return {
+        //int id, std::string heg, std::vector<ButtonPair> btns, int audioFile
         OptionConfig(PUPPENSPIELERID, "Puppenspieler:in", {
-                                                              ButtonPair("Spinne", "Tier", 1, A, 101),
+                                                              ButtonPair("Spinne", "Tier", 1, A, 101),  // symbol, category, row, col, audioFile
                                                               ButtonPair("Marionette", "Gegenstand", 1, H, 102),
                                                               ButtonPair("Lila", "Farbe", 4, E, 103),
                                                           },

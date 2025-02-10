@@ -2,7 +2,7 @@
 #include "MCPHandler.h"
 #include "Config.h"
 
-MCPHandler::MCPHandler(Adafruit_MCP23X17 &mcp, MCPConfig &config) : mcp(mcp), config(config), prevGpioState(0xFFFF) {}
+MCPHandler::MCPHandler(Adafruit_MCP23X17 &mcp, MCPConfig &config, String name) : mcp(mcp), config(config), name(name), prevGpioState(0xFFFF) {}
 
 void MCPHandler::begin(uint8_t i2c_addr)
 {
@@ -36,13 +36,11 @@ void MCPHandler::begin(uint8_t i2c_addr)
 
 void MCPHandler::printGpioStates()
 {
-    Serial.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-    // Ausgabe des vorherigen und aktuellen GPIO-Zustands als Binärzahlen für bessere Übersichtlichkeit
-    Serial.print("Previous GPIO State: ");
-    Serial.println(prevGpioState, BIN);
+    for (int pin = 0; pin < 16; pin++)
+    {
+        mcp.pinMode(pin, INPUT_PULLUP);
+    }
     uint16_t currentState = mcp.readGPIOAB();
-    Serial.print("Current GPIO State: ");
-    Serial.println(currentState, BIN);
 
     // Array für Tracking von Änderungen und deren Richtung (Fallend/Steigend)
     bool stateChanged[16] = {false};
@@ -54,11 +52,6 @@ void MCPHandler::printGpioStates()
         bool current = (currentState & (1 << pin)) != 0;
         bool prev = (prevGpioState & (1 << pin)) != 0;
 
-        Serial.print("Pin ");
-        Serial.print(pin);
-        Serial.print(": ");
-        Serial.print(current ? "HIGH  " : "LOW  ");
-
         // Wenn sich der Zustand geändert hat, merken wir uns die Änderung und Richtung
         if (current != prev)
         {
@@ -68,7 +61,6 @@ void MCPHandler::printGpioStates()
     }
 
     // Zusammenfassende Ausgabe aller Pins, die sich geändert haben
-    Serial.print("Changes Detected:");
     for (int pin = 0; pin < 16; pin++)
     {
         if (stateChanged[pin])
@@ -135,3 +127,15 @@ void MCPHandler::printConfiguredGpioStates(bool verbose)
     // Aktualisieren des vorherigen Zustands
     prevGpioState = mcp.readGPIOAB(); // Optional: Update to reflect actual states if necessary
 }
+
+void MCPHandler::writeGPIO(MCP_Pins gpio, uint8_t value)
+{
+    mcp.pinMode(gpio, OUTPUT);
+    mcp.digitalWrite(gpio, value);
+};
+
+uint16_t MCPHandler::readGPIO(MCP_Pins gpio)
+{
+    mcp.pinMode(gpio, INPUT_PULLUP);
+    return mcp.digitalRead(gpio);
+};  
