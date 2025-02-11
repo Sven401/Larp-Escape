@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include "FastLED.h"
 
 enum ColLetter
 {
@@ -22,42 +23,31 @@ class ButtonPair
 public:
     std::string symbol;
     std::string category;
+    const TProgmemRGBPalette16* color;
     int row;
     ColLetter col;
     int audioFile;
 
-    ButtonPair(std::string sym, std::string cat, int r, ColLetter c, int audio)
-        : symbol(std::move(sym)), category(std::move(cat)), row(r), col(c), audioFile(audio) {}
+    ButtonPair(std::string sym, std::string cat, const TProgmemRGBPalette16* color, int r, ColLetter c, int audio);
 };
 
 class OptionConfig
 {
 private:
-    int rfidID;
+    uint8_t rfidID;
     std::string hegemon;
     std::vector<ButtonPair> buttons;
     int optionAudioFile;
 
 public:
-    OptionConfig(int id, std::string heg, std::vector<ButtonPair> btns, int audioFile)
-        : rfidID(id), hegemon(std::move(heg)), buttons(std::move(btns)), optionAudioFile(audioFile) {}
+    OptionConfig(uint8_t id, std::string heg, std::vector<ButtonPair> btns, int audioFile);
 
-    int getRFID() const { return rfidID; }
-    std::string getHegemon() const { return hegemon; }
-    const std::vector<ButtonPair> &getButtons() const { return buttons; }
-    int getOptionAudioFile() const { return optionAudioFile; }
+    bool isRFIDequal(uint8_t*);
+    std::string getHegemon() const;
+    const std::vector<ButtonPair> &getButtons() const;
+    int getOptionAudioFile() const;
 
-    bool isValidCrystal(int row, ColLetter col) const
-    {
-        for (const auto &button : buttons)
-        {
-            if (button.row == row && button.col == col)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
+    bool isValidCrystal(int row, ColLetter col) const;
 };
 
 #endif // OPTION_CONFIG_H

@@ -28,7 +28,7 @@
 
 const uint8_t VOL = 25; // Volume level
 
-#define PUPPENSPIELERID 1
+const uint8_t PUPPENSPIELERID = 1;
 
 extern Adafruit_PN532 nfc;
 extern Adafruit_MCP23X17 mcp1, mcp2;

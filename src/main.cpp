@@ -5,7 +5,7 @@
 #include "KeyMatrix.h"
 #include <vector>
 #include "FastLED.h"
-#include "fx/1d/twinklefox.h"
+#include "twinklefox.h"
 #include "DFMinniHandler.h"
 
 #define LED_TYPE WS2811

@@ -46,6 +46,22 @@ void KeyMatrix::printMatrixState()
     once = false;
 }
 
+std::vector<std::pair<int, ColLetter>> KeyMatrix::getLowKeys()
+{
+    std::vector<std::pair<int, ColLetter>> lowKeys;
+    for (int row : rows)
+    {
+        for (ColLetter col : cols)
+        {
+            if (!getKeyState(row, col))
+            {
+                lowKeys.push_back(std::make_pair(row, col));
+            }
+        }
+    }
+    return lowKeys;
+}
+
 bool KeyMatrix::getKeyState(int row, ColLetter col)
 {
     // Set the row pin to LOW
