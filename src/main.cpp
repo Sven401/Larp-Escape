@@ -31,8 +31,9 @@ std::vector<MCPHandler> handlers = {mcpHandler1, mcpHandler2};
 KeyMatrix keymatrix(handlers, ROWMAP, COLMAP);
 HardwareSerial mySoftwareSerial(1);
 DFPlayerMini_Fast myMP3;
-
 DFMinniHandler dfmHandler(mySoftwareSerial, myMP3, DFBUSY, DFWAKEUP);
+ReichstagGame game(nfcReader, keymatrix, dfmHandler, twinkleFox);
+
 
 unsigned long lastMillis = 0;
 
@@ -40,9 +41,7 @@ void setup()
 {
     Serial.begin(115200);
     Wire.begin();
-
     Serial.print("Beginning");
-    setupTransitions();
     keymatrix.begin();
     nfcReader.begin();
     dfmHandler.begin();
@@ -67,7 +66,7 @@ void loop()
 
     EVERY_N_SECONDS(1)
     {
-        gameState.run();
+        game.machine.run();
     }
 
     EVERY_N_SECONDS(SECONDS_PER_PALETTE)

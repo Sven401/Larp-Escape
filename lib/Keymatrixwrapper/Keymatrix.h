@@ -16,6 +16,7 @@ public:
     void printMatrixState();
     bool getKeyState(int row, ColLetter col);
     void begin();
+    std::vector<std::pair<int, ColLetter>> getLowKeys(); // New method declaration
 
 private:
     std::vector<MCPHandler>& handlers;
@@ -25,6 +26,6 @@ private:
     std::vector<ColLetter> cols;
     bool once;
     static std::map<std::pair<int, ColLetter>, bool> lastState;
-};
+};;
 
 #endif // KEYMATRIX_H

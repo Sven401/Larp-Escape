@@ -2,6 +2,9 @@
 #define OPTION_DEFINITIONS_H
 
 #include "OptionConfig.h"
+#include "twinklefox.h"
+#include "Config.h"
+using namespace fl;
 
 std::vector<OptionConfig> getDefaultOptions()
 {

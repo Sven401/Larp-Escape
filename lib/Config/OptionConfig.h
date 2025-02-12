@@ -46,8 +46,7 @@ public:
     std::string getHegemon() const;
     const std::vector<ButtonPair> &getButtons() const;
     int getOptionAudioFile() const;
-
-    bool isValidCrystal(int row, ColLetter col) const;
+    const ButtonPair* isValidCrystal(int row, ColLetter col) const;
 };
 
 #endif // OPTION_CONFIG_H

@@ -26,11 +26,11 @@ int OptionConfig::getOptionAudioFile() const {
     return optionAudioFile;
 }
 
-bool OptionConfig::isValidCrystal(int row, ColLetter col) const {
+const ButtonPair* OptionConfig::isValidCrystal(int row, ColLetter col) const {
     for (const auto &button : buttons) {
         if (button.row == row && button.col == col) {
-            return true;
+            return &button;
         }
     }
-    return false;
+    return nullptr;
 }
