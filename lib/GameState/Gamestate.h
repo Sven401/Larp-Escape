@@ -17,6 +17,9 @@
 #include "OptionDefinitions.h"
 #include <vector>
 
+using namespace fl;
+using namespace MyMachine;
+
 
 /**
  * @class ReichstagGame
@@ -32,7 +35,7 @@ public:
     /**
      * @brief Constructs a new ReichstagGame object.
      */
-    ReichstagGame(NFCReader nfcReader, KeyMatrix keymatrix, DFMinniHandler dfmHandler, TwinkleFox twinkleFox);
+    ReichstagGame(NFCReader& nfcReader, KeyMatrix& keymatrix, DFMinniHandler& dfmHandler, fl::MyTwinkleFox& twinkleFox);
 
     /**
      * @brief Handles the idle state of the game.
@@ -179,7 +182,7 @@ private:
     NFCReader& nfcReader;
     KeyMatrix& keymatrix;
     DFMinniHandler& dfmHandler;
-    TwinkleFox& twinkleFox;
+    MyTwinkleFox& twinkleFox;
 
 };
 

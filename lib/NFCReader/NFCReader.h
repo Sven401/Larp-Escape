@@ -1,5 +1,6 @@
 #ifndef NFCREADER_H
 #define NFCREADER_H
+#pragma once
 #include "Config.h"
 #include <Adafruit_PN532.h> // Include the necessary library for PN532
 #include <Arduino.h>        // Include Arduino libraries

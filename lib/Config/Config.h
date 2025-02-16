@@ -1,7 +1,6 @@
 
 #ifndef CONFIG_H
 #define CONFIG_H
-
 // Config.h
 #pragma once
 
@@ -29,9 +28,6 @@
 const uint8_t VOL = 25; // Volume level
 
 const uint8_t PUPPENSPIELERID = 1;
-
-extern Adafruit_PN532 nfc;
-extern Adafruit_MCP23X17 mcp1, mcp2;
 
 #endif // CONFIG_H
 

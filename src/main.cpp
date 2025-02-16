@@ -17,7 +17,7 @@
 CRGBArray<NUM_LEDS> leds;
 
 using namespace fl;
-TwinkleFox twinkleFox(NUM_LEDS);
+MyTwinkleFox twinkleFox(NUM_LEDS);
 
 
 // Objects
@@ -55,63 +55,7 @@ void setup()
 
 void loop()
 {
-    EVERY_N_SECONDS(1)
-    {
-        mcpHandler1.printGpioStates();
-    }
-    EVERY_N_SECONDS(1)
-    {
-        mcpHandler2.printGpioStates();
-    }
-
-    EVERY_N_SECONDS(1)
-    {
-        game.machine.run();
-    }
-
-    EVERY_N_SECONDS(SECONDS_PER_PALETTE)
-    {
-        twinkleFox.chooseNextColorPalette(twinkleFox.targetPalette);
-    }
-    twinkleFox.draw(Fx::DrawContext(millis(), leds));
+    game.machine.run();
+    twinkleFox.draw(fl::Fx::DrawContext(millis(), leds));
     FastLED.show();
-    EVERY_N_SECONDS(1)
-    {
-        keymatrix.printMatrixState();
-    }
-    
-    EVERY_N_SECONDS(2){
-        Serial.print("Attempting to read NFC card... ");
-        auto card = nfcReader.getCard();
-        if (card == nullptr) {
-            Serial.println("No card detected.");
-        } else {
-            Serial.println("Card detected!");
-            Serial.print("Card UID: ");
-            for (int i = 0; i < 7; i++) {
-                Serial.print(nfcReader.uid[i], HEX);
-                if (i < 6) {
-                    Serial.print(":");
-                }
-            }
-            Serial.println();
-        }
-    }
-
-    EVERY_N_SECONDS(1)
-    {
-        if (!dfmHandler.isBusy())
-        {
-            Serial.println("DFPlayer is not busy, attempting to play track 111.");
-            dfmHandler.playTrack(111);
-            delay(500); // Small delay to allow the command to be processed
-            if (dfmHandler.isBusy()) {
-                Serial.println("Track 111 is now playing.");
-            } else {
-                Serial.println("Failed to start playing track 111.");
-            }
-        } else {
-            Serial.println("DFPlayer is busy, cannot play track 111.");
-        }
-    }
 }

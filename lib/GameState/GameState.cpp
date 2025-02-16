@@ -4,7 +4,7 @@
 #include "OptionDefinitions.h"
 #include "Gamestate.h"
 
-ReichstagGame::ReichstagGame(NFCReader& nfcReader, KeyMatrix& keymatrix, DFMinniHandler& dfmHandler, TwinkleFox& twinkleFox)
+ReichstagGame::ReichstagGame(NFCReader& nfcReader, KeyMatrix& keymatrix, DFMinniHandler& dfmHandler, MyTwinkleFox& twinkleFox)
     : nfcReader(nfcReader), keymatrix(keymatrix), dfmHandler(dfmHandler), twinkleFox(twinkleFox)
 {
     options = getDefaultOptions();
@@ -13,24 +13,29 @@ ReichstagGame::ReichstagGame(NFCReader& nfcReader, KeyMatrix& keymatrix, DFMinni
 
 OptionConfig* ReichstagGame::getOptionConfig(uint8_t *keyStone)
 {
+    Serial.println("Getting option config for keyStone...");
     for (auto &option : options)
     {
         if (option.isRFIDequal(keyStone))
         {
+            Serial.println("Matching option found.");
             currentOptionConfig = &option;
             return &option;
         }
     }
+    Serial.println("No matching option found.");
     return nullptr;
 }
 
 // --- Helper Functions ---
 uint8_t* ReichstagGame::getKeyStone()
 {
+    Serial.println("Getting current keyStone from NFC reader...");
     return nfcReader.getCard(); // This would return the current keyStone based on the RFID reader
 }
 
 ReichstagGame::CrystalCheckResult ReichstagGame::newCrystalisValid() {
+    Serial.println("Checking if new crystal is valid...");
     std::vector<std::pair<int, ColLetter>> crystals = keymatrix.getLowKeys(); // Scan the keyboard for the pressed button.
     if (!crystals.empty()) {
         for (auto &crystal : crystals) {
@@ -51,13 +56,16 @@ ReichstagGame::CrystalCheckResult ReichstagGame::newCrystalisValid() {
                     }
                     correctCrystals++;
                     currentButton = pair;
+                    Serial.println("Valid crystal found and added.");
                     return VALID_CRYSTAL;
                 }
             } else {
+                Serial.println("Invalid crystal detected.");
                 return INVALID_CRYSTAL;
             }
         }
     }
+    Serial.println("No new crystal detected.");
     return NO_NEW_CRYSTAL;
 }
 
@@ -116,6 +124,7 @@ void ReichstagGame::stateFirstCrystalPlaced()
     if(machine.executeOnce){
         twinkleFox.setTwinkleSpeed(5);
         twinkleFox.setTwinkleDensity(5);
+        dfmHandler.playTrack(currentButton->audioFile);
     }
 }
 
@@ -124,15 +133,18 @@ void ReichstagGame::stateSecondCrystalPlaced()
     if(machine.executeOnce){
         twinkleFox.setTwinkleSpeed(6);
         twinkleFox.setTwinkleDensity(6);
+        dfmHandler.playTrack(currentButton->audioFile);
     }
 }
 
 void ReichstagGame::stateThirdCrystalPlaced()
 {
     if(machine.executeOnce){
-    }
     twinkleFox.setTwinkleSpeed(7);
     twinkleFox.setTwinkleDensity(7);
+    dfmHandler.playTrack(currentButton->audioFile);
+    
+    }
 }
 
 void ReichstagGame::stateGameCompleted()
@@ -140,6 +152,7 @@ void ReichstagGame::stateGameCompleted()
     if(machine.executeOnce){
         twinkleFox.setTwinkleSpeed(8);
         twinkleFox.setTwinkleDensity(8);
+        dfmHandler.playTrack(currentOptionConfig->optionAudioFile);
     roundCounter++;
     }
 }
@@ -149,6 +162,7 @@ void ReichstagGame::stateErrorState()
     if(machine.executeOnce){
         twinkleFox.setTwinkleSpeed(3);
         twinkleFox.setTwinkleDensity(3);
+        dfmHandler.playTrack(0);
     }
 }
 

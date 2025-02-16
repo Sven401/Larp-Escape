@@ -1,5 +1,7 @@
 #ifndef OPTION_CONFIG_H
 #define OPTION_CONFIG_H
+#pragma once
+
 
 #include <vector>
 #include <string>
@@ -37,11 +39,11 @@ private:
     uint8_t rfidID;
     std::string hegemon;
     std::vector<ButtonPair> buttons;
-    int optionAudioFile;
+    
 
 public:
     OptionConfig(uint8_t id, std::string heg, std::vector<ButtonPair> btns, int audioFile);
-
+    int optionAudioFile;
     bool isRFIDequal(uint8_t*);
     std::string getHegemon() const;
     const std::vector<ButtonPair> &getButtons() const;

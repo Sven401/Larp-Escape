@@ -1,7 +1,8 @@
-#include <Arduino.h>
 
 #ifndef MCP_CONFIG_H
 #define MCP_CONFIG_H
+#pragma once
+#include <Arduino.h>
 
 #define MAX_INSTANCES 8 // Maximum number of MCP instances
 #define NUM_PINS 16     // Maximum number of pins per instance
