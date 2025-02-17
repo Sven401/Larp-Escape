@@ -11,24 +11,24 @@ ReichstagGame::ReichstagGame(NFCReader& nfcReader, KeyMatrix& keymatrix, DFMinni
     setup();
 }
 
-OptionConfig* ReichstagGame::getOptionConfig(uint8_t *keyStone)
-{
+OptionConfig* ReichstagGame::getOptionConfig(std::array<uint8_t, 7>& keyStone) {
     Serial.println("Getting option config for keyStone...");
-    for (auto &option : options)
-    {
-        if (option.isRFIDequal(keyStone))
-        {
+    
+    for (auto &option : options) {
+        if (option.isRFIDequal(keyStone)) {  // Muss sicherstellen, dass isRFIDequal std::array akzeptiert
             Serial.println("Matching option found.");
             currentOptionConfig = &option;
             return &option;
         }
     }
+
     Serial.println("No matching option found.");
     return nullptr;
 }
 
+
 // --- Helper Functions ---
-uint8_t* ReichstagGame::getKeyStone()
+std::array<uint8_t, 7> ReichstagGame::getKeyStone()
 {
     Serial.println("Getting current keyStone from NFC reader...");
     return nfcReader.getCard(); // This would return the current keyStone based on the RFID reader
@@ -73,7 +73,7 @@ bool ReichstagGame::gameReset()
 {
     // Reset global variables
     roundCounter = 0;
-    currentKeyStone = nullptr;
+    currentKeyStone = {};
     errorState = false;
     seenOptionButtons.clear();
     currentButton = nullptr;
@@ -85,7 +85,7 @@ bool ReichstagGame::gameReset()
 bool ReichstagGame::roundReset()
 {
     // Reset round-specific variables
-    currentKeyStone = nullptr;
+    currentKeyStone = {};
     seenOptionButtons.clear();
     currentButton = nullptr;
     correctCrystals = 0;
@@ -115,8 +115,6 @@ void ReichstagGame::stateWaitingForCrystals()
         twinkleFox.setTwinkleSpeed(4);
         twinkleFox.setTwinkleDensity(4);
     }
-    std::cout << "Schlüsselstein erkannt: " << currentKeyStone << std::endl;
-    std::cout << "Warte auf ersten Lesekristall..." << std::endl;
 }
 
 void ReichstagGame::stateFirstCrystalPlaced()
@@ -169,7 +167,7 @@ void ReichstagGame::stateErrorState()
 // --- TRANSITIONS ---
 bool ReichstagGame::transitionToWaitingForCrystals()
 {
-    if (currentKeyStone != nullptr)
+    if (currentKeyStone != std::array<uint8_t, 7>{})
     {
         currentOptionConfig = getOptionConfig(currentKeyStone);
         if(currentOptionConfig != nullptr){

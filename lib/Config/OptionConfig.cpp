@@ -2,33 +2,40 @@
 #include <string>
 
 // ButtonPair constructor
-ButtonPair::ButtonPair(std::string sym, std::string cat,const TProgmemRGBPalette16* color, int r, ColLetter c, int audio)
-    : symbol(std::move(sym)), category(std::move(cat)), color(color) ,row(r), col(c), audioFile(audio) {}
+ButtonPair::ButtonPair(std::string sym, std::string cat, const TProgmemRGBPalette16 *color, int r, ColLetter c, int audio)
+    : symbol(std::move(sym)), category(std::move(cat)), color(color), row(r), col(c), audioFile(audio) {}
 
 // OptionConfig constructor
-OptionConfig::OptionConfig(uint8_t id, std::string heg, std::vector<ButtonPair> btns, int audioFile)
-    : rfidID(id), hegemon(std::move(heg)), buttons(std::move(btns)), optionAudioFile(audioFile) {}
+OptionConfig::OptionConfig(std::vector<uint8_t> uid, std::string heg, std::vector<ButtonPair> btns, int audioFile)
+    : hegemon(std::move(heg)), buttons(std::move(btns)), optionAudioFile(audioFile), rfidID(std::move(uid)) {}
 
 // OptionConfig member functions
-bool OptionConfig::isRFIDequal(uint8_t* inputKeystone) {
-    return memcmp(&rfidID, inputKeystone, sizeof(rfidID)) == 0;
+bool OptionConfig::isRFIDequal(std::array<uint8_t, 7> &inputKeystone)
+{
+    return rfidID.size() == 7 && std::equal(rfidID.begin(), rfidID.end(), inputKeystone.begin());
 }
 
-std::string OptionConfig::getHegemon() const {
+std::string OptionConfig::getHegemon() const
+{
     return hegemon;
 }
 
-const std::vector<ButtonPair>& OptionConfig::getButtons() const {
+const std::vector<ButtonPair> &OptionConfig::getButtons() const
+{
     return buttons;
 }
 
-int OptionConfig::getOptionAudioFile() const {
+int OptionConfig::getOptionAudioFile() const
+{
     return optionAudioFile;
 }
 
-const ButtonPair* OptionConfig::isValidCrystal(int row, ColLetter col) const {
-    for (const auto &button : buttons) {
-        if (button.row == row && button.col == col) {
+const ButtonPair *OptionConfig::isValidCrystal(int row, ColLetter col) const
+{
+    for (const auto &button : buttons)
+    {
+        if (button.row == row && button.col == col)
+        {
             return &button;
         }
     }

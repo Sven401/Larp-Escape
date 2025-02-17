@@ -120,13 +120,13 @@ private:
      * @param keyStone The keystone to retrieve the configuration for.
      * @return A pointer to the option configuration.
      */
-    OptionConfig* getOptionConfig(uint8_t* keyStone);
+    OptionConfig* getOptionConfig(std::array<uint8_t, 7>& keyStone);
 
     /**
      * @brief Retrieves the current keystone.
      * @return A pointer to the current keystone.
      */
-    uint8_t* getKeyStone();
+    std::array<uint8_t, 7> getKeyStone();
 
     /**
      * @brief Retrieves the current crystal.
@@ -164,7 +164,7 @@ private:
     bool roundReset();
 
     int roundCounter;                                    ///< Counts the completed game rounds. eg. for how many keystones the correct crystals have been placed.
-    uint8_t *currentKeyStone;                            ///< Stores the current keystone.
+    std::array<uint8_t, 7> currentKeyStone;                            ///< Stores the current keystone.
     bool errorState;                                     ///< Indicates if the game is in an error state.
     std::vector<OptionConfig> options;                   ///< Stores the game options.
     std::vector<const ButtonPair*> seenOptionButtons;    ///< Stores the seen option buttons.

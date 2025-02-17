@@ -27,8 +27,6 @@
 
 const uint8_t VOL = 25; // Volume level
 
-const uint8_t PUPPENSPIELERID = 1;
-
 #endif // CONFIG_H
 
 const std::map<int, std::pair<int, MCP_Pins>> ROWMAP = {
