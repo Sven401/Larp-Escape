@@ -16,19 +16,18 @@ void DFMinniHandler::begin() {
 
 void DFMinniHandler::playTrack(uint16_t trackNumber) {
     if (myMP3.currentVersion() == -1) {
+        Serial.println("DFPlayer not found");
         begin();
         delay(300); // Wait for the DFPlayer to reset
         myMP3.begin(mySerial);
         myMP3.volume(VOL);
     }
+    Serial.print("Playing track: ");
     myMP3.playFromMP3Folder(trackNumber);
 }
 
 bool DFMinniHandler::isBusy() {
     int busyState = digitalRead(busyPin);
-    Serial.print("Busy pin state: ");
-    Serial.print(busyState);
-    Serial.println(busyState == LOW ? "LOW" : "HIGH");
     return busyState == LOW;
 }
 

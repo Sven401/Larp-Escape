@@ -34,6 +34,16 @@ const ButtonPair *OptionConfig::isValidCrystal(int row, ColLetter col) const
 {
     for (const auto &button : buttons)
     {
+        Serial.print("checking against Button: ");
+        Serial.print(button.symbol.c_str());
+        Serial.print(" at ");
+        Serial.print(button.row);
+        Serial.print(" =? ");
+        Serial.print(row);
+        Serial.print(" "); 
+        Serial.println(button.col);
+        Serial.print(" =? ");
+        Serial.println(col);
         if (button.row == row && button.col == col)
         {
             return &button;

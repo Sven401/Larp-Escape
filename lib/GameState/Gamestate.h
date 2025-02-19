@@ -171,6 +171,7 @@ private:
     const ButtonPair* currentButton;                     ///< Stores the currently valid button pair. eg Crystal
     uint8_t correctCrystals;                             ///< Number of correctly placed crystals (max. 3).
     bool incorrectCrystal;                               ///< Indicates if an incorrect crystal has been placed (max. 1).
+    bool correctCrystal;                                 ///< Indicates if a correct crystal has been placed.
     OptionConfig* currentOptionConfig;                   ///< Stores the current option configuration.
     State *Idle;
     State *WaitingForCrystals;

@@ -23,6 +23,42 @@ KeyMatrix::KeyMatrix(std::vector<MCPHandler> &handlers, const std::map<int, std:
 
 void KeyMatrix::printMatrixState()
 {
+    Serial.println("\nKey Matrix State:");
+    
+    // Print column headers
+    Serial.print("   "); // Space for row labels
+    for (ColLetter col : cols)
+    {
+        Serial.print(" ");
+        Serial.print(col);
+    }
+    Serial.println(); // Newline after headers
+
+    for (int row : rows)
+    {
+        Serial.print(row); // Row label
+        Serial.print(" |");
+
+        for (ColLetter col : cols)
+        {
+            bool currentState = getKeyState(row, col);
+            std::pair<int, ColLetter> key = std::make_pair(row, col);
+
+            Serial.print(" ");
+            Serial.print(currentState ? "1" : "0");
+
+            lastState[key] = currentState;
+        }
+        Serial.println(); // Newline after each row
+    }
+    Serial.println(); // Extra newline for spacing
+    once = false;
+}
+
+void KeyMatrix::printMatrixChanges()
+{
+    bool hasChanges = false;
+    
     for (int row : rows)
     {
         for (ColLetter col : cols)
@@ -30,21 +66,27 @@ void KeyMatrix::printMatrixState()
             bool currentState = getKeyState(row, col);
             std::pair<int, ColLetter> key = std::make_pair(row, col);
 
-            if (once || lastState[key] != currentState)
+            if (lastState[key] != currentState)
             {
-                Serial.print("Row: ");
+                Serial.print("Change detected - Row: ");
                 Serial.print(row);
-                Serial.print(" Col: ");
+                Serial.print(", Col: ");
                 Serial.print(col);
-                Serial.print(" State: ");
+                Serial.print(", New State: ");
                 Serial.println(currentState ? "1" : "0");
+                
+                lastState[key] = currentState; // Update stored state
+                hasChanges = true;
             }
-
-            lastState[key] = currentState;
         }
     }
-    once = false;
+
+    if (!hasChanges)
+    {
+        Serial.println("No changes detected.");
+    }
 }
+
 
 std::vector<std::pair<int, ColLetter>> KeyMatrix::getLowKeys()
 {
@@ -64,15 +106,30 @@ std::vector<std::pair<int, ColLetter>> KeyMatrix::getLowKeys()
 
 bool KeyMatrix::getKeyState(int row, ColLetter col)
 {
-    // Set the row pin to LOW
     handlers[colMapping.at(col).first].writeGPIO(colMapping.at(col).second, LOW);
-    // Read the column pin state
     bool state = handlers[rowMapping.at(row).first].readGPIO(rowMapping.at(row).second);
-    // Reset the row pin to HIGH
     handlers[colMapping.at(col).first].writeGPIO(colMapping.at(col).second, HIGH);
 
     return state;
 }
+
+void KeyMatrix::debug(int row, ColLetter col){
+
+    handlers[colMapping.at(col).first].writeGPIO(colMapping.at(col).second, LOW);
+    
+    bool state = handlers[rowMapping.at(row).first].readGPIO(rowMapping.at(row).second);
+
+    Serial.print("column: ");
+    Serial.print(col);
+    Serial.print("low ");
+    Serial.print(" row: ");
+    Serial.print(row);
+    Serial.print("input Pullup");
+    Serial.println(state);
+
+}
+
+
 
 void KeyMatrix::begin()
 {

@@ -25,7 +25,7 @@
 #define DFBUSY 14 // Define the pin number for DFBUSY
 #define DFWAKEUP 13 // Define the pin number for DFWAKEUP
 
-const uint8_t VOL = 25; // Volume level
+const uint8_t VOL = 5; // Volume level
 
 #endif // CONFIG_H
 
@@ -50,6 +50,6 @@ const std::map<ColLetter, std::pair<int, MCP_Pins>> COLMAP = {
     {F, {0, MCP_A4}},
     {G, {0, MCP_A5}},
     {H, {0, MCP_A6}},
-    {I, {0, MCP_A7}},
+    {I, {0, MCP_B5}},
 };
 

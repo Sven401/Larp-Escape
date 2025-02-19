@@ -34,8 +34,32 @@ DFPlayerMini_Fast myMP3;
 DFMinniHandler dfmHandler(mySoftwareSerial, myMP3, DFBUSY, DFWAKEUP);
 ReichstagGame game(nfcReader, keymatrix, dfmHandler, twinkleFox);
 
+void ledTask(void *pvParameters) {
+    const TickType_t delay = pdMS_TO_TICKS(33); // ~30 FPS (33ms per frame)
+    
+    while (true) {
+        twinkleFox.draw(fl::Fx::DrawContext(millis(), leds)); 
+        FastLED.show();
+        vTaskDelay(delay);
+    }
+}
+/*
+void wakeUpTask(void *pvParameters) {
+    pinMode(DFWAKEUP, OUTPUT);
 
-unsigned long lastMillis = 0;
+    while (true) {
+        int onTime = random(100, 300);   // Random ON time between 100ms and 300ms
+        int offTime = random(1300, 2500); // Random OFF time between 1.3s and 2.5s
+
+        digitalWrite(DFWAKEUP, HIGH);
+        vTaskDelay(pdMS_TO_TICKS(onTime));
+
+        digitalWrite(DFWAKEUP, LOW);
+        vTaskDelay(pdMS_TO_TICKS(offTime));
+    }
+}
+*/
+
 
 void setup()
 {
@@ -51,11 +75,39 @@ void setup()
         .setCorrection(TypicalLEDStrip);
 
     keymatrix.printMatrixState();
+    twinkleFox.currentPalette = MutedAllColors_p;
+    twinkleFox.setTwinkleDensity(1);
+    twinkleFox.setTwinkleSpeed(1);
+    FastLED.setBrightness(100);
+        // Create the LED update task on Core 1
+        xTaskCreatePinnedToCore(
+            ledTask,       // Function to run
+            "LED Task",    // Task name
+            2048,          // Stack size (2KB should be enough)
+            nullptr,       // Task parameters
+            1,             // Priority (1 = low priority)
+            nullptr,// Task handle
+            1              // Run on Core 1
+        );
+        /*
+        xTaskCreatePinnedToCore(
+            wakeUpTask,      
+            "Blink Task",   
+            1024,          
+            nullptr,       
+            1,             
+            nullptr,       
+            1              
+        );*/
+    pinMode(DFWAKEUP, OUTPUT);
+    digitalWrite(DFWAKEUP, HIGH);
 }
 
 void loop()
 {
     game.machine.run();
-    twinkleFox.draw(fl::Fx::DrawContext(millis(), leds));
-    FastLED.show();
+    keymatrix.printMatrixChanges();
+    keymatrix.printMatrixState();
+    delay(1000);
+
 }

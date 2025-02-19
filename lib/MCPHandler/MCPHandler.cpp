@@ -7,12 +7,14 @@ MCPHandler::MCPHandler(Adafruit_MCP23X17 &mcp, MCPConfig &config, String name) :
 void MCPHandler::begin(uint8_t i2c_addr)
 {
     // Initialize first MCP23X17
-    if (!mcp.begin_I2C(i2c_addr))
+    if (!mcp.begin_I2C(config.i2c_addr))
     {
         Serial.print("Error: MCP23XXX not found at adress");
-        Serial.print(i2c_addr);
+        Serial.print(config.i2c_addr);
         ESP.restart();
     }
+    Serial.print("MCP23XXX found at adress ");
+    Serial.println(config.i2c_addr);
     for (int i = 0; i < config.numPins; i++)
     {
         uint8_t pin = config.pinConfigs[i].pin;   // Get pin number
@@ -23,9 +25,6 @@ void MCPHandler::begin(uint8_t i2c_addr)
         {
         case INPUT_PULLUP_MODE:
             mcp.pinMode(pin, INPUT_PULLUP);
-            break;
-        case INPUT_MODE:
-            mcp.pinMode(pin, INPUT);
             break;
         case OUTPUT_MODE:
             mcp.pinMode(pin, OUTPUT);
