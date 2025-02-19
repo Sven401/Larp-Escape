@@ -25,7 +25,7 @@
 #define DFBUSY 14 // Define the pin number for DFBUSY
 #define DFWAKEUP 13 // Define the pin number for DFWAKEUP
 
-const uint8_t VOL = 5; // Volume level
+const uint8_t VOL = 27; // Volume level
 
 #endif // CONFIG_H
 

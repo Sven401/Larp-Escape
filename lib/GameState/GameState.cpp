@@ -34,13 +34,12 @@ OptionConfig *ReichstagGame::getOptionConfig(std::array<uint8_t, 7> &keyStone)
 std::array<uint8_t, 7> ReichstagGame::getKeyStone()
 {
     Serial.println("Getting current keyStone from NFC reader...");
-    return nfcReader.getCard(); // This would return the current keyStone based on the RFID reader
+    return nfcReader.getCard(0U); // This would return the current keyStone based on the RFID reader
 }
 
 ReichstagGame::CrystalCheckResult ReichstagGame::newCrystalisValid()
 {
     std::vector<std::pair<int, ColLetter>> crystals = keymatrix.getLowKeys(); // Scan the keyboard for the pressed button.
-    keymatrix.printMatrixState();
     if (!crystals.empty())
     {
         Serial.print(crystals.size());
@@ -67,8 +66,8 @@ ReichstagGame::CrystalCheckResult ReichstagGame::newCrystalisValid()
                 for (auto &seenPair : seenOptionButtons)
                 {
                     Serial.print("Seen pair: ");
-                    Serial.print(seenPair->symbol.c_str());
-                    if (seenPair == pair)
+                    Serial.print(seenPair.first->symbol.c_str());
+                    if (seenPair.first == pair)
                     {
                         pairFound = true;
                         break;
@@ -77,7 +76,7 @@ ReichstagGame::CrystalCheckResult ReichstagGame::newCrystalisValid()
 
                 if (!pairFound)
                 {
-                    seenOptionButtons.push_back(pair);
+                    seenOptionButtons.emplace_back(pair, false);
                     if (pair && pair->color)
                     {
                         twinkleFox.targetPalette = *pair->color;
@@ -102,6 +101,26 @@ ReichstagGame::CrystalCheckResult ReichstagGame::newCrystalisValid()
     return NO_NEW_CRYSTAL;
 }
 
+void ReichstagGame::handleCrystaldetection(int delay)
+{
+    EVERY_N_MILLIS(delay)
+    {
+        CrystalCheckResult result = newCrystalisValid();
+        if (result == VALID_CRYSTAL)
+        {
+            correctCrystal = true;
+            incorrectCrystal = false;
+            Serial.println("Valid crystal placed.");
+        }
+        else if (result == INVALID_CRYSTAL)
+        {
+            correctCrystal = false;
+            incorrectCrystal = true;
+            Serial.println("Invalid crystal placed.");
+        }
+    }
+}
+
 bool ReichstagGame::gameReset()
 {
     // Reset global variables
@@ -112,6 +131,7 @@ bool ReichstagGame::gameReset()
     currentButton = nullptr;
     correctCrystals = 0;
     incorrectCrystal = false;
+    seenKeyStones.clear();
     return true;
 }
 
@@ -132,22 +152,22 @@ void ReichstagGame::stateIdle()
     if (machine.executeOnce)
     {
         Serial.println("Idle state entered.");
-        twinkleFox.setTwinkleSpeed(1);
         twinkleFox.setTwinkleDensity(1);
         twinkleFox.targetPalette = MutedAllColors_p;
     };
-    EVERY_N_MILLISECONDS(100)
+    const uint8_t targetBri = 20;
+    EVERY_N_MILLISECONDS(INTERVALL)
     {
         uint8_t bri = FastLED.getBrightness();
-        if (bri != 100)
-        {
-            FastLED.setBrightness(bri - 1);
+        if (bri != targetBri) {
+            bri += (bri < targetBri) ? 1 : -1; // Increment if lower, decrement if higher
+            FastLED.setBrightness(bri);
         }
     }
 
     EVERY_N_SECONDS(1)
     {
-        currentKeyStone = nfcReader.getCard();
+        currentKeyStone = nfcReader.getCard(0);
         Serial.println("Warten auf Schlüsselstein...");
     }
 }
@@ -156,32 +176,23 @@ void ReichstagGame::stateWaitingForCrystals()
 {
     if (machine.executeOnce)
     {
+        Serial.println("Waiting for crystals state entered.");
         twinkleFox.setTwinkleSpeed(4);
-        twinkleFox.setTwinkleDensity(4);
+        twinkleFox.setTwinkleDensity(2);
     }
-    EVERY_N_MILLISECONDS(100)
+    const uint8_t targetBri = 50;
+    EVERY_N_MILLISECONDS(INTERVALL)
     {
         uint8_t bri = FastLED.getBrightness();
-        if (bri != 200)
-        {
-            FastLED.setBrightness(bri + 1);
+        if (bri != targetBri) {
+            bri += (bri < targetBri) ? 1 : -1; // Increment if lower, decrement if higher
+            FastLED.setBrightness(bri);
         }
     }
-    EVERY_N_SECONDS(1)
-    {
-        CrystalCheckResult result = newCrystalisValid();
-        if (result == VALID_CRYSTAL)
-        {
-            correctCrystal = true;
-            incorrectCrystal = false;
-            Serial.println("Valid crystal placed.");
-        }
-        else if (result == INVALID_CRYSTAL)
-        {
-            correctCrystal = false;
-            incorrectCrystal = true;
-            Serial.println("Invalid crystal placed.");
-        }
+    handleCrystaldetection(100);
+    EVERY_N_SECONDS(2){
+        std::array<uint8_t, 7> presentKey = nfcReader.getCard(100);
+        errorState = currentKeyStone == presentKey ? false: true;
     }
 }
 
@@ -189,11 +200,26 @@ void ReichstagGame::stateFirstCrystalPlaced()
 {
     if (machine.executeOnce)
     {
-        twinkleFox.setTwinkleSpeed(5);
-        twinkleFox.setTwinkleDensity(5);
+        Serial.println("First crystal placed state entered.");
+        twinkleFox.setTwinkleDensity(3);
         Serial.print("Playing audio file: ");
-        Serial.println(currentButton->audioFile);
-        dfmHandler.playTrack(currentButton->audioFile);
+        Serial.println(seenOptionButtons[0].first->audioFile);
+        dfmHandler.playTrack(seenOptionButtons[0].first->audioFile);
+        seenOptionButtons[0].second = true;
+    }
+    const uint8_t targetBri = 100;
+    EVERY_N_MILLISECONDS(INTERVALL)
+    {
+        uint8_t bri = FastLED.getBrightness();
+        if (bri != targetBri) {
+            bri += (bri < targetBri) ? 1 : -1; // Increment if lower, decrement if higher
+            FastLED.setBrightness(bri);
+        }
+    }
+    handleCrystaldetection(100);
+    EVERY_N_SECONDS(2){
+        std::array<uint8_t, 7> presentKey = nfcReader.getCard(100);
+        errorState = currentKeyStone == presentKey ? false: true;
     }
 }
 
@@ -201,9 +227,23 @@ void ReichstagGame::stateSecondCrystalPlaced()
 {
     if (machine.executeOnce)
     {
-        twinkleFox.setTwinkleSpeed(6);
-        twinkleFox.setTwinkleDensity(6);
-        dfmHandler.playTrack(currentButton->audioFile);
+        twinkleFox.setTwinkleDensity(4);
+        dfmHandler.playTrack(seenOptionButtons[1].first->audioFile);
+        seenOptionButtons[1].second = true;
+    }
+    const uint8_t targetBri = 150;
+    EVERY_N_MILLISECONDS(INTERVALL)
+    {
+        uint8_t bri = FastLED.getBrightness();
+        if (bri != targetBri) {
+            bri += (bri < targetBri) ? 1 : -1; // Increment if lower, decrement if higher
+            FastLED.setBrightness(bri);
+        }
+    }
+    handleCrystaldetection(100);
+    EVERY_N_SECONDS(2){
+        std::array<uint8_t, 7> presentKey = nfcReader.getCard(100);
+        errorState = currentKeyStone == presentKey ? false: true;
     }
 }
 
@@ -211,9 +251,18 @@ void ReichstagGame::stateThirdCrystalPlaced()
 {
     if (machine.executeOnce)
     {
-        twinkleFox.setTwinkleSpeed(7);
-        twinkleFox.setTwinkleDensity(7);
-        dfmHandler.playTrack(currentButton->audioFile);
+        twinkleFox.setTwinkleDensity(5);
+        dfmHandler.playTrack(seenOptionButtons[2].first->audioFile);
+        seenOptionButtons[2].second = true;
+    }
+    const uint8_t targetBri = 200;
+    EVERY_N_MILLISECONDS(INTERVALL)
+    {
+        uint8_t bri = FastLED.getBrightness();
+        if (bri != targetBri) {
+            bri += (bri < targetBri) ? 1 : -1; // Increment if lower, decrement if higher
+            FastLED.setBrightness(bri);
+        }
     }
 }
 
@@ -221,10 +270,19 @@ void ReichstagGame::stateGameCompleted()
 {
     if (machine.executeOnce)
     {
-        twinkleFox.setTwinkleSpeed(8);
-        twinkleFox.setTwinkleDensity(8);
+        seenKeyStones.push_back(currentKeyStone);
+        twinkleFox.setTwinkleDensity(6);
         dfmHandler.playTrack(currentOptionConfig->optionAudioFile);
         roundCounter++;
+    }
+    const uint8_t targetBri = 250;
+    EVERY_N_MILLISECONDS(INTERVALL)
+    {
+        uint8_t bri = FastLED.getBrightness();
+        if (bri != targetBri) {
+            bri += (bri < targetBri) ? 1 : -1; // Increment if lower, decrement if higher
+            FastLED.setBrightness(bri);
+        }
     }
 }
 
@@ -232,10 +290,40 @@ void ReichstagGame::stateErrorState()
 {
     if (machine.executeOnce)
     {
-        twinkleFox.setTwinkleSpeed(3);
         twinkleFox.setTwinkleDensity(3);
+        dfmHandler.playTrack(997);
+        gameReset();
+        roundReset();
+    }
+}
+
+void ReichstagGame::stateBonusState()
+{
+    if (machine.executeOnce)
+    {
+        Serial.print("Bonus Stage reached");
+        randomSeed(analogRead(0));
+        for (int i = 0; i < 10; i++) { // Print multiple random confetti dots
+            int tabs = random(0, 10); // Random tab position
+            int newlines = random(0, 5); // Random vertical position
+            for (int j = 0; j < newlines; j++) Serial.println(); // Move down
+            for (int j = 0; j < tabs; j++) Serial.print("\t"); // Move right
+            Serial.print("* "); // Print a confetti character
+        }
+        twinkleFox.setTwinkleDensity(7);
         dfmHandler.playTrack(999);
     }
+}
+
+bool ReichstagGame::transitionToBonusState()
+{
+    if (dfmHandler.isBusy())
+        return false;
+    if (roundCounter == 6 | seenKeyStones.size() == 6)
+    {
+        return true;
+    }
+    return false;
 }
 
 // --- TRANSITIONS ---
@@ -243,6 +331,11 @@ bool ReichstagGame::transitionToWaitingForCrystals()
 {
     if (currentKeyStone != std::array<uint8_t, 7>{})
     {
+        // Check if currentKeyStone is already in seenKeyStones
+        if (std::find(seenKeyStones.begin(), seenKeyStones.end(), currentKeyStone) != seenKeyStones.end())
+        {
+            return false; // If found, return false
+        }
         currentOptionConfig = getOptionConfig(currentKeyStone);
         if (currentOptionConfig != nullptr)
         {
@@ -257,16 +350,42 @@ bool ReichstagGame::transitionToCrystal()
 {
     if (dfmHandler.isBusy())
         return false;
-    if (correctCrystal)
+
+    bool anyOptionFalse = false;
+    for (size_t i = 0; i < seenOptionButtons.size(); i++)
+    {
+        if (!seenOptionButtons[i].second)
+        {
+            anyOptionFalse = true;
+            break; // Wir müssen nicht weiter prüfen, wenn wir schon ein `false` gefunden haben
+        }
+    }
+
+    if (correctCrystal || anyOptionFalse)
     {
         correctCrystal = false;
         return true;
     }
+
     return false;
 }
 
+
+
 bool ReichstagGame::transitionToGameCompleted()
 {
+    delay(500);
+    Serial.println("Transition check to gamecompleted.");
+    Serial.print("Correct crystals: ");
+    Serial.println(correctCrystals);
+    Serial.print("Round counter: ");
+    Serial.println(roundCounter);
+    Serial.print("Seen keystones: ");
+    Serial.println(seenKeyStones.size());
+    Serial.print("DfmHandler busy: ");
+    Serial.println(dfmHandler.isBusy());
+    if (dfmHandler.isBusy())
+        return false;
     return correctCrystals == 3;
 }
 
@@ -279,11 +398,16 @@ bool ReichstagGame::transitionToError()
         incorrectCrystal = false;
         return true;
     }
+    if (errorState){
+        errorState = false;
+        return true;
+    }
     return false;
 }
 
 bool ReichstagGame::transitionToIdle()
 {
+    delay(500);
     if (!dfmHandler.isBusy())
     {
         roundReset();
@@ -300,6 +424,7 @@ void ReichstagGame::setup()
     SecondCrystalPlaced = machine.addState(std::bind(&ReichstagGame::stateSecondCrystalPlaced, this));
     ThirdCrystalPlaced = machine.addState(std::bind(&ReichstagGame::stateThirdCrystalPlaced, this));
     GameCompleted = machine.addState(std::bind(&ReichstagGame::stateGameCompleted, this));
+    BonusState = machine.addState(std::bind(&ReichstagGame::stateBonusState, this));
     ErrorState = machine.addState(std::bind(&ReichstagGame::stateErrorState, this));
     setupTransitions();
 }
@@ -308,19 +433,23 @@ void ReichstagGame::setupTransitions()
 {
     Idle->addTransition(std::bind(&ReichstagGame::transitionToWaitingForCrystals, this), WaitingForCrystals);
     Idle->addTransition(std::bind(&ReichstagGame::transitionToError, this), ErrorState);
-
-    WaitingForCrystals->addTransition(std::bind(&ReichstagGame::transitionToCrystal, this), FirstCrystalPlaced);
+    
     WaitingForCrystals->addTransition(std::bind(&ReichstagGame::transitionToError, this), ErrorState);
-
-    FirstCrystalPlaced->addTransition(std::bind(&ReichstagGame::transitionToCrystal, this), SecondCrystalPlaced);
+    WaitingForCrystals->addTransition(std::bind(&ReichstagGame::transitionToCrystal, this), FirstCrystalPlaced);
+    
     FirstCrystalPlaced->addTransition(std::bind(&ReichstagGame::transitionToError, this), ErrorState);
+    FirstCrystalPlaced->addTransition(std::bind(&ReichstagGame::transitionToCrystal, this), SecondCrystalPlaced);
 
-    SecondCrystalPlaced->addTransition(std::bind(&ReichstagGame::transitionToCrystal, this), ThirdCrystalPlaced);
     SecondCrystalPlaced->addTransition(std::bind(&ReichstagGame::transitionToError, this), ErrorState);
+    SecondCrystalPlaced->addTransition(std::bind(&ReichstagGame::transitionToCrystal, this), ThirdCrystalPlaced);
 
-    ThirdCrystalPlaced->addTransition(std::bind(&ReichstagGame::transitionToGameCompleted, this), GameCompleted);
     ThirdCrystalPlaced->addTransition(std::bind(&ReichstagGame::transitionToError, this), ErrorState);
+    ThirdCrystalPlaced->addTransition(std::bind(&ReichstagGame::transitionToGameCompleted, this), GameCompleted);
+
+    GameCompleted->addTransition(std::bind(&ReichstagGame::transitionToBonusState, this), BonusState);
 
     GameCompleted->addTransition(std::bind(&ReichstagGame::transitionToIdle, this), Idle);
+    BonusState->addTransition(std::bind(&ReichstagGame::transitionToIdle, this), Idle);
+
     ErrorState->addTransition(std::bind(&ReichstagGame::transitionToIdle, this), Idle);
 }

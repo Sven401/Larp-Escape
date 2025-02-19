@@ -67,6 +67,8 @@ public:
      */
     void stateGameCompleted();
 
+    void stateBonusState();
+
     /**
      * @brief Handles the error state of the game.
      */
@@ -101,6 +103,8 @@ public:
      * @return true if the transition is successful, false otherwise.
      */
     bool transitionToIdle();
+
+    bool transitionToBonusState();
 
     /**
      * @brief Sets up the state transitions for the game.
@@ -163,11 +167,14 @@ private:
      */
     bool roundReset();
 
+    void handleCrystaldetection(int delay);
+
     int roundCounter;                                    ///< Counts the completed game rounds. eg. for how many keystones the correct crystals have been placed.
     std::array<uint8_t, 7> currentKeyStone;                            ///< Stores the current keystone.
+    std::vector<std::array<uint8_t, 7>> seenKeyStones;  ///< Stores the seen keystones.
     bool errorState;                                     ///< Indicates if the game is in an error state.
     std::vector<OptionConfig> options;                   ///< Stores the game options.
-    std::vector<const ButtonPair*> seenOptionButtons;    ///< Stores the seen option buttons.
+    std::vector<std::pair<const ButtonPair*, bool>> seenOptionButtons;
     const ButtonPair* currentButton;                     ///< Stores the currently valid button pair. eg Crystal
     uint8_t correctCrystals;                             ///< Number of correctly placed crystals (max. 3).
     bool incorrectCrystal;                               ///< Indicates if an incorrect crystal has been placed (max. 1).
@@ -179,11 +186,13 @@ private:
     State *SecondCrystalPlaced;
     State *ThirdCrystalPlaced;
     State *GameCompleted;
+    State *BonusState;
     State *ErrorState;
     NFCReader& nfcReader;
     KeyMatrix& keymatrix;
     DFMinniHandler& dfmHandler;
     MyTwinkleFox& twinkleFox;
+    const int INTERVALL = 150;
 
 };
 

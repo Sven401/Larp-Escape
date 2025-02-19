@@ -43,13 +43,13 @@ void ledTask(void *pvParameters) {
         vTaskDelay(delay);
     }
 }
-/*
+
 void wakeUpTask(void *pvParameters) {
     pinMode(DFWAKEUP, OUTPUT);
 
     while (true) {
-        int onTime = random(100, 300);   // Random ON time between 100ms and 300ms
-        int offTime = random(1300, 2500); // Random OFF time between 1.3s and 2.5s
+        int onTime = random(500, 1000);   // Random ON time between 100ms and 300ms
+        int offTime = random(500, 1000); // Random OFF time between 1.3s and 2.5s
 
         digitalWrite(DFWAKEUP, HIGH);
         vTaskDelay(pdMS_TO_TICKS(onTime));
@@ -58,7 +58,7 @@ void wakeUpTask(void *pvParameters) {
         vTaskDelay(pdMS_TO_TICKS(offTime));
     }
 }
-*/
+
 
 
 void setup()
@@ -89,7 +89,6 @@ void setup()
             nullptr,// Task handle
             1              // Run on Core 1
         );
-        /*
         xTaskCreatePinnedToCore(
             wakeUpTask,      
             "Blink Task",   
@@ -98,7 +97,7 @@ void setup()
             1,             
             nullptr,       
             1              
-        );*/
+        );
     pinMode(DFWAKEUP, OUTPUT);
     digitalWrite(DFWAKEUP, HIGH);
 }
@@ -106,8 +105,4 @@ void setup()
 void loop()
 {
     game.machine.run();
-    keymatrix.printMatrixChanges();
-    keymatrix.printMatrixState();
-    delay(1000);
-
 }

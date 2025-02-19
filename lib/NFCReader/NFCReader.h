@@ -16,7 +16,7 @@ public:
     void resetStoredUids();       // Enable the NFC reader
     bool isCurrentUid(uint8_t* queryUid, uint8_t queryUidLength);
     uint8_t uid[7];  // Buffer to store the returned UID
-    std::array<uint8_t, 7> getCard();
+    std::array<uint8_t, 7> getCard(uint16_t timeout);
     bool isNewUid;
     bool isStoredUid;
     bool allUidsStored;

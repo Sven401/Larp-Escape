@@ -15,15 +15,24 @@ void DFMinniHandler::begin() {
 }
 
 void DFMinniHandler::playTrack(uint16_t trackNumber) {
-    if (myMP3.currentVersion() == -1) {
+    if (!myMP3.parseFeedback()) {
         Serial.println("DFPlayer not found");
         begin();
-        delay(300); // Wait for the DFPlayer to reset
-        myMP3.begin(mySerial);
-        myMP3.volume(VOL);
+    } else {
+        Serial.println("DFPlayer found");
+    }
+    if (!myMP3.parseFeedback()) {
+        Serial.println("DFPlayer not found");
+        begin();
+    }
+    else{
+        Serial.println("DFPlayer found");
     }
     Serial.print("Playing track: ");
+    Serial.println(trackNumber);
     myMP3.playFromMP3Folder(trackNumber);
+    Serial.print("DFPlayer busy state: ");
+    Serial.print(isBusy());
 }
 
 bool DFMinniHandler::isBusy() {
@@ -34,6 +43,14 @@ bool DFMinniHandler::isBusy() {
 void DFMinniHandler::wakeupDFPlayer() {
     // Wake up the DFPlayer
     digitalWrite(wakeUpPin, HIGH);
+    Serial.print("DFPlayer busy state: ");
+    Serial.print(isBusy());
+    delay(100); // Wait for the DFPlayer to wake up
+    digitalWrite(wakeUpPin, LOW);
+    delay(100); // Wait for the DFPlayer to wake up
+    digitalWrite(wakeUpPin, HIGH);
+    Serial.print("DFPlayer busy state: ");
+    Serial.print(isBusy());
     delay(100); // Wait for the DFPlayer to wake up
     digitalWrite(wakeUpPin, LOW);
 }

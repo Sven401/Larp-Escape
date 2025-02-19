@@ -14,7 +14,7 @@ public:
         const std::map<ColLetter, std::pair<int, MCP_Pins>>& colMap);
     
     void printMatrixState();
-    void printMatrixChanges();
+    bool printMatrixChanges();
     bool getKeyState(int row, ColLetter col);
     void debug(int row, ColLetter col);
     void begin();

@@ -55,7 +55,7 @@ void KeyMatrix::printMatrixState()
     once = false;
 }
 
-void KeyMatrix::printMatrixChanges()
+bool KeyMatrix::printMatrixChanges()
 {
     bool hasChanges = false;
     
@@ -80,11 +80,7 @@ void KeyMatrix::printMatrixChanges()
             }
         }
     }
-
-    if (!hasChanges)
-    {
-        Serial.println("No changes detected.");
-    }
+    return hasChanges;
 }
 
 

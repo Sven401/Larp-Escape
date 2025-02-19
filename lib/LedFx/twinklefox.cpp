@@ -10,8 +10,8 @@ namespace fl
     MyTwinkleFox::MyTwinkleFox(uint16_t num_leds)
         : Fx1d(num_leds), backgroundColor(CRGB::Black),
           twinkleSpeed(1), twinkleDensity(1),
-          coolLikeIncandescent(true),
-          autoSelectBackgroundColor(true){};
+          coolLikeIncandescent(false),
+          autoSelectBackgroundColor(true) {};
 
     void MyTwinkleFox::draw(DrawContext context)
     {
@@ -19,19 +19,38 @@ namespace fl
         {
             nblendPaletteTowardPalette(currentPalette, targetPalette, 12);
         }
-        drawTwinkleFox(context.leds);
-        if (targetSpeed != twinkleSpeed || targetDensity != twinkleDensity)
-        {
-            EVERY_N_MILLISECONDS(500)
-            {
-                twinkleSpeed = qadd8(twinkleSpeed, targetSpeed - twinkleSpeed);
-                twinkleDensity = qadd8(twinkleDensity, targetDensity - twinkleDensity);
+        // Smooth transition using easing that starts slow and speeds up
+        if (targetSpeed != twinkleSpeed) {
+            EVERY_N_MILLISECONDS(1000) {
+                twinkleSpeed += (twinkleSpeed < targetSpeed) ? 1 : -1;
+                twinkleSpeed > 8 ? twinkleSpeed = 8 : twinkleSpeed;
             }
-        };
+        }
+        
+        if (targetDensity != twinkleDensity) {
+            EVERY_N_MILLISECONDS(1000) {
+                    twinkleDensity += (twinkleDensity < targetDensity) ? 1 : -1;
+                    twinkleDensity > 8 ? twinkleDensity = 8 : twinkleDensity;
+            }
+        }
+        
+        drawTwinkleFox(context.leds);
     }
 
-    void MyTwinkleFox::setTwinkleSpeed(uint8_t speed) { targetSpeed = speed; };
-    void MyTwinkleFox::setTwinkleDensity(uint8_t density) { targetDensity = density; };
+    void MyTwinkleFox::setTwinkleSpeed(uint8_t speed) {
+        Serial.print("Setting Twinkle Speed: ");
+        Serial.println(speed);
+        targetSpeed = speed; 
+        Serial.print("Target Speed: ");
+        Serial.println(targetSpeed);
+    };
+    void MyTwinkleFox::setTwinkleDensity(uint8_t density) {
+        Serial.print("Setting Twinkle Density: ");
+        Serial.println(density);
+        targetDensity = density; 
+        Serial.print("Target Density: ");
+        Serial.println(targetDensity);    
+    };
 
     void MyTwinkleFox::drawTwinkleFox(CRGB *leds)
     {

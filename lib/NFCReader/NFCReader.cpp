@@ -43,11 +43,12 @@ bool NFCReader::enableReader()
     if (!awake)
     {
         readerDisabled = !begin();
+        nfc.reset();
     }
     return !readerDisabled;
 } 
 
-std::array<uint8_t, 7> NFCReader::getCard()
+std::array<uint8_t, 7> NFCReader::getCard(uint16_t timeout)
 {
     Serial.print("Attempting to enable NFC reader. Result: ");
     bool result = enableReader();
@@ -56,7 +57,7 @@ std::array<uint8_t, 7> NFCReader::getCard()
         return {};
     }
     Serial.println("Waiting for an ISO14443A Card ...");
-    success = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, uid, &uidLength);
+    success = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, uid, &uidLength, 100);
     Serial.print("Read passive target ID success: ");
     Serial.println(success);
     if (!success) {
