@@ -7,6 +7,9 @@
 #include "FastLED.h"
 #include "twinklefox.h"
 #include "DFMinniHandler.h"
+#include "ripple.h"
+#include "burst.h"
+
 
 #define LED_TYPE WS2811
 #define COLOR_ORDER GRB
@@ -18,6 +21,14 @@ CRGBArray<NUM_LEDS> leds;
 
 using namespace fl;
 MyTwinkleFox twinkleFox(NUM_LEDS);
+Burst burst (30,leds, NUM_LEDS);
+Ripple ripples[4] = {
+    Ripple(NUM_LEDS*1/4, leds, 30, NUM_LEDS),
+    Ripple(NUM_LEDS*2/4, leds, 30, NUM_LEDS),
+    Ripple(NUM_LEDS*3/4, leds, 30, NUM_LEDS),
+    Ripple(NUM_LEDS*4/4, leds, 30, NUM_LEDS)
+};
+
 
 
 // Objects
@@ -32,13 +43,18 @@ KeyMatrix keymatrix(handlers, ROWMAP, COLMAP);
 HardwareSerial mySoftwareSerial(1);
 DFPlayerMini_Fast myMP3;
 DFMinniHandler dfmHandler(mySoftwareSerial, myMP3, DFBUSY, DFWAKEUP);
-ReichstagGame game(nfcReader, keymatrix, dfmHandler, twinkleFox);
+ReichstagGame game(nfcReader, keymatrix, dfmHandler, twinkleFox, burst, ripples);
 
 void ledTask(void *pvParameters) {
     const TickType_t delay = pdMS_TO_TICKS(33); // ~30 FPS (33ms per frame)
     
     while (true) {
         twinkleFox.draw(fl::Fx::DrawContext(millis(), leds)); 
+        burst.draw();
+        ripples[0].draw();
+        ripples[1].draw();
+        ripples[2].draw();
+        ripples[3].draw();
         FastLED.show();
         vTaskDelay(delay);
     }
@@ -48,8 +64,8 @@ void wakeUpTask(void *pvParameters) {
     pinMode(DFWAKEUP, OUTPUT);
 
     while (true) {
-        int onTime = random(500, 1000);   // Random ON time between 100ms and 300ms
-        int offTime = random(500, 1000); // Random OFF time between 1.3s and 2.5s
+        int onTime = random(200, 500);   // Random ON time between 100ms and 300ms
+        int offTime = random(100, 400); // Random OFF time between 1.3s and 2.5s
 
         digitalWrite(DFWAKEUP, HIGH);
         vTaskDelay(pdMS_TO_TICKS(onTime));
@@ -105,4 +121,6 @@ void setup()
 void loop()
 {
     game.machine.run();
+    if (keymatrix.printMatrixChanges())
+        keymatrix.printMatrixState();
 }

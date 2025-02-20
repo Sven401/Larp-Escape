@@ -16,6 +16,8 @@
 #include "OptionConfig.h"
 #include "OptionDefinitions.h"
 #include <vector>
+#include "ripple.h"
+#include "burst.h"
 
 using namespace fl;
 using namespace MyMachine;
@@ -35,7 +37,7 @@ public:
     /**
      * @brief Constructs a new ReichstagGame object.
      */
-    ReichstagGame(NFCReader& nfcReader, KeyMatrix& keymatrix, DFMinniHandler& dfmHandler, fl::MyTwinkleFox& twinkleFox);
+    ReichstagGame(NFCReader& nfcReader, KeyMatrix& keymatrix, DFMinniHandler& dfmHandler, fl::MyTwinkleFox& twinkleFox, Burst& burst, Ripple ripples[4]);
 
     /**
      * @brief Handles the idle state of the game.
@@ -68,6 +70,8 @@ public:
     void stateGameCompleted();
 
     void stateBonusState();
+
+    void stateStandByState();
 
     /**
      * @brief Handles the error state of the game.
@@ -105,6 +109,9 @@ public:
     bool transitionToIdle();
 
     bool transitionToBonusState();
+
+    bool transitionToStandBy();
+    bool transitionFromStandBY();
 
     /**
      * @brief Sets up the state transitions for the game.
@@ -188,11 +195,16 @@ private:
     State *GameCompleted;
     State *BonusState;
     State *ErrorState;
+    State *StandByState;
     NFCReader& nfcReader;
     KeyMatrix& keymatrix;
     DFMinniHandler& dfmHandler;
     MyTwinkleFox& twinkleFox;
+    Burst& burst;
+    Ripple *ripples;
     const int INTERVALL = 150;
+    unsigned long timeout = 600000;
+    unsigned long lastMillis = 0;
 
 };
 

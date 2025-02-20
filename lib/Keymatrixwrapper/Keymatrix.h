@@ -19,9 +19,9 @@ public:
     void debug(int row, ColLetter col);
     void begin();
     std::vector<std::pair<int, ColLetter>> getLowKeys(); // New method declaration
+    std::vector<MCPHandler>& handlers;
 
 private:
-    std::vector<MCPHandler>& handlers;
     const std::map<int, std::pair<int, MCP_Pins>>& rowMapping;
     const std::map<ColLetter, std::pair<int, MCP_Pins>>& colMapping;
     std::vector<int> rows;
