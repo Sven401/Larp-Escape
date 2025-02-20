@@ -8,6 +8,7 @@
 
 // A mostly red palette with green accents and white trim.
 // "CRGB::Gray" is used as white to keep the brightness more uniform.
+/*
 const TProgmemRGBPalette16 RedGreenWhite_p FL_PROGMEM = {
     CRGB::Red, CRGB::Red, CRGB::Red, CRGB::Red, CRGB::Red, CRGB::Red,
     CRGB::Red, CRGB::Red, CRGB::Red, CRGB::Red, CRGB::Gray, CRGB::Gray,
@@ -60,6 +61,7 @@ const TProgmemRGBPalette16 Ice_p FL_PROGMEM = {
     0x0C1040, 0x0C1040, 0x0C1040, 0x0C1040, 0x0C1040, 0x0C1040,
     0x182080, 0x182080, 0x182080, 0x5080C0
 };
+*/
 
 const TProgmemRGBPalette16 Blue_p FL_PROGMEM = {
     0x0000FF, 0x0000CC, 0x000099, 0x000066, 0x000033, 0x0033FF,
