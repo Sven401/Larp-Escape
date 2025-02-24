@@ -38,18 +38,14 @@ namespace fl
     }
 
     void MyTwinkleFox::setTwinkleSpeed(uint8_t speed) {
-        Serial.print("Setting Twinkle Speed: ");
-        Serial.println(speed);
+
         targetSpeed = speed; 
-        Serial.print("Target Speed: ");
-        Serial.println(targetSpeed);
+
     };
     void MyTwinkleFox::setTwinkleDensity(uint8_t density) {
-        Serial.print("Setting Twinkle Density: ");
-        Serial.println(density);
+
         targetDensity = density; 
-        Serial.print("Target Density: ");
-        Serial.println(targetDensity);    
+ 
     };
 
     void MyTwinkleFox::drawTwinkleFox(CRGB *leds)

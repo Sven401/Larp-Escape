@@ -22,22 +22,22 @@
 using namespace fl;
 using namespace MyMachine;
 
-
 /**
  * @class ReichstagGame
  * @brief Manages the state and transitions of the Reichstag game.
- * 
+ *
  * This class handles the different states of the game, transitions between states,
  * and game-specific logic such as crystal placement and error handling.
- * 
+ *
  * @note This class uses a state machine to manage game states.
  */
-class ReichstagGame {
+class ReichstagGame
+{
 public:
     /**
      * @brief Constructs a new ReichstagGame object.
      */
-    ReichstagGame(NFCReader& nfcReader, KeyMatrix& keymatrix, DFMinniHandler& dfmHandler, fl::MyTwinkleFox& twinkleFox, Burst& burst, Ripple ripples[4]);
+    ReichstagGame(NFCReader &nfcReader, KeyMatrix &keymatrix, DFMinniHandler &dfmHandler, fl::MyTwinkleFox &twinkleFox, Burst &burst, Ripple ripples[4]);
 
     /**
      * @brief Handles the idle state of the game.
@@ -112,6 +112,7 @@ public:
 
     bool transitionToStandBy();
     bool transitionFromStandBY();
+    bool transitionToIdleBonus();
 
     /**
      * @brief Sets up the state transitions for the game.
@@ -123,7 +124,7 @@ public:
      */
     void setup();
 
-    StateMachine machine;                              ///< Manages the game states.
+    StateMachine machine; ///< Manages the game states.
 
 private:
     /**
@@ -131,7 +132,7 @@ private:
      * @param keyStone The keystone to retrieve the configuration for.
      * @return A pointer to the option configuration.
      */
-    OptionConfig* getOptionConfig(std::array<uint8_t, 7>& keyStone);
+    OptionConfig *getOptionConfig(std::array<uint8_t, 7> &keyStone);
 
     /**
      * @brief Retrieves the current keystone.
@@ -145,15 +146,15 @@ private:
      */
     int getCrystal();
 
-
     /**
      * @brief Checks if a new crystal is valid.
      * @return true if the new crystal is valid, false otherwise.
      */
-    enum CrystalCheckResult {                            ///< Enumerates the possible crystal check results.
-        NO_NEW_CRYSTAL,                                  ///< No new crystal has been placed.
-        VALID_CRYSTAL,                                   ///< A valid crystal has been placed.
-        INVALID_CRYSTAL                                  ///< An invalid crystal has been placed.
+    enum CrystalCheckResult
+    {                   ///< Enumerates the possible crystal check results.
+        NO_NEW_CRYSTAL, ///< No new crystal has been placed.
+        VALID_CRYSTAL,  ///< A valid crystal has been placed.
+        INVALID_CRYSTAL ///< An invalid crystal has been placed.
     };
 
     CrystalCheckResult newCrystalisValid();
@@ -166,7 +167,7 @@ private:
 
     /**
      * @brief Resets the game state for a new round.
-     * 
+     *
      * This function is responsible for resetting all necessary game state variables
      * and conditions to their initial values in preparation for a new round of the game.
      * Does not lose track of the correct played rounds.
@@ -176,17 +177,20 @@ private:
 
     void handleCrystaldetection(int delay);
 
-    int roundCounter;                                    ///< Counts the completed game rounds. eg. for how many keystones the correct crystals have been placed.
-    std::array<uint8_t, 7> currentKeyStone;                            ///< Stores the current keystone.
-    std::vector<std::array<uint8_t, 7>> seenKeyStones;  ///< Stores the seen keystones.
-    bool errorState;                                     ///< Indicates if the game is in an error state.
-    std::vector<OptionConfig> options;                   ///< Stores the game options.
-    std::vector<std::pair<const ButtonPair*, bool>> seenOptionButtons;
-    const ButtonPair* currentButton;                     ///< Stores the currently valid button pair. eg Crystal
-    uint8_t correctCrystals;                             ///< Number of correctly placed crystals (max. 3).
-    bool incorrectCrystal;                               ///< Indicates if an incorrect crystal has been placed (max. 1).
-    bool correctCrystal;                                 ///< Indicates if a correct crystal has been placed.
-    OptionConfig* currentOptionConfig;                   ///< Stores the current option configuration.
+    void handleKeystonedetection();
+
+    int roundCounter;                                  ///< Counts the completed game rounds. eg. for how many keystones the correct crystals have been placed.
+    std::array<uint8_t, 7> currentKeyStone;            ///< Stores the current keystone.
+    std::array<uint8_t, 7> lastKeyStone;
+    std::vector<std::array<uint8_t, 7>> seenKeyStones; ///< Stores the seen keystones.
+    bool errorState;                                   ///< Indicates if the game is in an error state.
+    std::vector<OptionConfig> options;                 ///< Stores the game options.
+    std::vector<std::pair<const ButtonPair *, bool>> seenOptionButtons;
+    const ButtonPair *currentButton;   ///< Stores the currently valid button pair. eg Crystal
+    uint8_t correctCrystals;           ///< Number of correctly placed crystals (max. 3).
+    bool incorrectCrystal;             ///< Indicates if an incorrect crystal has been placed (max. 1).
+    bool correctCrystal;               ///< Indicates if a correct crystal has been placed.
+    OptionConfig *currentOptionConfig; ///< Stores the current option configuration.
     State *Idle;
     State *WaitingForCrystals;
     State *FirstCrystalPlaced;
@@ -196,16 +200,26 @@ private:
     State *BonusState;
     State *ErrorState;
     State *StandByState;
-    NFCReader& nfcReader;
-    KeyMatrix& keymatrix;
-    DFMinniHandler& dfmHandler;
-    MyTwinkleFox& twinkleFox;
-    Burst& burst;
+    NFCReader &nfcReader;
+    KeyMatrix &keymatrix;
+    DFMinniHandler &dfmHandler;
+    MyTwinkleFox &twinkleFox;
+    Burst &burst;
     Ripple *ripples;
     const int INTERVALL = 150;
     unsigned long timeout = 600000;
     unsigned long lastMillis = 0;
+    uint8_t retrys;
 
+    uint8_t receiverMAC[6] = {0xB0, 0xA7, 0x32, 0xF1, 0x86, 0x54};
+
+    // Define the data structure
+    typedef struct struct_message
+    {
+        char message[32];
+    } struct_message;
+
+    struct_message dataToSend;
 };
 
-#endif //GAMESTATE_H
+#endif // GAMESTATE_H

@@ -9,6 +9,8 @@
 #include "DFMinniHandler.h"
 #include "ripple.h"
 #include "burst.h"
+#include <esp_now.h>
+#include <WiFi.h>
 
 
 #define LED_TYPE WS2811
@@ -18,6 +20,8 @@
 #define MAX_MA 1000
 #define NUM_LEDS 23
 CRGBArray<NUM_LEDS> leds;
+
+uint8_t receiverMAC[6] = {0xB0, 0xA7, 0x32, 0xF1, 0x86, 0x54};
 
 using namespace fl;
 MyTwinkleFox twinkleFox(NUM_LEDS);
@@ -44,6 +48,13 @@ HardwareSerial mySoftwareSerial(1);
 DFPlayerMini_Fast myMP3;
 DFMinniHandler dfmHandler(mySoftwareSerial, myMP3, DFBUSY, DFWAKEUP);
 ReichstagGame game(nfcReader, keymatrix, dfmHandler, twinkleFox, burst, ripples);
+
+
+// Callback for message delivery status
+void onSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
+    Serial.print("Delivery Status: ");
+    Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Success" : "Fail");
+}
 
 void ledTask(void *pvParameters) {
     const TickType_t delay = pdMS_TO_TICKS(33); // ~30 FPS (33ms per frame)
@@ -116,11 +127,29 @@ void setup()
         );
     pinMode(DFWAKEUP, OUTPUT);
     digitalWrite(DFWAKEUP, HIGH);
+    
+    WiFi.mode(WIFI_STA);
+    WiFi.disconnect();
+
+    if (esp_now_init() != ESP_OK) {
+        Serial.println("ESP-NOW Init Failed");
+        ESP.restart();
+    }
+
+    esp_now_register_send_cb(onSent);
+
+    esp_now_peer_info_t peerInfo = {};
+    memcpy(peerInfo.peer_addr, receiverMAC, 6);
+    peerInfo.channel = 0;  
+    peerInfo.encrypt = false;  
+
+    if (esp_now_add_peer(&peerInfo) != ESP_OK) {
+        Serial.println("Failed to add peer");
+        ESP.restart();
+    }
 }
 
 void loop()
 {
-    game.machine.run();
-    if (keymatrix.printMatrixChanges())
-        keymatrix.printMatrixState();
+    game.machine.run();    
 }

@@ -67,12 +67,21 @@ std::array<uint8_t, 7> NFCReader::getCard(uint16_t timeout)
     isNewUid = (uidLength != sizeof(lastUid) || memcmp(uid, lastUid, uidLength) != 0);
     isStoredUid = false;
 
-    if (isNewUid) {
-        Serial.print("New UID: ");
-        for (uint8_t i = 0; i < uidLength; i++) {
-            Serial.print(uid[i], HEX); Serial.print(" ");
+    if (isNewUid) {if (uidLength > 0 && uidLength <= sizeof(uid))  // Prüft, ob uidLength gültig ist
+        {
+            Serial.print("New UID: ");
+            for (uint8_t i = 0; i < uidLength; i++) 
+            {
+                Serial.print(uid[i], HEX);
+                Serial.print(" ");
+            }
+            Serial.println();
+        } 
+        else 
+        {
+            Serial.println("Fehler: Ungültige UID-Länge!");
         }
-        Serial.println();
+        
 
         // Store the UID in the stored UIDs array
         for (int i = 0; i < 6; i++) {
