@@ -167,7 +167,7 @@ void ReichstagGame::stateIdle()
         uint8_t bri = FastLED.getBrightness();
         if (bri != targetBri)
         {
-            bri += (bri < targetBri) ? 1 : -1; // Increment if lower, decrement if higher
+            bri += (bri < targetBri) ? 1 : -1;
             FastLED.setBrightness(bri);
         }
     }
@@ -357,7 +357,10 @@ void ReichstagGame::stateErrorState()
     {
         lastMillis = millis();
         twinkleFox.setTwinkleDensity(3);
-        dfmHandler.playTrack(998);
+        int errorTrackCount = sizeof(ERRORTRACK) / sizeof(ERRORTRACK[0]);
+        randomSeed(analogRead(0));
+        int randomIndex = random(0, errorTrackCount);
+        dfmHandler.playTrack(ERRORTRACK[randomIndex]);
         gameReset();
         roundReset();
         errorState = false;
@@ -369,21 +372,8 @@ void ReichstagGame::stateBonusState()
     if (machine.executeOnce)
     {
         twinkleFox.setTwinkleDensity(7);
-        dfmHandler.playTrack(900);
-
+        dfmHandler.playTrack(BONUSTRACK);
         lastMillis = millis();
-        Serial.print("Bonus Stage reached");
-        randomSeed(analogRead(0));
-        for (int i = 0; i < 10; i++)
-        {                                // Print multiple random confetti dots
-            int tabs = random(0, 10);    // Random tab position
-            int newlines = random(0, 5); // Random vertical position
-            for (int j = 0; j < newlines; j++)
-                Serial.println(); // Move down
-            for (int j = 0; j < tabs; j++)
-                Serial.print("\t"); // Move right
-            Serial.print("* ");     // Print a confetti character
-        }
     }
 }
 
@@ -422,7 +412,7 @@ bool ReichstagGame::transitionToBonusState()
     delay(500);
     if (dfmHandler.isBusy())
         return false;
-    if (seenKeyStones.size() == 6)
+    if (seenKeyStones.size() == options.size())
     {
         return true;
     }
@@ -648,7 +638,7 @@ void ReichstagGame::handleKeystonedetection()
             retrys++; // Kein gültiger Key -> als Fehler zählen
         }
 
-        // Setze errorState nur, wenn 3 aufeinanderfolgende Fehler auftraten
+        // Setze errorState nur, wenn X aufeinanderfolgende Fehler auftraten
         if (retrys >= 5)
         {
             errorState = true;
