@@ -11,9 +11,10 @@ public:
     void begin();
     void playTrack(uint16_t trackNumber);
     bool isBusy();
+    void wakeupDFPlayer();
 
 private:
-    void wakeupDFPlayer();
+    
     HardwareSerial& mySerial;
     int busyPin;
     int wakeUpPin;

@@ -7,6 +7,13 @@
 #include <string>
 #include "FastLED.h"
 
+// 4 AD D1 CA 6E 67 80 Überlebender
+// 4 B1 D1 CA 6E 67 80 Krieger
+// 4 A9 D1 CA 6E 67 80 Wissende
+// 4 A5 D1 CA 6E 67 80 Abenteurerin
+// 4 A1 D1 CA 6E 67 80 Narr
+// 4 9D D1 CA 6E 67 80 Puppenspielerin
+
 const std::vector<uint8_t> UID_UEBERLEBENDER = {0x4, 0xAD, 0xD1, 0xCA, 0x6E, 0x67, 0x80}; // Überlebender
 const std::vector<uint8_t> UID_KRIEGER = {0x4, 0xB1, 0xD1, 0xCA, 0x6E, 0x67, 0x80}; // Krieger
 const std::vector<uint8_t> UID_WISSENDE = {0x4, 0xA9, 0xD1, 0xCA, 0x6E, 0x67, 0x80}; // Wissende

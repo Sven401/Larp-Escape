@@ -43,14 +43,18 @@ bool DFMinniHandler::isBusy() {
 void DFMinniHandler::wakeupDFPlayer() {
     // Wake up the DFPlayer
     digitalWrite(wakeUpPin, HIGH);
-    Serial.print("DFPlayer busy state: ");
-    Serial.print(isBusy());
     delay(100); // Wait for the DFPlayer to wake up
     digitalWrite(wakeUpPin, LOW);
     delay(100); // Wait for the DFPlayer to wake up
     digitalWrite(wakeUpPin, HIGH);
-    Serial.print("DFPlayer busy state: ");
-    Serial.print(isBusy());
+    delay(100); // Wait for the DFPlayer to wake up
+    digitalWrite(wakeUpPin, LOW);
+    delay(100);
+    digitalWrite(wakeUpPin, HIGH);
+    delay(100); // Wait for the DFPlayer to wake up
+    digitalWrite(wakeUpPin, LOW);
+    delay(100); // Wait for the DFPlayer to wake up
+    digitalWrite(wakeUpPin, HIGH);
     delay(100); // Wait for the DFPlayer to wake up
     digitalWrite(wakeUpPin, LOW);
 }

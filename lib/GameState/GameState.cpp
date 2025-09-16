@@ -153,11 +153,13 @@ void ReichstagGame::stateIdle()
 {
     if (machine.executeOnce)
     {
+        burst.fire(120, {0,255,0});
         lastMillis = millis();
         burst.fire(15);
         Serial.println("Idle state entered.");
         twinkleFox.setTwinkleDensity(1);
         twinkleFox.targetPalette = MutedAllColors_p;
+        retrys = 0 ;
     };
     const uint8_t targetBri = 20;
     EVERY_N_MILLISECONDS(INTERVALL)
@@ -170,15 +172,29 @@ void ReichstagGame::stateIdle()
         }
     }
 
+    /*
     EVERY_N_SECONDS(1)
     {
         auto newKeyStone = nfcReader.getCard(0);
         Serial.println("STATE IDLE: Aktualisiere nur, wenn newKeyStone nicht leer ist oder nach 3 Versuchen");
+        Serial.print("Aktueller Keystone: ");
+        for (uint8_t byte : currentKeyStone)
+        {
+            Serial.print(byte, HEX);
+            Serial.print(" ");
+        }
+        Serial.println();
+        Serial.print("vorheriger Keystone: ");
+        for (uint8_t byte : lastKeyStone)
+        {
+            Serial.print(byte, HEX);
+            Serial.print(" ");
+        }
         // Aktualisiere nur, wenn newKeyStone nicht leer ist oder nach 3 Versuchen
-        if (newKeyStone != std::array<uint8_t, 7>{} || retrys >= 3) 
+        if (newKeyStone != std::array<uint8_t, 7>{} || retrys >= 3)
         {
 
-            Serial.println("New current keystone from StateIdle.");
+            Serial.println("~~~~~~~~~~~~~~~~ New current keystone from StateIdle.");
             lastKeyStone = currentKeyStone;
             currentKeyStone = newKeyStone;
 
@@ -195,27 +211,28 @@ void ReichstagGame::stateIdle()
                 Serial.print(byte, HEX);
                 Serial.print(" ");
             }
-            
+
             retrys = 0; // Reset retries nach erfolgreichem Lesen
         }
-        else 
+        else
         {
             retrys++; // Retry hochzählen, falls keine gültige ID
         }
-    
     }
-    
-}
+    */
+    }
 
 void ReichstagGame::stateWaitingForCrystals()
 {
     if (machine.executeOnce)
     {
+        dfmHandler.wakeupDFPlayer();
         lastMillis = millis();
         burst.fire(15);
         Serial.println("Waiting for crystals state entered.");
         twinkleFox.setTwinkleSpeed(4);
         twinkleFox.setTwinkleDensity(2);
+        retrys = 0;
     }
     const uint8_t targetBri = 50;
     EVERY_N_MILLISECONDS(INTERVALL)
@@ -229,7 +246,6 @@ void ReichstagGame::stateWaitingForCrystals()
     }
     handleCrystaldetection(100);
     handleKeystonedetection();
-    
 }
 
 void ReichstagGame::stateFirstCrystalPlaced()
@@ -244,6 +260,7 @@ void ReichstagGame::stateFirstCrystalPlaced()
         Serial.println(seenOptionButtons[0].first->audioFile);
         dfmHandler.playTrack(seenOptionButtons[0].first->audioFile);
         seenOptionButtons[0].second = true;
+        retrys = 0;
     }
     const uint8_t targetBri = 100;
     EVERY_N_MILLISECONDS(INTERVALL)
@@ -268,6 +285,7 @@ void ReichstagGame::stateSecondCrystalPlaced()
         twinkleFox.setTwinkleDensity(4);
         dfmHandler.playTrack(seenOptionButtons[1].first->audioFile);
         seenOptionButtons[1].second = true;
+        retrys = 0;
     }
     const uint8_t targetBri = 150;
     EVERY_N_MILLISECONDS(INTERVALL)
@@ -319,8 +337,9 @@ void ReichstagGame::stateGameCompleted()
         twinkleFox.setTwinkleDensity(6);
         dfmHandler.playTrack(currentOptionConfig->optionAudioFile);
         roundCounter++;
+        lastKeyStone = currentKeyStone;
     }
-    const uint8_t targetBri = 250;
+    const uint8_t targetBri = 255;
     EVERY_N_MILLISECONDS(INTERVALL)
     {
         uint8_t bri = FastLED.getBrightness();
@@ -338,9 +357,10 @@ void ReichstagGame::stateErrorState()
     {
         lastMillis = millis();
         twinkleFox.setTwinkleDensity(3);
-        dfmHandler.playTrack(997);
+        dfmHandler.playTrack(998);
         gameReset();
         roundReset();
+        errorState = false;
     }
 }
 
@@ -399,6 +419,7 @@ void ReichstagGame::stateStandByState()
 
 bool ReichstagGame::transitionToBonusState()
 {
+    delay(500);
     if (dfmHandler.isBusy())
         return false;
     if (seenKeyStones.size() == 6)
@@ -411,11 +432,20 @@ bool ReichstagGame::transitionToBonusState()
 // --- TRANSITIONS ---
 bool ReichstagGame::transitionToWaitingForCrystals()
 {
-    EVERY_N_SECONDS(1){
-    Serial.println("*************************Prüfe Übergang zu WaitingForCrystals...********************************");
-
-    if (currentKeyStone != std::array<uint8_t, 7>{})
+    EVERY_N_SECONDS(1)
     {
+        Serial.println("************************* Prüfe Übergang zu WaitingForCrystals... ********************************");
+
+        auto newKeyStone = nfcReader.getCard(0);
+
+        Serial.print("neuer Keystone: ");
+        for (uint8_t byte : newKeyStone)
+        {
+            Serial.print(byte, HEX);
+            Serial.print(" ");
+        }
+        Serial.println();
+
         Serial.print("Aktueller Keystone: ");
         for (uint8_t byte : currentKeyStone)
         {
@@ -431,29 +461,55 @@ bool ReichstagGame::transitionToWaitingForCrystals()
         }
         Serial.println();
 
-        if (currentKeyStone == lastKeyStone)
+        // Falls der neue Keystone leer ist, aktualisiere nur den Status, aber kein Übergang
+        if (newKeyStone == std::array<uint8_t, 7>{})
         {
-            Serial.println("❌ Transition abgelehnt: Current Keystone ist gleich Last Keystone.");
+            Serial.println("⚠️ Neuer Keystone ist leer – möglicherweise kein Stein erkannt.");
+            retrys ++;
+            if(retrys > 4){
+                Serial.print(retrys);
+                Serial.println(" times empty keystone seen. ⚠️ Neuer Keystone ist leer ");
+            lastKeyStone = currentKeyStone;
+            currentKeyStone = newKeyStone;
+            retrys = 0;
+        }
             return false;
         }
 
-        Serial.println("🔍 Suche OptionConfig für den aktuellen Keystone...");
-        currentOptionConfig = getOptionConfig(currentKeyStone);
-        
-        if (currentOptionConfig != nullptr)
+        // Falls der neue Keystone mit dem letzten übereinstimmt, keine Transition
+        if (newKeyStone == lastKeyStone)
         {
-            Serial.println("✅ Transition erlaubt: Gültige OptionConfig gefunden.");
-            return true;
-        }
-        else
-        {
-            Serial.println("❌ Transition abgelehnt: Keine gültige OptionConfig gefunden.");
+            Serial.println("❌ Neuer Keystone entspricht dem letzten Keystone. Kein Übergang.");
             return false;
         }
-    }
-    
-    Serial.println("❌ Transition abgelehnt: Kein gültiger Keystone erkannt.");
-    return false;
+
+        // Falls der letzte Keystone leer war, bedeutet das, dass das Board vorher abgeräumt wurde
+        if (lastKeyStone == std::array<uint8_t, 7>{})
+        {
+            Serial.println("🔍 Suche OptionConfig für den neuen Keystone...");
+            currentOptionConfig = getOptionConfig(newKeyStone);
+
+            if (currentOptionConfig != nullptr)
+            {
+                Serial.println("✅ Gültige OptionConfig gefunden. Übergang erlaubt.");
+                lastKeyStone = currentKeyStone;
+                currentKeyStone = newKeyStone;
+                return true;
+            }
+            else
+            {
+                Serial.println("❌ Keine gültige OptionConfig gefunden. Kein Übergang.");
+                lastKeyStone = currentKeyStone;
+                currentKeyStone = newKeyStone;
+                return false;
+            }
+        }
+
+        // Falls ein anderer Stein erkannt wurde, aber das Board nicht leer war -> Kein Übergang
+        Serial.println("❌ Neuer Keystone erkannt, aber kein Reset-Zustand vorher. Kein Übergang.");
+        lastKeyStone = currentKeyStone;
+        currentKeyStone = newKeyStone;
+        return false;
     }
     return false;
 }
@@ -522,7 +578,6 @@ bool ReichstagGame::transitionToIdle()
     delay(500);
     if (!dfmHandler.isBusy())
     {
-
         roundReset();
         return true;
     }
@@ -569,31 +624,32 @@ bool ReichstagGame::transitionToStandBy()
     return (millis() - lastMillis) >= timeout;
 }
 
-void ReichstagGame::handleKeystonedetection(){
+void ReichstagGame::handleKeystonedetection()
+{
     EVERY_N_SECONDS(2)
     {
         std::array<uint8_t, 7> presentKey = nfcReader.getCard(100);
-    
-        if (presentKey != std::array<uint8_t, 7>{}) 
+
+        if (presentKey != std::array<uint8_t, 7>{})
         {
             // Falls ein gültiger Key gelesen wurde, vergleiche mit currentKeyStone
-            if (currentKeyStone == presentKey) 
+            if (currentKeyStone == presentKey)
             {
-                errorState = false;  // Kein Fehler
-                retrys = 0;    // Reset Fehlerzähler
+                errorState = false; // Kein Fehler
+                retrys = 0;         // Reset Fehlerzähler
             }
-            else 
+            else
             {
                 retrys++; // Fehlerzähler erhöhen
             }
-        } 
-        else 
+        }
+        else
         {
             retrys++; // Kein gültiger Key -> als Fehler zählen
         }
-    
+
         // Setze errorState nur, wenn 3 aufeinanderfolgende Fehler auftraten
-        if (retrys >= 3) 
+        if (retrys >= 5)
         {
             errorState = true;
             retrys = 0;

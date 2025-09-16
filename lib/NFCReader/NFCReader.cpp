@@ -80,6 +80,7 @@ std::array<uint8_t, 7> NFCReader::getCard(uint16_t timeout)
         else 
         {
             Serial.println("Fehler: Ungültige UID-Länge!");
+            return{};
         }
         
 

@@ -22,15 +22,16 @@ void Burst::draw()
 
         for (int i = 0; i < NUM_LEDS; i++)
         {
-            leds[i] += CRGB(brightness, brightness, brightness); // Add brightness instead of setting
+            leds[i] += color.scale8(CRGB(brightness, brightness, brightness)) ; // Add brightness instead of setting
         }
 
         step++; // Move to the next frame
     }
 }
 
-void Burst::fire(uint8_t inframes)
+void Burst::fire(uint8_t inframes, CRGB incolor)
 {
+    color = incolor;
     if (step >= frames){
     step = 0;
     frames = inframes;}
