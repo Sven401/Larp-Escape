@@ -3,7 +3,7 @@
 #include "OptionConfig.h"
 #include "OptionDefinitions.h"
 #include "Gamestate.h"
-#include <esp_now.h>
+//#include <esp_now.h>
 
 ReichstagGame::ReichstagGame(NFCReader &nfcReader, KeyMatrix &keymatrix, DFMinniHandler &dfmHandler, MyTwinkleFox &twinkleFox, Burst &burst, Ripple ripples[4])
     : nfcReader(nfcReader), keymatrix(keymatrix), dfmHandler(dfmHandler), twinkleFox(twinkleFox), burst(burst), ripples(ripples)
@@ -579,7 +579,7 @@ bool ReichstagGame::transitionToIdleBonus()
     delay(500);
     if (!dfmHandler.isBusy())
     {
-
+        /*
         strcpy(dataToSend.message, "ACTIVATE");
 
         // Send message
@@ -593,6 +593,7 @@ bool ReichstagGame::transitionToIdleBonus()
         {
             Serial.println("Send Failed");
         }
+        */
         gameReset();
         return true;
     }
