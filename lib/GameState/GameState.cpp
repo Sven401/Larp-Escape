@@ -3,7 +3,7 @@
 #include "OptionConfig.h"
 #include "OptionDefinitions.h"
 #include "Gamestate.h"
-//#include <esp_now.h>
+// #include <esp_now.h>
 
 ReichstagGame::ReichstagGame(NFCReader &nfcReader, KeyMatrix &keymatrix, DFMinniHandler &dfmHandler, MyTwinkleFox &twinkleFox, Burst &burst, Ripple ripples[4])
     : nfcReader(nfcReader), keymatrix(keymatrix), dfmHandler(dfmHandler), twinkleFox(twinkleFox), burst(burst), ripples(ripples)
@@ -88,7 +88,7 @@ ReichstagGame::CrystalCheckResult ReichstagGame::newCrystalisValid()
                     Serial.print("Correct crystals: ");
                     Serial.println(correctCrystals);
                     Serial.print(currentButton->symbol.c_str());
-                    Serial.print(currentButton->category.c_str());
+                    Serial.println(currentButton->category.c_str());
                     return VALID_CRYSTAL;
                 }
             }
@@ -153,13 +153,13 @@ void ReichstagGame::stateIdle()
 {
     if (machine.executeOnce)
     {
-        burst.fire(120, {0,255,0});
+        burst.fire(120, {0, 255, 0});
         lastMillis = millis();
         burst.fire(15);
         Serial.println("Idle state entered.");
         twinkleFox.setTwinkleDensity(1);
         twinkleFox.targetPalette = MutedAllColors_p;
-        retrys = 0 ;
+        retrys = 0;
     };
     const uint8_t targetBri = 20;
     EVERY_N_MILLISECONDS(INTERVALL)
@@ -220,7 +220,7 @@ void ReichstagGame::stateIdle()
         }
     }
     */
-    }
+}
 
 void ReichstagGame::stateWaitingForCrystals()
 {
@@ -371,6 +371,8 @@ void ReichstagGame::stateBonusState()
 {
     if (machine.executeOnce)
     {
+        Serial.print("BONUS STATE PLAYING BONUS TRACK ");
+        Serial.println(BONUSTRACK);
         twinkleFox.setTwinkleDensity(7);
         dfmHandler.playTrack(BONUSTRACK);
         lastMillis = millis();
@@ -409,11 +411,31 @@ void ReichstagGame::stateStandByState()
 
 bool ReichstagGame::transitionToBonusState()
 {
-    delay(500);
-    if (dfmHandler.isBusy())
-        return false;
+    Serial.println("TRANSITION TO BONUS STATE CHECK");
+    Serial.print("seenKeyStones ");
+    Serial.print(seenKeyStones.size());
+    Serial.print("   options");
+    Serial.print(options.size());
+    Serial.print("  equalitycheck");
+    Serial.println(seenKeyStones.size() == options.size());
+
     if (seenKeyStones.size() == options.size())
     {
+        while (dfmHandler.isBusy())
+        {
+            Serial.print("...");
+        }
+        Serial.println("DF READY Going to Bonus");
+        return true;
+    }
+    if (seenKeyStones.size() == 3)
+    {
+        while (dfmHandler.isBusy())
+        {
+            Serial.print("...");
+        }
+        Serial.println("DF READY Going to Bonus");
+        return true;
         return true;
     }
     return false;
@@ -455,14 +477,15 @@ bool ReichstagGame::transitionToWaitingForCrystals()
         if (newKeyStone == std::array<uint8_t, 7>{})
         {
             Serial.println("⚠️ Neuer Keystone ist leer – möglicherweise kein Stein erkannt.");
-            retrys ++;
-            if(retrys > 4){
+            retrys++;
+            if (retrys > 4)
+            {
                 Serial.print(retrys);
                 Serial.println(" times empty keystone seen. ⚠️ Neuer Keystone ist leer ");
-            lastKeyStone = currentKeyStone;
-            currentKeyStone = newKeyStone;
-            retrys = 0;
-        }
+                lastKeyStone = currentKeyStone;
+                currentKeyStone = newKeyStone;
+                retrys = 0;
+            }
             return false;
         }
 
@@ -503,7 +526,6 @@ bool ReichstagGame::transitionToWaitingForCrystals()
     }
     return false;
 }
-
 
 bool ReichstagGame::transitionToCrystal()
 {
@@ -565,6 +587,7 @@ bool ReichstagGame::transitionToError()
 
 bool ReichstagGame::transitionToIdle()
 {
+    Serial.println("TRANSITION TO IDLE CHECK");
     delay(500);
     if (!dfmHandler.isBusy())
     {
