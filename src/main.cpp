@@ -21,7 +21,7 @@
 #define NUM_LEDS 23
 CRGBArray<NUM_LEDS> leds;
 
-//uint8_t receiverMAC[6] = {0xB0, 0xA7, 0x32, 0xF1, 0x86, 0x54};
+// uint8_t receiverMAC[6] = {0xB0, 0xA7, 0x32, 0xF1, 0x86, 0x54};
 
 using namespace fl;
 MyTwinkleFox twinkleFox(NUM_LEDS);
