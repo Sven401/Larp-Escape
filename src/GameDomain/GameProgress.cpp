@@ -29,5 +29,27 @@ void GameProgress::resetGame()
     seenKeyStones.clear();
     retryCount = 0;
 }
+
+bool GameProgress::consumeErrorTransition(bool audioBusy)
+{
+    if (audioBusy)
+    {
+        return false;
+    }
+
+    if (incorrectCrystal)
+    {
+        incorrectCrystal = false;
+        return true;
+    }
+
+    if (keystoneMonitor.hasError())
+    {
+        keystoneMonitor.clearError();
+        return true;
+    }
+
+    return false;
+}
 } // namespace domain
 } // namespace larp

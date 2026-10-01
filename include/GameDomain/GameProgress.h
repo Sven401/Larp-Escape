@@ -17,6 +17,7 @@ struct GameProgress
 
     void resetRound();
     void resetGame();
+    bool consumeErrorTransition(bool audioBusy);
 
     int roundCounter;
     CardUid currentKeyStone;

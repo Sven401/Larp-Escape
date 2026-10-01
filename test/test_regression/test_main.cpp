@@ -18,6 +18,7 @@ void test_keystone_transition_requires_board_clear_and_known_role();
 void test_five_empty_keystone_reads_are_required_to_clear_board_state();
 void test_round_reset_clears_only_round_progress_and_retry_streak();
 void test_game_reset_clears_rounds_keystones_seen_tags_and_errors();
+void test_error_transition_waits_for_audio_then_consumes_crystal_before_keystone_error();
 
 
 
@@ -111,6 +112,7 @@ int runUnityTests()
     RUN_TEST(test_five_empty_keystone_reads_are_required_to_clear_board_state);
     RUN_TEST(test_round_reset_clears_only_round_progress_and_retry_streak);
     RUN_TEST(test_game_reset_clears_rounds_keystones_seen_tags_and_errors);
+    RUN_TEST(test_error_transition_waits_for_audio_then_consumes_crystal_before_keystone_error);
     return UNITY_END();
 }
 

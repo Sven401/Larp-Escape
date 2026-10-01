@@ -340,8 +340,6 @@ void ReichstagGame::stateErrorState()
         twinkleFox.setTwinkleDensity(3);
         dfmHandler.playTrack(998);
         gameReset();
-        roundReset();
-        gameProgress.keystoneMonitor.clearError();
     }
 }
 
@@ -532,19 +530,7 @@ bool ReichstagGame::transitionToGameCompleted()
 
 bool ReichstagGame::transitionToError()
 {
-    if (dfmHandler.isBusy())
-        return false;
-    if (gameProgress.incorrectCrystal)
-    {
-        gameProgress.incorrectCrystal = false;
-        return true;
-    }
-    if (gameProgress.keystoneMonitor.hasError())
-    {
-        gameProgress.keystoneMonitor.clearError();
-        return true;
-    }
-    return false;
+    return gameProgress.consumeErrorTransition(dfmHandler.isBusy());
 }
 
 bool ReichstagGame::transitionToIdle()
