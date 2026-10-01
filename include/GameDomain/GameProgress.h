@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <vector>
 
+#include "GameDomain/GameDefinitions.h"
 #include "GameDomain/KeystoneMonitor.h"
 #include "GameDomain/PuzzleProgress.h"
 
@@ -19,10 +20,13 @@ struct GameProgress
 
     int roundCounter;
     CardUid currentKeyStone;
+    CardUid lastKeyStone;
     std::vector<CardUid> seenKeyStones;
     KeystoneMonitor keystoneMonitor;
     PuzzleProgress puzzleProgress;
     bool incorrectCrystal;
+    bool correctCrystal;
+    const RoleDefinition *currentRoleDefinition;
     std::uint8_t retryCount;
 };
 } // namespace domain

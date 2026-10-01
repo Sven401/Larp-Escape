@@ -11,8 +11,12 @@ void test_round_reset_clears_only_round_progress_and_retry_streak()
     GameProgress progress;
     const auto &role = defaultRoleDefinitions()[0];
     const larp::domain::CardUid activeKeystone = role.uid;
+    const larp::domain::CardUid previousKeystone = defaultRoleDefinitions()[1].uid;
     progress.roundCounter = 3;
     progress.currentKeyStone = activeKeystone;
+    progress.lastKeyStone = previousKeystone;
+    progress.correctCrystal = true;
+    progress.currentRoleDefinition = &role;
     progress.seenKeyStones.push_back(role.uid);
     progress.puzzleProgress.record(role.crystals[0]);
     progress.incorrectCrystal = true;
@@ -27,6 +31,10 @@ void test_round_reset_clears_only_round_progress_and_retry_streak()
     TEST_ASSERT_EQUAL_INT(3, progress.roundCounter);
     TEST_ASSERT_EQUAL_MEMORY(activeKeystone.data(), progress.currentKeyStone.data(),
                              activeKeystone.size());
+    TEST_ASSERT_EQUAL_MEMORY(previousKeystone.data(), progress.lastKeyStone.data(),
+                             previousKeystone.size());
+    TEST_ASSERT_TRUE(progress.correctCrystal);
+    TEST_ASSERT_TRUE(progress.currentRoleDefinition == &role);
     TEST_ASSERT_EQUAL_INT(1, static_cast<int>(progress.seenKeyStones.size()));
     TEST_ASSERT_EQUAL_INT(0, static_cast<int>(progress.puzzleProgress.count()));
     TEST_ASSERT_FALSE(progress.incorrectCrystal);
@@ -48,6 +56,10 @@ void test_game_reset_clears_rounds_keystones_seen_tags_and_errors()
     const auto &role = defaultRoleDefinitions()[0];
     progress.roundCounter = 5;
     progress.currentKeyStone = role.uid;
+    const larp::domain::CardUid previousKeystone = defaultRoleDefinitions()[1].uid;
+    progress.lastKeyStone = previousKeystone;
+    progress.correctCrystal = true;
+    progress.currentRoleDefinition = &role;
     progress.seenKeyStones.push_back(role.uid);
     progress.puzzleProgress.record(role.crystals[0]);
     progress.incorrectCrystal = true;
@@ -63,9 +75,13 @@ void test_game_reset_clears_rounds_keystones_seen_tags_and_errors()
     const larp::domain::CardUid empty = {};
     TEST_ASSERT_EQUAL_INT(0, progress.roundCounter);
     TEST_ASSERT_EQUAL_MEMORY(empty.data(), progress.currentKeyStone.data(), empty.size());
+    TEST_ASSERT_EQUAL_MEMORY(previousKeystone.data(), progress.lastKeyStone.data(),
+                             previousKeystone.size());
     TEST_ASSERT_TRUE(progress.seenKeyStones.empty());
     TEST_ASSERT_EQUAL_INT(0, static_cast<int>(progress.puzzleProgress.count()));
     TEST_ASSERT_FALSE(progress.incorrectCrystal);
     TEST_ASSERT_EQUAL_INT(0, progress.retryCount);
     TEST_ASSERT_FALSE(progress.keystoneMonitor.hasError());
+    TEST_ASSERT_TRUE(progress.correctCrystal);
+    TEST_ASSERT_TRUE(progress.currentRoleDefinition == &role);
 }

@@ -179,10 +179,7 @@ private:
 
     void handleKeystonedetection();
 
-    std::array<uint8_t, 7> lastKeyStone;
     larp::domain::GameProgress gameProgress;
-    bool correctCrystal;               ///< Indicates if a correct crystal has been placed.
-    const larp::domain::RoleDefinition *currentRoleDefinition = nullptr;
     State *Idle;
     State *WaitingForCrystals;
     State *FirstCrystalPlaced;

@@ -40,7 +40,7 @@ ReichstagGame::CrystalCheckResult ReichstagGame::newCrystalisValid()
     {
         Serial.print(crystals.size());
         Serial.print(" crystal(s) found. ");
-        if (!currentRoleDefinition)
+        if (!gameProgress.currentRoleDefinition)
         {
             Serial.println("Error: currentRoleDefinition is nullptr!");
             return NO_NEW_CRYSTAL;
@@ -56,7 +56,7 @@ ReichstagGame::CrystalCheckResult ReichstagGame::newCrystalisValid()
         for (auto &crystal : crystals)
         {
             const larp::domain::CrystalDefinition *crystalDefinition =
-                larp::domain::findCrystalByPosition(*currentRoleDefinition, crystal);
+                larp::domain::findCrystalByPosition(*gameProgress.currentRoleDefinition, crystal);
             if (crystalDefinition != nullptr)
             {
                 const larp::domain::CrystalRecordResult result =
@@ -64,7 +64,7 @@ ReichstagGame::CrystalCheckResult ReichstagGame::newCrystalisValid()
                 if (result == larp::domain::CrystalRecordResult::Added)
                 {
                     const TProgmemRGBPalette16 *palette = larp::led::paletteForCrystal(
-                        currentRoleDefinition->id, crystalDefinition->position);
+                        gameProgress.currentRoleDefinition->id, crystalDefinition->position);
                     if (palette != nullptr)
                     {
                         twinkleFox.targetPalette = *palette;
@@ -94,13 +94,13 @@ void ReichstagGame::handleCrystaldetection(int delay)
         CrystalCheckResult result = newCrystalisValid();
         if (result == VALID_CRYSTAL)
         {
-            correctCrystal = true;
+            gameProgress.correctCrystal = true;
             gameProgress.incorrectCrystal = false;
             Serial.println("Valid crystal placed.");
         }
         else if (result == INVALID_CRYSTAL)
         {
-            correctCrystal = false;
+            gameProgress.correctCrystal = false;
             gameProgress.incorrectCrystal = true;
             Serial.println("Invalid crystal placed.");
         }
@@ -171,7 +171,7 @@ void ReichstagGame::stateIdle()
         }
         Serial.println();
         Serial.print("vorheriger Keystone: ");
-        for (uint8_t byte : lastKeyStone)
+        for (uint8_t byte : gameProgress.lastKeyStone)
         {
             Serial.print(byte, HEX);
             Serial.print(" ");
@@ -181,7 +181,7 @@ void ReichstagGame::stateIdle()
         {
 
             Serial.println("~~~~~~~~~~~~~~~~ New current keystone from StateIdle.");
-            lastKeyStone = gameProgress.currentKeyStone;
+            gameProgress.lastKeyStone = gameProgress.currentKeyStone;
             gameProgress.currentKeyStone = newKeyStone;
 
             Serial.print("Aktueller Keystone: ");
@@ -192,7 +192,7 @@ void ReichstagGame::stateIdle()
             }
             Serial.println();
             Serial.print("vorheriger Keystone: ");
-            for (uint8_t byte : lastKeyStone)
+            for (uint8_t byte : gameProgress.lastKeyStone)
             {
                 Serial.print(byte, HEX);
                 Serial.print(" ");
@@ -316,9 +316,9 @@ void ReichstagGame::stateGameCompleted()
             gameProgress.seenKeyStones.push_back(gameProgress.currentKeyStone); // Nur hinzufügen, wenn er nicht existiert
         }
         twinkleFox.setTwinkleDensity(6);
-        dfmHandler.playTrack(currentRoleDefinition->audioTrack);
+        dfmHandler.playTrack(gameProgress.currentRoleDefinition->audioTrack);
         gameProgress.roundCounter++;
-        lastKeyStone = gameProgress.currentKeyStone;
+        gameProgress.lastKeyStone = gameProgress.currentKeyStone;
     }
     const uint8_t targetBri = 255;
     EVERY_N_MILLISECONDS(INTERVALL)
@@ -435,7 +435,7 @@ bool ReichstagGame::transitionToWaitingForCrystals()
         }
         Serial.println();
         Serial.print("vorheriger Keystone: ");
-        for (uint8_t byte : lastKeyStone)
+        for (uint8_t byte : gameProgress.lastKeyStone)
         {
             Serial.print(byte, HEX);
             Serial.print(" ");
@@ -444,14 +444,14 @@ bool ReichstagGame::transitionToWaitingForCrystals()
 
         bool candidateIsKnownRole = false;
         if (newKeyStone != std::array<uint8_t, 7>{} &&
-            lastKeyStone == std::array<uint8_t, 7>{})
+            gameProgress.lastKeyStone == std::array<uint8_t, 7>{})
         {
-            currentRoleDefinition = getRoleDefinition(newKeyStone);
-            candidateIsKnownRole = currentRoleDefinition != nullptr;
+            gameProgress.currentRoleDefinition = getRoleDefinition(newKeyStone);
+            candidateIsKnownRole = gameProgress.currentRoleDefinition != nullptr;
         }
 
         const larp::domain::KeystoneTransition decision =
-            larp::domain::classifyKeystoneTransition(newKeyStone, lastKeyStone,
+            larp::domain::classifyKeystoneTransition(newKeyStone, gameProgress.lastKeyStone,
                                                     candidateIsKnownRole);
         if (decision == larp::domain::KeystoneTransition::EmptyRead)
         {
@@ -461,7 +461,7 @@ bool ReichstagGame::transitionToWaitingForCrystals()
             {
                 Serial.print(gameProgress.retryCount);
                 Serial.println(" times empty keystone seen. ⚠️ Neuer Keystone ist leer ");
-                lastKeyStone = gameProgress.currentKeyStone;
+                gameProgress.lastKeyStone = gameProgress.currentKeyStone;
                 gameProgress.currentKeyStone = newKeyStone;
                 gameProgress.retryCount = 0;
             }
@@ -477,7 +477,7 @@ bool ReichstagGame::transitionToWaitingForCrystals()
         if (decision == larp::domain::KeystoneTransition::RoleAccepted)
         {
             Serial.println("✅ Gültiges Rollenprofil gefunden. Übergang erlaubt.");
-            lastKeyStone = gameProgress.currentKeyStone;
+            gameProgress.lastKeyStone = gameProgress.currentKeyStone;
             gameProgress.currentKeyStone = newKeyStone;
             return true;
         }
@@ -491,7 +491,7 @@ bool ReichstagGame::transitionToWaitingForCrystals()
             Serial.println("❌ Neuer Keystone erkannt, aber kein Reset-Zustand vorher. Kein Übergang.");
         }
 
-        lastKeyStone = gameProgress.currentKeyStone;
+        gameProgress.lastKeyStone = gameProgress.currentKeyStone;
         gameProgress.currentKeyStone = newKeyStone;
         return false;
     }
@@ -504,9 +504,9 @@ bool ReichstagGame::transitionToCrystal()
     if (dfmHandler.isBusy())
         return false;
 
-    if (correctCrystal || gameProgress.puzzleProgress.hasPendingAudio())
+    if (gameProgress.correctCrystal || gameProgress.puzzleProgress.hasPendingAudio())
     {
-        correctCrystal = false;
+        gameProgress.correctCrystal = false;
         return true;
     }
 

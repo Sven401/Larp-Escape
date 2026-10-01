@@ -5,8 +5,9 @@ namespace larp
 namespace domain
 {
 GameProgress::GameProgress()
-    : roundCounter(0), currentKeyStone(), seenKeyStones(), keystoneMonitor(), puzzleProgress(),
-      incorrectCrystal(false), retryCount(0)
+    : roundCounter(0), currentKeyStone(), lastKeyStone(), seenKeyStones(), keystoneMonitor(),
+      puzzleProgress(), incorrectCrystal(false), correctCrystal(false), currentRoleDefinition(nullptr),
+      retryCount(0)
 {
 }
 
