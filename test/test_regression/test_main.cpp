@@ -4,10 +4,10 @@
 #include <unity.h>
 #include "StateMachine.h"
 
-void test_default_role_uids_and_audio_tracks_match_current_data();
-void test_unknown_and_short_role_uids_are_rejected();
-void test_all_default_crystal_positions_and_tracks_match_current_data();
-void test_unmapped_crystal_positions_are_rejected();
+void test_default_roles_have_unique_uids_names_and_audio_tracks();
+void test_unknown_role_uid_is_rejected();
+void test_crystal_definitions_and_palette_mapping_match_current_data();
+void test_unknown_crystal_category_has_fallback_label();
 void test_grid_position_equality_and_ordering();
 
 
@@ -88,10 +88,10 @@ int runUnityTests()
     RUN_TEST(test_machine_stays_in_state_while_guard_is_false_and_runs_target_next_tick);
     RUN_TEST(test_machine_uses_first_matching_transition);
     RUN_TEST(test_state_transition_target_can_be_reconfigured);
-    RUN_TEST(test_default_role_uids_and_audio_tracks_match_current_data);
-    RUN_TEST(test_unknown_and_short_role_uids_are_rejected);
-    RUN_TEST(test_all_default_crystal_positions_and_tracks_match_current_data);
-    RUN_TEST(test_unmapped_crystal_positions_are_rejected);
+    RUN_TEST(test_default_roles_have_unique_uids_names_and_audio_tracks);
+    RUN_TEST(test_unknown_role_uid_is_rejected);
+    RUN_TEST(test_crystal_definitions_and_palette_mapping_match_current_data);
+    RUN_TEST(test_unknown_crystal_category_has_fallback_label);
     RUN_TEST(test_grid_position_equality_and_ordering);
     return UNITY_END();
 }

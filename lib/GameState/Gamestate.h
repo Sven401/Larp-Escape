@@ -4,21 +4,19 @@
 
 #pragma once
 
-#include <vector>
+#include <array>
+#include <cstdint>
 #include <utility>
-#include "OptionConfig.h"
-#include "OptionDefinitions.h"
-#include "twinklefox.h"
-#include "NFCReader.h"
-#include "Keymatrix.h"
-#include "DFMinniHandler.h"
-#include "StateMachine.h"
-#include "OptionConfig.h"
-#include "OptionDefinitions.h"
 #include <vector>
-#include "ripple.h"
-#include "burst.h"
 
+#include "DFMinniHandler.h"
+#include "GameDomain/GameDefinitions.h"
+#include "Keymatrix.h"
+#include "NFCReader.h"
+#include "StateMachine.h"
+#include "burst.h"
+#include "ripple.h"
+#include "twinklefox.h"
 
 using namespace MyMachine;
 
@@ -128,11 +126,12 @@ public:
 
 private:
     /**
-     * @brief Retrieves the option configuration for a given keystone.
-     * @param keyStone The keystone to retrieve the configuration for.
-     * @return A pointer to the option configuration.
+     * @brief Finds the domain role matching a card UID.
+     * @param cardUid Fixed-size UID read from the role card.
+     * @return A pointer to the immutable role definition, or nullptr when unknown.
      */
-    OptionConfig *getOptionConfig(std::array<uint8_t, 7> &keyStone);
+    const larp::domain::RoleDefinition *getRoleDefinition(
+        const larp::domain::CardUid &cardUid) const;
 
     /**
      * @brief Retrieves the current keystone.
@@ -184,13 +183,12 @@ private:
     std::array<uint8_t, 7> lastKeyStone;
     std::vector<std::array<uint8_t, 7>> seenKeyStones; ///< Stores the seen keystones.
     bool errorState;                                   ///< Indicates if the game is in an error state.
-    std::vector<OptionConfig> options;                 ///< Stores the game options.
-    std::vector<std::pair<const ButtonPair *, bool>> seenOptionButtons;
-    const ButtonPair *currentButton;   ///< Stores the currently valid button pair. eg Crystal
+    std::vector<std::pair<const larp::domain::CrystalDefinition *, bool>> seenCrystals;
+    const larp::domain::CrystalDefinition *currentCrystal = nullptr;
     uint8_t correctCrystals;           ///< Number of correctly placed crystals (max. 3).
     bool incorrectCrystal;             ///< Indicates if an incorrect crystal has been placed (max. 1).
     bool correctCrystal;               ///< Indicates if a correct crystal has been placed.
-    OptionConfig *currentOptionConfig; ///< Stores the current option configuration.
+    const larp::domain::RoleDefinition *currentRoleDefinition = nullptr;
     State *Idle;
     State *WaitingForCrystals;
     State *FirstCrystalPlaced;

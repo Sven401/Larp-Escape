@@ -1,33 +1,27 @@
 #include "StateMachine.h"
 #include <iostream>
-#include "OptionConfig.h"
-#include "OptionDefinitions.h"
+#include "CrystalPaletteMap.h"
 #include "Gamestate.h"
 #include <esp_now.h>
 
 ReichstagGame::ReichstagGame(NFCReader &nfcReader, KeyMatrix &keymatrix, DFMinniHandler &dfmHandler, fl::MyTwinkleFox &twinkleFox, Burst &burst, Ripple ripples[4])
     : nfcReader(nfcReader), keymatrix(keymatrix), dfmHandler(dfmHandler), twinkleFox(twinkleFox), burst(burst), ripples(ripples)
 {
-    options = getDefaultOptions();
     setup();
 }
 
-OptionConfig *ReichstagGame::getOptionConfig(std::array<uint8_t, 7> &keyStone)
+const larp::domain::RoleDefinition *ReichstagGame::getRoleDefinition(
+    const larp::domain::CardUid &cardUid) const
 {
-    Serial.println("Getting option config for keyStone...");
-
-    for (auto &option : options)
+    const larp::domain::RoleDefinition *role = larp::domain::findRoleByUid(cardUid);
+    if (role != nullptr)
     {
-        if (option.isRFIDequal(keyStone))
-        { // Muss sicherstellen, dass isRFIDequal std::array akzeptiert
-            Serial.println("Matching option found.");
-            currentOptionConfig = &option;
-            Serial.println(currentOptionConfig->getHegemon().c_str());
-            return &option;
-        }
+        Serial.println("Matching role found.");
+        Serial.println(role->name);
+        return role;
     }
 
-    Serial.println("No matching option found.");
+    Serial.println("No matching role found.");
     return nullptr;
 }
 
@@ -45,9 +39,9 @@ ReichstagGame::CrystalCheckResult ReichstagGame::newCrystalisValid()
     {
         Serial.print(crystals.size());
         Serial.print(" crystal(s) found. ");
-        if (!currentOptionConfig)
+        if (!currentRoleDefinition)
         {
-            Serial.println("Error: currentOptionConfig is nullptr!");
+            Serial.println("Error: currentRoleDefinition is nullptr!");
             return NO_NEW_CRYSTAL;
         }
         for (auto &crystal : crystals)
@@ -60,35 +54,38 @@ ReichstagGame::CrystalCheckResult ReichstagGame::newCrystalisValid()
         }
         for (auto &crystal : crystals)
         {
-            const ButtonPair *pair = currentOptionConfig->isValidCrystal(crystal);
-            if (pair != nullptr)
+            const larp::domain::CrystalDefinition *crystalDefinition =
+                larp::domain::findCrystalByPosition(*currentRoleDefinition, crystal);
+            if (crystalDefinition != nullptr)
             {
-                bool pairFound = false;
-                for (auto &seenPair : seenOptionButtons)
+                bool crystalFound = false;
+                for (auto &seenPair : seenCrystals)
                 {
-                    Serial.print("Seen pair: ");
-                    Serial.print(seenPair.first->symbol.c_str());
-                    if (seenPair.first == pair)
+                    Serial.print("Seen crystal: ");
+                    Serial.print(seenPair.first->symbol);
+                    if (seenPair.first == crystalDefinition)
                     {
-                        pairFound = true;
+                        crystalFound = true;
                         break;
                     }
                 }
 
-                if (!pairFound)
+                if (!crystalFound)
                 {
-                    seenOptionButtons.emplace_back(pair, false);
-                    if (pair && pair->color)
+                    seenCrystals.emplace_back(crystalDefinition, false);
+                    const TProgmemRGBPalette16 *palette = larp::led::paletteForCrystal(
+                        currentRoleDefinition->id, crystalDefinition->position);
+                    if (palette != nullptr)
                     {
-                        twinkleFox.targetPalette = *pair->color;
+                        twinkleFox.targetPalette = *palette;
                     }
                     correctCrystals++;
-                    currentButton = pair;
+                    currentCrystal = crystalDefinition;
                     Serial.println("Valid crystal found and added.");
                     Serial.print("Correct crystals: ");
                     Serial.println(correctCrystals);
-                    Serial.print(currentButton->symbol.c_str());
-                    Serial.print(currentButton->category.c_str());
+                    Serial.print(currentCrystal->symbol);
+                    Serial.print(larp::domain::crystalCategoryName(currentCrystal->category));
                     return VALID_CRYSTAL;
                 }
             }
@@ -128,8 +125,8 @@ bool ReichstagGame::gameReset()
     roundCounter = 0;
     currentKeyStone = {};
     errorState = false;
-    seenOptionButtons.clear();
-    currentButton = nullptr;
+    seenCrystals.clear();
+    currentCrystal = nullptr;
     correctCrystals = 0;
     incorrectCrystal = false;
     seenKeyStones.clear();
@@ -140,8 +137,8 @@ bool ReichstagGame::gameReset()
 bool ReichstagGame::roundReset()
 {
     // Reset round-specific variables
-    seenOptionButtons.clear();
-    currentButton = nullptr;
+    seenCrystals.clear();
+    currentCrystal = nullptr;
     correctCrystals = 0;
     incorrectCrystal = false;
     retrys = 0;
@@ -257,9 +254,9 @@ void ReichstagGame::stateFirstCrystalPlaced()
         Serial.println("First crystal placed state entered.");
         twinkleFox.setTwinkleDensity(3);
         Serial.print("Playing audio file: ");
-        Serial.println(seenOptionButtons[0].first->audioFile);
-        dfmHandler.playTrack(seenOptionButtons[0].first->audioFile);
-        seenOptionButtons[0].second = true;
+        Serial.println(seenCrystals[0].first->audioTrack);
+        dfmHandler.playTrack(seenCrystals[0].first->audioTrack);
+        seenCrystals[0].second = true;
         retrys = 0;
     }
     const uint8_t targetBri = 100;
@@ -283,8 +280,8 @@ void ReichstagGame::stateSecondCrystalPlaced()
         lastMillis = millis();
         burst.fire(15);
         twinkleFox.setTwinkleDensity(4);
-        dfmHandler.playTrack(seenOptionButtons[1].first->audioFile);
-        seenOptionButtons[1].second = true;
+        dfmHandler.playTrack(seenCrystals[1].first->audioTrack);
+        seenCrystals[1].second = true;
         retrys = 0;
     }
     const uint8_t targetBri = 150;
@@ -308,8 +305,8 @@ void ReichstagGame::stateThirdCrystalPlaced()
         lastMillis = millis();
         burst.fire(15);
         twinkleFox.setTwinkleDensity(5);
-        dfmHandler.playTrack(seenOptionButtons[2].first->audioFile);
-        seenOptionButtons[2].second = true;
+        dfmHandler.playTrack(seenCrystals[2].first->audioTrack);
+        seenCrystals[2].second = true;
     }
     const uint8_t targetBri = 200;
     EVERY_N_MILLISECONDS(INTERVALL)
@@ -335,7 +332,7 @@ void ReichstagGame::stateGameCompleted()
             seenKeyStones.push_back(currentKeyStone); // Nur hinzufügen, wenn er nicht existiert
         }
         twinkleFox.setTwinkleDensity(6);
-        dfmHandler.playTrack(currentOptionConfig->optionAudioFile);
+        dfmHandler.playTrack(currentRoleDefinition->audioTrack);
         roundCounter++;
         lastKeyStone = currentKeyStone;
     }
@@ -486,19 +483,19 @@ bool ReichstagGame::transitionToWaitingForCrystals()
         // Falls der letzte Keystone leer war, bedeutet das, dass das Board vorher abgeräumt wurde
         if (lastKeyStone == std::array<uint8_t, 7>{})
         {
-            Serial.println("🔍 Suche OptionConfig für den neuen Keystone...");
-            currentOptionConfig = getOptionConfig(newKeyStone);
+            Serial.println("🔍 Suche Rollenprofil für den neuen Keystone...");
+            currentRoleDefinition = getRoleDefinition(newKeyStone);
 
-            if (currentOptionConfig != nullptr)
+            if (currentRoleDefinition != nullptr)
             {
-                Serial.println("✅ Gültige OptionConfig gefunden. Übergang erlaubt.");
+                Serial.println("✅ Gültiges Rollenprofil gefunden. Übergang erlaubt.");
                 lastKeyStone = currentKeyStone;
                 currentKeyStone = newKeyStone;
                 return true;
             }
             else
             {
-                Serial.println("❌ Keine gültige OptionConfig gefunden. Kein Übergang.");
+                Serial.println("❌ Kein gültiges Rollenprofil gefunden. Kein Übergang.");
                 lastKeyStone = currentKeyStone;
                 currentKeyStone = newKeyStone;
                 return false;
@@ -520,17 +517,17 @@ bool ReichstagGame::transitionToCrystal()
     if (dfmHandler.isBusy())
         return false;
 
-    bool anyOptionFalse = false;
-    for (size_t i = 0; i < seenOptionButtons.size(); i++)
+    bool hasCrystalAudioPending = false;
+    for (size_t i = 0; i < seenCrystals.size(); i++)
     {
-        if (!seenOptionButtons[i].second)
+        if (!seenCrystals[i].second)
         {
-            anyOptionFalse = true;
+            hasCrystalAudioPending = true;
             break; // Wir müssen nicht weiter prüfen, wenn wir schon ein `false` gefunden haben
         }
     }
 
-    if (correctCrystal || anyOptionFalse)
+    if (correctCrystal || hasCrystalAudioPending)
     {
         correctCrystal = false;
         return true;
