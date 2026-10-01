@@ -12,6 +12,7 @@
 #include "DFMinniHandler.h"
 #include "GameDomain/GameDefinitions.h"
 #include "GameDomain/KeystoneMonitor.h"
+#include "GameDomain/KeystoneTransition.h"
 #include "GameDomain/PuzzleProgress.h"
 #include "Keymatrix.h"
 #include "NFCReader.h"

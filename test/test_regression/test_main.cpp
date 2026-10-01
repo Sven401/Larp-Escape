@@ -13,6 +13,9 @@ void test_puzzle_progress_records_unique_crystals_in_order_and_completes_at_thre
 void test_puzzle_progress_tracks_audio_and_resets_round_state();
 void test_keystone_monitor_raises_error_after_five_consecutive_misses();
 void test_keystone_monitor_match_breaks_miss_streak_and_clears_error();
+void test_empty_keystone_read_never_starts_a_role_transition();
+void test_keystone_transition_requires_board_clear_and_known_role();
+void test_five_empty_keystone_reads_are_required_to_clear_board_state();
 
 
 
@@ -101,6 +104,9 @@ int runUnityTests()
     RUN_TEST(test_puzzle_progress_tracks_audio_and_resets_round_state);
     RUN_TEST(test_keystone_monitor_raises_error_after_five_consecutive_misses);
     RUN_TEST(test_keystone_monitor_match_breaks_miss_streak_and_clears_error);
+    RUN_TEST(test_empty_keystone_read_never_starts_a_role_transition);
+    RUN_TEST(test_keystone_transition_requires_board_clear_and_known_role);
+    RUN_TEST(test_five_empty_keystone_reads_are_required_to_clear_board_state);
     return UNITY_END();
 }
 

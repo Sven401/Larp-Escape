@@ -452,52 +452,55 @@ bool ReichstagGame::transitionToWaitingForCrystals()
         }
         Serial.println();
 
-        // Falls der neue Keystone leer ist, aktualisiere nur den Status, aber kein Übergang
-        if (newKeyStone == std::array<uint8_t, 7>{})
+        bool candidateIsKnownRole = false;
+        if (newKeyStone != std::array<uint8_t, 7>{} &&
+            lastKeyStone == std::array<uint8_t, 7>{})
+        {
+            currentRoleDefinition = getRoleDefinition(newKeyStone);
+            candidateIsKnownRole = currentRoleDefinition != nullptr;
+        }
+
+        const larp::domain::KeystoneTransition decision =
+            larp::domain::classifyKeystoneTransition(newKeyStone, lastKeyStone,
+                                                    candidateIsKnownRole);
+        if (decision == larp::domain::KeystoneTransition::EmptyRead)
         {
             Serial.println("⚠️ Neuer Keystone ist leer – möglicherweise kein Stein erkannt.");
-            retrys ++;
-            if(retrys > 4){
+            ++retrys;
+            if (larp::domain::hasEnoughEmptyKeystoneReads(retrys))
+            {
                 Serial.print(retrys);
                 Serial.println(" times empty keystone seen. ⚠️ Neuer Keystone ist leer ");
-            lastKeyStone = currentKeyStone;
-            currentKeyStone = newKeyStone;
-            retrys = 0;
-        }
+                lastKeyStone = currentKeyStone;
+                currentKeyStone = newKeyStone;
+                retrys = 0;
+            }
             return false;
         }
 
-        // Falls der neue Keystone mit dem letzten übereinstimmt, keine Transition
-        if (newKeyStone == lastKeyStone)
+        if (decision == larp::domain::KeystoneTransition::RepeatedPreviousKeystone)
         {
             Serial.println("❌ Neuer Keystone entspricht dem letzten Keystone. Kein Übergang.");
             return false;
         }
 
-        // Falls der letzte Keystone leer war, bedeutet das, dass das Board vorher abgeräumt wurde
-        if (lastKeyStone == std::array<uint8_t, 7>{})
+        if (decision == larp::domain::KeystoneTransition::RoleAccepted)
         {
-            Serial.println("🔍 Suche Rollenprofil für den neuen Keystone...");
-            currentRoleDefinition = getRoleDefinition(newKeyStone);
-
-            if (currentRoleDefinition != nullptr)
-            {
-                Serial.println("✅ Gültiges Rollenprofil gefunden. Übergang erlaubt.");
-                lastKeyStone = currentKeyStone;
-                currentKeyStone = newKeyStone;
-                return true;
-            }
-            else
-            {
-                Serial.println("❌ Kein gültiges Rollenprofil gefunden. Kein Übergang.");
-                lastKeyStone = currentKeyStone;
-                currentKeyStone = newKeyStone;
-                return false;
-            }
+            Serial.println("✅ Gültiges Rollenprofil gefunden. Übergang erlaubt.");
+            lastKeyStone = currentKeyStone;
+            currentKeyStone = newKeyStone;
+            return true;
         }
 
-        // Falls ein anderer Stein erkannt wurde, aber das Board nicht leer war -> Kein Übergang
-        Serial.println("❌ Neuer Keystone erkannt, aber kein Reset-Zustand vorher. Kein Übergang.");
+        if (decision == larp::domain::KeystoneTransition::UnknownRole)
+        {
+            Serial.println("❌ Kein gültiges Rollenprofil gefunden. Kein Übergang.");
+        }
+        else
+        {
+            Serial.println("❌ Neuer Keystone erkannt, aber kein Reset-Zustand vorher. Kein Übergang.");
+        }
+
         lastKeyStone = currentKeyStone;
         currentKeyStone = newKeyStone;
         return false;
