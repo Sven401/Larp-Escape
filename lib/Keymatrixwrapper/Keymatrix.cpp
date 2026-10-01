@@ -1,81 +1,78 @@
-#include <iostream>
-#include <vector>
-#include "MCPHandler.h" 
-#include <map>
-#include "OptionConfig.h"
 #include "Keymatrix.h"
 
-std::map<std::pair<int, ColLetter>, bool> KeyMatrix::lastState;
+#include "MCPHandler.h"
 
-KeyMatrix::KeyMatrix(std::vector<MCPHandler> &handlers, const std::map<int, std::pair<int, MCP_Pins>> &rowMap, const std::map<ColLetter, std::pair<int, MCP_Pins>> &colMap)
-    : handlers(handlers), rowMapping(rowMap), colMapping(colMap)
+using larp::domain::GridColumn;
+using larp::domain::GridPosition;
+
+std::map<GridPosition, bool> KeyMatrix::lastState;
+
+KeyMatrix::KeyMatrix(std::vector<MCPHandler> &handlers,
+                     const std::map<int, std::pair<int, MCP_Pins>> &rowMap,
+                     const std::map<GridColumn, std::pair<int, MCP_Pins>> &colMap)
+    : handlers(handlers), rowMapping(rowMap), colMapping(colMap), once(true)
 {
     for (const auto &row : rowMap)
     {
         rows.push_back(row.first);
     }
-    for (const auto &col : colMap)
+    for (const auto &column : colMap)
     {
-        cols.push_back(col.first);
+        columns.push_back(column.first);
     }
-    once = true;
 }
 
 void KeyMatrix::printMatrixState()
 {
     Serial.println("\nKey Matrix State:");
-    
-    // Print column headers
-    Serial.print("   "); // Space for row labels
-    for (ColLetter col : cols)
+    Serial.print("   ");
+    for (GridColumn column : columns)
     {
         Serial.print(" ");
-        Serial.print(col);
+        Serial.print(static_cast<int>(column));
     }
-    Serial.println(); // Newline after headers
+    Serial.println();
 
     for (int row : rows)
     {
-        Serial.print(row); // Row label
+        Serial.print(row);
         Serial.print(" |");
 
-        for (ColLetter col : cols)
+        for (GridColumn column : columns)
         {
-            bool currentState = getKeyState(row, col);
-            std::pair<int, ColLetter> key = std::make_pair(row, col);
-
+            const GridPosition position{static_cast<std::uint8_t>(row), column};
+            const bool currentState = getKeyState(position);
             Serial.print(" ");
             Serial.print(currentState ? "1" : "0");
-
-            lastState[key] = currentState;
+            lastState[position] = currentState;
         }
-        Serial.println(); // Newline after each row
+        Serial.println();
     }
-    Serial.println(); // Extra newline for spacing
+    Serial.println();
     once = false;
 }
 
 bool KeyMatrix::printMatrixChanges()
 {
     bool hasChanges = false;
-    
+
     for (int row : rows)
     {
-        for (ColLetter col : cols)
+        for (GridColumn column : columns)
         {
-            bool currentState = getKeyState(row, col);
-            std::pair<int, ColLetter> key = std::make_pair(row, col);
+            const GridPosition position{static_cast<std::uint8_t>(row), column};
+            const bool currentState = getKeyState(position);
 
-            if (lastState[key] != currentState)
+            if (lastState[position] != currentState)
             {
                 Serial.print("Change detected - Row: ");
                 Serial.print(row);
                 Serial.print(", Col: ");
-                Serial.print(col);
+                Serial.print(static_cast<int>(column));
                 Serial.print(", New State: ");
                 Serial.println(currentState ? "1" : "0");
-                
-                lastState[key] = currentState; // Update stored state
+
+                lastState[position] = currentState;
                 hasChanges = true;
             }
         }
@@ -83,49 +80,49 @@ bool KeyMatrix::printMatrixChanges()
     return hasChanges;
 }
 
-
-std::vector<std::pair<int, ColLetter>> KeyMatrix::getLowKeys()
+std::vector<GridPosition> KeyMatrix::getLowKeys()
 {
-    std::vector<std::pair<int, ColLetter>> lowKeys;
+    std::vector<GridPosition> lowKeys;
     for (int row : rows)
     {
-        for (ColLetter col : cols)
+        for (GridColumn column : columns)
         {
-            if (!getKeyState(row, col))
+            const GridPosition position{static_cast<std::uint8_t>(row), column};
+            if (!getKeyState(position))
             {
-                lowKeys.push_back(std::make_pair(row, col));
+                lowKeys.push_back(position);
             }
         }
     }
     return lowKeys;
 }
 
-bool KeyMatrix::getKeyState(int row, ColLetter col)
+bool KeyMatrix::getKeyState(const GridPosition &position)
 {
-    handlers[colMapping.at(col).first].writeGPIO(colMapping.at(col).second, LOW);
-    bool state = handlers[rowMapping.at(row).first].readGPIO(rowMapping.at(row).second);
-    handlers[colMapping.at(col).first].writeGPIO(colMapping.at(col).second, HIGH);
-
+    handlers[colMapping.at(position.column).first].writeGPIO(colMapping.at(position.column).second,
+                                                             LOW);
+    const bool state = handlers[rowMapping.at(position.row).first].readGPIO(
+        rowMapping.at(position.row).second);
+    handlers[colMapping.at(position.column).first].writeGPIO(colMapping.at(position.column).second,
+                                                             HIGH);
     return state;
 }
 
-void KeyMatrix::debug(int row, ColLetter col){
-
-    handlers[colMapping.at(col).first].writeGPIO(colMapping.at(col).second, LOW);
-    
-    bool state = handlers[rowMapping.at(row).first].readGPIO(rowMapping.at(row).second);
+void KeyMatrix::debug(const GridPosition &position)
+{
+    handlers[colMapping.at(position.column).first].writeGPIO(colMapping.at(position.column).second,
+                                                             LOW);
+    const bool state = handlers[rowMapping.at(position.row).first].readGPIO(
+        rowMapping.at(position.row).second);
 
     Serial.print("column: ");
-    Serial.print(col);
+    Serial.print(static_cast<int>(position.column));
     Serial.print("low ");
     Serial.print(" row: ");
-    Serial.print(row);
+    Serial.print(static_cast<int>(position.row));
     Serial.print("input Pullup");
     Serial.println(state);
-
 }
-
-
 
 void KeyMatrix::begin()
 {
@@ -133,5 +130,4 @@ void KeyMatrix::begin()
     {
         handler.begin();
     }
-    return ;
-}   
+}

@@ -40,7 +40,7 @@ std::array<uint8_t, 7> ReichstagGame::getKeyStone()
 
 ReichstagGame::CrystalCheckResult ReichstagGame::newCrystalisValid()
 {
-    std::vector<std::pair<int, ColLetter>> crystals = keymatrix.getLowKeys(); // Scan the keyboard for the pressed button.
+    std::vector<larp::domain::GridPosition> crystals = keymatrix.getLowKeys();
     if (!crystals.empty())
     {
         Serial.print(crystals.size());
@@ -53,14 +53,14 @@ ReichstagGame::CrystalCheckResult ReichstagGame::newCrystalisValid()
         for (auto &crystal : crystals)
         {
             Serial.print("Crystal: ");
-            Serial.print(crystal.first);
+            Serial.print(static_cast<int>(crystal.row));
             Serial.print(" ");
-            Serial.print(crystal.second);
+            Serial.print(static_cast<int>(crystal.column));
             Serial.println();
         }
         for (auto &crystal : crystals)
         {
-            const ButtonPair *pair = currentOptionConfig->isValidCrystal(crystal.first, crystal.second);
+            const ButtonPair *pair = currentOptionConfig->isValidCrystal(crystal);
             if (pair != nullptr)
             {
                 bool pairFound = false;

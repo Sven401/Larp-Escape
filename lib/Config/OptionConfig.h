@@ -6,9 +6,11 @@
 #include <cstdint>
 
 
-#include <vector>
 #include <string>
+#include <vector>
+
 #include "FastLED.h"
+#include "GameDomain/GridPosition.h"
 
 // 4 AD D1 CA 6E 67 80 Überlebender
 // 4 B1 D1 CA 6E 67 80 Krieger
@@ -31,30 +33,17 @@ const std::vector<uint8_t> UID4 = {0x4, 0x60, 0xD1, 0xCA, 0x6E, 0x67, 0x80};
 const std::vector<uint8_t> UID5 = {0x4, 0x5C, 0xD1, 0xCA, 0x6E, 0x67, 0x80};
 const std::vector<uint8_t> UID6 = {0x4, 0x58, 0xD1, 0xCA, 0x6E, 0x67, 0x80};
 
-enum ColLetter
-{
-    A,
-    B,
-    C,
-    D,
-    E,
-    F,
-    G,
-    H,
-    I
-};
-
 class ButtonPair
 {
 public:
     std::string symbol;
     std::string category;
     const TProgmemRGBPalette16* color;
-    int row;
-    ColLetter col;
+    larp::domain::GridPosition position;
     int audioFile;
 
-    ButtonPair(std::string sym, std::string cat, const TProgmemRGBPalette16* color, int r, ColLetter c, int audio);
+    ButtonPair(std::string sym, std::string cat, const TProgmemRGBPalette16 *color,
+               larp::domain::GridPosition position, int audio);
 };
 
 class OptionConfig
@@ -72,7 +61,7 @@ public:
     std::string getHegemon() const;
     const std::vector<ButtonPair> &getButtons() const;
     int getOptionAudioFile() const;
-    const ButtonPair* isValidCrystal(int row, ColLetter col) const;
+    const ButtonPair *isValidCrystal(larp::domain::GridPosition position) const;
 };
 
 #endif // OPTION_CONFIG_H

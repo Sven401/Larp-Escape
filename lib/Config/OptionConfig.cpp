@@ -1,17 +1,23 @@
 #include "OptionConfig.h"
+
 #include <algorithm>
 #include <string>
 #include <utility>
 
-// ButtonPair constructor
-ButtonPair::ButtonPair(std::string sym, std::string cat, const TProgmemRGBPalette16 *color, int r, ColLetter c, int audio)
-    : symbol(std::move(sym)), category(std::move(cat)), color(color), row(r), col(c), audioFile(audio) {}
+ButtonPair::ButtonPair(std::string sym, std::string cat, const TProgmemRGBPalette16 *color,
+                       larp::domain::GridPosition position, int audio)
+    : symbol(std::move(sym)), category(std::move(cat)), color(color), position(position),
+      audioFile(audio)
+{
+}
 
-// OptionConfig constructor
-OptionConfig::OptionConfig(std::vector<uint8_t> uid, std::string heg, std::vector<ButtonPair> btns, int audioFile)
-    : hegemon(std::move(heg)), buttons(std::move(btns)), optionAudioFile(audioFile), rfidID(std::move(uid)) {}
+OptionConfig::OptionConfig(std::vector<uint8_t> uid, std::string heg, std::vector<ButtonPair> btns,
+                           int audioFile)
+    : hegemon(std::move(heg)), buttons(std::move(btns)), optionAudioFile(audioFile),
+      rfidID(std::move(uid))
+{
+}
 
-// OptionConfig member functions
 bool OptionConfig::isRFIDequal(std::array<uint8_t, 7> &inputKeystone)
 {
     return rfidID.size() == 7 && std::equal(rfidID.begin(), rfidID.end(), inputKeystone.begin());
@@ -32,21 +38,21 @@ int OptionConfig::getOptionAudioFile() const
     return optionAudioFile;
 }
 
-const ButtonPair *OptionConfig::isValidCrystal(int row, ColLetter col) const
+const ButtonPair *OptionConfig::isValidCrystal(larp::domain::GridPosition position) const
 {
     for (const auto &button : buttons)
     {
         Serial.print("checking against Button: ");
         Serial.print(button.symbol.c_str());
         Serial.print(" at ");
-        Serial.print(button.row);
+        Serial.print(static_cast<int>(button.position.row));
         Serial.print(" =? ");
-        Serial.print(row);
-        Serial.print(" "); 
-        Serial.println(button.col);
+        Serial.print(static_cast<int>(position.row));
+        Serial.print(" ");
+        Serial.println(static_cast<int>(button.position.column));
         Serial.print(" =? ");
-        Serial.println(col);
-        if (button.row == row && button.col == col)
+        Serial.println(static_cast<int>(position.column));
+        if (button.position == position)
         {
             return &button;
         }

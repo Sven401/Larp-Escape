@@ -10,15 +10,30 @@
 #include "../../lib/Config/OptionConfig.cpp"
 #include "../../lib/Config/OptionDefinitions.cpp"
 
-namespace fl
+using larp::domain::GridColumn;
+using larp::domain::GridPosition;
+
+void test_grid_position_equality_and_ordering()
 {
+    const GridPosition topLeft{1, GridColumn::A};
+    const GridPosition samePosition{1, GridColumn::A};
+    const GridPosition laterColumn{1, GridColumn::H};
+    const GridPosition laterRow{2, GridColumn::A};
+
+    TEST_ASSERT_TRUE(topLeft == samePosition);
+    TEST_ASSERT_FALSE(topLeft != samePosition);
+    TEST_ASSERT_TRUE(topLeft < laterColumn);
+    TEST_ASSERT_TRUE(laterColumn < laterRow);
+    TEST_ASSERT_FALSE(laterRow < topLeft);
+    TEST_ASSERT_FALSE(topLeft < topLeft);
+}
+
 const TProgmemRGBPalette16 Purple_p = {};
 const TProgmemRGBPalette16 Red_p = {};
 const TProgmemRGBPalette16 Orange_p = {};
 const TProgmemRGBPalette16 Green_p = {};
 const TProgmemRGBPalette16 White_p = {};
 const TProgmemRGBPalette16 Blue_p = {};
-}
 
 struct ExpectedRole
 {
@@ -88,29 +103,31 @@ void test_all_default_crystal_positions_and_tracks_match_current_data()
     struct ExpectedCrystal
     {
         std::size_t optionIndex;
-        int row;
-        ColLetter column;
+        GridPosition position;
         int audioTrack;
         bool hasPalette;
     };
     const ExpectedCrystal expected[] = {
-        {0, 1, A, 132, false}, {0, 1, H, 131, false}, {0, 4, E, 130, true},
-        {1, 2, B, 112, false}, {1, 6, B, 111, true}, {1, 3, F, 110, false},
-        {2, 2, C, 120, false}, {2, 9, B, 121, true}, {2, 9, H, 122, false},
-        {3, 5, H, 102, false}, {3, 2, E, 101, true}, {3, 2, F, 100, false},
-        {4, 9, D, 150, false}, {4, 7, G, 151, true}, {4, 3, G, 152, false},
-        {5, 9, F, 141, false}, {5, 2, G, 140, true}, {5, 8, E, 142, false},
+        {0, {1, GridColumn::A}, 132, false}, {0, {1, GridColumn::H}, 131, false},
+        {0, {4, GridColumn::E}, 130, true}, {1, {2, GridColumn::B}, 112, false},
+        {1, {6, GridColumn::B}, 111, true}, {1, {3, GridColumn::F}, 110, false},
+        {2, {2, GridColumn::C}, 120, false}, {2, {9, GridColumn::B}, 121, true},
+        {2, {9, GridColumn::H}, 122, false}, {3, {5, GridColumn::H}, 102, false},
+        {3, {2, GridColumn::E}, 101, true}, {3, {2, GridColumn::F}, 100, false},
+        {4, {9, GridColumn::D}, 150, false}, {4, {7, GridColumn::G}, 151, true},
+        {4, {3, GridColumn::G}, 152, false}, {5, {9, GridColumn::F}, 141, false},
+        {5, {2, GridColumn::G}, 140, true}, {5, {8, GridColumn::E}, 142, false},
     };
     std::vector<OptionConfig> options = getDefaultOptions();
 
     for (const auto &crystal : expected)
     {
         TEST_ASSERT_TRUE(crystal.optionIndex < options.size());
-        const ButtonPair *match = options[crystal.optionIndex].isValidCrystal(crystal.row, crystal.column);
+        const ButtonPair *match = options[crystal.optionIndex].isValidCrystal(crystal.position);
         TEST_ASSERT_NOT_NULL(match);
         TEST_ASSERT_EQUAL_INT(crystal.audioTrack, match->audioFile);
         TEST_ASSERT_EQUAL_INT(crystal.hasPalette, match->color != nullptr);
-        TEST_ASSERT_TRUE(match == options[crystal.optionIndex].isValidCrystal(crystal.row, crystal.column));
+        TEST_ASSERT_TRUE(match == options[crystal.optionIndex].isValidCrystal(crystal.position));
     }
 }
 
@@ -120,8 +137,8 @@ void test_unmapped_crystal_positions_are_rejected()
 
     for (auto &option : options)
     {
-        TEST_ASSERT_NULL(option.isValidCrystal(0, A));
-        TEST_ASSERT_NULL(option.isValidCrystal(10, I));
+        TEST_ASSERT_NULL(option.isValidCrystal(GridPosition{0, GridColumn::A}));
+        TEST_ASSERT_NULL(option.isValidCrystal(GridPosition{10, GridColumn::I}));
     }
 }
 

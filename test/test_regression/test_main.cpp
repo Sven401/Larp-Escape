@@ -8,6 +8,7 @@ void test_default_role_uids_and_audio_tracks_match_current_data();
 void test_unknown_and_short_role_uids_are_rejected();
 void test_all_default_crystal_positions_and_tracks_match_current_data();
 void test_unmapped_crystal_positions_are_rejected();
+void test_grid_position_equality_and_ordering();
 
 
 
@@ -91,6 +92,7 @@ int runUnityTests()
     RUN_TEST(test_unknown_and_short_role_uids_are_rejected);
     RUN_TEST(test_all_default_crystal_positions_and_tracks_match_current_data);
     RUN_TEST(test_unmapped_crystal_positions_are_rejected);
+    RUN_TEST(test_grid_position_equality_and_ordering);
     return UNITY_END();
 }
 
