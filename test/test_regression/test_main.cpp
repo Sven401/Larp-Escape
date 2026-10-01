@@ -16,6 +16,8 @@ void test_keystone_monitor_match_breaks_miss_streak_and_clears_error();
 void test_empty_keystone_read_never_starts_a_role_transition();
 void test_keystone_transition_requires_board_clear_and_known_role();
 void test_five_empty_keystone_reads_are_required_to_clear_board_state();
+void test_round_reset_clears_only_round_progress_and_retry_streak();
+void test_game_reset_clears_rounds_keystones_seen_tags_and_errors();
 
 
 
@@ -107,6 +109,8 @@ int runUnityTests()
     RUN_TEST(test_empty_keystone_read_never_starts_a_role_transition);
     RUN_TEST(test_keystone_transition_requires_board_clear_and_known_role);
     RUN_TEST(test_five_empty_keystone_reads_are_required_to_clear_board_state);
+    RUN_TEST(test_round_reset_clears_only_round_progress_and_retry_streak);
+    RUN_TEST(test_game_reset_clears_rounds_keystones_seen_tags_and_errors);
     return UNITY_END();
 }
 

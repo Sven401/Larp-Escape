@@ -7,13 +7,10 @@
 #include <array>
 #include <cstddef>
 #include <cstdint>
-#include <vector>
 
 #include "DFMinniHandler.h"
 #include "GameDomain/GameDefinitions.h"
-#include "GameDomain/KeystoneMonitor.h"
-#include "GameDomain/KeystoneTransition.h"
-#include "GameDomain/PuzzleProgress.h"
+#include "GameDomain/GameProgress.h"
 #include "Keymatrix.h"
 #include "NFCReader.h"
 #include "StateMachine.h"
@@ -182,13 +179,8 @@ private:
 
     void handleKeystonedetection();
 
-    int roundCounter;                                  ///< Counts the completed game rounds. eg. for how many keystones the correct crystals have been placed.
-    std::array<uint8_t, 7> currentKeyStone;            ///< Stores the current keystone.
     std::array<uint8_t, 7> lastKeyStone;
-    std::vector<std::array<uint8_t, 7>> seenKeyStones; ///< Stores the seen keystones.
-    larp::domain::KeystoneMonitor keystoneMonitor;
-    larp::domain::PuzzleProgress puzzleProgress;
-    bool incorrectCrystal; ///< Indicates if an incorrect crystal has been placed (max. 1).
+    larp::domain::GameProgress gameProgress;
     bool correctCrystal;               ///< Indicates if a correct crystal has been placed.
     const larp::domain::RoleDefinition *currentRoleDefinition = nullptr;
     State *Idle;
@@ -209,7 +201,6 @@ private:
     const int INTERVALL = 150;
     unsigned long timeout = 600000;
     unsigned long lastMillis = 0;
-    uint8_t retrys;
 
     uint8_t receiverMAC[6] = {0xB0, 0xA7, 0x32, 0xF1, 0x86, 0x54};
 

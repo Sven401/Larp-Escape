@@ -1,6 +1,7 @@
 #include "StateMachine.h"
 #include <iostream>
 #include "CrystalPaletteMap.h"
+#include "GameDomain/KeystoneTransition.h"
 #include "Gamestate.h"
 #include <esp_now.h>
 
@@ -59,7 +60,7 @@ ReichstagGame::CrystalCheckResult ReichstagGame::newCrystalisValid()
             if (crystalDefinition != nullptr)
             {
                 const larp::domain::CrystalRecordResult result =
-                    puzzleProgress.record(*crystalDefinition);
+                    gameProgress.puzzleProgress.record(*crystalDefinition);
                 if (result == larp::domain::CrystalRecordResult::Added)
                 {
                     const TProgmemRGBPalette16 *palette = larp::led::paletteForCrystal(
@@ -70,7 +71,7 @@ ReichstagGame::CrystalCheckResult ReichstagGame::newCrystalisValid()
                     }
                     Serial.println("Valid crystal found and added.");
                     Serial.print("Correct crystals: ");
-                    Serial.println(puzzleProgress.count());
+                    Serial.println(gameProgress.puzzleProgress.count());
                     Serial.print(crystalDefinition->symbol);
                     Serial.print(larp::domain::crystalCategoryName(crystalDefinition->category));
                     return VALID_CRYSTAL;
@@ -94,13 +95,13 @@ void ReichstagGame::handleCrystaldetection(int delay)
         if (result == VALID_CRYSTAL)
         {
             correctCrystal = true;
-            incorrectCrystal = false;
+            gameProgress.incorrectCrystal = false;
             Serial.println("Valid crystal placed.");
         }
         else if (result == INVALID_CRYSTAL)
         {
             correctCrystal = false;
-            incorrectCrystal = true;
+            gameProgress.incorrectCrystal = true;
             Serial.println("Invalid crystal placed.");
         }
     }
@@ -108,30 +109,19 @@ void ReichstagGame::handleCrystaldetection(int delay)
 
 bool ReichstagGame::gameReset()
 {
-    // Reset global variables
-    roundCounter = 0;
-    currentKeyStone = {};
-    keystoneMonitor.reset();
-    puzzleProgress.reset();
-    incorrectCrystal = false;
-    seenKeyStones.clear();
-    retrys = 0;
+    gameProgress.resetGame();
     return true;
 }
 
 bool ReichstagGame::roundReset()
 {
-    // Reset round-specific variables
-    puzzleProgress.reset();
-    incorrectCrystal = false;
-    retrys = 0;
-    keystoneMonitor.resetMisses();
+    gameProgress.resetRound();
     return true;
 }
 
 void ReichstagGame::playCrystalAudio(std::size_t crystalIndex)
 {
-    const larp::domain::RecordedCrystal *crystal = puzzleProgress.crystalAt(crystalIndex);
+    const larp::domain::RecordedCrystal *crystal = gameProgress.puzzleProgress.crystalAt(crystalIndex);
     if (crystal == nullptr)
     {
         Serial.println("No recorded crystal available for audio playback.");
@@ -141,7 +131,7 @@ void ReichstagGame::playCrystalAudio(std::size_t crystalIndex)
     Serial.print("Playing audio file: ");
     Serial.println(crystal->audioTrack);
     dfmHandler.playTrack(crystal->audioTrack);
-    puzzleProgress.markAudioPlayed(crystalIndex);
+    gameProgress.puzzleProgress.markAudioPlayed(crystalIndex);
 }
 
 // --- STATES ---
@@ -155,7 +145,7 @@ void ReichstagGame::stateIdle()
         Serial.println("Idle state entered.");
         twinkleFox.setTwinkleDensity(1);
         twinkleFox.targetPalette = MutedAllColors_p;
-        retrys = 0 ;
+        gameProgress.retryCount = 0 ;
     };
     const uint8_t targetBri = 20;
     EVERY_N_MILLISECONDS(INTERVALL)
@@ -174,7 +164,7 @@ void ReichstagGame::stateIdle()
         auto newKeyStone = nfcReader.getCard(0);
         Serial.println("STATE IDLE: Aktualisiere nur, wenn newKeyStone nicht leer ist oder nach 3 Versuchen");
         Serial.print("Aktueller Keystone: ");
-        for (uint8_t byte : currentKeyStone)
+        for (uint8_t byte : gameProgress.currentKeyStone)
         {
             Serial.print(byte, HEX);
             Serial.print(" ");
@@ -187,15 +177,15 @@ void ReichstagGame::stateIdle()
             Serial.print(" ");
         }
         // Aktualisiere nur, wenn newKeyStone nicht leer ist oder nach 3 Versuchen
-        if (newKeyStone != std::array<uint8_t, 7>{} || retrys >= 3)
+        if (newKeyStone != std::array<uint8_t, 7>{} || gameProgress.retryCount >= 3)
         {
 
             Serial.println("~~~~~~~~~~~~~~~~ New current keystone from StateIdle.");
-            lastKeyStone = currentKeyStone;
-            currentKeyStone = newKeyStone;
+            lastKeyStone = gameProgress.currentKeyStone;
+            gameProgress.currentKeyStone = newKeyStone;
 
             Serial.print("Aktueller Keystone: ");
-            for (uint8_t byte : currentKeyStone)
+            for (uint8_t byte : gameProgress.currentKeyStone)
             {
                 Serial.print(byte, HEX);
                 Serial.print(" ");
@@ -208,11 +198,11 @@ void ReichstagGame::stateIdle()
                 Serial.print(" ");
             }
 
-            retrys = 0; // Reset retries nach erfolgreichem Lesen
+            gameProgress.retryCount = 0; // Reset retries nach erfolgreichem Lesen
         }
         else
         {
-            retrys++; // Retry hochzählen, falls keine gültige ID
+            gameProgress.retryCount++; // Retry hochzählen, falls keine gültige ID
         }
     }
     */
@@ -228,7 +218,7 @@ void ReichstagGame::stateWaitingForCrystals()
         Serial.println("Waiting for crystals state entered.");
         twinkleFox.setTwinkleSpeed(4);
         twinkleFox.setTwinkleDensity(2);
-        retrys = 0;
+        gameProgress.retryCount = 0;
     }
     const uint8_t targetBri = 50;
     EVERY_N_MILLISECONDS(INTERVALL)
@@ -253,7 +243,7 @@ void ReichstagGame::stateFirstCrystalPlaced()
         Serial.println("First crystal placed state entered.");
         twinkleFox.setTwinkleDensity(3);
         playCrystalAudio(0);
-        retrys = 0;
+        gameProgress.retryCount = 0;
     }
     const uint8_t targetBri = 100;
     EVERY_N_MILLISECONDS(INTERVALL)
@@ -277,7 +267,7 @@ void ReichstagGame::stateSecondCrystalPlaced()
         burst.fire(15);
         twinkleFox.setTwinkleDensity(4);
         playCrystalAudio(1);
-        retrys = 0;
+        gameProgress.retryCount = 0;
     }
     const uint8_t targetBri = 150;
     EVERY_N_MILLISECONDS(INTERVALL)
@@ -320,15 +310,15 @@ void ReichstagGame::stateGameCompleted()
     {
         burst.fire(30);
         lastMillis = millis();
-        // Überprüfen, ob der aktuelle KeyStone bereits in seenKeyStones existiert
-        if (std::find(seenKeyStones.begin(), seenKeyStones.end(), currentKeyStone) == seenKeyStones.end())
+        // Überprüfen, ob der aktuelle KeyStone bereits in gameProgress.seenKeyStones existiert
+        if (std::find(gameProgress.seenKeyStones.begin(), gameProgress.seenKeyStones.end(), gameProgress.currentKeyStone) == gameProgress.seenKeyStones.end())
         {
-            seenKeyStones.push_back(currentKeyStone); // Nur hinzufügen, wenn er nicht existiert
+            gameProgress.seenKeyStones.push_back(gameProgress.currentKeyStone); // Nur hinzufügen, wenn er nicht existiert
         }
         twinkleFox.setTwinkleDensity(6);
         dfmHandler.playTrack(currentRoleDefinition->audioTrack);
-        roundCounter++;
-        lastKeyStone = currentKeyStone;
+        gameProgress.roundCounter++;
+        lastKeyStone = gameProgress.currentKeyStone;
     }
     const uint8_t targetBri = 255;
     EVERY_N_MILLISECONDS(INTERVALL)
@@ -351,7 +341,7 @@ void ReichstagGame::stateErrorState()
         dfmHandler.playTrack(998);
         gameReset();
         roundReset();
-        keystoneMonitor.clearError();
+        gameProgress.keystoneMonitor.clearError();
     }
 }
 
@@ -413,7 +403,7 @@ bool ReichstagGame::transitionToBonusState()
     delay(500);
     if (dfmHandler.isBusy())
         return false;
-    if (seenKeyStones.size() == 6)
+    if (gameProgress.seenKeyStones.size() == 6)
     {
         return true;
     }
@@ -438,7 +428,7 @@ bool ReichstagGame::transitionToWaitingForCrystals()
         Serial.println();
 
         Serial.print("Aktueller Keystone: ");
-        for (uint8_t byte : currentKeyStone)
+        for (uint8_t byte : gameProgress.currentKeyStone)
         {
             Serial.print(byte, HEX);
             Serial.print(" ");
@@ -466,14 +456,14 @@ bool ReichstagGame::transitionToWaitingForCrystals()
         if (decision == larp::domain::KeystoneTransition::EmptyRead)
         {
             Serial.println("⚠️ Neuer Keystone ist leer – möglicherweise kein Stein erkannt.");
-            ++retrys;
-            if (larp::domain::hasEnoughEmptyKeystoneReads(retrys))
+            ++gameProgress.retryCount;
+            if (larp::domain::hasEnoughEmptyKeystoneReads(gameProgress.retryCount))
             {
-                Serial.print(retrys);
+                Serial.print(gameProgress.retryCount);
                 Serial.println(" times empty keystone seen. ⚠️ Neuer Keystone ist leer ");
-                lastKeyStone = currentKeyStone;
-                currentKeyStone = newKeyStone;
-                retrys = 0;
+                lastKeyStone = gameProgress.currentKeyStone;
+                gameProgress.currentKeyStone = newKeyStone;
+                gameProgress.retryCount = 0;
             }
             return false;
         }
@@ -487,8 +477,8 @@ bool ReichstagGame::transitionToWaitingForCrystals()
         if (decision == larp::domain::KeystoneTransition::RoleAccepted)
         {
             Serial.println("✅ Gültiges Rollenprofil gefunden. Übergang erlaubt.");
-            lastKeyStone = currentKeyStone;
-            currentKeyStone = newKeyStone;
+            lastKeyStone = gameProgress.currentKeyStone;
+            gameProgress.currentKeyStone = newKeyStone;
             return true;
         }
 
@@ -501,8 +491,8 @@ bool ReichstagGame::transitionToWaitingForCrystals()
             Serial.println("❌ Neuer Keystone erkannt, aber kein Reset-Zustand vorher. Kein Übergang.");
         }
 
-        lastKeyStone = currentKeyStone;
-        currentKeyStone = newKeyStone;
+        lastKeyStone = gameProgress.currentKeyStone;
+        gameProgress.currentKeyStone = newKeyStone;
         return false;
     }
     return false;
@@ -514,7 +504,7 @@ bool ReichstagGame::transitionToCrystal()
     if (dfmHandler.isBusy())
         return false;
 
-    if (correctCrystal || puzzleProgress.hasPendingAudio())
+    if (correctCrystal || gameProgress.puzzleProgress.hasPendingAudio())
     {
         correctCrystal = false;
         return true;
@@ -528,30 +518,30 @@ bool ReichstagGame::transitionToGameCompleted()
     delay(500);
     Serial.println("Transition check to gamecompleted.");
     Serial.print("Correct crystals: ");
-    Serial.println(puzzleProgress.count());
+    Serial.println(gameProgress.puzzleProgress.count());
     Serial.print("Round counter: ");
-    Serial.println(roundCounter);
+    Serial.println(gameProgress.roundCounter);
     Serial.print("Seen keystones: ");
-    Serial.println(seenKeyStones.size());
+    Serial.println(gameProgress.seenKeyStones.size());
     Serial.print("DfmHandler busy: ");
     Serial.println(dfmHandler.isBusy());
     if (dfmHandler.isBusy())
         return false;
-    return puzzleProgress.isComplete();
+    return gameProgress.puzzleProgress.isComplete();
 }
 
 bool ReichstagGame::transitionToError()
 {
     if (dfmHandler.isBusy())
         return false;
-    if (incorrectCrystal)
+    if (gameProgress.incorrectCrystal)
     {
-        incorrectCrystal = false;
+        gameProgress.incorrectCrystal = false;
         return true;
     }
-    if (keystoneMonitor.hasError())
+    if (gameProgress.keystoneMonitor.hasError())
     {
-        keystoneMonitor.clearError();
+        gameProgress.keystoneMonitor.clearError();
         return true;
     }
     return false;
@@ -615,9 +605,9 @@ void ReichstagGame::handleKeystonedetection()
         std::array<uint8_t, 7> presentKey = nfcReader.getCard(100);
 
         const bool matchesCurrentKeystone =
-            presentKey != std::array<uint8_t, 7>{} && presentKey == currentKeyStone;
-        keystoneMonitor.observe(matchesCurrentKeystone);
-        if (keystoneMonitor.hasError())
+            presentKey != std::array<uint8_t, 7>{} && presentKey == gameProgress.currentKeyStone;
+        gameProgress.keystoneMonitor.observe(matchesCurrentKeystone);
+        if (gameProgress.keystoneMonitor.hasError())
         {
             Serial.println("Fehler: Schlüsselstein nicht erkannt!");
         }
