@@ -5,8 +5,8 @@
 #include "Gamestate.h"
 #include <esp_now.h>
 
-ReichstagGame::ReichstagGame(NFCReader &nfcReader, KeyMatrix &keymatrix, larp::ports::IAudioPlayer &audioPlayer, fl::MyTwinkleFox &twinkleFox, Burst &burst, Ripple ripples[4])
-    : nfcReader(nfcReader), keymatrix(keymatrix), audioPlayer(audioPlayer), twinkleFox(twinkleFox), burst(burst), ripples(ripples)
+ReichstagGame::ReichstagGame(NFCReader &nfcReader, KeyMatrix &keymatrix, larp::ports::IAudioPlayer &audioPlayer, larp::ports::IClock &clockPort, fl::MyTwinkleFox &twinkleFox, Burst &burst, Ripple ripples[4])
+    : nfcReader(nfcReader), keymatrix(keymatrix), audioPlayer(audioPlayer), clockPort(clockPort), twinkleFox(twinkleFox), burst(burst), ripples(ripples)
 {
     setup();
 }
@@ -140,7 +140,7 @@ void ReichstagGame::stateIdle()
     if (machine.executeOnce)
     {
         burst.fire(120, {0,255,0});
-        lastMillis = millis();
+        lastMillis = clockPort.nowMilliseconds();
         burst.fire(15);
         Serial.println("Idle state entered.");
         twinkleFox.setTwinkleDensity(1);
@@ -213,7 +213,7 @@ void ReichstagGame::stateWaitingForCrystals()
     if (machine.executeOnce)
     {
         audioPlayer.wakeup();
-        lastMillis = millis();
+        lastMillis = clockPort.nowMilliseconds();
         burst.fire(15);
         Serial.println("Waiting for crystals state entered.");
         twinkleFox.setTwinkleSpeed(4);
@@ -238,7 +238,7 @@ void ReichstagGame::stateFirstCrystalPlaced()
 {
     if (machine.executeOnce)
     {
-        lastMillis = millis();
+        lastMillis = clockPort.nowMilliseconds();
         burst.fire(15);
         Serial.println("First crystal placed state entered.");
         twinkleFox.setTwinkleDensity(3);
@@ -263,7 +263,7 @@ void ReichstagGame::stateSecondCrystalPlaced()
 {
     if (machine.executeOnce)
     {
-        lastMillis = millis();
+        lastMillis = clockPort.nowMilliseconds();
         burst.fire(15);
         twinkleFox.setTwinkleDensity(4);
         playCrystalAudio(1);
@@ -287,7 +287,7 @@ void ReichstagGame::stateThirdCrystalPlaced()
 {
     if (machine.executeOnce)
     {
-        lastMillis = millis();
+        lastMillis = clockPort.nowMilliseconds();
         burst.fire(15);
         twinkleFox.setTwinkleDensity(5);
         playCrystalAudio(2);
@@ -309,7 +309,7 @@ void ReichstagGame::stateGameCompleted()
     if (machine.executeOnce)
     {
         burst.fire(30);
-        lastMillis = millis();
+        lastMillis = clockPort.nowMilliseconds();
         // Überprüfen, ob der aktuelle KeyStone bereits in gameProgress.seenKeyStones existiert
         if (std::find(gameProgress.seenKeyStones.begin(), gameProgress.seenKeyStones.end(), gameProgress.currentKeyStone) == gameProgress.seenKeyStones.end())
         {
@@ -336,7 +336,7 @@ void ReichstagGame::stateErrorState()
 {
     if (machine.executeOnce)
     {
-        lastMillis = millis();
+        lastMillis = clockPort.nowMilliseconds();
         twinkleFox.setTwinkleDensity(3);
         audioPlayer.playTrack(998);
         gameReset();
@@ -350,7 +350,7 @@ void ReichstagGame::stateBonusState()
         twinkleFox.setTwinkleDensity(7);
         audioPlayer.playTrack(900);
 
-        lastMillis = millis();
+        lastMillis = clockPort.nowMilliseconds();
         Serial.print("Bonus Stage reached");
         randomSeed(analogRead(0));
         for (int i = 0; i < 10; i++)
@@ -398,7 +398,7 @@ void ReichstagGame::stateStandByState()
 
 bool ReichstagGame::transitionToBonusState()
 {
-    delay(500);
+    clockPort.delayMilliseconds(500);
     if (audioPlayer.isBusy())
         return false;
     if (gameProgress.seenKeyStones.size() == 6)
@@ -513,7 +513,7 @@ bool ReichstagGame::transitionToCrystal()
 
 bool ReichstagGame::transitionToGameCompleted()
 {
-    delay(500);
+    clockPort.delayMilliseconds(500);
     Serial.println("Transition check to gamecompleted.");
     Serial.print("Correct crystals: ");
     Serial.println(gameProgress.puzzleProgress.count());
@@ -535,7 +535,7 @@ bool ReichstagGame::transitionToError()
 
 bool ReichstagGame::transitionToIdle()
 {
-    delay(500);
+    clockPort.delayMilliseconds(500);
     if (!audioPlayer.isBusy())
     {
         roundReset();
@@ -546,7 +546,7 @@ bool ReichstagGame::transitionToIdle()
 
 bool ReichstagGame::transitionToIdleBonus()
 {
-    delay(500);
+    clockPort.delayMilliseconds(500);
     if (!audioPlayer.isBusy())
     {
 
@@ -581,7 +581,7 @@ bool ReichstagGame::transitionFromStandBY()
 }
 bool ReichstagGame::transitionToStandBy()
 {
-    return (millis() - lastMillis) >= timeout;
+    return (clockPort.nowMilliseconds() - lastMillis) >= timeout;
 }
 
 void ReichstagGame::handleKeystonedetection()

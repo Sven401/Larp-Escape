@@ -11,6 +11,7 @@
 #include "GameDomain/GameDefinitions.h"
 #include "GameDomain/GameProgress.h"
 #include "GamePorts/IAudioPlayer.h"
+#include "GamePorts/IClock.h"
 #include "Keymatrix.h"
 #include "NFCReader.h"
 #include "StateMachine.h"
@@ -35,7 +36,7 @@ public:
     /**
      * @brief Constructs a new ReichstagGame object.
      */
-    ReichstagGame(NFCReader &nfcReader, KeyMatrix &keymatrix, larp::ports::IAudioPlayer &audioPlayer, fl::MyTwinkleFox &twinkleFox, Burst &burst, Ripple ripples[4]);
+    ReichstagGame(NFCReader &nfcReader, KeyMatrix &keymatrix, larp::ports::IAudioPlayer &audioPlayer, larp::ports::IClock &clockPort, fl::MyTwinkleFox &twinkleFox, Burst &burst, Ripple ripples[4]);
 
     /**
      * @brief Handles the idle state of the game.
@@ -192,6 +193,7 @@ private:
     NFCReader &nfcReader;
     KeyMatrix &keymatrix;
     larp::ports::IAudioPlayer &audioPlayer;
+    larp::ports::IClock &clockPort;
     fl::MyTwinkleFox &twinkleFox;
     Burst &burst;
     Ripple *ripples;

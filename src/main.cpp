@@ -7,6 +7,7 @@
 #include "FastLED.h"
 #include "twinklefox.h"
 #include "DFMinniHandler.h"
+#include "ArduinoClock.h"
 #include "ripple.h"
 #include "burst.h"
 #include <esp_now.h>
@@ -47,7 +48,8 @@ KeyMatrix keymatrix(handlers, ROWMAP, COLMAP);
 HardwareSerial mySoftwareSerial(1);
 DFPlayerMini_Fast myMP3;
 DFMinniHandler dfmHandler(mySoftwareSerial, myMP3, DFBUSY, DFWAKEUP);
-ReichstagGame game(nfcReader, keymatrix, dfmHandler, twinkleFox, burst, ripples);
+ArduinoClock gameClock;
+ReichstagGame game(nfcReader, keymatrix, dfmHandler, gameClock, twinkleFox, burst, ripples);
 
 
 // Callback for message delivery status
