@@ -2,7 +2,7 @@
 #include <vector>
 #include "MCPHandler.h" 
 #include <map>
-#include "optionConfig.h"
+#include "OptionConfig.h"
 #include "Keymatrix.h"
 
 std::map<std::pair<int, ColLetter>, bool> KeyMatrix::lastState;

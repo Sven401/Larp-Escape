@@ -1,8 +1,7 @@
 #include "FastLED.h"
-#include "fx/fx1d.h"
-#include "fl/str.h"
-#include "fl/namespace.h"
-#include "pallets.h"
+#include "fl/fx/fx1d.h"
+#include "fl/stl/string.h"
+#include "Pallets.h"
 #include "twinklefox.h"
 
 namespace fl
@@ -34,7 +33,7 @@ namespace fl
             }
         }
         
-        drawTwinkleFox(context.leds);
+        drawTwinkleFox(context.leds.data());
     }
 
     void MyTwinkleFox::setTwinkleSpeed(uint8_t speed) {

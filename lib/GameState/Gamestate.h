@@ -8,9 +8,9 @@
 #include <utility>
 #include "OptionConfig.h"
 #include "OptionDefinitions.h"
-#include "TwinkleFox.h"
+#include "twinklefox.h"
 #include "NFCReader.h"
-#include "KeyMatrix.h"
+#include "Keymatrix.h"
 #include "DFMinniHandler.h"
 #include "StateMachine.h"
 #include "OptionConfig.h"
@@ -19,7 +19,7 @@
 #include "ripple.h"
 #include "burst.h"
 
-using namespace fl;
+
 using namespace MyMachine;
 
 /**
@@ -203,7 +203,7 @@ private:
     NFCReader &nfcReader;
     KeyMatrix &keymatrix;
     DFMinniHandler &dfmHandler;
-    MyTwinkleFox &twinkleFox;
+    fl::MyTwinkleFox &twinkleFox;
     Burst &burst;
     Ripple *ripples;
     const int INTERVALL = 150;

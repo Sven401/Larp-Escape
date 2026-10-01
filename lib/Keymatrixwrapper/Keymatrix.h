@@ -4,7 +4,7 @@
 
 #include <vector>
 #include "MCPHandler.h"
-#include "optionConfig.h"
+#include "OptionConfig.h"
 #include <map>
 
 class KeyMatrix {

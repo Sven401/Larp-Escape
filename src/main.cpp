@@ -1,8 +1,8 @@
 #include "Config.h"
 #include "NFCReader.h"
 #include "MCPHandler.h"
-#include "GameState.h"
-#include "KeyMatrix.h"
+#include "Gamestate.h"
+#include "Keymatrix.h"
 #include <vector>
 #include "FastLED.h"
 #include "twinklefox.h"
@@ -23,7 +23,7 @@ CRGBArray<NUM_LEDS> leds;
 
 uint8_t receiverMAC[6] = {0xB0, 0xA7, 0x32, 0xF1, 0x86, 0x54};
 
-using namespace fl;
+using fl::MyTwinkleFox;
 MyTwinkleFox twinkleFox(NUM_LEDS);
 Burst burst (30,leds, NUM_LEDS);
 Ripple ripples[4] = {

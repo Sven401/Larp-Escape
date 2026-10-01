@@ -5,7 +5,7 @@
 #include "Gamestate.h"
 #include <esp_now.h>
 
-ReichstagGame::ReichstagGame(NFCReader &nfcReader, KeyMatrix &keymatrix, DFMinniHandler &dfmHandler, MyTwinkleFox &twinkleFox, Burst &burst, Ripple ripples[4])
+ReichstagGame::ReichstagGame(NFCReader &nfcReader, KeyMatrix &keymatrix, DFMinniHandler &dfmHandler, fl::MyTwinkleFox &twinkleFox, Burst &burst, Ripple ripples[4])
     : nfcReader(nfcReader), keymatrix(keymatrix), dfmHandler(dfmHandler), twinkleFox(twinkleFox), burst(burst), ripples(ripples)
 {
     options = getDefaultOptions();

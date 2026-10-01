@@ -1,10 +1,9 @@
 #pragma once
 
 #include "FastLED.h"
-#include "fx/fx1d.h"
-#include "fl/str.h"
-#include "fl/namespace.h"
-#include "pallets.h"
+#include "fl/fx/fx1d.h"
+#include "fl/stl/string.h"
+#include "Pallets.h"
 
 namespace fl
 {
@@ -121,7 +120,7 @@ namespace fl
 
         void setTwinkleSpeed(uint8_t speed);
         void setTwinkleDensity(uint8_t density);
-        fl::Str fxName() const override { return "MyTwinkleFox"; }
+        fl::string fxName() const override { return "MyTwinkleFox"; }
 
     private:
         uint8_t targetSpeed;
