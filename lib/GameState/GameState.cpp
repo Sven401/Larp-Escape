@@ -5,8 +5,8 @@
 #include "Gamestate.h"
 #include <esp_now.h>
 
-ReichstagGame::ReichstagGame(NFCReader &nfcReader, KeyMatrix &keymatrix, larp::ports::IAudioPlayer &audioPlayer, larp::ports::IClock &clockPort, fl::MyTwinkleFox &twinkleFox, Burst &burst, Ripple ripples[4])
-    : nfcReader(nfcReader), keymatrix(keymatrix), audioPlayer(audioPlayer), clockPort(clockPort), twinkleFox(twinkleFox), burst(burst), ripples(ripples)
+ReichstagGame::ReichstagGame(larp::ports::ICardReader &cardReader, KeyMatrix &keymatrix, larp::ports::IAudioPlayer &audioPlayer, larp::ports::IClock &clockPort, fl::MyTwinkleFox &twinkleFox, Burst &burst, Ripple ripples[4])
+    : cardReader(cardReader), keymatrix(keymatrix), audioPlayer(audioPlayer), clockPort(clockPort), twinkleFox(twinkleFox), burst(burst), ripples(ripples)
 {
     setup();
 }
@@ -30,7 +30,7 @@ const larp::domain::RoleDefinition *ReichstagGame::getRoleDefinition(
 std::array<uint8_t, 7> ReichstagGame::getKeyStone()
 {
     Serial.println("Getting current keyStone from NFC reader...");
-    return nfcReader.getCard(0U); // This would return the current keyStone based on the RFID reader
+    return cardReader.readCard(100U); // This would return the current keyStone based on the RFID reader
 }
 
 ReichstagGame::CrystalCheckResult ReichstagGame::newCrystalisValid()
@@ -161,7 +161,7 @@ void ReichstagGame::stateIdle()
     /*
     EVERY_N_SECONDS(1)
     {
-        auto newKeyStone = nfcReader.getCard(0);
+        auto newKeyStone = cardReader.readCard(100U);
         Serial.println("STATE IDLE: Aktualisiere nur, wenn newKeyStone nicht leer ist oder nach 3 Versuchen");
         Serial.print("Aktueller Keystone: ");
         for (uint8_t byte : gameProgress.currentKeyStone)
@@ -415,7 +415,7 @@ bool ReichstagGame::transitionToWaitingForCrystals()
     {
         Serial.println("************************* Prüfe Übergang zu WaitingForCrystals... ********************************");
 
-        auto newKeyStone = nfcReader.getCard(0);
+        auto newKeyStone = cardReader.readCard(100U);
 
         Serial.print("neuer Keystone: ");
         for (uint8_t byte : newKeyStone)
@@ -588,7 +588,7 @@ void ReichstagGame::handleKeystonedetection()
 {
     EVERY_N_SECONDS(2)
     {
-        std::array<uint8_t, 7> presentKey = nfcReader.getCard(100);
+        larp::domain::CardUid presentKey = cardReader.readCard(100U);
 
         const bool matchesCurrentKeystone =
             presentKey != std::array<uint8_t, 7>{} && presentKey == gameProgress.currentKeyStone;

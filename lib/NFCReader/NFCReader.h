@@ -2,10 +2,11 @@
 #define NFCREADER_H
 #pragma once
 #include "Config.h"
+#include "GamePorts/ICardReader.h"
 #include <Adafruit_PN532.h> // Include the necessary library for PN532
 #include <Arduino.h>        // Include Arduino libraries
 
-class NFCReader
+class NFCReader : public larp::ports::ICardReader
 {
 public:
     NFCReader(Adafruit_PN532 &nfc)
@@ -16,7 +17,7 @@ public:
     void resetStoredUids();       // Enable the NFC reader
     bool isCurrentUid(uint8_t* queryUid, uint8_t queryUidLength);
     uint8_t uid[7];  // Buffer to store the returned UID
-    std::array<uint8_t, 7> getCard(uint16_t timeout);
+    larp::domain::CardUid readCard(std::uint16_t timeoutMilliseconds) override;
     bool isNewUid;
     bool isStoredUid;
     bool allUidsStored;
