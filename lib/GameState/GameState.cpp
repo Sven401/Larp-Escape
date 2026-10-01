@@ -5,8 +5,8 @@
 #include "Gamestate.h"
 #include <esp_now.h>
 
-ReichstagGame::ReichstagGame(NFCReader &nfcReader, KeyMatrix &keymatrix, DFMinniHandler &dfmHandler, fl::MyTwinkleFox &twinkleFox, Burst &burst, Ripple ripples[4])
-    : nfcReader(nfcReader), keymatrix(keymatrix), dfmHandler(dfmHandler), twinkleFox(twinkleFox), burst(burst), ripples(ripples)
+ReichstagGame::ReichstagGame(NFCReader &nfcReader, KeyMatrix &keymatrix, larp::ports::IAudioPlayer &audioPlayer, fl::MyTwinkleFox &twinkleFox, Burst &burst, Ripple ripples[4])
+    : nfcReader(nfcReader), keymatrix(keymatrix), audioPlayer(audioPlayer), twinkleFox(twinkleFox), burst(burst), ripples(ripples)
 {
     setup();
 }
@@ -130,7 +130,7 @@ void ReichstagGame::playCrystalAudio(std::size_t crystalIndex)
 
     Serial.print("Playing audio file: ");
     Serial.println(crystal->audioTrack);
-    dfmHandler.playTrack(crystal->audioTrack);
+    audioPlayer.playTrack(crystal->audioTrack);
     gameProgress.puzzleProgress.markAudioPlayed(crystalIndex);
 }
 
@@ -212,7 +212,7 @@ void ReichstagGame::stateWaitingForCrystals()
 {
     if (machine.executeOnce)
     {
-        dfmHandler.wakeupDFPlayer();
+        audioPlayer.wakeup();
         lastMillis = millis();
         burst.fire(15);
         Serial.println("Waiting for crystals state entered.");
@@ -316,7 +316,7 @@ void ReichstagGame::stateGameCompleted()
             gameProgress.seenKeyStones.push_back(gameProgress.currentKeyStone); // Nur hinzufügen, wenn er nicht existiert
         }
         twinkleFox.setTwinkleDensity(6);
-        dfmHandler.playTrack(gameProgress.currentRoleDefinition->audioTrack);
+        audioPlayer.playTrack(gameProgress.currentRoleDefinition->audioTrack);
         gameProgress.roundCounter++;
         gameProgress.lastKeyStone = gameProgress.currentKeyStone;
     }
@@ -338,7 +338,7 @@ void ReichstagGame::stateErrorState()
     {
         lastMillis = millis();
         twinkleFox.setTwinkleDensity(3);
-        dfmHandler.playTrack(998);
+        audioPlayer.playTrack(998);
         gameReset();
     }
 }
@@ -348,7 +348,7 @@ void ReichstagGame::stateBonusState()
     if (machine.executeOnce)
     {
         twinkleFox.setTwinkleDensity(7);
-        dfmHandler.playTrack(900);
+        audioPlayer.playTrack(900);
 
         lastMillis = millis();
         Serial.print("Bonus Stage reached");
@@ -399,7 +399,7 @@ void ReichstagGame::stateStandByState()
 bool ReichstagGame::transitionToBonusState()
 {
     delay(500);
-    if (dfmHandler.isBusy())
+    if (audioPlayer.isBusy())
         return false;
     if (gameProgress.seenKeyStones.size() == 6)
     {
@@ -499,7 +499,7 @@ bool ReichstagGame::transitionToWaitingForCrystals()
 
 bool ReichstagGame::transitionToCrystal()
 {
-    if (dfmHandler.isBusy())
+    if (audioPlayer.isBusy())
         return false;
 
     if (gameProgress.correctCrystal || gameProgress.puzzleProgress.hasPendingAudio())
@@ -522,21 +522,21 @@ bool ReichstagGame::transitionToGameCompleted()
     Serial.print("Seen keystones: ");
     Serial.println(gameProgress.seenKeyStones.size());
     Serial.print("DfmHandler busy: ");
-    Serial.println(dfmHandler.isBusy());
-    if (dfmHandler.isBusy())
+    Serial.println(audioPlayer.isBusy());
+    if (audioPlayer.isBusy())
         return false;
     return gameProgress.puzzleProgress.isComplete();
 }
 
 bool ReichstagGame::transitionToError()
 {
-    return gameProgress.consumeErrorTransition(dfmHandler.isBusy());
+    return gameProgress.consumeErrorTransition(audioPlayer.isBusy());
 }
 
 bool ReichstagGame::transitionToIdle()
 {
     delay(500);
-    if (!dfmHandler.isBusy())
+    if (!audioPlayer.isBusy())
     {
         roundReset();
         return true;
@@ -547,7 +547,7 @@ bool ReichstagGame::transitionToIdle()
 bool ReichstagGame::transitionToIdleBonus()
 {
     delay(500);
-    if (!dfmHandler.isBusy())
+    if (!audioPlayer.isBusy())
     {
 
         strcpy(dataToSend.message, "ACTIVATE");

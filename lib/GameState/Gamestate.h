@@ -8,9 +8,9 @@
 #include <cstddef>
 #include <cstdint>
 
-#include "DFMinniHandler.h"
 #include "GameDomain/GameDefinitions.h"
 #include "GameDomain/GameProgress.h"
+#include "GamePorts/IAudioPlayer.h"
 #include "Keymatrix.h"
 #include "NFCReader.h"
 #include "StateMachine.h"
@@ -35,7 +35,7 @@ public:
     /**
      * @brief Constructs a new ReichstagGame object.
      */
-    ReichstagGame(NFCReader &nfcReader, KeyMatrix &keymatrix, DFMinniHandler &dfmHandler, fl::MyTwinkleFox &twinkleFox, Burst &burst, Ripple ripples[4]);
+    ReichstagGame(NFCReader &nfcReader, KeyMatrix &keymatrix, larp::ports::IAudioPlayer &audioPlayer, fl::MyTwinkleFox &twinkleFox, Burst &burst, Ripple ripples[4]);
 
     /**
      * @brief Handles the idle state of the game.
@@ -191,7 +191,7 @@ private:
     State *StandByState;
     NFCReader &nfcReader;
     KeyMatrix &keymatrix;
-    DFMinniHandler &dfmHandler;
+    larp::ports::IAudioPlayer &audioPlayer;
     fl::MyTwinkleFox &twinkleFox;
     Burst &burst;
     Ripple *ripples;
