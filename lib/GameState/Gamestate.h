@@ -5,12 +5,13 @@
 #pragma once
 
 #include <array>
+#include <cstddef>
 #include <cstdint>
-#include <utility>
 #include <vector>
 
 #include "DFMinniHandler.h"
 #include "GameDomain/GameDefinitions.h"
+#include "GameDomain/PuzzleProgress.h"
 #include "Keymatrix.h"
 #include "NFCReader.h"
 #include "StateMachine.h"
@@ -175,6 +176,7 @@ private:
     bool roundReset();
 
     void handleCrystaldetection(int delay);
+    void playCrystalAudio(std::size_t crystalIndex);
 
     void handleKeystonedetection();
 
@@ -183,10 +185,8 @@ private:
     std::array<uint8_t, 7> lastKeyStone;
     std::vector<std::array<uint8_t, 7>> seenKeyStones; ///< Stores the seen keystones.
     bool errorState;                                   ///< Indicates if the game is in an error state.
-    std::vector<std::pair<const larp::domain::CrystalDefinition *, bool>> seenCrystals;
-    const larp::domain::CrystalDefinition *currentCrystal = nullptr;
-    uint8_t correctCrystals;           ///< Number of correctly placed crystals (max. 3).
-    bool incorrectCrystal;             ///< Indicates if an incorrect crystal has been placed (max. 1).
+    larp::domain::PuzzleProgress puzzleProgress;
+    bool incorrectCrystal; ///< Indicates if an incorrect crystal has been placed (max. 1).
     bool correctCrystal;               ///< Indicates if a correct crystal has been placed.
     const larp::domain::RoleDefinition *currentRoleDefinition = nullptr;
     State *Idle;

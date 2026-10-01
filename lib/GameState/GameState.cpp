@@ -58,34 +58,21 @@ ReichstagGame::CrystalCheckResult ReichstagGame::newCrystalisValid()
                 larp::domain::findCrystalByPosition(*currentRoleDefinition, crystal);
             if (crystalDefinition != nullptr)
             {
-                bool crystalFound = false;
-                for (auto &seenPair : seenCrystals)
+                const larp::domain::CrystalRecordResult result =
+                    puzzleProgress.record(*crystalDefinition);
+                if (result == larp::domain::CrystalRecordResult::Added)
                 {
-                    Serial.print("Seen crystal: ");
-                    Serial.print(seenPair.first->symbol);
-                    if (seenPair.first == crystalDefinition)
-                    {
-                        crystalFound = true;
-                        break;
-                    }
-                }
-
-                if (!crystalFound)
-                {
-                    seenCrystals.emplace_back(crystalDefinition, false);
                     const TProgmemRGBPalette16 *palette = larp::led::paletteForCrystal(
                         currentRoleDefinition->id, crystalDefinition->position);
                     if (palette != nullptr)
                     {
                         twinkleFox.targetPalette = *palette;
                     }
-                    correctCrystals++;
-                    currentCrystal = crystalDefinition;
                     Serial.println("Valid crystal found and added.");
                     Serial.print("Correct crystals: ");
-                    Serial.println(correctCrystals);
-                    Serial.print(currentCrystal->symbol);
-                    Serial.print(larp::domain::crystalCategoryName(currentCrystal->category));
+                    Serial.println(puzzleProgress.count());
+                    Serial.print(crystalDefinition->symbol);
+                    Serial.print(larp::domain::crystalCategoryName(crystalDefinition->category));
                     return VALID_CRYSTAL;
                 }
             }
@@ -125,9 +112,7 @@ bool ReichstagGame::gameReset()
     roundCounter = 0;
     currentKeyStone = {};
     errorState = false;
-    seenCrystals.clear();
-    currentCrystal = nullptr;
-    correctCrystals = 0;
+    puzzleProgress.reset();
     incorrectCrystal = false;
     seenKeyStones.clear();
     retrys = 0;
@@ -137,12 +122,25 @@ bool ReichstagGame::gameReset()
 bool ReichstagGame::roundReset()
 {
     // Reset round-specific variables
-    seenCrystals.clear();
-    currentCrystal = nullptr;
-    correctCrystals = 0;
+    puzzleProgress.reset();
     incorrectCrystal = false;
     retrys = 0;
     return true;
+}
+
+void ReichstagGame::playCrystalAudio(std::size_t crystalIndex)
+{
+    const larp::domain::RecordedCrystal *crystal = puzzleProgress.crystalAt(crystalIndex);
+    if (crystal == nullptr)
+    {
+        Serial.println("No recorded crystal available for audio playback.");
+        return;
+    }
+
+    Serial.print("Playing audio file: ");
+    Serial.println(crystal->audioTrack);
+    dfmHandler.playTrack(crystal->audioTrack);
+    puzzleProgress.markAudioPlayed(crystalIndex);
 }
 
 // --- STATES ---
@@ -253,10 +251,7 @@ void ReichstagGame::stateFirstCrystalPlaced()
         burst.fire(15);
         Serial.println("First crystal placed state entered.");
         twinkleFox.setTwinkleDensity(3);
-        Serial.print("Playing audio file: ");
-        Serial.println(seenCrystals[0].first->audioTrack);
-        dfmHandler.playTrack(seenCrystals[0].first->audioTrack);
-        seenCrystals[0].second = true;
+        playCrystalAudio(0);
         retrys = 0;
     }
     const uint8_t targetBri = 100;
@@ -280,8 +275,7 @@ void ReichstagGame::stateSecondCrystalPlaced()
         lastMillis = millis();
         burst.fire(15);
         twinkleFox.setTwinkleDensity(4);
-        dfmHandler.playTrack(seenCrystals[1].first->audioTrack);
-        seenCrystals[1].second = true;
+        playCrystalAudio(1);
         retrys = 0;
     }
     const uint8_t targetBri = 150;
@@ -305,8 +299,7 @@ void ReichstagGame::stateThirdCrystalPlaced()
         lastMillis = millis();
         burst.fire(15);
         twinkleFox.setTwinkleDensity(5);
-        dfmHandler.playTrack(seenCrystals[2].first->audioTrack);
-        seenCrystals[2].second = true;
+        playCrystalAudio(2);
     }
     const uint8_t targetBri = 200;
     EVERY_N_MILLISECONDS(INTERVALL)
@@ -517,17 +510,7 @@ bool ReichstagGame::transitionToCrystal()
     if (dfmHandler.isBusy())
         return false;
 
-    bool hasCrystalAudioPending = false;
-    for (size_t i = 0; i < seenCrystals.size(); i++)
-    {
-        if (!seenCrystals[i].second)
-        {
-            hasCrystalAudioPending = true;
-            break; // Wir müssen nicht weiter prüfen, wenn wir schon ein `false` gefunden haben
-        }
-    }
-
-    if (correctCrystal || hasCrystalAudioPending)
+    if (correctCrystal || puzzleProgress.hasPendingAudio())
     {
         correctCrystal = false;
         return true;
@@ -541,7 +524,7 @@ bool ReichstagGame::transitionToGameCompleted()
     delay(500);
     Serial.println("Transition check to gamecompleted.");
     Serial.print("Correct crystals: ");
-    Serial.println(correctCrystals);
+    Serial.println(puzzleProgress.count());
     Serial.print("Round counter: ");
     Serial.println(roundCounter);
     Serial.print("Seen keystones: ");
@@ -550,7 +533,7 @@ bool ReichstagGame::transitionToGameCompleted()
     Serial.println(dfmHandler.isBusy());
     if (dfmHandler.isBusy())
         return false;
-    return correctCrystals == 3;
+    return puzzleProgress.isComplete();
 }
 
 bool ReichstagGame::transitionToError()

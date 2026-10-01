@@ -9,6 +9,8 @@ void test_unknown_role_uid_is_rejected();
 void test_crystal_definitions_and_palette_mapping_match_current_data();
 void test_unknown_crystal_category_has_fallback_label();
 void test_grid_position_equality_and_ordering();
+void test_puzzle_progress_records_unique_crystals_in_order_and_completes_at_three();
+void test_puzzle_progress_tracks_audio_and_resets_round_state();
 
 
 
@@ -93,6 +95,8 @@ int runUnityTests()
     RUN_TEST(test_crystal_definitions_and_palette_mapping_match_current_data);
     RUN_TEST(test_unknown_crystal_category_has_fallback_label);
     RUN_TEST(test_grid_position_equality_and_ordering);
+    RUN_TEST(test_puzzle_progress_records_unique_crystals_in_order_and_completes_at_three);
+    RUN_TEST(test_puzzle_progress_tracks_audio_and_resets_round_state);
     return UNITY_END();
 }
 
