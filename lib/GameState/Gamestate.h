@@ -14,11 +14,9 @@
 #include "GamePorts/ICardReader.h"
 #include "GamePorts/ICrystalInput.h"
 #include "GamePorts/IClock.h"
+#include "GamePorts/ILightEffects.h"
 #include "GamePorts/IWakeInput.h"
 #include "StateMachine.h"
-#include "burst.h"
-#include "ripple.h"
-#include "twinklefox.h"
 
 using namespace MyMachine;
 
@@ -37,7 +35,7 @@ public:
     /**
      * @brief Constructs a new ReichstagGame object.
      */
-    ReichstagGame(larp::ports::ICardReader &cardReader, larp::ports::ICrystalInput &crystalInput, larp::ports::IWakeInput &wakeInput, larp::ports::IAudioPlayer &audioPlayer, larp::ports::IClock &clockPort, fl::MyTwinkleFox &twinkleFox, Burst &burst, Ripple ripples[4]);
+    ReichstagGame(larp::ports::ICardReader &cardReader, larp::ports::ICrystalInput &crystalInput, larp::ports::IWakeInput &wakeInput, larp::ports::IAudioPlayer &audioPlayer, larp::ports::IClock &clockPort, larp::ports::ILightEffects &lightEffects);
 
     /**
      * @brief Handles the idle state of the game.
@@ -176,7 +174,7 @@ private:
      */
     bool roundReset();
 
-    void handleCrystaldetection(int delay);
+    void handleCrystaldetection(std::uint32_t intervalMilliseconds);
     void playCrystalAudio(std::size_t crystalIndex);
 
     void handleKeystonedetection();
@@ -196,12 +194,19 @@ private:
     larp::ports::IWakeInput &wakeInput;
     larp::ports::IAudioPlayer &audioPlayer;
     larp::ports::IClock &clockPort;
-    fl::MyTwinkleFox &twinkleFox;
-    Burst &burst;
-    Ripple *ripples;
+    larp::ports::ILightEffects &lightEffects;
     const int INTERVALL = 150;
     unsigned long timeout = 600000;
     unsigned long lastMillis = 0;
+    std::uint32_t lastTransitionCardReadMilliseconds = 0;
+    std::uint32_t lastKeystoneReadMilliseconds = 0;
+    std::uint32_t lastCrystalScanMilliseconds = 0;
+    bool transitionCardReadTimerStarted = false;
+    bool keystoneReadTimerStarted = false;
+    bool crystalScanTimerStarted = false;
+
+    bool intervalElapsed(std::uint32_t &lastTriggerMilliseconds, bool &timerStarted,
+                        std::uint32_t intervalMilliseconds);
 
     uint8_t receiverMAC[6] = {0xB0, 0xA7, 0x32, 0xF1, 0x86, 0x54};
 

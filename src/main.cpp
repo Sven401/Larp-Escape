@@ -8,6 +8,7 @@
 #include "twinklefox.h"
 #include "DFMinniHandler.h"
 #include "ArduinoClock.h"
+#include "GameLightEffects.h"
 #include "ripple.h"
 #include "burst.h"
 #include <esp_now.h>
@@ -49,7 +50,8 @@ HardwareSerial mySoftwareSerial(1);
 DFPlayerMini_Fast myMP3;
 DFMinniHandler dfmHandler(mySoftwareSerial, myMP3, DFBUSY, DFWAKEUP);
 ArduinoClock gameClock;
-ReichstagGame game(nfcReader, keymatrix, keymatrix, dfmHandler, gameClock, twinkleFox, burst, ripples);
+GameLightEffects gameLightEffects(twinkleFox, burst, ripples, gameClock);
+ReichstagGame game(nfcReader, keymatrix, keymatrix, dfmHandler, gameClock, gameLightEffects);
 
 
 // Callback for message delivery status

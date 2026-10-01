@@ -1,13 +1,16 @@
 #include "StateMachine.h"
 #include <iostream>
-#include "CrystalPaletteMap.h"
 #include "GameDomain/KeystoneTransition.h"
 #include "Gamestate.h"
+#include <Arduino.h>
 #include <esp_now.h>
+#include <array>
 
-ReichstagGame::ReichstagGame(larp::ports::ICardReader &cardReader, larp::ports::ICrystalInput &crystalInput, larp::ports::IWakeInput &wakeInput, larp::ports::IAudioPlayer &audioPlayer, larp::ports::IClock &clockPort, fl::MyTwinkleFox &twinkleFox, Burst &burst, Ripple ripples[4])
-    : cardReader(cardReader), crystalInput(crystalInput), wakeInput(wakeInput), audioPlayer(audioPlayer), clockPort(clockPort), twinkleFox(twinkleFox), burst(burst), ripples(ripples)
+ReichstagGame::ReichstagGame(larp::ports::ICardReader &cardReader, larp::ports::ICrystalInput &crystalInput, larp::ports::IWakeInput &wakeInput, larp::ports::IAudioPlayer &audioPlayer, larp::ports::IClock &clockPort, larp::ports::ILightEffects &lightEffects)
+    : cardReader(cardReader), crystalInput(crystalInput), wakeInput(wakeInput), audioPlayer(audioPlayer), clockPort(clockPort), lightEffects(lightEffects)
 {
+    lastTransitionCardReadMilliseconds = clockPort.nowMilliseconds();
+    lastKeystoneReadMilliseconds = lastTransitionCardReadMilliseconds;
     setup();
 }
 
@@ -63,12 +66,8 @@ ReichstagGame::CrystalCheckResult ReichstagGame::newCrystalisValid()
                     gameProgress.puzzleProgress.record(*crystalDefinition);
                 if (result == larp::domain::CrystalRecordResult::Added)
                 {
-                    const TProgmemRGBPalette16 *palette = larp::led::paletteForCrystal(
-                        gameProgress.currentRoleDefinition->id, crystalDefinition->position);
-                    if (palette != nullptr)
-                    {
-                        twinkleFox.targetPalette = *palette;
-                    }
+                    lightEffects.setCrystalPalette(gameProgress.currentRoleDefinition->id,
+                                                   crystalDefinition->position);
                     Serial.println("Valid crystal found and added.");
                     Serial.print("Correct crystals: ");
                     Serial.println(gameProgress.puzzleProgress.count());
@@ -87,23 +86,26 @@ ReichstagGame::CrystalCheckResult ReichstagGame::newCrystalisValid()
     return NO_NEW_CRYSTAL;
 }
 
-void ReichstagGame::handleCrystaldetection(int delay)
+void ReichstagGame::handleCrystaldetection(std::uint32_t intervalMilliseconds)
 {
-    EVERY_N_MILLIS(delay)
+    if (!intervalElapsed(lastCrystalScanMilliseconds, crystalScanTimerStarted,
+                         intervalMilliseconds))
     {
-        CrystalCheckResult result = newCrystalisValid();
-        if (result == VALID_CRYSTAL)
-        {
-            gameProgress.correctCrystal = true;
-            gameProgress.incorrectCrystal = false;
-            Serial.println("Valid crystal placed.");
-        }
-        else if (result == INVALID_CRYSTAL)
-        {
-            gameProgress.correctCrystal = false;
-            gameProgress.incorrectCrystal = true;
-            Serial.println("Invalid crystal placed.");
-        }
+        return;
+    }
+
+    CrystalCheckResult result = newCrystalisValid();
+    if (result == VALID_CRYSTAL)
+    {
+        gameProgress.correctCrystal = true;
+        gameProgress.incorrectCrystal = false;
+        Serial.println("Valid crystal placed.");
+    }
+    else if (result == INVALID_CRYSTAL)
+    {
+        gameProgress.correctCrystal = false;
+        gameProgress.incorrectCrystal = true;
+        Serial.println("Invalid crystal placed.");
     }
 }
 
@@ -139,24 +141,16 @@ void ReichstagGame::stateIdle()
 {
     if (machine.executeOnce)
     {
-        burst.fire(120, {0,255,0});
+        lightEffects.fireBurst(120U, {0U, 255U, 0U});
         lastMillis = clockPort.nowMilliseconds();
-        burst.fire(15);
+        lightEffects.fireBurst(15U);
         Serial.println("Idle state entered.");
-        twinkleFox.setTwinkleDensity(1);
-        twinkleFox.targetPalette = MutedAllColors_p;
+        lightEffects.setTwinkleDensity(1U);
+        lightEffects.setMutedPalette();
         gameProgress.retryCount = 0 ;
     };
-    const uint8_t targetBri = 20;
-    EVERY_N_MILLISECONDS(INTERVALL)
-    {
-        uint8_t bri = FastLED.getBrightness();
-        if (bri != targetBri)
-        {
-            bri += (bri < targetBri) ? 1 : -1; // Increment if lower, decrement if higher
-            FastLED.setBrightness(bri);
-        }
-    }
+    lightEffects.stepBrightnessToward(larp::ports::BrightnessRamp::Idle, 20U,
+                                      static_cast<std::uint16_t>(INTERVALL));
 
     /*
     EVERY_N_SECONDS(1)
@@ -214,22 +208,14 @@ void ReichstagGame::stateWaitingForCrystals()
     {
         audioPlayer.wakeup();
         lastMillis = clockPort.nowMilliseconds();
-        burst.fire(15);
+        lightEffects.fireBurst(15U);
         Serial.println("Waiting for crystals state entered.");
-        twinkleFox.setTwinkleSpeed(4);
-        twinkleFox.setTwinkleDensity(2);
+        lightEffects.setTwinkleSpeed(4U);
+        lightEffects.setTwinkleDensity(2U);
         gameProgress.retryCount = 0;
     }
-    const uint8_t targetBri = 50;
-    EVERY_N_MILLISECONDS(INTERVALL)
-    {
-        uint8_t bri = FastLED.getBrightness();
-        if (bri != targetBri)
-        {
-            bri += (bri < targetBri) ? 1 : -1; // Increment if lower, decrement if higher
-            FastLED.setBrightness(bri);
-        }
-    }
+    lightEffects.stepBrightnessToward(larp::ports::BrightnessRamp::WaitingForCrystals, 50U,
+                                      static_cast<std::uint16_t>(INTERVALL));
     handleCrystaldetection(100);
     handleKeystonedetection();
 }
@@ -239,22 +225,14 @@ void ReichstagGame::stateFirstCrystalPlaced()
     if (machine.executeOnce)
     {
         lastMillis = clockPort.nowMilliseconds();
-        burst.fire(15);
+        lightEffects.fireBurst(15U);
         Serial.println("First crystal placed state entered.");
-        twinkleFox.setTwinkleDensity(3);
+        lightEffects.setTwinkleDensity(3U);
         playCrystalAudio(0);
         gameProgress.retryCount = 0;
     }
-    const uint8_t targetBri = 100;
-    EVERY_N_MILLISECONDS(INTERVALL)
-    {
-        uint8_t bri = FastLED.getBrightness();
-        if (bri != targetBri)
-        {
-            bri += (bri < targetBri) ? 1 : -1; // Increment if lower, decrement if higher
-            FastLED.setBrightness(bri);
-        }
-    }
+    lightEffects.stepBrightnessToward(larp::ports::BrightnessRamp::FirstCrystalPlaced, 100U,
+                                      static_cast<std::uint16_t>(INTERVALL));
     handleCrystaldetection(100);
     handleKeystonedetection();
 }
@@ -264,21 +242,13 @@ void ReichstagGame::stateSecondCrystalPlaced()
     if (machine.executeOnce)
     {
         lastMillis = clockPort.nowMilliseconds();
-        burst.fire(15);
-        twinkleFox.setTwinkleDensity(4);
+        lightEffects.fireBurst(15U);
+        lightEffects.setTwinkleDensity(4U);
         playCrystalAudio(1);
         gameProgress.retryCount = 0;
     }
-    const uint8_t targetBri = 150;
-    EVERY_N_MILLISECONDS(INTERVALL)
-    {
-        uint8_t bri = FastLED.getBrightness();
-        if (bri != targetBri)
-        {
-            bri += (bri < targetBri) ? 1 : -1; // Increment if lower, decrement if higher
-            FastLED.setBrightness(bri);
-        }
-    }
+    lightEffects.stepBrightnessToward(larp::ports::BrightnessRamp::SecondCrystalPlaced, 150U,
+                                      static_cast<std::uint16_t>(INTERVALL));
     handleCrystaldetection(100);
     handleKeystonedetection();
 }
@@ -288,48 +258,32 @@ void ReichstagGame::stateThirdCrystalPlaced()
     if (machine.executeOnce)
     {
         lastMillis = clockPort.nowMilliseconds();
-        burst.fire(15);
-        twinkleFox.setTwinkleDensity(5);
+        lightEffects.fireBurst(15U);
+        lightEffects.setTwinkleDensity(5U);
         playCrystalAudio(2);
     }
-    const uint8_t targetBri = 200;
-    EVERY_N_MILLISECONDS(INTERVALL)
-    {
-        uint8_t bri = FastLED.getBrightness();
-        if (bri != targetBri)
-        {
-            bri += (bri < targetBri) ? 1 : -1; // Increment if lower, decrement if higher
-            FastLED.setBrightness(bri);
-        }
-    }
+    lightEffects.stepBrightnessToward(larp::ports::BrightnessRamp::ThirdCrystalPlaced, 200U,
+                                      static_cast<std::uint16_t>(INTERVALL));
 }
 
 void ReichstagGame::stateGameCompleted()
 {
     if (machine.executeOnce)
     {
-        burst.fire(30);
+        lightEffects.fireBurst(30U);
         lastMillis = clockPort.nowMilliseconds();
         // Überprüfen, ob der aktuelle KeyStone bereits in gameProgress.seenKeyStones existiert
         if (std::find(gameProgress.seenKeyStones.begin(), gameProgress.seenKeyStones.end(), gameProgress.currentKeyStone) == gameProgress.seenKeyStones.end())
         {
             gameProgress.seenKeyStones.push_back(gameProgress.currentKeyStone); // Nur hinzufügen, wenn er nicht existiert
         }
-        twinkleFox.setTwinkleDensity(6);
+        lightEffects.setTwinkleDensity(6U);
         audioPlayer.playTrack(gameProgress.currentRoleDefinition->audioTrack);
         gameProgress.roundCounter++;
         gameProgress.lastKeyStone = gameProgress.currentKeyStone;
     }
-    const uint8_t targetBri = 255;
-    EVERY_N_MILLISECONDS(INTERVALL)
-    {
-        uint8_t bri = FastLED.getBrightness();
-        if (bri != targetBri)
-        {
-            bri += (bri < targetBri) ? 1 : -1; // Increment if lower, decrement if higher
-            FastLED.setBrightness(bri);
-        }
-    }
+    lightEffects.stepBrightnessToward(larp::ports::BrightnessRamp::GameCompleted, 255U,
+                                      static_cast<std::uint16_t>(INTERVALL));
 }
 
 void ReichstagGame::stateErrorState()
@@ -337,7 +291,7 @@ void ReichstagGame::stateErrorState()
     if (machine.executeOnce)
     {
         lastMillis = clockPort.nowMilliseconds();
-        twinkleFox.setTwinkleDensity(3);
+        lightEffects.setTwinkleDensity(3U);
         audioPlayer.playTrack(998);
         gameReset();
     }
@@ -347,7 +301,7 @@ void ReichstagGame::stateBonusState()
 {
     if (machine.executeOnce)
     {
-        twinkleFox.setTwinkleDensity(7);
+        lightEffects.setTwinkleDensity(7U);
         audioPlayer.playTrack(900);
 
         lastMillis = clockPort.nowMilliseconds();
@@ -370,7 +324,7 @@ void ReichstagGame::stateStandByState()
 {
     if (machine.executeOnce)
     {
-        twinkleFox.setTwinkleDensity(0);
+        lightEffects.setTwinkleDensity(0U);
         gameReset();
         roundReset();
     }
@@ -378,22 +332,22 @@ void ReichstagGame::stateStandByState()
     if (wakeSignals[0])
     {
         Serial.println("ripples0");
-        ripples[0].fire(60, 22);
+        lightEffects.fireRipple(0U, 60U, 22U);
     };
     if (wakeSignals[1])
     {
         Serial.println("ripples1");
-        ripples[1].fire(60, 2);
+        lightEffects.fireRipple(1U, 60U, 2U);
     };
     if (wakeSignals[2])
     {
         Serial.println("ripples2");
-        ripples[2].fire(60, 16);
+        lightEffects.fireRipple(2U, 60U, 16U);
     };
     if (wakeSignals[3])
     {
         Serial.println("ripples3");
-        ripples[3].fire(60, 10);
+        lightEffects.fireRipple(3U, 60U, 10U);
     };
 }
 
@@ -412,7 +366,10 @@ bool ReichstagGame::transitionToBonusState()
 // --- TRANSITIONS ---
 bool ReichstagGame::transitionToWaitingForCrystals()
 {
-    EVERY_N_SECONDS(1)
+    if (!intervalElapsed(lastTransitionCardReadMilliseconds, transitionCardReadTimerStarted, 1000U))
+    {
+        return false;
+    }
     {
         Serial.println("************************* Prüfe Übergang zu WaitingForCrystals... ********************************");
 
@@ -585,7 +542,10 @@ bool ReichstagGame::transitionToStandBy()
 
 void ReichstagGame::handleKeystonedetection()
 {
-    EVERY_N_SECONDS(2)
+    if (!intervalElapsed(lastKeystoneReadMilliseconds, keystoneReadTimerStarted, 2000U))
+    {
+        return;
+    }
     {
         larp::domain::CardUid presentKey = cardReader.readCard(100U);
 
@@ -597,6 +557,25 @@ void ReichstagGame::handleKeystonedetection()
             Serial.println("Fehler: Schlüsselstein nicht erkannt!");
         }
     }
+}
+
+bool ReichstagGame::intervalElapsed(std::uint32_t &lastTriggerMilliseconds, bool &timerStarted,
+                                   std::uint32_t intervalMilliseconds)
+{
+    const std::uint32_t now = clockPort.nowMilliseconds();
+    if (!timerStarted)
+    {
+        lastTriggerMilliseconds = now;
+        timerStarted = true;
+        return false;
+    }
+    if ((now - lastTriggerMilliseconds) < intervalMilliseconds)
+    {
+        return false;
+    }
+
+    lastTriggerMilliseconds = now;
+    return true;
 }
 
 void ReichstagGame::setup()
