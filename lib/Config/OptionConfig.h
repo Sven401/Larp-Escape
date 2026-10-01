@@ -2,6 +2,9 @@
 #define OPTION_CONFIG_H
 #pragma once
 
+#include <array>
+#include <cstdint>
+
 
 #include <vector>
 #include <string>

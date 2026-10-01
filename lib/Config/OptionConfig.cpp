@@ -1,5 +1,7 @@
 #include "OptionConfig.h"
+#include <algorithm>
 #include <string>
+#include <utility>
 
 // ButtonPair constructor
 ButtonPair::ButtonPair(std::string sym, std::string cat, const TProgmemRGBPalette16 *color, int r, ColLetter c, int audio)
