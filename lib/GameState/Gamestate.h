@@ -11,6 +11,7 @@
 
 #include "DFMinniHandler.h"
 #include "GameDomain/GameDefinitions.h"
+#include "GameDomain/KeystoneMonitor.h"
 #include "GameDomain/PuzzleProgress.h"
 #include "Keymatrix.h"
 #include "NFCReader.h"
@@ -184,7 +185,7 @@ private:
     std::array<uint8_t, 7> currentKeyStone;            ///< Stores the current keystone.
     std::array<uint8_t, 7> lastKeyStone;
     std::vector<std::array<uint8_t, 7>> seenKeyStones; ///< Stores the seen keystones.
-    bool errorState;                                   ///< Indicates if the game is in an error state.
+    larp::domain::KeystoneMonitor keystoneMonitor;
     larp::domain::PuzzleProgress puzzleProgress;
     bool incorrectCrystal; ///< Indicates if an incorrect crystal has been placed (max. 1).
     bool correctCrystal;               ///< Indicates if a correct crystal has been placed.

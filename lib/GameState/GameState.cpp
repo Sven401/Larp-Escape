@@ -111,7 +111,7 @@ bool ReichstagGame::gameReset()
     // Reset global variables
     roundCounter = 0;
     currentKeyStone = {};
-    errorState = false;
+    keystoneMonitor.reset();
     puzzleProgress.reset();
     incorrectCrystal = false;
     seenKeyStones.clear();
@@ -125,6 +125,7 @@ bool ReichstagGame::roundReset()
     puzzleProgress.reset();
     incorrectCrystal = false;
     retrys = 0;
+    keystoneMonitor.resetMisses();
     return true;
 }
 
@@ -350,7 +351,7 @@ void ReichstagGame::stateErrorState()
         dfmHandler.playTrack(998);
         gameReset();
         roundReset();
-        errorState = false;
+        keystoneMonitor.clearError();
     }
 }
 
@@ -545,9 +546,9 @@ bool ReichstagGame::transitionToError()
         incorrectCrystal = false;
         return true;
     }
-    if (errorState)
+    if (keystoneMonitor.hasError())
     {
-        errorState = false;
+        keystoneMonitor.clearError();
         return true;
     }
     return false;
@@ -610,29 +611,11 @@ void ReichstagGame::handleKeystonedetection()
     {
         std::array<uint8_t, 7> presentKey = nfcReader.getCard(100);
 
-        if (presentKey != std::array<uint8_t, 7>{})
+        const bool matchesCurrentKeystone =
+            presentKey != std::array<uint8_t, 7>{} && presentKey == currentKeyStone;
+        keystoneMonitor.observe(matchesCurrentKeystone);
+        if (keystoneMonitor.hasError())
         {
-            // Falls ein gültiger Key gelesen wurde, vergleiche mit currentKeyStone
-            if (currentKeyStone == presentKey)
-            {
-                errorState = false; // Kein Fehler
-                retrys = 0;         // Reset Fehlerzähler
-            }
-            else
-            {
-                retrys++; // Fehlerzähler erhöhen
-            }
-        }
-        else
-        {
-            retrys++; // Kein gültiger Key -> als Fehler zählen
-        }
-
-        // Setze errorState nur, wenn 3 aufeinanderfolgende Fehler auftraten
-        if (retrys >= 5)
-        {
-            errorState = true;
-            retrys = 0;
             Serial.println("Fehler: Schlüsselstein nicht erkannt!");
         }
     }
