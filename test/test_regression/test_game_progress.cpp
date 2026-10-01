@@ -38,6 +38,8 @@ void test_round_reset_clears_only_round_progress_and_retry_streak()
     }
     progress.keystoneMonitor.observe(false);
     TEST_ASSERT_TRUE(progress.keystoneMonitor.hasError());
+    progress.resetRound();
+    TEST_ASSERT_TRUE(progress.keystoneMonitor.hasError());
 }
 
 void test_game_reset_clears_rounds_keystones_seen_tags_and_errors()
