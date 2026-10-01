@@ -5,8 +5,8 @@
 #include "Gamestate.h"
 #include <esp_now.h>
 
-ReichstagGame::ReichstagGame(larp::ports::ICardReader &cardReader, KeyMatrix &keymatrix, larp::ports::IAudioPlayer &audioPlayer, larp::ports::IClock &clockPort, fl::MyTwinkleFox &twinkleFox, Burst &burst, Ripple ripples[4])
-    : cardReader(cardReader), keymatrix(keymatrix), audioPlayer(audioPlayer), clockPort(clockPort), twinkleFox(twinkleFox), burst(burst), ripples(ripples)
+ReichstagGame::ReichstagGame(larp::ports::ICardReader &cardReader, larp::ports::ICrystalInput &crystalInput, larp::ports::IWakeInput &wakeInput, larp::ports::IAudioPlayer &audioPlayer, larp::ports::IClock &clockPort, fl::MyTwinkleFox &twinkleFox, Burst &burst, Ripple ripples[4])
+    : cardReader(cardReader), crystalInput(crystalInput), wakeInput(wakeInput), audioPlayer(audioPlayer), clockPort(clockPort), twinkleFox(twinkleFox), burst(burst), ripples(ripples)
 {
     setup();
 }
@@ -35,7 +35,7 @@ std::array<uint8_t, 7> ReichstagGame::getKeyStone()
 
 ReichstagGame::CrystalCheckResult ReichstagGame::newCrystalisValid()
 {
-    std::vector<larp::domain::GridPosition> crystals = keymatrix.getLowKeys();
+    std::vector<larp::domain::GridPosition> crystals = crystalInput.readPressedPositions();
     if (!crystals.empty())
     {
         Serial.print(crystals.size());
@@ -374,22 +374,23 @@ void ReichstagGame::stateStandByState()
         gameReset();
         roundReset();
     }
-    if (keymatrix.handlers[0].readGPIO(MCP_B7))
+    const std::array<bool, 4> wakeSignals = wakeInput.readWakeSignals();
+    if (wakeSignals[0])
     {
         Serial.println("ripples0");
         ripples[0].fire(60, 22);
     };
-    if (keymatrix.handlers[0].readGPIO(MCP_B6))
+    if (wakeSignals[1])
     {
         Serial.println("ripples1");
         ripples[1].fire(60, 2);
     };
-    if (keymatrix.handlers[0].readGPIO(MCP_B4))
+    if (wakeSignals[2])
     {
         Serial.println("ripples2");
         ripples[2].fire(60, 16);
     };
-    if (keymatrix.handlers[0].readGPIO(MCP_B3))
+    if (wakeSignals[3])
     {
         Serial.println("ripples3");
         ripples[3].fire(60, 10);
@@ -570,10 +571,8 @@ bool ReichstagGame::transitionToIdleBonus()
 }
 bool ReichstagGame::transitionFromStandBY()
 {
-    if (keymatrix.handlers[0].readGPIO(MCP_B7) &&
-        keymatrix.handlers[0].readGPIO(MCP_B6) &&
-        keymatrix.handlers[0].readGPIO(MCP_B4) &&
-        keymatrix.handlers[0].readGPIO(MCP_B3))
+    const std::array<bool, 4> wakeSignals = wakeInput.readWakeSignals();
+    if (wakeSignals[0] && wakeSignals[1] && wakeSignals[2] && wakeSignals[3])
     {
         return true;
     };

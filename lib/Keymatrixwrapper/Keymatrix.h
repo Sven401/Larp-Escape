@@ -2,6 +2,10 @@
 #define KEYMATRIX_H
 #pragma once
 
+#include "GamePorts/ICrystalInput.h"
+#include "GamePorts/IWakeInput.h"
+
+#include <array>
 #include <map>
 #include <utility>
 #include <vector>
@@ -9,7 +13,7 @@
 #include "GameDomain/GridPosition.h"
 #include "MCPHandler.h"
 
-class KeyMatrix
+class KeyMatrix : public larp::ports::ICrystalInput, public larp::ports::IWakeInput
 {
 public:
     KeyMatrix(std::vector<MCPHandler> &handlers,
@@ -21,10 +25,11 @@ public:
     bool getKeyState(const larp::domain::GridPosition &position);
     void debug(const larp::domain::GridPosition &position);
     void begin();
-    std::vector<larp::domain::GridPosition> getLowKeys();
-    std::vector<MCPHandler> &handlers;
+    std::vector<larp::domain::GridPosition> readPressedPositions() override;
+    std::array<bool, 4> readWakeSignals() override;
 
 private:
+    std::vector<MCPHandler> &handlers;
     const std::map<int, std::pair<int, MCP_Pins>> &rowMapping;
     const std::map<larp::domain::GridColumn, std::pair<int, MCP_Pins>> &colMapping;
     std::vector<int> rows;

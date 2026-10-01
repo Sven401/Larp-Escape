@@ -12,8 +12,9 @@
 #include "GameDomain/GameProgress.h"
 #include "GamePorts/IAudioPlayer.h"
 #include "GamePorts/ICardReader.h"
+#include "GamePorts/ICrystalInput.h"
 #include "GamePorts/IClock.h"
-#include "Keymatrix.h"
+#include "GamePorts/IWakeInput.h"
 #include "StateMachine.h"
 #include "burst.h"
 #include "ripple.h"
@@ -36,7 +37,7 @@ public:
     /**
      * @brief Constructs a new ReichstagGame object.
      */
-    ReichstagGame(larp::ports::ICardReader &cardReader, KeyMatrix &keymatrix, larp::ports::IAudioPlayer &audioPlayer, larp::ports::IClock &clockPort, fl::MyTwinkleFox &twinkleFox, Burst &burst, Ripple ripples[4]);
+    ReichstagGame(larp::ports::ICardReader &cardReader, larp::ports::ICrystalInput &crystalInput, larp::ports::IWakeInput &wakeInput, larp::ports::IAudioPlayer &audioPlayer, larp::ports::IClock &clockPort, fl::MyTwinkleFox &twinkleFox, Burst &burst, Ripple ripples[4]);
 
     /**
      * @brief Handles the idle state of the game.
@@ -191,7 +192,8 @@ private:
     State *ErrorState;
     State *StandByState;
     larp::ports::ICardReader &cardReader;
-    KeyMatrix &keymatrix;
+    larp::ports::ICrystalInput &crystalInput;
+    larp::ports::IWakeInput &wakeInput;
     larp::ports::IAudioPlayer &audioPlayer;
     larp::ports::IClock &clockPort;
     fl::MyTwinkleFox &twinkleFox;

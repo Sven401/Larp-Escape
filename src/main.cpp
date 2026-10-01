@@ -49,7 +49,7 @@ HardwareSerial mySoftwareSerial(1);
 DFPlayerMini_Fast myMP3;
 DFMinniHandler dfmHandler(mySoftwareSerial, myMP3, DFBUSY, DFWAKEUP);
 ArduinoClock gameClock;
-ReichstagGame game(nfcReader, keymatrix, dfmHandler, gameClock, twinkleFox, burst, ripples);
+ReichstagGame game(nfcReader, keymatrix, keymatrix, dfmHandler, gameClock, twinkleFox, burst, ripples);
 
 
 // Callback for message delivery status

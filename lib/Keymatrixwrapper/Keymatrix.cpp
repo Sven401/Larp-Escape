@@ -80,7 +80,7 @@ bool KeyMatrix::printMatrixChanges()
     return hasChanges;
 }
 
-std::vector<GridPosition> KeyMatrix::getLowKeys()
+std::vector<GridPosition> KeyMatrix::readPressedPositions()
 {
     std::vector<GridPosition> lowKeys;
     for (int row : rows)
@@ -95,6 +95,16 @@ std::vector<GridPosition> KeyMatrix::getLowKeys()
         }
     }
     return lowKeys;
+}
+
+std::array<bool, 4> KeyMatrix::readWakeSignals()
+{
+    return {{
+        handlers[0].readGPIO(MCP_B7),
+        handlers[0].readGPIO(MCP_B6),
+        handlers[0].readGPIO(MCP_B4),
+        handlers[0].readGPIO(MCP_B3),
+    }};
 }
 
 bool KeyMatrix::getKeyState(const GridPosition &position)
