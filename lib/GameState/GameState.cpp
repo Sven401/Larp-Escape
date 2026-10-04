@@ -352,7 +352,8 @@ void ReichstagGame::stateStandByState()
 
 bool ReichstagGame::transitionToBonusState()
 {
-    clockPort.delayMilliseconds(500);
+    if (!transitionWaitElapsed(0U, 500U))
+        return false;
     if (audioPlayer.isBusy())
         return false;
     if (gameProgress.seenKeyStones.size() == 6)
@@ -470,7 +471,8 @@ bool ReichstagGame::transitionToCrystal()
 
 bool ReichstagGame::transitionToGameCompleted()
 {
-    clockPort.delayMilliseconds(500);
+    if (!transitionWaitElapsed(1U, 500U))
+        return false;
     Serial.println("Transition check to gamecompleted.");
     Serial.print("Correct crystals: ");
     Serial.println(gameProgress.puzzleProgress.count());
@@ -492,7 +494,8 @@ bool ReichstagGame::transitionToError()
 
 bool ReichstagGame::transitionToIdle()
 {
-    clockPort.delayMilliseconds(500);
+    if (!transitionWaitElapsed(2U, 500U))
+        return false;
     if (!audioPlayer.isBusy())
     {
         roundReset();
@@ -503,7 +506,8 @@ bool ReichstagGame::transitionToIdle()
 
 bool ReichstagGame::transitionToIdleBonus()
 {
-    clockPort.delayMilliseconds(500);
+    if (!transitionWaitElapsed(3U, 500U))
+        return false;
     if (!audioPlayer.isBusy())
     {
 
@@ -569,6 +573,26 @@ bool ReichstagGame::intervalElapsed(std::uint32_t &lastTriggerMilliseconds, bool
     }
 
     lastTriggerMilliseconds = now;
+    return true;
+}
+
+bool ReichstagGame::transitionWaitElapsed(std::size_t transitionIndex,
+                                          std::uint32_t intervalMilliseconds)
+{
+    if (transitionIndex >= transitionWaitStarted.size())
+        return false;
+
+    const std::uint32_t now = clockPort.nowMilliseconds();
+    if (!transitionWaitStarted[transitionIndex])
+    {
+        transitionWaitStarted[transitionIndex] = true;
+        transitionWaitStartedMilliseconds[transitionIndex] = now;
+        return false;
+    }
+    if ((now - transitionWaitStartedMilliseconds[transitionIndex]) < intervalMilliseconds)
+        return false;
+
+    transitionWaitStarted[transitionIndex] = false;
     return true;
 }
 

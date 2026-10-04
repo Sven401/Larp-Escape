@@ -206,9 +206,12 @@ private:
     bool transitionCardReadTimerStarted = false;
     bool keystoneReadTimerStarted = false;
     bool crystalScanTimerStarted = false;
+    std::array<std::uint32_t, 4> transitionWaitStartedMilliseconds{};
+    std::array<bool, 4> transitionWaitStarted{};
 
     bool intervalElapsed(std::uint32_t &lastTriggerMilliseconds, bool &timerStarted,
                         std::uint32_t intervalMilliseconds);
+    bool transitionWaitElapsed(std::size_t transitionIndex, std::uint32_t intervalMilliseconds);
 
 };
 
