@@ -5,12 +5,25 @@
 
 #include <FastLED.h>
 
+namespace
+{
+void updateMaximum(std::atomic<std::uint32_t> &maximum, std::uint32_t candidate)
+{
+    std::uint32_t observed = maximum.load(std::memory_order_relaxed);
+    while (candidate > observed &&
+           !maximum.compare_exchange_weak(observed, candidate, std::memory_order_relaxed))
+    {
+    }
+}
+}
+
 GameLightEffects::GameLightEffects(fl::MyTwinkleFox &twinkleFox, Burst &burst, Ripple ripples[4],
                                    larp::ports::IClock &clock, CRGB *ledBuffer,
                                    std::size_t ledCount)
     : twinkleFox(twinkleFox), burst(burst), ripples(ripples), clock(clock), ledBuffer(ledBuffer),
       ledCount(ledCount), brightnessRamps{}, brightnessCommands{}, commandQueue(nullptr),
-      taskHandle(nullptr), droppedCommands(0U)
+      taskHandle(nullptr), droppedCommands(0U), minimumStackFreeBytesObserved(4096U),
+      maximumQueueDepthObserved(0U), maximumRenderDurationObserved(0U)
 {
 }
 
@@ -44,6 +57,21 @@ std::uint32_t GameLightEffects::droppedCommandCount() const
     return droppedCommands.load(std::memory_order_relaxed);
 }
 
+std::uint32_t GameLightEffects::minimumStackFreeBytes() const
+{
+    return minimumStackFreeBytesObserved.load(std::memory_order_relaxed);
+}
+
+std::uint32_t GameLightEffects::maximumQueueDepth() const
+{
+    return maximumQueueDepthObserved.load(std::memory_order_relaxed);
+}
+
+std::uint32_t GameLightEffects::maximumRenderDurationMicroseconds() const
+{
+    return maximumRenderDurationObserved.load(std::memory_order_relaxed);
+}
+
 void GameLightEffects::taskEntry(void *context)
 {
     static_cast<GameLightEffects *>(context)->renderLoop();
@@ -57,11 +85,24 @@ void GameLightEffects::renderLoop()
 
     for (;;)
     {
+        updateMaximum(maximumQueueDepthObserved,
+                      static_cast<std::uint32_t>(uxQueueMessagesWaiting(commandQueue)));
         while (xQueueReceive(commandQueue, &command, 0U) == pdTRUE)
         {
             applyCommand(command);
         }
+        const std::uint32_t renderStarted = micros();
         renderFrame();
+        updateMaximum(maximumRenderDurationObserved, micros() - renderStarted);
+        const std::uint32_t stackFreeBytes =
+            static_cast<std::uint32_t>(uxTaskGetStackHighWaterMark(nullptr));
+        std::uint32_t observedMinimum =
+            minimumStackFreeBytesObserved.load(std::memory_order_relaxed);
+        while (stackFreeBytes < observedMinimum &&
+               !minimumStackFreeBytesObserved.compare_exchange_weak(
+                   observedMinimum, stackFreeBytes, std::memory_order_relaxed))
+        {
+        }
         vTaskDelayUntil(&nextFrame, frameInterval);
     }
 }

@@ -31,6 +31,9 @@ public:
 
     bool begin();
     std::uint32_t droppedCommandCount() const;
+    std::uint32_t minimumStackFreeBytes() const;
+    std::uint32_t maximumQueueDepth() const;
+    std::uint32_t maximumRenderDurationMicroseconds() const;
 
     void setTwinkleDensity(std::uint8_t density) override;
     void setTwinkleSpeed(std::uint8_t speed) override;
@@ -100,4 +103,7 @@ private:
     QueueHandle_t commandQueue;
     TaskHandle_t taskHandle;
     std::atomic<std::uint32_t> droppedCommands;
+    std::atomic<std::uint32_t> minimumStackFreeBytesObserved;
+    std::atomic<std::uint32_t> maximumQueueDepthObserved;
+    std::atomic<std::uint32_t> maximumRenderDurationObserved;
 };

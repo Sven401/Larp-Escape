@@ -71,6 +71,9 @@ QueueHandle_t sendStatusQueue = nullptr;
 std::atomic<std::uint32_t> droppedSendStatusEvents(0U);
 std::uint32_t reportedDroppedSendStatusEvents = 0U;
 std::uint32_t reportedDroppedLedCommands = 0U;
+std::uint32_t maximumSendStatusQueueDepth = 0U;
+std::uint32_t maximumMainLoopDurationMicroseconds = 0U;
+std::uint32_t lastRuntimeReportMilliseconds = 0U;
 
 void onSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
     (void)mac_addr;
@@ -139,6 +142,7 @@ void setup()
 
 void loop()
 {
+    const std::uint32_t loopStarted = micros();
     dfmHandler.service();
 
     const std::uint32_t droppedLedCommands = gameLightEffects.droppedCommandCount();
@@ -150,6 +154,12 @@ void loop()
     }
 
     SendStatusEvent event;
+    const std::uint32_t pendingStatusEvents = static_cast<std::uint32_t>(
+        sendStatusQueue == nullptr ? 0U : uxQueueMessagesWaiting(sendStatusQueue));
+    if (pendingStatusEvents > maximumSendStatusQueueDepth)
+    {
+        maximumSendStatusQueueDepth = pendingStatusEvents;
+    }
     while (sendStatusQueue != nullptr &&
            xQueueReceive(sendStatusQueue, &event, 0U) == pdTRUE)
     {
@@ -166,4 +176,26 @@ void loop()
     }
 
     game.machine.run();
+
+    const std::uint32_t loopDuration = micros() - loopStarted;
+    if (loopDuration > maximumMainLoopDurationMicroseconds)
+    {
+        maximumMainLoopDurationMicroseconds = loopDuration;
+    }
+
+    const std::uint32_t now = millis();
+    if ((now - lastRuntimeReportMilliseconds) >= 10000U)
+    {
+        lastRuntimeReportMilliseconds = now;
+        Serial.print("Runtime max loop us: ");
+        Serial.println(maximumMainLoopDurationMicroseconds);
+        Serial.print("LED min free stack bytes: ");
+        Serial.println(gameLightEffects.minimumStackFreeBytes());
+        Serial.print("LED max queue depth: ");
+        Serial.println(gameLightEffects.maximumQueueDepth());
+        Serial.print("LED max render us: ");
+        Serial.println(gameLightEffects.maximumRenderDurationMicroseconds());
+        Serial.print("ESP-NOW max queue depth: ");
+        Serial.println(maximumSendStatusQueueDepth);
+    }
 }
