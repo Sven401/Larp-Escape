@@ -69,8 +69,6 @@ struct SendStatusEvent
 
 QueueHandle_t sendStatusQueue = nullptr;
 std::atomic<std::uint32_t> droppedSendStatusEvents(0U);
-std::uint32_t reportedDroppedSendStatusEvents = 0U;
-std::uint32_t reportedDroppedLedCommands = 0U;
 std::uint32_t maximumSendStatusQueueDepth = 0U;
 std::uint32_t maximumMainLoopDurationMicroseconds = 0U;
 std::uint32_t lastRuntimeReportMilliseconds = 0U;
@@ -145,14 +143,6 @@ void loop()
     const std::uint32_t loopStarted = micros();
     dfmHandler.service();
 
-    const std::uint32_t droppedLedCommands = gameLightEffects.droppedCommandCount();
-    if (droppedLedCommands != reportedDroppedLedCommands)
-    {
-        Serial.print("Dropped LED commands: ");
-        Serial.println(droppedLedCommands);
-        reportedDroppedLedCommands = droppedLedCommands;
-    }
-
     SendStatusEvent event;
     const std::uint32_t pendingStatusEvents = static_cast<std::uint32_t>(
         sendStatusQueue == nullptr ? 0U : uxQueueMessagesWaiting(sendStatusQueue));
@@ -165,14 +155,6 @@ void loop()
     {
         Serial.print("Delivery Status: ");
         Serial.println(event.status == ESP_NOW_SEND_SUCCESS ? "Success" : "Fail");
-    }
-
-    const std::uint32_t dropped = droppedSendStatusEvents.load(std::memory_order_relaxed);
-    if (dropped != reportedDroppedSendStatusEvents)
-    {
-        Serial.print("Dropped ESP-NOW status events: ");
-        Serial.println(dropped);
-        reportedDroppedSendStatusEvents = dropped;
     }
 
     game.machine.run();
@@ -197,5 +179,9 @@ void loop()
         Serial.println(gameLightEffects.maximumRenderDurationMicroseconds());
         Serial.print("ESP-NOW max queue depth: ");
         Serial.println(maximumSendStatusQueueDepth);
+        Serial.print("LED command drops: ");
+        Serial.println(gameLightEffects.droppedCommandCount());
+        Serial.print("ESP-NOW status drops: ");
+        Serial.println(droppedSendStatusEvents.load(std::memory_order_relaxed));
     }
 }
