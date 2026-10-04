@@ -6,12 +6,33 @@
 void DFMinniHandler::begin() {
     pinMode(busyPin, INPUT);
     pinMode(wakeUpPin, OUTPUT);
+    setWakePin(true);
+    delay(100);
+    setWakePin(false);
+    delay(100);
+    scheduleNextPeriodicTransition();
     if (mySerial.available() == 0){
         mySerial.begin(9600, SERIAL_8N1, 25, 26);
     }
-    wakeupDFPlayer();
     myMP3.begin(mySerial);
     myMP3.volume(VOL);
+}
+
+void DFMinniHandler::service() {
+    const std::uint32_t now = millis();
+
+    if (sequenceTransitionsRemaining > 0U &&
+        static_cast<std::int32_t>(now - nextSequenceTransition) >= 0) {
+        setWakePin(!wakePinHigh);
+        --sequenceTransitionsRemaining;
+        nextSequenceTransition = now + 100U;
+    }
+
+    if (sequenceTransitionsRemaining == 0U &&
+        static_cast<std::int32_t>(now - nextPeriodicTransition) >= 0) {
+        setWakePin(!wakePinHigh);
+        scheduleNextPeriodicTransition();
+    }
 }
 
 void DFMinniHandler::playTrack(uint16_t trackNumber) {
@@ -37,28 +58,27 @@ void DFMinniHandler::playTrack(uint16_t trackNumber) {
 
 bool DFMinniHandler::isBusy() {
     int busyState = digitalRead(busyPin);
-    return busyState == LOW;
+    return busyState == LOW || sequenceTransitionsRemaining > 0U;
 }
 
 void DFMinniHandler::wakeupDFPlayer() {
-    // Wake up the DFPlayer
-    digitalWrite(wakeUpPin, HIGH);
-    delay(100); // Wait for the DFPlayer to wake up
-    digitalWrite(wakeUpPin, LOW);
-    delay(100); // Wait for the DFPlayer to wake up
-    digitalWrite(wakeUpPin, HIGH);
-    delay(100); // Wait for the DFPlayer to wake up
-    digitalWrite(wakeUpPin, LOW);
-    delay(100);
-    digitalWrite(wakeUpPin, HIGH);
-    delay(100); // Wait for the DFPlayer to wake up
-    digitalWrite(wakeUpPin, LOW);
-    delay(100); // Wait for the DFPlayer to wake up
-    digitalWrite(wakeUpPin, HIGH);
-    delay(100); // Wait for the DFPlayer to wake up
-    digitalWrite(wakeUpPin, LOW);
+    wakeup();
 }
 
 void DFMinniHandler::wakeup() {
-    wakeupDFPlayer();
+    sequenceTransitionsRemaining = 8U;
+    nextSequenceTransition = millis() + 100U;
+    nextPeriodicTransition = nextSequenceTransition + 800U;
+}
+
+void DFMinniHandler::setWakePin(bool high) {
+    wakePinHigh = high;
+    digitalWrite(wakeUpPin, high ? HIGH : LOW);
+}
+
+void DFMinniHandler::scheduleNextPeriodicTransition() {
+    const std::uint32_t duration = wakePinHigh
+        ? static_cast<std::uint32_t>(random(200, 500))
+        : static_cast<std::uint32_t>(random(100, 400));
+    nextPeriodicTransition = millis() + duration;
 }

@@ -1,5 +1,6 @@
 #include "Config.h"
 #include <array>
+#include <atomic>
 #include <cstdint>
 #include "NFCReader.h"
 #include "MCPHandler.h"
@@ -16,6 +17,8 @@
 #include "burst.h"
 #include <esp_now.h>
 #include <WiFi.h>
+#include <freertos/FreeRTOS.h>
+#include <freertos/queue.h>
 
 
 #define LED_TYPE WS2811
@@ -53,48 +56,30 @@ HardwareSerial mySoftwareSerial(1);
 DFPlayerMini_Fast myMP3;
 DFMinniHandler dfmHandler(mySoftwareSerial, myMP3, DFBUSY, DFWAKEUP);
 ArduinoClock gameClock;
-GameLightEffects gameLightEffects(twinkleFox, burst, ripples, gameClock);
+GameLightEffects gameLightEffects(twinkleFox, burst, ripples, gameClock, leds, NUM_LEDS);
 EspNowCommunicator communicator(receiverMAC);
 ReichstagGame game(nfcReader, keymatrix, keymatrix, dfmHandler, gameClock, gameLightEffects, communicator);
 
 
 // Callback for message delivery status
+struct SendStatusEvent
+{
+    esp_now_send_status_t status;
+};
+
+QueueHandle_t sendStatusQueue = nullptr;
+std::atomic<std::uint32_t> droppedSendStatusEvents(0U);
+std::uint32_t reportedDroppedSendStatusEvents = 0U;
+std::uint32_t reportedDroppedLedCommands = 0U;
+
 void onSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
-    Serial.print("Delivery Status: ");
-    Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Success" : "Fail");
-}
-
-void ledTask(void *pvParameters) {
-    const TickType_t delay = pdMS_TO_TICKS(33); // ~30 FPS (33ms per frame)
-    
-    while (true) {
-        twinkleFox.draw(fl::Fx::DrawContext(millis(), leds)); 
-        burst.draw();
-        ripples[0].draw();
-        ripples[1].draw();
-        ripples[2].draw();
-        ripples[3].draw();
-        FastLED.show();
-        vTaskDelay(delay);
+    (void)mac_addr;
+    const SendStatusEvent event = {status};
+    if (sendStatusQueue == nullptr || xQueueSend(sendStatusQueue, &event, 0U) != pdTRUE)
+    {
+        droppedSendStatusEvents.fetch_add(1U, std::memory_order_relaxed);
     }
 }
-
-void wakeUpTask(void *pvParameters) {
-    pinMode(DFWAKEUP, OUTPUT);
-
-    while (true) {
-        int onTime = random(200, 500);   // Random ON time between 100ms and 300ms
-        int offTime = random(100, 400); // Random OFF time between 1.3s and 2.5s
-
-        digitalWrite(DFWAKEUP, HIGH);
-        vTaskDelay(pdMS_TO_TICKS(onTime));
-
-        digitalWrite(DFWAKEUP, LOW);
-        vTaskDelay(pdMS_TO_TICKS(offTime));
-    }
-}
-
-
 
 void setup()
 {
@@ -114,37 +99,32 @@ void setup()
     twinkleFox.setTwinkleDensity(1);
     twinkleFox.setTwinkleSpeed(1);
     FastLED.setBrightness(100);
-        // Create the LED update task on Core 1
-        xTaskCreatePinnedToCore(
-            ledTask,       // Function to run
-            "LED Task",    // Task name
-            2048,          // Stack size (2KB should be enough)
-            nullptr,       // Task parameters
-            1,             // Priority (1 = low priority)
-            nullptr,// Task handle
-            1              // Run on Core 1
-        );
-        xTaskCreatePinnedToCore(
-            wakeUpTask,      
-            "Blink Task",   
-            1024,          
-            nullptr,       
-            1,             
-            nullptr,       
-            1              
-        );
-    pinMode(DFWAKEUP, OUTPUT);
-    digitalWrite(DFWAKEUP, HIGH);
-    
+    if (!gameLightEffects.begin()) {
+        Serial.println("Failed to start LED service");
+        ESP.restart();
+        return;
+    }
+
     WiFi.mode(WIFI_STA);
     WiFi.disconnect();
+
+    sendStatusQueue = xQueueCreate(8U, sizeof(SendStatusEvent));
+    if (sendStatusQueue == nullptr) {
+        Serial.println("Failed to create ESP-NOW status queue");
+        ESP.restart();
+        return;
+    }
 
     if (esp_now_init() != ESP_OK) {
         Serial.println("ESP-NOW Init Failed");
         ESP.restart();
     }
 
-    esp_now_register_send_cb(onSent);
+    if (esp_now_register_send_cb(onSent) != ESP_OK) {
+        Serial.println("Failed to register ESP-NOW send callback");
+        ESP.restart();
+        return;
+    }
 
     esp_now_peer_info_t peerInfo = {};
     memcpy(peerInfo.peer_addr, receiverMAC.data(), receiverMAC.size());
@@ -159,5 +139,31 @@ void setup()
 
 void loop()
 {
-    game.machine.run();    
+    dfmHandler.service();
+
+    const std::uint32_t droppedLedCommands = gameLightEffects.droppedCommandCount();
+    if (droppedLedCommands != reportedDroppedLedCommands)
+    {
+        Serial.print("Dropped LED commands: ");
+        Serial.println(droppedLedCommands);
+        reportedDroppedLedCommands = droppedLedCommands;
+    }
+
+    SendStatusEvent event;
+    while (sendStatusQueue != nullptr &&
+           xQueueReceive(sendStatusQueue, &event, 0U) == pdTRUE)
+    {
+        Serial.print("Delivery Status: ");
+        Serial.println(event.status == ESP_NOW_SEND_SUCCESS ? "Success" : "Fail");
+    }
+
+    const std::uint32_t dropped = droppedSendStatusEvents.load(std::memory_order_relaxed);
+    if (dropped != reportedDroppedSendStatusEvents)
+    {
+        Serial.print("Dropped ESP-NOW status events: ");
+        Serial.println(dropped);
+        reportedDroppedSendStatusEvents = dropped;
+    }
+
+    game.machine.run();
 }
