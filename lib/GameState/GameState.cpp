@@ -1,6 +1,7 @@
 #include "StateMachine.h"
 #include <iostream>
 #include "GameDomain/KeystoneTransition.h"
+#include "GameDomain/TransitionWait.h"
 #include "Gamestate.h"
 #include <Arduino.h>
 #include <array>
@@ -582,18 +583,10 @@ bool ReichstagGame::transitionWaitElapsed(std::size_t transitionIndex,
     if (transitionIndex >= transitionWaitStarted.size())
         return false;
 
-    const std::uint32_t now = clockPort.nowMilliseconds();
-    if (!transitionWaitStarted[transitionIndex])
-    {
-        transitionWaitStarted[transitionIndex] = true;
-        transitionWaitStartedMilliseconds[transitionIndex] = now;
-        return false;
-    }
-    if ((now - transitionWaitStartedMilliseconds[transitionIndex]) < intervalMilliseconds)
-        return false;
-
-    transitionWaitStarted[transitionIndex] = false;
-    return true;
+    return larp::domain::TransitionWait::elapsed(clockPort.nowMilliseconds(),
+                                                 transitionWaitStarted[transitionIndex],
+                                                 transitionWaitStartedMilliseconds[transitionIndex],
+                                                 intervalMilliseconds);
 }
 
 void ReichstagGame::setup()
