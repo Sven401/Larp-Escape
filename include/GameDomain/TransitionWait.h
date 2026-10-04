@@ -3,7 +3,9 @@
 
 #include <cstdint>
 
-namespace larp::domain
+namespace larp
+{
+namespace domain
 {
 class TransitionWait
 {
@@ -23,6 +25,7 @@ public:
         return true;
     }
 };
+}
 }
 
 #endif
