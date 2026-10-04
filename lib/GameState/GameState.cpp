@@ -3,11 +3,10 @@
 #include "GameDomain/KeystoneTransition.h"
 #include "Gamestate.h"
 #include <Arduino.h>
-#include <esp_now.h>
 #include <array>
 
-ReichstagGame::ReichstagGame(larp::ports::ICardReader &cardReader, larp::ports::ICrystalInput &crystalInput, larp::ports::IWakeInput &wakeInput, larp::ports::IAudioPlayer &audioPlayer, larp::ports::IClock &clockPort, larp::ports::ILightEffects &lightEffects)
-    : cardReader(cardReader), crystalInput(crystalInput), wakeInput(wakeInput), audioPlayer(audioPlayer), clockPort(clockPort), lightEffects(lightEffects)
+ReichstagGame::ReichstagGame(larp::ports::ICardReader &cardReader, larp::ports::ICrystalInput &crystalInput, larp::ports::IWakeInput &wakeInput, larp::ports::IAudioPlayer &audioPlayer, larp::ports::IClock &clockPort, larp::ports::ILightEffects &lightEffects, larp::ports::ICommunicator &communicator)
+    : cardReader(cardReader), crystalInput(crystalInput), wakeInput(wakeInput), audioPlayer(audioPlayer), clockPort(clockPort), lightEffects(lightEffects), communicator(communicator)
 {
     lastTransitionCardReadMilliseconds = clockPort.nowMilliseconds();
     lastKeystoneReadMilliseconds = lastTransitionCardReadMilliseconds;
@@ -508,12 +507,7 @@ bool ReichstagGame::transitionToIdleBonus()
     if (!audioPlayer.isBusy())
     {
 
-        strcpy(dataToSend.message, "ACTIVATE");
-
-        // Send message
-        esp_err_t result = esp_now_send(receiverMAC, (uint8_t *)&dataToSend, sizeof(dataToSend));
-
-        if (result == ESP_OK)
+        if (communicator.send(larp::ports::GameMessage::Activate))
         {
             Serial.println("Message Sent");
         }

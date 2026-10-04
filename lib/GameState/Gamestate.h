@@ -12,6 +12,7 @@
 #include "GameDomain/GameProgress.h"
 #include "GamePorts/IAudioPlayer.h"
 #include "GamePorts/ICardReader.h"
+#include "GamePorts/ICommunicator.h"
 #include "GamePorts/ICrystalInput.h"
 #include "GamePorts/IClock.h"
 #include "GamePorts/ILightEffects.h"
@@ -35,7 +36,7 @@ public:
     /**
      * @brief Constructs a new ReichstagGame object.
      */
-    ReichstagGame(larp::ports::ICardReader &cardReader, larp::ports::ICrystalInput &crystalInput, larp::ports::IWakeInput &wakeInput, larp::ports::IAudioPlayer &audioPlayer, larp::ports::IClock &clockPort, larp::ports::ILightEffects &lightEffects);
+    ReichstagGame(larp::ports::ICardReader &cardReader, larp::ports::ICrystalInput &crystalInput, larp::ports::IWakeInput &wakeInput, larp::ports::IAudioPlayer &audioPlayer, larp::ports::IClock &clockPort, larp::ports::ILightEffects &lightEffects, larp::ports::ICommunicator &communicator);
 
     /**
      * @brief Handles the idle state of the game.
@@ -195,6 +196,7 @@ private:
     larp::ports::IAudioPlayer &audioPlayer;
     larp::ports::IClock &clockPort;
     larp::ports::ILightEffects &lightEffects;
+    larp::ports::ICommunicator &communicator;
     const int INTERVALL = 150;
     unsigned long timeout = 600000;
     unsigned long lastMillis = 0;
@@ -208,15 +210,6 @@ private:
     bool intervalElapsed(std::uint32_t &lastTriggerMilliseconds, bool &timerStarted,
                         std::uint32_t intervalMilliseconds);
 
-    uint8_t receiverMAC[6] = {0xB0, 0xA7, 0x32, 0xF1, 0x86, 0x54};
-
-    // Define the data structure
-    typedef struct struct_message
-    {
-        char message[32];
-    } struct_message;
-
-    struct_message dataToSend;
 };
 
 #endif // GAMESTATE_H

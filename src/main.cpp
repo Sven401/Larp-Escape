@@ -1,4 +1,6 @@
 #include "Config.h"
+#include <array>
+#include <cstdint>
 #include "NFCReader.h"
 #include "MCPHandler.h"
 #include "Gamestate.h"
@@ -9,6 +11,7 @@
 #include "DFMinniHandler.h"
 #include "ArduinoClock.h"
 #include "GameLightEffects.h"
+#include "EspNowCommunicator.h"
 #include "ripple.h"
 #include "burst.h"
 #include <esp_now.h>
@@ -23,7 +26,7 @@
 #define NUM_LEDS 23
 CRGBArray<NUM_LEDS> leds;
 
-uint8_t receiverMAC[6] = {0xB0, 0xA7, 0x32, 0xF1, 0x86, 0x54};
+const std::array<std::uint8_t, 6> receiverMAC = {{0xB0, 0xA7, 0x32, 0xF1, 0x86, 0x54}};
 
 using fl::MyTwinkleFox;
 MyTwinkleFox twinkleFox(NUM_LEDS);
@@ -51,7 +54,8 @@ DFPlayerMini_Fast myMP3;
 DFMinniHandler dfmHandler(mySoftwareSerial, myMP3, DFBUSY, DFWAKEUP);
 ArduinoClock gameClock;
 GameLightEffects gameLightEffects(twinkleFox, burst, ripples, gameClock);
-ReichstagGame game(nfcReader, keymatrix, keymatrix, dfmHandler, gameClock, gameLightEffects);
+EspNowCommunicator communicator(receiverMAC);
+ReichstagGame game(nfcReader, keymatrix, keymatrix, dfmHandler, gameClock, gameLightEffects, communicator);
 
 
 // Callback for message delivery status
@@ -143,7 +147,7 @@ void setup()
     esp_now_register_send_cb(onSent);
 
     esp_now_peer_info_t peerInfo = {};
-    memcpy(peerInfo.peer_addr, receiverMAC, 6);
+    memcpy(peerInfo.peer_addr, receiverMAC.data(), receiverMAC.size());
     peerInfo.channel = 0;  
     peerInfo.encrypt = false;  
 
