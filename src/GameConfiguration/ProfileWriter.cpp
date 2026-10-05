@@ -1,4 +1,5 @@
 #include "GameConfiguration/ProfileWriter.h"
+#include "GameConfiguration/ProfileVocabulary.h"
 #include <cstring>
 
 namespace larp {
@@ -71,24 +72,13 @@ class Json {
     bool ok;
 };
 const char *componentName(ComponentKind kind) {
-    static const char *names[] = {"nfc_spi",    "io_expander", "matrix",
-                                  "audio_uart", "led_strip",   "esp_now"};
-    return names[static_cast<unsigned>(kind)];
+    return vocabulary::ComponentKindNames[static_cast<unsigned>(kind)];
 }
 const char *fieldName(Field field) {
-    static const char *names[] = {
-        "audio_busy",      "role_accepted",     "crystal_available",     "crystal_audio_pending",
-        "puzzle_complete", "incorrect_crystal", "keystone_error",        "all_wake_active",
-        "seen_role_count", "state_elapsed_ms",  "transition_elapsed_ms", "round_count"};
-    return names[static_cast<unsigned>(field)];
+    return vocabulary::FieldNames[static_cast<unsigned>(field)];
 }
 const char *actionName(ActionKind kind) {
-    static const char *names[] = {
-        "apply_effect",   "play_track",      "play_role_track",  "play_crystal_track",
-        "wake_audio",     "reset_round",     "reset_game",       "reset_card_retry",
-        "complete_round", "send_activation", "consume_crystal",  "consume_error",
-        "read_role",      "read_crystals",   "observe_keystone", "animate_wake_inputs"};
-    return names[static_cast<unsigned>(kind)];
+    return vocabulary::ActionKindNames[static_cast<unsigned>(kind)];
 }
 void endpoints(Json &json, const List<Endpoint, Limits::MatrixLines> &items) {
     json.literal("[");
@@ -204,9 +194,9 @@ void role(Json &json, const Role &item) {
         json.numeric("column", crystal.column);
         json.literal(",");
         json.numeric("audioTrack", crystal.audioTrack);
-        static const char *categories[] = {"animal", "item", "color"};
         json.literal(",");
-        json.text("category", categories[static_cast<unsigned>(crystal.category)]);
+        json.text("category",
+                  vocabulary::CrystalCategoryNames[static_cast<unsigned>(crystal.category)]);
         json.literal(",");
         json.flag("changesPalette", crystal.changesPalette);
         json.literal(",");
@@ -253,19 +243,17 @@ void transition(Json &json, const Transition &item) {
     json.literal("}");
 }
 void condition(Json &json, const Condition &item) {
-    static const char *kinds[] = {"predicate", "all", "any", "not"};
-    static const char *comparisons[] = {"eq", "ne", "lt", "le", "gt", "ge"};
     json.literal("{");
     json.numeric("id", item.id.value);
     json.literal(",");
-    json.text("kind", kinds[static_cast<unsigned>(item.kind)]);
+    json.text("kind", vocabulary::ConditionKindNames[static_cast<unsigned>(item.kind)]);
     if (item.kind == ConditionKind::Predicate) {
         json.literal(",");
         json.text("field", fieldName(item.field));
         json.literal(",");
         json.numeric("component", item.component.value);
         json.literal(",");
-        json.text("comparison", comparisons[static_cast<unsigned>(item.comparison)]);
+        json.text("comparison", vocabulary::CompareNames[static_cast<unsigned>(item.comparison)]);
         json.literal(",");
         json.numeric("operand", item.operand);
     } else {
@@ -294,7 +282,6 @@ void action(Json &json, const Action &item) {
     json.literal("}");
 }
 void effect(Json &json, const Effect &item) {
-    static const char *kinds[] = {"twinkle", "burst", "ripple", "brightness_ramp", "palette"};
     json.literal("{");
     json.numeric("id", item.id.value);
     json.literal(",");
@@ -302,7 +289,7 @@ void effect(Json &json, const Effect &item) {
     json.literal(",");
     json.numeric("component", item.component.value);
     json.literal(",");
-    json.text("kind", kinds[static_cast<unsigned>(item.kind)]);
+    json.text("kind", vocabulary::EffectKindNames[static_cast<unsigned>(item.kind)]);
     json.literal(",");
     json.numeric("density", item.density);
     json.literal(",");
@@ -350,7 +337,7 @@ bool writeProfile(const Profile &profile, IProfileWriter &writer) {
     json.literal(",");
     json.text("name", profile.name.c_str());
     json.literal(",");
-    json.text("board", "esp32_devkit_v4");
+    json.text("board", vocabulary::BoardNames[static_cast<unsigned>(profile.board)]);
     json.literal(",");
     json.numeric("initialState", profile.initialState.value);
     json.literal(",");

@@ -31,7 +31,7 @@
       "minLength": 1,
       "maxLength": 32,
       "x-maxUtf8Bytes": 32,
-      "description": "Firmware also requires <=32 UTF-8 bytes and rejects control characters."
+      "description": "Firmware also requires <=32 UTF-8 bytes and rejects ASCII C0 control characters."
     },
     "board": {
       "const": "esp32_devkit_v4"
@@ -189,7 +189,7 @@
           "minLength": 1,
           "maxLength": 32,
           "x-maxUtf8Bytes": 32,
-          "description": "Firmware also requires <=32 UTF-8 bytes and rejects control characters."
+          "description": "Firmware also requires <=32 UTF-8 bytes and rejects ASCII C0 control characters."
         },
         "kind": {
           "type": "string",
@@ -380,7 +380,7 @@
           "minLength": 1,
           "maxLength": 32,
           "x-maxUtf8Bytes": 32,
-          "description": "Firmware also requires <=32 UTF-8 bytes and rejects control characters."
+          "description": "Firmware also requires <=32 UTF-8 bytes and rejects ASCII C0 control characters."
         },
         "row": {
           "type": "integer",
@@ -441,7 +441,7 @@
           "minLength": 1,
           "maxLength": 32,
           "x-maxUtf8Bytes": 32,
-          "description": "Firmware also requires <=32 UTF-8 bytes and rejects control characters."
+          "description": "Firmware also requires <=32 UTF-8 bytes and rejects ASCII C0 control characters."
         },
         "uid": {
           "type": "array",
@@ -490,7 +490,7 @@
           "minLength": 1,
           "maxLength": 32,
           "x-maxUtf8Bytes": 32,
-          "description": "Firmware also requires <=32 UTF-8 bytes and rejects control characters."
+          "description": "Firmware also requires <=32 UTF-8 bytes and rejects ASCII C0 control characters."
         },
         "manualAllowed": {
           "type": "boolean"
@@ -793,7 +793,7 @@
           "minLength": 1,
           "maxLength": 32,
           "x-maxUtf8Bytes": 32,
-          "description": "Firmware also requires <=32 UTF-8 bytes and rejects control characters."
+          "description": "Firmware also requires <=32 UTF-8 bytes and rejects ASCII C0 control characters."
         },
         "component": {
           "type": "integer",
@@ -869,5 +869,7 @@
       }
     }
   },
+  "x-maxDocumentBytes": 131072,
+  "x-maxContainerDepth": 8,
   "description": "Structural contract; semantic validation by the firmware is required before activation."
 }

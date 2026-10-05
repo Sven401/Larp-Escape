@@ -1,4 +1,5 @@
 // Host-side profile export/inspection. This is not an embedded entry point.
+#include "GameConfiguration/ProfileReader.h"
 #include "GameConfiguration/ProfileWriter.h"
 #include <cstdio>
 #include <cstring>
@@ -15,23 +16,65 @@ class FileWriter : public larp::configuration::IProfileWriter {
   private:
     std::FILE *file_;
 };
+class FileReader : public larp::configuration::IProfileReader {
+  public:
+    explicit FileReader(std::FILE *file) : file_(file) {}
+    larp::configuration::ReadStatus readByte(std::uint8_t &byte) override {
+        const int value = std::fgetc(file_);
+        if (value == EOF)
+            return std::ferror(file_) ? larp::configuration::ReadStatus::Failure
+                                      : larp::configuration::ReadStatus::End;
+        byte = static_cast<std::uint8_t>(value);
+        return larp::configuration::ReadStatus::Byte;
+    }
+
+  private:
+    std::FILE *file_;
+};
 } // namespace
 int main(int argc, char **argv) {
     using namespace larp::configuration;
     bool summary = false;
     bool example = false;
+    const char *inputPath = nullptr;
     for (int index = 1; index < argc; ++index) {
         if (std::strcmp(argv[index], "--summary") == 0 && !summary)
             summary = true;
-        else if (std::strcmp(argv[index], "--example") == 0 && !example)
+        else if (std::strcmp(argv[index], "--example") == 0 && !example && inputPath == nullptr)
             example = true;
+        else if (std::strcmp(argv[index], "--import") == 0 && inputPath == nullptr && !example &&
+                 index + 1 < argc)
+            inputPath = argv[++index];
         else {
-            std::fputs("Usage: profile-tools [--summary] [--example]\n", stderr);
+            std::fputs("Usage: profile-tools [--summary] [--example | --import FILE]\n", stderr);
             return 2;
         }
     }
     std::unique_ptr<Profile> profile(new Profile());
-    if (!(example ? makeHintExampleProfile(*profile) : makeStandardProfile(*profile))) {
+    if (inputPath != nullptr) {
+        std::FILE *input = std::fopen(inputPath, "rb");
+        if (input == nullptr) {
+            std::perror("Cannot open profile");
+            return 1;
+        }
+        // Host allocation; embedded callers provide their own two storage slots.
+        std::unique_ptr<Profile> scratch(new Profile());
+        FileReader reader(input);
+        const ImportResult result = readProfile(reader, *scratch, *profile);
+        const bool closeOk = std::fclose(input) == 0;
+        if (!result) {
+            std::fprintf(
+                stderr,
+                "Profile import rejected: error=%s offset=%lu section=%u object=%u field=%s "
+                "validation=%u detail=%u\n",
+                importErrorName(result.error), static_cast<unsigned long>(result.offset),
+                static_cast<unsigned>(result.section), result.object, result.field,
+                static_cast<unsigned>(result.validation.error), result.validation.detail);
+            return 1;
+        }
+        if (!closeOk)
+            return 1;
+    } else if (!(example ? makeHintExampleProfile(*profile) : makeStandardProfile(*profile))) {
         const ValidationResult result = validateProfile(*profile);
         std::fprintf(stderr,
                      "Profile construction rejected: error=%u section=%u object=%u detail=%u\n",
