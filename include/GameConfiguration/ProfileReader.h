@@ -53,6 +53,11 @@ struct ImportResult {
     }
 };
 const char *importErrorName(ImportError error);
+// Destructive import into one exclusively owned INACTIVE draft. Failure may leave
+// partial contents; only a successful result permits validation/activation/export.
+// The input must not overlap draft storage. No heap or second full Profile needed.
+ImportResult readDraftProfile(IProfileReader &reader, Profile &draft);
+ImportResult readDraftProfile(const char *bytes, std::size_t count, Profile &draft);
 // No heap allocation. Storage must be distinct and exclusively owned by the caller.
 // Failure leaves destination unchanged; scratch may contain a partial document.
 // Success copies the validated scratch into destination; this is NOT a task-safe

@@ -15,7 +15,7 @@ Genau ein Anwendungskontext besitzt `Runtime`; dessen Broker und Session sind pr
 
 `activate(candidate, expectedConfigurationRevision, now)` setzt ein bereits **gestopptes** Spiel voraus. Pause genügt nicht. Validierung und Planerstellung erfolgen vor der Stilllegung; ein ungültiger Kandidat verändert die aktive Einrichtung nicht. Angenommene Übernahme bedeutet zunächst `Queued`, nicht bereits `Applied`.
 
-Aktives Profil und Kandidat sind unveränderliche, geliehene Speicherbereiche: aktiv bis zur erfolgreichen Ersetzung, Kandidat bis zum Abschluss der Übernahme. Keine Task bekommt einen Profilzeiger. Die Durchsetzung dieser Speicherlebensdauer durch einen aktiven/Entwurf-Speicher ist noch offen; ein Aufrufer darf die Bereiche weder überschreiben noch freigeben.
+Aktives Profil und Kandidat sind unveränderliche, geliehene Speicherbereiche: aktiv bis zur erfolgreichen Ersetzung, Kandidat bis zum Abschluss der Übernahme. Keine Task bekommt einen Profilzeiger. Der [Profilcontroller](profile-slots.md) kapselt jetzt zwei private aktive/Entwurf-Speicher und setzt diese Lebensdauer im angeschlossenen Rechner-/Probepfad durch. Direkte Runtime-Aufrufer dürfen ihre geliehenen Bereiche weiterhin weder überschreiben noch freigeben.
 
 ## Ablauf und Gerätevertrag
 
@@ -58,7 +58,7 @@ Ein Fehler mit vorherigem aktiven Profil startet unter neuer Generation erneut *
 
 Ohne vorheriges Profil oder bei gescheiterter Rückkehr folgt ein weiterer Parkversuch. Anschließend ist der Zustand `Fault` mit `Failed`, und Spielbefehle bleiben gesperrt. Fehler/Timeout bei dieser Bereinigung bedeutet ausdrücklich **keine bestätigte physische Stilllegung**. Reale Backends müssen etwa blockierende Treiber, Timer, Interrupts und Funkcallbacks in ihren Stilllegungsvertrag aufnehmen. Der Koordinator bietet bislang keinen hardwareseitigen Notaus.
 
-Rückkehr, Timeout, Antwortverlust, alte Tickets und Grenzwerte sind im Code behandelt; diese Fehlerpfade wurden in diesem Schnitt nicht ausgeführt. Last-good-Speicherung, Stromausfallrecovery, exklusive Profilslots und dauerhafte Übernahmejournalisierung sind noch offen.
+Rückkehr, Timeout, Antwortverlust, alte Tickets und Grenzwerte sind im Code behandelt; diese Fehlerpfade wurden in diesem Schnitt nicht ausgeführt. Last-good-Speicherung, Stromausfallrecovery, Abnahme der Profilslot-Fehlerpfade und dauerhafte Übernahmejournalisierung sind noch offen.
 
 ## Rechnerbedienung
 

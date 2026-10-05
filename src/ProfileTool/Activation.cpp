@@ -1,6 +1,6 @@
 #include "Activation.h"
 #include "DeviceRuntime/OwnerConfiguration.h"
-#include "DeviceRuntime/Runtime.h"
+#include "DeviceRuntime/ProfileController.h"
 #include <cstdio>
 #include <memory>
 namespace {
@@ -193,7 +193,7 @@ class Owners : public IChannel, public IControlChannel {
         }
     }
 };
-void report(const Runtime &runtime) {
+void report(const ProfileController &runtime) {
     const auto value = runtime.activation();
     const auto game = runtime.game();
     std::printf(
@@ -213,7 +213,7 @@ void report(const Runtime &runtime) {
         game.execution.running ? "true" : "false", game.execution.state.value,
         static_cast<unsigned long>(game.execution.stateRevision));
 }
-bool drive(Owners &owners, Runtime &runtime, std::uint32_t &now) {
+bool drive(Owners &owners, ProfileController &runtime, std::uint32_t &now) {
     for (unsigned step = 0; step < 256 && runtime.busy(); ++step) {
         owners.pump(++now);
         runtime.service(now);
@@ -223,23 +223,93 @@ bool drive(Owners &owners, Runtime &runtime, std::uint32_t &now) {
     return !runtime.busy() && runtime.activation().hardwareReady &&
            runtime.activation().finish == ActivationFinish::Applied;
 }
+class FileReader : public IProfileReader {
+  public:
+    explicit FileReader(std::FILE *file) : file_(file) {}
+    ReadStatus readByte(std::uint8_t &byte) override {
+        const int value = std::fgetc(file_);
+        if (value == EOF)
+            return std::ferror(file_) ? ReadStatus::Failure : ReadStatus::End;
+        byte = static_cast<std::uint8_t>(value);
+        return ReadStatus::Byte;
+    }
+
+  private:
+    std::FILE *file_;
+};
+class FileWriter : public IProfileWriter {
+  public:
+    explicit FileWriter(std::FILE *file) : file_(file) {}
+    bool write(const char *bytes, std::size_t count) override {
+        return std::fwrite(bytes, 1, count, file_) == count;
+    }
+
+  private:
+    std::FILE *file_;
+};
+void reportStorage(const ProfileController &controller) {
+    const auto value = controller.storage();
+    std::printf("{\"event\":\"profile_storage\",\"draftRevision\":%lu,"
+                "\"activeProfileRevision\":%lu,\"draftProfileRevision\":%lu,"
+                "\"hasActive\":%s,\"draftReady\":%s,\"applying\":%s}\n",
+                static_cast<unsigned long>(value.draftRevision),
+                static_cast<unsigned long>(value.activeProfileRevision),
+                static_cast<unsigned long>(value.draftProfileRevision),
+                value.hasActive ? "true" : "false", value.draftReady ? "true" : "false",
+                value.applying ? "true" : "false");
+}
+DraftResult importFile(ProfileController &controller, const char *path) {
+    std::FILE *input = std::fopen(path, "rb");
+    if (!input) {
+        std::perror("Cannot open draft profile");
+        DraftResult result;
+        result.outcome = DraftOutcome::InvalidSource;
+        return result;
+    }
+    FileReader reader(input);
+    auto result = controller.importDraft(reader, controller.storage().draftRevision);
+    if (std::fclose(input) != 0 && result)
+        result.outcome = DraftOutcome::ImportFailed;
+    std::printf("{\"event\":\"draft_import\",\"result\":\"%s\",\"error\":\"%s\","
+                "\"offset\":%lu,\"object\":%u}\n",
+                draftOutcomeName(result.outcome), importErrorName(result.import.error),
+                static_cast<unsigned long>(result.import.offset),
+                static_cast<unsigned>(result.import.object));
+    reportStorage(controller);
+    return result;
+}
 void reportGameResult(const char *operation, const larp::execution::Result &result) {
     std::printf("{\"event\":\"game_control\",\"operation\":\"%s\",\"result\":\"%s\"}\n", operation,
                 larp::execution::outcomeName(result.outcome));
 }
 } // namespace
-int runActivation(const Profile &initial, const Profile &candidate) {
+int runActivation(const char *initialPath, bool hintFactory, const char *candidatePath,
+                  const char *exportActivePath) {
     std::unique_ptr<Owners> owners(new Owners());
-    std::unique_ptr<Runtime> runtime(new Runtime(*owners, *owners));
+    std::unique_ptr<ProfileController> runtime(new ProfileController(*owners, *owners));
+    if (!runtime->beginStorage()) {
+        std::fputs("Profile storage allocation failed\n", stderr);
+        return 1;
+    }
     std::printf(
         "{\"event\":\"activation_demo\",\"syntheticOwners\":true,\"physicalHardware\":false,"
-        "\"runtimeBytes\":%lu,\"ownerConfigurationBytes\":%lu,\"controlBytes\":%lu}\n",
-        static_cast<unsigned long>(sizeof(Runtime)),
+        "\"controllerBytes\":%lu,\"profileHeapBytes\":%lu,\"profileSlots\":2,"
+        "\"ownerConfigurationBytes\":%lu,\"controlBytes\":%lu}\n",
+        static_cast<unsigned long>(sizeof(ProfileController)),
+        static_cast<unsigned long>(2 * sizeof(Profile)),
         static_cast<unsigned long>(sizeof(OwnerConfiguration)),
         static_cast<unsigned long>(sizeof(Control)));
-    std::uint32_t now = 0;
-    if (!runtime->activate(initial, 0, now) || !drive(*owners, *runtime, now))
+    const auto initial =
+        initialPath ? importFile(*runtime, initialPath)
+                    : runtime->createDraft(
+                          hintFactory ? FactoryProfile::Hint : FactoryProfile::Standard, 0);
+    if (!initial)
         return 1;
+    std::uint32_t now = 0;
+    if (!runtime->activateDraft(runtime->storage().draftRevision, 0, now) ||
+        !drive(*owners, *runtime, now))
+        return 1;
+    reportStorage(*runtime);
     auto result = runtime->startGame(runtime->activation().configurationRevision, ++now);
     reportGameResult("start_initial", result);
     if (!result)
@@ -256,12 +326,17 @@ int runActivation(const Profile &initial, const Profile &candidate) {
     if (!result)
         return 1;
     owners->report();
-    const auto requested =
-        runtime->activate(candidate, runtime->activation().configurationRevision, now);
-    std::printf("{\"event\":\"activate_request\",\"result\":\"%s\"}\n",
-                activationOutcomeName(requested.outcome));
+    // Import directly into the one inactive slot; the old active remains locked.
+    if (!importFile(*runtime, candidatePath))
+        return 1;
+    const auto requested = runtime->activateDraft(runtime->storage().draftRevision,
+                                                  runtime->activation().configurationRevision, now);
+    std::printf("{\"event\":\"activate_request\",\"result\":\"%s\",\"activation\":\"%s\"}\n",
+                draftOutcomeName(requested.outcome),
+                activationOutcomeName(requested.activation.outcome));
     if (!requested || !drive(*owners, *runtime, now))
         return 1;
+    reportStorage(*runtime);
     result = runtime->startGame(runtime->activation().configurationRevision, ++now);
     reportGameResult("start_candidate", result);
     if (!result)
@@ -275,5 +350,24 @@ int runActivation(const Profile &initial, const Profile &candidate) {
     }
     report(*runtime);
     owners->report();
+    if (exportActivePath) {
+        result = runtime->stopGame(runtime->game().execution.stateRevision, ++now);
+        reportGameResult("stop_for_export", result);
+        if (!result)
+            return 1;
+        std::FILE *output = std::fopen(exportActivePath, "wb");
+        if (!output) {
+            std::perror("Cannot open active profile export");
+            return 1;
+        }
+        FileWriter writer(output);
+        const auto exported =
+            runtime->writeActive(writer, runtime->activation().configurationRevision);
+        const bool closeOk = std::fclose(output) == 0;
+        std::printf("{\"event\":\"active_export\",\"result\":\"%s\"}\n",
+                    draftOutcomeName(exported.outcome));
+        if (!exported || !closeOk)
+            return 1;
+    }
     return std::fflush(stdout) == 0 ? 0 : 1;
 }

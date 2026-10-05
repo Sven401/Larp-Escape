@@ -1,21 +1,17 @@
 // Isolated synthetic-owner entry point. No external GPIO, bus, audio, LEDs or
 // radio are initialized. Runtime owns actual activation/Session/queue logic.
 #include "DeviceRuntime/OwnerConfiguration.h"
-#include "DeviceRuntime/Runtime.h"
+#include "DeviceRuntime/ProfileController.h"
+#include "GameDomain/GameDefinitions.h"
 #include <Arduino.h>
 #include <FreeRtosProfileChannel.h>
 #include <freertos/task.h>
-#include <memory>
-#include <new>
 namespace {
 using namespace larp::devices;
 using namespace larp::configuration;
-// Reserve full fixed-capacity slots once at boot, before workers. ESP32's
-// linker BSS region is smaller than its total allocator-addressable DRAM.
-// No allocation in recurring control/game/device service; stable process lifetime.
-std::unique_ptr<Profile> initialProfile, candidateProfile;
 FreeRtosProfileChannel channel;
-Runtime runtime(channel, channel);
+// Two startup allocations, private profiles; workers never borrow their contents.
+ProfileController runtime(channel, channel);
 // ESP-IDF v4.4 task depths are BYTES; this pinned port has byte stack elements.
 static const std::size_t WorkerStackBytes = 4096;
 static_assert(sizeof(StackType_t) == 1, "Pinned ESP32 byte stack port required");
@@ -162,26 +158,19 @@ void ownerTask(void *argument) {
 } // namespace
 void setup() {
     Serial.begin(115200);
-    initialProfile.reset(new (std::nothrow) Profile());
-    candidateProfile.reset(new (std::nothrow) Profile());
-    if (!initialProfile || !candidateProfile) {
+    if (!runtime.beginStorage()) {
         Serial.println("profile_runtime_probe: profile storage allocation failed");
         return;
     }
-    if (!makeStandardProfile(*initialProfile) || !makeHintExampleProfile(*candidateProfile) ||
-        !channel.begin()) {
+    if (!runtime.createDraft(FactoryProfile::Standard, 0) || !channel.begin()) {
         Serial.println("profile_runtime_probe: setup rejected");
         return;
     }
-    // Synthetic inputs are copied before task creation. Workers never read a Profile.
-    storage.nfc.card = initialProfile->roles.get(0)->uid;
-    for (std::size_t index = 0; index < initialProfile->roles.get(0)->crystals.size(); ++index) {
-        const auto &crystal = *initialProfile->roles.get(0)->crystals.get(index);
-        larp::domain::GridPosition position;
-        position.row = crystal.row;
-        position.column = static_cast<larp::domain::GridColumn>(crystal.column);
-        storage.i2c.crystals.push_back(position);
-    }
+    // Factory input values copied before workers, independent of private slots.
+    const auto &definition = larp::domain::defaultRoleDefinitions()[0];
+    storage.nfc.card = definition.uid;
+    for (const auto &crystal : definition.crystals)
+        storage.i2c.crystals.push_back(crystal.position);
     for (auto *worker : workers) {
         worker->handle =
             xTaskCreateStaticPinnedToCore(ownerTask, ownerName(worker->owner), WorkerStackBytes,
@@ -197,7 +186,7 @@ void setup() {
         unsigned(sizeof(runtime)), unsigned(sizeof(OwnerConfiguration)), unsigned(sizeof(channel)),
         unsigned(sizeof(Control)), unsigned(sizeof(storage)), unsigned(2 * sizeof(Profile)));
     boot = millis();
-    ready = static_cast<bool>(runtime.activate(*initialProfile, 0, boot));
+    ready = static_cast<bool>(runtime.activateDraft(runtime.storage().draftRevision, 0, boot));
 }
 void loop() {
     if (!ready) {
@@ -210,9 +199,18 @@ void loop() {
     auto game = runtime.game();
     if (!switchRequested && activation.hardwareReady && game.execution.running &&
         static_cast<std::uint32_t>(now - boot) >= 10000) {
-        if (runtime.stopGame(game.execution.stateRevision, now))
-            switchRequested = static_cast<bool>(
-                runtime.activate(*candidateProfile, activation.configurationRevision, now));
+        if (runtime.stopGame(game.execution.stateRevision, now)) {
+            const auto created =
+                runtime.createDraft(FactoryProfile::Hint, runtime.storage().draftRevision);
+            const auto requested =
+                created ? runtime.activateDraft(runtime.storage().draftRevision,
+                                                activation.configurationRevision, now)
+                        : created;
+            switchRequested = true;
+            if (!requested)
+                Serial.printf("profile_runtime_probe: switch rejected=%s\n",
+                              draftOutcomeName(requested.outcome));
+        }
     }
     activation = runtime.activation();
     if (activation.hardwareReady && !runtime.game().execution.running &&
@@ -232,7 +230,7 @@ void loop() {
             "profile_runtime_probe: phase=%s finish=%s cfg=%lu profile=%lu generation=%lu "
             "state=%u role=%u crystals=%u accepted=%lu replies=%lu stale=%lu timeout=%lu "
             "outstanding=%lu "
-            "control_drops=%lu heap=%u stacks=",
+            "control_drops=%lu draft_revision=%lu heap=%u stacks=",
             activationPhaseName(activation.phase), activationFinishName(activation.finish),
             (unsigned long)activation.configurationRevision,
             (unsigned long)activation.profileRevision, (unsigned long)activation.generation,
@@ -240,7 +238,7 @@ void loop() {
             (unsigned long)traffic.accepted, (unsigned long)traffic.received,
             (unsigned long)traffic.staleReplies, (unsigned long)traffic.timedOut,
             (unsigned long)queues.outstanding, (unsigned long)queues.droppedControlReplies,
-            unsigned(ESP.getFreeHeap()));
+            (unsigned long)runtime.storage().draftRevision, unsigned(ESP.getFreeHeap()));
         for (const auto *worker : workers)
             Serial.printf("%u,", unsigned(uxTaskGetStackHighWaterMark(worker->handle)));
         Serial.println();

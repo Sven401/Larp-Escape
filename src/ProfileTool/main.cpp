@@ -42,6 +42,7 @@ int main(int argc, char **argv) {
     const char *inputPath = nullptr;
     const char *previewPath = nullptr;
     const char *activationPath = nullptr;
+    const char *exportActivePath = nullptr;
     bool playable = false, queued = false;
     for (int index = 1; index < argc; ++index) {
         if (std::strcmp(argv[index], "--summary") == 0 && !summary)
@@ -51,6 +52,9 @@ int main(int argc, char **argv) {
         else if (std::strcmp(argv[index], "--import") == 0 && inputPath == nullptr && !example &&
                  index + 1 < argc)
             inputPath = argv[++index];
+        else if (std::strcmp(argv[index], "--active-export") == 0 && exportActivePath == nullptr &&
+                 index + 1 < argc)
+            exportActivePath = argv[++index];
         else if (std::strcmp(argv[index], "--activate") == 0 && activationPath == nullptr &&
                  index + 1 < argc)
             activationPath = argv[++index];
@@ -64,7 +68,7 @@ int main(int argc, char **argv) {
         } else {
             std::fputs("Usage: profile-tools [--summary | --preview SCRIPT | --play SCRIPT | "
                        "--play-queued SCRIPT | --activate FILE] "
-                       "[--example | --import FILE]\n",
+                       "[--example | --import FILE] [--active-export FILE (activation only)]\n",
                        stderr);
             return 2;
         }
@@ -73,6 +77,12 @@ int main(int argc, char **argv) {
         std::fputs("Summary, preview/play and activation are exclusive\n", stderr);
         return 2;
     }
+    if (exportActivePath && !activationPath) {
+        std::fputs("Active export requires activation mode\n", stderr);
+        return 2;
+    }
+    if (activationPath)
+        return runActivation(inputPath, example, activationPath, exportActivePath);
     std::unique_ptr<Profile> profile(new Profile());
     if (inputPath != nullptr) {
         std::FILE *input = std::fopen(inputPath, "rb");
@@ -104,24 +114,6 @@ int main(int argc, char **argv) {
                      static_cast<unsigned>(result.error), static_cast<unsigned>(result.section),
                      result.object, result.detail);
         return 1;
-    }
-    if (activationPath != nullptr) {
-        std::unique_ptr<Profile> candidate(new Profile()), scratch(new Profile());
-        std::FILE *input = std::fopen(activationPath, "rb");
-        if (!input) {
-            std::perror("Cannot open candidate profile");
-            return 1;
-        }
-        FileReader reader(input);
-        const ImportResult result = readProfile(reader, *scratch, *candidate);
-        const bool closeOk = std::fclose(input) == 0;
-        if (!result) {
-            std::fprintf(stderr, "Candidate import rejected: error=%s offset=%lu validation=%u\n",
-                         importErrorName(result.error), static_cast<unsigned long>(result.offset),
-                         static_cast<unsigned>(result.validation.error));
-            return 1;
-        }
-        return closeOk ? runActivation(*profile, *candidate) : 1;
     }
     if (previewPath != nullptr) {
         std::FILE *input = std::fopen(previewPath, "rb");

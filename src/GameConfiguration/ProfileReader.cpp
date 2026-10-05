@@ -898,14 +898,27 @@ const char *importErrorName(ImportError error) {
     const unsigned index = static_cast<unsigned>(error);
     return index < sizeof(names) / sizeof(names[0]) ? names[index] : "unknown_error";
 }
+ImportResult readDraftProfile(IProfileReader &reader, Profile &draft) {
+    Parser parser(reader);
+    return parser.finish(draft);
+}
+ImportResult readDraftProfile(const char *bytes, std::size_t count, Profile &draft) {
+    if ((bytes == nullptr && count != 0) || count > ImportLimits::DocumentBytes) {
+        ImportResult result;
+        result.error = count > ImportLimits::DocumentBytes ? ImportError::DocumentLimit
+                                                           : ImportError::InvalidArgument;
+        return result;
+    }
+    MemoryReader reader(bytes, count);
+    return readDraftProfile(reader, draft);
+}
 ImportResult readProfile(IProfileReader &reader, Profile &scratch, Profile &destination) {
     if (&scratch == &destination) {
         ImportResult result;
         result.error = ImportError::AliasedStorage;
         return result;
     }
-    Parser parser(reader);
-    const ImportResult result = parser.finish(scratch);
+    const ImportResult result = readDraftProfile(reader, scratch);
     if (result)
         destination = scratch;
     return result;
