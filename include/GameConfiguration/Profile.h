@@ -206,7 +206,9 @@ enum class Field : std::uint8_t {
     RoundCount
 };
 enum class Compare : std::uint8_t { Equal, NotEqual, Less, LessEqual, Greater, GreaterEqual };
-enum class ConditionKind : std::uint8_t { Predicate, All, Any, Not };
+// Wait emits one match after its interval and restarts on the next observation.
+// It has independent timing per transition; at most one distinct Wait per guard.
+enum class ConditionKind : std::uint8_t { Predicate, All, Any, Not, Wait };
 struct Condition {
     ConditionId id;
     ComponentId component; // Source for a hardware-dependent field.

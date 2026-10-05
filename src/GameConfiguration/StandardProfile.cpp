@@ -77,6 +77,14 @@ class Builder {
         ok = profile.conditions.push(item) && ok;
         return item.id;
     }
+    ConditionId wait(std::uint32_t milliseconds) {
+        Condition item;
+        item.id = ConditionId(static_cast<std::uint16_t>(profile.conditions.size() + 1));
+        item.kind = ConditionKind::Wait;
+        item.operand = milliseconds;
+        ok = profile.conditions.push(item) && ok;
+        return item.id;
+    }
     ConditionId combine(ConditionKind kind, ConditionId first, ConditionId second) {
         Condition item;
         item.id = ConditionId(static_cast<std::uint16_t>(profile.conditions.size() + 1));
@@ -156,7 +164,7 @@ bool makeStandardProfile(Profile &profile) {
     profile.actions.clear();
     profile.effects.clear();
     profile.schemaVersion = Limits::SchemaVersion;
-    profile.revision = 1;
+    profile.revision = 2;
     profile.board = Board::Esp32DevkitV4;
     profile.initialState = StateId(1);
     profile.errorState = StateId(9);
@@ -329,8 +337,7 @@ bool makeStandardProfile(Profile &profile) {
         builder.predicate(Field::StateElapsedMilliseconds, Compare::GreaterEqual, 600000);
     const ConditionId wake = builder.predicate(Field::AllWakeActive, Compare::Equal, 1, matrixId);
     const ConditionId role = builder.predicate(Field::RoleAccepted, Compare::Equal, 1, nfcId);
-    const ConditionId delay =
-        builder.predicate(Field::TransitionElapsedMilliseconds, Compare::GreaterEqual, 500);
+    const ConditionId delay = builder.wait(500);
     const ConditionId delayedReady = builder.combine(ConditionKind::All, delay, audioReady);
     const ConditionId puzzle = builder.predicate(Field::PuzzleComplete, Compare::Equal, 1);
     const ConditionId completedReady = builder.combine(ConditionKind::All, delayedReady, puzzle);
@@ -359,7 +366,7 @@ bool makeStandardProfile(Profile &profile) {
 bool makeHintExampleProfile(Profile &profile) {
     if (!makeStandardProfile(profile))
         return false;
-    profile.revision = 2;
+    profile.revision = 3;
     if (!profile.name.assign("Larp-Escape with hint"))
         return false;
     Effect effect;

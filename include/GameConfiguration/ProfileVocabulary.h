@@ -14,7 +14,7 @@ static const char *const FieldNames[] = {
     "puzzle_complete", "incorrect_crystal", "keystone_error",        "all_wake_active",
     "seen_role_count", "state_elapsed_ms",  "transition_elapsed_ms", "round_count"};
 static const char *const CompareNames[] = {"eq", "ne", "lt", "le", "gt", "ge"};
-static const char *const ConditionKindNames[] = {"predicate", "all", "any", "not"};
+static const char *const ConditionKindNames[] = {"predicate", "all", "any", "not", "wait"};
 static const char *const ActionKindNames[] = {
     "apply_effect",   "play_track",      "play_role_track",  "play_crystal_track",
     "wake_audio",     "reset_round",     "reset_game",       "reset_card_retry",
@@ -40,7 +40,7 @@ static_assert(sizeof(CompareNames) / sizeof(CompareNames[0]) ==
                   static_cast<unsigned>(Compare::GreaterEqual) + 1,
               "Compare JSON vocabulary must match enum");
 static_assert(sizeof(ConditionKindNames) / sizeof(ConditionKindNames[0]) ==
-                  static_cast<unsigned>(ConditionKind::Not) + 1,
+                  static_cast<unsigned>(ConditionKind::Wait) + 1,
               "ConditionKind JSON vocabulary must match enum");
 static_assert(sizeof(ActionKindNames) / sizeof(ActionKindNames[0]) ==
                   static_cast<unsigned>(ActionKind::AnimateWakeInputs) + 1,

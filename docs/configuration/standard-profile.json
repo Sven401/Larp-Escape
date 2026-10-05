@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "revision": 1,
+  "revision": 2,
   "name": "Larp-Escape Standard",
   "board": "esp32_devkit_v4",
   "initialState": 1,
@@ -1457,10 +1457,7 @@
     },
     {
       "id": 13,
-      "kind": "predicate",
-      "field": "transition_elapsed_ms",
-      "component": 0,
-      "comparison": "ge",
+      "kind": "wait",
       "operand": 500
     },
     {

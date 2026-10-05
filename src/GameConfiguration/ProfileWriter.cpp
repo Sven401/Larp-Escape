@@ -247,7 +247,10 @@ void condition(Json &json, const Condition &item) {
     json.numeric("id", item.id.value);
     json.literal(",");
     json.text("kind", vocabulary::ConditionKindNames[static_cast<unsigned>(item.kind)]);
-    if (item.kind == ConditionKind::Predicate) {
+    if (item.kind == ConditionKind::Wait) {
+        json.literal(",");
+        json.numeric("operand", item.operand);
+    } else if (item.kind == ConditionKind::Predicate) {
         json.literal(",");
         json.text("field", fieldName(item.field));
         json.literal(",");

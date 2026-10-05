@@ -1,6 +1,6 @@
 # Konfigurationsprofil v1 – erster Umsetzungsschnitt
 
-Stand: 5. Oktober 2026. Profilmodell, Standardprofil, Validierung sowie JSON-Import und -Ausgabe sind implementiert. Ausführung des Graphen, Speicherung, Netzwerkschnittstelle und Android-Editoren folgen. Die Produktionsfirmware verwendet noch den bisherigen Controller. Ein vorhandenes JSON-Dokument bedeutet keine erreichbare API oder übernommene Gerätekonfiguration.
+Stand: 5. Oktober 2026. Profilmodell, Standardprofil, Validierung sowie JSON-Import und -Ausgabe sind implementiert. Ein hardwarefreier Graphkern mit Rechner-Vorschau ist implementiert; Anschluss von Spiel-/Geräteaktionen, Speicherung, Netzwerkschnittstelle und Android-Editoren folgen. Die Produktionsfirmware verwendet noch den bisherigen Controller. Ein vorhandenes JSON-Dokument bedeutet keine erreichbare API oder übernommene Gerätekonfiguration.
 
 ## Quellen und reproduzierbarer Export
 
@@ -32,7 +32,7 @@ Das Werkzeug läuft am Rechner und initialisiert keine ESP32-Hardware. Es allozi
 | --- | --- |
 | Komponenten | 16; zunächst NFC-SPI, MCP23017, Matrix, DFPlayer-UART, WS2811/GRB und ESP-NOW |
 | Zustände / Übergänge | 32 / 64; jeweils eigene IDs; kleinere Priorität zuerst, pro Quellzustand eindeutig |
-| Bedingungen | 96 Knoten, Pfadtiefe höchstens 8; Predicate, All, Any, Not; Referenzen dürfen teilen, Zyklen nicht |
+| Bedingungen | 96 Knoten, Pfadtiefe höchstens 8; Predicate, All, Any, Not, Wait; Referenzen dürfen teilen, Zyklen nicht |
 | Aktionen / Effekte | 96 / 32; je Zustand bis 8 Eintritts-/Tick-/Austrittsaktionen, je Übergang 4 Aktionen |
 | Rollen / Kristalle | 16 Rollen mit je bis 8 Kristallen; eindeutige sieben Byte lange UID und eindeutige Positionen pro Rolle |
 | Matrix / Wake | Je 9 Zeilen/Spalten, bis 4 Wake-Eingänge; Listenposition ist logische Koordinate, Zeile 1..9 / Spalte 0..8 |
@@ -52,7 +52,7 @@ Kapazitäten bieten begrenzte Erweiterung gegenüber 7 Geräten, 9 Zuständen, 1
 - SPI-Pinfolge SCK/MISO/MOSI/SS, I²C SDA/SCL, Audio RX/TX/BUSY/WAKE, LED DATA. GPIO 6..11 und USB-UART 1/3 stehen hier nicht zur Verfügung; GPIO 34..39 sind keine Ausgänge. Bootstrapping-Pins brauchen weiterhin elektrische Abnahme.
 - Geteiltes I²C nur bei gleichem Bus und gleicher SDA-/SCL-Zuordnung; Adresse eindeutig. Matrixpositionen und Wake-Eingänge dürfen keine Expanderpins doppelt belegen. UART0 bleibt Diagnose; DFPlayer-Vertrag derzeit 9.600 Baud, Lautstärke 0..30.
 - Bedingungen lesen vorab erfasste Werte/Ereignisse. Ein Predicate führt kein Geräte-I/O aus. Gerätebezogene Felder besitzen eine Komponenten-ID. All/Any haben zwei Kinder, Not eines. Boolwerte erlauben eq/ne mit 0/1; Zeitvergleiche sind auf halben uint32-Bereich begrenzt.
-- `transition_elapsed_ms` ist eine pro Übergang ausgewertete Uhr. Vor der Ausführung ist noch festzulegen, wann ihre Beobachtung beginnt und wie sie beim Verlassen zurückgesetzt wird; das Standardspiel startet seinen 500-ms-Guard bei erster Guardprüfung. Die neue Engine muss dieses Verhalten bewahren.
+- `transition_elapsed_ms` zählt fortlaufend seit erster Abfrage im jeweiligen Übergang. Der bisherige wiederkehrende 500-ms-Guard wird im Standardprofil durch die neue Bedingungsart `wait` bewahrt. Genauer Zeit-/Aktionsvertrag und Grenzen stehen in [execution.md](execution.md).
 - Aktionen haben explizite Komponenten-/Effektbezüge und Parameter. Unterschied zwischen Anfrage und ausgeführter Hardwarewirkung bleibt Bestandteil der Adapterverträge. Fehlerresultate und Eintritt/Austritt bei manuellen Wechseln folgen in E2/E4.
 - Paletten sind 16 RGB24-Werte; ein Kristall ändert sie nur bei `changesPalette=true`. Standardfarben wurden aus `lib/LedFx/Pallets.h` übernommen; bei späterem Entfernen des alten Controllers verbleibt eine kanonische Zuordnung im Profil.
 
@@ -73,7 +73,7 @@ JSON-Grundlage für Syntax, Zahlen und Unicode: [RFC 8259](https://www.rfc-edito
 
 Export enthält sieben Komponenten, sechs Rollen, neun Zustände, 19 Übergänge, 18 Bedingungsknoten, 37 Aktionen und 19 Effekte. UID-/Rollendaten kommen aus `GameDomain::defaultRoleDefinitions`; Hardwarepins und MCP-Startmodi entsprechen dem bestehenden Code. Elektrische Startmodus-/Matrixfragen bleiben offen.
 
-Entry-/Tick-/Transition-Aktionen bilden unter anderem Kristall-/Rollen-Audio, Helligkeitsrampen mit 150-ms-Intervall, Twinkle-Dichte, Burst, Wake, Reset, Rundenzählung und ACTIVATE ab. Wiederholte oder abgewiesene Effektanforderungen behalten ihre Reihenfolge; die Ausführungsengine ist noch nicht implementiert. Noch kein Beweis identischen Spielflusses. Das zweite Beispielprofil ergänzt Zustand 42 (Hinweis), einen Übergang aus Idle nach 30 Sekunden, Rückkehr nach 5 Sekunden und einen cyanfarbenen Burst; es wird im Profilwerkzeug erfolgreich validiert und exportiert, noch nicht als Spiel ausgeführt.
+Entry-/Tick-/Transition-Aktionen bilden unter anderem Kristall-/Rollen-Audio, Helligkeitsrampen mit 150-ms-Intervall, Twinkle-Dichte, Burst, Wake, Reset, Rundenzählung und ACTIVATE ab. Wiederholte oder abgewiesene Effektanforderungen behalten ihre Reihenfolge; die Graphvorschau verarbeitet die Anforderungsreihenfolge, Geräteaktionen sind noch anzuschließen. Noch kein Beweis identischen Spielflusses. Das zweite Beispielprofil ergänzt Zustand 42 (Hinweis), einen Übergang aus Idle nach 30 Sekunden, Rückkehr nach 5 Sekunden und einen cyanfarbenen Burst; es wird im Profilwerkzeug erfolgreich validiert und exportiert, als Graphvorschau mit vorgegebenen Eingaben ausgeführt; Rollen-/Geräteaktionen bleiben anzuschließen.
 
 `emptyReadsBeforeClear=5`, `consecutiveEmptyReads=false` und die bestehenden späten Standby-Lücken bewahren die dokumentierte Ausgangspolitik. Timer-/Event-Latches, Palette auf neuem Kristall und eindeutige Verbrauchsaktionen müssen beim Anschluss an den Controller konkret umgesetzt werden. Vorhandene Controllerfixtures dienen dafür als spätere Verhaltensreferenz.
 
@@ -83,14 +83,14 @@ Profilwerkzeug mit C++11 und Warnungen als Fehler gebaut; Factory/semantische Va
 
 Architekturprüfung zunächst 45 Dateien/110 Includes, 32 isolierte Header und 80 Formatdateien bestanden. Spiel- und USB-Profil sowie das Profilwerkzeug erfolgreich gebaut. Spielprofil: RAM 55.156 Byte, Flash 1.224.921/1.310.720 Byte (93,5 %); USB-Profil: RAM 21.480 Byte, Flash 291.673 Byte. Profilcode ist noch nicht an den Spielcontroller angebunden und teilweise durch den Linker entfernt; dies ist kein RAM-/Flashbudgetnachweis für dessen spätere Aktivierung. Cppcheck 2.1 für drei neue Implementierungen ohne Befund. Keine Remote-CI ausgeführt. Der USB-ESP32 wurde in diesem Schritt nicht neu geflasht.
 
-## Import: beobachteter Gebrauch am 5. Oktober 2026
+## Import: beobachteter Gebrauch im Schnitt `2d7e9dd` am 5. Oktober 2026
 
 Standardprofil über `--import docs/configuration/standard-profile.json` eingelesen und kanonisch wieder ausgegeben: **19.202 Bytes, bytegleich** zum Factoryexport. Hinweisprofil exportiert/eingelesen/ausgegeben: **20.026 Bytes, bytegleich**. Danach JSON-Datei bearbeitet: Name „Hinweis – Bühne“, Revision 3, Hinweisbedingung 45.000 ms und Burstfarbe RGB `0xffaa00`. Der Editor speicherte Unicode als Escapes und kehrte Objektfeldreihenfolgen um; Einlesen/Ausgeben erhielt das vollständige bearbeitete Dokument. Dies belegt den beobachteten Bearbeitungsablauf, keine vollständige Fehlerpfadabdeckung.
 
 Frische Architektur-/Header-/Formatprüfung: 48 Dateien / 119 Includes, 34 isolierte Header und 83 Formatdateien bestanden. Cppcheck 2.1 für Leser, Schreiber und Profilwerkzeug ohne Befund. Keine neue Unity-Suite ergänzt oder ausgeführt; Fehlerfälle, Alias-/Zielerhalt, Grenzwerte und unabhängige Schema-Validierung brauchen noch gesonderte Ausführungsabdeckung. ESP32-Compiler `-Os -fstack-usage`: größter gemeldeter Importframe 1.824 Byte, nächster Frame 400 Byte. Das ist keine gemessene Gesamtstacktiefe oder freigegebene Taskstackgröße.
 
-Drei aktuelle Builds erfolgreich: Spiel RAM 55.156 Byte / Flash **1.225.549 von 1.310.720 Byte (93,5 %)**, USB RAM 21.480 / Flash 291.673 Byte, Rechnerwerkzeug mit Warnungen als Fehler. Der erste Spiel-Build scheiterte beim Bibliothekskompilieren an „No space left on device“; Wiederholung mit `pio run -e az-delivery-devkit-v4 -j 2 -e profile-tools` erfolgreich, ohne Quelldaten zu löschen. Kein Upload und keine Remote-CI. Profilimport noch nicht im Produktionslauf aktiv; die Buildgrößen belegen dessen späteres Ressourcenbudget nicht.
+Builds des Import-Schnitts erfolgreich: Spiel RAM 55.156 Byte / Flash **1.225.549 von 1.310.720 Byte (93,5 %)**, USB RAM 21.480 / Flash 291.673 Byte, Rechnerwerkzeug mit Warnungen als Fehler. Der erste Spiel-Build scheiterte beim Bibliothekskompilieren an „No space left on device“; Wiederholung mit `pio run -e az-delivery-devkit-v4 -j 2 -e profile-tools` erfolgreich, ohne Quelldaten zu löschen. Kein Upload und keine Remote-CI. Profilimport noch nicht im Produktionslauf aktiv; die Buildgrößen belegen dessen späteres Ressourcenbudget nicht.
 
 ## Nächster konkreter Schritt
 
-E2-Graph-/Bedingungsausführung mit explizitem Zeit-/Ereignisvertrag und Standardspielvergleich. JSON-Dateien sind als Profile einlesbar, aber der laufende Controller nutzt sie noch nicht. Konfigurationsaktivierung, Speicherung, lokale API und App bleiben offen; vor Netzwerkumfang RAM-/Flashreserve budgetieren.
+Profilabhängigen Rollen-/Kristallfortschritt und Geräteaktionen an den implementierten E2-Graphkern anschließen. Standardspielvergleich und vollständige Fehlerpfadabdeckung bleiben offen. JSON-Dateien sind als Profile einlesbar und in der Rechner-Vorschau ausführbar, aber der Produktionscontroller nutzt sie noch nicht. Aktuelle Artefakte: Standardrevision 2 (19.133 kompakte Bytes), Hinweisrevision 3 (19.957 Bytes), Graphkern 4.200 Byte. Details: [Ausführungsvertrag](execution.md). Konfigurationsaktivierung, Speicherung, lokale API und App bleiben offen; vor Netzwerkumfang RAM-/Flashreserve budgetieren.

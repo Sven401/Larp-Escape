@@ -27,6 +27,8 @@ FORMATTER_VERSION = "19.1.7"
 ADAPTER_FILES = (
     "src/main.cpp",
     "src/ProfileTool/main.cpp",
+    "src/ProfileTool/Preview.h",
+    "src/ProfileTool/Preview.cpp",
     "src/RuntimeProbe/main.cpp",
     "lib/CompanionStatusStore/CompanionStatusStore.h",
     "lib/CompanionStatusStore/CompanionStatusStore.cpp",

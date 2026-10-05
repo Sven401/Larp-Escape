@@ -474,9 +474,10 @@ class Parser {
     }
     std::uint32_t mask(const Condition &item, std::uint32_t) const {
         // Keys: id, kind, field, component, comparison, operand, first, second.
-        return item.kind == ConditionKind::Predicate ? 0x3F
-               : item.kind == ConditionKind::Not     ? 0x43
-                                                     : 0xC3;
+        return item.kind == ConditionKind::Wait        ? 0x23
+               : item.kind == ConditionKind::Predicate ? 0x3F
+               : item.kind == ConditionKind::Not       ? 0x43
+                                                       : 0xC3;
     }
 };
 bool Parser::read(Board &value) {

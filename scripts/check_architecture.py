@@ -23,6 +23,8 @@ LAYER_ROOTS = (
     ("src/GameDomain", "domain"),
     ("include/GameConfiguration", "configuration"),
     ("src/GameConfiguration", "configuration"),
+    ("include/GameExecution", "execution"),
+    ("src/GameExecution", "execution"),
     ("include/GamePorts", "ports"),
     ("include/GameApplication", "application"),
     ("include/GameRuntime", "runtime"),
@@ -35,10 +37,11 @@ LAYER_ROOTS = (
 ALLOWED_DEPENDENCIES = {
     "domain": {"domain"},
     "configuration": {"domain", "configuration"},
+    "execution": {"domain", "configuration", "execution"},
     "ports": {"domain", "ports"},
     "runtime": {"domain", "runtime"},
     "machine": {"machine"},
-    "application": {"domain", "ports", "runtime", "machine", "application", "configuration"},
+    "application": {"domain", "ports", "runtime", "machine", "application", "configuration", "execution"},
     "companion": {"domain", "application", "companion", "configuration"},
 }
 SOURCE_SUFFIXES = {".h", ".hpp", ".hh", ".hxx", ".c", ".cpp", ".cc", ".cxx", ".inl", ".ipp"}

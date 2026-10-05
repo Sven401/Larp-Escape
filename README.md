@@ -57,3 +57,5 @@ Die Windows-CI ersetzt keine zusätzliche Prüfung von Include-Groß-/Kleinschre
 ## Konfigurierbare Firmware und Companion
 
 Der erste hardwarefreie Profilkern enthält Hardware, Rollen, Zustände, Übergangsbedingungen, Aktionen und Effekte. [Modell, Export und Grenzen](docs/configuration/profile-model.md), [Standardprofil](docs/configuration/standard-profile.json) und [strukturelles JSON-Schema](docs/configuration/profile-v1.schema.json). JSON-Import, Profilausführung, Speicherung, API und Android-App sind noch offen.
+
+Konfigurierbare Graphausführung und Rechner-Vorschau: [Laufzeitvertrag](docs/configuration/execution.md).

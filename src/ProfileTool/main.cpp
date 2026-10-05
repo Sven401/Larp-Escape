@@ -1,6 +1,7 @@
 // Host-side profile export/inspection. This is not an embedded entry point.
 #include "GameConfiguration/ProfileReader.h"
 #include "GameConfiguration/ProfileWriter.h"
+#include "Preview.h"
 #include <cstdio>
 #include <cstring>
 #include <memory>
@@ -37,6 +38,7 @@ int main(int argc, char **argv) {
     bool summary = false;
     bool example = false;
     const char *inputPath = nullptr;
+    const char *previewPath = nullptr;
     for (int index = 1; index < argc; ++index) {
         if (std::strcmp(argv[index], "--summary") == 0 && !summary)
             summary = true;
@@ -45,10 +47,19 @@ int main(int argc, char **argv) {
         else if (std::strcmp(argv[index], "--import") == 0 && inputPath == nullptr && !example &&
                  index + 1 < argc)
             inputPath = argv[++index];
+        else if (std::strcmp(argv[index], "--preview") == 0 && previewPath == nullptr &&
+                 index + 1 < argc)
+            previewPath = argv[++index];
         else {
-            std::fputs("Usage: profile-tools [--summary] [--example | --import FILE]\n", stderr);
+            std::fputs(
+                "Usage: profile-tools [--summary | --preview SCRIPT] [--example | --import FILE]\n",
+                stderr);
             return 2;
         }
+    }
+    if (summary && previewPath != nullptr) {
+        std::fputs("Summary and preview are exclusive\n", stderr);
+        return 2;
     }
     std::unique_ptr<Profile> profile(new Profile());
     if (inputPath != nullptr) {
@@ -81,6 +92,15 @@ int main(int argc, char **argv) {
                      static_cast<unsigned>(result.error), static_cast<unsigned>(result.section),
                      result.object, result.detail);
         return 1;
+    }
+    if (previewPath != nullptr) {
+        std::FILE *input = std::fopen(previewPath, "rb");
+        if (input == nullptr) {
+            std::perror("Cannot open preview script");
+            return 1;
+        }
+        const int status = runPreview(*profile, input);
+        return std::fclose(input) == 0 ? status : 1;
     }
     if (summary) {
         std::printf("{\"profileBytes\":%lu,\"components\":%lu,\"roles\":%lu,\"states\":%lu,"

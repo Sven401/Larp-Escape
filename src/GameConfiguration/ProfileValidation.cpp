@@ -250,7 +250,7 @@ ValidationResult expression(const Profile &profile, ConditionId id,
     if (depth == path.size())
         return fail(Error::ConditionDepth, Section::Conditions, id.value);
     path[depth] = id;
-    if (node->kind == ConditionKind::Predicate)
+    if (node->kind == ConditionKind::Predicate || node->kind == ConditionKind::Wait)
         return {};
     ValidationResult result = expression(profile, node->first, path, depth + 1);
     if (!result || node->kind == ConditionKind::Not)
@@ -260,9 +260,14 @@ ValidationResult expression(const Profile &profile, ConditionId id,
 ValidationResult validateConditions(const Profile &profile) {
     for (std::size_t index = 0; index < profile.conditions.size(); ++index) {
         const Condition &node = *profile.conditions.get(index);
-        if (static_cast<unsigned>(node.kind) > static_cast<unsigned>(ConditionKind::Not))
+        if (static_cast<unsigned>(node.kind) > static_cast<unsigned>(ConditionKind::Wait))
             return fail(Error::InvalidKind, Section::Conditions, node.id.value);
-        if (node.kind == ConditionKind::Predicate) {
+        if (node.kind == ConditionKind::Wait) {
+            if (node.operand == 0 || node.operand > 0x7FFFFFFFU || node.first.value != 0 ||
+                node.second.value != 0 || node.component.value != 0 ||
+                node.field != Field::AudioBusy || node.comparison != Compare::Equal)
+                return fail(Error::InvalidExpression, Section::Conditions, node.id.value);
+        } else if (node.kind == ConditionKind::Predicate) {
             if (node.first.value != 0 || node.second.value != 0 ||
                 static_cast<unsigned>(node.field) > static_cast<unsigned>(Field::RoundCount) ||
                 static_cast<unsigned>(node.comparison) >
@@ -448,6 +453,26 @@ ValidationResult actionReferences(const Profile &profile, const List<ActionId, N
             return fail(Error::MissingReference, section, owner, ids.get(index)->value);
     return {};
 }
+// Conditions are already validated/acyclic. Sharing a Wait node is permitted,
+// but two independent waits in one guard would require two clocks per transition.
+ValidationResult singleWait(const Profile &profile, ConditionId id, ConditionId &found,
+                            std::uint16_t transition, std::size_t depth = 0) {
+    const Condition *node = find(profile.conditions, id);
+    if (node == nullptr || depth == Limits::ConditionDepth)
+        return fail(Error::InvalidExpression, Section::Transitions, transition, id.value);
+    if (node->kind == ConditionKind::Wait) {
+        if (found.value != 0 && found != id)
+            return fail(Error::InvalidExpression, Section::Transitions, transition, id.value);
+        found = id;
+        return {};
+    }
+    if (node->kind == ConditionKind::Predicate)
+        return {};
+    ValidationResult result = singleWait(profile, node->first, found, transition, depth + 1);
+    if (!result || node->kind == ConditionKind::Not)
+        return result;
+    return singleWait(profile, node->second, found, transition, depth + 1);
+}
 ValidationResult validateGraph(const Profile &profile) {
     if (profile.states.size() == 0)
         return fail(Error::EmptyGraph, Section::Profile);
@@ -475,6 +500,11 @@ ValidationResult validateGraph(const Profile &profile) {
             find(profile.states, transition.target) == nullptr ||
             find(profile.conditions, transition.condition) == nullptr)
             return fail(Error::MissingReference, Section::Transitions, transition.id.value);
+        ConditionId wait;
+        const ValidationResult waitResult =
+            singleWait(profile, transition.condition, wait, transition.id.value);
+        if (!waitResult)
+            return waitResult;
         for (std::size_t previous = 0; previous < index; ++previous) {
             const Transition &other = *profile.transitions.get(previous);
             if (other.source == transition.source && other.priority == transition.priority)
