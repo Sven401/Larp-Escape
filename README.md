@@ -53,3 +53,7 @@ Der kanonische Projektplan und die Sitzungsübergabe liegen im getrennten Werkba
 `check_format.py` verwendet exakt clang-format **19.1.7** und `.clang-format`. Die explizite Baseline umfasst die reinen Schichten, die im Skript genannten überarbeiteten Adapter, beide Einstiegspunkte und die neuen Host-Suites. Alte Konfiguration, ArduinoClock, EspNowCommunicator und die frühere `test_regression` bleiben außerhalb der Formatbaseline. `--list` zeigt die konkreten Dateien, `--fix` formatiert ausschließlich diese geprüfte Liste. Die aktuelle Baseline enthält 74 Dateien.
 
 Die Windows-CI ersetzt keine zusätzliche Prüfung von Include-Groß-/Kleinschreibung auf einem case-sensitiven System. Statische Analyse wurde lokal mit Cppcheck 2.1 für die reinen Implementierungen (`warning,performance,portability`) durchgeführt; clang-tidy und eine verpflichtende vollständige Analyse sind noch offen.
+
+## Konfigurierbare Firmware und Companion
+
+Der erste hardwarefreie Profilkern enthält Hardware, Rollen, Zustände, Übergangsbedingungen, Aktionen und Effekte. [Modell, Export und Grenzen](docs/configuration/profile-model.md), [Standardprofil](docs/configuration/standard-profile.json) und [strukturelles JSON-Schema](docs/configuration/profile-v1.schema.json). JSON-Import, Profilausführung, Speicherung, API und Android-App sind noch offen.

@@ -1,0 +1,873 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "revision",
+    "name",
+    "board",
+    "initialState",
+    "errorState",
+    "inputs",
+    "components",
+    "roles",
+    "states",
+    "transitions",
+    "conditions",
+    "actions",
+    "effects"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4294967295
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 32,
+      "x-maxUtf8Bytes": 32,
+      "description": "Firmware also requires <=32 UTF-8 bytes and rejects control characters."
+    },
+    "board": {
+      "const": "esp32_devkit_v4"
+    },
+    "initialState": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 65535
+    },
+    "errorState": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 65535
+    },
+    "inputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cardTimeoutMilliseconds",
+        "emptyReadsBeforeClear",
+        "keystoneFailureThreshold",
+        "consecutiveEmptyReads",
+        "wakeRippleOrigins",
+        "wakeRippleFrames"
+      ],
+      "properties": {
+        "cardTimeoutMilliseconds": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535
+        },
+        "emptyReadsBeforeClear": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 255
+        },
+        "keystoneFailureThreshold": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 255
+        },
+        "consecutiveEmptyReads": {
+          "type": "boolean"
+        },
+        "wakeRippleOrigins": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 65535
+          },
+          "minItems": 4,
+          "maxItems": 4
+        },
+        "wakeRippleFrames": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        }
+      }
+    },
+    "components": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/component"
+      },
+      "minItems": 0,
+      "maxItems": 16
+    },
+    "roles": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/role"
+      },
+      "minItems": 0,
+      "maxItems": 16
+    },
+    "states": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/state"
+      },
+      "minItems": 1,
+      "maxItems": 32
+    },
+    "transitions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/transition"
+      },
+      "minItems": 0,
+      "maxItems": 64
+    },
+    "conditions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/condition"
+      },
+      "minItems": 0,
+      "maxItems": 96
+    },
+    "actions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/action"
+      },
+      "minItems": 0,
+      "maxItems": 96
+    },
+    "effects": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/effect"
+      },
+      "minItems": 0,
+      "maxItems": 32
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Larp-Escape configuration profile v1",
+  "$defs": {
+    "component": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "kind",
+        "enabled",
+        "pins",
+        "bus",
+        "address",
+        "ledCount",
+        "powerLimitMilliamperes",
+        "volume",
+        "baud",
+        "initialBrightness",
+        "initialTwinkleDensity",
+        "initialTwinkleSpeed",
+        "startupModes",
+        "peer",
+        "channel",
+        "rows",
+        "columns",
+        "wakeInputs"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 32,
+          "x-maxUtf8Bytes": 32,
+          "description": "Firmware also requires <=32 UTF-8 bytes and rejects control characters."
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "nfc_spi",
+            "io_expander",
+            "matrix",
+            "audio_uart",
+            "led_strip",
+            "esp_now"
+          ]
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "pins": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 255
+          },
+          "minItems": 4,
+          "maxItems": 4
+        },
+        "bus": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "address": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "ledCount": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "powerLimitMilliamperes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "volume": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "baud": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "initialBrightness": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "initialTwinkleDensity": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "initialTwinkleSpeed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "startupModes": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 3
+          },
+          "minItems": 16,
+          "maxItems": 16
+        },
+        "peer": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 255
+          },
+          "minItems": 6,
+          "maxItems": 6
+        },
+        "channel": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "expander",
+              "pin"
+            ],
+            "properties": {
+              "expander": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 65535
+              },
+              "pin": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 15
+              }
+            }
+          },
+          "minItems": 0,
+          "maxItems": 9
+        },
+        "columns": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "expander",
+              "pin"
+            ],
+            "properties": {
+              "expander": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 65535
+              },
+              "pin": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 15
+              }
+            }
+          },
+          "minItems": 0,
+          "maxItems": 9
+        },
+        "wakeInputs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "expander",
+              "pin"
+            ],
+            "properties": {
+              "expander": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 65535
+              },
+              "pin": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 15
+              }
+            }
+          },
+          "minItems": 0,
+          "maxItems": 4
+        }
+      }
+    },
+    "crystal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "row",
+        "column",
+        "audioTrack",
+        "category",
+        "changesPalette",
+        "palette"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 32,
+          "x-maxUtf8Bytes": 32,
+          "description": "Firmware also requires <=32 UTF-8 bytes and rejects control characters."
+        },
+        "row": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9
+        },
+        "column": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8
+        },
+        "audioTrack": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535
+        },
+        "category": {
+          "type": "string",
+          "enum": [
+            "animal",
+            "item",
+            "color"
+          ]
+        },
+        "changesPalette": {
+          "type": "boolean"
+        },
+        "palette": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 16777215
+          },
+          "minItems": 16,
+          "maxItems": 16
+        }
+      }
+    },
+    "role": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "uid",
+        "audioTrack",
+        "crystals"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 32,
+          "x-maxUtf8Bytes": 32,
+          "description": "Firmware also requires <=32 UTF-8 bytes and rejects control characters."
+        },
+        "uid": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 255
+          },
+          "minItems": 7,
+          "maxItems": 7
+        },
+        "audioTrack": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535
+        },
+        "crystals": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/crystal"
+          },
+          "minItems": 1,
+          "maxItems": 8
+        }
+      }
+    },
+    "state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "manualAllowed",
+        "entry",
+        "tick",
+        "exit"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 32,
+          "x-maxUtf8Bytes": 32,
+          "description": "Firmware also requires <=32 UTF-8 bytes and rejects control characters."
+        },
+        "manualAllowed": {
+          "type": "boolean"
+        },
+        "entry": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 65535
+          },
+          "minItems": 0,
+          "maxItems": 8
+        },
+        "tick": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 65535
+          },
+          "minItems": 0,
+          "maxItems": 8
+        },
+        "exit": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 65535
+          },
+          "minItems": 0,
+          "maxItems": 8
+        }
+      }
+    },
+    "transition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "source",
+        "target",
+        "condition",
+        "priority",
+        "manualAllowed",
+        "actions"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535
+        },
+        "source": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535
+        },
+        "target": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535
+        },
+        "condition": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535
+        },
+        "priority": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "manualAllowed": {
+          "type": "boolean"
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 65535
+          },
+          "minItems": 0,
+          "maxItems": 4
+        }
+      }
+    },
+    "condition": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "kind",
+            "field",
+            "component",
+            "comparison",
+            "operand"
+          ],
+          "properties": {
+            "id": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 65535
+            },
+            "kind": {
+              "const": "predicate"
+            },
+            "field": {
+              "type": "string",
+              "enum": [
+                "audio_busy",
+                "role_accepted",
+                "crystal_available",
+                "crystal_audio_pending",
+                "puzzle_complete",
+                "incorrect_crystal",
+                "keystone_error",
+                "all_wake_active",
+                "seen_role_count",
+                "state_elapsed_ms",
+                "transition_elapsed_ms",
+                "round_count"
+              ]
+            },
+            "component": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 65535
+            },
+            "comparison": {
+              "type": "string",
+              "enum": [
+                "eq",
+                "ne",
+                "lt",
+                "le",
+                "gt",
+                "ge"
+              ]
+            },
+            "operand": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4294967295
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "kind",
+            "first",
+            "second"
+          ],
+          "properties": {
+            "id": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 65535
+            },
+            "kind": {
+              "type": "string",
+              "enum": [
+                "all",
+                "any"
+              ]
+            },
+            "first": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 65535
+            },
+            "second": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 65535
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "kind",
+            "first"
+          ],
+          "properties": {
+            "id": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 65535
+            },
+            "kind": {
+              "const": "not"
+            },
+            "first": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 65535
+            }
+          }
+        }
+      ]
+    },
+    "action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "component",
+        "source",
+        "effect",
+        "value"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "apply_effect",
+            "play_track",
+            "play_role_track",
+            "play_crystal_track",
+            "wake_audio",
+            "reset_round",
+            "reset_game",
+            "reset_card_retry",
+            "complete_round",
+            "send_activation",
+            "consume_crystal",
+            "consume_error",
+            "read_role",
+            "read_crystals",
+            "observe_keystone",
+            "animate_wake_inputs"
+          ]
+        },
+        "component": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "source": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "effect": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "value": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "effect": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "component",
+        "kind",
+        "density",
+        "changesSpeed",
+        "speed",
+        "brightness",
+        "intervalMilliseconds",
+        "frames",
+        "colored",
+        "colorRgb",
+        "rippleIndex",
+        "origin",
+        "palette"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 32,
+          "x-maxUtf8Bytes": 32,
+          "description": "Firmware also requires <=32 UTF-8 bytes and rejects control characters."
+        },
+        "component": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "twinkle",
+            "burst",
+            "ripple",
+            "brightness_ramp",
+            "palette"
+          ]
+        },
+        "density": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8
+        },
+        "changesSpeed": {
+          "type": "boolean"
+        },
+        "speed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8
+        },
+        "brightness": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "intervalMilliseconds": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "frames": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "colored": {
+          "type": "boolean"
+        },
+        "colorRgb": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 16777215
+        },
+        "rippleIndex": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "origin": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "palette": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 16777215
+          },
+          "minItems": 16,
+          "maxItems": 16
+        }
+      }
+    }
+  },
+  "description": "Structural contract; semantic validation by the firmware is required before activation."
+}

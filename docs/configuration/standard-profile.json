@@ -1,0 +1,2447 @@
+{
+  "schemaVersion": 1,
+  "revision": 1,
+  "name": "Larp-Escape Standard",
+  "board": "esp32_devkit_v4",
+  "initialState": 1,
+  "errorState": 9,
+  "inputs": {
+    "cardTimeoutMilliseconds": 100,
+    "emptyReadsBeforeClear": 5,
+    "keystoneFailureThreshold": 5,
+    "consecutiveEmptyReads": false,
+    "wakeRippleOrigins": [
+      22,
+      2,
+      16,
+      10
+    ],
+    "wakeRippleFrames": 60
+  },
+  "components": [
+    {
+      "id": 1,
+      "name": "PN532",
+      "kind": "nfc_spi",
+      "enabled": true,
+      "pins": [
+        16,
+        17,
+        23,
+        4
+      ],
+      "bus": 0,
+      "address": 0,
+      "ledCount": 0,
+      "powerLimitMilliamperes": 1000,
+      "volume": 27,
+      "baud": 9600,
+      "initialBrightness": 100,
+      "initialTwinkleDensity": 1,
+      "initialTwinkleSpeed": 1,
+      "startupModes": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "peer": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "channel": 0,
+      "rows": [],
+      "columns": [],
+      "wakeInputs": []
+    },
+    {
+      "id": 2,
+      "name": "MCP 0x20",
+      "kind": "io_expander",
+      "enabled": true,
+      "pins": [
+        21,
+        22,
+        255,
+        255
+      ],
+      "bus": 0,
+      "address": 32,
+      "ledCount": 0,
+      "powerLimitMilliamperes": 1000,
+      "volume": 27,
+      "baud": 9600,
+      "initialBrightness": 100,
+      "initialTwinkleDensity": 1,
+      "initialTwinkleSpeed": 1,
+      "startupModes": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "peer": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "channel": 0,
+      "rows": [],
+      "columns": [],
+      "wakeInputs": []
+    },
+    {
+      "id": 3,
+      "name": "MCP 0x21",
+      "kind": "io_expander",
+      "enabled": true,
+      "pins": [
+        21,
+        22,
+        255,
+        255
+      ],
+      "bus": 0,
+      "address": 33,
+      "ledCount": 0,
+      "powerLimitMilliamperes": 1000,
+      "volume": 27,
+      "baud": 9600,
+      "initialBrightness": 100,
+      "initialTwinkleDensity": 1,
+      "initialTwinkleSpeed": 1,
+      "startupModes": [
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        1,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "peer": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "channel": 0,
+      "rows": [],
+      "columns": [],
+      "wakeInputs": []
+    },
+    {
+      "id": 4,
+      "name": "Crystal matrix",
+      "kind": "matrix",
+      "enabled": true,
+      "pins": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "bus": 0,
+      "address": 0,
+      "ledCount": 0,
+      "powerLimitMilliamperes": 1000,
+      "volume": 27,
+      "baud": 9600,
+      "initialBrightness": 100,
+      "initialTwinkleDensity": 1,
+      "initialTwinkleSpeed": 1,
+      "startupModes": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "peer": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "channel": 0,
+      "rows": [
+        {
+          "expander": 3,
+          "pin": 15
+        },
+        {
+          "expander": 3,
+          "pin": 14
+        },
+        {
+          "expander": 3,
+          "pin": 13
+        },
+        {
+          "expander": 3,
+          "pin": 12
+        },
+        {
+          "expander": 3,
+          "pin": 11
+        },
+        {
+          "expander": 3,
+          "pin": 10
+        },
+        {
+          "expander": 3,
+          "pin": 9
+        },
+        {
+          "expander": 3,
+          "pin": 8
+        },
+        {
+          "expander": 2,
+          "pin": 8
+        }
+      ],
+      "columns": [
+        {
+          "expander": 2,
+          "pin": 9
+        },
+        {
+          "expander": 2,
+          "pin": 0
+        },
+        {
+          "expander": 2,
+          "pin": 1
+        },
+        {
+          "expander": 2,
+          "pin": 2
+        },
+        {
+          "expander": 2,
+          "pin": 3
+        },
+        {
+          "expander": 2,
+          "pin": 4
+        },
+        {
+          "expander": 2,
+          "pin": 5
+        },
+        {
+          "expander": 2,
+          "pin": 6
+        },
+        {
+          "expander": 2,
+          "pin": 13
+        }
+      ],
+      "wakeInputs": [
+        {
+          "expander": 2,
+          "pin": 15
+        },
+        {
+          "expander": 2,
+          "pin": 14
+        },
+        {
+          "expander": 2,
+          "pin": 12
+        },
+        {
+          "expander": 2,
+          "pin": 11
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "DFPlayer",
+      "kind": "audio_uart",
+      "enabled": true,
+      "pins": [
+        25,
+        26,
+        14,
+        13
+      ],
+      "bus": 1,
+      "address": 0,
+      "ledCount": 0,
+      "powerLimitMilliamperes": 1000,
+      "volume": 27,
+      "baud": 9600,
+      "initialBrightness": 100,
+      "initialTwinkleDensity": 1,
+      "initialTwinkleSpeed": 1,
+      "startupModes": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "peer": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "channel": 0,
+      "rows": [],
+      "columns": [],
+      "wakeInputs": []
+    },
+    {
+      "id": 6,
+      "name": "WS2811 GRB",
+      "kind": "led_strip",
+      "enabled": true,
+      "pins": [
+        15,
+        255,
+        255,
+        255
+      ],
+      "bus": 0,
+      "address": 0,
+      "ledCount": 23,
+      "powerLimitMilliamperes": 1000,
+      "volume": 27,
+      "baud": 9600,
+      "initialBrightness": 100,
+      "initialTwinkleDensity": 1,
+      "initialTwinkleSpeed": 1,
+      "startupModes": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "peer": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "channel": 0,
+      "rows": [],
+      "columns": [],
+      "wakeInputs": []
+    },
+    {
+      "id": 7,
+      "name": "ESP-NOW receiver",
+      "kind": "esp_now",
+      "enabled": true,
+      "pins": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "bus": 0,
+      "address": 0,
+      "ledCount": 0,
+      "powerLimitMilliamperes": 1000,
+      "volume": 27,
+      "baud": 9600,
+      "initialBrightness": 100,
+      "initialTwinkleDensity": 1,
+      "initialTwinkleSpeed": 1,
+      "startupModes": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "peer": [
+        176,
+        167,
+        50,
+        241,
+        134,
+        84
+      ],
+      "channel": 0,
+      "rows": [],
+      "columns": [],
+      "wakeInputs": []
+    }
+  ],
+  "roles": [
+    {
+      "id": 1,
+      "name": "Puppenspieler:in",
+      "uid": [
+        4,
+        157,
+        209,
+        202,
+        110,
+        103,
+        128
+      ],
+      "audioTrack": 230,
+      "crystals": [
+        {
+          "name": "Spinne",
+          "row": 1,
+          "column": 0,
+          "audioTrack": 132,
+          "category": "animal",
+          "changesPalette": false,
+          "palette": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "Marionette",
+          "row": 1,
+          "column": 7,
+          "audioTrack": 131,
+          "category": "item",
+          "changesPalette": false,
+          "palette": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "Lila",
+          "row": 4,
+          "column": 4,
+          "audioTrack": 130,
+          "category": "color",
+          "changesPalette": true,
+          "palette": [
+            8388736,
+            10040217,
+            11691698,
+            13408716,
+            15060197,
+            6684774,
+            5046349,
+            10840509,
+            14204888,
+            10027161,
+            11665586,
+            13369548,
+            15007973,
+            16711935,
+            16724991,
+            16738047
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Krieger:in",
+      "uid": [
+        4,
+        177,
+        209,
+        202,
+        110,
+        103,
+        128
+      ],
+      "audioTrack": 210,
+      "crystals": [
+        {
+          "name": "Schild",
+          "row": 2,
+          "column": 1,
+          "audioTrack": 112,
+          "category": "item",
+          "changesPalette": false,
+          "palette": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "Rot",
+          "row": 6,
+          "column": 1,
+          "audioTrack": 111,
+          "category": "color",
+          "changesPalette": true,
+          "palette": [
+            13369344,
+            10027008,
+            8388640,
+            11674146,
+            16734774,
+            16737894,
+            16751001,
+            16764108,
+            16766720,
+            16752762,
+            14893620,
+            14100024,
+            12720135,
+            16747586,
+            16416882,
+            16761035
+          ]
+        },
+        {
+          "name": "Löwe",
+          "row": 3,
+          "column": 5,
+          "audioTrack": 110,
+          "category": "animal",
+          "changesPalette": false,
+          "palette": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Narr / Närrin",
+      "uid": [
+        4,
+        161,
+        209,
+        202,
+        110,
+        103,
+        128
+      ],
+      "audioTrack": 220,
+      "crystals": [
+        {
+          "name": "Käfig",
+          "row": 2,
+          "column": 2,
+          "audioTrack": 120,
+          "category": "item",
+          "changesPalette": false,
+          "palette": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "Orange",
+          "row": 9,
+          "column": 1,
+          "audioTrack": 121,
+          "category": "color",
+          "changesPalette": true,
+          "palette": [
+            16753920,
+            16747520,
+            16744272,
+            16737095,
+            16729344,
+            16729344,
+            16737095,
+            16744272,
+            16747520,
+            16753920,
+            16757575,
+            16764006,
+            16766720,
+            16770229,
+            16773077,
+            16775388
+          ]
+        },
+        {
+          "name": "Rabe",
+          "row": 9,
+          "column": 7,
+          "audioTrack": 122,
+          "category": "animal",
+          "changesPalette": false,
+          "palette": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Abenteurer:in",
+      "uid": [
+        4,
+        165,
+        209,
+        202,
+        110,
+        103,
+        128
+      ],
+      "audioTrack": 200,
+      "crystals": [
+        {
+          "name": "Seil",
+          "row": 5,
+          "column": 7,
+          "audioTrack": 102,
+          "category": "item",
+          "changesPalette": false,
+          "palette": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "Grün",
+          "row": 2,
+          "column": 4,
+          "audioTrack": 101,
+          "category": "color",
+          "changesPalette": true,
+          "palette": [
+            5025616,
+            3706428,
+            3046706,
+            1793568,
+            867093,
+            8505220,
+            10868391,
+            13166281,
+            15267305,
+            6732650,
+            5744499,
+            6270294,
+            9159498,
+            10275941,
+            11722715,
+            13692135
+          ]
+        },
+        {
+          "name": "Fuchs",
+          "row": 2,
+          "column": 5,
+          "audioTrack": 100,
+          "category": "animal",
+          "changesPalette": false,
+          "palette": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Überlebende:r",
+      "uid": [
+        4,
+        173,
+        209,
+        202,
+        110,
+        103,
+        128
+      ],
+      "audioTrack": 250,
+      "crystals": [
+        {
+          "name": "Schwer",
+          "row": 9,
+          "column": 3,
+          "audioTrack": 150,
+          "category": "item",
+          "changesPalette": false,
+          "palette": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "Weiß",
+          "row": 7,
+          "column": 6,
+          "audioTrack": 151,
+          "category": "color",
+          "changesPalette": true,
+          "palette": [
+            16777215,
+            16316656,
+            15790312,
+            15266040,
+            14737648,
+            15788280,
+            16310496,
+            16314576,
+            15268048,
+            13695208,
+            13691128,
+            15782136,
+            16306400,
+            14743792,
+            15792336,
+            16312528
+          ]
+        },
+        {
+          "name": "Ratte",
+          "row": 3,
+          "column": 6,
+          "audioTrack": 152,
+          "category": "animal",
+          "changesPalette": false,
+          "palette": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Wissende:r",
+      "uid": [
+        4,
+        169,
+        209,
+        202,
+        110,
+        103,
+        128
+      ],
+      "audioTrack": 240,
+      "crystals": [
+        {
+          "name": "Buch",
+          "row": 9,
+          "column": 5,
+          "audioTrack": 141,
+          "category": "item",
+          "changesPalette": false,
+          "palette": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "Blau  ",
+          "row": 2,
+          "column": 6,
+          "audioTrack": 140,
+          "category": "color",
+          "changesPalette": true,
+          "palette": [
+            255,
+            204,
+            13158,
+            20638,
+            1990801,
+            30646,
+            38599,
+            46296,
+            4770532,
+            9494767,
+            3381759,
+            3368703,
+            4876733,
+            6970061,
+            5932259,
+            9349350
+          ]
+        },
+        {
+          "name": "Pfau",
+          "row": 8,
+          "column": 4,
+          "audioTrack": 142,
+          "category": "animal",
+          "changesPalette": false,
+          "palette": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    }
+  ],
+  "states": [
+    {
+      "id": 1,
+      "name": "standby",
+      "manualAllowed": true,
+      "entry": [
+        14,
+        2,
+        1
+      ],
+      "tick": [
+        15
+      ],
+      "exit": []
+    },
+    {
+      "id": 2,
+      "name": "idle",
+      "manualAllowed": true,
+      "entry": [
+        12,
+        10,
+        16,
+        13,
+        3
+      ],
+      "tick": [
+        17,
+        6
+      ],
+      "exit": []
+    },
+    {
+      "id": 3,
+      "name": "waiting_for_crystals",
+      "manualAllowed": true,
+      "entry": [
+        9,
+        10,
+        18,
+        3
+      ],
+      "tick": [
+        19,
+        7,
+        8
+      ],
+      "exit": []
+    },
+    {
+      "id": 4,
+      "name": "first_crystal_placed",
+      "manualAllowed": true,
+      "entry": [
+        10,
+        20,
+        21,
+        3
+      ],
+      "tick": [
+        22,
+        7,
+        8
+      ],
+      "exit": []
+    },
+    {
+      "id": 5,
+      "name": "second_crystal_placed",
+      "manualAllowed": true,
+      "entry": [
+        10,
+        23,
+        24,
+        3
+      ],
+      "tick": [
+        25,
+        7,
+        8
+      ],
+      "exit": []
+    },
+    {
+      "id": 6,
+      "name": "third_crystal_placed",
+      "manualAllowed": true,
+      "entry": [
+        10,
+        26,
+        27
+      ],
+      "tick": [
+        28
+      ],
+      "exit": []
+    },
+    {
+      "id": 7,
+      "name": "game_completed",
+      "manualAllowed": true,
+      "entry": [
+        11,
+        29,
+        30,
+        31
+      ],
+      "tick": [
+        32
+      ],
+      "exit": []
+    },
+    {
+      "id": 8,
+      "name": "bonus",
+      "manualAllowed": true,
+      "entry": [
+        33,
+        34
+      ],
+      "tick": [],
+      "exit": []
+    },
+    {
+      "id": 9,
+      "name": "error",
+      "manualAllowed": true,
+      "entry": [
+        35,
+        36,
+        2
+      ],
+      "tick": [],
+      "exit": []
+    }
+  ],
+  "transitions": [
+    {
+      "id": 1,
+      "source": 1,
+      "target": 2,
+      "condition": 11,
+      "priority": 0,
+      "manualAllowed": false,
+      "actions": []
+    },
+    {
+      "id": 2,
+      "source": 2,
+      "target": 3,
+      "condition": 12,
+      "priority": 0,
+      "manualAllowed": false,
+      "actions": []
+    },
+    {
+      "id": 3,
+      "source": 2,
+      "target": 9,
+      "condition": 5,
+      "priority": 1,
+      "manualAllowed": false,
+      "actions": [
+        5
+      ]
+    },
+    {
+      "id": 4,
+      "source": 2,
+      "target": 1,
+      "condition": 10,
+      "priority": 2,
+      "manualAllowed": false,
+      "actions": []
+    },
+    {
+      "id": 5,
+      "source": 3,
+      "target": 9,
+      "condition": 5,
+      "priority": 0,
+      "manualAllowed": false,
+      "actions": [
+        5
+      ]
+    },
+    {
+      "id": 6,
+      "source": 3,
+      "target": 4,
+      "condition": 9,
+      "priority": 1,
+      "manualAllowed": false,
+      "actions": [
+        4
+      ]
+    },
+    {
+      "id": 7,
+      "source": 3,
+      "target": 1,
+      "condition": 10,
+      "priority": 2,
+      "manualAllowed": false,
+      "actions": []
+    },
+    {
+      "id": 8,
+      "source": 4,
+      "target": 9,
+      "condition": 5,
+      "priority": 0,
+      "manualAllowed": false,
+      "actions": [
+        5
+      ]
+    },
+    {
+      "id": 9,
+      "source": 4,
+      "target": 5,
+      "condition": 9,
+      "priority": 1,
+      "manualAllowed": false,
+      "actions": [
+        4
+      ]
+    },
+    {
+      "id": 10,
+      "source": 4,
+      "target": 1,
+      "condition": 10,
+      "priority": 2,
+      "manualAllowed": false,
+      "actions": []
+    },
+    {
+      "id": 11,
+      "source": 5,
+      "target": 9,
+      "condition": 5,
+      "priority": 0,
+      "manualAllowed": false,
+      "actions": [
+        5
+      ]
+    },
+    {
+      "id": 12,
+      "source": 5,
+      "target": 6,
+      "condition": 9,
+      "priority": 1,
+      "manualAllowed": false,
+      "actions": [
+        4
+      ]
+    },
+    {
+      "id": 13,
+      "source": 5,
+      "target": 1,
+      "condition": 10,
+      "priority": 2,
+      "manualAllowed": false,
+      "actions": []
+    },
+    {
+      "id": 14,
+      "source": 6,
+      "target": 9,
+      "condition": 5,
+      "priority": 0,
+      "manualAllowed": false,
+      "actions": [
+        5
+      ]
+    },
+    {
+      "id": 15,
+      "source": 6,
+      "target": 7,
+      "condition": 16,
+      "priority": 1,
+      "manualAllowed": false,
+      "actions": []
+    },
+    {
+      "id": 16,
+      "source": 7,
+      "target": 8,
+      "condition": 18,
+      "priority": 0,
+      "manualAllowed": false,
+      "actions": []
+    },
+    {
+      "id": 17,
+      "source": 7,
+      "target": 2,
+      "condition": 14,
+      "priority": 1,
+      "manualAllowed": false,
+      "actions": [
+        1
+      ]
+    },
+    {
+      "id": 18,
+      "source": 8,
+      "target": 2,
+      "condition": 14,
+      "priority": 0,
+      "manualAllowed": false,
+      "actions": [
+        37,
+        2
+      ]
+    },
+    {
+      "id": 19,
+      "source": 9,
+      "target": 2,
+      "condition": 14,
+      "priority": 0,
+      "manualAllowed": false,
+      "actions": [
+        1
+      ]
+    }
+  ],
+  "conditions": [
+    {
+      "id": 1,
+      "kind": "predicate",
+      "field": "audio_busy",
+      "component": 5,
+      "comparison": "eq",
+      "operand": 0
+    },
+    {
+      "id": 2,
+      "kind": "predicate",
+      "field": "incorrect_crystal",
+      "component": 4,
+      "comparison": "eq",
+      "operand": 1
+    },
+    {
+      "id": 3,
+      "kind": "predicate",
+      "field": "keystone_error",
+      "component": 1,
+      "comparison": "eq",
+      "operand": 1
+    },
+    {
+      "id": 4,
+      "kind": "any",
+      "first": 2,
+      "second": 3
+    },
+    {
+      "id": 5,
+      "kind": "all",
+      "first": 1,
+      "second": 4
+    },
+    {
+      "id": 6,
+      "kind": "predicate",
+      "field": "crystal_available",
+      "component": 4,
+      "comparison": "eq",
+      "operand": 1
+    },
+    {
+      "id": 7,
+      "kind": "predicate",
+      "field": "crystal_audio_pending",
+      "component": 0,
+      "comparison": "eq",
+      "operand": 1
+    },
+    {
+      "id": 8,
+      "kind": "any",
+      "first": 6,
+      "second": 7
+    },
+    {
+      "id": 9,
+      "kind": "all",
+      "first": 1,
+      "second": 8
+    },
+    {
+      "id": 10,
+      "kind": "predicate",
+      "field": "state_elapsed_ms",
+      "component": 0,
+      "comparison": "ge",
+      "operand": 600000
+    },
+    {
+      "id": 11,
+      "kind": "predicate",
+      "field": "all_wake_active",
+      "component": 4,
+      "comparison": "eq",
+      "operand": 1
+    },
+    {
+      "id": 12,
+      "kind": "predicate",
+      "field": "role_accepted",
+      "component": 1,
+      "comparison": "eq",
+      "operand": 1
+    },
+    {
+      "id": 13,
+      "kind": "predicate",
+      "field": "transition_elapsed_ms",
+      "component": 0,
+      "comparison": "ge",
+      "operand": 500
+    },
+    {
+      "id": 14,
+      "kind": "all",
+      "first": 13,
+      "second": 1
+    },
+    {
+      "id": 15,
+      "kind": "predicate",
+      "field": "puzzle_complete",
+      "component": 0,
+      "comparison": "eq",
+      "operand": 1
+    },
+    {
+      "id": 16,
+      "kind": "all",
+      "first": 14,
+      "second": 15
+    },
+    {
+      "id": 17,
+      "kind": "predicate",
+      "field": "seen_role_count",
+      "component": 0,
+      "comparison": "eq",
+      "operand": 6
+    },
+    {
+      "id": 18,
+      "kind": "all",
+      "first": 14,
+      "second": 17
+    }
+  ],
+  "actions": [
+    {
+      "id": 1,
+      "kind": "reset_round",
+      "component": 0,
+      "source": 0,
+      "effect": 0,
+      "value": 0
+    },
+    {
+      "id": 2,
+      "kind": "reset_game",
+      "component": 0,
+      "source": 0,
+      "effect": 0,
+      "value": 0
+    },
+    {
+      "id": 3,
+      "kind": "reset_card_retry",
+      "component": 0,
+      "source": 0,
+      "effect": 0,
+      "value": 0
+    },
+    {
+      "id": 4,
+      "kind": "consume_crystal",
+      "component": 0,
+      "source": 0,
+      "effect": 0,
+      "value": 0
+    },
+    {
+      "id": 5,
+      "kind": "consume_error",
+      "component": 0,
+      "source": 0,
+      "effect": 0,
+      "value": 0
+    },
+    {
+      "id": 6,
+      "kind": "read_role",
+      "component": 1,
+      "source": 0,
+      "effect": 0,
+      "value": 1000
+    },
+    {
+      "id": 7,
+      "kind": "read_crystals",
+      "component": 4,
+      "source": 0,
+      "effect": 0,
+      "value": 100
+    },
+    {
+      "id": 8,
+      "kind": "observe_keystone",
+      "component": 1,
+      "source": 0,
+      "effect": 0,
+      "value": 2000
+    },
+    {
+      "id": 9,
+      "kind": "wake_audio",
+      "component": 5,
+      "source": 0,
+      "effect": 0,
+      "value": 0
+    },
+    {
+      "id": 10,
+      "kind": "apply_effect",
+      "component": 0,
+      "source": 0,
+      "effect": 1,
+      "value": 0
+    },
+    {
+      "id": 11,
+      "kind": "apply_effect",
+      "component": 0,
+      "source": 0,
+      "effect": 2,
+      "value": 0
+    },
+    {
+      "id": 12,
+      "kind": "apply_effect",
+      "component": 0,
+      "source": 0,
+      "effect": 3,
+      "value": 0
+    },
+    {
+      "id": 13,
+      "kind": "apply_effect",
+      "component": 0,
+      "source": 0,
+      "effect": 4,
+      "value": 0
+    },
+    {
+      "id": 14,
+      "kind": "apply_effect",
+      "component": 0,
+      "source": 0,
+      "effect": 5,
+      "value": 0
+    },
+    {
+      "id": 15,
+      "kind": "animate_wake_inputs",
+      "component": 6,
+      "source": 4,
+      "effect": 0,
+      "value": 0
+    },
+    {
+      "id": 16,
+      "kind": "apply_effect",
+      "component": 0,
+      "source": 0,
+      "effect": 6,
+      "value": 0
+    },
+    {
+      "id": 17,
+      "kind": "apply_effect",
+      "component": 0,
+      "source": 0,
+      "effect": 7,
+      "value": 0
+    },
+    {
+      "id": 18,
+      "kind": "apply_effect",
+      "component": 0,
+      "source": 0,
+      "effect": 8,
+      "value": 0
+    },
+    {
+      "id": 19,
+      "kind": "apply_effect",
+      "component": 0,
+      "source": 0,
+      "effect": 9,
+      "value": 0
+    },
+    {
+      "id": 20,
+      "kind": "apply_effect",
+      "component": 0,
+      "source": 0,
+      "effect": 10,
+      "value": 0
+    },
+    {
+      "id": 21,
+      "kind": "play_crystal_track",
+      "component": 5,
+      "source": 0,
+      "effect": 0,
+      "value": 0
+    },
+    {
+      "id": 22,
+      "kind": "apply_effect",
+      "component": 0,
+      "source": 0,
+      "effect": 11,
+      "value": 0
+    },
+    {
+      "id": 23,
+      "kind": "apply_effect",
+      "component": 0,
+      "source": 0,
+      "effect": 12,
+      "value": 0
+    },
+    {
+      "id": 24,
+      "kind": "play_crystal_track",
+      "component": 5,
+      "source": 0,
+      "effect": 0,
+      "value": 1
+    },
+    {
+      "id": 25,
+      "kind": "apply_effect",
+      "component": 0,
+      "source": 0,
+      "effect": 13,
+      "value": 0
+    },
+    {
+      "id": 26,
+      "kind": "apply_effect",
+      "component": 0,
+      "source": 0,
+      "effect": 14,
+      "value": 0
+    },
+    {
+      "id": 27,
+      "kind": "play_crystal_track",
+      "component": 5,
+      "source": 0,
+      "effect": 0,
+      "value": 2
+    },
+    {
+      "id": 28,
+      "kind": "apply_effect",
+      "component": 0,
+      "source": 0,
+      "effect": 15,
+      "value": 0
+    },
+    {
+      "id": 29,
+      "kind": "complete_round",
+      "component": 0,
+      "source": 0,
+      "effect": 0,
+      "value": 0
+    },
+    {
+      "id": 30,
+      "kind": "apply_effect",
+      "component": 0,
+      "source": 0,
+      "effect": 16,
+      "value": 0
+    },
+    {
+      "id": 31,
+      "kind": "play_role_track",
+      "component": 5,
+      "source": 0,
+      "effect": 0,
+      "value": 0
+    },
+    {
+      "id": 32,
+      "kind": "apply_effect",
+      "component": 0,
+      "source": 0,
+      "effect": 17,
+      "value": 0
+    },
+    {
+      "id": 33,
+      "kind": "apply_effect",
+      "component": 0,
+      "source": 0,
+      "effect": 18,
+      "value": 0
+    },
+    {
+      "id": 34,
+      "kind": "play_track",
+      "component": 5,
+      "source": 0,
+      "effect": 0,
+      "value": 900
+    },
+    {
+      "id": 35,
+      "kind": "apply_effect",
+      "component": 0,
+      "source": 0,
+      "effect": 19,
+      "value": 0
+    },
+    {
+      "id": 36,
+      "kind": "play_track",
+      "component": 5,
+      "source": 0,
+      "effect": 0,
+      "value": 998
+    },
+    {
+      "id": 37,
+      "kind": "send_activation",
+      "component": 7,
+      "source": 0,
+      "effect": 0,
+      "value": 0
+    }
+  ],
+  "effects": [
+    {
+      "id": 1,
+      "name": "burst",
+      "component": 6,
+      "kind": "burst",
+      "density": 0,
+      "changesSpeed": false,
+      "speed": 4,
+      "brightness": 0,
+      "intervalMilliseconds": 20,
+      "frames": 15,
+      "colored": false,
+      "colorRgb": 0,
+      "rippleIndex": 0,
+      "origin": 0,
+      "palette": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": 2,
+      "name": "burst",
+      "component": 6,
+      "kind": "burst",
+      "density": 0,
+      "changesSpeed": false,
+      "speed": 4,
+      "brightness": 0,
+      "intervalMilliseconds": 20,
+      "frames": 30,
+      "colored": false,
+      "colorRgb": 0,
+      "rippleIndex": 0,
+      "origin": 0,
+      "palette": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": 3,
+      "name": "burst",
+      "component": 6,
+      "kind": "burst",
+      "density": 0,
+      "changesSpeed": false,
+      "speed": 4,
+      "brightness": 0,
+      "intervalMilliseconds": 20,
+      "frames": 120,
+      "colored": true,
+      "colorRgb": 65280,
+      "rippleIndex": 0,
+      "origin": 0,
+      "palette": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": 4,
+      "name": "muted palette",
+      "component": 6,
+      "kind": "palette",
+      "density": 0,
+      "changesSpeed": false,
+      "speed": 4,
+      "brightness": 0,
+      "intervalMilliseconds": 20,
+      "frames": 15,
+      "colored": false,
+      "colorRgb": 0,
+      "rippleIndex": 0,
+      "origin": 0,
+      "palette": [
+        16755071,
+        16769164,
+        11061406,
+        8759434,
+        13689768,
+        12047299,
+        9283249,
+        10532563,
+        12047336,
+        14930147,
+        15713758,
+        14256796,
+        16752778,
+        16757658,
+        16767370,
+        16762833
+      ]
+    },
+    {
+      "id": 5,
+      "name": "twinkle",
+      "component": 6,
+      "kind": "twinkle",
+      "density": 0,
+      "changesSpeed": false,
+      "speed": 4,
+      "brightness": 0,
+      "intervalMilliseconds": 20,
+      "frames": 15,
+      "colored": false,
+      "colorRgb": 0,
+      "rippleIndex": 0,
+      "origin": 0,
+      "palette": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": 6,
+      "name": "twinkle",
+      "component": 6,
+      "kind": "twinkle",
+      "density": 1,
+      "changesSpeed": false,
+      "speed": 4,
+      "brightness": 0,
+      "intervalMilliseconds": 20,
+      "frames": 15,
+      "colored": false,
+      "colorRgb": 0,
+      "rippleIndex": 0,
+      "origin": 0,
+      "palette": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": 7,
+      "name": "brightness",
+      "component": 6,
+      "kind": "brightness_ramp",
+      "density": 0,
+      "changesSpeed": false,
+      "speed": 4,
+      "brightness": 20,
+      "intervalMilliseconds": 150,
+      "frames": 15,
+      "colored": false,
+      "colorRgb": 0,
+      "rippleIndex": 0,
+      "origin": 0,
+      "palette": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": 8,
+      "name": "twinkle",
+      "component": 6,
+      "kind": "twinkle",
+      "density": 2,
+      "changesSpeed": true,
+      "speed": 4,
+      "brightness": 0,
+      "intervalMilliseconds": 20,
+      "frames": 15,
+      "colored": false,
+      "colorRgb": 0,
+      "rippleIndex": 0,
+      "origin": 0,
+      "palette": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": 9,
+      "name": "brightness",
+      "component": 6,
+      "kind": "brightness_ramp",
+      "density": 0,
+      "changesSpeed": false,
+      "speed": 4,
+      "brightness": 50,
+      "intervalMilliseconds": 150,
+      "frames": 15,
+      "colored": false,
+      "colorRgb": 0,
+      "rippleIndex": 0,
+      "origin": 0,
+      "palette": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": 10,
+      "name": "twinkle",
+      "component": 6,
+      "kind": "twinkle",
+      "density": 3,
+      "changesSpeed": false,
+      "speed": 4,
+      "brightness": 0,
+      "intervalMilliseconds": 20,
+      "frames": 15,
+      "colored": false,
+      "colorRgb": 0,
+      "rippleIndex": 0,
+      "origin": 0,
+      "palette": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": 11,
+      "name": "brightness",
+      "component": 6,
+      "kind": "brightness_ramp",
+      "density": 0,
+      "changesSpeed": false,
+      "speed": 4,
+      "brightness": 100,
+      "intervalMilliseconds": 150,
+      "frames": 15,
+      "colored": false,
+      "colorRgb": 0,
+      "rippleIndex": 0,
+      "origin": 0,
+      "palette": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": 12,
+      "name": "twinkle",
+      "component": 6,
+      "kind": "twinkle",
+      "density": 4,
+      "changesSpeed": false,
+      "speed": 4,
+      "brightness": 0,
+      "intervalMilliseconds": 20,
+      "frames": 15,
+      "colored": false,
+      "colorRgb": 0,
+      "rippleIndex": 0,
+      "origin": 0,
+      "palette": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": 13,
+      "name": "brightness",
+      "component": 6,
+      "kind": "brightness_ramp",
+      "density": 0,
+      "changesSpeed": false,
+      "speed": 4,
+      "brightness": 150,
+      "intervalMilliseconds": 150,
+      "frames": 15,
+      "colored": false,
+      "colorRgb": 0,
+      "rippleIndex": 0,
+      "origin": 0,
+      "palette": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": 14,
+      "name": "twinkle",
+      "component": 6,
+      "kind": "twinkle",
+      "density": 5,
+      "changesSpeed": false,
+      "speed": 4,
+      "brightness": 0,
+      "intervalMilliseconds": 20,
+      "frames": 15,
+      "colored": false,
+      "colorRgb": 0,
+      "rippleIndex": 0,
+      "origin": 0,
+      "palette": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": 15,
+      "name": "brightness",
+      "component": 6,
+      "kind": "brightness_ramp",
+      "density": 0,
+      "changesSpeed": false,
+      "speed": 4,
+      "brightness": 200,
+      "intervalMilliseconds": 150,
+      "frames": 15,
+      "colored": false,
+      "colorRgb": 0,
+      "rippleIndex": 0,
+      "origin": 0,
+      "palette": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": 16,
+      "name": "twinkle",
+      "component": 6,
+      "kind": "twinkle",
+      "density": 6,
+      "changesSpeed": false,
+      "speed": 4,
+      "brightness": 0,
+      "intervalMilliseconds": 20,
+      "frames": 15,
+      "colored": false,
+      "colorRgb": 0,
+      "rippleIndex": 0,
+      "origin": 0,
+      "palette": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": 17,
+      "name": "brightness",
+      "component": 6,
+      "kind": "brightness_ramp",
+      "density": 0,
+      "changesSpeed": false,
+      "speed": 4,
+      "brightness": 255,
+      "intervalMilliseconds": 150,
+      "frames": 15,
+      "colored": false,
+      "colorRgb": 0,
+      "rippleIndex": 0,
+      "origin": 0,
+      "palette": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": 18,
+      "name": "twinkle",
+      "component": 6,
+      "kind": "twinkle",
+      "density": 7,
+      "changesSpeed": false,
+      "speed": 4,
+      "brightness": 0,
+      "intervalMilliseconds": 20,
+      "frames": 15,
+      "colored": false,
+      "colorRgb": 0,
+      "rippleIndex": 0,
+      "origin": 0,
+      "palette": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": 19,
+      "name": "twinkle",
+      "component": 6,
+      "kind": "twinkle",
+      "density": 3,
+      "changesSpeed": false,
+      "speed": 4,
+      "brightness": 0,
+      "intervalMilliseconds": 20,
+      "frames": 15,
+      "colored": false,
+      "colorRgb": 0,
+      "rippleIndex": 0,
+      "origin": 0,
+      "palette": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ]
+}

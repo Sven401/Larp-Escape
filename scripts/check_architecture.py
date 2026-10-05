@@ -21,6 +21,8 @@ import unittest
 LAYER_ROOTS = (
     ("include/GameDomain", "domain"),
     ("src/GameDomain", "domain"),
+    ("include/GameConfiguration", "configuration"),
+    ("src/GameConfiguration", "configuration"),
     ("include/GamePorts", "ports"),
     ("include/GameApplication", "application"),
     ("include/GameRuntime", "runtime"),
@@ -32,11 +34,12 @@ LAYER_ROOTS = (
 )
 ALLOWED_DEPENDENCIES = {
     "domain": {"domain"},
+    "configuration": {"domain", "configuration"},
     "ports": {"domain", "ports"},
     "runtime": {"domain", "runtime"},
     "machine": {"machine"},
-    "application": {"domain", "ports", "runtime", "machine", "application"},
-    "companion": {"domain", "application", "companion"},
+    "application": {"domain", "ports", "runtime", "machine", "application", "configuration"},
+    "companion": {"domain", "application", "companion", "configuration"},
 }
 SOURCE_SUFFIXES = {".h", ".hpp", ".hh", ".hxx", ".c", ".cpp", ".cc", ".cxx", ".inl", ".ipp"}
 PURE_LIBRARIES = {"machine", "gamestate", "gameapplication"}
