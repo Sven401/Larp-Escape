@@ -2,13 +2,10 @@
 
 #include <cstdint>
 
-namespace larp
-{
-namespace ports
-{
-class IClock
-{
-public:
+namespace larp {
+namespace ports {
+class IClock {
+  public:
     virtual ~IClock() {}
 
     virtual std::uint32_t nowMilliseconds() const = 0;

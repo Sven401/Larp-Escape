@@ -2,13 +2,10 @@
 
 #include <cstdint>
 
-namespace larp
-{
-namespace domain
-{
-class KeystoneMonitor
-{
-public:
+namespace larp {
+namespace domain {
+class KeystoneMonitor {
+  public:
     static const std::uint8_t ErrorThreshold = 5;
 
     KeystoneMonitor();
@@ -20,7 +17,7 @@ public:
     void clearError();
     void reset();
 
-private:
+  private:
     std::uint8_t consecutiveMisses_;
     bool errorActive_;
 };

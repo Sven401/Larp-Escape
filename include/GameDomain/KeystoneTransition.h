@@ -4,12 +4,9 @@
 
 #include "GameDomain/GameDefinitions.h"
 
-namespace larp
-{
-namespace domain
-{
-enum class KeystoneTransition : unsigned char
-{
+namespace larp {
+namespace domain {
+enum class KeystoneTransition : unsigned char {
     EmptyRead,
     RepeatedPreviousKeystone,
     RoleAccepted,
@@ -18,8 +15,8 @@ enum class KeystoneTransition : unsigned char
 };
 
 KeystoneTransition classifyKeystoneTransition(const CardUid &candidate,
-                                               const CardUid &previousKeystone,
-                                               bool candidateIsKnownRole);
+                                              const CardUid &previousKeystone,
+                                              bool candidateIsKnownRole);
 bool hasEnoughEmptyKeystoneReads(std::uint8_t consecutiveEmptyReads);
 } // namespace domain
 } // namespace larp

@@ -1,11 +1,8 @@
 #include "GameDomain/GameDefinitions.h"
 
-namespace larp
-{
-namespace domain
-{
-namespace
-{
+namespace larp {
+namespace domain {
+namespace {
 const std::array<RoleDefinition, 6> kDefaultRoleDefinitions = {{
     {RoleId::Puppenspielerin,
      {{0x04, 0x9D, 0xD1, 0xCA, 0x6E, 0x67, 0x80}},
@@ -52,39 +49,30 @@ const std::array<RoleDefinition, 6> kDefaultRoleDefinitions = {{
 }};
 } // namespace
 
-const std::array<RoleDefinition, 6> &defaultRoleDefinitions()
-{
+const std::array<RoleDefinition, 6> &defaultRoleDefinitions() {
     return kDefaultRoleDefinitions;
 }
 
-const RoleDefinition *findRoleByUid(const CardUid &uid)
-{
-    for (const RoleDefinition &role : defaultRoleDefinitions())
-    {
-        if (role.uid == uid)
-        {
+const RoleDefinition *findRoleByUid(const CardUid &uid) {
+    for (const RoleDefinition &role : defaultRoleDefinitions()) {
+        if (role.uid == uid) {
             return &role;
         }
     }
     return nullptr;
 }
 
-const CrystalDefinition *findCrystalByPosition(const RoleDefinition &role, GridPosition position)
-{
-    for (const CrystalDefinition &crystal : role.crystals)
-    {
-        if (crystal.position == position)
-        {
+const CrystalDefinition *findCrystalByPosition(const RoleDefinition &role, GridPosition position) {
+    for (const CrystalDefinition &crystal : role.crystals) {
+        if (crystal.position == position) {
             return &crystal;
         }
     }
     return nullptr;
 }
 
-const char *crystalCategoryName(CrystalCategory category)
-{
-    switch (category)
-    {
+const char *crystalCategoryName(CrystalCategory category) {
+    switch (category) {
     case CrystalCategory::Animal:
         return "Tier";
     case CrystalCategory::Item:

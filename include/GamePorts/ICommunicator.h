@@ -2,18 +2,12 @@
 
 #include <cstdint>
 
-namespace larp
-{
-namespace ports
-{
-enum class GameMessage : std::uint8_t
-{
-    Activate
-};
+namespace larp {
+namespace ports {
+enum class GameMessage : std::uint8_t { Activate };
 
-class ICommunicator
-{
-public:
+class ICommunicator {
+  public:
     virtual ~ICommunicator() {}
 
     virtual bool send(GameMessage message) = 0;
