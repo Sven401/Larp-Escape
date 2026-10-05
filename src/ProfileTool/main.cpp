@@ -40,7 +40,7 @@ int main(int argc, char **argv) {
     bool example = false;
     const char *inputPath = nullptr;
     const char *previewPath = nullptr;
-    bool playable = false;
+    bool playable = false, queued = false;
     for (int index = 1; index < argc; ++index) {
         if (std::strcmp(argv[index], "--summary") == 0 && !summary)
             summary = true;
@@ -50,12 +50,15 @@ int main(int argc, char **argv) {
                  index + 1 < argc)
             inputPath = argv[++index];
         else if ((std::strcmp(argv[index], "--preview") == 0 ||
-                  std::strcmp(argv[index], "--play") == 0) &&
+                  std::strcmp(argv[index], "--play") == 0 ||
+                  std::strcmp(argv[index], "--play-queued") == 0) &&
                  previewPath == nullptr && index + 1 < argc) {
-            playable = std::strcmp(argv[index], "--play") == 0;
+            queued = std::strcmp(argv[index], "--play-queued") == 0;
+            playable = queued || std::strcmp(argv[index], "--play") == 0;
             previewPath = argv[++index];
         } else {
-            std::fputs("Usage: profile-tools [--summary | --preview SCRIPT | --play SCRIPT] "
+            std::fputs("Usage: profile-tools [--summary | --preview SCRIPT | --play SCRIPT | "
+                       "--play-queued SCRIPT] "
                        "[--example | --import FILE]\n",
                        stderr);
             return 2;
@@ -103,7 +106,8 @@ int main(int argc, char **argv) {
             std::perror("Cannot open preview script");
             return 1;
         }
-        const int status = playable ? runPlay(*profile, input) : runPreview(*profile, input);
+        const int status =
+            playable ? runPlay(*profile, input, queued) : runPreview(*profile, input);
         return std::fclose(input) == 0 ? status : 1;
     }
     if (summary) {

@@ -1,4 +1,5 @@
 #include "Play.h"
+#include "DeviceRuntime/Broker.h"
 #include "GameConfiguration/ProfileVocabulary.h"
 #include "GameExecution/Session.h"
 #include <cstring>
@@ -10,7 +11,8 @@ using namespace larp::configuration;
 using namespace larp::execution;
 class Play : public IProfileDevices {
   public:
-    explicit Play(const Profile &profile) : session(*this), profile_(profile) {
+    explicit Play(const Profile &profile, IProfileDevices *devices = nullptr)
+        : session(devices ? *devices : *this), profile_(profile) {
         for (std::size_t index = 0; index < profile.components.size(); ++index)
             samples_[index].available = profile.components.get(index)->enabled;
     }
@@ -164,6 +166,140 @@ class Play : public IProfileDevices {
         return outcome;
     }
 };
+// Host-only FIFO simulator. Same copied payloads and Broker as the ESP32,
+// but one deterministic pump substitutes for separately scheduled device tasks.
+class QueuedPlay : public larp::devices::IChannel {
+  public:
+    explicit QueuedPlay(const Profile &profile) : broker(*this), profile_(profile) {}
+    bool initialize(Play &play) {
+        play_ = &play;
+        return static_cast<bool>(larp::devices::compilePlan(profile_, plan_)) &&
+               broker.configure(plan_, 1);
+    }
+    bool send(larp::devices::Owner owner, const larp::devices::Command &command) noexcept override {
+        const unsigned index = static_cast<unsigned>(owner);
+        return index < commands_.size() && commands_[index].push(command);
+    }
+    bool receiveReply(larp::devices::Reply &reply) noexcept override {
+        return replies_.pop(reply);
+    }
+    bool observe(std::uint8_t slot, larp::devices::DeviceObservation &value) noexcept override {
+        if (slot >= plan_.routeCount)
+            return false;
+        value = observations_[slot];
+        return true;
+    }
+    bool quiescent() const noexcept override {
+        for (const auto &queue : commands_)
+            if (queue.count != 0)
+                return false;
+        return !processing_;
+    }
+    void pump(std::uint32_t now) {
+        using namespace larp::devices;
+        processing_ = true;
+        for (auto &queue : commands_) {
+            Command command;
+            for (std::size_t step = 0; step < ChannelLimits::CommandsPerOwner && queue.pop(command);
+                 ++step) {
+                Reply reply;
+                reply.ticket = command.ticket;
+                reply.kind = command.kind;
+                reply.completedMilliseconds = now;
+                ActionOutcome outcome = ActionOutcome::Unavailable;
+                switch (command.kind) {
+                case CommandKind::ReadCard:
+                    reply.outcome = play_->pollCard(command.poll, reply.card);
+                    break;
+                case CommandKind::ReadCrystals:
+                    reply.outcome = play_->pollCrystals(command.poll, reply.crystals);
+                    break;
+                case CommandKind::PlayTrack:
+                    outcome =
+                        play_->playTrack(command.ticket.component, command.track, command.context);
+                    break;
+                case CommandKind::WakeAudio:
+                    outcome = play_->wakeAudio(command.ticket.component, command.context);
+                    break;
+                case CommandKind::ApplyEffect:
+                    outcome = play_->applyEffect(command.effect, command.ticket.requester,
+                                                 command.context);
+                    break;
+                case CommandKind::SendActivation:
+                    outcome = play_->sendActivation(command.ticket.component, command.context);
+                    break;
+                }
+                const bool read = command.kind == CommandKind::ReadCard ||
+                                  command.kind == CommandKind::ReadCrystals;
+                if (read) {
+                    if (!replies_.push(reply))
+                        ++droppedReplies_;
+                    outcome = reply.outcome == PollOutcome::Fresh ? ActionOutcome::Applied
+                                                                  : ActionOutcome::Unavailable;
+                }
+                for (std::uint8_t index = 0; index < plan_.routeCount; ++index)
+                    if (plan_.routes[index].id == command.ticket.component) {
+                        observations_[index].processedSequence = command.ticket.sequence;
+                        observations_[index].lastOutcome = outcome;
+                    }
+            }
+        }
+        for (std::uint8_t index = 0; index < plan_.routeCount; ++index) {
+            observations_[index].generation = 1;
+            play_->sample(*profile_.components.get(index), observations_[index].sample);
+        }
+        processing_ = false;
+        broker.service();
+    }
+    void report() const {
+        const larp::devices::BrokerSnapshot value = broker.snapshot();
+        std::size_t queuedCommands = 0;
+        for (const auto &queue : commands_)
+            queuedCommands += queue.count;
+        std::printf("{\"event\":\"channel\",\"accepted\":%lu,\"rejected\":%lu,\"received\":%lu,"
+                    "\"staleReplies\":%lu,\"timedOut\":%lu,\"pendingReads\":%u,\"droppedReplies\":%"
+                    "lu,\"queuedCommands\":%lu}\n",
+                    static_cast<unsigned long>(value.accepted),
+                    static_cast<unsigned long>(value.rejected),
+                    static_cast<unsigned long>(value.received),
+                    static_cast<unsigned long>(value.staleReplies),
+                    static_cast<unsigned long>(value.timedOut), value.pendingReads,
+                    static_cast<unsigned long>(droppedReplies_),
+                    static_cast<unsigned long>(queuedCommands));
+    }
+    larp::devices::Broker broker;
+
+  private:
+    template <typename T, std::size_t Capacity> struct Fifo {
+        std::array<T, Capacity> values = {};
+        std::size_t head = 0, count = 0;
+        bool push(const T &value) {
+            if (count == Capacity)
+                return false;
+            values[(head + count) % Capacity] = value;
+            ++count;
+            return true;
+        }
+        bool pop(T &value) {
+            if (count == 0)
+                return false;
+            value = values[head];
+            head = (head + 1) % Capacity;
+            --count;
+            return true;
+        }
+    };
+    const Profile &profile_;
+    Play *play_ = nullptr;
+    larp::devices::Plan plan_;
+    std::array<Fifo<larp::devices::Command, larp::devices::ChannelLimits::CommandsPerOwner>,
+               larp::devices::ChannelLimits::Owners>
+        commands_ = {};
+    Fifo<larp::devices::Reply, larp::devices::ChannelLimits::Replies> replies_;
+    std::array<larp::devices::DeviceObservation, Limits::Components> observations_ = {};
+    std::uint32_t droppedReplies_ = 0;
+    bool processing_ = false;
+};
 bool number(const char *text, std::uint32_t &value) {
     if (text == nullptr || *text == '\0')
         return false;
@@ -229,11 +365,23 @@ void report(const Session &session, const Result &result) {
     std::puts("]}");
 }
 } // namespace
-int runPlay(const larp::configuration::Profile &profile, std::FILE *input) {
-    std::unique_ptr<Play> play(new Play(profile));
+int runPlay(const larp::configuration::Profile &profile, std::FILE *input, bool queued) {
+    std::unique_ptr<QueuedPlay> channel(queued ? new QueuedPlay(profile) : nullptr);
+    std::unique_ptr<Play> play(new Play(profile, channel ? &channel->broker : nullptr));
+    if (channel && !channel->initialize(*play)) {
+        std::fputs("Device plan rejected\n", stderr);
+        return 1;
+    }
     std::printf("{\"event\":\"play\",\"sessionBytes\":%lu,\"syntheticDevices\":true,"
-                "\"physicalHardware\":false}\n",
-                static_cast<unsigned long>(sizeof(Session)));
+                "\"physicalHardware\":false,\"queued\":%s}\n",
+                static_cast<unsigned long>(sizeof(Session)), queued ? "true" : "false");
+    if (channel)
+        std::printf("{\"event\":\"device_payloads\",\"planBytes\":%lu,\"brokerBytes\":%lu,"
+                    "\"commandBytes\":%lu,\"replyBytes\":%lu}\n",
+                    static_cast<unsigned long>(sizeof(larp::devices::Plan)),
+                    static_cast<unsigned long>(sizeof(larp::devices::Broker)),
+                    static_cast<unsigned long>(sizeof(larp::devices::Command)),
+                    static_cast<unsigned long>(sizeof(larp::devices::Reply)));
     char line[1024];
     unsigned lineNumber = 0;
     bool failed = false;
@@ -282,9 +430,24 @@ int runPlay(const larp::configuration::Profile &profile, std::FILE *input) {
             inputOnly = true;
         } else if (std::strcmp(tokens[0], "start") == 0 || std::strcmp(tokens[0], "tick") == 0) {
             valid = count == 2 && number(tokens[1], a);
-            if (valid)
+            if (valid) {
+                if (channel)
+                    channel->pump(a);
                 result = std::strcmp(tokens[0], "start") == 0 ? play->session.start(profile, a)
                                                               : play->session.tick(a);
+            }
+        } else if (std::strcmp(tokens[0], "settle") == 0) {
+            valid = count == 3 && number(tokens[1], a) && number(tokens[2], b) && b > 0 && b <= 8;
+            for (std::uint32_t step = 0; valid && step < b; ++step) {
+                if (channel)
+                    channel->pump(a);
+                result = play->session.tick(a);
+                report(play->session, result);
+                if (channel)
+                    channel->report();
+                failed = failed || !result;
+            }
+            inputOnly = true;
         } else if (std::strcmp(tokens[0], "state") == 0 || std::strcmp(tokens[0], "edge") == 0) {
             valid = count == 4 && number(tokens[1], a) && a <= 65535 && number(tokens[2], b) &&
                     number(tokens[3], c);
@@ -311,6 +474,8 @@ int runPlay(const larp::configuration::Profile &profile, std::FILE *input) {
         }
         if (!inputOnly) {
             report(play->session, result);
+            if (channel)
+                channel->report();
             failed = failed || !result;
         }
     }

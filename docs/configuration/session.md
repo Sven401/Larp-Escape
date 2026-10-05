@@ -1,6 +1,6 @@
 # Profilabhängige Spielsitzung
 
-Stand: 5. Oktober 2026. `GameExecution::Session` verbindet den Graphkern mit Rollen, Kristallen und Geräteaufträgen aus dem aktiven Profil. Der bisherige `ReichstagGame` bleibt der Produktionscontroller. Reale Komponenteninitialisierung, FreeRTOS-Geräteadapter und Companion-Transport sind noch offen.
+Stand: 5. Oktober 2026. `GameExecution::Session` verbindet den Graphkern mit Rollen, Kristallen und Geräteaufträgen aus dem aktiven Profil. Der bisherige `ReichstagGame` bleibt der Produktionscontroller. Reale Komponenteninitialisierung, Hardwaretreiberadapter und Companion-Transport sind noch offen. Der Folgeschnitt vom 6. Oktober ergänzt [Komponentenplanung und FreeRTOS-Auftragskanal](device-runtime.md).
 
 ## Eigentümer und Speicher
 
@@ -75,9 +75,9 @@ Beispiele regenerieren: Standard/Hinweis aus dem gebauten Profilwerkzeug exporti
 
 Im gebauten Werkzeug: Standard sechs Rollen vollständig, je drei Kristalle; Tracks in gespeicherter Eingangsreihenfolge und Rollenabschlussaudio, Bonus-Track 900, genau ein synthetischer Aktivierungsauftrag. Danach Idle mit Runden/Historie null und beibehaltenen Rollenmetadaten; keine abgewiesenen oder nicht verfügbaren Aktionen im beobachteten Ablauf. Zwischen Rollen zehn frische Leerlesungen.
 
-Dasselbe Programm ohne Neukompilierung mit Zusatz-JSON: Rolle 77, vier Kristalle, Zustand 88, vierter Track 178, Palette `0xffaa00`, Rollen-Track 177 und Rückkehr nach Idle. Der 750-ms-Guard liegt nur im JSON. Das Spielleiterbeispiel führte Start → Idle (manuell) → Pause → Fortsetzen → Standby (manuell) → Stop aus, mit Zustandsrevisionen 1 bis 6. Dies belegt diese normalen Rechnerabläufe; keine vollständige Fehler-/Timer-/Reentranzabdeckung oder Gerätewirkung. Synthetische Ports liefern ausschließlich sofort frische Antworten; Queued/Pending/Korrelation brauchen noch Ausführungsabdeckung und einen realen Adapter.
+Dasselbe Programm ohne Neukompilierung mit Zusatz-JSON: Rolle 77, vier Kristalle, Zustand 88, vierter Track 178, Palette `0xffaa00`, Rollen-Track 177 und Rückkehr nach Idle. Der 750-ms-Guard liegt nur im JSON. Das Spielleiterbeispiel führte Start → Idle (manuell) → Pause → Fortsetzen → Standby (manuell) → Stop aus, mit Zustandsrevisionen 1 bis 6. Dies belegt diese normalen Rechnerabläufe; keine vollständige Fehler-/Timer-/Reentranzabdeckung oder Gerätewirkung. Dieser historische Schnitt verwendet ausschließlich sofort frische synthetische Antworten. Der [Folgeschnitt](device-runtime.md) ergänzt normale Rechnerabläufe über Queued/Pending und einen statischen FreeRTOS-Kanal; Randfallabdeckung und reale Geräteadapter bleiben offen.
 
-Keine neue Unity-Suite ergänzt/ausgeführt, kein Upload und keine Remote-CI. Standardspielvergleich bisher anhand Quellvertrag und normalem Rechnerablauf; automatischer Vergleich mit dem alten Controller, alle Fehlerpfade und Echtzeit-/Hardwareabnahme offen. Nächster Schritt: Komponentenregistry und Adapter mit klaren Eigentümern/Queues, anschließend kontrollierter Produktionsanschluss. Speicherung/Übernahme, erweiterter Status-/Befehlsvertrag, direkter infrastrukturloser Appzugang und Android folgen.
+Keine neue Unity-Suite ergänzt/ausgeführt, kein Upload und keine Remote-CI. Standardspielvergleich bisher anhand Quellvertrag und normalem Rechnerablauf; automatischer Vergleich mit dem alten Controller, alle Fehlerpfade und Echtzeit-/Hardwareabnahme offen. Folgeschritt inzwischen begonnen: Komponentenplanung und Auftragskanal mit klaren Eigentümern/Queues; reale Treiber und kontrollierter Produktionsanschluss bleiben offen. Speicherung/Übernahme, erweiterter Status-/Befehlsvertrag, direkter infrastrukturloser Appzugang und Android folgen.
 
 ## Frische Quellen- und Ressourcenprüfung
 

@@ -91,3 +91,12 @@ extended["transitions"] += [
     json.dumps(extended, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 (OUTPUT / "extended-play.txt").write_text(play_script([role], fourth=True, bonus=False),
                                           encoding="utf-8")
+
+# Each bounded settle advances owner FIFOs and Session ticks at the same wall
+# time. It demonstrates queued replies without changing configured intervals.
+for name in ("standard", "extended"):
+    source = (OUTPUT / f"{name}-play.txt").read_text(encoding="utf-8")
+    lines = ["# Queued host owners: four bounded micro-ticks per supplied time."]
+    lines += [f"settle {line.split()[1]} 4" if line.startswith("tick ") else line
+              for line in source.splitlines()]
+    (OUTPUT / f"{name}-queued-play.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")

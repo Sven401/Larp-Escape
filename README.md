@@ -23,6 +23,9 @@ Hosttests und Firmware-Build sind getrennte Nachweise. Der Build bestätigt wede
 | Schicht | Ort | Aufgabe |
 | --- | --- | --- |
 | Domain | `include/GameDomain`, `src/GameDomain` | Rollen, Kristalle, Fortschritt und Resetregeln |
+| Konfiguration | `include/GameConfiguration`, `src/GameConfiguration` | Begrenzte Profile, semantische Prüfung, JSON-Import/-Export |
+| Ausführung | `include/GameExecution`, `src/GameExecution` | Konfigurierbarer Graph und profilabhängige Spielsitzung |
+| Geräteplanung | `include/DeviceRuntime`, `src/DeviceRuntime` | Komponentenbesitz, korrelierte kopierte Aufträge und Antworten |
 | Ports | `include/GamePorts` | Wertbasierte Schnittstellen für Geräte und Diagnose |
 | Anwendung | `lib/GameState`, `lib/GameApplication` | Spielfluss und Reihenfolge der Dienste |
 | Zustandsmaschine | `lib/Machine` | Zustandsbesitz, Guards, einmalige Eintrittsaktionen |
@@ -36,6 +39,8 @@ Die Spiellogik braucht weder Arduino noch Hardware-Stubs. Die alte Regression pr
 ## Laufzeit und Companion
 
 - [ESP32 am USB ohne Zusatzhardware](docs/usb-probe.md)
+- [Komponentenplanung und FreeRTOS-Auftragskanal](docs/configuration/device-runtime.md)
+- [Profilabhängige Spielsitzung](docs/configuration/session.md)
 - [Besitz, Tasks und Grenzen](docs/runtime.md)
 - [Companion-Status v1](docs/companion/status-v1.md)
 - [Statusschema](docs/companion/status-v1.schema.json)
@@ -50,12 +55,12 @@ Der kanonische Projektplan und die Sitzungsübergabe liegen im getrennten Werkba
 
 `check_headers.py` übersetzt jeden öffentlichen Header der reinen Schichten separat mit C++11, `-Wall -Wextra -Wpedantic -Werror`, ohne Hardware-Stubs. Der Hostcompiler wird nach den Hosttests von PlatformIO bereitgestellt.
 
-`check_format.py` verwendet exakt clang-format **19.1.7** und `.clang-format`. Die explizite Baseline umfasst die reinen Schichten, die im Skript genannten überarbeiteten Adapter, beide Einstiegspunkte und die neuen Host-Suites. Alte Konfiguration, ArduinoClock, EspNowCommunicator und die frühere `test_regression` bleiben außerhalb der Formatbaseline. `--list` zeigt die konkreten Dateien, `--fix` formatiert ausschließlich diese geprüfte Liste. Die aktuelle Baseline enthält 74 Dateien.
+`check_format.py` verwendet exakt clang-format **19.1.7** und `.clang-format`. Die explizite Baseline umfasst die reinen Schichten, die im Skript genannten überarbeiteten Adapter, beide Einstiegspunkte und die neuen Host-Suites. Alte Konfiguration, ArduinoClock, EspNowCommunicator und die frühere `test_regression` bleiben außerhalb der Formatbaseline. `--list` zeigt die konkreten Dateien, `--fix` formatiert ausschließlich diese geprüfte Liste. Den aktuellen Dateiumfang liefert `--list`; neue reine Schichten und der Profilkanal sind einbezogen.
 
 Die Windows-CI ersetzt keine zusätzliche Prüfung von Include-Groß-/Kleinschreibung auf einem case-sensitiven System. Statische Analyse wurde lokal mit Cppcheck 2.1 für die reinen Implementierungen (`warning,performance,portability`) durchgeführt; clang-tidy und eine verpflichtende vollständige Analyse sind noch offen.
 
 ## Konfigurierbare Firmware und Companion
 
-Der erste hardwarefreie Profilkern enthält Hardware, Rollen, Zustände, Übergangsbedingungen, Aktionen und Effekte. [Modell, Export und Grenzen](docs/configuration/profile-model.md), [Standardprofil](docs/configuration/standard-profile.json) und [strukturelles JSON-Schema](docs/configuration/profile-v1.schema.json). JSON-Import, Profilausführung, Speicherung, API und Android-App sind noch offen.
+Der erste hardwarefreie Profilkern enthält Hardware, Rollen, Zustände, Übergangsbedingungen, Aktionen und Effekte. [Modell, Export und Grenzen](docs/configuration/profile-model.md), [Standardprofil](docs/configuration/standard-profile.json) und [strukturelles JSON-Schema](docs/configuration/profile-v1.schema.json). JSON-Import, Graphauswertung und eine profilabhängige Spielsitzung mit Rechnerbedienung sind implementiert. Komponentenplanung, Broker und statische FreeRTOS-Queues sind vorbereitet und separat mit synthetischen Besitzern baubar. Reale profilabhängige Treiber, Produktionsanschluss, Speicherung/Übernahme, Companion-API und Android-App sind noch offen.
 
 Konfigurierbare Graphausführung und Rechner-Vorschau: [Laufzeitvertrag](docs/configuration/execution.md).

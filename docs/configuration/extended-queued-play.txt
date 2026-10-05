@@ -1,0 +1,33 @@
+# Queued host owners: four bounded micro-ticks per supplied time.
+# Synthetic devices; Session computes conditions/progress from these inputs.
+start 0
+wakes 4 15
+settle 0 4
+settle 1 4
+
+# Round 1: profile role ID 77
+crystals 4
+card 1 77
+settle 1001 4
+settle 1002 4
+crystals 4 1:0 1:7 4:4 9:8
+settle 1102 4
+settle 1103 4
+settle 1203 4
+settle 1303 4
+finish 5
+settle 1304 4
+settle 1305 4
+finish 5
+settle 1306 4
+settle 1307 4
+finish 5
+settle 1407 4
+settle 1408 4
+finish 5
+settle 2158 4
+settle 2159 4
+finish 5
+settle 2659 4
+settle 2660 4
+snapshot
