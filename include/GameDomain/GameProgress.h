@@ -1,18 +1,15 @@
 #pragma once
 
 #include <cstdint>
-#include <vector>
 
 #include "GameDomain/GameDefinitions.h"
 #include "GameDomain/KeystoneMonitor.h"
+#include "GameDomain/KnownRoleHistory.h"
 #include "GameDomain/PuzzleProgress.h"
 
-namespace larp
-{
-namespace domain
-{
-struct GameProgress
-{
+namespace larp {
+namespace domain {
+struct GameProgress {
     GameProgress();
 
     void resetRound();
@@ -22,7 +19,7 @@ struct GameProgress
     int roundCounter;
     CardUid currentKeyStone;
     CardUid lastKeyStone;
-    std::vector<CardUid> seenKeyStones;
+    KnownRoleHistory seenKeyStones;
     KeystoneMonitor keystoneMonitor;
     PuzzleProgress puzzleProgress;
     bool incorrectCrystal;
