@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Larp-Escape Companion status v1",
+  "type": "object",
+  "required": ["schemaVersion", "capabilities", "game"],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "capabilities": {"type": "array", "items": {"type": "string"}, "contains": {"const": "status.read"}, "uniqueItems": true},
+    "game": {
+      "type": "object",
+      "required": ["phase", "role", "crystalCount", "roundCount", "seenRoleCount", "incorrectCrystal", "keystoneError", "audioBusy"],
+      "properties": {
+        "phase": {"enum": ["standby", "idle", "waiting_for_crystals", "first_crystal_placed", "second_crystal_placed", "third_crystal_placed", "game_completed", "bonus", "error"]},
+        "role": {"enum": [null, "puppenspielerin", "krieger", "narr", "abenteurerin", "ueberlebende", "wissende"], "description": "Retained role profile, not physical card presence"},
+        "crystalCount": {"type": "integer", "minimum": 0, "maximum": 3},
+        "roundCount": {"type": "integer", "minimum": 0, "maximum": 4294967295, "description": "Completed round counter"},
+        "seenRoleCount": {"type": "integer", "minimum": 0, "maximum": 6},
+        "incorrectCrystal": {"type": "boolean"},
+        "keystoneError": {"type": "boolean"},
+        "audioBusy": {"type": "boolean"}
+      }
+    }
+  }
+}
