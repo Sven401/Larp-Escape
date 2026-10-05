@@ -1,6 +1,6 @@
 # Kontrollierte Profilübernahme
 
-Stand: 6. Oktober 2026. `DeviceRuntime::Runtime` verbindet Profilplanung, Gerätebroker und Spielsitzung mit einem begrenzten Übernahmeprotokoll. Rechnerbesitzer und ein separates ESP32-Bauziel führen dieses Protokoll mit synthetischen Geräten aus. Reale profilabhängige Treiber, Produktionsanschluss, persistente Slots und Companion-Transport fehlen noch.
+Übernahmeschnitt `9f27e46`, 6. Oktober 2026; dessen Buildzahlen unten bleiben datiert. `DeviceRuntime::Runtime` verbindet Profilplanung, Gerätebroker und Spielsitzung mit einem begrenzten Übernahmeprotokoll. Rechnerbesitzer und ein separates ESP32-Bauziel führen dieses Protokoll mit synthetischen Geräten aus. Reale profilabhängige Treiber, Produktionsanschluss, persistente Slots und Companion-Transport fehlen noch.
 
 ## Besitz und Revisionen
 
@@ -99,4 +99,4 @@ Frische `-fstack-usage`-Übersetzung mit Xtensa/`-Os`: größter einzelner Runti
 
 Alle vier Bauziele erfolgreich, Rechnerquellen mit Warnungen als Fehler. Architektur **63 Dateien / 149 direkte Includes**, **42** isolierte reine Header, Format **107 Dateien** mit clang-format 19.1.7. Ausgewählte Cppcheck-2.1-Analyse der neuen Kern-/Werkzeugquellen ohne Befund; `git diff --check` ohne Befund. Bestehende Frameworkwarnungen bleiben sichtbar. Keine neue Unity-Suite ergänzt/ausgeführt, kein Upload oder Remote-CI.
 
-Als Nächstes: PN532-Paket-/UID-Längenaudit vor echtem NFC-Besitzer; dann profilabhängige Treiber mit tatsächlicher Stilllegung. Für die Companion-Schnittstelle zusätzlich aktive/Entwurf-Speicher, Persistenz, dynamischer Status, Anforderungs-IDs, Zugriffsschutz und direkter Appzugang ohne Router. Android und Feldenergieabnahme bleiben eigene Etappen.
+Folgeschnitt: [PN532-Paket-/UID-Längenaudit und gepinnte Korrektur](../nfc-packet-contract.md) sind im Quellcode umgesetzt und erfolgreich gebaut; echte Leser-/Fehlerpfadabnahme bleibt offen. Als Nächstes profilabhängige Treiber mit tatsächlicher Stilllegung. Für die Companion-Schnittstelle zusätzlich aktive/Entwurf-Speicher, Persistenz, dynamischer Status, Anforderungs-IDs, Zugriffsschutz und direkter Appzugang ohne Router. Android und Feldenergieabnahme bleiben eigene Etappen.

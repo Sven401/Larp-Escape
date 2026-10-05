@@ -31,6 +31,7 @@ class NFCReader : public larp::ports::ICardReader {
     std::uint8_t uidLength = 0U;
     // Driver 1.3.4 copies the returned uint8 length without a destination-capacity
     // parameter. Reserve its full destination range before validating seven-byte
-    // game UIDs. This does not validate the driver's internal response buffer.
+    // game UIDs. The pinned build patch validates the internal frame before this
+    // copy; retain the defensive destination range until a capacity-bearing API.
     std::array<std::uint8_t, 256> driverUid{};
 };

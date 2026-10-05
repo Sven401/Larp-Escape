@@ -25,6 +25,7 @@ from check_architecture import LAYER_ROOTS, SOURCE_SUFFIXES
 
 FORMATTER_VERSION = "19.1.7"
 ADAPTER_FILES = (
+    "scripts/patches/pn532-1.3.4/read_detected.cpp",
     "src/main.cpp",
     "src/ProfileTool/main.cpp",
     "src/ProfileTool/Preview.h",

@@ -39,6 +39,7 @@ Die Spiellogik braucht weder Arduino noch Hardware-Stubs. Die alte Regression pr
 ## Laufzeit und Companion
 
 - [ESP32 am USB ohne Zusatzhardware](docs/usb-probe.md)
+- [NFC-Paketvertrag und gepinnte Bibliothekskorrektur](docs/nfc-packet-contract.md)
 - [Komponentenplanung und FreeRTOS-Auftragskanal](docs/configuration/device-runtime.md)
 - [Kontrollierte Profilübernahme und geänderte Einrichtung](docs/configuration/activation.md)
 - [Profilabhängige Spielsitzung](docs/configuration/session.md)
