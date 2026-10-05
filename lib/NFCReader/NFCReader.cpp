@@ -1,136 +1,87 @@
 #include "NFCReader.h"
+#include "GameRuntime/CardUidCopy.h"
+#include <algorithm>
+#include <cstring>
 
-bool NFCReader::begin()
-{
-    bool setup = nfc.begin();      // Initialize the PN532
-    uint32_t versiondata = nfc.getFirmwareVersion();
-    unsigned long startTime = millis();
-    const unsigned long timeout = 10000; // 10 seconds timeout
-    Serial.println("Initializing NFC reader...");
-    Serial.print(setup);
-    Serial.println(setup ? "Success" : "Failed");
-    readerDisabled = !setup;
-    while (!setup) {
-        Serial.println("Didn't find PN53x board, retrying...");
-        setup = nfc.begin();
-
-        nfc.reset();
-
-        readerDisabled = !setup;
-
-        if (millis() - startTime >= timeout) {
-            Serial.println("Timeout reached, restarting ESP...");
-            ESP.restart();
+bool NFCReader::begin() {
+    if (initialized)
+        return true;
+    const std::uint32_t started = millis();
+    while (!nfc.begin()) {
+        if (static_cast<std::uint32_t>(millis() - started) >= 10000U) {
+            Serial.println("NFC initialization timed out");
+            return false;
         }
+        nfc.reset();
+        delay(20U); // Startup only; the game is not running yet.
     }
-    // Got ok data, print it out!
-    Serial.print("Found chip PN5"); Serial.println((versiondata>>24) & 0xFF, HEX);
-    Serial.print("Firmware ver. "); Serial.print((versiondata>>16) & 0xFF, DEC);
-    Serial.print('.'); Serial.println((versiondata>>8) & 0xFF, DEC);
-    return setup;
+    const std::uint32_t version = nfc.getFirmwareVersion();
+    if (version == 0U) {
+        Serial.println("NFC firmware query failed");
+        return false;
+    }
+    initialized = true;
+    readerDisabled = false;
+    Serial.print("NFC firmware: ");
+    Serial.println(version, HEX);
+    return true;
 }
-
-bool NFCReader::disableReader()
-{
-    readerDisabled = !nfc.AsTarget(); 
+bool NFCReader::disableReader() {
+    if (!initialized)
+        return false;
+    readerDisabled = !nfc.AsTarget();
     return readerDisabled;
 }
-bool NFCReader::enableReader()
-{
+bool NFCReader::enableReader() {
+    if (!initialized)
+        return false;
     nfc.wakeup();
-    bool awake = nfc.SAMConfig();
-    readerDisabled = !awake;
-    if (!awake)
-    {
-        readerDisabled = !begin();
-        nfc.reset();
-    }
+    readerDisabled = !nfc.SAMConfig();
     return !readerDisabled;
-} 
-
-larp::domain::CardUid NFCReader::readCard(std::uint16_t timeoutMilliseconds)
-{
-    Serial.print("Attempting to enable NFC reader. Result: ");
-    bool result = enableReader();
-    Serial.println(result ? "Success" : "Failure");
-    if(!result){
-        return {};
-    }
-    Serial.println("Waiting for an ISO14443A Card ...");
-    success = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, uid, &uidLength, timeoutMilliseconds);
-    Serial.print("Read passive target ID success: ");
-    Serial.println(success);
-    if (!success) {
-        return {};
-    }
-
-    isNewUid = (uidLength != sizeof(lastUid) || memcmp(uid, lastUid, uidLength) != 0);
+}
+larp::domain::CardUid NFCReader::readCard(std::uint16_t timeoutMilliseconds) {
+    isNewUid = false;
     isStoredUid = false;
+    uidLength = 0U;
+    std::fill(std::begin(uid), std::end(uid), 0U);
+    if (!enableReader())
+        return {};
 
-    if (isNewUid) {if (uidLength > 0 && uidLength <= sizeof(uid))  // Prüft, ob uidLength gültig ist
-        {
-            Serial.print("New UID: ");
-            for (uint8_t i = 0; i < uidLength; i++) 
-            {
-                Serial.print(uid[i], HEX);
-                Serial.print(" ");
-            }
-            Serial.println();
-        } 
-        else 
-        {
-            Serial.println("Fehler: Ungültige UID-Länge!");
-            return{};
-        }
-        
-
-        // Store the UID in the stored UIDs array
-        for (int i = 0; i < 6; i++) {
-            if (storedUidLengths[i] == 0) {
-                memcpy(storedUids[i], uid, uidLength);
-                storedUidLengths[i] = uidLength;
-                break;
-            }
-        }
-
-        // Store the UID as the last UID
-        memset(lastUid, 0, sizeof(lastUid));
-        memcpy(lastUid, uid, uidLength);
-    } else {
-        Serial.println("Same UID as last time");
-    }
-
-    // Check if the UID is in the stored UIDs
-    for (int i = 0; i < 6; i++) {
-        if (storedUidLengths[i] == uidLength && memcmp(uid, storedUids[i], uidLength) == 0) {
-            isStoredUid = true;
-            Serial.print("This UID matches stored UID #"); Serial.println(i + 1);
-            break;
-        }
-    }
-
-    // Check if all 6 UIDs are stored
-    allUidsStored = true;
-    for (int i = 0; i < 6; i++) {
-        if (storedUidLengths[i] == 0) {
-            allUidsStored = false;
-            break;
-        }
-    }
+    std::uint8_t readLength = 0U;
+    const bool success = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, driverUid.data(),
+                                                 &readLength, timeoutMilliseconds);
+    larp::domain::CardUid card{};
+    const bool accepted =
+        success && larp::runtime::tryCopyCardUid(driverUid.data(), readLength, card);
+    // Retain the established target-mode lifecycle for now. Its hardware latency
+    // and necessity are a separate device check, not inferred from host tests.
     disableReader();
-    std::array<uint8_t, 7> card{};
-    std::copy_n(uid, std::min(uidLength, static_cast<uint8_t>(7)), card.begin());
-
+    if (!accepted)
+        return {};
+    uidLength = static_cast<std::uint8_t>(card.size());
+    std::copy(card.begin(), card.end(), std::begin(uid));
+    isNewUid = card != lastUid;
+    lastUid = card;
+    for (std::size_t index = 0U; index < storedUidCount; ++index) {
+        if (storedUids[index] == card) {
+            isStoredUid = true;
+            break;
+        }
+    }
+    if (!isStoredUid && storedUidCount < storedUids.size()) {
+        storedUids[storedUidCount++] = card;
+        isStoredUid = true;
+    }
+    allUidsStored = storedUidCount == storedUids.size();
     return card;
 }
-
-void NFCReader::resetStoredUids()
-{
-    memset(storedUids, 0, sizeof(storedUids));
-    memset(storedUidLengths, 0, sizeof(storedUidLengths));
+void NFCReader::resetStoredUids() {
+    storedUids = {};
+    storedUidCount = 0U;
+    isStoredUid = false;
+    allUidsStored = false;
 }
-
-bool NFCReader::isCurrentUid(uint8_t* queryUid, uint8_t queryUidLength)
-{
-    return (uidLength == queryUidLength && memcmp(uid, queryUid, queryUidLength) == 0);
+bool NFCReader::isCurrentUid(const std::uint8_t *queryUid, std::uint8_t queryUidLength) const {
+    return queryUid != nullptr && uidLength == sizeof(uid) && queryUidLength == sizeof(uid) &&
+           std::memcmp(uid, queryUid, sizeof(uid)) == 0;
 }

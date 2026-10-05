@@ -8,18 +8,18 @@
 #include <cstddef>
 #include <cstdint>
 
+#include "GameApplication/GameSnapshot.h"
 #include "GameDomain/GameDefinitions.h"
 #include "GameDomain/GameProgress.h"
 #include "GamePorts/IAudioPlayer.h"
 #include "GamePorts/ICardReader.h"
+#include "GamePorts/IClock.h"
 #include "GamePorts/ICommunicator.h"
 #include "GamePorts/ICrystalInput.h"
-#include "GamePorts/IClock.h"
+#include "GamePorts/IGameDiagnostics.h"
 #include "GamePorts/ILightEffects.h"
 #include "GamePorts/IWakeInput.h"
 #include "StateMachine.h"
-
-using namespace MyMachine;
 
 /**
  * @class ReichstagGame
@@ -30,13 +30,25 @@ using namespace MyMachine;
  *
  * @note This class uses a state machine to manage game states.
  */
-class ReichstagGame
-{
-public:
+class ReichstagGame {
+  public:
     /**
      * @brief Constructs a new ReichstagGame object.
      */
-    ReichstagGame(larp::ports::ICardReader &cardReader, larp::ports::ICrystalInput &crystalInput, larp::ports::IWakeInput &wakeInput, larp::ports::IAudioPlayer &audioPlayer, larp::ports::IClock &clockPort, larp::ports::ILightEffects &lightEffects, larp::ports::ICommunicator &communicator);
+    ReichstagGame(larp::ports::ICardReader &cardReader, larp::ports::ICrystalInput &crystalInput,
+                  larp::ports::IWakeInput &wakeInput, larp::ports::IAudioPlayer &audioPlayer,
+                  larp::ports::IClock &clockPort, larp::ports::ILightEffects &lightEffects,
+                  larp::ports::ICommunicator &communicator,
+                  larp::ports::IGameDiagnostics *diagnostics = nullptr);
+
+    // Ports and the optional diagnostic sink must outlive this controller.
+    ReichstagGame(const ReichstagGame &) = delete;
+    ReichstagGame &operator=(const ReichstagGame &) = delete;
+    ReichstagGame(ReichstagGame &&) = delete;
+    ReichstagGame &operator=(ReichstagGame &&) = delete;
+
+    // Call from the owning application context; this is not a cross-task lock.
+    larp::application::GameSnapshot snapshot() const;
 
     /**
      * @brief Handles the idle state of the game.
@@ -123,38 +135,25 @@ public:
      */
     void setup();
 
-    StateMachine machine; ///< Manages the game states.
+    MyMachine::StateMachine machine; ///< Manages the game states.
 
-private:
+  private:
     /**
      * @brief Finds the domain role matching a card UID.
      * @param cardUid Fixed-size UID read from the role card.
      * @return A pointer to the immutable role definition, or nullptr when unknown.
      */
-    const larp::domain::RoleDefinition *getRoleDefinition(
-        const larp::domain::CardUid &cardUid) const;
-
-    /**
-     * @brief Retrieves the current keystone.
-     * @return A pointer to the current keystone.
-     */
-    std::array<uint8_t, 7> getKeyStone();
-
-    /**
-     * @brief Retrieves the current crystal.
-     * @return The current crystal.
-     */
-    int getCrystal();
+    const larp::domain::RoleDefinition *
+    getRoleDefinition(const larp::domain::CardUid &cardUid) const;
 
     /**
      * @brief Checks if a new crystal is valid.
      * @return true if the new crystal is valid, false otherwise.
      */
-    enum CrystalCheckResult
-    {                   ///< Enumerates the possible crystal check results.
-        NO_NEW_CRYSTAL, ///< No new crystal has been placed.
-        VALID_CRYSTAL,  ///< A valid crystal has been placed.
-        INVALID_CRYSTAL ///< An invalid crystal has been placed.
+    enum CrystalCheckResult { ///< Enumerates the possible crystal check results.
+        NO_NEW_CRYSTAL,       ///< No new crystal has been placed.
+        VALID_CRYSTAL,        ///< A valid crystal has been placed.
+        INVALID_CRYSTAL       ///< An invalid crystal has been placed.
     };
 
     CrystalCheckResult newCrystalisValid();
@@ -180,16 +179,18 @@ private:
 
     void handleKeystonedetection();
 
+    bool statesConfigured = false;
+    bool transitionsConfigured = false;
     larp::domain::GameProgress gameProgress;
-    State *Idle;
-    State *WaitingForCrystals;
-    State *FirstCrystalPlaced;
-    State *SecondCrystalPlaced;
-    State *ThirdCrystalPlaced;
-    State *GameCompleted;
-    State *BonusState;
-    State *ErrorState;
-    State *StandByState;
+    myMachine::State *Idle;
+    myMachine::State *WaitingForCrystals;
+    myMachine::State *FirstCrystalPlaced;
+    myMachine::State *SecondCrystalPlaced;
+    myMachine::State *ThirdCrystalPlaced;
+    myMachine::State *GameCompleted;
+    myMachine::State *BonusState;
+    myMachine::State *ErrorState;
+    myMachine::State *StandByState;
     larp::ports::ICardReader &cardReader;
     larp::ports::ICrystalInput &crystalInput;
     larp::ports::IWakeInput &wakeInput;
@@ -197,9 +198,10 @@ private:
     larp::ports::IClock &clockPort;
     larp::ports::ILightEffects &lightEffects;
     larp::ports::ICommunicator &communicator;
+    larp::ports::IGameDiagnostics *diagnostics;
     const int INTERVALL = 150;
-    unsigned long timeout = 600000;
-    unsigned long lastMillis = 0;
+    std::uint32_t timeout = 600000U;
+    std::uint32_t lastMillis = 0U;
     std::uint32_t lastTransitionCardReadMilliseconds = 0;
     std::uint32_t lastKeystoneReadMilliseconds = 0;
     std::uint32_t lastCrystalScanMilliseconds = 0;
@@ -209,10 +211,13 @@ private:
     std::array<std::uint32_t, 4> transitionWaitStartedMilliseconds{};
     std::array<bool, 4> transitionWaitStarted{};
 
-    bool intervalElapsed(std::uint32_t &lastTriggerMilliseconds, bool &timerStarted,
-                        std::uint32_t intervalMilliseconds);
-    bool transitionWaitElapsed(std::size_t transitionIndex, std::uint32_t intervalMilliseconds);
+    void report(larp::ports::GameDiagnosticEvent event, std::uint32_t value = 0U,
+                std::uint32_t auxiliary = 0U) const;
+    void beginState(larp::application::GamePhase phase);
 
+    bool intervalElapsed(std::uint32_t &lastTriggerMilliseconds, bool &timerStarted,
+                         std::uint32_t intervalMilliseconds);
+    bool transitionWaitElapsed(std::size_t transitionIndex, std::uint32_t intervalMilliseconds);
 };
 
 #endif // GAMESTATE_H

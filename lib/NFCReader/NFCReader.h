@@ -1,41 +1,36 @@
-#ifndef NFCREADER_H
-#define NFCREADER_H
 #pragma once
-#include "Config.h"
 #include "GamePorts/ICardReader.h"
-#include <Adafruit_PN532.h> // Include the necessary library for PN532
-#include <Arduino.h>        // Include Arduino libraries
+#include <Adafruit_PN532.h>
+#include <array>
+#include <cstdint>
 
-class NFCReader : public larp::ports::ICardReader
-{
-public:
-    NFCReader(Adafruit_PN532 &nfc)
-        : nfc(nfc){}
-    bool begin();              // Initializes the NFC reader
-    bool disableReader();      // Disable the NFC reader
+// Single application-loop owner; the referenced driver lives until restart.
+class NFCReader : public larp::ports::ICardReader {
+  public:
+    explicit NFCReader(Adafruit_PN532 &nfc) : nfc(nfc) {}
+    NFCReader(const NFCReader &) = delete;
+    NFCReader &operator=(const NFCReader &) = delete;
+    bool begin();
+    bool disableReader();
     bool enableReader();
-    void resetStoredUids();       // Enable the NFC reader
-    bool isCurrentUid(uint8_t* queryUid, uint8_t queryUidLength);
-    uint8_t uid[7];  // Buffer to store the returned UID
+    void resetStoredUids();
+    bool isCurrentUid(const std::uint8_t *queryUid, std::uint8_t queryUidLength) const;
     larp::domain::CardUid readCard(std::uint16_t timeoutMilliseconds) override;
-    bool isNewUid;
-    bool isStoredUid;
-    bool allUidsStored;
+    std::uint8_t uid[7] = {};
+    bool isNewUid = false;
+    bool isStoredUid = false;
+    bool allUidsStored = false;
 
-private:
+  private:
+    bool initialized = false;
     bool readerDisabled = true;
-    //unsigned long lastCardReadTime;
-    Adafruit_PN532 &nfc; // Assuming you have initialized the PN532 object
-    //int irqPrev = HIGH; // Previous state of the IRQ pin
-    //int irqCurr = HIGH; // Current state of the IRQ pin
-    uint8_t lastUid[7] = {0};
-    uint8_t storedUids[6][7] = {0};
-    uint8_t storedUidLengths[6] = {0};
-    uint8_t success;
-    uint8_t uidLength;   
-    void checkForCard(); // Check if a card has been detected
-    bool handleCardDetected(); // Handle detected card
-    bool startListening();     // Start listening for NFC cards
+    Adafruit_PN532 &nfc;
+    larp::domain::CardUid lastUid{};
+    std::array<larp::domain::CardUid, 6> storedUids{};
+    std::size_t storedUidCount = 0U;
+    std::uint8_t uidLength = 0U;
+    // Driver 1.3.4 copies the returned uint8 length without a destination-capacity
+    // parameter. Reserve its full destination range before validating seven-byte
+    // game UIDs. This does not validate the driver's internal response buffer.
+    std::array<std::uint8_t, 256> driverUid{};
 };
-
-#endif // NFCREADER_H
