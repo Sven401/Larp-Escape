@@ -100,3 +100,19 @@ for name in ("standard", "extended"):
     lines += [f"settle {line.split()[1]} 4" if line.startswith("tick ") else line
               for line in source.splitlines()]
     (OUTPUT / f"{name}-queued-play.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+# Setup workflow variant: graph/role edits plus copied device settings.
+setup = copy.deepcopy(extended)
+setup["revision"] = 6
+setup["name"] = "Setup: changed LED and audio"
+for component in setup["components"]:
+    if component["kind"] == "led_strip":
+        component["pins"][0] = 27
+        component["ledCount"] = 31
+    elif component["kind"] == "audio_uart":
+        component["bus"] = 2
+        component["volume"] = 19
+    elif component["kind"] == "io_expander" and component["id"] == 3:
+        component["address"] = 0x22
+(OUTPUT / "setup-profile.json").write_text(
+    json.dumps(setup, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

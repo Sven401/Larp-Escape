@@ -40,6 +40,7 @@ Die Spiellogik braucht weder Arduino noch Hardware-Stubs. Die alte Regression pr
 
 - [ESP32 am USB ohne Zusatzhardware](docs/usb-probe.md)
 - [Komponentenplanung und FreeRTOS-Auftragskanal](docs/configuration/device-runtime.md)
+- [Kontrollierte Profilübernahme und geänderte Einrichtung](docs/configuration/activation.md)
 - [Profilabhängige Spielsitzung](docs/configuration/session.md)
 - [Besitz, Tasks und Grenzen](docs/runtime.md)
 - [Companion-Status v1](docs/companion/status-v1.md)
@@ -61,6 +62,6 @@ Die Windows-CI ersetzt keine zusätzliche Prüfung von Include-Groß-/Kleinschre
 
 ## Konfigurierbare Firmware und Companion
 
-Der erste hardwarefreie Profilkern enthält Hardware, Rollen, Zustände, Übergangsbedingungen, Aktionen und Effekte. [Modell, Export und Grenzen](docs/configuration/profile-model.md), [Standardprofil](docs/configuration/standard-profile.json) und [strukturelles JSON-Schema](docs/configuration/profile-v1.schema.json). JSON-Import, Graphauswertung und eine profilabhängige Spielsitzung mit Rechnerbedienung sind implementiert. Komponentenplanung, Broker und statische FreeRTOS-Queues sind vorbereitet und separat mit synthetischen Besitzern baubar. Reale profilabhängige Treiber, Produktionsanschluss, Speicherung/Übernahme, Companion-API und Android-App sind noch offen.
+Der erste hardwarefreie Profilkern enthält Hardware, Rollen, Zustände, Übergangsbedingungen, Aktionen und Effekte. [Modell, Export und Grenzen](docs/configuration/profile-model.md), [Standardprofil](docs/configuration/standard-profile.json) und [strukturelles JSON-Schema](docs/configuration/profile-v1.schema.json). JSON-Import, Graphauswertung und eine profilabhängige Spielsitzung mit Rechnerbedienung sind implementiert. Komponentenplanung, Broker, statische FreeRTOS-Queues und kontrollierte Profilübernahme sind implementiert und separat mit synthetischen Besitzern baubar. Reale profilabhängige Treiber, Produktionsanschluss, persistente Slots/Speicherung, Fehlerpfadabnahme, Companion-API und Android-App sind noch offen.
 
 Konfigurierbare Graphausführung und Rechner-Vorschau: [Laufzeitvertrag](docs/configuration/execution.md).

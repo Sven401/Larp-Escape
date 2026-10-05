@@ -1,5 +1,6 @@
 #pragma once
 #include "DeviceRuntime/Channel.h"
+#include "DeviceRuntime/Lifecycle.h"
 #include <freertos/FreeRTOS.h>
 #include <freertos/queue.h>
 
@@ -7,19 +8,24 @@ namespace larp {
 namespace devices {
 enum class Completion : std::uint8_t { Invalid, Completed, ReplyDropped };
 struct ChannelSnapshot {
-    std::uint32_t outstanding = 0, rejectedCommands = 0, droppedReplies = 0;
+    std::uint32_t outstanding = 0, rejectedCommands = 0, droppedReplies = 0, rejectedControls = 0,
+                  droppedControlReplies = 0;
     std::uint8_t parkedOwners = 0;
 };
 // Process-lifetime storage; no heap queue creation/deletion. One application
 // producer and exactly one worker per Owner. No ISR calls. Methods never wait.
 // begin() precedes all tasks. Worker lifecycle calls must not overlap for an
 // owner. Drivers must stop/cancel autonomous activity BEFORE parking that owner.
-class FreeRtosProfileChannel : public IChannel {
+class FreeRtosProfileChannel : public IChannel, public IControlChannel {
   public:
     FreeRtosProfileChannel() = default;
     FreeRtosProfileChannel(const FreeRtosProfileChannel &) = delete;
     FreeRtosProfileChannel &operator=(const FreeRtosProfileChannel &) = delete;
     bool begin();
+    bool sendControl(const Control &control) noexcept override;
+    bool receiveControlReply(ControlReply &reply) noexcept override;
+    bool takeControl(Owner owner, Control &control);
+    Completion completeControl(Owner owner, const ControlReply &reply);
     bool send(Owner owner, const Command &command) noexcept override;
     bool receiveReply(Reply &reply) noexcept override;
     bool observe(std::uint8_t componentSlot, DeviceObservation &value) noexcept override;
@@ -41,6 +47,8 @@ class FreeRtosProfileChannel : public IChannel {
     static const std::uint8_t AllParked = (1U << ChannelLimits::Owners) - 1U;
     struct Worker {
         Ticket activeTicket;
+        ControlTicket activeControl;
+        bool controlling = false;
         CommandKind activeKind = CommandKind::ReadCard;
         std::uint32_t generation = 0, outstanding = 0;
         bool executing = false;
@@ -58,6 +66,13 @@ class FreeRtosProfileChannel : public IChannel {
     std::array<StaticQueue_t, Limits::Components> observationControls_ = {};
     alignas(DeviceObservation) std::uint8_t
         observationBytes_[Limits::Components][sizeof(DeviceObservation)] = {};
+    std::array<QueueHandle_t, ChannelLimits::Owners> controls_ = {};
+    std::array<StaticQueue_t, ChannelLimits::Owners> controlControls_ = {};
+    alignas(Control) std::uint8_t controlBytes_[ChannelLimits::Owners][sizeof(Control)] = {};
+    QueueHandle_t controlReplies_ = nullptr;
+    StaticQueue_t controlReplyControl_ = {};
+    alignas(ControlReply) std::uint8_t
+        controlReplyBytes_[ChannelLimits::Owners * sizeof(ControlReply)] = {};
     mutable portMUX_TYPE mutex_ = portMUX_INITIALIZER_UNLOCKED;
     ChannelSnapshot status_;
     bool started_ = false;

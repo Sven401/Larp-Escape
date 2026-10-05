@@ -1,6 +1,6 @@
 # Komponentenplanung und Geräteaufträge
 
-Stand: 6. Oktober 2026. Implementiert: hardwarefreie Planung, revisionskorrelierter Broker, statischer FreeRTOS-Kanal und synthetische Ausführungsbeispiele. Die Produktionsfirmware benutzt weiterhin die feste Verdrahtung und den alten Spielcontroller. Dieser Schnitt initialisiert keine realen Komponenten und bietet noch keine Companion-Verbindung oder persistente Profilübernahme.
+Stand: 6. Oktober 2026. Implementiert: hardwarefreie Planung, revisionskorrelierter Broker, statischer FreeRTOS-Kanal, [kontrollierte Profilübernahme](activation.md) und synthetische Ausführungsbeispiele. Die Produktionsfirmware benutzt weiterhin die feste Verdrahtung und den alten Spielcontroller. Dieser Schnitt initialisiert keine realen Komponenten und bietet noch keine Companion-Verbindung oder persistente Profilübernahme.
 
 ## Komponenten aus einem Profil planen
 
@@ -46,7 +46,7 @@ Ein realer Gerätebesitzer muss sämtliche benötigten `Component`-Einstellungen
 
 **Übernahmebarriere:** Alle Gerätebesitzer müssen zunächst autonome Treiberarbeit anhalten/abbrechen und anschließend `parkOwner` bestätigen. Parken gelingt nur ohne angenommene Arbeit für diesen Besitzer. Leere Queues allein reichen nicht: laufende Aufträge bleiben mitgezählt. `quiescent()` wird nur wahr, wenn alle fünf Besitzer geparkt und alle Jobs beendet sind. Dann kann der Broker einen erfolgreich kompilierten, unveränderten Plan mit neuer Generation übernehmen. Besitzer übernehmen ihre neue Konfiguration und Generation vor `resumeOwner`. Alte Mailboxwerte werden durch die Generation erkannt; alte Antworten werden beim nächsten `service` verworfen.
 
-Dieser Kanal liefert die Bausteine der Barriere. Koordinator, Abbruchprotokoll, Treiberwechsel, Timeout der Barriere, Wiederherstellung des vorherigen Profils und last-good-Speicherung sind noch **nicht** implementiert. Ein Owner darf sich nicht als geparkt melden, solange sein Treiber selbständig weiterarbeitet. Ein `complete` bei Audio ist erst nach abgeschlossener/abgebrochener Gerätearbeit erlaubt, auch wenn vorher schon Start/BUSY publiziert wird.
+Der [Übernahmekoordinator](activation.md) führt Parken, kopierte Einrichtung, Brokerbindung, Freigabe, Fristen und Rückkehr zum vorherigen Profil aus. Dafür bestehen je Besitzer eine statische Kontrollqueue mit einem Eintrag und eine gemeinsame Kontrollantwortqueue mit fünf Einträgen. Reale Treiberstilllegung und last-good-Speicherung sind noch offen. Ein Owner darf sich nicht als geparkt melden, solange sein Treiber selbständig weiterarbeitet. Ein `complete` bei Audio ist erst nach abgeschlossener/abgebrochener Gerätearbeit erlaubt, auch wenn vorher schon Start/BUSY publiziert wird.
 
 Primärquelle: [ESP-IDF v4.4 FreeRTOS API](https://docs.espressif.com/projects/esp-idf/en/v4.4/esp32/api-reference/system/freertos.html), insbesondere statische Queues und Taskerzeugung. Die installierten `queue.h`, `task.h` und `portmacro.h` wurden ebenfalls gelesen. Dieser ESP32-Port definiert `StackType_t` als `uint8_t` und Taskstackgrößen in **Bytes**.
 
@@ -67,19 +67,21 @@ Regenerieren: `python scripts/generate_play_examples.py` erzeugt die unmittelbar
 
 ## ESP32-Bauziel mit fünf synthetischen Tasks
 
-`pio run -e esp32-profile-runtime-probe -j 2` baut einen separaten Einstieg, der Profil, Plan, Broker, Session, Kanal, statische Worker-Kontrollblöcke und fünf **4.096-Byte-Stacks** tatsächlich instanziiert. Fünf Besitzer laufen auf Core 0; der Arduino-Anwendungslauf bedient Broker/Session. NFC, Matrix, Audio, LED und Aktivierung sind synthetisch; keinerlei externe GPIO-, Bus-, Audio-, LED- oder Netzwerkinitialisierung.
+`pio run -e esp32-profile-runtime-probe -j 2` baut fünf synthetische Besitzer mit je 4.096-Byte-Stack und den tatsächlichen Runtime-/FreeRTOS-Übernahmepfad. Zwei volle Profile werden einmalig beim Start reserviert. Die Probe fordert nach zehn Sekunden einen Wechsel vom Standard- zum Hinweisprofil an. Keine externe Hardware oder Netzwerkinitialisierung. Aktuelle Speicherzahlen und die statische DRAM-Grenze stehen im [Übernahmevertrag](activation.md).
 
-Die Probe enthält nur einen automatischen Ausschnitt mit der ersten Profilrolle und 100-ms-Synthetikaudio. Sie ist keine komplette Sechs-Runden-Abnahme und keine Produktionsintegration. In diesem Arbeitsschritt wurde sie ausschließlich gebaut, **nicht hochgeladen oder am Board ausgeführt**. Der zuvor geprüfte USB-Diagnosestand bleibt am Board.
+Die Probe wurde ausschließlich gebaut, nicht hochgeladen oder am Board ausgeführt. Der zuvor geprüfte USB-Diagnosestand bleibt am Board. Der Ausschnitt mit erster Profilrolle und 100-ms-Synthetikaudio ersetzt weder einen kompletten Spielfluss noch eine echte Geräteabnahme.
 
 ## Noch offen
 
 1. Reale Besitzer-/Treiberadapter mit profilabhängiger Einrichtung, Abbruch/Stilllegung, Lebenszeichen-/Sample-Alterprüfung und kontrolliertem Produktionsanschluss. Die Mailboxes prüfen bislang Generation, nicht das Alter eines gecachten Samples.
 2. Last-/Overflow-/Stale-/Timeout-/Generationswechselabdeckung und Legacyvergleich; normaler Rechnergebrauch beweist diese Randfälle nicht.
-3. Persistente aktive/Entwurf-Slots, last-good-Profil, Fehler-/Stromausfallverhalten und vollständige Aktivierungsbarriere.
+3. Persistente aktive/Entwurf-Slots, last-good-Profil, Fehler-/Stromausfallverhalten und Abnahme der implementierten Aktivierungsbarriere mit echten Treibern.
 4. Dynamischer Companion-Status, authentifizierte Steuereingänge und direkter Appzugang ohne zusätzliche Netzwerkinfrastruktur.
 5. Android-Editor/Spielleitung; reale Hardware-, Stack-, Latenz-, Energie- und Recoveryabnahme.
 
-## Beobachteter Stand am 6. Oktober 2026
+## Historischer Gerätekanal-Schnitt (`977e332`, 6. Oktober 2026)
+
+Aktueller Folgestand mit Kontrollqueues und zwei Profilspeichern: [Übernahmevertrag](activation.md). Die folgenden Zahlen gehören zum ersten Gerätekanal-Schnitt.
 
 Normale Bedienung mit dem gebauten Rechnerwerkzeug, keine neue Testsuite:
 

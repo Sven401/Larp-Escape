@@ -17,6 +17,11 @@ bool FreeRtosProfileChannel::begin() {
     for (std::size_t index = 0; index < ChannelLimits::Owners; ++index)
         commands_[index] = xQueueCreateStatic(ChannelLimits::CommandsPerOwner, sizeof(Command),
                                               commandBytes_[index], &commandControls_[index]);
+    for (std::size_t index = 0; index < ChannelLimits::Owners; ++index)
+        controls_[index] =
+            xQueueCreateStatic(1, sizeof(Control), controlBytes_[index], &controlControls_[index]);
+    controlReplies_ = xQueueCreateStatic(ChannelLimits::Owners, sizeof(ControlReply),
+                                         controlReplyBytes_, &controlReplyControl_);
     replies_ =
         xQueueCreateStatic(ChannelLimits::Replies, sizeof(Reply), replyBytes_, &replyControl_);
     for (std::size_t index = 0; index < Limits::Components; ++index)
@@ -25,6 +30,49 @@ bool FreeRtosProfileChannel::begin() {
     started_ = true;
     status_.parkedOwners = AllParked;
     return true;
+}
+bool FreeRtosProfileChannel::sendControl(const Control &control) noexcept {
+    if (!started_ || !valid(control.ticket.owner) || control.ticket.generation == 0 ||
+        control.ticket.sequence == 0)
+        return false;
+    if (xQueueSendToBack(controls_[static_cast<unsigned>(control.ticket.owner)], &control, 0) ==
+        pdTRUE)
+        return true;
+    portENTER_CRITICAL(&mutex_);
+    increment(status_.rejectedControls);
+    portEXIT_CRITICAL(&mutex_);
+    return false;
+}
+bool FreeRtosProfileChannel::receiveControlReply(ControlReply &reply) noexcept {
+    return started_ && xQueueReceive(controlReplies_, &reply, 0) == pdTRUE;
+}
+bool FreeRtosProfileChannel::takeControl(Owner owner, Control &control) {
+    if (!started_ || !valid(owner))
+        return false;
+    Worker &worker = workers_[static_cast<unsigned>(owner)];
+    if (worker.controlling ||
+        xQueueReceive(controls_[static_cast<unsigned>(owner)], &control, 0) != pdTRUE)
+        return false;
+    worker.activeControl = control.ticket;
+    worker.controlling = true;
+    return true;
+}
+Completion FreeRtosProfileChannel::completeControl(Owner owner, const ControlReply &reply) {
+    if (!started_ || !valid(owner))
+        return Completion::Invalid;
+    Worker &worker = workers_[static_cast<unsigned>(owner)];
+    if (!worker.controlling || !sameControlTicket(reply.ticket, worker.activeControl) ||
+        (reply.outcome != ControlOutcome::Applied && reply.outcome != ControlOutcome::Rejected &&
+         reply.outcome != ControlOutcome::Failed))
+        return Completion::Invalid;
+    const bool dropped = xQueueSendToBack(controlReplies_, &reply, 0) != pdTRUE;
+    worker.controlling = false;
+    if (dropped) {
+        portENTER_CRITICAL(&mutex_);
+        increment(status_.droppedControlReplies);
+        portEXIT_CRITICAL(&mutex_);
+    }
+    return dropped ? Completion::ReplyDropped : Completion::Completed;
 }
 bool FreeRtosProfileChannel::send(Owner owner, const Command &command) noexcept {
     if (!started_ || !valid(owner))

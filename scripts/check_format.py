@@ -31,6 +31,8 @@ ADAPTER_FILES = (
     "src/ProfileTool/Preview.cpp",
     "src/ProfileTool/Play.h",
     "src/ProfileTool/Play.cpp",
+    "src/ProfileTool/Activation.h",
+    "src/ProfileTool/Activation.cpp",
     "src/RuntimeProbe/main.cpp",
     "src/ProfileRuntimeProbe/main.cpp",
     "lib/FreeRtosProfileChannel/FreeRtosProfileChannel.h",

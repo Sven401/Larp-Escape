@@ -1,8 +1,7 @@
 #include "DeviceRuntime/Plan.h"
 namespace larp {
 namespace devices {
-namespace {
-Owner ownerFor(ComponentKind kind) {
+Owner componentOwner(ComponentKind kind) {
     switch (kind) {
     case ComponentKind::NfcSpi:
         return Owner::Nfc;
@@ -18,6 +17,7 @@ Owner ownerFor(ComponentKind kind) {
     }
     return Owner::Count;
 }
+namespace {
 std::uint8_t slot(const Profile &profile, ComponentId id) {
     for (std::size_t index = 0; index < profile.components.size(); ++index)
         if (profile.components.get(index)->id == id)
@@ -78,7 +78,7 @@ PlanResult compilePlan(const Profile &profile, Plan &plan) {
         route = Route();
         route.id = component.id;
         route.kind = component.kind;
-        route.owner = ownerFor(component.kind);
+        route.owner = componentOwner(component.kind);
         route.enabled = component.enabled;
         route.profileSlot = static_cast<std::uint8_t>(index);
         route.rowExpanders.fill(255);

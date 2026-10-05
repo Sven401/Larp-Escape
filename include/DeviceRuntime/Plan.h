@@ -52,6 +52,7 @@ struct PlanResult {
 // remains unchanged. The plan stores indices/IDs, not borrowed profile pointers.
 // This declares ownership and dependencies; it does NOT initialize hardware.
 PlanResult compilePlan(const Profile &profile, Plan &destination);
+Owner componentOwner(ComponentKind kind);
 const char *ownerName(Owner owner);
 const char *planErrorName(PlanError error);
 } // namespace devices

@@ -1,4 +1,5 @@
 // Host-side profile export/inspection. This is not an embedded entry point.
+#include "Activation.h"
 #include "GameConfiguration/ProfileReader.h"
 #include "GameConfiguration/ProfileWriter.h"
 #include "Play.h"
@@ -40,6 +41,7 @@ int main(int argc, char **argv) {
     bool example = false;
     const char *inputPath = nullptr;
     const char *previewPath = nullptr;
+    const char *activationPath = nullptr;
     bool playable = false, queued = false;
     for (int index = 1; index < argc; ++index) {
         if (std::strcmp(argv[index], "--summary") == 0 && !summary)
@@ -49,6 +51,9 @@ int main(int argc, char **argv) {
         else if (std::strcmp(argv[index], "--import") == 0 && inputPath == nullptr && !example &&
                  index + 1 < argc)
             inputPath = argv[++index];
+        else if (std::strcmp(argv[index], "--activate") == 0 && activationPath == nullptr &&
+                 index + 1 < argc)
+            activationPath = argv[++index];
         else if ((std::strcmp(argv[index], "--preview") == 0 ||
                   std::strcmp(argv[index], "--play") == 0 ||
                   std::strcmp(argv[index], "--play-queued") == 0) &&
@@ -58,14 +63,14 @@ int main(int argc, char **argv) {
             previewPath = argv[++index];
         } else {
             std::fputs("Usage: profile-tools [--summary | --preview SCRIPT | --play SCRIPT | "
-                       "--play-queued SCRIPT] "
+                       "--play-queued SCRIPT | --activate FILE] "
                        "[--example | --import FILE]\n",
                        stderr);
             return 2;
         }
     }
-    if (summary && previewPath != nullptr) {
-        std::fputs("Summary and preview are exclusive\n", stderr);
+    if ((summary && (previewPath || activationPath)) || (previewPath && activationPath)) {
+        std::fputs("Summary, preview/play and activation are exclusive\n", stderr);
         return 2;
     }
     std::unique_ptr<Profile> profile(new Profile());
@@ -99,6 +104,24 @@ int main(int argc, char **argv) {
                      static_cast<unsigned>(result.error), static_cast<unsigned>(result.section),
                      result.object, result.detail);
         return 1;
+    }
+    if (activationPath != nullptr) {
+        std::unique_ptr<Profile> candidate(new Profile()), scratch(new Profile());
+        std::FILE *input = std::fopen(activationPath, "rb");
+        if (!input) {
+            std::perror("Cannot open candidate profile");
+            return 1;
+        }
+        FileReader reader(input);
+        const ImportResult result = readProfile(reader, *scratch, *candidate);
+        const bool closeOk = std::fclose(input) == 0;
+        if (!result) {
+            std::fprintf(stderr, "Candidate import rejected: error=%s offset=%lu validation=%u\n",
+                         importErrorName(result.error), static_cast<unsigned long>(result.offset),
+                         static_cast<unsigned>(result.validation.error));
+            return 1;
+        }
+        return closeOk ? runActivation(*profile, *candidate) : 1;
     }
     if (previewPath != nullptr) {
         std::FILE *input = std::fopen(previewPath, "rb");
