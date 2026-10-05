@@ -71,6 +71,11 @@ const char *outcomeName(Outcome value) {
     const unsigned index = static_cast<unsigned>(value);
     return index < sizeof(names) / sizeof(names[0]) ? names[index] : "unknown_outcome";
 }
+const char *actionOutcomeName(ActionOutcome value) {
+    static const char *const names[] = {"applied", "queued", "rejected", "unavailable", "deferred"};
+    const unsigned index = static_cast<unsigned>(value);
+    return index < sizeof(names) / sizeof(names[0]) ? names[index] : "unknown_outcome";
+}
 Engine::Engine(IExecutionInputs &inputs, IExecutionActions &actions)
     : inputs_(inputs), actions_(actions) {}
 template <std::size_t N>
@@ -136,7 +141,7 @@ Result Engine::start(const Profile &profile, std::uint32_t now) {
     paused_ = false;
     entryPending_ = true;
     lastTransition_ = TransitionId();
-    requests_ = queued_ = rejected_ = unavailable_ = 0;
+    requests_ = queued_ = deferred_ = rejected_ = unavailable_ = 0;
     lastFailedAction_ = ActionId();
     lastFailure_ = ActionOutcome::Applied;
     tickResult_ = {};
@@ -181,7 +186,9 @@ void Engine::dispatch(const ActionList &list, ActionPhase phase, std::uint32_t n
         const Action &action = *profile_->actions.get(list.indices[index]);
         increment(requests_);
         const ActionOutcome outcome = actions_.execute(*profile_, action, context);
-        if (outcome == ActionOutcome::Queued)
+        if (outcome == ActionOutcome::Deferred)
+            increment(deferred_);
+        else if (outcome == ActionOutcome::Queued)
             increment(queued_);
         else if (outcome != ActionOutcome::Applied) {
             if (outcome == ActionOutcome::Rejected)
@@ -423,6 +430,7 @@ ExecutionSnapshot Engine::snapshot() const {
     value.stateElapsedMilliseconds = stateAge_;
     value.actionRequests = requests_;
     value.queuedActions = queued_;
+    value.deferredActions = deferred_;
     value.rejectedActions = rejected_;
     value.unavailableActions = unavailable_;
     value.lastFailedAction = lastFailedAction_;

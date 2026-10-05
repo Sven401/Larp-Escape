@@ -82,6 +82,12 @@ def generate(root: Path) -> dict:
             "density": integer(8), "changesSpeed": flag, "speed": integer(8), "brightness": integer(255),
             "intervalMilliseconds": integer(65535), "frames": integer(255), "colored": flag,
             "colorRgb": integer(0xFFFFFF), "rippleIndex": integer(255), "origin": integer(65535), "palette": palette})}
+    definitions["action"]["properties"]["effect"] = dict(optional_id)
+    definitions["action"]["properties"]["effect"]["description"] = (
+        "ApplyEffect references an effect. ReadCrystals may bind a Palette effect "
+        "to select the LED target; its colors come from the accepted crystal. "
+        "With effect=0, palette-changing crystals require exactly one enabled "
+        "LED strip. Other action kinds require effect=0.")
     document = obj({"schemaVersion": {"const": limits["SchemaVersion"]}, "revision": integer(),
         "name": name, "board": {"const": vocabulary["Board"][0]}, "initialState": identifier, "errorState": identifier,
         "inputs": obj({"cardTimeoutMilliseconds": integer(65535, 1), "emptyReadsBeforeClear": integer(255, 1),

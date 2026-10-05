@@ -1,6 +1,6 @@
 # Konfigurationsprofil v1 – erster Umsetzungsschnitt
 
-Stand: 5. Oktober 2026. Profilmodell, Standardprofil, Validierung sowie JSON-Import und -Ausgabe sind implementiert. Ein hardwarefreier Graphkern mit Rechner-Vorschau ist implementiert; Anschluss von Spiel-/Geräteaktionen, Speicherung, Netzwerkschnittstelle und Android-Editoren folgen. Die Produktionsfirmware verwendet noch den bisherigen Controller. Ein vorhandenes JSON-Dokument bedeutet keine erreichbare API oder übernommene Gerätekonfiguration.
+Stand: 5. Oktober 2026. Profilmodell, Standardprofil, Validierung sowie JSON-Import und -Ausgabe sind implementiert. Ein hardwarefreier Graphkern mit Rechner-Vorschau ist implementiert; Profilabhängige Spiel-/Geräteaufträge sind mit Session verbunden; reale Komponentenadapter, Produktionsanschluss, Speicherung, Companion-Transport und Android-Editoren folgen. Die Produktionsfirmware verwendet noch den bisherigen Controller. Ein vorhandenes JSON-Dokument bedeutet keine erreichbare API oder übernommene Gerätekonfiguration.
 
 ## Quellen und reproduzierbarer Export
 
@@ -71,11 +71,11 @@ JSON-Grundlage für Syntax, Zahlen und Unicode: [RFC 8259](https://www.rfc-edito
 
 ## Standardspiel: abgebildet, Ausführungsvergleich noch offen
 
-Export enthält sieben Komponenten, sechs Rollen, neun Zustände, 19 Übergänge, 18 Bedingungsknoten, 37 Aktionen und 19 Effekte. UID-/Rollendaten kommen aus `GameDomain::defaultRoleDefinitions`; Hardwarepins und MCP-Startmodi entsprechen dem bestehenden Code. Elektrische Startmodus-/Matrixfragen bleiben offen.
+Export enthält sieben Komponenten, sechs Rollen, neun Zustände, 19 Übergänge, 18 Bedingungsknoten, 37 Aktionen und 20 Effekte (aktuelle Standardrevision 3). UID-/Rollendaten kommen aus `GameDomain::defaultRoleDefinitions`; Hardwarepins und MCP-Startmodi entsprechen dem bestehenden Code. Elektrische Startmodus-/Matrixfragen bleiben offen.
 
-Entry-/Tick-/Transition-Aktionen bilden unter anderem Kristall-/Rollen-Audio, Helligkeitsrampen mit 150-ms-Intervall, Twinkle-Dichte, Burst, Wake, Reset, Rundenzählung und ACTIVATE ab. Wiederholte oder abgewiesene Effektanforderungen behalten ihre Reihenfolge; die Graphvorschau verarbeitet die Anforderungsreihenfolge, Geräteaktionen sind noch anzuschließen. Noch kein Beweis identischen Spielflusses. Das zweite Beispielprofil ergänzt Zustand 42 (Hinweis), einen Übergang aus Idle nach 30 Sekunden, Rückkehr nach 5 Sekunden und einen cyanfarbenen Burst; es wird im Profilwerkzeug erfolgreich validiert und exportiert, als Graphvorschau mit vorgegebenen Eingaben ausgeführt; Rollen-/Geräteaktionen bleiben anzuschließen.
+Entry-/Tick-/Transition-Aktionen bilden unter anderem Kristall-/Rollen-Audio, Helligkeitsrampen mit 150-ms-Intervall, Twinkle-Dichte, Burst, Wake, Reset, Rundenzählung und ACTIVATE ab. Wiederholte oder abgewiesene Effektanforderungen behalten ihre Reihenfolge; die Graphvorschau verarbeitet die Anforderungsreihenfolge, typisierte Geräteaufträge sind inzwischen über Session angeschlossen; reale Adapter bleiben offen. Noch kein Beweis identischen Spielflusses. Das zweite Beispielprofil ergänzt Zustand 42 (Hinweis), einen Übergang aus Idle nach 30 Sekunden, Rückkehr nach 5 Sekunden und einen cyanfarbenen Burst; es wird im Profilwerkzeug erfolgreich validiert und exportiert, als Graphvorschau mit vorgegebenen Eingaben ausgeführt; Session führt inzwischen Rollen-/Geräteaufträge aus, siehe den aktuellen Schnitt unten.
 
-`emptyReadsBeforeClear=5`, `consecutiveEmptyReads=false` und die bestehenden späten Standby-Lücken bewahren die dokumentierte Ausgangspolitik. Timer-/Event-Latches, Palette auf neuem Kristall und eindeutige Verbrauchsaktionen müssen beim Anschluss an den Controller konkret umgesetzt werden. Vorhandene Controllerfixtures dienen dafür als spätere Verhaltensreferenz.
+`emptyReadsBeforeClear=5`, `consecutiveEmptyReads=false` und die bestehenden späten Standby-Lücken bewahren die dokumentierte Ausgangspolitik. Timer-/Event-Latches, Palette auf neuem Kristall und Verbrauchsaktionen sind in Session umgesetzt; ihre breite Vergleichs-/Fehlerpfadabdeckung bleibt offen. Vorhandene Controllerfixtures dienen dafür als spätere Verhaltensreferenz.
 
 ## Gemessener Erstgebrauch
 
@@ -91,6 +91,10 @@ Frische Architektur-/Header-/Formatprüfung: 48 Dateien / 119 Includes, 34 isoli
 
 Builds des Import-Schnitts erfolgreich: Spiel RAM 55.156 Byte / Flash **1.225.549 von 1.310.720 Byte (93,5 %)**, USB RAM 21.480 / Flash 291.673 Byte, Rechnerwerkzeug mit Warnungen als Fehler. Der erste Spiel-Build scheiterte beim Bibliothekskompilieren an „No space left on device“; Wiederholung mit `pio run -e az-delivery-devkit-v4 -j 2 -e profile-tools` erfolgreich, ohne Quelldaten zu löschen. Kein Upload und keine Remote-CI. Profilimport noch nicht im Produktionslauf aktiv; die Buildgrößen belegen dessen späteres Ressourcenbudget nicht.
 
-## Nächster konkreter Schritt
+## Aktueller Session-Schnitt und nächster Schritt
 
-Profilabhängigen Rollen-/Kristallfortschritt und Geräteaktionen an den implementierten E2-Graphkern anschließen. Standardspielvergleich und vollständige Fehlerpfadabdeckung bleiben offen. JSON-Dateien sind als Profile einlesbar und in der Rechner-Vorschau ausführbar, aber der Produktionscontroller nutzt sie noch nicht. Aktuelle Artefakte: Standardrevision 2 (19.133 kompakte Bytes), Hinweisrevision 3 (19.957 Bytes), Graphkern 4.200 Byte. Details: [Ausführungsvertrag](execution.md). Konfigurationsaktivierung, Speicherung, lokale API und App bleiben offen; vor Netzwerkumfang RAM-/Flashreserve budgetieren.
+Profilabhängiger Rollen-/Kristallfortschritt und typisierte Geräteaufträge sind über `GameExecution::Session` angeschlossen. Standardspiel mit sechs Rollen und Bonus sowie ein verändertes JSON mit siebter Rolle, vier Kristallen, Zustand 88, 750-ms-Guard und orangefarbener Palette wurden im selben Rechnerprogramm ausgeführt. Diese normalen Abläufe nutzen synthetische Geräte; Produktionscontroller, reale Adapter und breite Fehlerpfad-/Vergleichsabdeckung bleiben offen.
+
+`ReadCrystals.effect` kann jetzt einen Palette-Effekt als LED-Zuordnung referenzieren; dessen Palette wird mit den Kristallfarben ersetzt. Ohne Zuordnung verlangen palettenändernde Kristalle genau einen aktiven LED-Streifen. Das Standardprofil enthält nun 20 Effekte, Revision 3 (19.395 kompakte Bytes); Hinweisrevision 4 (20.219 Bytes). Schema beschreibt den Bezug als Annotation, C++ validiert dessen Bedeutung. Bearbeitbare Zusatzartefakte/Provenienz und Portverträge: [session.md](session.md).
+
+Als Nächstes Komponentenregistry, nicht blockierende Geräteadapter und kontrollierter Produktionsanschluss. Konfigurationsaktivierung, Speicherung, erweiterter Companion-Vertrag, direkter Appzugang ohne WLAN-Infrastruktur und Android bleiben offen. Vor deren Aktivierung RAM-/Flashreserve budgetieren.

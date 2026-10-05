@@ -777,7 +777,8 @@
         "effect": {
           "type": "integer",
           "minimum": 0,
-          "maximum": 65535
+          "maximum": 65535,
+          "description": "ApplyEffect references an effect. ReadCrystals may bind a Palette effect to select the LED target; its colors come from the accepted crystal. With effect=0, palette-changing crystals require exactly one enabled LED strip. Other action kinds require effect=0."
         },
         "value": {
           "type": "integer",

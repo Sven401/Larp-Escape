@@ -37,7 +37,7 @@ LAYER_ROOTS = (
 ALLOWED_DEPENDENCIES = {
     "domain": {"domain"},
     "configuration": {"domain", "configuration"},
-    "execution": {"domain", "configuration", "execution"},
+    "execution": {"domain", "configuration", "ports", "execution"},
     "ports": {"domain", "ports"},
     "runtime": {"domain", "runtime"},
     "machine": {"machine"},

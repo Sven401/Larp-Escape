@@ -26,7 +26,7 @@ struct ActionContext {
     ActionPhase phase = ActionPhase::Tick;
     std::uint32_t nowMilliseconds = 0;
 };
-enum class ActionOutcome : std::uint8_t { Applied, Queued, Rejected, Unavailable };
+enum class ActionOutcome : std::uint8_t { Applied, Queued, Rejected, Unavailable, Deferred };
 class IExecutionInputs {
   public:
     virtual ~IExecutionInputs() = default;
@@ -80,6 +80,7 @@ struct ExecutionSnapshot {
     std::uint32_t stateElapsedMilliseconds = 0;
     std::uint32_t actionRequests = 0;
     std::uint32_t queuedActions = 0;
+    std::uint32_t deferredActions = 0;
     std::uint32_t rejectedActions = 0;
     std::uint32_t unavailableActions = 0;
     ActionId lastFailedAction;
@@ -87,6 +88,7 @@ struct ExecutionSnapshot {
     Result lastTickResult;
 };
 const char *outcomeName(Outcome value);
+const char *actionOutcomeName(ActionOutcome value);
 // Hardware-free execution kernel. All calls belong to one application owner;
 // snapshot() is a value copy, NOT intertask synchronization. No heap allocation.
 // The borrowed profile must remain alive and unchanged until stop() returns.
@@ -144,7 +146,7 @@ class Engine {
     std::uint32_t revision_ = 0, profileRevision_ = 0, lastNow_ = 0, stateAge_ = 0;
     bool paused_ = false, entryPending_ = false, operating_ = false;
     TransitionId lastTransition_;
-    std::uint32_t requests_ = 0, queued_ = 0, rejected_ = 0, unavailable_ = 0;
+    std::uint32_t requests_ = 0, queued_ = 0, deferred_ = 0, rejected_ = 0, unavailable_ = 0;
     ActionId lastFailedAction_;
     ActionOutcome lastFailure_ = ActionOutcome::Applied;
     Result tickResult_;

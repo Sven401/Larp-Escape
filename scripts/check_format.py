@@ -29,6 +29,8 @@ ADAPTER_FILES = (
     "src/ProfileTool/main.cpp",
     "src/ProfileTool/Preview.h",
     "src/ProfileTool/Preview.cpp",
+    "src/ProfileTool/Play.h",
+    "src/ProfileTool/Play.cpp",
     "src/RuntimeProbe/main.cpp",
     "lib/CompanionStatusStore/CompanionStatusStore.h",
     "lib/CompanionStatusStore/CompanionStatusStore.cpp",

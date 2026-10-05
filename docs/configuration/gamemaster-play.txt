@@ -1,0 +1,11 @@
+# Synthetic game-master control; revisions come from each accepted operation.
+start 0
+state 2 1 1
+tick 2
+pause 2 3
+tick 1000
+resume 3 1001
+state 1 4 1002
+tick 1003
+stop 5 1004
+snapshot

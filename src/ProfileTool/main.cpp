@@ -1,6 +1,7 @@
 // Host-side profile export/inspection. This is not an embedded entry point.
 #include "GameConfiguration/ProfileReader.h"
 #include "GameConfiguration/ProfileWriter.h"
+#include "Play.h"
 #include "Preview.h"
 #include <cstdio>
 #include <cstring>
@@ -39,6 +40,7 @@ int main(int argc, char **argv) {
     bool example = false;
     const char *inputPath = nullptr;
     const char *previewPath = nullptr;
+    bool playable = false;
     for (int index = 1; index < argc; ++index) {
         if (std::strcmp(argv[index], "--summary") == 0 && !summary)
             summary = true;
@@ -47,13 +49,15 @@ int main(int argc, char **argv) {
         else if (std::strcmp(argv[index], "--import") == 0 && inputPath == nullptr && !example &&
                  index + 1 < argc)
             inputPath = argv[++index];
-        else if (std::strcmp(argv[index], "--preview") == 0 && previewPath == nullptr &&
-                 index + 1 < argc)
+        else if ((std::strcmp(argv[index], "--preview") == 0 ||
+                  std::strcmp(argv[index], "--play") == 0) &&
+                 previewPath == nullptr && index + 1 < argc) {
+            playable = std::strcmp(argv[index], "--play") == 0;
             previewPath = argv[++index];
-        else {
-            std::fputs(
-                "Usage: profile-tools [--summary | --preview SCRIPT] [--example | --import FILE]\n",
-                stderr);
+        } else {
+            std::fputs("Usage: profile-tools [--summary | --preview SCRIPT | --play SCRIPT] "
+                       "[--example | --import FILE]\n",
+                       stderr);
             return 2;
         }
     }
@@ -99,7 +103,7 @@ int main(int argc, char **argv) {
             std::perror("Cannot open preview script");
             return 1;
         }
-        const int status = runPreview(*profile, input);
+        const int status = playable ? runPlay(*profile, input) : runPreview(*profile, input);
         return std::fclose(input) == 0 ? status : 1;
     }
     if (summary) {

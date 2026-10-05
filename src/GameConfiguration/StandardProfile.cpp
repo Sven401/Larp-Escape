@@ -48,12 +48,13 @@ class Builder {
         return item.id;
     }
     ActionId action(ActionKind kind, ComponentId component = ComponentId(), std::uint32_t value = 0,
-                    ComponentId source = ComponentId()) {
+                    ComponentId source = ComponentId(), EffectId binding = EffectId()) {
         Action item;
         item.id = ActionId(static_cast<std::uint16_t>(profile.actions.size() + 1));
         item.kind = kind;
         item.component = component;
         item.source = source;
+        item.effect = binding;
         item.value = value;
         ok = profile.actions.push(item) && ok;
         return item.id;
@@ -164,7 +165,7 @@ bool makeStandardProfile(Profile &profile) {
     profile.actions.clear();
     profile.effects.clear();
     profile.schemaVersion = Limits::SchemaVersion;
-    profile.revision = 2;
+    profile.revision = 3;
     profile.board = Board::Esp32DevkitV4;
     profile.initialState = StateId(1);
     profile.errorState = StateId(9);
@@ -249,7 +250,12 @@ bool makeStandardProfile(Profile &profile) {
     const ActionId consumeCrystal = builder.action(ActionKind::ConsumeCrystal);
     const ActionId consumeError = builder.action(ActionKind::ConsumeError);
     const ActionId readRole = builder.action(ActionKind::ReadRole, nfcId, 1000);
-    const ActionId readCrystals = builder.action(ActionKind::ReadCrystals, matrixId, 100);
+    Effect crystalColors;
+    crystalColors.component = ledId;
+    crystalColors.kind = EffectKind::Palette;
+    const EffectId crystalColorBinding = builder.effect(crystalColors, "crystal colors");
+    const ActionId readCrystals =
+        builder.action(ActionKind::ReadCrystals, matrixId, 100, ComponentId(), crystalColorBinding);
     const ActionId monitorKeystone = builder.action(ActionKind::ObserveKeystone, nfcId, 2000);
     const ActionId wakeAudio = builder.action(ActionKind::WakeAudio, audioId);
     const ActionId burst15 = burst(builder, ledId, 15);
@@ -366,7 +372,7 @@ bool makeStandardProfile(Profile &profile) {
 bool makeHintExampleProfile(Profile &profile) {
     if (!makeStandardProfile(profile))
         return false;
-    profile.revision = 3;
+    profile.revision = 4;
     if (!profile.name.assign("Larp-Escape with hint"))
         return false;
     Effect effect;

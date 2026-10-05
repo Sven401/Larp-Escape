@@ -261,7 +261,7 @@ struct Action {
     ActionKind kind = ActionKind::ResetRound;
     ComponentId source; // Matrix source for AnimateWakeInputs.
     ComponentId component;
-    EffectId effect;
+    EffectId effect;         // ApplyEffect, or optional Palette binding for ReadCrystals.
     std::uint32_t value = 0; // track number, crystal index, or polling interval
 };
 struct State {

@@ -363,7 +363,7 @@ ValidationResult validateActions(const Profile &profile) {
                 return fail(Error::InvalidParameter, Section::Actions, action.id.value);
             continue;
         }
-        if (action.effect.value != 0)
+        if (action.effect.value != 0 && action.kind != ActionKind::ReadCrystals)
             return fail(Error::InvalidParameter, Section::Actions, action.id.value);
         bool device = true;
         ComponentKind kind = ComponentKind::AudioUart;
@@ -422,16 +422,39 @@ ValidationResult validateActions(const Profile &profile) {
         if (action.kind == ActionKind::ReadRole && profile.roles.size() == 0)
             return fail(Error::InvalidParameter, Section::Actions, action.id.value);
         if (action.kind == ActionKind::ReadCrystals) {
+            if (action.effect.value != 0) {
+                const Effect *binding = find(profile.effects, action.effect);
+                if (binding == nullptr)
+                    return fail(Error::MissingReference, Section::Actions, action.id.value,
+                                action.effect.value);
+                if (binding->kind != EffectKind::Palette)
+                    return fail(Error::InvalidParameter, Section::Actions, action.id.value,
+                                action.effect.value);
+            }
+            bool needsPalette = false;
             const Component &matrix = *find(profile.components, action.component);
             for (std::size_t roleIndex = 0; roleIndex < profile.roles.size(); ++roleIndex) {
                 const Role &role = *profile.roles.get(roleIndex);
                 for (std::size_t crystalIndex = 0; crystalIndex < role.crystals.size();
                      ++crystalIndex) {
                     const Crystal &crystal = *role.crystals.get(crystalIndex);
+                    needsPalette = needsPalette || crystal.changesPalette;
                     if (crystal.row > matrix.rows.size() || crystal.column >= matrix.columns.size())
                         return fail(Error::InvalidCrystal, Section::Actions, action.id.value,
                                     role.id.value);
                 }
+            }
+            if (needsPalette && action.effect.value == 0) {
+                std::size_t ledTargets = 0;
+                for (std::size_t component = 0; component < profile.components.size();
+                     ++component) {
+                    const Component &candidate = *profile.components.get(component);
+                    if (candidate.enabled && candidate.kind == ComponentKind::LedStrip)
+                        ++ledTargets;
+                }
+                // Compatibility with the first unpublished profile: one unambiguous strip.
+                if (ledTargets != 1)
+                    return fail(Error::MissingReference, Section::Actions, action.id.value);
             }
         }
         if (action.kind == ActionKind::PlayTrack && (action.value == 0 || action.value > 65535))
