@@ -2,6 +2,7 @@
 #include "CompanionIntegration/GameControl.h"
 #include "FakeOwners.h"
 #include "FreeRtosGameControlChannel.h"
+#include "MemoryJournalStore.h"
 #include <algorithm>
 #include <cstdlib>
 #include <cstring>
@@ -18,63 +19,7 @@ bool nonzeroWait = false;
 } // namespace host_rtos
 namespace {
 using namespace larp::companion;
-class MemoryStore : public IJournalStore {
-  public:
-    JournalOpen openRead(std::uint8_t slot) override {
-        if (open_ || slot > 1)
-            return JournalOpen::Failure;
-        if (!present_[slot])
-            return JournalOpen::Missing;
-        slot_ = slot;
-        position_ = 0;
-        open_ = true;
-        writing_ = false;
-        return JournalOpen::Present;
-    }
-    bool closeRead() override {
-        bool okay = open_ && !writing_;
-        open_ = false;
-        return okay;
-    }
-    ReadStatus readByte(std::uint8_t &byte) override {
-        if (!open_ || writing_)
-            return ReadStatus::Failure;
-        if (position_ == records_[slot_].size())
-            return ReadStatus::End;
-        byte = static_cast<std::uint8_t>(records_[slot_][position_++]);
-        return ReadStatus::Byte;
-    }
-    bool beginWrite(std::uint8_t slot) override {
-        if (open_ || slot > 1)
-            return false;
-        slot_ = slot;
-        records_[slot].clear();
-        present_[slot] = true;
-        open_ = writing_ = true;
-        return true;
-    }
-    bool write(const char *bytes, std::size_t count) override {
-        if (!open_ || !writing_)
-            return false;
-        records_[slot_].append(bytes, count);
-        return true;
-    }
-    JournalCommit finishWrite() override {
-        const bool okay = open_ && writing_;
-        open_ = writing_ = false;
-        return okay ? JournalCommit::Confirmed : JournalCommit::Uncertain;
-    }
-    void abortWrite() override {
-        open_ = writing_ = false;
-    }
-
-  private:
-    std::string records_[2];
-    bool present_[2] = {};
-    std::size_t position_ = 0;
-    std::uint8_t slot_ = 0;
-    bool open_ = false, writing_ = false;
-};
+using host_journal::MemoryStore;
 TrustedAuthority authority(std::uint32_t epoch, bool gm = true, std::uint32_t principal = 7) {
     TrustedAuthority value;
     value.epoch = epoch;
@@ -793,6 +738,7 @@ void test_pending_hardware_switch_does_not_publish_old_availability() {
 }
 
 #include "CommandStreamCases.h"
+#include "JournalFaultCases.h"
 } // namespace
 void setUp() {
     host_rtos::depth = 0;
@@ -848,5 +794,17 @@ int main() {
     RUN_TEST(test_maximum_document_and_variable_chunk_sizes);
     RUN_TEST(test_revoke_after_fragment_observation_still_fails_admission);
     RUN_TEST(test_frame_fixture_matches_canonical_producer);
+    RUN_TEST(test_existing_only_empty_and_corrupt_boot_never_create_records);
+    RUN_TEST(test_partial_and_failed_truncate_preserve_confirmed_profile_for_reboot);
+    RUN_TEST(test_uncertain_readable_record_cannot_start_until_confirmed_retry);
+    RUN_TEST(test_damaged_newer_records_fall_back_without_auto_start);
+    RUN_TEST(test_equal_generations_are_ambiguous_and_do_not_overwrite);
+    RUN_TEST(test_future_record_version_preserves_bytes_and_blocks_save);
+    RUN_TEST(test_backend_open_read_close_failures_block_initialization);
+    RUN_TEST(test_import_close_failure_never_leaves_ready_draft);
+    RUN_TEST(test_record_changed_after_inspection_is_rejected);
+    RUN_TEST(test_generation_maximum_never_wraps_or_overwrites);
+    RUN_TEST(test_semantically_invalid_record_falls_back_to_valid_profile);
+    RUN_TEST(test_missing_previously_confirmed_records_are_not_fresh_empty_store);
     return UNITY_END();
 }

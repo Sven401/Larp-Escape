@@ -6,7 +6,7 @@ Tatsächliche reine Firmwarequellen, tatsächlicher FreeRtosGameControlChannel, 
 
 Beobachtungshooks setzen Rechtewechsel vor/nach dem letzten synchronisierten Read bzw. vor Admission. Das prüft die definierte Entscheidungsreihenfolge und ausdrücklich auch die zulässige einzelne beanspruchte Operation nach späterem Entzug. Es ist keine atomare Abbruchgarantie. MemoryStore bestätigt ausschließlich modellierte Bytes, keine Stromausfall-/Dateisystem-Synchronisierungsabnahme.
 
-39 gezielte Fälle; keine vollständige JSON-/Profil-Fuzzing-/Ausfallsuite, keine vollständige Lease-/Request-/Sampleerschöpfung. Queuevoll/Reconnect/Entzug/Retry/Replyverlust sowie Start durch Codec bis StoredReady-Engine/Status sind enthalten. Historische Nicht-Prüfungen bleiben im Projektgedächtnis datiert; dieser neue Nachweis ersetzt sie nur für die genannten Fälle.
+51 gezielte Fälle; keine vollständige JSON-/Profil-Fuzzing-/Ausfallsuite, keine vollständige Lease-/Request-/Sampleerschöpfung. Queuevoll/Reconnect/Entzug/Retry/Replyverlust sowie Start durch Codec bis StoredReady-Engine/Status sind enthalten. Historische Nicht-Prüfungen bleiben im Projektgedächtnis datiert; dieser neue Nachweis ersetzt sie nur für die genannten Fälle.
 
 Die [Firmware-Fixtures v2](../../docs/companion/fixtures/v2/README.md) entstehen aus dem tatsächlichen Hostpfad und werden im zusätzlichen Fixturefall bytegenau verglichen.
 
@@ -17,3 +17,14 @@ Duplicate/Conflict/Busy, Reconnect/Entzug, QueueFull/Retry und höchste Länge.
 Framing ist kein Pairing oder BLE-Adapter. Die 20-Byte-Probenwerte sind eine
 lokale Testwahl, keine gemessene GATT-/Funkfähigkeit. Vollständiger Framingvertrag:
 [command-framing-v1.md](../../docs/companion/command-framing-v1.md).
+
+
+12 zusätzliche Journal-Ausfallfunktionen verwenden nur native Backendbytes und
+deterministische Fehlerpunkte (MemoryJournalStore). Tatsächliche private
+Firmwareprofile, Application, Journal, Importer und Eigentümerablauf bleiben
+Produktionsquellen. Abgebrochene Schreibprefixe/Truncate/unklarer Commit,
+alte bestätigte Auswahl, beschädigte/höhere/future/gleiche Generationen,
+Read-/Close-/TOCTOU-Fehler und Generationmax werden geprüft. Keine physische
+Dateisystem-/Stromausfall-/Flashhaltbarkeitsabnahme. Revisionsannahme des ersten
+Laufs korrigiert: Importversuche erhöhen draftRevision, Abschluss der Aktivierung
+verbraucht sie nochmals; beide Beobachtungspunkte jetzt getrennt geprüft.
