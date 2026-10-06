@@ -89,3 +89,11 @@ Architektur83 Dateien/193 Includes, 53 unabhängige C++11-Header,
 Format139/clang-format19.1.7; diffcheck sauber. Kein Cppcheck dieses Schnitts,
 Upload, Remote-CI oder Funk-/Androidabnahme. Vollständiger Backend-Ausfall-,
 Zähler-/Fuzzing- und Feldbetriebnachweis bleibt offen.
+
+### Kopierte Callbackaufnahme
+
+Der neue [Framequeuevertrag](command-frame-queue.md) trennt die feste
+Callbackkopie vom alleinigen CommandStream-Owner. Im Queuepfad zählt die
+ursprüngliche Empfangszeit des ersten Frames zur unveränderten absoluten2000ms-
+Frist; weder Queuewartezeit noch erneute Stücke verlängern sie. CopiedFrame ist
+keine vollständige CommandQueued- oder Executed-Spielbestätigung.

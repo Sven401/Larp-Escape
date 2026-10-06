@@ -7,6 +7,7 @@
 #include "GameDomain/GameDefinitions.h"
 #include <Arduino.h>
 #include <Esp32ProfileStore.h>
+#include <FreeRtosCommandFrameQueue.h>
 #include <FreeRtosGameControlChannel.h>
 #include <FreeRtosProfileChannel.h>
 #include <bootloader_random.h>
@@ -21,6 +22,7 @@ Esp32ProfileStore persistentStore;
 ProfileApplication runtime(channel, channel, persistentStore);
 larp::companion::FreeRtosGameControlChannel companionChannel;
 larp::companion::CommandStream commandStream(companionChannel);
+larp::companion::FreeRtosCommandFrameQueue frameQueue(companionChannel);
 std::array<char, 20> commandFrame = {};
 larp::integration::GameControl gameControl(runtime, companionChannel);
 larp::companion::BootIdentity bootIdentity;
@@ -41,7 +43,13 @@ larp::companion::CommandStreamResult submitFramedCommand(std::size_t count, std:
             result.outcome = CommandStreamOutcome::InvalidFrame;
             return result;
         }
-        result = commandStream.receive(commandFrame.data(), written, 1, 1, now);
+        // Synthetic callback/owner handoff through the same fixed RTOS queue.
+        if (frameQueue.copyWrite(commandFrame.data(), written, 1, 1, now) !=
+            FrameCopyOutcome::Copied) {
+            result.outcome = CommandStreamOutcome::InvalidFrame;
+            return result;
+        }
+        result = dispatchCommandFrame(frameQueue, commandStream, now).stream;
         if (result.outcome != CommandStreamOutcome::Receiving &&
             result.outcome != CommandStreamOutcome::Queued &&
             result.outcome != CommandStreamOutcome::QueueFull)
@@ -207,7 +215,7 @@ void setup() {
         return;
     }
     const auto begun = runtime.begin();
-    if (!begun || !channel.begin() || !companionChannel.begin() ||
+    if (!begun || !channel.begin() || !companionChannel.begin() || !frameQueue.begin() ||
         !gameControl.begin(bootIdentity)) {
         Serial.printf("profile_runtime_probe: application setup rejected=%s; stopped\n",
                       applicationOutcomeName(begun.outcome));

@@ -85,14 +85,20 @@ CommandStreamResult CommandStream::submit() noexcept {
 CommandStreamResult CommandStream::receive(const char *bytes, std::size_t count,
                                            std::uint32_t principal, std::uint32_t epoch,
                                            std::uint32_t now) noexcept {
+    return receive(bytes, count, principal, epoch, now, now);
+}
+CommandStreamResult CommandStream::receive(const char *bytes, std::size_t count,
+                                           std::uint32_t principal, std::uint32_t epoch,
+                                           std::uint32_t receivedAt, std::uint32_t now) noexcept {
     TrustedAuthority authority;
     CommandStreamOutcome event;
     const bool authorized = refresh(now, authority, event);
     if (!authorized || !principal || !epoch || principal != authority.principal ||
         epoch != authority.epoch)
         return result(CommandStreamOutcome::Unauthorized);
-    if (event == CommandStreamOutcome::Expired)
-        return result(event);
+    if (event == CommandStreamOutcome::Expired ||
+        static_cast<std::uint32_t>(now - receivedAt) >= CommandFrameLimits::TimeoutMilliseconds)
+        return result(CommandStreamOutcome::Expired);
     CommandFrame frame;
     const auto decoded = decodeCommandFrame(bytes, count, frame);
     if (decoded != FrameDecodeResult::Success)
@@ -106,7 +112,7 @@ CommandStreamResult CommandStream::receive(const char *bytes, std::size_t count,
         total_ = frame.total;
         principal_ = principal;
         epoch_ = epoch;
-        started_ = now;
+        started_ = receivedAt;
     } else if (message_ != frame.message) {
         return result(CommandStreamOutcome::Busy);
     } else if (total_ != frame.total) {

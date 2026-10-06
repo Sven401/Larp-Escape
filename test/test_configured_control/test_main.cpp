@@ -2,6 +2,7 @@
 #include "Companion/ProfileCapabilities.h"
 #include "CompanionIntegration/GameControl.h"
 #include "FakeOwners.h"
+#include "FreeRtosCommandFrameQueue.h"
 #include "FreeRtosGameControlChannel.h"
 #include "MemoryJournalStore.h"
 #include <algorithm>
@@ -12,6 +13,7 @@
 #include <string>
 #include <unity.h>
 // Compile the actual adapter against the deterministic RTOS model.
+#include "../../lib/FreeRtosCommandFrameQueue/FreeRtosCommandFrameQueue.cpp"
 #include "../../lib/FreeRtosGameControlChannel/FreeRtosGameControlChannel.cpp"
 namespace host_rtos {
 void (*beforeEnter)() = nullptr;
@@ -898,6 +900,7 @@ void test_profile_capability_fixture_matches_firmware_encoder() {
     TEST_ASSERT_EQUAL_MEMORY(bytes, expected, written);
 }
 #include "CommandStreamCases.h"
+#include "FrameQueueCases.h"
 #include "JournalFaultCases.h"
 } // namespace
 void setUp() {
@@ -973,5 +976,13 @@ int main() {
     RUN_TEST(test_profile_capabilities_encoder_bounds_and_compiled_limits);
     RUN_TEST(test_catalog_led_limit_is_for_enabled_components);
     RUN_TEST(test_profile_capability_fixture_matches_firmware_encoder);
+    RUN_TEST(test_frame_queue_validates_outer_write_and_preserves_empty_destination);
+    RUN_TEST(test_frame_queue_owns_bytes_and_trusted_metadata);
+    RUN_TEST(test_frame_queue_full_does_not_report_copied_or_consume_command);
+    RUN_TEST(test_queued_frames_reach_actual_stored_game_and_current_reply);
+    RUN_TEST(test_frame_queue_revoke_and_reconnect_reject_buffered_old_frames);
+    RUN_TEST(test_frame_queue_wait_does_not_extend_absolute_deadline);
+    RUN_TEST(test_empty_frame_queue_poll_revokes_without_retry_or_game_tick);
+    RUN_TEST(test_frame_copy_after_authority_observation_is_rechecked_by_stream);
     return UNITY_END();
 }

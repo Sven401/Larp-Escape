@@ -40,6 +40,11 @@ class CommandStream {
     CommandStream &operator=(const CommandStream &) = delete;
     CommandStreamResult receive(const char *bytes, std::size_t count, std::uint32_t principal,
                                 std::uint32_t epoch, std::uint32_t now) noexcept;
+    // Queued callback path: original trusted receipt time sets the first-frame
+    // absolute deadline. Reject expired/future timestamp before any admission.
+    CommandStreamResult receive(const char *bytes, std::size_t count, std::uint32_t principal,
+                                std::uint32_t epoch, std::uint32_t receivedAt,
+                                std::uint32_t now) noexcept;
     // Explicit bounded retry when complete + QueueFull. Does not tick the game.
     CommandStreamResult retry(std::uint32_t now) noexcept;
     // Owner polls even without frames to discard expired/revoked partial data.

@@ -40,6 +40,8 @@ ADAPTER_FILES = (
     "src/ProfileRuntimeProbe/main.cpp",
     "lib/FreeRtosGameControlChannel/FreeRtosGameControlChannel.h",
     "lib/FreeRtosGameControlChannel/FreeRtosGameControlChannel.cpp",
+    "lib/FreeRtosCommandFrameQueue/FreeRtosCommandFrameQueue.h",
+    "lib/FreeRtosCommandFrameQueue/FreeRtosCommandFrameQueue.cpp",
     "lib/Esp32ProfileStore/Esp32ProfileStore.h",
     "lib/Esp32ProfileStore/Esp32ProfileStore.cpp",
     "lib/FreeRtosProfileChannel/FreeRtosProfileChannel.h",
