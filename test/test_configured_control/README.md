@@ -6,7 +6,7 @@ Tatsächliche reine Firmwarequellen, tatsächlicher FreeRtosGameControlChannel, 
 
 Beobachtungshooks setzen Rechtewechsel vor/nach dem letzten synchronisierten Read bzw. vor Admission. Das prüft die definierte Entscheidungsreihenfolge und ausdrücklich auch die zulässige einzelne beanspruchte Operation nach späterem Entzug. Es ist keine atomare Abbruchgarantie. MemoryStore bestätigt ausschließlich modellierte Bytes, keine Stromausfall-/Dateisystem-Synchronisierungsabnahme.
 
-66 gezielte Fälle; keine vollständige JSON-/Profil-Fuzzing-/Ausfallsuite, keine vollständige Lease-/Request-/Sampleerschöpfung. Queuevoll/Reconnect/Entzug/Retry/Replyverlust sowie Start durch Codec bis StoredReady-Engine/Status sind enthalten. Historische Nicht-Prüfungen bleiben im Projektgedächtnis datiert; dieser neue Nachweis ersetzt sie nur für die genannten Fälle.
+75 gezielte Fälle; keine vollständige JSON-/Profil-Fuzzing-/Ausfallsuite, keine vollständige Lease-/Request-/Sampleerschöpfung. Queuevoll/Reconnect/Entzug/Retry/Replyverlust sowie Start durch Codec bis StoredReady-Engine/Status sind enthalten. Historische Nicht-Prüfungen bleiben im Projektgedächtnis datiert; dieser neue Nachweis ersetzt sie nur für die genannten Fälle.
 
 Die [Firmware-Fixtures v2](../../docs/companion/fixtures/v2/README.md) entstehen aus dem tatsächlichen Hostpfad und werden im zusätzlichen Fixturefall bytegenau verglichen.
 
@@ -48,3 +48,10 @@ Outerwrite-/Frameprüfung, Quelle danach überschrieben, echte StoredGame/Reply,
 Authoritywechsel, ursprüngliche Empfangsfrist mit Queuewartezeit/Uhrumlauf,
 leerer Poll ohne Retry/GameTick und Entzug nach Copy-Beobachtungspunkt.
 Kein SDKcallback-, RF-, GATT-Bestätigungs- oder SMP-Nachweis.
+
+Neun Antwortframefälle prüfen Typ2/max511 gegen weiterhin strikte Command-Typ1-
+Aufnahme, tatsächlichen aktuellen Replyqueuepfad, Goldenrekonstruktion,
+Sender/Bearer-Busy/Bindung/Frist, Uhrumlauf und Message1..65535 plus Erschöpfung
+und neue gültige Epoch. Fixed-Bearercopy ist ausdrücklich kein Peerempfang.
+Erste zwei neue Reconnectfälle verwendeten falsch epoch1 aus dem alten
+Fixturehelper; jetzt wird der aktuelle vertrauenswürdige Kanalstand verwendet.

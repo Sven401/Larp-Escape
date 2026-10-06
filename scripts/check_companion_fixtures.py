@@ -11,6 +11,58 @@ import sys
 sys.dont_write_bytecode = True
 
 
+def decode_reply_frames(lines: list[str]) -> bytes:
+    """Independent tool/client counterpart; no identity or authorization proof."""
+    import re
+    import struct
+    output = bytearray()
+    message = total = 0
+    if not lines:
+        raise ValueError("empty reply frame sequence")
+    for index, line in enumerate(lines):
+        if not re.fullmatch(r"[0-9A-F]{18,256}", line) or len(line) % 2:
+            raise ValueError(f"invalid hex/outer length at frame {index}")
+        value = bytes.fromhex(line)
+        version, kind, identity, length, offset = struct.unpack("<BBHHH", value[:8])
+        count = len(value) - 8
+        if version != 1 or kind != 2 or not identity or not 1 <= length <= 511:
+            raise ValueError(f"unsupported/invalid reply header at frame {index}")
+        if count > 120 or offset >= length or count > length - offset:
+            raise ValueError(f"invalid payload range at frame {index}")
+        if not message:
+            message, total = identity, length
+        if identity != message or length != total or offset != len(output):
+            raise ValueError(f"mixed, duplicated or out-of-order frame {index}")
+        output.extend(value[8:])
+    if len(output) != total:
+        raise ValueError("incomplete reply document")
+    return bytes(output)
+
+
+def check_reply_frames(base: Path) -> tuple[int, int]:
+    lines = (base / "fixtures" / "reply-frames-v1.txt").read_text(encoding="utf-8").splitlines()
+    expected = (base / "fixtures" / "v2" / "reply-executed.json").read_bytes().rstrip(bytes((13, 10)))
+    actual = decode_reply_frames(lines)
+    if actual != expected:
+        raise ValueError("reply frames do not reconstruct the actual firmware receipt")
+    # Tool failures must be explicit; none of these are complete client documents.
+    negatives = [[], lines[:-1], [lines[0], *lines], [lines[1], lines[0], *lines[2:]]]
+    for offset, byte in ((0, 2), (1, 1), (2, 0), (4, 0), (6, 1)):
+        changed = bytearray.fromhex(lines[0])
+        changed[offset] = byte
+        if offset in (2, 4):
+            changed[offset + 1] = 0
+        negatives.append([changed.hex().upper(), *lines[1:]])
+    negatives.extend([["GG", *lines[1:]], [lines[0] + "FF" * 121, *lines[1:]]])
+    for bad in negatives:
+        try:
+            decode_reply_frames(bad)
+        except ValueError:
+            continue
+        raise ValueError("reply counterpart accepted a malformed fixture mutation")
+    return len(lines), len(actual)
+
+
 def main() -> int:
     try:
         from jsonschema import Draft202012Validator
@@ -107,7 +159,13 @@ def main() -> int:
     if capabilities["profileSchemaVersion"] != properties["schemaVersion"]["const"]:
         print("Capabilities/profile schema version mismatch", file=sys.stderr)
         return 1
+    try:
+        frame_count, reply_bytes = check_reply_frames(base)
+    except ValueError as error:
+        print(f"Reply frame counterpart: {error}", file=sys.stderr)
+        return 1
     print(f"{len(names)} v2 fixtures + profile capabilities validate; vocabularies and {len(expected_limits)} limits agree.")
+    print(f"Reply counterpart reconstructs {reply_bytes} exact bytes from {frame_count} frames; 11 malformed variants rejected.")
 
     return 0
 

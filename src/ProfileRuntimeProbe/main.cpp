@@ -1,6 +1,7 @@
 // Isolated synthetic-owner entry point. No external GPIO, bus, audio, LEDs or
 // radio are initialized. Runtime owns actual activation/Session/queue logic.
 #include "Companion/CommandStream.h"
+#include "Companion/ReplyFrameSender.h"
 #include "CompanionIntegration/GameControl.h"
 #include "DeviceRuntime/OwnerConfiguration.h"
 #include "DeviceRuntime/ProfileApplication.h"
@@ -23,6 +24,26 @@ ProfileApplication runtime(channel, channel, persistentStore);
 larp::companion::FreeRtosGameControlChannel companionChannel;
 larp::companion::CommandStream commandStream(companionChannel);
 larp::companion::FreeRtosCommandFrameQueue frameQueue(companionChannel);
+// Synthetic bounded bearer: verifies current routing, copies one fixed value.
+// No GATT, radio or peer acknowledgment is performed by this implementation.
+class ProbeReplyBearer : public larp::companion::IReplyFrameBearer {
+  public:
+    larp::companion::RoutedReplyFrame last;
+    std::uint32_t copies = 0;
+    larp::companion::ReplyFrameCopy
+    copyReplyFrame(const larp::companion::RoutedReplyFrame &frame) noexcept override {
+        using namespace larp::companion;
+        TrustedAuthority current;
+        if (!companionChannel.readAuthority(current) || !current.gameMaster ||
+            current.principal != frame.principal || current.epoch != frame.epoch)
+            return ReplyFrameCopy::Unavailable;
+        last = frame;
+        if (copies != UINT32_MAX)
+            ++copies;
+        return ReplyFrameCopy::Copied;
+    }
+} replyBearer;
+larp::companion::ReplyFrameSender replySender(companionChannel, replyBearer);
 std::array<char, 20> commandFrame = {};
 larp::integration::GameControl gameControl(runtime, companionChannel);
 larp::companion::BootIdentity bootIdentity;
@@ -334,7 +355,7 @@ void loop() {
     // requests and publishes a bounded status, without another game tick.
     gameControl.service(now);
     larp::companion::RoutedGameReply receipt;
-    while (companionChannel.takeCurrentReply(receipt)) {
+    if (!replySender.pending() && companionChannel.takeCurrentReply(receipt)) {
         if (receipt.principal == 1 && receipt.connectionEpoch == 1 && startPending) {
             startPending = false;
             if (receipt.reply.outcome == larp::companion::GameReplyOutcome::Executed)
@@ -346,6 +367,16 @@ void loop() {
                 return;
             }
         }
+        if (replySender.load(receipt, now) != larp::companion::ReplySendOutcome::Loaded) {
+            Serial.println("profile_runtime_probe: reply frame load dropped; game continues");
+        }
+    }
+    // At most one copied outbound value per loop; no additional game tick.
+    const auto replySend = replySender.service(now, 20);
+    if (replySend == larp::companion::ReplySendOutcome::Expired ||
+        replySend == larp::companion::ReplySendOutcome::Unauthorized ||
+        replySend == larp::companion::ReplySendOutcome::TransportUnavailable) {
+        Serial.println("profile_runtime_probe: synthetic reply stream dropped; game continues");
     }
     static std::uint32_t last = 0;
     if (static_cast<std::uint32_t>(now - last) >= 1000) {
@@ -358,7 +389,7 @@ void loop() {
             "state=%u role=%u crystals=%u accepted=%lu replies=%lu stale=%lu timeout=%lu "
             "outstanding=%lu "
             "control_drops=%lu draft_revision=%lu stored_generation=%lu application=%s "
-            "stored_match=%s heap=%u stacks=",
+            "stored_match=%s reply_frame_copies=%lu heap=%u stacks=",
             activationPhaseName(activation.phase), activationFinishName(activation.finish),
             (unsigned long)activation.configurationRevision,
             (unsigned long)activation.profileRevision, (unsigned long)activation.generation,
@@ -369,7 +400,8 @@ void loop() {
             (unsigned long)runtime.storage().draftRevision,
             (unsigned long)runtime.snapshot().storedGeneration,
             applicationPhaseName(runtime.snapshot().phase),
-            runtime.snapshot().storedMatchesActive ? "true" : "false", unsigned(ESP.getFreeHeap()));
+            runtime.snapshot().storedMatchesActive ? "true" : "false",
+            (unsigned long)replyBearer.copies, unsigned(ESP.getFreeHeap()));
         for (const auto *worker : workers)
             Serial.printf("%u,", unsigned(uxTaskGetStackHighWaterMark(worker->handle)));
         Serial.println();

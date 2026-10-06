@@ -1,7 +1,7 @@
 # Verifizierte Antwortauswahl aus der FreeRTOS-Queue
 
 **Stand:** 7. Oktober 2026. **Status:** schmaler tatsächlicher Queue-/Host-/Probenpfad;
-physischer Transport, Identität/Pairing und Wireantwortframing offen.
+physischer Transport, Identität/Pairing und tatsächliche Peerbestätigung offen.
 
 GameControl kopiert ursprüngliche Principal+connectionEpoch in jede
 RoutedGameReply. Der verifizierte Transporteigentümer benutzt nun
@@ -56,3 +56,8 @@ plus57.272 Profilheap/Allocator/FS; keine Boardreserve. Produktion/alte Probe
 wurden seitc9654c3 nicht erneut gebaut, keine betreffenden Einstiegssourceänderungen.
 Architektur83/193, Format141/clang19.1.7, diffcheck sauber; kein Cppcheck dieses
 Schnitts. Typbelegung/Statusschemata unverändert, keine neue Queue oder Heap.
+
+Der folgende [Antwortframepfad](reply-framing-v1.md) übernimmt die tatsächliche
+verbindungsgebundene Auswahl, friert JSON ein und bearbeitet pro Owneraufruf
+höchstens einen kopierten Frame. Seine synthetische Bearerprüfung ist ein
+Host-/Probenbeleg; physische SDK-Sendebindung bleibt gesondert abzunehmen.

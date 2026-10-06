@@ -1,5 +1,6 @@
 #include "Companion/CommandStream.h"
 #include "Companion/ProfileCapabilities.h"
+#include "Companion/ReplyFrameSender.h"
 #include "CompanionIntegration/GameControl.h"
 #include "FakeOwners.h"
 #include "FreeRtosCommandFrameQueue.h"
@@ -12,6 +13,7 @@
 #include <memory>
 #include <string>
 #include <unity.h>
+#include <vector>
 // Compile the actual adapter against the deterministic RTOS model.
 #include "../../lib/FreeRtosCommandFrameQueue/FreeRtosCommandFrameQueue.cpp"
 #include "../../lib/FreeRtosGameControlChannel/FreeRtosGameControlChannel.cpp"
@@ -902,6 +904,7 @@ void test_profile_capability_fixture_matches_firmware_encoder() {
 #include "CommandStreamCases.h"
 #include "FrameQueueCases.h"
 #include "JournalFaultCases.h"
+#include "ReplyFrameCases.h"
 } // namespace
 void setUp() {
     host_rtos::depth = 0;
@@ -984,5 +987,14 @@ int main() {
     RUN_TEST(test_frame_queue_wait_does_not_extend_absolute_deadline);
     RUN_TEST(test_empty_frame_queue_poll_revokes_without_retry_or_game_tick);
     RUN_TEST(test_frame_copy_after_authority_observation_is_rechecked_by_stream);
+    RUN_TEST(test_reply_frame_codec_separate_kind_bounds_and_target_preservation);
+    RUN_TEST(test_executed_reply_frames_reconstruct_actual_firmware_fixture);
+    RUN_TEST(test_reply_sender_busy_retains_exact_frame_and_original_deadline);
+    RUN_TEST(test_reply_sender_frame_capacity_and_pending_reply_preservation);
+    RUN_TEST(test_reply_sender_reconnect_rejects_old_reply_and_binds_new_epoch);
+    RUN_TEST(test_reply_bearer_rechecks_revoke_before_copy);
+    RUN_TEST(test_reply_copy_before_later_revoke_keeps_original_epoch);
+    RUN_TEST(test_reply_sender_deadline_wrap_and_invalid_reply);
+    RUN_TEST(test_reply_message_counter_exhaustion_never_wraps_and_new_epoch_recovers);
     return UNITY_END();
 }
