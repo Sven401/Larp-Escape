@@ -65,6 +65,9 @@ class ProfileController {
     execution::SessionSnapshot game() const {
         return runtime_.game();
     }
+    execution::ExecutionSnapshot execution() const {
+        return runtime_.execution();
+    }
     bool gameRunning() const {
         return runtime_.gameRunning();
     }

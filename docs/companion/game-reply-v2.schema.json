@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Game master receipt v2",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "const": 2
+    },
+    "boot": {
+      "type": "string",
+      "pattern": "^(?!0000000000000000$)[0-9A-F]{16}$"
+    },
+    "lease": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4294967295
+    },
+    "request": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4294967295
+    },
+    "nextRequest": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4294967295
+    },
+    "outcome": {
+      "enum": [
+        "executed",
+        "execution_rejected",
+        "invalid_request",
+        "wrong_boot",
+        "unauthorized",
+        "stale_configuration",
+        "stale_state",
+        "out_of_order",
+        "receipt_expired",
+        "request_conflict",
+        "not_ready"
+      ]
+    },
+    "duplicate": {
+      "type": "boolean"
+    },
+    "consumed": {
+      "type": "boolean"
+    },
+    "configurationRevision": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4294967295
+    },
+    "stateRevision": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4294967295
+    },
+    "executionOutcome": {
+      "type": "string",
+      "maxLength": 32
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "boot",
+    "lease",
+    "request",
+    "nextRequest",
+    "outcome",
+    "duplicate",
+    "consumed",
+    "configurationRevision",
+    "stateRevision",
+    "executionOutcome"
+  ],
+  "additionalProperties": false
+}

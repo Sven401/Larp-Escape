@@ -78,6 +78,9 @@ class Runtime {
     execution::SessionSnapshot game() const {
         return session_.snapshot();
     }
+    execution::ExecutionSnapshot execution() const {
+        return session_.execution();
+    }
     bool gameRunning() const {
         return session_.running();
     }

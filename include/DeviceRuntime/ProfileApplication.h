@@ -66,6 +66,9 @@ class ProfileApplication {
                                     bool older = false);
     void service(std::uint32_t now);
     bool busy() const;
+    execution::ExecutionSnapshot execution() const {
+        return controller_.execution();
+    }
     bool gameRunning() const {
         return controller_.gameRunning();
     }

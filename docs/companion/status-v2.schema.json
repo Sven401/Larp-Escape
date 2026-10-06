@@ -1,0 +1,293 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Configured companion status v2",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "const": 2
+    },
+    "capabilities": {
+      "const": [
+        "status.configured.read",
+        "game.control.core"
+      ]
+    },
+    "boot": {
+      "type": "string",
+      "pattern": "^(?!0000000000000000$)[0-9A-F]{16}$"
+    },
+    "sample": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4294967295
+    },
+    "sampledMilliseconds": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4294967295
+    },
+    "application": {
+      "type": "object",
+      "properties": {
+        "phase": {
+          "enum": [
+            "empty",
+            "pending_activation",
+            "applying",
+            "saving",
+            "ready",
+            "fault"
+          ]
+        },
+        "configurationRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "profileRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "draftRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "deviceGeneration": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "storedGeneration": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "storedProfileRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "hasActive": {
+          "type": "boolean"
+        },
+        "draftReady": {
+          "type": "boolean"
+        },
+        "hardwareReady": {
+          "type": "boolean"
+        },
+        "storedMatchesActive": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "phase",
+        "configurationRevision",
+        "profileRevision",
+        "draftRevision",
+        "deviceGeneration",
+        "storedGeneration",
+        "storedProfileRevision",
+        "hasActive",
+        "draftReady",
+        "hardwareReady",
+        "storedMatchesActive"
+      ],
+      "additionalProperties": false
+    },
+    "control": {
+      "type": "object",
+      "properties": {
+        "lease": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "nextRequest": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        }
+      },
+      "required": [
+        "lease",
+        "nextRequest"
+      ],
+      "additionalProperties": false
+    },
+    "game": {
+      "type": "object",
+      "properties": {
+        "running": {
+          "type": "boolean"
+        },
+        "paused": {
+          "type": "boolean"
+        },
+        "entryPending": {
+          "type": "boolean"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 65535
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "lastTransition": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "stateRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "stateElapsedMilliseconds": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "role": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 65535
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "crystalCount": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8
+        },
+        "requiredCrystals": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8
+        },
+        "seenRoleCount": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 16
+        },
+        "roundCount": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "audioPending": {
+          "type": "boolean"
+        },
+        "incorrectCrystal": {
+          "type": "boolean"
+        },
+        "keystoneError": {
+          "type": "boolean"
+        },
+        "rejectedActions": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "unavailableActions": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "lastTickOutcome": {
+          "type": "string",
+          "maxLength": 32
+        }
+      },
+      "required": [
+        "running",
+        "paused",
+        "entryPending",
+        "state",
+        "lastTransition",
+        "stateRevision",
+        "stateElapsedMilliseconds",
+        "role",
+        "crystalCount",
+        "requiredCrystals",
+        "seenRoleCount",
+        "roundCount",
+        "audioPending",
+        "incorrectCrystal",
+        "keystoneError",
+        "rejectedActions",
+        "unavailableActions",
+        "lastTickOutcome"
+      ],
+      "additionalProperties": false
+    },
+    "devices": {
+      "type": "array",
+      "maxItems": 16,
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 65535
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "available": {
+            "type": "boolean"
+          },
+          "cardReadable": {
+            "type": "boolean"
+          },
+          "matrixReadable": {
+            "type": "boolean"
+          },
+          "pollPending": {
+            "type": "boolean"
+          },
+          "lastOutcome": {
+            "type": "string",
+            "maxLength": 16
+          }
+        },
+        "required": [
+          "id",
+          "enabled",
+          "available",
+          "cardReadable",
+          "matrixReadable",
+          "pollPending",
+          "lastOutcome"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "capabilities",
+    "boot",
+    "sample",
+    "sampledMilliseconds",
+    "application",
+    "control",
+    "game",
+    "devices"
+  ],
+  "additionalProperties": false
+}

@@ -1,11 +1,15 @@
 // Isolated synthetic-owner entry point. No external GPIO, bus, audio, LEDs or
 // radio are initialized. Runtime owns actual activation/Session/queue logic.
+#include "CompanionIntegration/GameControl.h"
 #include "DeviceRuntime/OwnerConfiguration.h"
 #include "DeviceRuntime/ProfileApplication.h"
 #include "GameDomain/GameDefinitions.h"
 #include <Arduino.h>
 #include <Esp32ProfileStore.h>
+#include <FreeRtosGameControlChannel.h>
 #include <FreeRtosProfileChannel.h>
+#include <bootloader_random.h>
+#include <esp_random.h>
 #include <freertos/task.h>
 namespace {
 using namespace larp::devices;
@@ -14,6 +18,11 @@ FreeRtosProfileChannel channel;
 // Two startup allocations, private profiles; workers never borrow their contents.
 Esp32ProfileStore persistentStore;
 ProfileApplication runtime(channel, channel, persistentStore);
+larp::companion::FreeRtosGameControlChannel companionChannel;
+larp::integration::GameControl gameControl(runtime, companionChannel);
+larp::companion::BootIdentity bootIdentity;
+std::uint32_t probeLease = 0;
+bool startPending = false;
 // ESP-IDF v4.4 task depths are BYTES; this pinned port has byte stack elements.
 static const std::size_t WorkerStackBytes = 4096;
 static_assert(sizeof(StackType_t) == 1, "Pinned ESP32 byte stack port required");
@@ -159,15 +168,28 @@ void ownerTask(void *argument) {
 }
 } // namespace
 void setup() {
+    // Isolated probe has not initialized RF, ADC or I2S. Enable physical
+    // entropy temporarily, then release the ADC/RF resource before any owners.
+    bootloader_random_enable();
+    bootIdentity.high = esp_random();
+    bootIdentity.low = esp_random();
+    bootloader_random_disable();
     Serial.begin(115200);
     if (!persistentStore.begin()) {
         Serial.println("profile_runtime_probe: storage mount failed; no format; stopped");
         return;
     }
     const auto begun = runtime.begin();
-    if (!begun || !channel.begin()) {
+    if (!begun || !channel.begin() || !companionChannel.begin() ||
+        !gameControl.begin(bootIdentity)) {
         Serial.printf("profile_runtime_probe: application setup rejected=%s; stopped\n",
                       applicationOutcomeName(begun.outcome));
+        return;
+    }
+    // Explicit local synthetic GM, not a network authentication implementation.
+    probeLease = gameControl.grant(1);
+    if (!probeLease) {
+        Serial.println("profile_runtime_probe: local control lease rejected");
         return;
     }
     // Factory input values copied before workers, independent of private slots.
@@ -187,9 +209,11 @@ void setup() {
     Serial.printf(
         "profile_runtime_probe: synthetic=true gpio=false network=false two_profiles=true "
         "journal=true "
-        "runtime=%u owner_config=%u channel=%u control=%u worker_storage=%u profile_heap=%u\n",
+        "runtime=%u owner_config=%u channel=%u control=%u worker_storage=%u profile_heap=%u "
+        "companion_channel=%u game_control=%u\n",
         unsigned(sizeof(runtime)), unsigned(sizeof(OwnerConfiguration)), unsigned(sizeof(channel)),
-        unsigned(sizeof(Control)), unsigned(sizeof(storage)), unsigned(2 * sizeof(Profile)));
+        unsigned(sizeof(Control)), unsigned(sizeof(storage)), unsigned(2 * sizeof(Profile)),
+        unsigned(sizeof(companionChannel)), unsigned(sizeof(gameControl)));
     boot = millis();
     ready = true; // First service queues activation with post-IO fresh time.
 }
@@ -236,8 +260,33 @@ void loop() {
     activation = runtime.activation();
     if (runtime.snapshot().phase == ApplicationPhase::Ready && activation.hardwareReady &&
         !runtime.gameRunning() && lastStartedGeneration != activation.generation) {
-        if (runtime.startGame(activation.configurationRevision, millis()))
-            lastStartedGeneration = activation.generation;
+        if (!startPending) {
+            larp::companion::TrustedGameRequest request;
+            request.principal = 1;
+            request.command.boot = bootIdentity;
+            request.command.lease = probeLease;
+            request.command.request = gameControl.snapshot().nextRequest;
+            request.command.expectedConfigurationRevision = activation.configurationRevision;
+            request.command.expectedStateRevision = runtime.execution().stateRevision;
+            startPending = companionChannel.submit(request);
+        }
+    }
+    // Application tick happened above exactly once. This drains only copied GM
+    // requests and publishes a bounded status, without another game tick.
+    gameControl.service(now);
+    larp::companion::RoutedGameReply receipt;
+    while (companionChannel.takeReply(receipt)) {
+        if (receipt.principal == 1 && startPending) {
+            startPending = false;
+            if (receipt.reply.outcome == larp::companion::GameReplyOutcome::Executed)
+                lastStartedGeneration = runtime.activation().generation;
+            else {
+                Serial.printf("profile_runtime_probe: GM start rejected=%s\n",
+                              larp::companion::gameReplyOutcomeName(receipt.reply.outcome));
+                ready = false;
+                return;
+            }
+        }
     }
     static std::uint32_t last = 0;
     if (static_cast<std::uint32_t>(now - last) >= 1000) {

@@ -30,6 +30,8 @@ LAYER_ROOTS = (
     ("include/GamePorts", "ports"),
     ("include/GameApplication", "application"),
     ("include/GameRuntime", "runtime"),
+    ("include/CompanionIntegration", "integration"),
+    ("src/CompanionIntegration", "integration"),
     ("include/Companion", "companion"),
     ("src/Companion", "companion"),
     ("lib/Machine", "machine"),
@@ -37,6 +39,7 @@ LAYER_ROOTS = (
     ("lib/GameApplication", "application"),
 )
 ALLOWED_DEPENDENCIES = {
+    "integration": {"domain", "configuration", "execution", "devices", "companion", "integration"},
     "domain": {"domain"},
     "configuration": {"domain", "configuration"},
     "execution": {"domain", "configuration", "ports", "execution"},
