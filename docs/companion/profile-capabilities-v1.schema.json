@@ -1,0 +1,345 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Compiled firmware profile language capabilities v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "scope",
+    "profileSchemaVersion",
+    "gameSchemaVersion",
+    "commandFrameVersion",
+    "limits",
+    "constraints",
+    "boards",
+    "componentKinds",
+    "crystalCategories",
+    "fields",
+    "comparisons",
+    "conditionKinds",
+    "actionKinds",
+    "effectKinds",
+    "gameCommands"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "scope": {
+      "const": "profile_language"
+    },
+    "profileSchemaVersion": {
+      "const": 1
+    },
+    "gameSchemaVersion": {
+      "const": 2
+    },
+    "commandFrameVersion": {
+      "const": 1
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "components",
+        "states",
+        "transitions",
+        "conditions",
+        "actions",
+        "effects",
+        "roles",
+        "crystalsPerRole",
+        "stateActions",
+        "transitionActions",
+        "conditionDepth",
+        "matrixLines",
+        "wakeInputs",
+        "leds",
+        "nameUtf8Bytes",
+        "profileDocumentBytes",
+        "profileContainerDepth",
+        "commandDocumentBytes",
+        "commandFrameBytes",
+        "commandFramePayloadBytes",
+        "commandAssemblyMilliseconds",
+        "gameCommandQueue",
+        "gameReceipts",
+        "paletteEntries",
+        "roleUidBytes",
+        "componentPinSlots",
+        "expanderPinModes",
+        "peerAddressBytes"
+      ],
+      "properties": {
+        "components": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "states": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "transitions": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "conditions": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "actions": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "effects": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "roles": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "crystalsPerRole": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "stateActions": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "transitionActions": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "conditionDepth": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "matrixLines": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "wakeInputs": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "leds": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "nameUtf8Bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "profileDocumentBytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "profileContainerDepth": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "commandDocumentBytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "commandFrameBytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "commandFramePayloadBytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "commandAssemblyMilliseconds": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "gameCommandQueue": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "gameReceipts": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "paletteEntries": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "roleUidBytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "componentPinSlots": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "expanderPinModes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "peerAddressBytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "constraints": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "configurationRequiresStoppedGame",
+        "startRequiresStoredProfile",
+        "singleGameMasterConnection"
+      ],
+      "properties": {
+        "configurationRequiresStoppedGame": {
+          "const": true
+        },
+        "startRequiresStoredProfile": {
+          "const": true
+        },
+        "singleGameMasterConnection": {
+          "const": true
+        }
+      }
+    },
+    "boards": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 32,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 32,
+        "pattern": "^[a-z][a-z0-9_]*$"
+      }
+    },
+    "componentKinds": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 32,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 32,
+        "pattern": "^[a-z][a-z0-9_]*$"
+      }
+    },
+    "crystalCategories": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 32,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 32,
+        "pattern": "^[a-z][a-z0-9_]*$"
+      }
+    },
+    "fields": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 32,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 32,
+        "pattern": "^[a-z][a-z0-9_]*$"
+      }
+    },
+    "comparisons": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 32,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 32,
+        "pattern": "^[a-z][a-z0-9_]*$"
+      }
+    },
+    "conditionKinds": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 32,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 32,
+        "pattern": "^[a-z][a-z0-9_]*$"
+      }
+    },
+    "actionKinds": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 32,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 32,
+        "pattern": "^[a-z][a-z0-9_]*$"
+      }
+    },
+    "effectKinds": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 32,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 32,
+        "pattern": "^[a-z][a-z0-9_]*$"
+      }
+    },
+    "gameCommands": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 32,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 32,
+        "pattern": "^[a-z][a-z0-9_]*$"
+      }
+    }
+  }
+}

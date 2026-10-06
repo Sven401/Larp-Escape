@@ -1,4 +1,5 @@
 #include "Companion/CommandStream.h"
+#include "Companion/ProfileCapabilities.h"
 #include "CompanionIntegration/GameControl.h"
 #include "FakeOwners.h"
 #include "FreeRtosGameControlChannel.h"
@@ -804,6 +805,98 @@ void test_revocation_after_reply_selection_cannot_change_copied_epoch() {
     TEST_ASSERT_TRUE(selected.connectionEpoch != current.epoch);
     TEST_ASSERT_TRUE(f->application.gameRunning());
 }
+void test_profile_capabilities_encoder_bounds_and_compiled_limits() {
+    char bytes[maxProfileCapabilitiesJsonBytes + 2];
+    std::memset(bytes, '#', sizeof(bytes));
+    std::size_t written = 999;
+    TEST_ASSERT_EQUAL(static_cast<unsigned>(ConfiguredEncodeResult::BufferTooSmall),
+                      static_cast<unsigned>(encodeProfileCapabilities(nullptr, 0, written)));
+    TEST_ASSERT_EQUAL_UINT32(0, written);
+    TEST_ASSERT_EQUAL(static_cast<unsigned>(ConfiguredEncodeResult::BufferTooSmall),
+                      static_cast<unsigned>(encodeProfileCapabilities(bytes + 1, 1, written)));
+    TEST_ASSERT_EQUAL_CHAR(0, bytes[1]);
+    TEST_ASSERT_EQUAL_CHAR('#', bytes[0]);
+    TEST_ASSERT_EQUAL(static_cast<unsigned>(ConfiguredEncodeResult::Success),
+                      static_cast<unsigned>(encodeProfileCapabilities(
+                          bytes + 1, maxProfileCapabilitiesJsonBytes, written)));
+    const auto required = written;
+    TEST_ASSERT_TRUE(required < maxProfileCapabilitiesJsonBytes);
+    TEST_ASSERT_NOT_NULL(std::strstr(bytes + 1, "\"components\":16"));
+    TEST_ASSERT_NOT_NULL(std::strstr(bytes + 1, "\"profileDocumentBytes\":131072"));
+    TEST_ASSERT_NOT_NULL(std::strstr(bytes + 1, "\"commandDocumentBytes\":1024"));
+    TEST_ASSERT_NOT_NULL(std::strstr(bytes + 1, "\"commandFramePayloadBytes\":120"));
+    TEST_ASSERT_EQUAL(
+        static_cast<unsigned>(ConfiguredEncodeResult::BufferTooSmall),
+        static_cast<unsigned>(encodeProfileCapabilities(bytes + 1, required, written)));
+    TEST_ASSERT_EQUAL_UINT32(0, written);
+    TEST_ASSERT_EQUAL_CHAR(0, bytes[1]);
+    std::memset(bytes, '#', sizeof(bytes));
+    TEST_ASSERT_EQUAL(
+        static_cast<unsigned>(ConfiguredEncodeResult::Success),
+        static_cast<unsigned>(encodeProfileCapabilities(bytes + 1, required + 1, written)));
+    TEST_ASSERT_EQUAL_UINT32(required, written);
+    TEST_ASSERT_EQUAL_CHAR(0, bytes[required + 1]);
+    TEST_ASSERT_EQUAL_CHAR('#', bytes[required + 2]);
+    TEST_ASSERT_EQUAL_CHAR('#', bytes[0]);
+}
+void test_catalog_led_limit_is_for_enabled_components() {
+    using namespace larp::configuration;
+    std::unique_ptr<Profile> profile(new Profile);
+    TEST_ASSERT_TRUE(profile->name.assign("LED boundary"));
+    State state;
+    state.id = StateId(1);
+    TEST_ASSERT_TRUE(state.name.assign("Ready"));
+    TEST_ASSERT_TRUE(profile->states.push(state));
+    profile->initialState = profile->errorState = state.id;
+    Component led;
+    led.id = ComponentId(1);
+    TEST_ASSERT_TRUE(led.name.assign("LED"));
+    led.kind = ComponentKind::LedStrip;
+    led.pins[0] = 4;
+    led.ledCount = Limits::Leds;
+    TEST_ASSERT_TRUE(profile->components.push(led));
+    TEST_ASSERT_TRUE(validateProfile(*profile));
+    auto &component = *profile->components.get(0);
+    component.ledCount = 0;
+    TEST_ASSERT_EQUAL(static_cast<unsigned>(Error::InvalidParameter),
+                      static_cast<unsigned>(validateProfile(*profile).error));
+    component.ledCount = Limits::Leds + 1;
+    TEST_ASSERT_EQUAL(static_cast<unsigned>(Error::InvalidParameter),
+                      static_cast<unsigned>(validateProfile(*profile).error));
+    component.enabled = false;
+    component.ledCount = UINT16_MAX;
+    TEST_ASSERT_TRUE(validateProfile(*profile));
+    // An enabled unrelated kind also carries the uint16 field without using it.
+    component.enabled = true;
+    component.kind = ComponentKind::EspNow;
+    component.pins[0] = UnusedPin;
+    component.peer[0] = 2;
+    TEST_ASSERT_TRUE(validateProfile(*profile));
+}
+void test_profile_capability_fixture_matches_firmware_encoder() {
+    char bytes[maxProfileCapabilitiesJsonBytes];
+    std::size_t written = 0;
+    TEST_ASSERT_EQUAL(
+        static_cast<unsigned>(ConfiguredEncodeResult::Success),
+        static_cast<unsigned>(encodeProfileCapabilities(bytes, sizeof(bytes), written)));
+    const char *path = "docs/companion/fixtures/profile-capabilities-v1.json";
+    const auto *flag = std::getenv("LARP_EXPORT_COMPANION_FIXTURES");
+    if (flag && std::strcmp(flag, "1") == 0) {
+        auto *file = std::fopen(path, "wb");
+        TEST_ASSERT_NOT_NULL(file);
+        TEST_ASSERT_EQUAL_UINT32(written, std::fwrite(bytes, 1, written, file));
+        TEST_ASSERT_EQUAL_INT('\n', std::fputc('\n', file));
+        TEST_ASSERT_EQUAL_INT(0, std::fclose(file));
+    }
+    auto *file = std::fopen(path, "rt");
+    TEST_ASSERT_NOT_NULL(file);
+    char expected[maxProfileCapabilitiesJsonBytes + 1];
+    const auto count = std::fread(expected, 1, sizeof(expected), file);
+    TEST_ASSERT_EQUAL_INT(0, std::fclose(file));
+    TEST_ASSERT_EQUAL_UINT32(written + 1, count);
+    TEST_ASSERT_EQUAL_CHAR('\n', expected[written]);
+    TEST_ASSERT_EQUAL_MEMORY(bytes, expected, written);
+}
 #include "CommandStreamCases.h"
 #include "JournalFaultCases.h"
 } // namespace
@@ -877,5 +970,8 @@ int main() {
     RUN_TEST(test_reply_selection_filters_wrong_principal_and_preserves_target_on_false);
     RUN_TEST(test_revocation_before_reply_selection_discards_full_queue);
     RUN_TEST(test_revocation_after_reply_selection_cannot_change_copied_epoch);
+    RUN_TEST(test_profile_capabilities_encoder_bounds_and_compiled_limits);
+    RUN_TEST(test_catalog_led_limit_is_for_enabled_components);
+    RUN_TEST(test_profile_capability_fixture_matches_firmware_encoder);
     return UNITY_END();
 }

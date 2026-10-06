@@ -3,6 +3,7 @@
 namespace larp {
 namespace companion {
 struct CommandFrameLimits {
+    static const std::uint8_t Version = 1, Kind = 1;
     static const std::size_t Header = 8, Payload = 120, Frame = Header + Payload;
     static const std::uint32_t TimeoutMilliseconds = 2000;
 };

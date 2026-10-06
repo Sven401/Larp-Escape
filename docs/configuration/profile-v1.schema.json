@@ -896,5 +896,7 @@
   },
   "x-maxDocumentBytes": 131072,
   "x-maxContainerDepth": 8,
+  "x-maxEnabledLeds": 256,
+  "x-maxConditionDepth": 8,
   "description": "Structural contract; semantic validation by the firmware is required before activation."
 }

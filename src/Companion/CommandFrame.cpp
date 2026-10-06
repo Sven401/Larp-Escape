@@ -21,7 +21,8 @@ FrameDecodeResult decodeCommandFrame(const char *bytes, std::size_t count,
                                      CommandFrame &destination) noexcept {
     if (!bytes || count <= CommandFrameLimits::Header || count > CommandFrameLimits::Frame)
         return FrameDecodeResult::Invalid;
-    if (static_cast<unsigned char>(bytes[0]) != 1 || static_cast<unsigned char>(bytes[1]) != 1)
+    if (static_cast<unsigned char>(bytes[0]) != CommandFrameLimits::Version ||
+        static_cast<unsigned char>(bytes[1]) != CommandFrameLimits::Kind)
         return FrameDecodeResult::Unsupported;
     CommandFrame candidate;
     candidate.message = read16(bytes + 2);
@@ -43,7 +44,8 @@ bool encodeCommandFrame(std::uint16_t message, std::uint16_t total, std::uint16_
     if (!bytes || !payload || !valid(message, total, offset, count) ||
         capacity < CommandFrameLimits::Header + count)
         return false;
-    bytes[0] = bytes[1] = 1;
+    bytes[0] = CommandFrameLimits::Version;
+    bytes[1] = CommandFrameLimits::Kind;
     write16(bytes + 2, message);
     write16(bytes + 4, total);
     write16(bytes + 6, offset);

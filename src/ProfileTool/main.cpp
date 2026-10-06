@@ -1,6 +1,7 @@
 // Host-side profile export/inspection. This is not an embedded entry point.
 #include "Activation.h"
 #include "CommandFrames.h"
+#include "Companion/ProfileCapabilities.h"
 #include "GameConfiguration/ProfileReader.h"
 #include "GameConfiguration/ProfileWriter.h"
 #include "Play.h"
@@ -37,6 +38,17 @@ class FileReader : public larp::configuration::IProfileReader {
 };
 } // namespace
 int main(int argc, char **argv) {
+    if (argc == 2 && std::strcmp(argv[1], "--capabilities") == 0) {
+        char bytes[larp::companion::maxProfileCapabilitiesJsonBytes];
+        std::size_t written = 0;
+        if (larp::companion::encodeProfileCapabilities(bytes, sizeof(bytes), written) !=
+            larp::companion::ConfiguredEncodeResult::Success)
+            return 1;
+        return std::fwrite(bytes, 1, written, stdout) == written &&
+                       std::fputc('\n', stdout) != EOF && std::fflush(stdout) == 0
+                   ? 0
+                   : 1;
+    }
     if (argc == 3 && std::strcmp(argv[1], "--frame-command") == 0)
         return runCommandFrames(argv[2]);
     using namespace larp::configuration;
@@ -76,7 +88,8 @@ int main(int argc, char **argv) {
             playable = queued || std::strcmp(argv[index], "--play") == 0;
             previewPath = argv[++index];
         } else {
-            std::fputs("Usage: profile-tools --frame-command FILE | [--summary | --preview SCRIPT "
+            std::fputs("Usage: profile-tools --capabilities | --frame-command FILE | [--summary | "
+                       "--preview SCRIPT "
                        "| --play SCRIPT | "
                        "--play-queued SCRIPT | --activate FILE] "
                        "[--example | --import FILE] [--active-export FILE] [--journal DIR] | "

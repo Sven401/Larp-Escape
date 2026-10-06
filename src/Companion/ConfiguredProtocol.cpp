@@ -1,4 +1,8 @@
 #include "Companion/ConfiguredProtocol.h"
+#include "Companion/CommandFrame.h"
+#include "Companion/ProfileCapabilities.h"
+#include "GameConfiguration/ProfileReader.h"
+#include "GameConfiguration/ProfileVocabulary.h"
 #include <algorithm>
 #include <cstdarg>
 #include <cstdio>
@@ -234,6 +238,104 @@ ConfiguredEncodeResult encodeGameReply(const GameReply &r, char *buffer, std::si
                 (unsigned long)r.stateRevision);
     json.text(r.executionOutcome.c_str());
     json.append("}");
+    return json.finish(written);
+}
+ConfiguredEncodeResult encodeProfileCapabilities(char *buffer, std::size_t capacity,
+                                                 std::size_t &written) {
+    using configuration::ImportLimits;
+    using configuration::Limits;
+    namespace words = configuration::vocabulary;
+    static_assert(sizeof(configuration::Name) == 33, "Name byte capacity must be explicit");
+    clear(buffer, capacity, written);
+    Json json(buffer, std::min(capacity, maxProfileCapabilitiesJsonBytes));
+    json.append("{\"schemaVersion\":1,\"scope\":\"profile_language\",\"profileSchemaVersion\":%u,"
+                "\"gameSchemaVersion\":2,\"commandFrameVersion\":%u,\"limits\":{",
+                static_cast<unsigned>(Limits::SchemaVersion),
+                static_cast<unsigned>(CommandFrameLimits::Version));
+    static const struct {
+        const char *name;
+        std::uint32_t value;
+    } limits[] = {
+        {"components", Limits::Components},
+        {"states", Limits::States},
+        {"transitions", Limits::Transitions},
+        {"conditions", Limits::Conditions},
+        {"actions", Limits::Actions},
+        {"effects", Limits::Effects},
+        {"roles", Limits::Roles},
+        {"crystalsPerRole", Limits::CrystalsPerRole},
+        {"stateActions", Limits::StateActions},
+        {"transitionActions", Limits::TransitionActions},
+        {"conditionDepth", Limits::ConditionDepth},
+        {"matrixLines", Limits::MatrixLines},
+        {"wakeInputs", Limits::WakeInputs},
+        {"leds", Limits::Leds},
+        {"paletteEntries", std::tuple_size<configuration::Palette>::value},
+        {"roleUidBytes", std::tuple_size<decltype(configuration::Role::uid)>::value},
+        {"componentPinSlots", std::tuple_size<decltype(configuration::Component::pins)>::value},
+        {"expanderPinModes",
+         std::tuple_size<decltype(configuration::Component::startupModes)>::value},
+        {"peerAddressBytes", std::tuple_size<decltype(configuration::Component::peer)>::value},
+        {"nameUtf8Bytes", sizeof(configuration::Name) - 1},
+        {"profileDocumentBytes", ImportLimits::DocumentBytes},
+        {"profileContainerDepth", ImportLimits::ContainerDepth},
+        {"commandDocumentBytes", maxGameCommandDocumentBytes},
+        {"commandFrameBytes", CommandFrameLimits::Frame},
+        {"commandFramePayloadBytes", CommandFrameLimits::Payload},
+        {"commandAssemblyMilliseconds", CommandFrameLimits::TimeoutMilliseconds},
+        {"gameCommandQueue", ControlLimits::Queue},
+        {"gameReceipts", ControlLimits::Receipts}};
+    for (std::size_t i = 0; i < sizeof(limits) / sizeof(limits[0]); ++i) {
+        if (i)
+            json.append(",");
+        json.text(limits[i].name);
+        json.append(":%lu", static_cast<unsigned long>(limits[i].value));
+    }
+    json.append("},");
+    static const struct {
+        const char *name;
+        const char *const *words;
+        std::size_t count;
+    } lists[] = {
+        {"boards", words::BoardNames, sizeof(words::BoardNames) / sizeof(words::BoardNames[0])},
+        {"componentKinds", words::ComponentKindNames,
+         sizeof(words::ComponentKindNames) / sizeof(words::ComponentKindNames[0])},
+        {"crystalCategories", words::CrystalCategoryNames,
+         sizeof(words::CrystalCategoryNames) / sizeof(words::CrystalCategoryNames[0])},
+        {"fields", words::FieldNames, sizeof(words::FieldNames) / sizeof(words::FieldNames[0])},
+        {"comparisons", words::CompareNames,
+         sizeof(words::CompareNames) / sizeof(words::CompareNames[0])},
+        {"conditionKinds", words::ConditionKindNames,
+         sizeof(words::ConditionKindNames) / sizeof(words::ConditionKindNames[0])},
+        {"actionKinds", words::ActionKindNames,
+         sizeof(words::ActionKindNames) / sizeof(words::ActionKindNames[0])},
+        {"effectKinds", words::EffectKindNames,
+         sizeof(words::EffectKindNames) / sizeof(words::EffectKindNames[0])}};
+    for (std::size_t i = 0; i < sizeof(lists) / sizeof(lists[0]); ++i) {
+        if (i)
+            json.append(",");
+        json.text(lists[i].name);
+        json.append(":[");
+        for (std::size_t j = 0; j < lists[i].count; ++j) {
+            if (j)
+                json.append(",");
+            json.text(lists[i].words[j]);
+        }
+        json.append("]");
+    }
+    json.append(",\"gameCommands\":[");
+    for (unsigned i = 0; i <= static_cast<unsigned>(GameCommandKind::TakeTransition); ++i) {
+        if (i)
+            json.append(",");
+        const char *name = gameCommandKindName(static_cast<GameCommandKind>(i));
+        if (!name) {
+            clear(buffer, capacity, written);
+            return ConfiguredEncodeResult::InvalidValue;
+        }
+        json.text(name);
+    }
+    json.append("],\"constraints\":{\"configurationRequiresStoppedGame\":true,"
+                "\"startRequiresStoredProfile\":true,\"singleGameMasterConnection\":true}}");
     return json.finish(written);
 }
 } // namespace companion

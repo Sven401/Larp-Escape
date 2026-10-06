@@ -105,6 +105,8 @@ def generate(root: Path) -> dict:
         "title": "Larp-Escape configuration profile v1", "$defs": definitions,
         "x-maxDocumentBytes": import_limits["DocumentBytes"],
         "x-maxContainerDepth": import_limits["ContainerDepth"],
+        "x-maxEnabledLeds": limits["Leds"],
+        "x-maxConditionDepth": limits["ConditionDepth"],
         "description": "Structural contract; semantic validation by the firmware is required before activation."})
     return document
 
