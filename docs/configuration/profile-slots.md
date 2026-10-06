@@ -86,3 +86,6 @@ Alle vier Bauziele erfolgreich: `pio run -e profile-tools -j 2` und `pio run -e 
 Zusätzlich 57.272 Byte Profilspeicher auf dem Heap, ohne Allocatorverwaltung. Die neue Probe verwendet privaten Controller, erzeugt erst Standard und nach Spielstop das Hinweisprofil im inaktiven Slot; synthetische Eingaben kommen als kleine Wertkopien aus denselben Domain-Werkdefinitionen. Fünf Besitzer mit je 4.096-Byte-Stack, keine GPIO-/Bus-/Audio-/LED-/Funkinitialisierung. **Nicht hochgeladen oder am Board ausgeführt.** Die alte geprüfte USB-Diagnose bleibt erhalten.
 
 Architektur **66 Dateien / 159 Includes**, **44** unabhängige reine C++11-Header, Format **111 Dateien** mit clang-format 19.1.7; ausgewählte Cppcheck-2.1-Analyse für Controller/Reader/Einrichtungswerkzeug/main ohne Befund. Native Quellen mit Warnungen als Fehler, `git diff --check` ohne Befund. Frameworkwarnungen weiter sichtbar. Keine neue Testsuite/Assertions oder Unity-Läufe, keine Fehlerpfad-/Zähler-/Rollback-/Reentranzabnahme, kein Upload oder Remote-CI. Die bereits verfügbaren positiven Rechner-/Exportbelege ersetzen diese Prüfungen nicht.
+
+
+Dauerhafte zwei Datensätze mit eigenem Journalzähler und gestopptem Export: [Speicherung/Wiederanlauf](profile-journal.md). RAM-Slotwechsel und dauerhafte Bestätigung bleiben verschiedene Ergebnisse.

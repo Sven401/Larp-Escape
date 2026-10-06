@@ -43,6 +43,8 @@ int main(int argc, char **argv) {
     const char *previewPath = nullptr;
     const char *activationPath = nullptr;
     const char *exportActivePath = nullptr;
+    const char *journalDirectory = nullptr;
+    bool restoreOnly = false;
     bool playable = false, queued = false;
     for (int index = 1; index < argc; ++index) {
         if (std::strcmp(argv[index], "--summary") == 0 && !summary)
@@ -55,8 +57,13 @@ int main(int argc, char **argv) {
         else if (std::strcmp(argv[index], "--active-export") == 0 && exportActivePath == nullptr &&
                  index + 1 < argc)
             exportActivePath = argv[++index];
-        else if (std::strcmp(argv[index], "--activate") == 0 && activationPath == nullptr &&
-                 index + 1 < argc)
+        else if ((std::strcmp(argv[index], "--journal") == 0 ||
+                  std::strcmp(argv[index], "--restore-journal") == 0) &&
+                 journalDirectory == nullptr && index + 1 < argc) {
+            restoreOnly = std::strcmp(argv[index], "--restore-journal") == 0;
+            journalDirectory = argv[++index];
+        } else if (std::strcmp(argv[index], "--activate") == 0 && activationPath == nullptr &&
+                   index + 1 < argc)
             activationPath = argv[++index];
         else if ((std::strcmp(argv[index], "--preview") == 0 ||
                   std::strcmp(argv[index], "--play") == 0 ||
@@ -68,7 +75,8 @@ int main(int argc, char **argv) {
         } else {
             std::fputs("Usage: profile-tools [--summary | --preview SCRIPT | --play SCRIPT | "
                        "--play-queued SCRIPT | --activate FILE] "
-                       "[--example | --import FILE] [--active-export FILE (activation only)]\n",
+                       "[--example | --import FILE] [--active-export FILE] [--journal DIR] | "
+                       "--restore-journal DIR [--active-export FILE]\n",
                        stderr);
             return 2;
         }
@@ -77,12 +85,15 @@ int main(int argc, char **argv) {
         std::fputs("Summary, preview/play and activation are exclusive\n", stderr);
         return 2;
     }
-    if (exportActivePath && !activationPath) {
-        std::fputs("Active export requires activation mode\n", stderr);
+    if ((restoreOnly && (activationPath || summary || previewPath || inputPath || example)) ||
+        (journalDirectory && !restoreOnly && !activationPath) ||
+        (exportActivePath && !activationPath && !restoreOnly)) {
+        std::fputs("Journal requires activation; restore mode is exclusive\n", stderr);
         return 2;
     }
-    if (activationPath)
-        return runActivation(inputPath, example, activationPath, exportActivePath);
+    if (activationPath || restoreOnly)
+        return runActivation(inputPath, example, activationPath, exportActivePath, journalDirectory,
+                             restoreOnly);
     std::unique_ptr<Profile> profile(new Profile());
     if (inputPath != nullptr) {
         std::FILE *input = std::fopen(inputPath, "rb");

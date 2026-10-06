@@ -36,6 +36,8 @@ ADAPTER_FILES = (
     "src/ProfileTool/Activation.cpp",
     "src/RuntimeProbe/main.cpp",
     "src/ProfileRuntimeProbe/main.cpp",
+    "lib/Esp32ProfileStore/Esp32ProfileStore.h",
+    "lib/Esp32ProfileStore/Esp32ProfileStore.cpp",
     "lib/FreeRtosProfileChannel/FreeRtosProfileChannel.h",
     "lib/FreeRtosProfileChannel/FreeRtosProfileChannel.cpp",
     "lib/CompanionStatusStore/CompanionStatusStore.h",

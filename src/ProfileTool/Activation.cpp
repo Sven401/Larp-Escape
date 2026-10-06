@@ -1,7 +1,10 @@
 #include "Activation.h"
 #include "DeviceRuntime/OwnerConfiguration.h"
 #include "DeviceRuntime/ProfileController.h"
+#include "DeviceRuntime/ProfileJournal.h"
+#include <cerrno>
 #include <cstdio>
+#include <io.h>
 #include <memory>
 namespace {
 using namespace larp::devices;
@@ -247,6 +250,107 @@ class FileWriter : public IProfileWriter {
   private:
     std::FILE *file_;
 };
+// Native file backend. Existing directory supplied by caller; fixed filenames.
+// _commit requests OS synchronization; physical power-loss durability is NOT a
+// host observation. This backend is not an ESP32 filesystem implementation.
+class NativeJournalStore : public IJournalStore {
+  public:
+    explicit NativeJournalStore(const char *directory) {
+        for (unsigned slot = 0; slot < 2; ++slot) {
+            const int count = std::snprintf(paths_[slot].data(), paths_[slot].size(),
+                                            "%s/profile-%c.larp", directory, 'a' + slot);
+            if (count < 0 || static_cast<std::size_t>(count) >= paths_[slot].size())
+                valid_ = false;
+        }
+    }
+    ~NativeJournalStore() {
+        if (file_)
+            std::fclose(file_);
+    }
+    JournalOpen openRead(std::uint8_t slot) override {
+        if (!valid_ || slot > 1 || file_)
+            return JournalOpen::Failure;
+        errno = 0;
+        file_ = std::fopen(paths_[slot].data(), "rb");
+        writing_ = false;
+        return file_             ? JournalOpen::Present
+               : errno == ENOENT ? JournalOpen::Missing
+                                 : JournalOpen::Failure;
+    }
+    ReadStatus readByte(std::uint8_t &byte) override {
+        if (!file_ || writing_)
+            return ReadStatus::Failure;
+        const int value = std::fgetc(file_);
+        if (value == EOF)
+            return std::ferror(file_) ? ReadStatus::Failure : ReadStatus::End;
+        byte = static_cast<std::uint8_t>(value);
+        return ReadStatus::Byte;
+    }
+    bool closeRead() override {
+        if (!file_ || writing_)
+            return false;
+        const bool good = std::fclose(file_) == 0;
+        file_ = nullptr;
+        return good;
+    }
+    bool beginWrite(std::uint8_t slot) override {
+        if (!valid_ || slot > 1 || file_)
+            return false;
+        file_ = std::fopen(paths_[slot].data(), "wb");
+        writing_ = true;
+        return file_ != nullptr;
+    }
+    bool write(const char *bytes, std::size_t count) override {
+        return file_ && writing_ && std::fwrite(bytes, 1, count, file_) == count;
+    }
+    JournalCommit finishWrite() override {
+        if (!file_ || !writing_)
+            return JournalCommit::Uncertain;
+        const bool flushed = std::fflush(file_) == 0;
+        const bool synced = flushed && _commit(_fileno(file_)) == 0;
+        const bool closed = std::fclose(file_) == 0;
+        file_ = nullptr;
+        writing_ = false;
+        return flushed && synced && closed ? JournalCommit::Confirmed : JournalCommit::Uncertain;
+    }
+    void abortWrite() override {
+        if (file_)
+            std::fclose(file_);
+        file_ = nullptr;
+        writing_ = false;
+    }
+
+  private:
+    std::array<std::array<char, 1024>, 2> paths_ = {};
+    std::FILE *file_ = nullptr;
+    bool valid_ = true, writing_ = false;
+};
+void reportJournal(const char *operation, const ProfileJournal &journal,
+                   const JournalResult &result) {
+    const auto state = journal.snapshot();
+    std::printf("{\"event\":\"profile_journal\",\"operation\":\"%s\",\"result\":\"%s\","
+                "\"generation\":%lu,\"maximumGeneration\":%lu,\"slot\":%u,"
+                "\"initialized\":%s,\"writable\":%s,\"controllerResult\":\"%s\"}\n",
+                operation, journalOutcomeName(result.outcome),
+                static_cast<unsigned long>(state.generation),
+                static_cast<unsigned long>(state.maximumGeneration),
+                static_cast<unsigned>(state.slot), state.initialized ? "true" : "false",
+                state.writable ? "true" : "false", draftOutcomeName(result.controller.outcome));
+}
+bool exportActive(ProfileController &controller, const char *path) {
+    std::FILE *output = std::fopen(path, "wb");
+    if (!output) {
+        std::perror("Cannot open active profile export");
+        return false;
+    }
+    FileWriter writer(output);
+    const auto result =
+        controller.writeActive(writer, controller.activation().configurationRevision);
+    const bool closed = std::fclose(output) == 0;
+    std::printf("{\"event\":\"active_export\",\"result\":\"%s\"}\n",
+                draftOutcomeName(result.outcome));
+    return static_cast<bool>(result) && closed;
+}
 void reportStorage(const ProfileController &controller) {
     const auto value = controller.storage();
     std::printf("{\"event\":\"profile_storage\",\"draftRevision\":%lu,"
@@ -284,7 +388,7 @@ void reportGameResult(const char *operation, const larp::execution::Result &resu
 }
 } // namespace
 int runActivation(const char *initialPath, bool hintFactory, const char *candidatePath,
-                  const char *exportActivePath) {
+                  const char *exportActivePath, const char *journalDirectory, bool restoreOnly) {
     std::unique_ptr<Owners> owners(new Owners());
     std::unique_ptr<ProfileController> runtime(new ProfileController(*owners, *owners));
     if (!runtime->beginStorage()) {
@@ -299,17 +403,42 @@ int runActivation(const char *initialPath, bool hintFactory, const char *candida
         static_cast<unsigned long>(2 * sizeof(Profile)),
         static_cast<unsigned long>(sizeof(OwnerConfiguration)),
         static_cast<unsigned long>(sizeof(Control)));
-    const auto initial =
-        initialPath ? importFile(*runtime, initialPath)
-                    : runtime->createDraft(
-                          hintFactory ? FactoryProfile::Hint : FactoryProfile::Standard, 0);
-    if (!initial)
-        return 1;
+    std::unique_ptr<NativeJournalStore> store;
+    std::unique_ptr<ProfileJournal> journal;
+    bool restored = false;
+    if (journalDirectory) {
+        store.reset(new NativeJournalStore(journalDirectory));
+        journal.reset(new ProfileJournal(*runtime, *store));
+        const auto loaded = journal->restoreDraft(0);
+        reportJournal("restore", *journal, loaded);
+        restored = loaded.outcome == JournalOutcome::Restored;
+        if (!restored && (restoreOnly || loaded.outcome != JournalOutcome::Empty))
+            return 1;
+    }
+    if (!restored) {
+        const auto initial =
+            initialPath ? importFile(*runtime, initialPath)
+                        : runtime->createDraft(
+                              hintFactory ? FactoryProfile::Hint : FactoryProfile::Standard, 0);
+        if (!initial)
+            return 1;
+    }
     std::uint32_t now = 0;
     if (!runtime->activateDraft(runtime->storage().draftRevision, 0, now) ||
         !drive(*owners, *runtime, now))
         return 1;
     reportStorage(*runtime);
+    if (journal && !restored) {
+        const auto saved = journal->saveActive(runtime->activation().configurationRevision);
+        reportJournal("save_initial", *journal, saved);
+        if (!saved)
+            return 1;
+    }
+    if (restoreOnly) {
+        if (exportActivePath && !exportActive(*runtime, exportActivePath))
+            return 1;
+        return std::fflush(stdout) == 0 ? 0 : 1;
+    }
     auto result = runtime->startGame(runtime->activation().configurationRevision, ++now);
     reportGameResult("start_initial", result);
     if (!result)
@@ -337,6 +466,12 @@ int runActivation(const char *initialPath, bool hintFactory, const char *candida
     if (!requested || !drive(*owners, *runtime, now))
         return 1;
     reportStorage(*runtime);
+    if (journal) {
+        const auto saved = journal->saveActive(runtime->activation().configurationRevision);
+        reportJournal("save_candidate", *journal, saved);
+        if (!saved)
+            return 1;
+    }
     result = runtime->startGame(runtime->activation().configurationRevision, ++now);
     reportGameResult("start_candidate", result);
     if (!result)
@@ -355,18 +490,7 @@ int runActivation(const char *initialPath, bool hintFactory, const char *candida
         reportGameResult("stop_for_export", result);
         if (!result)
             return 1;
-        std::FILE *output = std::fopen(exportActivePath, "wb");
-        if (!output) {
-            std::perror("Cannot open active profile export");
-            return 1;
-        }
-        FileWriter writer(output);
-        const auto exported =
-            runtime->writeActive(writer, runtime->activation().configurationRevision);
-        const bool closeOk = std::fclose(output) == 0;
-        std::printf("{\"event\":\"active_export\",\"result\":\"%s\"}\n",
-                    draftOutcomeName(exported.outcome));
-        if (!exported || !closeOk)
+        if (!exportActive(*runtime, exportActivePath))
             return 1;
     }
     return std::fflush(stdout) == 0 ? 0 : 1;

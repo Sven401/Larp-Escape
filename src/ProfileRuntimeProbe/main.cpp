@@ -2,8 +2,10 @@
 // radio are initialized. Runtime owns actual activation/Session/queue logic.
 #include "DeviceRuntime/OwnerConfiguration.h"
 #include "DeviceRuntime/ProfileController.h"
+#include "DeviceRuntime/ProfileJournal.h"
 #include "GameDomain/GameDefinitions.h"
 #include <Arduino.h>
+#include <Esp32ProfileStore.h>
 #include <FreeRtosProfileChannel.h>
 #include <freertos/task.h>
 namespace {
@@ -12,6 +14,8 @@ using namespace larp::configuration;
 FreeRtosProfileChannel channel;
 // Two startup allocations, private profiles; workers never borrow their contents.
 ProfileController runtime(channel, channel);
+Esp32ProfileStore persistentStore;
+ProfileJournal journal(runtime, persistentStore);
 // ESP-IDF v4.4 task depths are BYTES; this pinned port has byte stack elements.
 static const std::size_t WorkerStackBytes = 4096;
 static_assert(sizeof(StackType_t) == 1, "Pinned ESP32 byte stack port required");
@@ -37,7 +41,15 @@ struct Workers {
 const std::array<Worker *, ChannelLimits::Owners> workers = {
     {&storage.nfc, &storage.i2c, &storage.audio, &storage.led, &storage.peer}};
 bool ready = false, switchRequested = false;
+bool restoredAtBoot = false, fallbackAttempted = false, needsSave = false;
 std::uint32_t boot = 0, lastStartedGeneration = 0;
+void reportJournal(const char *operation, const JournalResult &result) {
+    const auto state = journal.snapshot();
+    Serial.printf("profile_runtime_probe: journal operation=%s result=%s generation=%lu slot=%u "
+                  "writable=%s\n",
+                  operation, journalOutcomeName(result.outcome), (unsigned long)state.generation,
+                  unsigned(state.slot), state.writable ? "true" : "false");
+}
 void completeRead(Worker &worker, const Command &command, std::uint32_t now, bool cancelled) {
     const auto *component = worker.settings.find(command.ticket.component);
     Reply reply;
@@ -162,7 +174,20 @@ void setup() {
         Serial.println("profile_runtime_probe: profile storage allocation failed");
         return;
     }
-    if (!runtime.createDraft(FactoryProfile::Standard, 0) || !channel.begin()) {
+    if (!persistentStore.begin()) {
+        Serial.println("profile_runtime_probe: storage mount failed; no format; stopped");
+        return;
+    }
+    const auto restored = journal.restoreDraft(0);
+    reportJournal("boot_restore", restored);
+    restoredAtBoot = restored.outcome == JournalOutcome::Restored;
+    if (!restoredAtBoot && restored.outcome != JournalOutcome::Empty) {
+        Serial.println("profile_runtime_probe: storage recovery required; stopped");
+        return;
+    }
+    needsSave = !restoredAtBoot;
+    if ((!restoredAtBoot && !runtime.createDraft(FactoryProfile::Standard, 0)) ||
+        !channel.begin()) {
         Serial.println("profile_runtime_probe: setup rejected");
         return;
     }
@@ -182,6 +207,7 @@ void setup() {
     }
     Serial.printf(
         "profile_runtime_probe: synthetic=true gpio=false network=false two_profiles=true "
+        "journal=true "
         "runtime=%u owner_config=%u channel=%u control=%u worker_storage=%u profile_heap=%u\n",
         unsigned(sizeof(runtime)), unsigned(sizeof(OwnerConfiguration)), unsigned(sizeof(channel)),
         unsigned(sizeof(Control)), unsigned(sizeof(storage)), unsigned(2 * sizeof(Profile)));
@@ -197,6 +223,28 @@ void loop() {
     runtime.service(now);
     auto activation = runtime.activation();
     auto game = runtime.game();
+    if (!runtime.busy() && activation.finish == ActivationFinish::Failed) {
+        if (restoredAtBoot && !fallbackAttempted && !switchRequested) {
+            fallbackAttempted = true;
+            const auto older = journal.restoreDraft(runtime.storage().draftRevision, true);
+            reportJournal("boot_older", older);
+            ready =
+                older.outcome == JournalOutcome::Restored &&
+                static_cast<bool>(runtime.activateDraft(
+                    runtime.storage().draftRevision, activation.configurationRevision, millis()));
+            needsSave = false;
+        } else
+            ready = false;
+        if (!ready)
+            Serial.println("profile_runtime_probe: activation failed; stopped");
+        return;
+    }
+    if (!runtime.busy() && activation.finish == ActivationFinish::RolledBack) {
+        Serial.println(
+            "profile_runtime_probe: candidate rejected; old configuration restored; stopped");
+        ready = false;
+        return;
+    }
     if (!switchRequested && activation.hardwareReady && game.execution.running &&
         static_cast<std::uint32_t>(now - boot) >= 10000) {
         if (runtime.stopGame(game.execution.stateRevision, now)) {
@@ -207,6 +255,7 @@ void loop() {
                                                 activation.configurationRevision, now)
                         : created;
             switchRequested = true;
+            needsSave = static_cast<bool>(requested);
             if (!requested)
                 Serial.printf("profile_runtime_probe: switch rejected=%s\n",
                               draftOutcomeName(requested.outcome));
@@ -215,11 +264,21 @@ void loop() {
     activation = runtime.activation();
     if (activation.hardwareReady && !runtime.game().execution.running &&
         lastStartedGeneration != activation.generation) {
-        if (runtime.startGame(activation.configurationRevision, now))
+        if (needsSave) {
+            const auto saved = journal.saveActive(activation.configurationRevision);
+            reportJournal("save_applied", saved);
+            if (!saved) {
+                Serial.println("profile_runtime_probe: persistence unconfirmed; stopped");
+                ready = false;
+                return;
+            }
+            needsSave = false;
+        }
+        if (runtime.startGame(activation.configurationRevision, millis()))
             lastStartedGeneration = activation.generation;
     }
     if (runtime.game().execution.running)
-        runtime.tickGame(now);
+        runtime.tickGame(millis());
     static std::uint32_t last = 0;
     if (static_cast<std::uint32_t>(now - last) >= 1000) {
         last = now;
@@ -230,7 +289,7 @@ void loop() {
             "profile_runtime_probe: phase=%s finish=%s cfg=%lu profile=%lu generation=%lu "
             "state=%u role=%u crystals=%u accepted=%lu replies=%lu stale=%lu timeout=%lu "
             "outstanding=%lu "
-            "control_drops=%lu draft_revision=%lu heap=%u stacks=",
+            "control_drops=%lu draft_revision=%lu stored_generation=%lu heap=%u stacks=",
             activationPhaseName(activation.phase), activationFinishName(activation.finish),
             (unsigned long)activation.configurationRevision,
             (unsigned long)activation.profileRevision, (unsigned long)activation.generation,
@@ -238,7 +297,8 @@ void loop() {
             (unsigned long)traffic.accepted, (unsigned long)traffic.received,
             (unsigned long)traffic.staleReplies, (unsigned long)traffic.timedOut,
             (unsigned long)queues.outstanding, (unsigned long)queues.droppedControlReplies,
-            (unsigned long)runtime.storage().draftRevision, unsigned(ESP.getFreeHeap()));
+            (unsigned long)runtime.storage().draftRevision,
+            (unsigned long)journal.snapshot().generation, unsigned(ESP.getFreeHeap()));
         for (const auto *worker : workers)
             Serial.printf("%u,", unsigned(uxTaskGetStackHighWaterMark(worker->handle)));
         Serial.println();
