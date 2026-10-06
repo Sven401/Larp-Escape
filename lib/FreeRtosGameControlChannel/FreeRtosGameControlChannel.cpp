@@ -98,6 +98,26 @@ GameSubmission FreeRtosGameControlChannel::submitJson(const char *bytes, std::si
 bool FreeRtosGameControlChannel::takeReply(RoutedGameReply &reply) {
     return started_ && xQueueReceive(replies_, &reply, 0) == pdTRUE;
 }
+bool FreeRtosGameControlChannel::takeCurrentReply(RoutedGameReply &reply) {
+    if (!started_)
+        return false;
+    bool selected = false;
+    RoutedGameReply candidate;
+    // Queue operations on the application side release their lock before an
+    // authority read. No network call, wait or reverse lock order inside here.
+    portENTER_CRITICAL(&authorityMutex_);
+    for (std::size_t i = 0; i < ControlLimits::Queue; ++i) {
+        if (xQueueReceive(replies_, &candidate, 0) != pdTRUE)
+            break;
+        if (authority_.admits(candidate.principal, candidate.connectionEpoch)) {
+            reply = candidate;
+            selected = true;
+            break;
+        }
+    }
+    portEXIT_CRITICAL(&authorityMutex_);
+    return selected;
+}
 bool FreeRtosGameControlChannel::readStatus(ConfiguredStatus &status) const {
     return started_ && xQueuePeek(status_, &status, 0) == pdTRUE;
 }

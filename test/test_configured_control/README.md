@@ -6,7 +6,7 @@ Tatsächliche reine Firmwarequellen, tatsächlicher FreeRtosGameControlChannel, 
 
 Beobachtungshooks setzen Rechtewechsel vor/nach dem letzten synchronisierten Read bzw. vor Admission. Das prüft die definierte Entscheidungsreihenfolge und ausdrücklich auch die zulässige einzelne beanspruchte Operation nach späterem Entzug. Es ist keine atomare Abbruchgarantie. MemoryStore bestätigt ausschließlich modellierte Bytes, keine Stromausfall-/Dateisystem-Synchronisierungsabnahme.
 
-51 gezielte Fälle; keine vollständige JSON-/Profil-Fuzzing-/Ausfallsuite, keine vollständige Lease-/Request-/Sampleerschöpfung. Queuevoll/Reconnect/Entzug/Retry/Replyverlust sowie Start durch Codec bis StoredReady-Engine/Status sind enthalten. Historische Nicht-Prüfungen bleiben im Projektgedächtnis datiert; dieser neue Nachweis ersetzt sie nur für die genannten Fälle.
+55 gezielte Fälle; keine vollständige JSON-/Profil-Fuzzing-/Ausfallsuite, keine vollständige Lease-/Request-/Sampleerschöpfung. Queuevoll/Reconnect/Entzug/Retry/Replyverlust sowie Start durch Codec bis StoredReady-Engine/Status sind enthalten. Historische Nicht-Prüfungen bleiben im Projektgedächtnis datiert; dieser neue Nachweis ersetzt sie nur für die genannten Fälle.
 
 Die [Firmware-Fixtures v2](../../docs/companion/fixtures/v2/README.md) entstehen aus dem tatsächlichen Hostpfad und werden im zusätzlichen Fixturefall bytegenau verglichen.
 
@@ -28,3 +28,9 @@ Read-/Close-/TOCTOU-Fehler und Generationmax werden geprüft. Keine physische
 Dateisystem-/Stromausfall-/Flashhaltbarkeitsabnahme. Revisionsannahme des ersten
 Laufs korrigiert: Importversuche erhöhen draftRevision, Abschluss der Aktivierung
 verbraucht sie nochmals; beide Beobachtungspunkte jetzt getrennt geprüft.
+
+
+Vier Antwortauswahlfälle: echte Queue, aktuelle Principal+Epoch unter kurzer
+Authoritysperre, alte/wrong Metadaten verwerfen, False erhält Ziel, volle Queue
+bei Entzug abräumen, kopierte ausgewählte Epoche nach späterem Entzug unverändert.
+Keine Garantie einer nachträglich abbrechbaren physischen Übertragung.

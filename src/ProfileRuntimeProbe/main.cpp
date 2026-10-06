@@ -326,7 +326,7 @@ void loop() {
     // requests and publishes a bounded status, without another game tick.
     gameControl.service(now);
     larp::companion::RoutedGameReply receipt;
-    while (companionChannel.takeReply(receipt)) {
+    while (companionChannel.takeCurrentReply(receipt)) {
         if (receipt.principal == 1 && receipt.connectionEpoch == 1 && startPending) {
             startPending = false;
             if (receipt.reply.outcome == larp::companion::GameReplyOutcome::Executed)

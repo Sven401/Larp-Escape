@@ -737,6 +737,73 @@ void test_pending_hardware_switch_does_not_publish_old_availability() {
         TEST_ASSERT_FALSE(value.devices[i].available);
 }
 
+void test_reply_selection_drops_old_epoch_and_selects_current_verified_recipient() {
+    TEST_ASSERT_TRUE(f->submit(f->command()));
+    f->control.service(++f->now); // Executed reply for epoch1 remains queued.
+    f->channel.actual.updateAuthority(authority(2, false));
+    f->channel.actual.updateAuthority(authority(3));
+    f->control.service(++f->now);
+    const auto stop = f->command(GameCommandKind::Stop);
+    TEST_ASSERT_TRUE(f->submit(stop, 3));
+    f->control.service(++f->now);
+    RoutedGameReply selected;
+    TEST_ASSERT_TRUE(f->channel.actual.takeCurrentReply(selected));
+    TEST_ASSERT_EQUAL_UINT32(7, selected.principal);
+    TEST_ASSERT_EQUAL_UINT32(3, selected.connectionEpoch);
+    TEST_ASSERT_EQUAL(static_cast<unsigned>(GameReplyOutcome::Executed),
+                      static_cast<unsigned>(selected.reply.outcome));
+    TEST_ASSERT_FALSE(f->application.gameRunning());
+    TEST_ASSERT_FALSE(f->channel.actual.takeReply(selected));
+}
+void test_reply_selection_filters_wrong_principal_and_preserves_target_on_false() {
+    RoutedGameReply foreign;
+    foreign.principal = 8;
+    foreign.connectionEpoch = 1;
+    TEST_ASSERT_TRUE(f->channel.actual.send(foreign));
+    RoutedGameReply wrongEpoch;
+    wrongEpoch.principal = 7;
+    wrongEpoch.connectionEpoch = 9;
+    TEST_ASSERT_TRUE(f->channel.actual.send(wrongEpoch));
+    RoutedGameReply selected;
+    selected.principal = 99;
+    selected.connectionEpoch = 42;
+    selected.reply.request = 77;
+    TEST_ASSERT_FALSE(f->channel.actual.takeCurrentReply(selected));
+    TEST_ASSERT_EQUAL_UINT32(99, selected.principal);
+    TEST_ASSERT_EQUAL_UINT32(42, selected.connectionEpoch);
+    TEST_ASSERT_EQUAL_UINT32(77, selected.reply.request);
+    TEST_ASSERT_FALSE(f->channel.actual.takeReply(foreign));
+    FreeRtosGameControlChannel unopened;
+    TEST_ASSERT_FALSE(unopened.takeCurrentReply(selected));
+    TEST_ASSERT_EQUAL_UINT32(77, selected.reply.request);
+}
+void test_revocation_before_reply_selection_discards_full_queue() {
+    RoutedGameReply reply;
+    reply.principal = 7;
+    reply.connectionEpoch = 1;
+    for (unsigned i = 0; i < ControlLimits::Queue; ++i)
+        TEST_ASSERT_TRUE(f->channel.actual.send(reply));
+    host_rtos::beforeEnter = revokeAtAdmission;
+    RoutedGameReply selected;
+    selected.reply.request = 88;
+    TEST_ASSERT_FALSE(f->channel.actual.takeCurrentReply(selected));
+    TEST_ASSERT_EQUAL_UINT32(88, selected.reply.request);
+    TEST_ASSERT_FALSE(f->channel.actual.takeReply(reply));
+}
+void test_revocation_after_reply_selection_cannot_change_copied_epoch() {
+    TEST_ASSERT_TRUE(f->submit(f->command()));
+    f->control.service(++f->now);
+    RoutedGameReply selected;
+    TEST_ASSERT_TRUE(f->channel.actual.takeCurrentReply(selected));
+    f->channel.actual.updateAuthority(authority(2, false));
+    f->channel.actual.updateAuthority(authority(3));
+    TEST_ASSERT_EQUAL_UINT32(1, selected.connectionEpoch); // Never relabel a claimed old reply.
+    TrustedAuthority current;
+    TEST_ASSERT_TRUE(f->channel.actual.readAuthority(current));
+    TEST_ASSERT_EQUAL_UINT32(3, current.epoch);
+    TEST_ASSERT_TRUE(selected.connectionEpoch != current.epoch);
+    TEST_ASSERT_TRUE(f->application.gameRunning());
+}
 #include "CommandStreamCases.h"
 #include "JournalFaultCases.h"
 } // namespace
@@ -806,5 +873,9 @@ int main() {
     RUN_TEST(test_generation_maximum_never_wraps_or_overwrites);
     RUN_TEST(test_semantically_invalid_record_falls_back_to_valid_profile);
     RUN_TEST(test_missing_previously_confirmed_records_are_not_fresh_empty_store);
+    RUN_TEST(test_reply_selection_drops_old_epoch_and_selects_current_verified_recipient);
+    RUN_TEST(test_reply_selection_filters_wrong_principal_and_preserves_target_on_false);
+    RUN_TEST(test_revocation_before_reply_selection_discards_full_queue);
+    RUN_TEST(test_revocation_after_reply_selection_cannot_change_copied_epoch);
     return UNITY_END();
 }

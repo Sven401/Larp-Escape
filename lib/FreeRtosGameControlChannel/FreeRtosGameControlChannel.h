@@ -29,7 +29,13 @@ class FreeRtosGameControlChannel : public IGameControlChannel, public ICommandIn
     GameSubmission submitJson(const char *bytes, std::size_t count,
                               std::uint32_t authenticatedPrincipal,
                               std::uint32_t connectionEpoch) noexcept override;
+    // Raw drain for diagnostics/tests; does not select a current network recipient.
     bool takeReply(RoutedGameReply &reply);
+    // Sole verified transport owner: at most Queue zero-wait copied reads under
+    // the authority lock, discarding stale/unavailable recipients. False preserves
+    // destination. Selection is an observation point, not physical-send completion.
+    // Recheck the bound epoch in the actual bearer before any later network send.
+    bool takeCurrentReply(RoutedGameReply &reply);
     bool readStatus(ConfiguredStatus &status) const;
 
   private:
