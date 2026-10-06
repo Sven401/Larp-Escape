@@ -1,6 +1,6 @@
 # Konfigurierter Companion-Vertrag v2
 
-**Stand:** 6. Oktober 2026. Status-/Befehlskern, [begrenzter JSON-Befehlscodec](command-codec-v2.md) und statischer FreeRTOS-Adapter implementiert; Appfunk, Anmeldung und Android noch offen. 21 gezielte Hostfälle prüfen den vertikalen Codec-/Aufnahme-/Anwendungs-/Antwortpfad mit synthetischen Geräten und einem deterministischen RTOS-Modell; echte Geräte-/SMP-Abnahme steht aus. Status v1 bleibt unverändert.
+**Stand:** 7. Oktober 2026. Status-/Befehlskern, [begrenzter JSON-Befehlscodec](command-codec-v2.md) und statischer FreeRTOS-Adapter implementiert; Appfunk, Anmeldung und Android noch offen. 25 gezielte Hostfälle prüfen den vertikalen Codec-/Aufnahme-/Anwendungs-/Antwortpfad mit synthetischen Geräten und einem deterministischen RTOS-Modell; echte Geräte-/SMP-Abnahme steht aus. Status v1 bleibt unverändert.
 
 ## Zuständigkeit
 
@@ -75,8 +75,16 @@ Im Hauptcheckout wurde am 6. Oktober ein unversionierter Appmock `companion/cont
 
 [Verbindliche App-Fixtures v2](fixtures/v2/README.md): aus dem tatsächlichen Firmware-Hostpfad erzeugt und bytegenau verglichen.
 
-## Ressourcen- und Buildbeleg des Zugangsschnitts
+## Historischer Ressourcen- und Buildbeleg des Zugangsschnitts (2d9570f)
 
 Vier finale Builds `pio run -e profile-tools -e az-delivery-devkit-v4 -e esp32-runtime-probe -e esp32-profile-runtime-probe -j2` terminal Exit0/alle SUCCESS; Log %TEMP%/larp-authority-final-build-repeat.log. Der erste Lauf scheiterte an fehlenden Build-Zwischendateien während parallel geändertem PlatformIO-Aufbau; vollständig beendet, danach mit unveränderter Konfiguration erneut erfolgreich. Legacy FastLED-/Frameworkwarnungen bleiben sichtbar. Produktion weiterhin alter Einstieg: 55.148 Byte RAM/1.228.385 Flash (93,7 %); alte Probe21.480/291.673, neue Profilprobe97.984/384.621 plus57.272 einmaliger Profilheap/Allocator/FS. Keine neue Boardprüfung/Upload/Remote-CI.
 
 Xtensa/-Os: TrustedAuthority12, AuthorityState20, TrustedGameRequest36, RoutedGameReply72, GameControl1.328, statischer Companionkanal1.248 Byte. Die Typ-/ELFsymbolwerte sind Compilerbelege, keine Laufzeitreserve. Eigene Frames: Authoritymethoden32, synchronizeAuthority48, revoke128, service208, dispatch144, publish464 Byte; Aufrufer/SDK/Queue-/Parserketten zusätzlich. Architektur78 Dateien/184 Includes, 50 unabhängige C++11-Header, Format131 Dateien mit clang-format19.1.7. 21 v2-Hostfälle und 11 v1-Fälle erfolgreich, acht JSON-Fixtures schema-valid. Keine vollständige Zähler-, SMP-/Timing-/Energie-/Stromausfallabnahme.
+
+## Konfigurationsgebundener Status (7. Oktober 2026)
+
+Runtime::game liefert das Inventar des aktiven Profils bereits vor dem ersten Spielstart. Rollen/Runden/Aktionshistory gehören zur zuletzt erfolgreich gestarteten Konfigurationsrevision; nach Ersatz wird dieser alte Spielinhalt ausgeblendet, während stateRevision des gestoppten Engines erhalten bleibt. Stop innerhalb derselben Konfiguration darf die bekannte Rolle behalten. Geräte-IDs/Enabled gehören immer zum aktiven Profil, verfügbare Beobachtungen müssen dessen aktuelle Gerätegeneration tragen. Fehlende/stale Quelle, deaktivierter Bestandteil oder noch laufende Einrichtung bedeutet available=false. Generationgleichheit ist weiterhin kein Heartbeat-/Frischenachweis.
+
+Die ursprünglichen Ready-Fixtures aus 2d9570f hatten vor erstem Start eine leere Geräteliste. Diese semantische Korrektur aktualisiert nur status-ready/status-running aus dem tatsächlichen Hostpfad; JSONstruktur und Anfrage-/Antwortfelder unverändert. Neue gezielte Fälle prüfen Inventar, alten Rolleninhalt nach einem importierten Profil mit anderen Komponenten-/Rollen-IDs, unveränderten Zustandszähler und neuen Start, stale Gerätegeneration und laufenden Hardwarewechsel. Keine neue mutable Controller-API, kein drittes vollständiges Profil in der Firmware.
+
+Statuskorrektur: vor Änderung drei gezielte Fehler reproduziert (leeres Inventar, alte Rolle nach Übernahme, stale Verfügbarkeit); nach Änderung `pio test -e host-configured-control`25/25 erfolgreich/Exit0, final ohne Fixtureexport (%TEMP%/larp-profile-status-final-test.log). Acht Fixtures weiterhin schema-valid. Vier Buildziele terminal SUCCESS/Exit0 (%TEMP%/larp-profile-status-final-build.log): Produktion55.148 RAM/1.228.417 Flash (93,7%), alteProbe21.480/291.673, neue97.992/384.989 plus57.272 Profilheap/Allocator/FS. Runtime11.084, Controller11.156, Anwendung11.216 Byte; jeweils ineinander enthalten, nicht addieren. Runtime::game eigener Frame320 und startGame64 Byte bei Xtensa/-Os, zusätzlich Caller/Session/Queueketten. Architektur78/184, Header50, Format131; kein Upload/Board-/SMP-/Timing-/Ausfallbeleg.

@@ -37,6 +37,11 @@ struct Worker {
 class Owners : public IChannel, public IControlChannel {
   public:
     Owners() : workers_{{&nfc_, &i2c_, &audio_, &led_, &peer_}} {}
+    larp::domain::CardUid card = {};
+    void staleObservations() {
+        for (auto &value : observations_)
+            value.generation = 0;
+    }
     bool send(Owner owner, const Command &command) noexcept override {
         const unsigned index = static_cast<unsigned>(owner);
         return index < workers_.size() && workers_[index]->running &&
@@ -160,6 +165,8 @@ class Owners : public IChannel, public IControlChannel {
             reply.kind = command.kind;
             reply.completedMilliseconds = now;
             reply.outcome = available ? PollOutcome::Fresh : PollOutcome::Unavailable;
+            if (command.kind == CommandKind::ReadCard && available)
+                reply.card = card;
             if (!replies_.push(reply))
                 ++dropped_;
         }

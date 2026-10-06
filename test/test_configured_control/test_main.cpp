@@ -637,6 +637,155 @@ void test_app_fixtures_match_actual_firmware_vertical_flow() {
     replyFixture("reply-stale-state", f->execute(stale).reply);
 }
 
+class ProfileBytes : public IProfileWriter, public IProfileReader {
+  public:
+    std::string bytes;
+    std::size_t position = 0;
+    bool write(const char *value, std::size_t count) override {
+        bytes.append(value, count);
+        return true;
+    }
+    ReadStatus readByte(std::uint8_t &value) override {
+        if (position == bytes.size())
+            return ReadStatus::End;
+        value = static_cast<std::uint8_t>(bytes[position++]);
+        return ReadStatus::Byte;
+    }
+};
+void test_ready_inventory_exists_before_first_game_start() {
+    std::unique_ptr<Profile> profile(new Profile);
+    TEST_ASSERT_TRUE(makeStandardProfile(*profile));
+    const auto value = f->application.game();
+    TEST_ASSERT_EQUAL_UINT32(profile->components.size(), value.deviceCount);
+    for (std::size_t i = 0; i < profile->components.size(); ++i) {
+        TEST_ASSERT_EQUAL_UINT16(profile->components.get(i)->id.value, value.devices[i].id.value);
+        TEST_ASSERT_EQUAL(profile->components.get(i)->enabled, value.devices[i].enabled);
+        TEST_ASSERT_TRUE(value.devices[i].available);
+    }
+    TEST_ASSERT_FALSE(value.execution.running);
+    TEST_ASSERT_EQUAL_UINT32(0, value.execution.stateRevision);
+}
+void test_profile_change_hides_old_role_and_rebinds_inventory_without_resetting_revision() {
+    std::unique_ptr<Profile> profile(new Profile);
+    TEST_ASSERT_TRUE(makeStandardProfile(*profile));
+    f->owners.card = profile->roles.get(0)->uid;
+    TEST_ASSERT_EQUAL(static_cast<unsigned>(GameReplyOutcome::Executed),
+                      static_cast<unsigned>(f->execute(f->command()).reply.outcome));
+    StateId readingState;
+    for (std::size_t i = 0; i < profile->states.size() && !readingState.value; ++i) {
+        const auto &state = *profile->states.get(i);
+        for (std::size_t j = 0; j < state.tick.size(); ++j)
+            for (std::size_t k = 0; k < profile->actions.size(); ++k)
+                if (profile->actions.get(k)->id == *state.tick.get(j) &&
+                    profile->actions.get(k)->kind == ActionKind::ReadRole)
+                    readingState = state.id;
+    }
+    TEST_ASSERT_TRUE(readingState.value != 0);
+    auto change = f->command(GameCommandKind::ChangeState);
+    change.target = readingState.value;
+    TEST_ASSERT_EQUAL(static_cast<unsigned>(GameReplyOutcome::Executed),
+                      static_cast<unsigned>(f->execute(change).reply.outcome));
+    for (unsigned i = 0; i < 400 && !f->application.game().rolePresent; ++i) {
+        f->now += 5;
+        f->owners.pump(f->now);
+        f->application.service(f->now);
+    }
+    TEST_ASSERT_TRUE(f->application.game().rolePresent);
+    TEST_ASSERT_EQUAL(
+        static_cast<unsigned>(GameReplyOutcome::Executed),
+        static_cast<unsigned>(f->execute(f->command(GameCommandKind::Stop)).reply.outcome));
+    TEST_ASSERT_TRUE(f->application.game().rolePresent); // Retained within same configuration.
+    const auto stoppedRevision = f->application.execution().stateRevision;
+    const auto oldConfiguration = f->application.activation().configurationRevision;
+    for (std::size_t i = 0; i < profile->components.size(); ++i) {
+        auto &component = *profile->components.get(i);
+        component.id.value += 1000;
+        for (std::size_t j = 0; j < component.rows.size(); ++j)
+            component.rows.get(j)->expander.value += 1000;
+        for (std::size_t j = 0; j < component.columns.size(); ++j)
+            component.columns.get(j)->expander.value += 1000;
+        for (std::size_t j = 0; j < component.wakeInputs.size(); ++j)
+            component.wakeInputs.get(j)->expander.value += 1000;
+    }
+    for (std::size_t i = 0; i < profile->conditions.size(); ++i)
+        if (profile->conditions.get(i)->component.value)
+            profile->conditions.get(i)->component.value += 1000;
+    for (std::size_t i = 0; i < profile->effects.size(); ++i)
+        profile->effects.get(i)->component.value += 1000;
+    for (std::size_t i = 0; i < profile->actions.size(); ++i) {
+        auto &action = *profile->actions.get(i);
+        if (action.component.value)
+            action.component.value += 1000;
+        if (action.source.value)
+            action.source.value += 1000;
+    }
+    for (std::size_t i = 0; i < profile->roles.size(); ++i)
+        profile->roles.get(i)->id.value += 1000;
+    TEST_ASSERT_TRUE(validateProfile(*profile));
+    ProfileBytes bytes;
+    TEST_ASSERT_TRUE(writeProfile(*profile, bytes));
+    TEST_ASSERT_TRUE(f->application.importDraft(bytes, f->application.storage().draftRevision));
+    TEST_ASSERT_TRUE(f->application.activateDraft(f->application.storage().draftRevision,
+                                                  oldConfiguration, f->now));
+    for (unsigned i = 0; i < 256 && f->application.busy(); ++i) {
+        f->now += 5;
+        f->owners.pump(f->now);
+        f->application.service(f->now);
+    }
+    TEST_ASSERT_EQUAL(static_cast<unsigned>(ApplicationPhase::Ready),
+                      static_cast<unsigned>(f->application.snapshot().phase));
+    TEST_ASSERT_TRUE(f->application.activation().configurationRevision > oldConfiguration);
+    const auto fresh = f->application.game();
+    TEST_ASSERT_FALSE(fresh.rolePresent);
+    TEST_ASSERT_EQUAL_UINT16(0, fresh.role.value);
+    TEST_ASSERT_FALSE(fresh.execution.running);
+    TEST_ASSERT_EQUAL_UINT32(stoppedRevision, fresh.execution.stateRevision);
+    TEST_ASSERT_EQUAL_UINT32(f->application.storage().activeProfileRevision,
+                             fresh.execution.profileRevision);
+    TEST_ASSERT_EQUAL_UINT32(profile->components.size(), fresh.deviceCount);
+    for (std::size_t i = 0; i < fresh.deviceCount; ++i) {
+        TEST_ASSERT_EQUAL_UINT16(profile->components.get(i)->id.value, fresh.devices[i].id.value);
+        TEST_ASSERT_TRUE(fresh.devices[i].available);
+    }
+    f->now += ControlLimits::PublishMilliseconds;
+    f->control.service(f->now);
+    ConfiguredStatus status;
+    TEST_ASSERT_TRUE(f->channel.actual.readStatus(status));
+    TEST_ASSERT_FALSE(status.rolePresent);
+    TEST_ASSERT_EQUAL_UINT16(1001, status.devices[0].id);
+    TEST_ASSERT_EQUAL(static_cast<unsigned>(GameReplyOutcome::Executed),
+                      static_cast<unsigned>(f->execute(f->command()).reply.outcome));
+    TEST_ASSERT_TRUE(f->application.gameRunning());
+}
+void test_stale_owner_generation_is_unavailable_without_changing_game_revision() {
+    f->execute(f->command());
+    f->application.service(f->now + 5);
+    f->owners.staleObservations();
+    const auto value = f->application.game();
+    TEST_ASSERT_TRUE(value.deviceCount > 0);
+    for (std::size_t i = 0; i < value.deviceCount; ++i)
+        TEST_ASSERT_FALSE(value.devices[i].available);
+    TEST_ASSERT_EQUAL_UINT32(f->application.execution().stateRevision,
+                             value.execution.stateRevision);
+}
+
+void test_pending_hardware_switch_does_not_publish_old_availability() {
+    f->execute(f->command());
+    f->now += 5;
+    f->application.service(f->now);
+    f->execute(f->command(GameCommandKind::Stop));
+    TEST_ASSERT_TRUE(
+        f->application.createDraft(FactoryProfile::Hint, f->application.storage().draftRevision));
+    TEST_ASSERT_TRUE(f->application.activateDraft(f->application.storage().draftRevision,
+                                                  f->application.activation().configurationRevision,
+                                                  f->now));
+    TEST_ASSERT_FALSE(f->application.activation().hardwareReady);
+    const auto value = f->application.game();
+    TEST_ASSERT_TRUE(value.deviceCount > 0);
+    for (std::size_t i = 0; i < value.deviceCount; ++i)
+        TEST_ASSERT_FALSE(value.devices[i].available);
+}
+
 } // namespace
 void setUp() {
     host_rtos::depth = 0;
@@ -674,5 +823,9 @@ int main() {
     RUN_TEST(test_wrong_principal_and_epoch_cannot_admit);
     RUN_TEST(test_pending_configuration_blocks_start_and_consumes_request);
     RUN_TEST(test_app_fixtures_match_actual_firmware_vertical_flow);
+    RUN_TEST(test_ready_inventory_exists_before_first_game_start);
+    RUN_TEST(test_profile_change_hides_old_role_and_rebinds_inventory_without_resetting_revision);
+    RUN_TEST(test_stale_owner_generation_is_unavailable_without_changing_game_revision);
+    RUN_TEST(test_pending_hardware_switch_does_not_publish_old_availability);
     return UNITY_END();
 }

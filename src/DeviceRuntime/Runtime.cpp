@@ -286,6 +286,39 @@ void Runtime::service(std::uint32_t now) {
             increment(status_.queueRejections);
     }
 }
+execution::SessionSnapshot Runtime::game() const {
+    execution::SessionSnapshot value;
+    const bool sameConfiguration = gameConfigurationRevision_ != 0 &&
+                                   gameConfigurationRevision_ == status_.configurationRevision;
+    if (sameConfiguration)
+        value = session_.snapshot();
+    else {
+        // The stopped engine keeps its monotone revision across configuration
+        // changes. Do not publish role/action/device history from another profile.
+        value.execution.stateRevision = session_.execution().stateRevision;
+        value.execution.profileRevision = status_.profileRevision;
+    }
+    if (!active_)
+        return value;
+    value.deviceCount = static_cast<std::uint8_t>(active_->components.size());
+    for (std::size_t i = 0; i < value.deviceCount; ++i) {
+        const auto &component = *active_->components.get(i);
+        auto &device = value.devices[i];
+        device.id = component.id;
+        device.enabled = component.enabled;
+        DeviceObservation observation;
+        const bool observed = status_.hardwareReady &&
+                              channel_.observe(static_cast<std::uint8_t>(i), observation) &&
+                              observation.generation == status_.generation;
+        device.available = component.enabled && observed && observation.sample.available;
+        if (!value.execution.running) {
+            device.pollPending = false;
+            device.lastOutcome =
+                observed ? observation.lastOutcome : execution::ActionOutcome::Unavailable;
+        }
+    }
+    return value;
+}
 bool Runtime::gameAllowed() const {
     return !operating_ && status_.phase == ActivationPhase::Ready && status_.hardwareReady &&
            active_;
@@ -296,7 +329,10 @@ execution::Result Runtime::startGame(std::uint32_t revision, std::uint32_t now) 
     if (revision != status_.configurationRevision)
         return denied(execution::Outcome::StaleRevision);
     Guard guard(operating_);
-    return session_.start(*active_, now);
+    const auto result = session_.start(*active_, now);
+    if (result)
+        gameConfigurationRevision_ = status_.configurationRevision;
+    return result;
 }
 execution::Result Runtime::tickGame(std::uint32_t now) {
     if (!gameAllowed())

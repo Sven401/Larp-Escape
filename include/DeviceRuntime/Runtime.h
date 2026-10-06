@@ -75,9 +75,9 @@ class Runtime {
     ActivationSnapshot activation() const {
         return status_;
     }
-    execution::SessionSnapshot game() const {
-        return session_.snapshot();
-    }
+    // Current configuration inventory, generation-checked copied observations.
+    // Old Session metadata is hidden after replacement; stateRevision survives.
+    execution::SessionSnapshot game() const;
     execution::ExecutionSnapshot execution() const {
         return session_.execution();
     }
@@ -107,6 +107,7 @@ class Runtime {
     ActivationSnapshot status_;
     Control operation_;
     ControlReply reply_;
+    std::uint32_t gameConfigurationRevision_ = 0;
     std::uint32_t generationCounter_ = 0, sequence_ = 0, transactionStarted_ = 0,
                   operationStarted_ = 0;
     std::uint8_t cursor_ = 0;
