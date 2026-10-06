@@ -31,6 +31,26 @@ bool FreeRtosGameControlChannel::publish(const ConfiguredStatus &status) noexcep
 bool FreeRtosGameControlChannel::submit(const TrustedGameRequest &request) {
     return started_ && request.principal != 0 && xQueueSendToBack(commands_, &request, 0) == pdTRUE;
 }
+GameSubmission FreeRtosGameControlChannel::submitJson(const char *bytes, std::size_t count,
+                                                      std::uint32_t authenticatedPrincipal) {
+    GameSubmission result;
+    if (!started_)
+        return result;
+    if (!authenticatedPrincipal) {
+        result.outcome = GameSubmissionOutcome::MissingPrincipal;
+        return result;
+    }
+    TrustedGameRequest request;
+    request.principal = authenticatedPrincipal;
+    result.decode = decodeGameCommand(bytes, count, request.command);
+    if (!result.decode) {
+        result.outcome = GameSubmissionOutcome::DecodeRejected;
+        return result;
+    }
+    result.outcome =
+        submit(request) ? GameSubmissionOutcome::Queued : GameSubmissionOutcome::QueueFull;
+    return result;
+}
 bool FreeRtosGameControlChannel::takeReply(RoutedGameReply &reply) {
     return started_ && xQueueReceive(replies_, &reply, 0) == pdTRUE;
 }

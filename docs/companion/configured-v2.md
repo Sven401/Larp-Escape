@@ -1,6 +1,10 @@
 # Konfigurierter Companion-Vertrag v2
 
-**Stand:** 6. Oktober 2026. Status-/Befehlskern und statischer FreeRTOS-Adapter implementiert; Appfunk, Anmeldung, JSON-Befehlsdecoder und Android noch offen. Builds belegen Kompilierbarkeit, keine Fehler-/Geräteabnahme. Status v1 bleibt unverändert.
+**Stand:** 6. Oktober 2026. Status-/Befehlskern, [begrenzter JSON-Befehlscodec](command-codec-v2.md) und statischer FreeRTOS-Adapter implementiert; Appfunk, Anmeldung und Android noch offen. Builds belegen Kompilierbarkeit, keine Fehler-/Geräteabnahme. Status v1 bleibt unverändert.
+
+## Zuständigkeit
+
+Nutzerentscheidung vom 6. Oktober 2026: Diese Arbeit verantwortet die ESP-Firmware und deren Datenverträge/Schnittstellendesign. Die App-Seite konsumiert die versionierten Firmwareverträge. Die nachfolgenden v2-Typen/Schemata/Codecs sind der implementierte Firmwarestand; Appclient, UI und Androidprojekt werden auf der App-Seite umgesetzt. Aus einem lokalen Appmock werden keine zusätzlichen unterstützten Firmwarebefehle oder Zugangsrechte abgeleitet.
 
 ## Eigentümer und Anschluss
 
@@ -20,7 +24,7 @@ Es gibt genau eine ausdrücklich vergebene Spielleiter-Lease. `grant(authenticat
 
 ## Dokumentverträge
 
-Bearbeitbare Schemata: [Status](status-v2.schema.json), [Anfrage](game-command-v2.schema.json), [Antwort](game-reply-v2.schema.json). Sie beschreiben diesen Ausgabestand; Device-ID-Eindeutigkeit, Bytegrenzen/Integerparser, Zustandsbeziehungen und Berechtigung brauchen zusätzlich die jeweiligen Implementierungen. Die Schemata sind kein Befehlsdecoder und kein Authentisierungsbeleg.
+Bearbeitbare Schemata: [Status](status-v2.schema.json), [Anfrage](game-command-v2.schema.json), [Antwort](game-reply-v2.schema.json). Sie beschreiben diesen Ausgabestand; Device-ID-Eindeutigkeit, Bytegrenzen/lexikalischer Integerparser, Zustandsbeziehungen und Berechtigung brauchen zusätzlich die jeweiligen Implementierungen. Der [Befehlscodec](command-codec-v2.md) prüft vollständige Nachrichten, Schemata allein sind kein Authentisierungsbeleg.
 
 ## Status
 
@@ -37,7 +41,7 @@ Encoder schreiben ohne Heap in einen Aufruferpuffer, höchstens 6.144 Statusbyte
 
 ## Spielleiteranfragen
 
-Transportneutraler GameCommand: boot, lease, request, expectedConfigurationRevision, expectedStateRevision, kind und target. Kind ist im zukünftigen Wiredecoder ein expliziter Name (start/stop/pause/resume/change_state/take_transition), keine frei interpretierte C++-Enumzahl. Target muss für change_state/take_transition eine nicht null gesetzte 16-Bit-Profil-ID sein; für die anderen Befehle genau 0. Der Decoder mit Längen-/Integer-/Duplicate-Key-/Feldprüfung ist noch offen; rohe Clientbytes dürfen niemals als C++-Struktur interpretiert werden.
+Transportneutraler GameCommand: boot, lease, request, expectedConfigurationRevision, expectedStateRevision, kind und target. Kind ist im zukünftigen Wiredecoder ein expliziter Name (start/stop/pause/resume/change_state/take_transition), keine frei interpretierte C++-Enumzahl. Target muss für change_state/take_transition eine nicht null gesetzte 16-Bit-Profil-ID sein; für die anderen Befehle genau 0. Der getrennte [Befehlscodec](command-codec-v2.md) prüft Länge/Integer/Feldmasken/duplizierte Namen; rohe Clientbytes werden niemals als C++-Struktur interpretiert.
 
 Berechtigung/Lease und Boot stimmen vor jedem Cachezugriff. Beide erwarteten Revisionen werden für **alle** neuen Befehle geprüft, einschließlich Start. Firmware prüft Ready, bestätigte Speicherzuordnung und Hardwarefreigabe. Engine bestimmt weiterhin gültige/manuell erlaubte Zustände/Übergänge, laufend/pausiert und verfügbare Revisionen. Executed bedeutet lokale Engineoperation angenommen/ausgeführt; queued/deferred physische Effekte und entryPending können noch ausstehen. Es ist keine Bestätigung jeder LED-/Audio-/Funkwirkung.
 
@@ -49,9 +53,9 @@ Reply v2 enthält aktuellen Boot, angefragte Lease/Nummer, outcome, duplicate, c
 
 ## Noch offen
 
-Wiredecoder/Versionsverhandlung, geordnete Anmeldung/Rechteentzug, BLE mit begrenztem Transfer/Flusskontrolle, Profilübertragung/Editoren und Android, reale Gerätebesitzer/Produktionsanschluss. Noch keine neuen Tests/Assertions, Wiederholungs-/Queue-/Rechte-/Zählerfehlerausführung, Geräte-/Stack-/Zeit-/Energie-/Ausfallabnahme. Konfigurations- und Statusschemata sind unterschiedliche Versionen; das bestehende Profildokument bleibt Schema 1.
+Versionsverhandlung, Nachrichtenframing/Übertragung, geordnete Anmeldung/Rechteentzug, BLE mit begrenztem Transfer/Flusskontrolle, Profilübertragung/Editoren und Android, reale Gerätebesitzer/Produktionsanschluss. Noch keine neuen Tests/Assertions, Wiederholungs-/Queue-/Rechte-/Zählerfehlerausführung, Geräte-/Stack-/Zeit-/Energie-/Ausfallabnahme. Konfigurations- und Statusschemata sind unterschiedliche Versionen; das bestehende Profildokument bleibt Schema 1.
 
-## Compiler- und Ressourcenstand
+## Historischer Compiler- und Ressourcenstand des ersten v2-Kerns (db52732)
 
 Xtensa/-Os: ConfiguredStatus516, TrustedGameRequest32, GameReply64/RoutedGameReply68, ExecutionSnapshot60 Byte. GameControl1.304 Byte einschließlich acht Originalpaaren und wiederverwendetem privaten Statuswert; statischer FreeRTOS-Kanal1.188 Byte. Vor der Verlegung dieses Statuswerts betrug der eigene Publikationsframe960 Byte, danach maximal464; service208/dispatch144. Die Encoderframes sind160/80 Byte, weitere snprintf-/SDK-/Aufruferframes kommen hinzu. Keine gemessene Gesamtstackreserve. Kein 6.144-Byte-JSON-Puffer wird im Kern oder Probenloop angelegt.
 
@@ -59,4 +63,4 @@ Vier Builds auf diesem Schnitt erfolgreich (Details im Projektgedächtnis): Prob
 
 ## Appentwurf aus paralleler Sitzung
 
-Im Hauptcheckout wurde am 6. Oktober ein unversionierter Appmock `companion/contract/v0` beobachtet. Er ist ein getrennter Entwurf, kein kompatibler Alias für v2. Insbesondere freies requestId, expectedRuntimeGeneration, capabilities als Objekt, accepted/duplicate als status und behauptete access-Flags stimmen noch nicht mit diesem Firmwarekern überein. Eine App kann eigene lokale requestId behalten, braucht aber eine stabile Zuordnung zur vollständigen boot/lease/request-Anfrage und identische Wiederholungsdaten. Gerätegeneration darf nicht stateRevision ersetzen. Eine sichtbare Lease beweist keine Berechtigung des lesenden Telefons. Reset ist kein einzelner v2-Befehl; manuelle Zustandswahl folgt Profilrechten. Geräteidentität über Boots und sichtbare Profil-/Zustandsnamen brauchen weitere authentifizierte Identitäts-/Profilverträge. Die gemeinsame Übernahme/Adapterentscheidung ist noch offen; fremde Appquellen wurden nicht verändert.
+Im Hauptcheckout wurde am 6. Oktober ein unversionierter Appmock `companion/contract/v0` beobachtet. Er ist ein getrennter Entwurf, kein kompatibler Alias für v2. Insbesondere freies requestId, expectedRuntimeGeneration, capabilities als Objekt, accepted/duplicate als status und behauptete access-Flags stimmen noch nicht mit diesem Firmwarekern überein. Eine App kann eigene lokale requestId behalten, braucht aber eine stabile Zuordnung zur vollständigen boot/lease/request-Anfrage und identische Wiederholungsdaten. Gerätegeneration darf nicht stateRevision ersetzen. Eine sichtbare Lease beweist keine Berechtigung des lesenden Telefons. Reset ist kein einzelner v2-Befehl; manuelle Zustandswahl folgt Profilrechten. Geräteidentität über Boots und sichtbare Profil-/Zustandsnamen brauchen weitere authentifizierte Identitäts-/Profilverträge. Die App-Seite konsumiert die Firmwareverträge; die notwendige Zuordnung/Übernahme im Appclient steht dort noch aus. Fremde Appquellen wurden nicht verändert.

@@ -23,6 +23,7 @@ larp::integration::GameControl gameControl(runtime, companionChannel);
 larp::companion::BootIdentity bootIdentity;
 std::uint32_t probeLease = 0;
 bool startPending = false;
+std::array<char, larp::companion::maxGameCommandJsonBytes> commandMessage = {};
 // ESP-IDF v4.4 task depths are BYTES; this pinned port has byte stack elements.
 static const std::size_t WorkerStackBytes = 4096;
 static_assert(sizeof(StackType_t) == 1, "Pinned ESP32 byte stack port required");
@@ -268,7 +269,23 @@ void loop() {
             request.command.request = gameControl.snapshot().nextRequest;
             request.command.expectedConfigurationRevision = activation.configurationRevision;
             request.command.expectedStateRevision = runtime.execution().stateRevision;
-            startPending = companionChannel.submit(request);
+            std::size_t written = 0;
+            const auto encoded = larp::companion::encodeGameCommand(
+                request.command, commandMessage.data(), commandMessage.size(), written);
+            if (encoded != larp::companion::ConfiguredEncodeResult::Success) {
+                Serial.println("profile_runtime_probe: GM command encoding rejected");
+                ready = false;
+                return;
+            }
+            const auto submitted = companionChannel.submitJson(commandMessage.data(), written, 1);
+            if (submitted.outcome != larp::companion::GameSubmissionOutcome::Queued &&
+                submitted.outcome != larp::companion::GameSubmissionOutcome::QueueFull) {
+                Serial.printf("profile_runtime_probe: GM command admission rejected=%s\n",
+                              larp::companion::commandDecodeErrorName(submitted.decode.error));
+                ready = false;
+                return;
+            }
+            startPending = bool(submitted);
         }
     }
     // Application tick happened above exactly once. This drains only copied GM

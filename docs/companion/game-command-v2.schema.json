@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Game master command v2 (decoder pending)",
+  "title": "Game master command v2",
   "type": "object",
   "properties": {
     "schemaVersion": {
@@ -86,5 +86,6 @@
         }
       }
     }
-  ]
+  ],
+  "$comment": "The bounded wire decoder additionally requires unsigned decimal digit number tokens without signs, fractions, exponents or leading zeros; JSON Schema cannot express lexical number spelling. Complete input is at most 1024 UTF-8 bytes; supported field names, kinds and decoded boot text are printable ASCII. Authentication metadata is outside this object."
 }

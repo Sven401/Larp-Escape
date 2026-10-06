@@ -182,6 +182,42 @@ ConfiguredEncodeResult encodeConfiguredStatus(const ConfiguredStatus &s, char *b
     json.append("]}");
     return json.finish(written);
 }
+const char *gameCommandKindName(GameCommandKind value) {
+    switch (value) {
+    case GameCommandKind::Start:
+        return "start";
+    case GameCommandKind::Stop:
+        return "stop";
+    case GameCommandKind::Pause:
+        return "pause";
+    case GameCommandKind::Resume:
+        return "resume";
+    case GameCommandKind::ChangeState:
+        return "change_state";
+    case GameCommandKind::TakeTransition:
+        return "take_transition";
+    }
+    return nullptr;
+}
+ConfiguredEncodeResult encodeGameCommand(const GameCommand &c, char *buffer, std::size_t capacity,
+                                         std::size_t &written) {
+    clear(buffer, capacity, written);
+    const char *kind = gameCommandKindName(c.kind);
+    const bool target =
+        c.kind == GameCommandKind::ChangeState || c.kind == GameCommandKind::TakeTransition;
+    if (!kind || !c.boot.valid() || !c.lease || !c.request ||
+        (target ? c.target == 0 : c.target != 0))
+        return ConfiguredEncodeResult::InvalidValue;
+    static_assert(400U <= maxGameCommandJsonBytes, "Canonical command fields must fit their cap");
+    Json json(buffer, std::min(capacity, maxGameCommandJsonBytes));
+    json.append("{\"schemaVersion\":2,\"boot\":\"%08lX%08lX\",\"lease\":%lu,\"request\":%lu,"
+                "\"expectedConfigurationRevision\":%lu,\"expectedStateRevision\":%lu,\"kind\":\"%"
+                "s\",\"target\":%u}",
+                (unsigned long)c.boot.high, (unsigned long)c.boot.low, (unsigned long)c.lease,
+                (unsigned long)c.request, (unsigned long)c.expectedConfigurationRevision,
+                (unsigned long)c.expectedStateRevision, kind, unsigned(c.target));
+    return json.finish(written);
+}
 ConfiguredEncodeResult encodeGameReply(const GameReply &r, char *buffer, std::size_t capacity,
                                        std::size_t &written) {
     clear(buffer, capacity, written);

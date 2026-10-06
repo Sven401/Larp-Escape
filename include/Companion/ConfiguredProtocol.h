@@ -110,12 +110,16 @@ class IGameControlChannel {
 };
 constexpr std::size_t maxConfiguredStatusJsonBytes = 6144;
 constexpr std::size_t maxGameReplyJsonBytes = 512;
+constexpr std::size_t maxGameCommandJsonBytes = 512; // Canonical output including NUL.
 enum class ConfiguredEncodeResult : std::uint8_t { Success, InvalidValue, BufferTooSmall };
 const char *configuredPhaseName(ConfiguredPhase value);
 const char *gameReplyOutcomeName(GameReplyOutcome value);
+const char *gameCommandKindName(GameCommandKind value);
 // written excludes NUL. Any failure clears written and the first output byte.
 ConfiguredEncodeResult encodeConfiguredStatus(const ConfiguredStatus &status, char *buffer,
                                               std::size_t capacity, std::size_t &written);
+ConfiguredEncodeResult encodeGameCommand(const GameCommand &command, char *buffer,
+                                         std::size_t capacity, std::size_t &written);
 ConfiguredEncodeResult encodeGameReply(const GameReply &reply, char *buffer, std::size_t capacity,
                                        std::size_t &written);
 } // namespace companion
