@@ -1,5 +1,6 @@
 // Host-side profile export/inspection. This is not an embedded entry point.
 #include "Activation.h"
+#include "CommandFrames.h"
 #include "GameConfiguration/ProfileReader.h"
 #include "GameConfiguration/ProfileWriter.h"
 #include "Play.h"
@@ -36,6 +37,8 @@ class FileReader : public larp::configuration::IProfileReader {
 };
 } // namespace
 int main(int argc, char **argv) {
+    if (argc == 3 && std::strcmp(argv[1], "--frame-command") == 0)
+        return runCommandFrames(argv[2]);
     using namespace larp::configuration;
     bool summary = false;
     bool example = false;
@@ -73,7 +76,8 @@ int main(int argc, char **argv) {
             playable = queued || std::strcmp(argv[index], "--play") == 0;
             previewPath = argv[++index];
         } else {
-            std::fputs("Usage: profile-tools [--summary | --preview SCRIPT | --play SCRIPT | "
+            std::fputs("Usage: profile-tools --frame-command FILE | [--summary | --preview SCRIPT "
+                       "| --play SCRIPT | "
                        "--play-queued SCRIPT | --activate FILE] "
                        "[--example | --import FILE] [--active-export FILE] [--journal DIR] | "
                        "--restore-journal DIR [--active-export FILE]\n",

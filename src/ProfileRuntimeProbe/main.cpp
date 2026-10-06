@@ -1,5 +1,6 @@
 // Isolated synthetic-owner entry point. No external GPIO, bus, audio, LEDs or
 // radio are initialized. Runtime owns actual activation/Session/queue logic.
+#include "Companion/CommandStream.h"
 #include "CompanionIntegration/GameControl.h"
 #include "DeviceRuntime/OwnerConfiguration.h"
 #include "DeviceRuntime/ProfileApplication.h"
@@ -19,11 +20,36 @@ FreeRtosProfileChannel channel;
 Esp32ProfileStore persistentStore;
 ProfileApplication runtime(channel, channel, persistentStore);
 larp::companion::FreeRtosGameControlChannel companionChannel;
+larp::companion::CommandStream commandStream(companionChannel);
+std::array<char, 20> commandFrame = {};
 larp::integration::GameControl gameControl(runtime, companionChannel);
 larp::companion::BootIdentity bootIdentity;
 std::uint32_t probeLease = 0;
 bool startPending = false;
 std::array<char, larp::companion::maxGameCommandJsonBytes> commandMessage = {};
+larp::companion::CommandStreamResult submitFramedCommand(std::size_t count, std::uint32_t now) {
+    using namespace larp::companion;
+    if (commandStream.snapshot().complete)
+        return commandStream.retry(now);
+    CommandStreamResult result;
+    for (std::size_t offset = 0; offset < count;) {
+        const auto length = count - offset < 12 ? count - offset : 12;
+        std::size_t written = 0;
+        if (!encodeCommandFrame(1, static_cast<std::uint16_t>(count),
+                                static_cast<std::uint16_t>(offset), commandMessage.data() + offset,
+                                length, commandFrame.data(), commandFrame.size(), written)) {
+            result.outcome = CommandStreamOutcome::InvalidFrame;
+            return result;
+        }
+        result = commandStream.receive(commandFrame.data(), written, 1, 1, now);
+        if (result.outcome != CommandStreamOutcome::Receiving &&
+            result.outcome != CommandStreamOutcome::Queued &&
+            result.outcome != CommandStreamOutcome::QueueFull)
+            return result;
+        offset += length;
+    }
+    return result;
+}
 // ESP-IDF v4.4 task depths are BYTES; this pinned port has byte stack elements.
 static const std::size_t WorkerStackBytes = 4096;
 static_assert(sizeof(StackType_t) == 1, "Pinned ESP32 byte stack port required");
@@ -284,16 +310,16 @@ void loop() {
                 ready = false;
                 return;
             }
-            const auto submitted =
-                companionChannel.submitJson(commandMessage.data(), written, 1, 1);
-            if (submitted.outcome != larp::companion::GameSubmissionOutcome::Queued &&
-                submitted.outcome != larp::companion::GameSubmissionOutcome::QueueFull) {
-                Serial.printf("profile_runtime_probe: GM command admission rejected=%s\n",
-                              larp::companion::commandDecodeErrorName(submitted.decode.error));
+            const auto submitted = submitFramedCommand(written, now);
+            if (submitted.outcome != larp::companion::CommandStreamOutcome::Queued &&
+                submitted.outcome != larp::companion::CommandStreamOutcome::QueueFull) {
+                Serial.printf(
+                    "profile_runtime_probe: GM command admission rejected=%s\n",
+                    larp::companion::commandDecodeErrorName(submitted.submission.decode.error));
                 ready = false;
                 return;
             }
-            startPending = bool(submitted);
+            startPending = submitted.outcome == larp::companion::CommandStreamOutcome::Queued;
         }
     }
     // Application tick happened above exactly once. This drains only copied GM

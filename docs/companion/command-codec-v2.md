@@ -67,3 +67,12 @@ Bestehender v1-Vertrag: `pio test -e host-regression --filter test_companion_pro
 Vier finale Builds `pio run -e profile-tools -e az-delivery-devkit-v4 -e esp32-runtime-probe -e esp32-profile-runtime-probe -j2` terminal Exit0/alle SUCCESS; Log %TEMP%/larp-authority-final-build-repeat.log. Der erste Lauf scheiterte an fehlenden Build-Zwischendateien während parallel geändertem PlatformIO-Aufbau; vollständig beendet, danach mit unveränderter Konfiguration erneut erfolgreich. Legacy FastLED-/Frameworkwarnungen bleiben sichtbar. Produktion weiterhin alter Einstieg: 55.148 Byte RAM/1.228.385 Flash (93,7 %); alte Probe21.480/291.673, neue Profilprobe97.984/384.621 plus57.272 einmaliger Profilheap/Allocator/FS. Keine neue Boardprüfung/Upload/Remote-CI.
 
 Xtensa/-Os: TrustedAuthority12, AuthorityState20, TrustedGameRequest36, RoutedGameReply72, GameControl1.328, statischer Companionkanal1.248 Byte. Die Typ-/ELFsymbolwerte sind Compilerbelege, keine Laufzeitreserve. Eigene Frames: Authoritymethoden32, synchronizeAuthority48, revoke128, service208, dispatch144, publish464 Byte; Aufrufer/SDK/Queue-/Parserketten zusätzlich. Architektur78 Dateien/184 Includes, 50 unabhängige C++11-Header, Format131 Dateien mit clang-format19.1.7. 21 v2-Hostfälle und 11 v1-Fälle erfolgreich, acht JSON-Fixtures schema-valid. Keine vollständige Zähler-, SMP-/Timing-/Energie-/Stromausfallabnahme.
+
+
+## Folgender Framing-Schnitt (7. Oktober 2026)
+
+[Commandrahmen v1](command-framing-v1.md) fügt kleine begrenzte Transportwerte
+verbindungsgebunden zusammen und verwendet diesen vollständigen Decoder erst
+bei total Bytes. QueueFull erhält das vollständige Dokument für einen
+fristgebundenen Retry. Tatsächliche Funkanmeldung, Wireantworten und Profiltransfer
+bleiben offen. Die früheren obigen Nicht-/Prüfungsangaben sind historische Belege.

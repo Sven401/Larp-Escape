@@ -1,5 +1,5 @@
 #pragma once
-#include "Companion/GameCommandReader.h"
+#include "Companion/CommandIngress.h"
 #include <freertos/FreeRTOS.h>
 #include <freertos/queue.h>
 namespace larp {
@@ -8,24 +8,7 @@ namespace companion {
 // value copies, no ISR API. Trusted transport owner attaches principal and
 // exclusively drains/routes replies by principal AND connectionEpoch.
 // Application alone receive/send/publish.
-enum class GameSubmissionOutcome : std::uint8_t {
-    Queued,
-    Uninitialized,
-    MissingPrincipal,
-    MissingEpoch,
-    Unauthorized,
-    DecodeRejected,
-    QueueFull
-};
-struct GameSubmission {
-    GameSubmissionOutcome outcome = GameSubmissionOutcome::Uninitialized;
-    // Meaningful only after parsing; Uninitialized/MissingPrincipal/MissingEpoch skip it.
-    CommandDecodeResult decode;
-    explicit operator bool() const {
-        return outcome == GameSubmissionOutcome::Queued;
-    }
-};
-class FreeRtosGameControlChannel : public IGameControlChannel {
+class FreeRtosGameControlChannel : public IGameControlChannel, public ICommandIngress {
   public:
     FreeRtosGameControlChannel() = default;
     FreeRtosGameControlChannel(const FreeRtosGameControlChannel &) = delete;
@@ -44,7 +27,8 @@ class FreeRtosGameControlChannel : public IGameControlChannel {
     // Admission rechecks the current authority after decode. Decode success is
     // not execution; a full queue leaves the command unadmitted for exact retry.
     GameSubmission submitJson(const char *bytes, std::size_t count,
-                              std::uint32_t authenticatedPrincipal, std::uint32_t connectionEpoch);
+                              std::uint32_t authenticatedPrincipal,
+                              std::uint32_t connectionEpoch) noexcept override;
     bool takeReply(RoutedGameReply &reply);
     bool readStatus(ConfiguredStatus &status) const;
 

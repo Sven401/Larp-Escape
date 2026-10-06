@@ -28,6 +28,8 @@ ADAPTER_FILES = (
     "scripts/patches/pn532-1.3.4/read_detected.cpp",
     "src/main.cpp",
     "src/ProfileTool/main.cpp",
+    "src/ProfileTool/CommandFrames.h",
+    "src/ProfileTool/CommandFrames.cpp",
     "src/ProfileTool/Preview.h",
     "src/ProfileTool/Preview.cpp",
     "src/ProfileTool/Play.h",

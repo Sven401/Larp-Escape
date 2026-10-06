@@ -72,7 +72,7 @@ bool FreeRtosGameControlChannel::submit(const TrustedGameRequest &request) {
 }
 GameSubmission FreeRtosGameControlChannel::submitJson(const char *bytes, std::size_t count,
                                                       std::uint32_t authenticatedPrincipal,
-                                                      std::uint32_t connectionEpoch) {
+                                                      std::uint32_t connectionEpoch) noexcept {
     GameSubmission result;
     if (!started_)
         return result;

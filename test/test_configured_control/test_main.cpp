@@ -1,6 +1,8 @@
+#include "Companion/CommandStream.h"
 #include "CompanionIntegration/GameControl.h"
 #include "FakeOwners.h"
 #include "FreeRtosGameControlChannel.h"
+#include <algorithm>
 #include <cstdlib>
 #include <cstring>
 #include <limits>
@@ -595,8 +597,12 @@ void fixture(const char *name, const char *bytes, std::size_t count) {
     char expected[maxConfiguredStatusJsonBytes + 1];
     const auto read = std::fread(expected, 1, sizeof(expected), input);
     TEST_ASSERT_EQUAL_INT(0, std::fclose(input));
-    TEST_ASSERT_EQUAL_UINT32(count + 1, read);
-    TEST_ASSERT_EQUAL_CHAR('\n', expected[count]);
+    // The minified JSON content remains byte-exact; permit only a final LF or
+    // CRLF so a Windows Git checkout does not change the contract comparison.
+    TEST_ASSERT_TRUE(read == count + 1 || read == count + 2);
+    if (read == count + 2)
+        TEST_ASSERT_EQUAL_CHAR('\r', expected[count]);
+    TEST_ASSERT_EQUAL_CHAR('\n', expected[read - 1]);
     TEST_ASSERT_EQUAL_MEMORY(bytes, expected, count);
 }
 void statusFixture(const char *name) {
@@ -786,6 +792,7 @@ void test_pending_hardware_switch_does_not_publish_old_availability() {
         TEST_ASSERT_FALSE(value.devices[i].available);
 }
 
+#include "CommandStreamCases.h"
 } // namespace
 void setUp() {
     host_rtos::depth = 0;
@@ -827,5 +834,19 @@ int main() {
     RUN_TEST(test_profile_change_hides_old_role_and_rebinds_inventory_without_resetting_revision);
     RUN_TEST(test_stale_owner_generation_is_unavailable_without_changing_game_revision);
     RUN_TEST(test_pending_hardware_switch_does_not_publish_old_availability);
+    RUN_TEST(test_frame_codec_limits_endianness_and_target_preservation);
+    RUN_TEST(test_fragmented_command_runs_through_real_queue_application_and_reply);
+    RUN_TEST(test_partial_and_duplicate_fragments_do_not_execute_or_extend_deadline);
+    RUN_TEST(test_fragment_gaps_overlap_and_other_message_preserve_pending);
+    RUN_TEST(test_conflicting_duplicate_and_total_discard_pending);
+    RUN_TEST(test_reconnect_cannot_join_old_fragments_or_erase_new_pending);
+    RUN_TEST(test_revocation_discards_complete_queuefull_message);
+    RUN_TEST(test_queuefull_retains_exact_document_and_explicit_retry_executes_once);
+    RUN_TEST(test_fragment_expiry_across_clock_wrap_and_busy_frames);
+    RUN_TEST(test_queuefull_expiry_never_submits_after_deadline);
+    RUN_TEST(test_fragmented_malformed_json_cannot_consume_game_request);
+    RUN_TEST(test_maximum_document_and_variable_chunk_sizes);
+    RUN_TEST(test_revoke_after_fragment_observation_still_fails_admission);
+    RUN_TEST(test_frame_fixture_matches_canonical_producer);
     return UNITY_END();
 }
