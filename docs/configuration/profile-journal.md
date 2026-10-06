@@ -72,3 +72,8 @@ Normaler Rechnergebrauch am 6. Oktober: leeres eigenes Journal → Standard gesp
 Alle vier Builds mit `pio run -e profile-tools -e az-delivery-devkit-v4 -e esp32-runtime-probe -e esp32-profile-runtime-probe -j2` am terminalen Ende erfolgreich (Exit 0), Log lokal `%TEMP%/larp-profile-journal-final-build.log`. Journal und Esp32ProfileStore sind in der neuen Probe verlinkt. Architekturprüfung 68 Dateien/163 direkte Includes, 45 unabhängige C++11-Header, Formatbaseline 115 Dateien/clang-format 19.1.7. Cppcheck 2.1 warning/performance/portability für Journal, Dateiadapter und Rechneranbindung ohne Befund; git diff --check sauber. Bestehende FastLED-/Frameworkwarnungen aus den Neubauten sichtbar. Kein Remote-CI-/Boardnachweis.
 
 Nächster Schritt: tatsächlicher ESP32-Mount/Boot/Save-Rückfall nur mit konkreter Gerätefreigabe; hardwarefrei Produktionskoordinator und Companion-Status/Anfragen anbinden. App, reale Gerätebesitzer und Gesamtziel bleiben offen.
+
+
+## Folgeschnitt: Anwendungsablauf und Retry-Schutz
+
+[Gemeinsamer Anwendungsablauf](profile-application.md) übernimmt Boot, Einrichtung, Speicherbestätigung und Spielleiterfreigabe in Rechnerwerkzeug und FreeRTOS-Probe. Nach einem unklaren Save bleibt protectedSlot über Rescans derselben Instanz hinweg geschützt; ein neu lesbarer, aber unbestätigter Platz verdrängt ihn nicht. Bestätigtes Save verschiebt den Schutz. Die bisherigen oben genannten Ressourcen/Belege beschreiben den Journalstand 0a0a49f; aktuelle Werte und offene Fehlerabnahme stehen im Folgevertrag.

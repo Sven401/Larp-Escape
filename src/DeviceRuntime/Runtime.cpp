@@ -60,7 +60,7 @@ ActivationResult Runtime::activate(const Profile &candidate, std::uint32_t expec
         result.outcome = ActivationOutcome::Busy;
         return result;
     }
-    if (session_.snapshot().execution.running) {
+    if (session_.running()) {
         result.outcome = ActivationOutcome::GameRunning;
         return result;
     }

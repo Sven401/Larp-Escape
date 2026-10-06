@@ -78,6 +78,9 @@ class Runtime {
     execution::SessionSnapshot game() const {
         return session_.snapshot();
     }
+    bool gameRunning() const {
+        return session_.running();
+    }
     BrokerSnapshot traffic() const {
         return broker_.snapshot();
     }

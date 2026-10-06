@@ -211,13 +211,13 @@ JournalResult ProfileJournal::restoreDraft(std::uint32_t expectedRevision, bool 
         return result;
     }
     const auto storage = controller_.storage();
-    if (controller_.busy() || !storage.initialized || controller_.game().execution.running ||
+    if (controller_.busy() || !storage.initialized || controller_.gameRunning() ||
         expectedRevision != storage.draftRevision ||
         storage.draftRevision == std::numeric_limits<std::uint32_t>::max()) {
         DraftOutcome outcome = DraftOutcome::Busy;
         if (!storage.initialized)
             outcome = DraftOutcome::Uninitialized;
-        else if (controller_.game().execution.running)
+        else if (controller_.gameRunning())
             outcome = DraftOutcome::GameRunning;
         else if (expectedRevision != storage.draftRevision)
             outcome = DraftOutcome::StaleRevision;
@@ -244,8 +244,14 @@ JournalResult ProfileJournal::restoreDraft(std::uint32_t expectedRevision, bool 
         if (records[0].open != JournalOpen::Missing || records[1].open != JournalOpen::Missing)
             return finish(JournalOutcome::Corrupt);
         state_.initialized = state_.writable = true;
+        // Missing previously confirmed data is not a fresh empty store.
+        if (state_.protectedSlot != 255) {
+            state_.initialized = state_.writable = false;
+            return finish(JournalOutcome::Corrupt);
+        }
         state_.generation = 0;
         state_.slot = 255;
+        state_.selectedUnconfirmed = false;
         return finish(JournalOutcome::Empty);
     }
     // Explicit older reload is relative to the LAST selected valid record,
@@ -280,6 +286,9 @@ JournalResult ProfileJournal::restoreDraft(std::uint32_t expectedRevision, bool 
         if (last) {
             state_.slot = slot;
             state_.generation = record.generation;
+            state_.selectedUnconfirmed = state_.writeUncertain && slot != state_.protectedSlot;
+            if (!state_.writeUncertain)
+                state_.protectedSlot = slot;
             state_.initialized = true;
             state_.writable = !unsupported;
             return finish(JournalOutcome::Restored, last);
@@ -309,7 +318,10 @@ JournalResult ProfileJournal::saveActive(std::uint32_t expectedRevision) {
     const auto measuredResult = controller_.writeActive(measured, expectedRevision);
     if (!measuredResult)
         return finish(JournalOutcome::ControllerRejected, measuredResult);
-    const std::uint8_t slot = state_.slot == 255 ? 0 : static_cast<std::uint8_t>(1 - state_.slot);
+    // A readable but unconfirmed new selection must not make the old confirmed
+    // record the next destructive target. Retry always keeps that old slot.
+    const std::uint8_t slot =
+        state_.protectedSlot == 255 ? 0 : static_cast<std::uint8_t>(1 - state_.protectedSlot);
     const std::uint32_t generation = state_.maximumGeneration + 1;
     std::array<std::uint8_t, HeaderBytes> header = {};
     std::memcpy(header.data(), HeaderMagic, 8);
@@ -320,6 +332,7 @@ JournalResult ProfileJournal::saveActive(std::uint32_t expectedRevision) {
     put(header.data() + 28, digest(header.data(), 28));
     // Once a destructive open is attempted, any failure needs a full rescan.
     state_.initialized = state_.writable = false;
+    state_.writeUncertain = true;
     if (!store_.beginWrite(slot)) {
         store_.abortWrite();
         return finish(JournalOutcome::WriteUncertain);
@@ -344,8 +357,9 @@ JournalResult ProfileJournal::saveActive(std::uint32_t expectedRevision) {
     }
     if (store_.finishWrite() != JournalCommit::Confirmed)
         return finish(JournalOutcome::WriteUncertain, serialized);
-    state_.slot = slot;
+    state_.slot = state_.protectedSlot = slot;
     state_.generation = state_.maximumGeneration = generation;
+    state_.writeUncertain = state_.selectedUnconfirmed = false;
     state_.initialized = state_.writable = true;
     return finish(JournalOutcome::Saved, serialized);
 }

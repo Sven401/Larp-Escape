@@ -108,6 +108,10 @@ class Engine {
     Result takeTransition(TransitionId transition, std::uint32_t expectedRevision,
                           std::uint32_t now);
     ExecutionSnapshot snapshot() const;
+    // Sole-owner query; paused games remain running. No snapshot copy or intertask synchronization.
+    bool running() const {
+        return state_ != Missing;
+    }
 
   private:
     static const std::uint8_t Missing = 255;

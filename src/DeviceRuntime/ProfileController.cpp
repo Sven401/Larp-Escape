@@ -61,7 +61,7 @@ DraftOutcome ProfileController::admission() const {
         return DraftOutcome::Busy;
     if (!initialized_)
         return DraftOutcome::Uninitialized;
-    if (runtime_.game().execution.running)
+    if (runtime_.gameRunning())
         return DraftOutcome::GameRunning;
     return DraftOutcome::Ready;
 }

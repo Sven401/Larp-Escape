@@ -420,7 +420,7 @@ Result Engine::takeTransition(TransitionId transition, std::uint32_t expectedRev
 }
 ExecutionSnapshot Engine::snapshot() const {
     ExecutionSnapshot value;
-    value.running = state_ != Missing;
+    value.running = running();
     value.paused = paused_;
     value.entryPending = entryPending_;
     value.state = value.running ? profile_->states.get(state_)->id : StateId();

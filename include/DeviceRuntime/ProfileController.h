@@ -65,6 +65,9 @@ class ProfileController {
     execution::SessionSnapshot game() const {
         return runtime_.game();
     }
+    bool gameRunning() const {
+        return runtime_.gameRunning();
+    }
     BrokerSnapshot traffic() const {
         return runtime_.traffic();
     }

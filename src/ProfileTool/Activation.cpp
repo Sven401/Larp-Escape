@@ -1,5 +1,6 @@
 #include "Activation.h"
 #include "DeviceRuntime/OwnerConfiguration.h"
+#include "DeviceRuntime/ProfileApplication.h"
 #include "DeviceRuntime/ProfileController.h"
 #include "DeviceRuntime/ProfileJournal.h"
 #include <cerrno>
@@ -196,7 +197,7 @@ class Owners : public IChannel, public IControlChannel {
         }
     }
 };
-void report(const ProfileController &runtime) {
+template <typename Controller> void report(const Controller &runtime) {
     const auto value = runtime.activation();
     const auto game = runtime.game();
     std::printf(
@@ -216,15 +217,23 @@ void report(const ProfileController &runtime) {
         game.execution.running ? "true" : "false", game.execution.state.value,
         static_cast<unsigned long>(game.execution.stateRevision));
 }
-bool drive(Owners &owners, ProfileController &runtime, std::uint32_t &now) {
+bool configured(const ProfileController &runtime) {
+    return runtime.activation().hardwareReady &&
+           runtime.activation().finish == ActivationFinish::Applied;
+}
+bool configured(const ProfileApplication &runtime) {
+    const auto state = runtime.snapshot();
+    return state.phase == ApplicationPhase::Ready && state.outcome == ApplicationOutcome::Ready &&
+           state.storedMatchesActive && runtime.activation().hardwareReady;
+}
+template <typename Controller> bool drive(Owners &owners, Controller &runtime, std::uint32_t &now) {
     for (unsigned step = 0; step < 256 && runtime.busy(); ++step) {
         owners.pump(++now);
         runtime.service(now);
     }
     report(runtime);
     owners.report();
-    return !runtime.busy() && runtime.activation().hardwareReady &&
-           runtime.activation().finish == ActivationFinish::Applied;
+    return !runtime.busy() && configured(runtime);
 }
 class FileReader : public IProfileReader {
   public:
@@ -325,19 +334,7 @@ class NativeJournalStore : public IJournalStore {
     std::FILE *file_ = nullptr;
     bool valid_ = true, writing_ = false;
 };
-void reportJournal(const char *operation, const ProfileJournal &journal,
-                   const JournalResult &result) {
-    const auto state = journal.snapshot();
-    std::printf("{\"event\":\"profile_journal\",\"operation\":\"%s\",\"result\":\"%s\","
-                "\"generation\":%lu,\"maximumGeneration\":%lu,\"slot\":%u,"
-                "\"initialized\":%s,\"writable\":%s,\"controllerResult\":\"%s\"}\n",
-                operation, journalOutcomeName(result.outcome),
-                static_cast<unsigned long>(state.generation),
-                static_cast<unsigned long>(state.maximumGeneration),
-                static_cast<unsigned>(state.slot), state.initialized ? "true" : "false",
-                state.writable ? "true" : "false", draftOutcomeName(result.controller.outcome));
-}
-bool exportActive(ProfileController &controller, const char *path) {
+template <typename Controller> bool exportActive(Controller &controller, const char *path) {
     std::FILE *output = std::fopen(path, "wb");
     if (!output) {
         std::perror("Cannot open active profile export");
@@ -351,7 +348,7 @@ bool exportActive(ProfileController &controller, const char *path) {
                 draftOutcomeName(result.outcome));
     return static_cast<bool>(result) && closed;
 }
-void reportStorage(const ProfileController &controller) {
+template <typename Controller> void reportStorage(const Controller &controller) {
     const auto value = controller.storage();
     std::printf("{\"event\":\"profile_storage\",\"draftRevision\":%lu,"
                 "\"activeProfileRevision\":%lu,\"draftProfileRevision\":%lu,"
@@ -362,7 +359,7 @@ void reportStorage(const ProfileController &controller) {
                 value.hasActive ? "true" : "false", value.draftReady ? "true" : "false",
                 value.applying ? "true" : "false");
 }
-DraftResult importFile(ProfileController &controller, const char *path) {
+template <typename Controller> DraftResult importFile(Controller &controller, const char *path) {
     std::FILE *input = std::fopen(path, "rb");
     if (!input) {
         std::perror("Cannot open draft profile");
@@ -386,9 +383,133 @@ void reportGameResult(const char *operation, const larp::execution::Result &resu
     std::printf("{\"event\":\"game_control\",\"operation\":\"%s\",\"result\":\"%s\"}\n", operation,
                 larp::execution::outcomeName(result.outcome));
 }
+// Lazy startup source: an input path is read only for an empty journal.
+// EOF includes checked close, so an initial import cannot hide close failure.
+class InitialFileSource : public IProfileReader {
+  public:
+    explicit InitialFileSource(const char *path) : path_(path) {}
+    ~InitialFileSource() {
+        if (file_)
+            std::fclose(file_);
+    }
+    ReadStatus readByte(std::uint8_t &byte) override {
+        if (ended_)
+            return final_;
+        if (!file_) {
+            file_ = std::fopen(path_, "rb");
+            if (!file_) {
+                ended_ = true;
+                final_ = ReadStatus::Failure;
+                return final_;
+            }
+        }
+        const int value = std::fgetc(file_);
+        if (value != EOF) {
+            byte = static_cast<std::uint8_t>(value);
+            return ReadStatus::Byte;
+        }
+        const bool good = !std::ferror(file_);
+        const bool closed = std::fclose(file_) == 0;
+        file_ = nullptr;
+        ended_ = true;
+        final_ = good && closed ? ReadStatus::End : ReadStatus::Failure;
+        return final_;
+    }
+
+  private:
+    const char *path_;
+    std::FILE *file_ = nullptr;
+    bool ended_ = false;
+    ReadStatus final_ = ReadStatus::End;
+};
+void reportApplication(const ProfileApplication &application) {
+    const auto state = application.snapshot();
+    const auto journal = application.persistence();
+    std::printf(
+        "{\"event\":\"profile_application\",\"phase\":\"%s\",\"result\":\"%s\","
+        "\"storedGeneration\":%lu,\"storedProfileRevision\":%lu,\"storedConfigurationRevision\":%"
+        "lu,"
+        "\"storedMatchesActive\":%s,\"journalResult\":\"%s\",\"protectedSlot\":%u,"
+        "\"writeUncertain\":%s,\"selectedUnconfirmed\":%s,\"fallbackAttempted\":%s}\n",
+        applicationPhaseName(state.phase), applicationOutcomeName(state.outcome),
+        static_cast<unsigned long>(state.storedGeneration),
+        static_cast<unsigned long>(state.storedProfileRevision),
+        static_cast<unsigned long>(state.storedConfigurationRevision),
+        state.storedMatchesActive ? "true" : "false", journalOutcomeName(state.journal),
+        static_cast<unsigned>(journal.protectedSlot), journal.writeUncertain ? "true" : "false",
+        journal.selectedUnconfirmed ? "true" : "false", state.fallbackAttempted ? "true" : "false");
+}
+int runStoredActivation(const char *initialPath, bool hintFactory, const char *candidatePath,
+                        const char *exportActivePath, const char *directory, bool restoreOnly) {
+    std::unique_ptr<Owners> owners(new Owners());
+    NativeJournalStore store(directory);
+    std::unique_ptr<ProfileApplication> app(new ProfileApplication(*owners, *owners, store));
+    InitialFileSource initial(initialPath);
+    const auto begun =
+        app->begin(restoreOnly ? BootPolicy::ExistingOnly : BootPolicy::InitializeEmpty,
+                   hintFactory ? FactoryProfile::Hint : FactoryProfile::Standard,
+                   initialPath ? &initial : nullptr);
+    reportApplication(*app);
+    if (!begun)
+        return 1;
+    std::uint32_t now = 0;
+    if (!drive(*owners, *app, now)) {
+        reportApplication(*app);
+        return 1;
+    }
+    reportStorage(*app);
+    reportApplication(*app);
+    if (restoreOnly) {
+        if (exportActivePath && !exportActive(*app, exportActivePath))
+            return 1;
+        return std::fflush(stdout) == 0 ? 0 : 1;
+    }
+    auto started = app->startGame(app->activation().configurationRevision, ++now);
+    reportGameResult("start_initial", started);
+    if (!started)
+        return 1;
+    for (unsigned step = 0; step < 3; ++step) {
+        owners->pump(++now);
+        app->service(now);
+    }
+    const auto stopped = app->stopGame(app->game().execution.stateRevision, ++now);
+    reportGameResult("stop_initial", stopped);
+    if (!stopped || !importFile(*app, candidatePath))
+        return 1;
+    const auto requested = app->activateDraft(app->storage().draftRevision,
+                                              app->activation().configurationRevision, now);
+    std::printf("{\"event\":\"activate_request\",\"result\":\"%s\"}\n",
+                applicationOutcomeName(requested.outcome));
+    if (!requested || !drive(*owners, *app, now)) {
+        reportApplication(*app);
+        return 1;
+    }
+    reportStorage(*app);
+    reportApplication(*app);
+    started = app->startGame(app->activation().configurationRevision, ++now);
+    reportGameResult("start_candidate", started);
+    if (!started)
+        return 1;
+    for (unsigned step = 0; step < 3; ++step) {
+        owners->pump(++now);
+        app->service(now);
+    }
+    report(*app);
+    owners->report();
+    if (exportActivePath) {
+        const auto stoppedForExport = app->stopGame(app->game().execution.stateRevision, ++now);
+        reportGameResult("stop_for_export", stoppedForExport);
+        if (!stoppedForExport || !exportActive(*app, exportActivePath))
+            return 1;
+    }
+    return std::fflush(stdout) == 0 ? 0 : 1;
+}
 } // namespace
 int runActivation(const char *initialPath, bool hintFactory, const char *candidatePath,
                   const char *exportActivePath, const char *journalDirectory, bool restoreOnly) {
+    if (journalDirectory)
+        return runStoredActivation(initialPath, hintFactory, candidatePath, exportActivePath,
+                                   journalDirectory, restoreOnly);
     std::unique_ptr<Owners> owners(new Owners());
     std::unique_ptr<ProfileController> runtime(new ProfileController(*owners, *owners));
     if (!runtime->beginStorage()) {
@@ -403,42 +524,17 @@ int runActivation(const char *initialPath, bool hintFactory, const char *candida
         static_cast<unsigned long>(2 * sizeof(Profile)),
         static_cast<unsigned long>(sizeof(OwnerConfiguration)),
         static_cast<unsigned long>(sizeof(Control)));
-    std::unique_ptr<NativeJournalStore> store;
-    std::unique_ptr<ProfileJournal> journal;
-    bool restored = false;
-    if (journalDirectory) {
-        store.reset(new NativeJournalStore(journalDirectory));
-        journal.reset(new ProfileJournal(*runtime, *store));
-        const auto loaded = journal->restoreDraft(0);
-        reportJournal("restore", *journal, loaded);
-        restored = loaded.outcome == JournalOutcome::Restored;
-        if (!restored && (restoreOnly || loaded.outcome != JournalOutcome::Empty))
-            return 1;
-    }
-    if (!restored) {
-        const auto initial =
-            initialPath ? importFile(*runtime, initialPath)
-                        : runtime->createDraft(
-                              hintFactory ? FactoryProfile::Hint : FactoryProfile::Standard, 0);
-        if (!initial)
-            return 1;
-    }
+    const auto initial =
+        initialPath ? importFile(*runtime, initialPath)
+                    : runtime->createDraft(
+                          hintFactory ? FactoryProfile::Hint : FactoryProfile::Standard, 0);
+    if (!initial)
+        return 1;
     std::uint32_t now = 0;
     if (!runtime->activateDraft(runtime->storage().draftRevision, 0, now) ||
         !drive(*owners, *runtime, now))
         return 1;
     reportStorage(*runtime);
-    if (journal && !restored) {
-        const auto saved = journal->saveActive(runtime->activation().configurationRevision);
-        reportJournal("save_initial", *journal, saved);
-        if (!saved)
-            return 1;
-    }
-    if (restoreOnly) {
-        if (exportActivePath && !exportActive(*runtime, exportActivePath))
-            return 1;
-        return std::fflush(stdout) == 0 ? 0 : 1;
-    }
     auto result = runtime->startGame(runtime->activation().configurationRevision, ++now);
     reportGameResult("start_initial", result);
     if (!result)
@@ -466,12 +562,6 @@ int runActivation(const char *initialPath, bool hintFactory, const char *candida
     if (!requested || !drive(*owners, *runtime, now))
         return 1;
     reportStorage(*runtime);
-    if (journal) {
-        const auto saved = journal->saveActive(runtime->activation().configurationRevision);
-        reportJournal("save_candidate", *journal, saved);
-        if (!saved)
-            return 1;
-    }
     result = runtime->startGame(runtime->activation().configurationRevision, ++now);
     reportGameResult("start_candidate", result);
     if (!result)

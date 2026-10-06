@@ -40,8 +40,9 @@ struct JournalResult {
 };
 struct JournalSnapshot {
     std::uint32_t generation = 0, maximumGeneration = 0;
-    std::uint8_t slot = 255;
-    bool initialized = false, writable = false, operating = false;
+    std::uint8_t slot = 255, protectedSlot = 255;
+    bool initialized = false, writable = false, operating = false, writeUncertain = false,
+         selectedUnconfirmed = false;
     JournalOutcome last = JournalOutcome::NeedsRestore;
 };
 // Two durable records, independent of two RAM Profiles. No full Profile/document
@@ -49,6 +50,9 @@ struct JournalSnapshot {
 // hardware/game. Save serializes only an already Applied, Ready, stopped active
 // profile. Caller coordinates activation/save/start in one application context;
 // no concurrent/reentrant access to this journal, controller or backend.
+// Within this boot, a rescan after WriteUncertain cannot release the last
+// confirmed protectedSlot. Retry writes the same other slot until Confirmed;
+// a readable new record does not prove a previously failed synchronization.
 class ProfileJournal {
   public:
     ProfileJournal(ProfileController &controller, IJournalStore &store)

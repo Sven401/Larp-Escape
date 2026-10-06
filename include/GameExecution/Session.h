@@ -78,6 +78,9 @@ class Session : private IExecutionInputs, private IExecutionActions {
     Result takeTransition(TransitionId transition, std::uint32_t expectedRevision,
                           std::uint32_t now);
     SessionSnapshot snapshot() const;
+    bool running() const {
+        return engine_.running();
+    }
 
   private:
     static const std::uint8_t Missing = 255;
