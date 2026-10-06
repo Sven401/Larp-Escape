@@ -90,3 +90,10 @@ Kein Upload, Appausführung, Cppcheck dieses Schnitts oder GATT-/RF-Abnahme.
 Verifizierte Identität/Pairing, tatsächliche Wireantworten und ein längerer
 Profilstream bleiben offen. Produktionsmain verwendet weiterhin den alten
 Einstieg; neue Module werden dort noch nicht zur neuen Anwendung montiert.
+
+## Folgevertrag vom 7. Oktober 2026
+
+[Aufnahmeantworten v1](command-receipts-v1.md) übertragen den tatsächlich
+verarbeiteten Streamstand als festen18Byte-Typ3-Wert mit ursprünglicher
+Verbindungsbindung. Callback-Copied/Outerwritefehler bleibt separat;
+keine behauptete GATT-/Peerbestätigung oder Spielausführung.

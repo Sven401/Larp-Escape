@@ -1,5 +1,6 @@
 // Isolated synthetic-owner entry point. No external GPIO, bus, audio, LEDs or
 // radio are initialized. Runtime owns actual activation/Session/queue logic.
+#include "Companion/CommandReceipt.h"
 #include "Companion/CommandStream.h"
 #include "Companion/ReplyFrameSender.h"
 #include "CompanionIntegration/GameControl.h"
@@ -70,7 +71,10 @@ larp::companion::CommandStreamResult submitFramedCommand(std::size_t count, std:
             result.outcome = CommandStreamOutcome::InvalidFrame;
             return result;
         }
-        result = dispatchCommandFrame(frameQueue, commandStream, now).stream;
+        const auto dispatch = dispatchCommandFrame(frameQueue, commandStream, now);
+        result = dispatch.stream;
+        // Synthetic best-effort receipt; no GATT ack, retry or game tick.
+        copyCommandReceipt(dispatch, companionChannel, replyBearer);
         if (result.outcome != CommandStreamOutcome::Receiving &&
             result.outcome != CommandStreamOutcome::Queued &&
             result.outcome != CommandStreamOutcome::QueueFull)

@@ -1,3 +1,4 @@
+#include "Companion/CommandReceipt.h"
 #include "Companion/CommandStream.h"
 #include "Companion/ProfileCapabilities.h"
 #include "Companion/ReplyFrameSender.h"
@@ -905,6 +906,8 @@ void test_profile_capability_fixture_matches_firmware_encoder() {
 #include "FrameQueueCases.h"
 #include "JournalFaultCases.h"
 #include "ReplyFrameCases.h"
+// Uses the stream/queue/bearer helpers defined above; preserve this order.
+#include "CommandReceiptCases.h"
 } // namespace
 void setUp() {
     host_rtos::depth = 0;
@@ -996,5 +999,13 @@ int main() {
     RUN_TEST(test_reply_copy_before_later_revoke_keeps_original_epoch);
     RUN_TEST(test_reply_sender_deadline_wrap_and_invalid_reply);
     RUN_TEST(test_reply_message_counter_exhaustion_never_wraps_and_new_epoch_recovers);
+    RUN_TEST(test_command_receipt_codec_codes_bounds_and_target_preservation);
+    RUN_TEST(test_actual_fragment_receipts_precede_execution_and_match_fixture);
+    RUN_TEST(test_receipt_busy_does_not_undo_queued_command_or_retry);
+    RUN_TEST(test_command_queue_full_receipt_and_explicit_duplicate_retry);
+    RUN_TEST(test_receipt_decode_rejection_does_not_consume_game_request);
+    RUN_TEST(test_receipt_distinguishes_input_from_busy_pending_message);
+    RUN_TEST(test_receipt_expired_queuewait_and_empty_poll);
+    RUN_TEST(test_receipt_reconnect_and_bearer_revoke_keep_original_binding);
     return UNITY_END();
 }

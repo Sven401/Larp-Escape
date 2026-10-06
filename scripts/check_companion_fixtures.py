@@ -63,6 +63,71 @@ def check_reply_frames(base: Path) -> tuple[int, int]:
     return len(lines), len(actual)
 
 
+def decode_command_receipt(line: str) -> tuple[int, ...]:
+    import re
+    import struct
+    if not re.fullmatch(r"[0-9A-F]{36}", line):
+        raise ValueError("invalid processing receipt hex/length")
+    values = struct.unpack("<BBBBHHHHHHH", bytes.fromhex(line))
+    version, kind, code, reserved, source, length, offset, count, active, total, received = values
+    if version != 1 or kind != 3 or reserved or not 1 <= code <= 13:
+        raise ValueError("invalid processing receipt header")
+    if not source or not 1 <= length <= 1024 or not 1 <= count <= 120:
+        raise ValueError("invalid processing receipt source")
+    if offset >= length or count > length - offset:
+        raise ValueError("invalid processing receipt source range")
+    if (not active and (total or received)) or (active and (not 1 <= total <= 1024 or received > total)):
+        raise ValueError("invalid processing receipt stream")
+    same = active == source and total == length
+    if code in (1, 2) and not (same and 0 < received < total):
+        raise ValueError("invalid partial receipt")
+    if code in (3, 4, 5, 13) and not (same and received == total):
+        raise ValueError("invalid complete receipt")
+    if code == 9 and (not active or active == source):
+        raise ValueError("invalid busy receipt")
+    if code == 11 and active != source:
+        raise ValueError("invalid conflict receipt")
+    if code == 10 and active and not same:
+        raise ValueError("invalid out-of-order receipt")
+    return values
+
+
+def check_command_receipts(base: Path) -> tuple[int, int]:
+    import struct
+    lines = (base / "fixtures" / "command-receipts-v1.txt").read_text(encoding="utf-8").splitlines()
+    commands = (base / "fixtures" / "command-frames-v1.txt").read_text(encoding="utf-8").splitlines()
+    if len(lines) != len(commands) or not lines:
+        raise ValueError("receipt/command fixture count mismatch")
+    for index, (line, command) in enumerate(zip(lines, commands)):
+        values = decode_command_receipt(line)
+        raw = bytes.fromhex(command)
+        version, kind, source, length, offset = struct.unpack("<BBHHH", raw[:8])
+        count = len(raw) - 8
+        expected_code = 3 if offset + count == length else 1
+        if version != 1 or kind != 1 or values[2] != expected_code:
+            raise ValueError("receipt outcome/command kind mismatch")
+        if values[4:] != (source, length, offset, count, source, length, offset + count):
+            raise ValueError(f"receipt source/progress mismatch at {index}")
+    negatives = ["", lines[0][:-2], lines[0] + "00", "GG" + lines[0][2:]]
+    for byte, number in ((0, 2), (1, 2), (2, 0), (2, 14), (3, 1),
+                         (4, 0), (6, 0), (10, 0), (14, 0), (16, 255)):
+        changed = bytearray.fromhex(lines[0])
+        changed[byte] = number
+        if byte in (4, 6, 10, 14, 16):
+            changed[byte + 1] = 255 if byte == 16 else 0
+        negatives.append(changed.hex().upper())
+    complete = bytearray.fromhex(lines[-1])
+    complete[16] -= 1
+    negatives.append(complete.hex().upper())
+    for bad in negatives:
+        try:
+            decode_command_receipt(bad)
+        except ValueError:
+            continue
+        raise ValueError("receipt counterpart accepted malformed mutation")
+    return len(lines), len(negatives)
+
+
 def main() -> int:
     try:
         from jsonschema import Draft202012Validator
@@ -161,11 +226,13 @@ def main() -> int:
         return 1
     try:
         frame_count, reply_bytes = check_reply_frames(base)
+        receipt_count, receipt_negatives = check_command_receipts(base)
     except ValueError as error:
         print(f"Reply frame counterpart: {error}", file=sys.stderr)
         return 1
     print(f"{len(names)} v2 fixtures + profile capabilities validate; vocabularies and {len(expected_limits)} limits agree.")
     print(f"Reply counterpart reconstructs {reply_bytes} exact bytes from {frame_count} frames; 11 malformed variants rejected.")
+    print(f"Receipt counterpart correlates {receipt_count} actual command fragments; {receipt_negatives} malformed variants rejected.")
 
     return 0
 

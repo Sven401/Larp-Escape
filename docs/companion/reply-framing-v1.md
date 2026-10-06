@@ -121,3 +121,10 @@ Wireaufnahmeantworten für CopiedFrame/Receiving/CommandQueued, Statusframing,
 Identität/Pairing, tatsächlicher SDK-/Androidadapter und Profiltransfer bleiben
 offen. Die App kann diesen schmalen Framevertrag und die Fixtures übernehmen;
 dieser Nachweis führt keinen fremden Appcode aus.
+
+## Folgevertrag vom 7. Oktober 2026
+
+[Aufnahmeantworten v1](command-receipts-v1.md) übertragen den tatsächlich
+verarbeiteten Streamstand als festen18Byte-Typ3-Wert mit ursprünglicher
+Verbindungsbindung. Callback-Copied/Outerwritefehler bleibt separat;
+keine behauptete GATT-/Peerbestätigung oder Spielausführung.

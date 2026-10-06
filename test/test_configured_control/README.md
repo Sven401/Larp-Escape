@@ -6,7 +6,7 @@ Tatsächliche reine Firmwarequellen, tatsächlicher FreeRtosGameControlChannel, 
 
 Beobachtungshooks setzen Rechtewechsel vor/nach dem letzten synchronisierten Read bzw. vor Admission. Das prüft die definierte Entscheidungsreihenfolge und ausdrücklich auch die zulässige einzelne beanspruchte Operation nach späterem Entzug. Es ist keine atomare Abbruchgarantie. MemoryStore bestätigt ausschließlich modellierte Bytes, keine Stromausfall-/Dateisystem-Synchronisierungsabnahme.
 
-75 gezielte Fälle; keine vollständige JSON-/Profil-Fuzzing-/Ausfallsuite, keine vollständige Lease-/Request-/Sampleerschöpfung. Queuevoll/Reconnect/Entzug/Retry/Replyverlust sowie Start durch Codec bis StoredReady-Engine/Status sind enthalten. Historische Nicht-Prüfungen bleiben im Projektgedächtnis datiert; dieser neue Nachweis ersetzt sie nur für die genannten Fälle.
+83 gezielte Fälle; keine vollständige JSON-/Profil-Fuzzing-/Ausfallsuite, keine vollständige Lease-/Request-/Sampleerschöpfung. Queuevoll/Reconnect/Entzug/Retry/Replyverlust sowie Start durch Codec bis StoredReady-Engine/Status sind enthalten. Historische Nicht-Prüfungen bleiben im Projektgedächtnis datiert; dieser neue Nachweis ersetzt sie nur für die genannten Fälle.
 
 Die [Firmware-Fixtures v2](../../docs/companion/fixtures/v2/README.md) entstehen aus dem tatsächlichen Hostpfad und werden im zusätzlichen Fixturefall bytegenau verglichen.
 
@@ -55,3 +55,13 @@ Sender/Bearer-Busy/Bindung/Frist, Uhrumlauf und Message1..65535 plus Erschöpfun
 und neue gültige Epoch. Fixed-Bearercopy ist ausdrücklich kein Peerempfang.
 Erste zwei neue Reconnectfälle verwendeten falsch epoch1 aus dem alten
 Fixturehelper; jetzt wird der aktuelle vertrauenswürdige Kanalstand verwendet.
+\nAcht Aufnahmeantwortfälle: tatsächliche Framequeue/Stream bis Receiving/Queued,
+Bestätigung vor Spielausführung, feste18Byte-Typ3-Referenzen, unabhängige
+Gegenstelle, Busy-Verlust ohne Undo/Retry, volle Commandqueue und identisches
+Fragmentretry, DecodeRejected ohne Requestverbrauch, Input vs andere
+Busy-Teilnachricht, Frist/Uhrumlauf und alte Verbindung/Bearerentzug.
+Erster Build sortierte die neue Prüfhilfe vor ihren Abhängigkeiten; Kommentar
+erhält die erforderliche Include-Reihenfolge. Danach wurde der Code um
+semantische Grenzen ergänzt; der Codec-Test benutzt nun passende komplette
+und partielle Werte. Keine Firmwarefehler aus diesen Prüfhilfen behauptet.
+Poll ohne Eingangsframe bietet keine Aufnahmeantwort an.
