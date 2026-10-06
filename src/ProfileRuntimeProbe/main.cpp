@@ -188,7 +188,14 @@ void setup() {
         return;
     }
     // Explicit local synthetic GM, not a network authentication implementation.
-    probeLease = gameControl.grant(1);
+    larp::companion::TrustedAuthority authority;
+    authority.epoch = 1;
+    authority.principal = 1;
+    authority.gameMaster = true;
+    if (companionChannel.updateAuthority(authority) != larp::companion::AuthorityUpdate::Published)
+        return;
+    gameControl.service(millis());
+    probeLease = gameControl.snapshot().lease;
     if (!probeLease) {
         Serial.println("profile_runtime_probe: local control lease rejected");
         return;
@@ -277,7 +284,8 @@ void loop() {
                 ready = false;
                 return;
             }
-            const auto submitted = companionChannel.submitJson(commandMessage.data(), written, 1);
+            const auto submitted =
+                companionChannel.submitJson(commandMessage.data(), written, 1, 1);
             if (submitted.outcome != larp::companion::GameSubmissionOutcome::Queued &&
                 submitted.outcome != larp::companion::GameSubmissionOutcome::QueueFull) {
                 Serial.printf("profile_runtime_probe: GM command admission rejected=%s\n",
@@ -293,7 +301,7 @@ void loop() {
     gameControl.service(now);
     larp::companion::RoutedGameReply receipt;
     while (companionChannel.takeReply(receipt)) {
-        if (receipt.principal == 1 && startPending) {
+        if (receipt.principal == 1 && receipt.connectionEpoch == 1 && startPending) {
             startPending = false;
             if (receipt.reply.outcome == larp::companion::GameReplyOutcome::Executed)
                 lastStartedGeneration = runtime.activation().generation;

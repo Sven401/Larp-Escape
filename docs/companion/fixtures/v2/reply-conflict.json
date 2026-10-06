@@ -1,0 +1,1 @@
+{"schemaVersion":2,"boot":"12345678ABCDEF01","lease":1,"request":1,"nextRequest":2,"outcome":"request_conflict","duplicate":false,"consumed":false,"configurationRevision":1,"stateRevision":1,"executionOutcome":""}

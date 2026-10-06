@@ -1,4 +1,5 @@
 #pragma once
+#include "Companion/AuthorityState.h"
 #include "GameConfiguration/Profile.h"
 #include <array>
 #include <cstddef>
@@ -34,10 +35,10 @@ struct GameCommand {
     // Only ChangeState / TakeTransition use a nonzero, profile-owned ID.
     std::uint16_t target = 0;
 };
-// principal is trusted channel metadata, NEVER a client-supplied authorization
-// field. An authenticated transport must attach it and reject impersonation.
+// principal + connectionEpoch are verified connection metadata, NEVER client
+// JSON fields. A transport attaches both from that specific verified connection.
 struct TrustedGameRequest {
-    std::uint32_t principal = 0;
+    std::uint32_t principal = 0, connectionEpoch = 0;
     GameCommand command;
 };
 enum class GameReplyOutcome : std::uint8_t {
@@ -62,7 +63,7 @@ struct GameReply {
     bool duplicate = false, consumed = false;
 };
 struct RoutedGameReply {
-    std::uint32_t principal = 0;
+    std::uint32_t principal = 0, connectionEpoch = 0;
     GameReply reply;
 };
 enum class ConfiguredPhase : std::uint8_t {
@@ -100,10 +101,13 @@ struct ConfiguredStatus {
 };
 // Copy-only, bounded, zero-wait application ports. Sole application owner calls
 // receive/send/publish. Transport tasks must use a synchronized adapter, never
-// touch the controller, and route replies ONLY to the authenticated principal.
+// touch the controller. Route replies only to a currently matching verified
+// principal AND connectionEpoch; never a recycled principal/new connection.
 class IGameControlChannel {
   public:
     virtual ~IGameControlChannel() = default;
+    // Latest synchronized verified transport state; false closes authority.
+    virtual bool readAuthority(TrustedAuthority &authority) const noexcept = 0;
     virtual bool receive(TrustedGameRequest &request) noexcept = 0;
     virtual bool send(const RoutedGameReply &reply) noexcept = 0;
     virtual bool publish(const ConfiguredStatus &status) noexcept = 0;

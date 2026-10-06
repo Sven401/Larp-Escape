@@ -28,11 +28,51 @@ bool FreeRtosGameControlChannel::send(const RoutedGameReply &reply) noexcept {
 bool FreeRtosGameControlChannel::publish(const ConfiguredStatus &status) noexcept {
     return started_ && xQueueOverwrite(status_, &status) == pdTRUE;
 }
+AuthorityUpdate FreeRtosGameControlChannel::updateAuthority(const TrustedAuthority &authority) {
+    if (!started_)
+        return AuthorityUpdate::Suspended;
+    portENTER_CRITICAL(&authorityMutex_);
+    const auto result = authority_.update(authority);
+    portEXIT_CRITICAL(&authorityMutex_);
+    return result;
+}
+void FreeRtosGameControlChannel::suspendAuthority() {
+    portENTER_CRITICAL(&authorityMutex_);
+    authority_.suspend();
+    portEXIT_CRITICAL(&authorityMutex_);
+}
+bool FreeRtosGameControlChannel::readAuthority(TrustedAuthority &authority) const noexcept {
+    if (!started_)
+        return false;
+    portENTER_CRITICAL(&authorityMutex_);
+    const bool available = authority_.read(authority);
+    portEXIT_CRITICAL(&authorityMutex_);
+    return available;
+}
+GameSubmissionOutcome FreeRtosGameControlChannel::admit(const TrustedGameRequest &request) {
+    if (!started_)
+        return GameSubmissionOutcome::Uninitialized;
+    if (!request.principal)
+        return GameSubmissionOutcome::MissingPrincipal;
+    if (!request.connectionEpoch)
+        return GameSubmissionOutcome::MissingEpoch;
+    // No wait/device calls. Updates and copied admission share this short lock.
+    // Consumer queue operations finish before it reads authority: no reverse lock.
+    portENTER_CRITICAL(&authorityMutex_);
+    const auto outcome = !authority_.admits(request.principal, request.connectionEpoch)
+                             ? GameSubmissionOutcome::Unauthorized
+                         : xQueueSendToBack(commands_, &request, 0) == pdTRUE
+                             ? GameSubmissionOutcome::Queued
+                             : GameSubmissionOutcome::QueueFull;
+    portEXIT_CRITICAL(&authorityMutex_);
+    return outcome;
+}
 bool FreeRtosGameControlChannel::submit(const TrustedGameRequest &request) {
-    return started_ && request.principal != 0 && xQueueSendToBack(commands_, &request, 0) == pdTRUE;
+    return admit(request) == GameSubmissionOutcome::Queued;
 }
 GameSubmission FreeRtosGameControlChannel::submitJson(const char *bytes, std::size_t count,
-                                                      std::uint32_t authenticatedPrincipal) {
+                                                      std::uint32_t authenticatedPrincipal,
+                                                      std::uint32_t connectionEpoch) {
     GameSubmission result;
     if (!started_)
         return result;
@@ -40,15 +80,19 @@ GameSubmission FreeRtosGameControlChannel::submitJson(const char *bytes, std::si
         result.outcome = GameSubmissionOutcome::MissingPrincipal;
         return result;
     }
+    if (!connectionEpoch) {
+        result.outcome = GameSubmissionOutcome::MissingEpoch;
+        return result;
+    }
     TrustedGameRequest request;
     request.principal = authenticatedPrincipal;
+    request.connectionEpoch = connectionEpoch;
     result.decode = decodeGameCommand(bytes, count, request.command);
     if (!result.decode) {
         result.outcome = GameSubmissionOutcome::DecodeRejected;
         return result;
     }
-    result.outcome =
-        submit(request) ? GameSubmissionOutcome::Queued : GameSubmissionOutcome::QueueFull;
+    result.outcome = admit(request);
     return result;
 }
 bool FreeRtosGameControlChannel::takeReply(RoutedGameReply &reply) {

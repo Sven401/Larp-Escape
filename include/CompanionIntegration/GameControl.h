@@ -5,6 +5,7 @@ namespace larp {
 namespace integration {
 struct ControlSnapshot {
     std::uint32_t lease = 0, nextRequest = 0, sample = 0, droppedReplies = 0, droppedStatus = 0;
+    std::uint32_t authorityEpoch = 0;
     bool initialized = false;
 };
 // Outer integration layer, sole application context. service does NOT tick the
@@ -18,11 +19,6 @@ class GameControl {
     GameControl(const GameControl &) = delete;
     GameControl &operator=(const GameControl &) = delete;
     bool begin(companion::BootIdentity boot);
-    // Trusted sole-owner admission after authentication. One GM lease per boot;
-    // replacing it invalidates old requests. principal is not a client role flag.
-    // Returns 0 on failure. No implicit grant, no lease renewal in a callback.
-    std::uint32_t grant(std::uint32_t authenticatedPrincipal);
-    void revoke();
     void service(std::uint32_t now);
     ControlSnapshot snapshot() const;
 
@@ -34,6 +30,8 @@ class GameControl {
     devices::ProfileApplication &application_;
     companion::IGameControlChannel &channel_;
     companion::BootIdentity boot_;
+    companion::AuthorityState authority_;
+    std::uint32_t authorityEpoch_ = 0;
     // Sole-owner reusable publication value; channels copy before returning.
     // Trades bounded static RAM for a smaller FreeRTOS application stack frame.
     companion::ConfiguredStatus status_;
@@ -43,6 +41,8 @@ class GameControl {
     bool initialized_ = false, operating_ = false, published_ = false;
     companion::GameReply dispatch(const companion::TrustedGameRequest &request, std::uint32_t now);
     void publish(std::uint32_t now);
+    bool synchronizeAuthority();
+    void revoke();
 };
 } // namespace integration
 } // namespace larp

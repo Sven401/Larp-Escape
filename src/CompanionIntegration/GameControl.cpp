@@ -40,19 +40,32 @@ bool GameControl::begin(companion::BootIdentity boot) {
     initialized_ = true;
     return true;
 }
-std::uint32_t GameControl::grant(std::uint32_t authenticatedPrincipal) {
-    if (!initialized_ || operating_ || !authenticatedPrincipal ||
-        leaseCounter_ == std::numeric_limits<std::uint32_t>::max() ||
-        sample_ == std::numeric_limits<std::uint32_t>::max())
-        return 0;
-    principal_ = authenticatedPrincipal;
-    lease_ = ++leaseCounter_;
-    lastRequest_ = 0;
-    receipts_.fill(Receipt());
-    return lease_;
+bool GameControl::synchronizeAuthority() {
+    companion::TrustedAuthority incoming;
+    if (!channel_.readAuthority(incoming)) {
+        authority_.suspend();
+        const bool changed = lease_ != 0;
+        revoke();
+        return changed;
+    }
+    const auto outcome = authority_.update(incoming);
+    if (outcome == companion::AuthorityUpdate::Duplicate)
+        return false;
+    const bool changed = lease_ != 0 || outcome == companion::AuthorityUpdate::Published;
+    revoke();
+    if (outcome == companion::AuthorityUpdate::Published) {
+        authorityEpoch_ = incoming.epoch;
+        if (incoming.gameMaster && leaseCounter_ != std::numeric_limits<std::uint32_t>::max() &&
+            sample_ != std::numeric_limits<std::uint32_t>::max()) {
+            principal_ = incoming.principal;
+            lease_ = ++leaseCounter_;
+        }
+    }
+    return changed;
 }
 void GameControl::revoke() {
-    if (operating_)
+    // Faulted/no-authority service is constant work after the first invalidation.
+    if (!principal_ && !lease_)
         return;
     principal_ = lease_ = 0;
     lastRequest_ = 0;
@@ -61,6 +74,7 @@ void GameControl::revoke() {
 ControlSnapshot GameControl::snapshot() const {
     ControlSnapshot s;
     s.lease = lease_;
+    s.authorityEpoch = authorityEpoch_;
     s.nextRequest =
         lease_ && lastRequest_ != std::numeric_limits<std::uint32_t>::max() ? lastRequest_ + 1 : 0;
     s.sample = sample_;
@@ -81,8 +95,8 @@ companion::GameReply GameControl::dispatch(const companion::TrustedGameRequest &
     reply.configurationRevision = application_.activation().configurationRevision;
     reply.stateRevision = application_.execution().stateRevision;
     // Authorization precedes cache lookup: another client cannot read receipts.
-    if (!principal_ || request.principal != principal_ || command.lease != lease_ ||
-        !command.lease) {
+    if (!principal_ || request.principal != principal_ ||
+        request.connectionEpoch != authorityEpoch_ || command.lease != lease_ || !command.lease) {
         reply.outcome = GameReplyOutcome::Unauthorized;
         return reply;
     }
@@ -234,13 +248,17 @@ void GameControl::service(std::uint32_t now) {
     if (!initialized_ || operating_)
         return;
     operating_ = true;
-    bool changed = false;
+    bool changed = synchronizeAuthority();
     for (std::size_t i = 0; i < companion::ControlLimits::Drain; ++i) {
         companion::TrustedGameRequest request;
         if (!channel_.receive(request))
             break;
+        // Authorization point: the last synchronized observation before dispatch.
+        // A later revoke does not retroactively cancel this claimed operation.
+        changed = synchronizeAuthority() || changed;
         companion::RoutedGameReply reply;
         reply.principal = request.principal;
+        reply.connectionEpoch = request.connectionEpoch;
         reply.reply = dispatch(request, now);
         if (!channel_.send(reply))
             increment(droppedReplies_);
