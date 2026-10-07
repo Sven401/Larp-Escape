@@ -9,7 +9,7 @@ import json
 import sys
 
 sys.dont_write_bytecode = True
-from check_profile_control import check_profile_control, check_profile_response_queue, check_gatts_profile
+from check_profile_control import check_profile_control, check_profile_response_queue, check_gatts_profile, check_esp_staging
 
 
 def decode_document_frames(lines: list[str], expected_kind: int, maximum: int) -> bytes:
@@ -558,6 +558,7 @@ def main() -> int:
         profile_control_negatives = check_profile_control(base, validators["status-v2.schema.json"])
         profile_response_queue_negatives = check_profile_response_queue(base)
         gatts_profile_negatives = check_gatts_profile(base)
+        esp_staging_negatives = check_esp_staging(base)
     except ValueError as error:
         print(f"Frame counterpart: {error}", file=sys.stderr)
         return 1
@@ -584,6 +585,8 @@ def main() -> int:
     print(f"Profile response queue counterpart keeps production time and confirmed model/wire correlation; {profile_response_queue_negatives} wrong observations rejected.")
 
     print(f"Raw GATTS profile counterpart separates172 ATT copies from3 semantic stages; {gatts_profile_negatives} wrong observations rejected. No RF/peer delivery proof.")
+
+    print(f"ESP staging counterpart correlates actual fixed-path adapter/model and Saved; {esp_staging_negatives} wrong observations rejected. No physical flash claim.")
 
     print(f"Public identity metadata validates; {len(identity_negatives)} malformed variants rejected. No authentication proof.")
 

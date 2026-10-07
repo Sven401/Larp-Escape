@@ -56,6 +56,8 @@ ADAPTER_FILES = (
     "lib/FreeRtosCommandFrameQueue/FreeRtosCommandFrameQueue.cpp",
     "lib/Esp32ProfileStore/Esp32ProfileStore.h",
     "lib/Esp32ProfileStore/Esp32ProfileStore.cpp",
+    "lib/Esp32ProfileStore/Esp32ProfileStagingStore.h",
+    "lib/Esp32ProfileStore/Esp32ProfileStagingStore.cpp",
     "lib/FreeRtosProfileChannel/FreeRtosProfileChannel.h",
     "lib/FreeRtosProfileChannel/FreeRtosProfileChannel.cpp",
     "lib/CompanionStatusStore/CompanionStatusStore.h",

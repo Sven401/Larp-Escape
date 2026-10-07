@@ -10,6 +10,7 @@
 #include "DeviceRuntime/ProfileApplication.h"
 #include "GameDomain/GameDefinitions.h"
 #include <Arduino.h>
+#include <Esp32ProfileStagingStore.h>
 #include <Esp32ProfileStore.h>
 #include <FreeRtosCommandFrameQueue.h>
 #include <FreeRtosGameControlChannel.h>
@@ -23,6 +24,7 @@ using namespace larp::configuration;
 FreeRtosProfileChannel channel;
 // Two startup allocations, private profiles; workers never borrow their contents.
 Esp32ProfileStore persistentStore;
+Esp32ProfileStagingStore temporarySource(persistentStore);
 ProfileApplication runtime(channel, channel, persistentStore);
 larp::companion::FreeRtosGameControlChannel companionChannel;
 larp::companion::IdentityAccess identityAccess(companionChannel);
@@ -252,6 +254,20 @@ void setup() {
         Serial.println("profile_runtime_probe: storage mount failed; no format; stopped");
         return;
     }
+    // Dedicated disposable source only; no journal/profile import or RF here.
+    std::uint8_t temporaryByte = 0;
+    const bool temporaryGood =
+        temporarySource.discard() && temporarySource.begin(1) && temporarySource.append("x", 1) &&
+        temporarySource.seal() && temporarySource.readByte(temporaryByte) == ReadStatus::Byte &&
+        temporaryByte == 'x' && temporarySource.readByte(temporaryByte) == ReadStatus::End;
+    const bool temporaryClosed = temporarySource.discard();
+    if (!temporaryGood || !temporaryClosed) {
+        Serial.println("profile_runtime_probe: temporary source failed; no format; stopped");
+        return;
+    }
+    Serial.printf("temporary_source_probe: synthetic=true network=false bytes=%u imported=false "
+                  "saved=false\n",
+                  unsigned(sizeof(temporarySource)));
     const auto begun = runtime.begin();
     if (!begun || !channel.begin() || !companionChannel.begin() || !frameQueue.begin() ||
         !gameControl.begin(bootIdentity)) {

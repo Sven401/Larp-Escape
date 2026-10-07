@@ -109,3 +109,32 @@ def check_gatts_profile(base: Path) -> int:
             continue
         raise ValueError("GATTS profile accepted a wrong observation")
     return len(negatives)
+
+
+def check_esp_staging(base: Path) -> int:
+    import json
+    fixture = base / "fixtures" / "profile-source"
+    if response(bytes.fromhex((fixture / "esp-staging-saved-v1.txt").read_text(encoding="utf-8").strip())) != (1, 2, 3, 3, 0, 4, 2):
+        raise ValueError("ESP staging Saved correlation")
+    expected = {"scope": "host_esp_staging_model", "writeCopies": 172, "attResponseCopies": 172,
+                "semanticResponseCopies": 3, "code": 3, "configurationRevision": 2,
+                "storedGeneration": 2, "temporaryDeleted": True, "journalPathsTouched": False,
+                "journalStorage": "host_model", "temporaryFsyncCalls": 0, "formatEnabled": False,
+                "peerDeliveryMeasured": False, "radioInitialized": False}
+    def accept(value):
+        if value != expected:
+            raise ValueError("ESP staging ownership/model/semantic mismatch")
+    accept(json.loads((fixture / "esp-staging-observation.json").read_text(encoding="utf-8")))
+    negatives = []
+    for key, value in (("scope", "device"), ("writeCopies", 171), ("semanticResponseCopies", 172),
+                       ("code", 2), ("temporaryDeleted", False), ("journalPathsTouched", True),
+                       ("journalStorage", "flash"), ("temporaryFsyncCalls", 1), ("formatEnabled", True),
+                       ("peerDeliveryMeasured", True), ("radioInitialized", True)):
+        changed = dict(expected); changed[key] = value; negatives.append(changed)
+    for changed in negatives:
+        try:
+            accept(changed)
+        except ValueError:
+            continue
+        raise ValueError("ESP staging accepted a wrong observation")
+    return len(negatives)

@@ -6,6 +6,7 @@
 // other caller may unmount/write this filesystem while the journal is in use.
 // Blocking file operations belong to the stopped application context, NOT a
 // worker/network callback. stdio/LittleFS have their own heap and latency costs.
+class Esp32TemporaryFilePort;
 class Esp32ProfileStore : public larp::devices::IJournalStore {
   public:
     ~Esp32ProfileStore();
@@ -22,6 +23,8 @@ class Esp32ProfileStore : public larp::devices::IJournalStore {
     void abortWrite() override;
 
   private:
+    friend class Esp32TemporaryFilePort;
+    Esp32TemporaryFilePort *temporaryOwner_ = nullptr;
     std::FILE *file_ = nullptr;
-    bool mounted_ = false, writing_ = false;
+    bool mounted_ = false, writing_ = false, temporaryCleanupRequired_ = false;
 };

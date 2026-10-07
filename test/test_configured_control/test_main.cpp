@@ -33,6 +33,8 @@
 #include "../../lib/FreeRtosProfileResponseQueue/FreeRtosProfileResponseQueue.cpp"
 #include "../../lib/GattsWriteAdmission/GattsWriteAdmission.cpp"
 #include "../../src/ProfileTool/TemporaryProfileFile.cpp"
+// Actual ESP file adapters under an isolated deterministic VFS model.
+#include "ProfileFileVfs.h"
 namespace host_rtos {
 void (*beforeEnter)() = nullptr;
 unsigned depth = 0;
@@ -946,6 +948,8 @@ void test_profile_capability_fixture_matches_firmware_encoder() {
 #include "ProfileResponseQueueCases.h"
 // Profile SDK cases need completed owners/input/output/ATT fixture helpers.
 #include "GattsProfileWriteCases.h"
+// File cases use original Raw/Owner/response helpers and actual ESP VFS adapters.
+#include "ProfileFileCases.h"
 } // namespace
 void setUp() {
     host_rtos::depth = 0;
@@ -1206,5 +1210,22 @@ int main() {
     RUN_TEST(test_gatts_profile_freezes_event_binding_and_bytes_before_first_observation);
     RUN_TEST(test_gatts_command_shared_gate_freezes_event_binding_and_bytes_too);
     RUN_TEST(test_gatts_profile_uninitialized_and_no_binding_do_not_ack_success);
+    RUN_TEST(test_file_staging_exact_length_bounds_and_target_preservation);
+    RUN_TEST(test_file_staging_partial_write_poison_and_failed_cleanup_fence);
+    RUN_TEST(test_file_staging_failed_open_or_seal_requires_discard);
+    RUN_TEST(test_file_staging_short_extra_fault_or_invalid_end_poison_read);
+    RUN_TEST(test_file_staging_freezes_append_and_fences_all_nested_operations);
+    RUN_TEST(test_file_staging_actual_host_maximum_source_and_reuse);
+    RUN_TEST(test_esp_staging_requires_existing_mount_and_never_formats);
+    RUN_TEST(test_esp_staging_claim_blocks_second_source_until_confirmed_cleanup);
+    RUN_TEST(test_esp_staging_failed_open_partial_write_flush_close_or_reopen_no_source);
+    RUN_TEST(test_esp_staging_read_only_exact_end_and_corruption_fences);
+    RUN_TEST(test_esp_staging_old_boot_source_discard_preserves_both_journal_names);
+    RUN_TEST(test_esp_staging_actual_raw_queue_private_apply_output_saved_model);
+    RUN_TEST(test_esp_staging_source_revoke_discards_only_temporary_and_keeps_game_journal);
+    RUN_TEST(test_esp_staging_actual_maximum_source_with_fixed_append_budget);
+    RUN_TEST(test_esp_staging_close_failure_keeps_claim_even_after_file_removal);
+    RUN_TEST(test_esp_staging_import_cleanup_failure_issues_no_apply_receipt);
+    RUN_TEST(test_esp_staging_destroyed_fault_child_address_reuse_requires_cleanup);
     return UNITY_END();
 }
