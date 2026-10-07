@@ -944,6 +944,8 @@ void test_profile_capability_fixture_matches_firmware_encoder() {
 #include "ProfileControlCases.h"
 // Response queue cases need actual control/file/application and sender helpers.
 #include "ProfileResponseQueueCases.h"
+// Profile SDK cases need completed owners/input/output/ATT fixture helpers.
+#include "GattsProfileWriteCases.h"
 } // namespace
 void setUp() {
     host_rtos::depth = 0;
@@ -1195,5 +1197,14 @@ int main() {
     RUN_TEST(test_profile_response_owner_full_port_revoke_closes_without_game_or_store_effect);
     RUN_TEST(test_profile_response_selection_busy_does_not_take_and_load_preserves_time);
     RUN_TEST(test_profile_response_selection_reentrant_clock_authority_does_not_take_twice);
+    RUN_TEST(test_gatts_profile_actual_raw_queue_control_output_sender_confirmed_journal);
+    RUN_TEST(test_gatts_profile_full_retry_att_resource_error_is_not_success);
+    RUN_TEST(test_gatts_profile_context_prepare_offset_type_and_shape_gates);
+    RUN_TEST(test_gatts_profile_without_att_response_still_only_copies_queue);
+    RUN_TEST(test_gatts_profile_response_failure_does_not_undo_copy_or_relabel_epoch);
+    RUN_TEST(test_gatts_profile_revoke_between_outer_and_queue_admission_prevents_copy);
+    RUN_TEST(test_gatts_profile_freezes_event_binding_and_bytes_before_first_observation);
+    RUN_TEST(test_gatts_command_shared_gate_freezes_event_binding_and_bytes_too);
+    RUN_TEST(test_gatts_profile_uninitialized_and_no_binding_do_not_ack_success);
     return UNITY_END();
 }

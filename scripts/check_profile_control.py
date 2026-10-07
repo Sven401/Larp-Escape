@@ -83,3 +83,29 @@ def check_profile_response_queue(base: Path) -> int:
             continue
         raise ValueError("response queue accepted a wrong observation")
     return len(negatives)
+
+
+def check_gatts_profile(base: Path) -> int:
+    import json
+    fixture = base / "fixtures" / "profile-source"
+    if response(bytes.fromhex((fixture / "gatts-profile-saved-v1.txt").read_text().strip())) != (1, 2, 3, 3, 0, 4, 2):
+        raise ValueError("GATTS profile Saved correlation")
+    expected = {"scope": "host_gatts_profile", "writeCopies": 172, "attResponseCopies": 172,
+                "semanticResponseCopies": 3, "code": 3, "configurationRevision": 2,
+                "storedGeneration": 2, "peerDeliveryMeasured": False, "radioInitialized": False}
+    def accept(value):
+        if value != expected:
+            raise ValueError("GATTS profile admission/semantic/measurement mismatch")
+    accept(json.loads((fixture / "gatts-profile-observation.json").read_text()))
+    negatives = []
+    for key, value in (("writeCopies", 171), ("attResponseCopies", 3), ("semanticResponseCopies", 172),
+                       ("code", 2), ("configurationRevision", 1), ("storedGeneration", 1),
+                       ("peerDeliveryMeasured", True), ("radioInitialized", True)):
+        changed = dict(expected); changed[key] = value; negatives.append(changed)
+    for changed in negatives:
+        try:
+            accept(changed)
+        except ValueError:
+            continue
+        raise ValueError("GATTS profile accepted a wrong observation")
+    return len(negatives)

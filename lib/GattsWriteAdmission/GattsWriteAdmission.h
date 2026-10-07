@@ -1,6 +1,7 @@
 #pragma once
 #include "Companion/IdentityAccess.h"
 #include "FreeRtosCommandFrameQueue.h"
+#include "FreeRtosProfileFrameQueue.h"
 namespace larp {
 namespace companion {
 // Original immutable SDK/lifecycle observation, not a current-handle lookup
@@ -72,5 +73,9 @@ GattsWriteResult admitGattsWrite(const GattsWriteEvent &event, const GattsWriteB
                                  const IGameControlChannel &authority,
                                  FreeRtosCommandFrameQueue &queue, IWriteResponseBearer &responses,
                                  std::uint32_t receivedAt) noexcept;
+// Same immutable original SDK gate, independent profile queue (kind5/6/7).
+GattsWriteResult admitGattsProfileWrite(const GattsWriteEvent &, const GattsWriteBinding &,
+                                        const IGameControlChannel &, FreeRtosProfileFrameQueue &,
+                                        IWriteResponseBearer &, std::uint32_t receivedAt) noexcept;
 } // namespace companion
 } // namespace larp

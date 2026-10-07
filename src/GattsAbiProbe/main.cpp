@@ -119,6 +119,24 @@ void setup() {
     Serial.printf("profile_control_probe: synthetic=true network=false bytes=%u imported=false "
                   "applied=false\n",
                   unsigned(profileWritten));
+    esp_ble_gatts_cb_param_t profileParameter = {};
+    profileParameter.write.conn_id = original.connection.handle;
+    profileParameter.write.trans_id = 18;
+    profileParameter.write.handle = original.attribute;
+    profileParameter.write.len = profileWritten;
+    profileParameter.write.value = reinterpret_cast<std::uint8_t *>(profileValue);
+    profileParameter.write.need_rsp = true;
+    for (std::size_t i = 0; i < original.peerAddress.size(); ++i)
+        profileParameter.write.bda[i] = original.peerAddress[i];
+    const auto profileEvent = fromSdkGattsWrite(original.interface, profileParameter);
+    const auto profileAdmitted =
+        admitGattsProfileWrite(profileEvent, original, channel, profileQueue, responses, millis());
+    if (profileAdmitted.outcome != GattsWriteOutcome::Copied ||
+        profileAdmitted.status != AttWriteStatus::Ok || !profileQueue.take(profileCopy))
+        return;
+    Serial.printf(
+        "profile_raw_write_probe: synthetic=true network=false response_copied=%s applied=false\n",
+        profileAdmitted.responseCopied ? "true" : "false");
     RoutedProfileResponse response;
     response.original = original.authority;
     response.producedAt = millis();
