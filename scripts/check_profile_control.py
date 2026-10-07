@@ -138,3 +138,23 @@ def check_esp_staging(base: Path) -> int:
             continue
         raise ValueError("ESP staging accepted a wrong observation")
     return len(negatives)
+
+
+def check_followup_proof(base: Path) -> int:
+    fixture = base / "fixtures" / "profile-source" / "followup-no-receipt-v1.txt"
+    value = bytes.fromhex(fixture.read_text(encoding="utf-8").strip())
+    expected = (1, 2, 3, 7, 10, 3, 1)
+    def accept(data):
+        if response(data) != expected:
+            raise ValueError("failed followup must reject old receipt")
+    accept(value)
+    negatives = []
+    for at, replacement in ((9, 2), (10, 0), (4, 3), (12, 4), (16, 2)):
+        changed = bytearray(value); changed[at] = replacement; negatives.append(bytes(changed))
+    for changed in negatives:
+        try:
+            accept(changed)
+        except ValueError:
+            continue
+        raise ValueError("accepted a stale followup proof observation")
+    return len(negatives)

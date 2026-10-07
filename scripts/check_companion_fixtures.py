@@ -9,7 +9,7 @@ import json
 import sys
 
 sys.dont_write_bytecode = True
-from check_profile_control import check_profile_control, check_profile_response_queue, check_gatts_profile, check_esp_staging
+from check_profile_control import check_profile_control, check_profile_response_queue, check_gatts_profile, check_esp_staging, check_followup_proof
 
 from check_device_identity_store import check_device_identity_store
 from check_application_file_owner import check_application_file_owner
@@ -561,6 +561,7 @@ def main() -> int:
         profile_response_queue_negatives = check_profile_response_queue(base)
         gatts_profile_negatives = check_gatts_profile(base)
         esp_staging_negatives = check_esp_staging(base)
+        followup_proof_negatives = check_followup_proof(base)
         application_file_negatives = check_application_file_owner(base)
         identity_record_negatives, identity_store_negatives = check_device_identity_store(base, Draft202012Validator(identity_schema))
     except ValueError as error:
@@ -591,6 +592,8 @@ def main() -> int:
     print(f"Raw GATTS profile counterpart separates172 ATT copies from3 semantic stages; {gatts_profile_negatives} wrong observations rejected. No RF/peer delivery proof.")
 
     print(f"ESP staging counterpart correlates actual fixed-path adapter/model and Saved; {esp_staging_negatives} wrong observations rejected. No physical flash claim.")
+
+    print(f"Followup proof counterpart requires ApplyRejected/NoReceipt on actual20-byte response; {followup_proof_negatives} stale correlations rejected.")
 
     print(f"Application file ownership counterpart checks cleanup quarantine and zero running IO; {application_file_negatives} wrong observations rejected. Host model only.")
 

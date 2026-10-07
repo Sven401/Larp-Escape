@@ -1268,5 +1268,9 @@ int main() {
     RUN_TEST(test_application_file_actual_esp_cleanup_quarantine_observation);
     RUN_TEST(test_application_file_import_revoke_cleans_inside_application_guard);
     RUN_TEST(test_application_file_startup_cleanup_blocks_nested_boot_and_preserves_quarantine);
+    RUN_TEST(test_profile_followup_failed_open_cannot_apply_previous_import_receipt);
+    RUN_TEST(test_profile_followup_wrong_route_cannot_cancel_current_receipt);
+    RUN_TEST(test_profile_followup_expired_metadata_preserves_current_receipt);
+    RUN_TEST(test_profile_followup_attempt_during_selected_apply_preserves_confirmation);
     return UNITY_END();
 }

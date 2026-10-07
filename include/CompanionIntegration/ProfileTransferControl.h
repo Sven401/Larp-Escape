@@ -20,7 +20,7 @@ class ProfileTransferControl : public companion::IProfileControlSink {
     bool ready() const noexcept override {
         return !busy_ && !pending_ && !applying_;
     }
-    void sourceStarted() noexcept override;
+    void sourceAttempted(const companion::TrustedAuthority &original) noexcept override;
     void handle(const companion::ProfileControlFrame &, const companion::TrustedAuthority &,
                 std::uint32_t) noexcept override;
     bool takeResponse(companion::RoutedProfileResponse &) noexcept;

@@ -51,9 +51,11 @@ ProfileDispatchResult ProfileFramePump::service() noexcept {
     if (decodeProfileSourceEnvelope(frame.bytes.data(), frame.count, envelope)) {
         result.metadata = true;
         result.transfer = envelope.transfer;
+        // A fresh current authenticated attempt invalidates old import proof
+        // before any storage failure can leave it usable for this transfer ID.
+        if (controls_)
+            controls_->sourceAttempted(original);
         result.outcome = source_.start(envelope, original, frame.receivedAt);
-        if (controls_ && result.outcome == ProfileReceiveOutcome::Receiving)
-            controls_->sourceStarted();
     } else if (decodeProfileDataFrame(frame.bytes.data(), frame.count, data)) {
         result.transfer = data.transfer;
         result.offset = data.offset;

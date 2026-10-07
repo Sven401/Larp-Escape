@@ -71,7 +71,7 @@ class IProfileControlSink {
     virtual ~IProfileControlSink() = default;
     virtual void service() noexcept = 0;
     virtual bool ready() const noexcept = 0;
-    virtual void sourceStarted() noexcept = 0;
+    virtual void sourceAttempted(const TrustedAuthority &original) noexcept = 0;
     virtual void handle(const ProfileControlFrame &, const TrustedAuthority &,
                         std::uint32_t) noexcept = 0;
 };

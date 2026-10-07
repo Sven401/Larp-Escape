@@ -93,8 +93,12 @@ void ProfileTransferControl::emit(const ProfileResponseFrame &value) noexcept {
     produced_ = clock_.nowMilliseconds();
     pending_ = true;
 }
-void ProfileTransferControl::sourceStarted() noexcept {
-    if (!busy_)
+void ProfileTransferControl::sourceAttempted(const TrustedAuthority &original) noexcept {
+    if (!ready())
+        return;
+    Call call(busy_);
+    const auto route = original;
+    if (current(route))
         receipt_ = ProfileImportReceipt();
 }
 void ProfileTransferControl::service() noexcept {

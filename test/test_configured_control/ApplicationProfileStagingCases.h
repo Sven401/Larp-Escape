@@ -436,3 +436,73 @@ void test_application_file_startup_cleanup_blocks_nested_boot_and_preserves_quar
     TEST_ASSERT_TRUE(app.begin());
     TEST_ASSERT_TRUE(app.storage().initialized);
 }
+
+void test_profile_followup_failed_open_cannot_apply_previous_import_receipt() {
+    using namespace host_profile_vfs;
+    reset();
+    EspControlFixture x;
+    const auto bytes = importExample();
+    copyProfileValue(x.queue, queuedProfileEnvelope(bytes), 0);
+    TEST_ASSERT_TRUE(x.pump.service().metadata);
+    for (const auto &value : profileFrames(bytes, 128)) {
+        copyProfileValue(x.queue, value, 0);
+        TEST_ASSERT_TRUE(x.pump.service().received);
+    }
+    copyProfileValue(x.queue, controlBytes(controlCommand(ProfileOperation::Finish)), 0);
+    TEST_ASSERT_TRUE(x.pump.service().control);
+    RoutedProfileResponse response;
+    TEST_ASSERT_TRUE(x.control.takeResponse(response));
+    responseCode(ProfileResponseCode::DraftReady, response);
+    const auto draft = f->application.storage().draftRevision;
+    failWriteOpen = true;
+    copyProfileValue(x.queue, queuedProfileEnvelope(bytes), 0);
+    receiveOutcome(ProfileReceiveOutcome::StorageFailure, x.pump.service().outcome);
+    failWriteOpen = false;
+    TEST_ASSERT_FALSE(f->application.profileFileBlocked());
+    TEST_ASSERT_EQUAL_UINT32(draft, f->application.storage().draftRevision);
+    copyProfileValue(x.queue, controlBytes(controlCommand(ProfileOperation::Apply, 2)), 0);
+    TEST_ASSERT_TRUE(x.pump.service().control);
+    TEST_ASSERT_TRUE(x.control.takeResponse(response));
+    responseCode(ProfileResponseCode::ApplyRejected, response);
+    TEST_ASSERT_EQUAL(static_cast<unsigned>(ProfileResponseDetail::NoReceipt),
+                      static_cast<unsigned>(response.response.detail));
+    TEST_ASSERT_FALSE(f->application.busy());
+    TEST_ASSERT_EQUAL_UINT32(1, f->application.snapshot().storedGeneration);
+    responseFixture("followup-no-receipt-v1.txt", response);
+    assertNoJournalVfs();
+}
+
+void test_profile_followup_wrong_route_cannot_cancel_current_receipt() {
+    ControlFixture x;
+    x.imported();
+    x.control.sourceAttempted(authority(2));
+    x.command(ProfileOperation::Apply, 2);
+    x.take(ProfileResponseCode::ApplyQueued);
+    pumpProfileApply();
+    x.control.service();
+    x.take(ProfileResponseCode::Saved);
+}
+void test_profile_followup_expired_metadata_preserves_current_receipt() {
+    ControlFixture x;
+    x.imported();
+    copyProfileValue(x.queue, queuedProfileEnvelope(importExample()), 0);
+    x.clock.now = 120000;
+    receiveOutcome(ProfileReceiveOutcome::Expired, x.pump.service().outcome);
+    f->now = x.clock.now; // Activation and owner completion share the same fake time.
+    x.command(ProfileOperation::Apply, 2, 1, x.clock.now);
+    x.take(ProfileResponseCode::ApplyQueued);
+    pumpProfileApply();
+    x.control.service();
+    x.take(ProfileResponseCode::Saved);
+}
+void test_profile_followup_attempt_during_selected_apply_preserves_confirmation() {
+    ControlFixture x;
+    x.imported();
+    x.command(ProfileOperation::Apply, 2);
+    x.control.sourceAttempted(authority(1)); // Pending response blocks another input.
+    x.take(ProfileResponseCode::ApplyQueued);
+    x.control.sourceAttempted(authority(1)); // Selected application work still blocks.
+    pumpProfileApply();
+    x.control.service();
+    x.take(ProfileResponseCode::Saved);
+}
