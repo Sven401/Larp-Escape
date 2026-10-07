@@ -4,6 +4,8 @@
 #include "Companion/CommandReceipt.h"
 #include "Companion/CommandStream.h"
 #include "Companion/IdentityAccess.h"
+#include "Companion/PeerProofFrame.h"
+#include "Companion/PeerProofReceiver.h"
 #include "Companion/ProfileCapabilities.h"
 #include "Companion/ProfileFrames.h"
 #include "Companion/ProfileResponseSender.h"
@@ -33,6 +35,7 @@
 // Compile the actual adapter against the deterministic RTOS model.
 #include "../../lib/FreeRtosCommandFrameQueue/FreeRtosCommandFrameQueue.cpp"
 #include "../../lib/FreeRtosGameControlChannel/FreeRtosGameControlChannel.cpp"
+#include "../../lib/FreeRtosPeerProofQueue/FreeRtosPeerProofQueue.cpp"
 #include "../../lib/FreeRtosProfileFrameQueue/FreeRtosProfileFrameQueue.cpp"
 #include "../../lib/FreeRtosProfileResponseQueue/FreeRtosProfileResponseQueue.cpp"
 #include "../../lib/GattsWriteAdmission/Esp32GattsService.cpp"
@@ -41,6 +44,9 @@
 #include "../../lib/GattsWriteAdmission/FreeRtosGattsResponseQueue.cpp"
 #include "../../lib/GattsWriteAdmission/GattsWriteAdmission.cpp"
 #include "../../lib/GattsWriteAdmission/SdkGattsService.cpp"
+#if defined(LARP_REAL_PEER_CRYPTO)
+#include "../../lib/Esp32PeerProofCrypto/Esp32PeerProofCrypto.cpp"
+#endif
 #include "../../src/ProfileTool/TemporaryProfileFile.cpp"
 // Actual ESP file adapters under an isolated deterministic VFS model.
 #include "ProfileFileVfs.h"
@@ -970,6 +976,7 @@ void test_profile_capability_fixture_matches_firmware_encoder() {
 #include "GattsServiceCases.h"
 #include "GattsSourceCases.h"
 #include "IdentityRetirementCases.h"
+#include "PeerProofCases.h"
 } // namespace
 void setUp() {
     host_rtos::depth = 0;
@@ -1358,5 +1365,35 @@ int main() {
     RUN_TEST(test_lifecycle_first_time_is_not_refreshed_by_capture);
     RUN_TEST(test_lifecycle_original_live_freezes_binding_before_lock);
     RUN_TEST(test_lifecycle_payload_bounds_preparation_and_offset_retain_original_error_context);
+    RUN_TEST(test_peer_challenge_and_proof_canonical_bytes_and_decoder_destinations);
+    RUN_TEST(test_peer_fixed_frame_total_must_match_and_preserve_decoder_target);
+    RUN_TEST(test_peer_challenge_malformed_fields_preserve_decoder_target);
+    RUN_TEST(test_peer_proof_malformed_header_sequence_signature_and_extent_preserve);
+    RUN_TEST(test_peer_one_challenge_per_original_connection_and_unchanged_retry);
+    RUN_TEST(test_peer_absolute_challenge_deadline_including_verification_and_wrap);
+    RUN_TEST(test_peer_deadline_crossed_inside_actual_crypto_port_stays_consumed);
+    RUN_TEST(test_peer_conflicting_duplicate_closes_proof_without_second_crypto);
+    RUN_TEST(test_peer_old_and_wrong_origins_do_not_consume_current_attempt);
+    RUN_TEST(test_peer_reconnect_same_handle_requires_new_sequence_and_original);
+    RUN_TEST(test_peer_invalid_context_credentials_and_entropy_fail_closed);
+    RUN_TEST(test_peer_key_revocation_before_and_after_crypto_never_publishes);
+    RUN_TEST(test_peer_source_closure_before_and_after_crypto_never_publishes);
+    RUN_TEST(test_peer_signature_attempt_consumed_before_reentry_and_without_retry);
+    RUN_TEST(test_peer_issue_reentry_and_frozen_inputs_before_clock_observation);
+    RUN_TEST(test_peer_duplicate_does_not_refresh_age_or_renew_key_proof);
+    RUN_TEST(test_peer_counter_exhaustion_never_wraps_and_wrong_sequence_preserves);
+    RUN_TEST(test_peer_proof_cannot_fabricate_transport_security_or_game_master);
+    RUN_TEST(test_peer_receiver_six_actual_twenty_byte_frames_and_full_duplicate);
+    RUN_TEST(test_peer_receiver_bad_order_message_overlap_conflict_and_header);
+    RUN_TEST(test_peer_receiver_original_age_and_snapshot_freeze_before_observation);
+    RUN_TEST(test_peer_queue_four_fixed_copies_zero_wait_and_no_callback_crypto);
+    RUN_TEST(test_peer_queue_freezes_bytes_origin_and_first_timestamp);
+    RUN_TEST(test_peer_queue_old_connection_ready_loss_and_expiry_never_rebind);
+    RUN_TEST(test_peer_queue_bad_write_and_closed_port_preserve_destination);
+    RUN_TEST(test_peer_queue_receiver_reentry_cannot_take_another_item);
+#if defined(LARP_REAL_PEER_CRYPTO)
+    RUN_TEST(test_peer_actual_mbedtls_p256_independent_signature_and_bad_public_inputs);
+    RUN_TEST(test_peer_actual_crypto_owner_frames_explicit_role_and_application);
+#endif
     return UNITY_END();
 }

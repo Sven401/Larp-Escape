@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "algorithm": "ECDSA_P256_SHA256",
+  "encoding": "SEC1_uncompressed65_raw_r_s64_low_s",
+  "keyScope": "public_test_generator_never_deploy",
+  "challengeBytes": 108,
+  "proofBytes": 72,
+  "challengeKind": 9,
+  "proofKind": 10,
+  "maxAgeMilliseconds": 30000,
+  "cryptoLibrary": "cryptography",
+  "cryptoVersion": "45.0.7",
+  "transportSecurityMeasured": false,
+  "deviceMeasured": false
+}

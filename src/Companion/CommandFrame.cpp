@@ -1,4 +1,5 @@
 #include "Companion/CommandFrame.h"
+#include "Companion/PeerProofFrame.h"
 #include "Companion/ReplyFrame.h"
 #include "Companion/StatusFrame.h"
 #include <cstring>
@@ -32,6 +33,17 @@ FrameDecodeResult decodeFrame(std::uint8_t kind, std::size_t maximum, const char
     candidate.payload = bytes + CommandFrameLimits::Header;
     candidate.count = count - CommandFrameLimits::Header;
     if (!valid(candidate.message, candidate.total, candidate.offset, candidate.count, maximum))
+        return FrameDecodeResult::Invalid;
+    destination = candidate;
+    return FrameDecodeResult::Success;
+}
+FrameDecodeResult decodeFixedPeerFrame(std::uint8_t kind, std::size_t exact, const char *bytes,
+                                       std::size_t count, CommandFrame &destination) noexcept {
+    CommandFrame candidate;
+    const auto decoded = decodeFrame(kind, exact, bytes, count, candidate);
+    if (decoded != FrameDecodeResult::Success)
+        return decoded;
+    if (candidate.total != exact)
         return FrameDecodeResult::Invalid;
     destination = candidate;
     return FrameDecodeResult::Success;
@@ -87,6 +99,30 @@ bool encodeStatusFrame(std::uint16_t message, std::uint16_t total, std::uint16_t
                        std::size_t &written) noexcept {
     return encodeFrame(StatusFrameLimits::Kind, StatusFrameLimits::Document, message, total, offset,
                        payload, count, bytes, capacity, written);
+}
+FrameDecodeResult decodePeerChallengeFrame(const char *bytes, std::size_t count,
+                                           CommandFrame &out) noexcept {
+    return decodeFixedPeerFrame(PeerProofLimits::ChallengeKind, PeerProofLimits::ChallengeBytes,
+                                bytes, count, out);
+}
+FrameDecodeResult decodePeerProofFrame(const char *bytes, std::size_t count,
+                                       CommandFrame &out) noexcept {
+    return decodeFixedPeerFrame(PeerProofLimits::ProofKind, PeerProofLimits::ProofBytes, bytes,
+                                count, out);
+}
+bool encodePeerChallengeFrame(std::uint16_t message, std::uint16_t total, std::uint16_t offset,
+                              const char *payload, std::size_t count, char *bytes,
+                              std::size_t capacity, std::size_t &written) noexcept {
+    return encodeFrame(PeerProofLimits::ChallengeKind, PeerProofLimits::ChallengeBytes, message,
+                       total == PeerProofLimits::ChallengeBytes ? total : 0, offset, payload, count,
+                       bytes, capacity, written);
+}
+bool encodePeerProofFrame(std::uint16_t message, std::uint16_t total, std::uint16_t offset,
+                          const char *payload, std::size_t count, char *bytes, std::size_t capacity,
+                          std::size_t &written) noexcept {
+    return encodeFrame(PeerProofLimits::ProofKind, PeerProofLimits::ProofBytes, message,
+                       total == PeerProofLimits::ProofBytes ? total : 0, offset, payload, count,
+                       bytes, capacity, written);
 }
 } // namespace companion
 } // namespace larp

@@ -6,9 +6,12 @@
 #include <Esp32DeviceIdentityStore.h>
 #include <Esp32GattsService.h>
 #include <Esp32GattsSource.h>
+#include <Esp32PeerProofCrypto.h>
+#include <Esp32PeerProofNonce.h>
 #include <FreeRtosCommandFrameQueue.h>
 #include <FreeRtosGameControlChannel.h>
 #include <FreeRtosGattsResponseQueue.h>
+#include <FreeRtosPeerProofQueue.h>
 #include <FreeRtosProfileFrameQueue.h>
 #include <FreeRtosProfileResponseQueue.h>
 #include <GattsWriteAdmission.h>
@@ -63,6 +66,20 @@ class SyntheticResponseSubmitter : public IGattsResponseSubmitter {
 GattsResponseDispatcher responseWorker(responses, responseSubmitter);
 Esp32GattsSource sourcePort(identityPolicy, profileClock, channel, queue, profileQueue);
 FreeRtosGattsResponseQueue sourceResponses(sourcePort);
+class UnopenedPeerContext : public IPeerProofContext {
+  public:
+    bool originalLive(const PeerProofBinding &) const noexcept override {
+        return false;
+    }
+    bool credentialCurrent(const PeerCredential &) const noexcept override {
+        return false;
+    }
+} unopenedPeerContext;
+Esp32PeerProofCrypto peerCrypto;
+Esp32PeerProofNonce peerNonce;
+PeerProofOwner peerProofOwner(unopenedPeerContext, peerCrypto, peerNonce, profileClock);
+PeerProofReceiver peerProofReceiver(peerProofOwner);
+FreeRtosPeerProofQueue peerProofQueue(unopenedPeerContext, profileClock);
 SdkGattsServiceDriver serviceDriver;
 Esp32GattsService sourceService(sourcePort, sourceResponses, profileClock, serviceDriver);
 } // namespace
@@ -89,6 +106,23 @@ void setup() {
         return;
     Serial.printf("gatts_service_abi: network=false initialized=false sdk_created=false owner=%u\n",
                   unsigned(sizeof(sourceService)));
+    if (!peerProofQueue.begin() ||
+        peerProofOwner.issue(PeerProofBinding{}, PeerCredential{}) !=
+            PeerProofOutcome::InvalidContext ||
+        dispatchPeerProofFrame(peerProofQueue, peerProofReceiver).received)
+        return;
+    Serial.printf("peer_proof_abi: initialized=false owner=%u receiver=%u queue=%u item=%u\n",
+                  unsigned(sizeof(peerProofOwner)), unsigned(sizeof(peerProofReceiver)),
+                  unsigned(sizeof(peerProofQueue)), unsigned(sizeof(CopiedPeerProofFrame)));
+    PeerNonce unopenedNonce;
+    unopenedNonce[0] = 99;
+    if (peerNonce.make(unopenedNonce) || unopenedNonce[0] != 99 ||
+        peerCrypto.validKey(PeerPublicKey{}) ||
+        peerCrypto.verify(PeerPublicKey{}, PeerTranscript{}, PeerSignature{}))
+        return;
+    Serial.printf("peer_crypto_abi: initialized=false nonce_generated=false key_verified=false "
+                  "crypto=%u nonce=%u\n",
+                  unsigned(sizeof(peerCrypto)), unsigned(sizeof(peerNonce)));
     // Actual synchronized retirement port; no peer/security grant from SDK fields.
     TrustedAuthority firstClosed, replacementClosed, closed, observed;
     closed.epoch = 99;

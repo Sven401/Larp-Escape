@@ -8,3 +8,8 @@ expected="1e11ea417c83432360b7309c0d35877a884be8fa3fc8c875cc9d627ff37cf787"
 if not library.is_file() or hashlib.sha256(library.read_bytes()).hexdigest()!=expected:
     raise RuntimeError("private GATT source ABI: libbt.a differs from the reviewed pin; re-audit required")
 print("GATT source SDK binary pin: verified (isolated probe only)")
+
+crypto=framework/"tools/sdk/esp32/lib/libmbedcrypto.a"
+if not crypto.is_file() or hashlib.sha256(crypto.read_bytes()).hexdigest()!="ef9cface38ac8a137309bad2fc6bc24969fcf13ad3206f9ee9a7e4c3f6cbf887":
+    raise RuntimeError("peer proof SDK crypto binary differs; re-audit required")
+print("Peer proof SDK crypto binary pin: verified (isolated probe only)")

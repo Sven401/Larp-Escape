@@ -2,8 +2,13 @@
 
 **Stand:** 7. Oktober 2026. **Status:** fester Rechtekern gegen tatsächlichen
 Kanal/Application/Host und synthetische Firmwareprobe geprüft.
-Echte kryptografische Verifikation, Provisionierung, Pairing, persistente
-Rollen/Schlüssel und SDK-/Androidabnahme offen.
+Aktuelle Ergänzung: [Original gebundener Peer-Schlüsselnachweis v1](peer-proof-v1.md)
+prüft echte P-256/SHA256-Signaturen über einen unveränderten Challenge-/Framepfad
+und begrenzte FreeRTOS-Aufnahme. Im separaten Nativeziel393/393Fälle erfolgreich;
+Transportsecurity bleibt modelliert und GM verlangt weiterhin ausdrückliche
+Zuordnung. Provisionierung, Pairing, persistente Rollen/Schlüssel, ursprüngliche
+SDKsecurity-/Authentisierungsendpunkte und SDK-/Androidabnahme bleiben offen.
+Die nachfolgenden113/113Belege beschreiben den historischen Policy-Erstschnitt.
 
 ## Gemeinsamer Vertrag
 
