@@ -73,7 +73,8 @@ void ProfileApplication::prepareStored(bool forceSave) {
 }
 ApplicationResult ProfileApplication::begin(BootPolicy policy, FactoryProfile factory,
                                             configuration::IProfileReader *initial) {
-    if (operating_ || initialized_ || state_.phase != ApplicationPhase::Empty)
+    if (operating_ || initialized_ || profileFileBlocked() ||
+        state_.phase != ApplicationPhase::Empty)
         return busyResult();
     Guard guard(operating_);
     state_.operation = ApplicationOperation::Boot;
@@ -134,7 +135,7 @@ DraftResult ProfileApplication::writeActive(configuration::IProfileWriter &write
 ApplicationResult ProfileApplication::activateDraft(std::uint32_t draft,
                                                     std::uint32_t configuration,
                                                     std::uint32_t now) {
-    if (busy())
+    if (busy() || profileFileBlocked())
         return busyResult();
     Guard guard(operating_);
     const auto requested = controller_.activateDraft(draft, configuration, now);
@@ -149,7 +150,7 @@ ApplicationResult ProfileApplication::activateDraft(std::uint32_t draft,
 }
 ApplicationResult ProfileApplication::restoreStored(std::uint32_t draft,
                                                     std::uint32_t configuration, bool older) {
-    if (busy())
+    if (busy() || profileFileBlocked())
         return busyResult();
     Guard guard(operating_);
     if (controller_.gameRunning())
@@ -244,8 +245,37 @@ void ProfileApplication::service(std::uint32_t now) {
     if (state_.phase == ApplicationPhase::Ready && controller_.gameRunning())
         controller_.tickGame(now);
 }
+bool ProfileApplication::claimProfileFile(const integration::ApplicationProfileStaging *owner,
+                                          bool cleanup) {
+    if (!owner || busy() || gameRunning() || (fileOwner_ && fileOwner_ != owner))
+        return false;
+    if (!cleanup && (state_.phase != ApplicationPhase::Ready || fileCleanupRequired_))
+        return false;
+    fileOwner_ = owner;
+    // Set before any backend IO. An abandoned or failed operation remains fenced.
+    fileCleanupRequired_ = true;
+    return true;
+}
+bool ProfileApplication::ownsProfileFile(
+    const integration::ApplicationProfileStaging *owner) const {
+    // Import reads run inside application/controller operating guards. This
+    // ownership check deliberately permits their synchronous sealed reader.
+    return owner && fileOwner_ == owner && !gameRunning();
+}
+void ProfileApplication::releaseProfileFile(const integration::ApplicationProfileStaging *owner) {
+    if (fileOwner_ != owner)
+        return;
+    fileOwner_ = nullptr;
+    fileCleanupRequired_ = false;
+}
+void ProfileApplication::abandonProfileFile(const integration::ApplicationProfileStaging *owner) {
+    if (fileOwner_ != owner)
+        return;
+    fileOwner_ = nullptr;
+    fileCleanupRequired_ = true;
+}
 bool ProfileApplication::gameAllowed() const {
-    return !operating_ && state_.phase == ApplicationPhase::Ready &&
+    return !operating_ && !profileFileBlocked() && state_.phase == ApplicationPhase::Ready &&
            snapshot().storedMatchesActive && controller_.activation().hardwareReady;
 }
 execution::Result ProfileApplication::startGame(std::uint32_t revision, std::uint32_t now) {

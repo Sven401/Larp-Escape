@@ -362,8 +362,9 @@ void test_esp_staging_old_boot_source_discard_preserves_both_journal_names() {
 struct EspControlFixture {
     Esp32ProfileStore mount;
     Esp32ProfileStagingStore file{mount};
+    larp::integration::ApplicationProfileStaging guarded{f->application, file};
     ImportClock clock;
-    ProfileStaging source{file, f->channel, clock};
+    ProfileStaging source{guarded, f->channel, clock};
     ProfileTransferControl control{f->application, f->channel, source, clock};
     FreeRtosProfileFrameQueue queue{f->channel.actual};
     ProfileFramePump pump{queue, source, clock, &control};

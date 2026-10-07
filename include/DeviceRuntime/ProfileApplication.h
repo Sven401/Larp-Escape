@@ -1,6 +1,9 @@
 #pragma once
 #include "DeviceRuntime/ProfileJournal.h"
 namespace larp {
+namespace integration {
+class ApplicationProfileStaging;
+}
 namespace devices {
 enum class ApplicationPhase : std::uint8_t {
     Empty,
@@ -66,6 +69,10 @@ class ProfileApplication {
                                     bool older = false);
     void service(std::uint32_t now);
     bool busy() const;
+    // Trusted owner fact, not a wire capability or a cross-task lock.
+    bool profileFileBlocked() const noexcept {
+        return fileOwner_ || fileCleanupRequired_;
+    }
     execution::ExecutionSnapshot execution() const {
         return controller_.execution();
     }
@@ -98,6 +105,13 @@ class ProfileApplication {
                                      std::uint32_t expectedStateRevision, std::uint32_t now);
 
   private:
+    friend class integration::ApplicationProfileStaging;
+    bool claimProfileFile(const integration::ApplicationProfileStaging *owner, bool cleanup);
+    bool ownsProfileFile(const integration::ApplicationProfileStaging *owner) const;
+    void releaseProfileFile(const integration::ApplicationProfileStaging *owner);
+    void abandonProfileFile(const integration::ApplicationProfileStaging *owner);
+    const integration::ApplicationProfileStaging *fileOwner_ = nullptr;
+    bool fileCleanupRequired_ = false;
     ProfileController controller_;
     ProfileJournal journal_;
     ApplicationSnapshot state_;

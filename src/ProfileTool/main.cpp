@@ -43,6 +43,8 @@ class FileReader : public larp::configuration::IProfileReader {
 };
 } // namespace
 int main(int argc, char **argv) {
+    if (argc == 3 && std::strcmp(argv[1], "--file-owner-probe") == 0)
+        return runApplicationFileProbe(argv[2]);
     if (argc == 5 && std::strcmp(argv[1], "--profile-control") == 0)
         return runProfileControl(argv[2], argv[3], argv[4]);
     if (argc == 3 && std::strcmp(argv[1], "--device-identity") == 0) {
@@ -120,7 +122,7 @@ int main(int argc, char **argv) {
             std::fputs("Usage: profile-tools --device-identity HEX32 | --capabilities | "
                        "--frame-command FILE | --profile-envelope FILE DRAFT_REV CONFIG_REV | "
                        "--frame-profile FILE DRAFT_REV CONFIG_REV [VALUE_BYTES] | "
-                       "--receive-profile FRAMES | "
+                       "--receive-profile FRAMES | --file-owner-probe JOURNAL_DIR | "
                        "[--summary | "
                        "--preview SCRIPT "
                        "| --play SCRIPT | "

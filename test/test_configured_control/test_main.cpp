@@ -10,6 +10,7 @@
 #include "Companion/ProfileStaging.h"
 #include "Companion/ReplyFrameSender.h"
 #include "Companion/StatusFrameSender.h"
+#include "CompanionIntegration/ApplicationProfileStaging.h"
 #include "CompanionIntegration/GameControl.h"
 #include "CompanionIntegration/ProfileApply.h"
 #include "CompanionIntegration/ProfileImport.h"
@@ -954,6 +955,8 @@ void test_profile_capability_fixture_matches_firmware_encoder() {
 #include "ProfileFileCases.h"
 // Persistent public labels reuse policy and actual NVS adapter helpers.
 #include "DeviceIdentityStoreCases.h"
+// Application file ownership uses actual ESP/source/control helpers above.
+#include "ApplicationProfileStagingCases.h"
 } // namespace
 void setUp() {
     host_rtos::depth = 0;
@@ -1247,5 +1250,23 @@ int main() {
     RUN_TEST(test_device_identity_actual_nvs_freezes_record_and_serializes_other_instance);
     RUN_TEST(test_device_identity_startup_entropy_call_order_and_zero_target_preservation);
     RUN_TEST(test_public_device_identity_persistence_never_opens_game_authority);
+    RUN_TEST(test_application_file_owner_spans_receive_seal_read_and_cleanup);
+    RUN_TEST(test_application_file_running_refuses_all_backend_io_preserves_game);
+    RUN_TEST(test_application_file_empty_or_pending_refuses_collection);
+    RUN_TEST(test_application_file_foreign_bridge_cannot_steal_or_release_owner);
+    RUN_TEST(test_application_file_invalid_bounds_no_io_or_accidental_release);
+    RUN_TEST(test_application_file_backend_failure_keeps_start_fence_until_cleanup);
+    RUN_TEST(test_application_file_failed_discard_quarantine_survives_address_reuse);
+    RUN_TEST(test_application_file_abandoned_source_needs_explicit_cleanup_not_new_begin);
+    RUN_TEST(test_application_file_gate_precedes_every_external_call_and_freezes_append);
+    RUN_TEST(test_application_file_invalid_reader_status_preserves_target_and_fences);
+    RUN_TEST(test_application_file_actual_esp_receiving_blocks_gm_start_then_abort_releases);
+    RUN_TEST(test_application_file_actual_esp_running_metadata_does_no_vfs_work);
+    RUN_TEST(test_application_file_revoke_or_expiry_failed_cleanup_keeps_start_fence);
+    RUN_TEST(test_application_file_actual_import_reads_inside_operating_guards);
+    RUN_TEST(test_application_file_finish_cleanup_failure_never_grants_apply_or_start);
+    RUN_TEST(test_application_file_actual_esp_cleanup_quarantine_observation);
+    RUN_TEST(test_application_file_import_revoke_cleans_inside_application_guard);
+    RUN_TEST(test_application_file_startup_cleanup_blocks_nested_boot_and_preserves_quarantine);
     return UNITY_END();
 }

@@ -1,8 +1,10 @@
 #include "Activation.h"
+#include "CompanionIntegration/ApplicationProfileStaging.h"
 #include "DeviceRuntime/OwnerConfiguration.h"
 #include "DeviceRuntime/ProfileApplication.h"
 #include "DeviceRuntime/ProfileController.h"
 #include "DeviceRuntime/ProfileJournal.h"
+#include "TemporaryProfileFile.h"
 #include <cerrno>
 #include <cstdio>
 #include <io.h>
@@ -40,7 +42,9 @@ struct Worker {
 };
 class Owners : public IChannel, public IControlChannel {
   public:
-    Owners() : workers_{{&nfc_, &i2c_, &audio_, &led_, &peer_}} {}
+    explicit Owners(bool trace = true) : workers_{{&nfc_, &i2c_, &audio_, &led_, &peer_}} {
+        trace_ = trace;
+    }
     bool send(Owner owner, const Command &command) noexcept override {
         const unsigned index = static_cast<unsigned>(owner);
         return index < workers_.size() && workers_[index]->running &&
@@ -113,34 +117,37 @@ class Owners : public IChannel, public IControlChannel {
                 reply.outcome = applied ? ControlOutcome::Applied : ControlOutcome::Rejected;
                 if (!controlReplies_.push(reply))
                     ++dropped_;
-                std::printf(
-                    "{\"event\":\"owner_control\",\"kind\":\"%s\",\"owner\":\"%s\","
-                    "\"generation\":%lu,\"sequence\":%lu,\"component\":%u,\"pin0\":%u,"
-                    "\"ledCount\":%u,\"bus\":%u,\"address\":%u,\"volume\":%u,\"baud\":%lu,"
-                    "\"applied\":%s}\n",
-                    controlKindName(control.ticket.kind), ownerName(worker->owner),
-                    static_cast<unsigned long>(control.ticket.generation),
-                    static_cast<unsigned long>(control.ticket.sequence),
-                    static_cast<unsigned>(control.ticket.kind == ControlKind::Component
-                                              ? control.component.id.value
-                                              : 0),
-                    static_cast<unsigned>(control.ticket.kind == ControlKind::Component
-                                              ? control.component.pins[0]
-                                              : 255),
-                    static_cast<unsigned>(control.ticket.kind == ControlKind::Component
-                                              ? control.component.ledCount
-                                              : 0),
-                    static_cast<unsigned>(
-                        control.ticket.kind == ControlKind::Component ? control.component.bus : 0),
-                    static_cast<unsigned>(control.ticket.kind == ControlKind::Component
-                                              ? control.component.address
-                                              : 0),
-                    static_cast<unsigned>(control.ticket.kind == ControlKind::Component
-                                              ? control.component.volume
-                                              : 0),
-                    static_cast<unsigned long>(
-                        control.ticket.kind == ControlKind::Component ? control.component.baud : 0),
-                    applied ? "true" : "false");
+                if (trace_)
+                    std::printf(
+                        "{\"event\":\"owner_control\",\"kind\":\"%s\",\"owner\":\"%s\","
+                        "\"generation\":%lu,\"sequence\":%lu,\"component\":%u,\"pin0\":%u,"
+                        "\"ledCount\":%u,\"bus\":%u,\"address\":%u,\"volume\":%u,\"baud\":%lu,"
+                        "\"applied\":%s}\n",
+                        controlKindName(control.ticket.kind), ownerName(worker->owner),
+                        static_cast<unsigned long>(control.ticket.generation),
+                        static_cast<unsigned long>(control.ticket.sequence),
+                        static_cast<unsigned>(control.ticket.kind == ControlKind::Component
+                                                  ? control.component.id.value
+                                                  : 0),
+                        static_cast<unsigned>(control.ticket.kind == ControlKind::Component
+                                                  ? control.component.pins[0]
+                                                  : 255),
+                        static_cast<unsigned>(control.ticket.kind == ControlKind::Component
+                                                  ? control.component.ledCount
+                                                  : 0),
+                        static_cast<unsigned>(control.ticket.kind == ControlKind::Component
+                                                  ? control.component.bus
+                                                  : 0),
+                        static_cast<unsigned>(control.ticket.kind == ControlKind::Component
+                                                  ? control.component.address
+                                                  : 0),
+                        static_cast<unsigned>(control.ticket.kind == ControlKind::Component
+                                                  ? control.component.volume
+                                                  : 0),
+                        static_cast<unsigned long>(control.ticket.kind == ControlKind::Component
+                                                       ? control.component.baud
+                                                       : 0),
+                        applied ? "true" : "false");
             }
             if (!worker->running)
                 continue;
@@ -175,7 +182,7 @@ class Owners : public IChannel, public IControlChannel {
     Fifo<Reply, ChannelLimits::Replies> replies_;
     Fifo<ControlReply, ChannelLimits::Owners> controlReplies_;
     std::uint32_t cancelled_ = 0, dropped_ = 0;
-    bool processing_ = false;
+    bool processing_ = false, trace_ = true;
     void complete(Worker &worker, const Command &command, std::uint32_t now, bool cancelled) {
         const auto *component = worker.settings.find(command.ticket.component);
         const bool available =
@@ -584,4 +591,86 @@ int runActivation(const char *initialPath, bool hintFactory, const char *candida
             return 1;
     }
     return std::fflush(stdout) == 0 ? 0 : 1;
+}
+
+int runApplicationFileProbe(const char *directory) {
+    using larp::integration::ApplicationProfileStaging;
+    // This command uses the existing native journal backend and synthetic owners.
+    // One deliberate cleanup failure models uncertainty, never device power loss.
+    class CleanupFault : public larp::companion::IProfileStagingStore {
+      public:
+        TemporaryProfileFile file;
+        bool reject = false;
+        unsigned io = 0;
+        bool begin(std::uint32_t bytes) noexcept override {
+            ++io;
+            return file.begin(bytes);
+        }
+        bool append(const char *bytes, std::size_t count) noexcept override {
+            ++io;
+            return file.append(bytes, count);
+        }
+        bool seal() noexcept override {
+            ++io;
+            return file.seal();
+        }
+        bool discard() noexcept override {
+            ++io;
+            return !reject && file.discard();
+        }
+        ReadStatus readByte(std::uint8_t &byte) override {
+            ++io;
+            return file.readByte(byte);
+        }
+    } backend;
+    std::unique_ptr<Owners> owners(new Owners(false));
+    NativeJournalStore journal(directory);
+    std::unique_ptr<ProfileApplication> app(new ProfileApplication(*owners, *owners, journal));
+    if (!app->begin())
+        return 1;
+    std::uint32_t now = 0;
+    for (unsigned step = 0; step < 256 && app->busy(); ++step) {
+        owners->pump(++now);
+        app->service(now);
+    }
+    if (!configured(*app))
+        return 1;
+    const auto revision = app->activation().configurationRevision;
+    bool blocked = false, failed = false, abandoned = false, newBegin = true, started = false;
+    {
+        ApplicationProfileStaging file(*app, backend);
+        if (!file.discard() || !file.begin(1))
+            return 1;
+        blocked = !app->startGame(revision, ++now);
+        std::uint8_t byte = 0;
+        if (!file.append("x", 1) || !file.seal() || file.readByte(byte) != ReadStatus::Byte ||
+            byte != 'x' || file.readByte(byte) != ReadStatus::End)
+            return 1;
+        backend.reject = true;
+        if (file.discard())
+            return 1;
+        failed = !app->startGame(revision, ++now);
+    }
+    abandoned = !app->startGame(revision, ++now);
+    ApplicationProfileStaging replacement(*app, backend);
+    newBegin = replacement.begin(1);
+    backend.reject = false;
+    if (newBegin || !replacement.discard())
+        return 1;
+    started = static_cast<bool>(app->startGame(revision, ++now));
+    const auto before = backend.io;
+    if (replacement.begin(1) || replacement.discard())
+        return 1;
+    const auto runningIo = backend.io - before;
+    if (!blocked || !failed || !abandoned || newBegin || !started || runningIo ||
+        app->profileFileBlocked())
+        return 1;
+    const auto count = std::printf(
+        "{\"scope\":\"host_application_file_owner\",\"temporarySource\":\"actual_host_file\","
+        "\"journalStorage\":\"host_file\",\"blockedBeforeCleanup\":true,\"failedCleanupBlocked\":"
+        "true,"
+        "\"abandonBlocked\":true,\"newBeginBeforeCleanup\":false,\"cleanedStart\":true,"
+        "\"runningIoCalls\":%u,\"profileImportExecuted\":false,\"radioMeasured\":false}\n",
+        runningIo);
+    return count > 0 && std::fflush(stdout) == 0 ? 0 : 1;
 }

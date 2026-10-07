@@ -5,6 +5,7 @@
 #include "Companion/IdentityAccess.h"
 #include "Companion/ReplyFrameSender.h"
 #include "Companion/StatusFrameSender.h"
+#include "CompanionIntegration/ApplicationProfileStaging.h"
 #include "CompanionIntegration/GameControl.h"
 #include "DeviceRuntime/OwnerConfiguration.h"
 #include "DeviceRuntime/ProfileApplication.h"
@@ -31,6 +32,8 @@ larp::companion::DeviceIdentityOwner publicIdentity(publicIdentityStore, identit
 Esp32ProfileStore persistentStore;
 Esp32ProfileStagingStore temporarySource(persistentStore);
 ProfileApplication runtime(channel, channel, persistentStore);
+larp::integration::ApplicationProfileStaging guardedSource(runtime, temporarySource);
+bool sourceChecked = false;
 larp::companion::FreeRtosGameControlChannel companionChannel;
 larp::companion::IdentityAccess identityAccess(companionChannel);
 larp::companion::BoundConnection probeConnection;
@@ -269,20 +272,6 @@ void setup() {
         Serial.println("profile_runtime_probe: storage mount failed; no format; stopped");
         return;
     }
-    // Dedicated disposable source only; no journal/profile import or RF here.
-    std::uint8_t temporaryByte = 0;
-    const bool temporaryGood =
-        temporarySource.discard() && temporarySource.begin(1) && temporarySource.append("x", 1) &&
-        temporarySource.seal() && temporarySource.readByte(temporaryByte) == ReadStatus::Byte &&
-        temporaryByte == 'x' && temporarySource.readByte(temporaryByte) == ReadStatus::End;
-    const bool temporaryClosed = temporarySource.discard();
-    if (!temporaryGood || !temporaryClosed) {
-        Serial.println("profile_runtime_probe: temporary source failed; no format; stopped");
-        return;
-    }
-    Serial.printf("temporary_source_probe: synthetic=true network=false bytes=%u imported=false "
-                  "saved=false\n",
-                  unsigned(sizeof(temporarySource)));
     const auto begun = runtime.begin();
     if (!begun || !channel.begin() || !companionChannel.begin() || !frameQueue.begin() ||
         !gameControl.begin(bootIdentity)) {
@@ -356,6 +345,25 @@ void loop() {
                       applicationOutcomeName(application.outcome));
         ready = false;
         return;
+    }
+    if (!sourceChecked && application.phase == ApplicationPhase::Ready) {
+        // Same application actor, after confirmed Ready and before any GM start.
+        std::uint8_t byte = 0;
+        const bool good = guardedSource.discard() && guardedSource.begin(1) &&
+                          !runtime.startGame(activation.configurationRevision, now) &&
+                          guardedSource.append("x", 1) && guardedSource.seal() &&
+                          guardedSource.readByte(byte) == ReadStatus::Byte && byte == 'x' &&
+                          guardedSource.readByte(byte) == ReadStatus::End;
+        const bool closed = guardedSource.discard();
+        if (!good || !closed || runtime.profileFileBlocked()) {
+            Serial.println("profile_runtime_probe: source owner check failed; stopped");
+            ready = false;
+            return;
+        }
+        sourceChecked = true;
+        Serial.printf("temporary_source_probe: synthetic=true network=false bytes=%u "
+                      "owner_bytes=%u imported=false saved=false start_guarded=true\n",
+                      unsigned(sizeof(temporarySource)), unsigned(sizeof(guardedSource)));
     }
     if (!switchRequested && activation.hardwareReady && runtime.gameRunning() &&
         static_cast<std::uint32_t>(now - boot) >= 10000) {
