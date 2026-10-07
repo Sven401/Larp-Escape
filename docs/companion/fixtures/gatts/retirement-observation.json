@@ -1,0 +1,1 @@
+{"scope":"host_identity_retirement","oldConnectionToken":2,"oldAuthorityEpoch":3,"replacementEpoch":4,"currentEpoch":4,"closeOutcome":"authority_unavailable","oldOwnerRetired":true,"newOwnerExecuted":true,"replyPrincipal":99,"replyEpoch":4,"statusEpoch":4,"lease":3,"rfInitialized":false,"sdkOriginProven":false}

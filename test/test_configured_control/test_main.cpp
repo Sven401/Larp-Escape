@@ -959,6 +959,7 @@ void test_profile_capability_fixture_matches_firmware_encoder() {
 // Application file ownership uses actual ESP/source/control helpers above.
 #include "ApplicationProfileStagingCases.h"
 #include "GattsResponseQueueCases.h"
+#include "IdentityRetirementCases.h"
 } // namespace
 void setUp() {
     host_rtos::depth = 0;
@@ -1292,5 +1293,18 @@ int main() {
     RUN_TEST(test_gatts_response_queue_all_sdk_statuses_and_zero_transaction_are_bounded);
     RUN_TEST(test_gatts_response_queue_raw_write_without_response_never_enqueues_output);
     RUN_TEST(test_gatts_response_queue_actual_input_full_is_resource_error_not_success);
+    RUN_TEST(test_identity_old_disconnect_preserves_replacement_and_actual_game_control);
+    RUN_TEST(test_identity_retired_owner_cannot_regrant_reconnect_or_reset);
+    RUN_TEST(test_identity_disconnect_uses_role_authority_not_original_connection_token);
+    RUN_TEST(test_authority_retirement_current_allocates_closed_epoch_without_wrap);
+    RUN_TEST(test_authority_retirement_full_observation_mismatch_preserves_current_and_destination);
+    RUN_TEST(test_authority_retirement_unavailable_maximum_and_grant_policy_are_separate);
+    RUN_TEST(test_authority_retirement_adapter_freezes_expected_before_lock_observation);
+    RUN_TEST(test_identity_disconnect_rechecks_replacement_at_atomic_adapter_boundary);
+    RUN_TEST(test_identity_suspended_disconnect_can_reconnect_with_fresh_original_token);
+    RUN_TEST(test_authority_retirement_uninitialized_adapter_preserves_destination);
+    RUN_TEST(test_identity_retirement_stale_copied_frame_cannot_execute_or_close_new_gm);
+    RUN_TEST(test_identity_old_security_failure_preserves_replacement_authority);
+    RUN_TEST(test_identity_old_role_revocation_preserves_replacement_authority);
     return UNITY_END();
 }

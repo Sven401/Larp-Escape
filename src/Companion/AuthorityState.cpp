@@ -51,6 +51,14 @@ AuthorityUpdate AuthorityState::advanceIfCurrent(const TrustedAuthority &expecte
     }
     return advance(principal, gameMaster, published);
 }
+AuthorityUpdate AuthorityState::closeIfCurrent(const TrustedAuthority &expected,
+                                               TrustedAuthority &published) noexcept {
+    if (!available_)
+        return AuthorityUpdate::Suspended;
+    if (!(expected == current_))
+        return AuthorityUpdate::Conflict; // Preserve the newer owner and highest epoch.
+    return advance(0, false, published);
+}
 void AuthorityState::suspend() noexcept {
     available_ = false;
 }

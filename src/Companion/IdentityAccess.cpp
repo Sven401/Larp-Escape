@@ -2,6 +2,8 @@
 namespace larp {
 namespace companion {
 IdentityAccessOutcome IdentityAccess::begin(const Identity &device) noexcept {
+    if (authorityRetired_)
+        return IdentityAccessOutcome::AuthorityUnavailable;
     if (fenced_)
         return IdentityAccessOutcome::InvalidIdentity;
     if (!device.valid() || (initialized_ && !(device == device_))) {
@@ -23,7 +25,8 @@ bool IdentityAccess::deviceIdentity(Identity &destination) const noexcept {
     return true;
 }
 bool IdentityAccess::matches(const BoundConnection &connection) const noexcept {
-    return initialized_ && !fenced_ && connected_ && connection.token && connection == connection_;
+    return initialized_ && !fenced_ && !authorityRetired_ && connected_ && connection.token &&
+           connection == connection_;
 }
 std::uint32_t IdentityAccess::assignedPrincipal(const Identity &peer) const noexcept {
     for (const auto &assignment : assignments_)
@@ -34,11 +37,16 @@ std::uint32_t IdentityAccess::assignedPrincipal(const Identity &peer) const noex
 bool IdentityAccess::publish(std::uint32_t principal, bool gm, bool requireOriginal) noexcept {
     const auto expected = current_;
     current_ = {};
+    const bool retiring = connected_ && !principal && !gm && !requireOriginal;
     const auto result =
-        requireOriginal ? authority_.advanceAuthorityIfCurrent(expected, principal, gm, current_)
-                        : authority_.advanceAuthority(principal, gm, current_);
+        retiring          ? authority_.closeAuthorityIfCurrent(expected, current_)
+        : requireOriginal ? authority_.advanceAuthorityIfCurrent(expected, principal, gm, current_)
+                          : authority_.advanceAuthority(principal, gm, current_);
     if (result != AuthorityUpdate::Published) {
-        authority_.suspendAuthority();
+        if (retiring)
+            authorityRetired_ = result != AuthorityUpdate::Suspended;
+        else
+            authority_.suspendAuthority();
         verified_ = false;
         failedLink_ = true;
         return false;
@@ -47,6 +55,8 @@ bool IdentityAccess::publish(std::uint32_t principal, bool gm, bool requireOrigi
 }
 IdentityAccessOutcome IdentityAccess::connect(std::uint16_t handle,
                                               BoundConnection &destination) noexcept {
+    if (authorityRetired_)
+        return IdentityAccessOutcome::AuthorityUnavailable;
     if (!initialized_ || fenced_)
         return IdentityAccessOutcome::InvalidIdentity;
     if (connected_)
@@ -88,16 +98,30 @@ IdentityAccessOutcome IdentityAccess::authenticate(const BoundConnection &connec
     return IdentityAccessOutcome::Verified;
 }
 IdentityAccessOutcome IdentityAccess::disconnect(const BoundConnection &connection) noexcept {
-    if (!matches(connection))
+    const auto original = connection;
+    if (!matches(original))
         return IdentityAccessOutcome::StaleConnection;
+    const auto expected = current_;
+    // Drop the old local connection before any external port observation.
     connected_ = verified_ = failedLink_ = false;
     peer_ = {};
     connection_ = {};
-    return publish(0, false) ? IdentityAccessOutcome::Disconnected
-                             : IdentityAccessOutcome::AuthorityUnavailable;
+    current_ = {};
+    TrustedAuthority closed;
+    const auto result = authority_.closeAuthorityIfCurrent(expected, closed);
+    if (result == AuthorityUpdate::Published) {
+        current_ = closed;
+        return IdentityAccessOutcome::Disconnected;
+    }
+    // A suspended channel can reconnect with a fresh epoch. A different live
+    // producer retires this old owner for its lifetime; begin cannot reset it.
+    authorityRetired_ = result != AuthorityUpdate::Suspended;
+    return IdentityAccessOutcome::AuthorityUnavailable;
 }
 IdentityAccessOutcome IdentityAccess::assignGameMaster(const Identity &peer,
                                                        std::uint32_t principal) noexcept {
+    if (authorityRetired_)
+        return IdentityAccessOutcome::AuthorityUnavailable;
     if (!initialized_ || fenced_)
         return IdentityAccessOutcome::InvalidIdentity;
     if (!peer.valid() || !principal)
@@ -121,6 +145,8 @@ IdentityAccessOutcome IdentityAccess::assignGameMaster(const Identity &peer,
     return IdentityAccessOutcome::Assigned;
 }
 IdentityAccessOutcome IdentityAccess::revokeGameMaster(const Identity &peer) noexcept {
+    if (authorityRetired_)
+        return IdentityAccessOutcome::AuthorityUnavailable;
     if (!initialized_ || fenced_)
         return IdentityAccessOutcome::InvalidIdentity;
     if (!peer.valid())

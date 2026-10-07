@@ -57,6 +57,18 @@ FreeRtosGameControlChannel::advanceAuthorityIfCurrent(const TrustedAuthority &ex
     portEXIT_CRITICAL(&authorityMutex_);
     return result;
 }
+AuthorityUpdate
+FreeRtosGameControlChannel::closeAuthorityIfCurrent(const TrustedAuthority &expected,
+                                                    TrustedAuthority &published) noexcept {
+    if (!started_)
+        return AuthorityUpdate::Suspended;
+    // Freeze before the first external observation, including lock acquisition.
+    const auto original = expected;
+    portENTER_CRITICAL(&authorityMutex_);
+    const auto result = authority_.closeIfCurrent(original, published);
+    portEXIT_CRITICAL(&authorityMutex_);
+    return result;
+}
 void FreeRtosGameControlChannel::suspendAuthority() noexcept {
     portENTER_CRITICAL(&authorityMutex_);
     authority_.suspend();

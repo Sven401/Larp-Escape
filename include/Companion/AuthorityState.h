@@ -31,6 +31,11 @@ class IAuthorityPublisher {
     virtual AuthorityUpdate advanceAuthorityIfCurrent(const TrustedAuthority &expected,
                                                       std::uint32_t principal, bool gameMaster,
                                                       TrustedAuthority &published) noexcept = 0;
+    // Retire only this full original authority in one lock. A replacement is
+    // preserved on Conflict; unlike a failed grant, old retirement cannot close it.
+    // Success allocates a new closed epoch; false preserves the destination.
+    virtual AuthorityUpdate closeAuthorityIfCurrent(const TrustedAuthority &expected,
+                                                    TrustedAuthority &published) noexcept = 0;
     virtual void suspendAuthority() noexcept = 0;
     virtual bool readAuthority(TrustedAuthority &authority) const noexcept = 0;
 };
@@ -46,6 +51,8 @@ class AuthorityState {
                             TrustedAuthority &published) noexcept;
     AuthorityUpdate advanceIfCurrent(const TrustedAuthority &expected, std::uint32_t principal,
                                      bool gameMaster, TrustedAuthority &published) noexcept;
+    AuthorityUpdate closeIfCurrent(const TrustedAuthority &expected,
+                                   TrustedAuthority &published) noexcept;
     void suspend() noexcept;
     bool read(TrustedAuthority &authority) const noexcept;
     bool admits(std::uint32_t principal, std::uint32_t epoch) const noexcept;

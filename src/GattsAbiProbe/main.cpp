@@ -66,6 +66,21 @@ void setup() {
     Serial.begin(115200);
     if (!channel.begin() || !queue.begin() || !profileQueue.begin() || !responses.begin())
         return;
+    // Actual synchronized retirement port; no peer/security grant from SDK fields.
+    TrustedAuthority firstClosed, replacementClosed, closed, observed;
+    closed.epoch = 99;
+    if (channel.advanceAuthority(0, false, firstClosed) != AuthorityUpdate::Published ||
+        channel.advanceAuthority(0, false, replacementClosed) != AuthorityUpdate::Published ||
+        channel.closeAuthorityIfCurrent(firstClosed, closed) != AuthorityUpdate::Conflict ||
+        closed.epoch != 99 || !channel.readAuthority(observed) ||
+        !(observed == replacementClosed) ||
+        channel.closeAuthorityIfCurrent(replacementClosed, closed) != AuthorityUpdate::Published ||
+        closed.gameMaster || closed.principal || closed.epoch != replacementClosed.epoch + 1)
+        return;
+    Serial.printf(
+        "authority_retirement_probe: synthetic=true network=false replacement_preserved=true "
+        "closed_epoch=%u\n",
+        unsigned(closed.epoch));
     Identity device, peer;
     device.bytes[0] = 1;
     peer.bytes[0] = 2;

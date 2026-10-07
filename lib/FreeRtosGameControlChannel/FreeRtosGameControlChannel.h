@@ -23,6 +23,8 @@ class FreeRtosGameControlChannel : public IGameControlChannel,
     AuthorityUpdate advanceAuthorityIfCurrent(const TrustedAuthority &expected,
                                               std::uint32_t principal, bool gameMaster,
                                               TrustedAuthority &published) noexcept override;
+    AuthorityUpdate closeAuthorityIfCurrent(const TrustedAuthority &expected,
+                                            TrustedAuthority &published) noexcept override;
     void suspendAuthority() noexcept override;
     bool readAuthority(TrustedAuthority &authority) const noexcept override;
     bool receive(TrustedGameRequest &request) noexcept override;

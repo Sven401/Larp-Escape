@@ -52,6 +52,9 @@ class IdentityAccess {
     IdentityAccessOutcome connect(std::uint16_t handle, BoundConnection &destination) noexcept;
     IdentityAccessOutcome authenticate(const BoundConnection &connection,
                                        const VerifiedPeerEvidence &evidence) noexcept;
+    // Retire the exact cached full authority, not connection.token (role epochs
+    // advance on the same connection). A replaced producer permanently retires
+    // this old owner; it cannot revoke or reconnect over the newer owner.
     IdentityAccessOutcome disconnect(const BoundConnection &connection) noexcept;
     // Explicit trusted local-administrator operations; never an untrusted App write.
     IdentityAccessOutcome assignGameMaster(const Identity &peer, std::uint32_t principal) noexcept;
@@ -70,7 +73,7 @@ class IdentityAccess {
     BoundConnection connection_;
     TrustedAuthority current_;
     bool initialized_ = false, fenced_ = false, connected_ = false, verified_ = false,
-         failedLink_ = false;
+         failedLink_ = false, authorityRetired_ = false;
     bool matches(const BoundConnection &connection) const noexcept;
     std::uint32_t assignedPrincipal(const Identity &peer) const noexcept;
     bool publish(std::uint32_t principal, bool gm, bool requireOriginal = false) noexcept;
