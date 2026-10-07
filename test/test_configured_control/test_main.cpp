@@ -32,6 +32,7 @@
 #include "../../lib/FreeRtosGameControlChannel/FreeRtosGameControlChannel.cpp"
 #include "../../lib/FreeRtosProfileFrameQueue/FreeRtosProfileFrameQueue.cpp"
 #include "../../lib/FreeRtosProfileResponseQueue/FreeRtosProfileResponseQueue.cpp"
+#include "../../lib/GattsWriteAdmission/FreeRtosGattsConnection.cpp"
 #include "../../lib/GattsWriteAdmission/FreeRtosGattsResponseQueue.cpp"
 #include "../../lib/GattsWriteAdmission/GattsWriteAdmission.cpp"
 #include "../../src/ProfileTool/TemporaryProfileFile.cpp"
@@ -958,6 +959,7 @@ void test_profile_capability_fixture_matches_firmware_encoder() {
 #include "DeviceIdentityStoreCases.h"
 // Application file ownership uses actual ESP/source/control helpers above.
 #include "ApplicationProfileStagingCases.h"
+#include "GattsLifecycleCases.h"
 #include "GattsResponseQueueCases.h"
 #include "IdentityRetirementCases.h"
 } // namespace
@@ -1306,5 +1308,19 @@ int main() {
     RUN_TEST(test_identity_retirement_stale_copied_frame_cannot_execute_or_close_new_gm);
     RUN_TEST(test_identity_old_security_failure_preserves_replacement_authority);
     RUN_TEST(test_identity_old_role_revocation_preserves_replacement_authority);
+    RUN_TEST(test_lifecycle_closed_sdk_context_grants_no_authority_but_copies_att_error);
+    RUN_TEST(test_lifecycle_actual_frames_start_and_original_status_fixture);
+    RUN_TEST(test_lifecycle_reused_handle_rejects_original_queued_output_and_old_retirement);
+    RUN_TEST(test_lifecycle_wrong_context_and_bad_endpoints_preserve_outputs);
+    RUN_TEST(test_lifecycle_unexpected_connect_closes_old_transport_and_rights);
+    RUN_TEST(test_lifecycle_freezes_callback_bytes_before_authority_observation);
+    RUN_TEST(test_lifecycle_retirement_closes_transport_before_external_authority_observation);
+    RUN_TEST(test_lifecycle_current_role_revoke_keeps_error_response_context);
+    RUN_TEST(test_lifecycle_profile_endpoint_uses_actual_independent_queue);
+    RUN_TEST(test_lifecycle_failed_replacement_closes_transport_preserving_new_authority);
+    RUN_TEST(test_lifecycle_reentrant_callback_does_not_relabel_original);
+    RUN_TEST(test_lifecycle_first_time_is_not_refreshed_by_capture);
+    RUN_TEST(test_lifecycle_original_live_freezes_binding_before_lock);
+    RUN_TEST(test_lifecycle_payload_bounds_preparation_and_offset_retain_original_error_context);
     return UNITY_END();
 }

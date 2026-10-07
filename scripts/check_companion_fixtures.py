@@ -15,6 +15,7 @@ from check_device_identity_store import check_device_identity_store
 from check_application_file_owner import check_application_file_owner
 from check_gatts_response_queue import check_gatts_response_queue
 from check_identity_retirement import check_identity_retirement
+from check_gatts_lifecycle import check_gatts_lifecycle
 
 def decode_document_frames(lines: list[str], expected_kind: int, maximum: int) -> bytes:
     """Independent bounded assembly; no identity/authorization/delivery proof."""
@@ -567,6 +568,7 @@ def main() -> int:
         application_file_negatives = check_application_file_owner(base)
         gatts_response_negatives = check_gatts_response_queue(base)
         identity_retirement_negatives = check_identity_retirement(base, validators["status-v2.schema.json"])
+        lifecycle_negatives = check_gatts_lifecycle(base, validators["status-v2.schema.json"])
         identity_record_negatives, identity_store_negatives = check_device_identity_store(base, Draft202012Validator(identity_schema))
     except ValueError as error:
         print(f"Frame counterpart: {error}", file=sys.stderr)
@@ -598,6 +600,8 @@ def main() -> int:
     print(f"ESP staging counterpart correlates actual fixed-path adapter/model and Saved; {esp_staging_negatives} wrong observations rejected. No physical flash claim.")
 
     print(f"Followup proof counterpart requires ApplyRejected/NoReceipt on actual20-byte response; {followup_proof_negatives} stale correlations rejected.")
+
+    print(f"Callback lifecycle: {lifecycle_negatives} negative original/status correlations rejected; Host only")
 
     print(f"Identity retirement: {identity_retirement_negatives} wrong observation/status correlations rejected; Host only")
 

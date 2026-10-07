@@ -10,7 +10,7 @@
 #include <FreeRtosProfileFrameQueue.h>
 #include <FreeRtosProfileResponseQueue.h>
 #include <GattsWriteAdmission.h>
-#include <SdkGattsWrite.h>
+#include <SdkGattsLifecycle.h>
 #include <algorithm>
 namespace {
 using namespace larp::companion;
@@ -35,16 +35,14 @@ std::array<char, maxGameCommandJsonBytes> document = {};
 std::array<char, 20> frame = {};
 std::size_t length = 0, offset = 0;
 bool ready = false, queued = false;
-class SyntheticResponseContext : public IGattsResponseContext {
-  public:
-    std::uint32_t nowMilliseconds() const noexcept override {
-        return millis();
-    }
-    bool originalLive(const GattsWriteBinding &value) const noexcept override {
-        return value.connection == connection && value.interface == original.interface &&
-               value.attribute == original.attribute && value.peerAddress == original.peerAddress;
-    }
-} responseContext;
+GattsEndpoints probeEndpoints() {
+    GattsEndpoints endpoints;
+    endpoints.interface = 1;
+    endpoints.command = 0x42;
+    endpoints.profile = 0x43;
+    return endpoints;
+}
+FreeRtosGattsConnection responseContext(identityPolicy, profileClock, probeEndpoints());
 FreeRtosGattsResponseQueue responses(responseContext);
 class SyntheticResponseSubmitter : public IGattsResponseSubmitter {
   public:
@@ -87,9 +85,36 @@ void setup() {
     VerifiedPeerEvidence evidence;
     evidence.peer = peer;
     evidence.encrypted = evidence.mitm = evidence.secureConnections = evidence.bonded = true;
-    if (identityPolicy.begin(device) != IdentityAccessOutcome::Initialized ||
-        identityPolicy.connect(0, connection) != IdentityAccessOutcome::Connected ||
-        identityPolicy.authenticate(connection, evidence) != IdentityAccessOutcome::Verified ||
+    if (identityPolicy.begin(device) != IdentityAccessOutcome::Initialized)
+        return;
+    esp_ble_gatts_cb_param_t connectParameter = {};
+    connectParameter.connect.conn_id = 0;
+    connectParameter.connect.remote_bda[0] = 1;
+    connectParameter.connect.link_role = 0; // No GM/peer rights from link role.
+    connectParameter.connect.conn_handle = 99;
+    const auto connectEvent = fromSdkGattsConnect(1, connectParameter);
+    BoundConnection first;
+    GattsWriteBinding retired;
+    GattsWriteEvent selected;
+    selected.interface = 1;
+    selected.attribute = 0x42;
+    selected.peerAddress[0] = 1;
+    esp_ble_gatts_cb_param_t disconnectParameter = {};
+    disconnectParameter.disconnect.conn_id = 0;
+    disconnectParameter.disconnect.remote_bda[0] = 1;
+    if (responseContext.connectNow(connectEvent, first) != GattsLifecycleOutcome::Opened ||
+        !responseContext.captureWriteNow(selected, GattsEndpoint::Command, retired) ||
+        retired.authority.gameMaster ||
+        responseContext.disconnectNow(fromSdkGattsDisconnect(1, disconnectParameter)) !=
+            GattsLifecycleOutcome::Closed ||
+        responseContext.connectNow(connectEvent, connection) != GattsLifecycleOutcome::Opened ||
+        connection.token <= first.token || responseContext.originalLive(retired) ||
+        responseContext.retireOriginal(retired) != GattsLifecycleOutcome::Ignored)
+        return;
+    Serial.printf("gatts_lifecycle_probe: synthetic=true network=false original_token=%u "
+                  "reconnected_token=%u sdk_ordering_proven=false\n",
+                  unsigned(first.token), unsigned(connection.token));
+    if (identityPolicy.authenticate(connection, evidence) != IdentityAccessOutcome::Verified ||
         identityPolicy.assignGameMaster(peer, 7) != IdentityAccessOutcome::Assigned ||
         !identityPolicy.route(connection, original.authority))
         return;
@@ -160,15 +185,15 @@ void setup() {
     esp_ble_gatts_cb_param_t profileParameter = {};
     profileParameter.write.conn_id = original.connection.handle;
     profileParameter.write.trans_id = 18;
-    profileParameter.write.handle = original.attribute;
+    profileParameter.write.handle = 0x43;
     profileParameter.write.len = profileWritten;
     profileParameter.write.value = reinterpret_cast<std::uint8_t *>(profileValue);
     profileParameter.write.need_rsp = true;
     for (std::size_t i = 0; i < original.peerAddress.size(); ++i)
         profileParameter.write.bda[i] = original.peerAddress[i];
     const auto profileEvent = fromSdkGattsWrite(original.interface, profileParameter);
-    const auto profileAdmitted =
-        admitGattsProfileWrite(profileEvent, original, channel, profileQueue, responses, millis());
+    const auto profileAdmitted = admitOriginalGattsProfileWrite(
+        profileEvent, responseContext, channel, profileQueue, responses, millis());
     if (profileAdmitted.outcome != GattsWriteOutcome::Copied ||
         profileAdmitted.status != AttWriteStatus::Ok || !profileQueue.take(profileCopy) ||
         responseWorker.service() != GattsResponseDispatch::Submitted)
@@ -221,7 +246,8 @@ void loop() {
     for (std::size_t i = 0; i < original.peerAddress.size(); ++i)
         parameter.write.bda[i] = original.peerAddress[i];
     const auto event = fromSdkGattsWrite(original.interface, parameter);
-    const auto admitted = admitGattsWrite(event, original, channel, queue, responses, now);
+    const auto admitted =
+        admitOriginalGattsWrite(event, responseContext, channel, queue, responses, now);
     if (admitted.outcome != GattsWriteOutcome::Copied) {
         ready = false;
         return;
