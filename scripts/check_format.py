@@ -73,6 +73,8 @@ ADAPTER_FILES = (
     "lib/FreeRtosProfileFrameQueue/FreeRtosProfileFrameQueue.cpp",
     "lib/FreeRtosCommandFrameQueue/FreeRtosCommandFrameQueue.h",
     "lib/FreeRtosCommandFrameQueue/FreeRtosCommandFrameQueue.cpp",
+    "lib/FreeRtosPeerChallengeReadRuntime/FreeRtosPeerChallengeReadRuntime.h",
+    "lib/FreeRtosPeerChallengeReadRuntime/FreeRtosPeerChallengeReadRuntime.cpp",
     "lib/FreeRtosPeerProofQueue/FreeRtosPeerProofQueue.h",
     "lib/FreeRtosPeerProofQueue/FreeRtosPeerProofQueue.cpp",
     "lib/Esp32PeerProofCrypto/Esp32PeerProofNonce.h",

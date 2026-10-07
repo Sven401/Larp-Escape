@@ -7,8 +7,10 @@ using esp_gatt_status_t = int;
 using esp_gatt_perm_t = std::uint16_t;
 using esp_gatt_char_prop_t = std::uint8_t;
 constexpr int ESP_GATT_OK = 0;
-constexpr std::uint16_t ESP_UUID_LEN_128 = 16, ESP_GATT_PERM_WRITE_ENC_MITM = 64;
-constexpr std::uint8_t ESP_GATT_CHAR_PROP_BIT_WRITE = 8, ESP_GATT_RSP_BY_APP = 0;
+constexpr std::uint16_t ESP_UUID_LEN_128 = 16, ESP_GATT_PERM_WRITE_ENC_MITM = 64,
+                        ESP_GATT_PERM_READ_ENC_MITM = 4;
+constexpr std::uint8_t ESP_GATT_CHAR_PROP_BIT_READ = 2, ESP_GATT_CHAR_PROP_BIT_WRITE = 8,
+                       ESP_GATT_RSP_BY_APP = 0;
 struct esp_bt_uuid_t {
     std::uint16_t len;
     union {

@@ -63,6 +63,9 @@ struct Callbacks {
 };
 static_assert(sizeof(bool) == 1 && sizeof(Uuid) == 20 && offsetof(Uuid, uu) == 4,
               "source scalar/UUID ABI");
+static_assert(sizeof(Read) == 6 && offsetof(Read, handle) == 0 && offsetof(Read, offset) == 2 &&
+                  offsetof(Read, isLong) == 4 && offsetof(Read, needResponse) == 5,
+              "source read ABI");
 static_assert(sizeof(Write) == 608 && sizeof(Request) == 608 && offsetof(Write, value) == 6 &&
                   offsetof(Write, needResponse) == 606 && offsetof(Write, prepared) == 607,
               "source write ABI");

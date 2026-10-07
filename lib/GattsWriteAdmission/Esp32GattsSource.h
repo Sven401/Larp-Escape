@@ -1,4 +1,5 @@
 #pragma once
+#include "Companion/PeerChallengeRead.h"
 #include "Companion/PeerLinkSecurity.h"
 #include "Companion/PeerProof.h"
 #include "Companion/PeerProofGrant.h"
@@ -29,8 +30,8 @@ class Esp32GattsSource : public IGattsResponseContext,
     // Registration wrapper on the actual BTU source task, before any link.
     bool registeredSourceNow(std::uint8_t interface) noexcept;
     bool readRegistration(GattsSourceRegistration &) const noexcept;
-    GattsEndpointSetupPost postEndpointSetup(const GattsEndpointSetup &,
-                                             IWriteResponseBearer &) noexcept;
+    GattsEndpointSetupPost postEndpointSetup(const GattsEndpointSetup &, IWriteResponseBearer &,
+                                             const PeerChallengeReadSetup & = {}) noexcept;
     GattsEndpointSetupState endpointSetupState(const GattsEndpointSetup &) const noexcept;
     // Trusted sole registry worker, copied original before deferring to BTU.
     bool readPeerRoleOrigin(const Identity &, PeerRegistryActorOrigin &) const noexcept;
@@ -73,6 +74,10 @@ class Esp32GattsSource : public IGattsResponseContext,
     // No raw SDK pointer or event without its original binding is queued.
     bool requestNow(std::uint16_t packedConnection, std::uint32_t transaction, std::uint8_t type,
                     const sdk446::Request *) noexcept;
+    bool configureChallengeReadNow(std::uint16_t, IPeerChallengeReadIngress &) noexcept;
+    bool challengeReadCurrent(const PeerChallengeReadRequest &) const noexcept;
+    bool challengeReadProducerNow(const PeerChallengeReadRequest &) const noexcept;
+    bool postChallengeReadReply(const PeerChallengeReadReply &) noexcept;
     bool originalLive(const GattsWriteBinding &) const noexcept override;
     std::uint32_t nowMilliseconds() const noexcept override {
         return clock_.nowMilliseconds();
@@ -88,6 +93,7 @@ class Esp32GattsSource : public IGattsResponseContext,
     struct SetupPending {
         GattsEndpointSetup value;
         IWriteResponseBearer *responses = nullptr;
+        PeerChallengeReadSetup challenge;
         std::uint8_t state = 0; // 0 unused, 1 queued, 2 consuming, 3 installed, 4 rejected
     } setup_;
     struct RolePending {
@@ -102,6 +108,16 @@ class Esp32GattsSource : public IGattsResponseContext,
         std::uint32_t postToken = 0;
         std::uint8_t state = 0;
     } grant_;
+    struct ChallengePending {
+        PeerChallengeReadReply value;
+        std::uint32_t token = 0;
+        std::uint8_t state = 0;
+    } challengePending_;
+    std::uint16_t challengeAttribute_ = 0;
+    IPeerChallengeReadIngress *challengeIngress_ = nullptr;
+    bool challengePosting_ = false;
+    bool validChallengeReply(const PeerChallengeReadReply &) const noexcept;
+    static void sendChallengeReply(void *) noexcept;
     BootIdentity proofBoot_;
     const IPeerProofContext *proofContext_ = nullptr;
     TaskHandle_t proofWorker_ = nullptr;

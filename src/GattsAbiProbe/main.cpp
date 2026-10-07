@@ -13,6 +13,7 @@
 #include <FreeRtosCommandFrameQueue.h>
 #include <FreeRtosGameControlChannel.h>
 #include <FreeRtosGattsResponseQueue.h>
+#include <FreeRtosPeerChallengeReadRuntime.h>
 #include <FreeRtosPeerProofGrantRuntime.h>
 #include <FreeRtosPeerProofQueue.h>
 #include <FreeRtosPeerRegistryRuntime.h>
@@ -91,8 +92,18 @@ PeerRegistryOwner unopenedRegistry(unopenedPeerStore, peerCrypto, unopenedRegist
 PeerProofOwner peerProofOwner(unopenedPeerContext, peerCrypto, peerNonce, profileClock);
 PeerProofReceiver peerProofReceiver(peerProofOwner);
 FreeRtosPeerProofQueue peerProofQueue(unopenedPeerContext, profileClock);
+FreeRtosPeerChallengeReadRuntime challengeReader(sourcePort, peerProofOwner, unopenedProofGrant,
+                                                 profileClock);
 SdkGattsServiceDriver serviceDriver;
-Esp32GattsService sourceService(sourcePort, sourceResponses, profileClock, serviceDriver);
+PeerChallengeReadSetup unopenedChallengeSetup() {
+    PeerChallengeReadSetup setup;
+    setup.boot.high = 1; // Synthetic immutable boot, no identity or authority.
+    setup.context = &unopenedPeerContext;
+    setup.ingress = &challengeReader;
+    return setup;
+}
+Esp32GattsService sourceService(sourcePort, sourceResponses, profileClock, serviceDriver,
+                                unopenedChallengeSetup());
 } // namespace
 void setup() {
     Serial.begin(115200);
@@ -148,6 +159,13 @@ void setup() {
     Serial.printf("peer_proof_abi: initialized=false owner=%u receiver=%u queue=%u item=%u\n",
                   unsigned(sizeof(peerProofOwner)), unsigned(sizeof(peerProofReceiver)),
                   unsigned(sizeof(peerProofQueue)), unsigned(sizeof(CopiedPeerProofFrame)));
+    if (challengeReader.beginWorker() ||
+        challengeReader.service() != PeerChallengeReadDispatch::Unavailable ||
+        challengeReader.copyRead(PeerChallengeReadRequest{}) ||
+        sourcePort.postChallengeReadReply(PeerChallengeReadReply{}))
+        return;
+    Serial.printf("peer_challenge_read_abi: initialized=false delivered=false runtime=%u item=%u\n",
+                  unsigned(sizeof(challengeReader)), unsigned(sizeof(PeerChallengeReadReply)));
     PeerNonce unopenedNonce;
     unopenedNonce[0] = 99;
     if (peerNonce.make(unopenedNonce) || unopenedNonce[0] != 99 ||

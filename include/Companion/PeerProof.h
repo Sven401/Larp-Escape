@@ -39,6 +39,12 @@ struct PeerChallenge {
     std::uint32_t sequence = 0;
     PeerNonce nonce = {};
 };
+// Sole-worker export; preserves the original absolute challenge deadline.
+struct PeerChallengeSnapshot {
+    PeerChallenge challenge;
+    PeerCredential credential;
+    std::uint32_t issuedAt = 0;
+};
 struct PeerProof {
     std::uint32_t sequence = 0;
     PeerSignature signature = {};
@@ -104,6 +110,7 @@ class PeerProofOwner {
     PeerProofOwner &operator=(const PeerProofOwner &) = delete;
     PeerProofOutcome issue(const PeerProofBinding &, const PeerCredential &) noexcept;
     bool challenge(const PeerProofBinding &, PeerChallenge &) noexcept;
+    bool challengeSnapshot(const PeerProofBinding &, PeerChallengeSnapshot &) noexcept;
     PeerProofOutcome verify(const PeerProofBinding &, const PeerProof &) noexcept;
     bool readVerified(const PeerProofBinding &, VerifiedPeerProof &) noexcept;
 

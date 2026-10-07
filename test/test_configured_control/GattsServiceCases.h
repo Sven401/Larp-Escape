@@ -20,8 +20,9 @@ struct GattsServiceFixture {
     Esp32GattsSource source{identity, clock, f->channel.actual, commands, profiles};
     FreeRtosGattsResponseQueue responses{source};
     SdkGattsServiceDriver driver;
-    Esp32GattsService owner{source, responses, clock, driver};
-    GattsServiceFixture() {
+    Esp32GattsService owner;
+    explicit GattsServiceFixture(const PeerChallengeReadSetup &challenge = {})
+        : owner(source, responses, clock, driver, challenge) {
         host_sdk_source::reset();
         host_service_sdk::reset();
         btu_thread = reinterpret_cast<void *>(2);

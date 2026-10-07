@@ -11,7 +11,8 @@ enum class GattsServicePhase : std::uint8_t {
     Installing,
     Starting,
     Ready,
-    Failed
+    Failed,
+    Challenge
 };
 enum class GattsServiceCopy : std::uint8_t { Copied, Ignored, Unavailable, Overflow };
 struct GattsServiceSnapshot {
@@ -24,8 +25,10 @@ struct GattsServiceSnapshot {
 class Esp32GattsService {
   public:
     Esp32GattsService(Esp32GattsSource &source, IWriteResponseBearer &responses,
-                      const IProfileImportClock &clock, SdkGattsServiceDriver &driver)
-        : source_(source), responses_(responses), clock_(clock), driver_(driver) {}
+                      const IProfileImportClock &clock, SdkGattsServiceDriver &driver,
+                      const PeerChallengeReadSetup &challenge = {})
+        : source_(source), responses_(responses), clock_(clock), driver_(driver),
+          challenge_(challenge) {}
     Esp32GattsService(const Esp32GattsService &) = delete;
     Esp32GattsService &operator=(const Esp32GattsService &) = delete;
     bool begin() noexcept;
@@ -46,6 +49,7 @@ class Esp32GattsService {
     IWriteResponseBearer &responses_;
     const IProfileImportClock &clock_;
     SdkGattsServiceDriver &driver_;
+    const PeerChallengeReadSetup challenge_;
     QueueHandle_t queue_ = nullptr;
     StaticQueue_t control_ = {};
     alignas(Copied) std::uint8_t storage_[Depth * sizeof(Copied)] = {};

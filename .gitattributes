@@ -12,3 +12,5 @@ docs/companion/fixtures/peer-registry/actor-observation.json text eol=lf
 docs/companion/fixtures/peer-security/*.json text eol=lf
 
 docs/companion/fixtures/peer-grant/*.json text eol=lf
+
+docs/companion/fixtures/peer-challenge-read/*.json text eol=lf

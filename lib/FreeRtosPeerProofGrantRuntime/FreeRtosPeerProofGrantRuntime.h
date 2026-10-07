@@ -14,6 +14,9 @@ class FreeRtosPeerProofGrantRuntime : public IPeerProofContext {
     FreeRtosPeerProofGrantRuntime(const FreeRtosPeerProofGrantRuntime &) = delete;
     FreeRtosPeerProofGrantRuntime &operator=(const FreeRtosPeerProofGrantRuntime &) = delete;
     bool beginWorker() noexcept;
+    bool workerNow() const noexcept {
+        return worker_ && worker_ == xTaskGetCurrentTaskHandle();
+    }
     bool originalLive(const PeerProofBinding &) const noexcept override;
     bool credentialCurrent(const PeerCredential &) const noexcept override;
     // The proof owner is read only by its sole crypto worker. Never accept

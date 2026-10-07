@@ -50,6 +50,12 @@ def main():
             raise ValueError(f"source changed: {name}")
         source[name]=data.decode("utf-8")
     common=source["bt_common.h"]; api=source["gatt_api.h"]
+    if not re.search(r"GATTS_REQ_TYPE_READ\s*=\s*1",api): raise ValueError("original read callback kind changed")
+    for token in ("case GATT_RSP_READ_BLOB:", "case GATT_RSP_READ:",
+                  "len = payload_size - p_buf->len;", "ARRAY_TO_STREAM (p, p_data, len);"):
+        if token not in source["att_protocol.c"]: raise ValueError("original read truncation changed")
+    for token in ("if (p_tcb->sr_cmd.trans_id != trans_id)", "gatt_sr_process_app_rsp"):
+        if token not in source["gatt_api.c"]: raise ValueError("original transaction check changed")
     declarations=["#include <cstddef>\n#include <cstdint>\n#include <type_traits>\n",
         "#define LARP_GATT_SOURCE_HOST_MODEL 1\n",
         '#include "'+(Path(__file__).resolve().parents[1]/"lib/GattsWriteAdmission/SdkGattSourceAbi.h").as_posix()+'"\n',
@@ -76,9 +82,10 @@ def main():
                      ("Complete","tGATT_CL_COMPLETE"),("Callbacks","tGATT_CBACK")):
         declarations.append(f'static_assert(sizeof(actual::{ours})==sizeof(reference::{ref}),"{ours} size");')
         declarations.append(f'static_assert(alignof(actual::{ours})==alignof(reference::{ref}),"{ours} alignment");')
-    for ours,ref,pairs in (("Write","tGATT_WRITE_REQ",(("handle","handle"),("offset","offset"),
+    for ours,ref,pairs in (("Read","tGATT_READ_REQ",(("handle","handle"),("offset","offset"),("isLong","is_long"),("needResponse","need_rsp"))),
+                         ("Write","tGATT_WRITE_REQ",(("handle","handle"),("offset","offset"),
                            ("length","len"),("value","value"),("needResponse","need_rsp"),("prepared","is_prep"))),
-                         ("Value","tGATT_VALUE",(("connection","conn_id"),("authentication","auth_req"),("value","value"))),
+                         ("Value","tGATT_VALUE",(("connection","conn_id"),("handle","handle"),("offset","offset"),("length","len"),("authentication","auth_req"),("value","value"))),
                          ("Callbacks","tGATT_CBACK",(("connection","p_conn_cb"),("complete","p_cmpl_cb"),
                           ("discovery","p_disc_res_cb"),("discoveryComplete","p_disc_cmpl_cb"),
                           ("request","p_req_cb"),("encrypted","p_enc_cmpl_cb"),("congestion","p_congestion_cb")))):
@@ -92,7 +99,7 @@ def main():
         environment["PATH"]=str(args.compiler.parent)+os.pathsep+environment.get("PATH", "")
         result=subprocess.run([str(args.compiler),"-std=c++11","-Wall","-Wextra","-Wpedantic","-Werror","-fsyntax-only",str(path)],capture_output=True,text=True,encoding="utf-8",errors="replace",timeout=60,env=environment)
         if result.returncode: raise ValueError(f"compiler Exit{result.returncode}: "+result.stdout+result.stderr)
-    print(f"{len(PINS)} pinned official sources verified; 8 layouts/alignments, 16 offsets and exact connection callback types agree. Compile only; no SDK/RF run.")
+    print(f"{len(PINS)} pinned official sources verified; 8 layouts/alignments, 23 offsets and exact connection callback types agree. Compile only; no SDK/RF run.")
     return 0
 
 if __name__=="__main__":

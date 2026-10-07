@@ -37,6 +37,7 @@
 // Compile the actual adapter against the deterministic RTOS model.
 #include "../../lib/FreeRtosCommandFrameQueue/FreeRtosCommandFrameQueue.cpp"
 #include "../../lib/FreeRtosGameControlChannel/FreeRtosGameControlChannel.cpp"
+#include "../../lib/FreeRtosPeerChallengeReadRuntime/FreeRtosPeerChallengeReadRuntime.cpp"
 #include "../../lib/FreeRtosPeerProofGrantRuntime/FreeRtosPeerProofGrantRuntime.cpp"
 #include "../../lib/FreeRtosPeerProofQueue/FreeRtosPeerProofQueue.cpp"
 #include "../../lib/FreeRtosPeerRegistryRuntime/FreeRtosPeerRegistryRuntime.cpp"
@@ -982,6 +983,7 @@ void test_profile_capability_fixture_matches_firmware_encoder() {
 #include "GattsServiceCases.h"
 #include "GattsSourceCases.h"
 #include "IdentityRetirementCases.h"
+#include "PeerChallengeReadCases.h"
 #include "PeerLinkSecurityCases.h"
 #include "PeerProofCases.h"
 #include "PeerProofGrantCases.h"
@@ -1488,5 +1490,28 @@ int main() {
     RUN_TEST(test_grant_applied_cancel_and_queued_role_revoke_share_exact_own_close_ack);
     RUN_TEST(test_grant_publisher_freezes_expected_before_lock_and_preserves_replacement);
     RUN_TEST(test_grant_poll_during_actor_publication_remains_pending_without_mutable_owner_read);
+    RUN_TEST(test_challenge_read_original_blob_values_keep_one_nonce_and_no_gm);
+    RUN_TEST(test_challenge_read_missing_challenge_and_bad_offset_have_bounded_att_errors);
+    RUN_TEST(
+        test_challenge_read_wrong_worker_no_response_unknown_reads_forward_and_no_rsp_is_dropped);
+    RUN_TEST(test_challenge_read_queue_is_four_static_entries_one_response_per_service);
+    RUN_TEST(test_challenge_read_queue_deadline_wrap_never_refreshes_and_stale_drain_is_bounded);
+    RUN_TEST(test_challenge_read_post_deadline_and_absolute_issue_deadline_drop_sdk_output);
+    RUN_TEST(test_challenge_read_reconnect_and_old_opaque_callback_cannot_consume_new_slot);
+    RUN_TEST(test_challenge_read_sdk_metadata_loss_never_emits_positive_data);
+    RUN_TEST(test_challenge_read_registry_revoke_while_pending_drops_original_answer);
+    RUN_TEST(test_challenge_read_post_failure_and_busy_slot_have_no_retry_or_duplicate_posts);
+    RUN_TEST(test_challenge_read_frozen_reply_and_invalid_scope_never_changes_original);
+    RUN_TEST(test_challenge_read_request_frozen_before_external_clock_and_late_security_recheck);
+    RUN_TEST(test_challenge_read_service_installs_original_read_attribute_before_start);
+    RUN_TEST(test_challenge_read_nonce_snapshot_failure_preserves_destination_and_deadline);
+    RUN_TEST(test_challenge_read_exhausted_callback_counter_and_foreign_caller_cannot_post);
+    RUN_TEST(test_challenge_read_revoke_or_deadline_during_sdk_metadata_never_sends);
+    RUN_TEST(test_challenge_read_borrowed_clock_closure_cannot_adopt_recycled_link);
+    RUN_TEST(test_challenge_read_invalid_installation_bundle_and_order_fail_before_sdk_start);
+    RUN_TEST(test_challenge_read_requires_the_same_existing_crypto_worker_before_any_owner_getter);
+#if defined(LARP_REAL_PEER_CRYPTO)
+    RUN_TEST(test_challenge_read_actual_crypto_from_original_sdk_blob_snapshot_to_grant_ack);
+#endif
     return UNITY_END();
 }

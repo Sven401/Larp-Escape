@@ -174,6 +174,23 @@ bool PeerProofOwner::challenge(const PeerProofBinding &caller,
     busy_ = false;
     return valid;
 }
+bool PeerProofOwner::challengeSnapshot(const PeerProofBinding &caller,
+                                       PeerChallengeSnapshot &destination) noexcept {
+    const auto original = caller;
+    if (busy_ || (phase_ != Phase::Pending && phase_ != Phase::Verified) ||
+        !(original == challenge_.original))
+        return false;
+    busy_ = true;
+    const bool valid = !expired() && current();
+    if (valid) {
+        destination.challenge = challenge_;
+        destination.credential = credential_;
+        destination.issuedAt = issuedAt_;
+    } else
+        phase_ = Phase::Failed;
+    busy_ = false;
+    return valid;
+}
 PeerProofOutcome PeerProofOwner::verify(const PeerProofBinding &caller,
                                         const PeerProof &callerProof) noexcept {
     const auto original = caller;

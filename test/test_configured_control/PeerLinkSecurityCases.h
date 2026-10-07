@@ -135,8 +135,9 @@ void test_security_core_repair_invalidates_previous_mode_until_terminal_drain() 
 }
 struct SecurityFixture : RegistryActorFixture {
     PeerProofBinding original;
-    explicit SecurityFixture(bool openLink = true, bool gm = true)
-        : RegistryActorFixture(nullptr, 0, true) {
+    explicit SecurityFixture(bool openLink = true, bool gm = true,
+                             IPeerProofCrypto *actual = nullptr, std::uint32_t registration = 0)
+        : RegistryActorFixture(actual, registration, true) {
         ready();
         save(registryValue(1, gm));
         GattsSourceRegistration reg;
