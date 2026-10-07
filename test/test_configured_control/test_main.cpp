@@ -35,6 +35,8 @@
 #include "../../src/ProfileTool/TemporaryProfileFile.cpp"
 // Actual ESP file adapters under an isolated deterministic VFS model.
 #include "ProfileFileVfs.h"
+// Actual identity persistence/entropy adapters under deterministic SDK models.
+#include "DeviceIdentityNvsModel.h"
 namespace host_rtos {
 void (*beforeEnter)() = nullptr;
 unsigned depth = 0;
@@ -950,6 +952,8 @@ void test_profile_capability_fixture_matches_firmware_encoder() {
 #include "GattsProfileWriteCases.h"
 // File cases use original Raw/Owner/response helpers and actual ESP VFS adapters.
 #include "ProfileFileCases.h"
+// Persistent public labels reuse policy and actual NVS adapter helpers.
+#include "DeviceIdentityStoreCases.h"
 } // namespace
 void setUp() {
     host_rtos::depth = 0;
@@ -1227,5 +1231,21 @@ int main() {
     RUN_TEST(test_esp_staging_close_failure_keeps_claim_even_after_file_removal);
     RUN_TEST(test_esp_staging_import_cleanup_failure_issues_no_apply_receipt);
     RUN_TEST(test_esp_staging_destroyed_fault_child_address_reuse_requires_cleanup);
+    RUN_TEST(test_device_identity_record_exact_crc_bounds_and_target_preservation);
+    RUN_TEST(test_device_identity_loaded_is_immutable_without_entropy_or_writes);
+    RUN_TEST(test_device_identity_missing_create_verify_and_restart_keep_same_label);
+    RUN_TEST(test_device_identity_entropy_failure_or_zero_never_writes);
+    RUN_TEST(test_device_identity_read_failure_or_corrupt_never_regenerates);
+    RUN_TEST(test_device_identity_uncertain_or_failed_write_never_publishes_candidate);
+    RUN_TEST(test_device_identity_confirmed_readback_must_match_and_be_complete);
+    RUN_TEST(test_device_identity_concurrent_existing_value_wins_without_overwrite);
+    RUN_TEST(test_device_identity_reentrant_begin_and_observation_expose_no_pending_label);
+    RUN_TEST(test_device_identity_nvs_init_full_or_mutex_busy_never_erases_or_opens);
+    RUN_TEST(test_device_identity_actual_nvs_startup_record_public_metadata_restart);
+    RUN_TEST(test_device_identity_nvs_bad_type_length_or_second_read_preserves_target);
+    RUN_TEST(test_device_identity_actual_nvs_set_or_commit_uncertain_stays_closed);
+    RUN_TEST(test_device_identity_actual_nvs_freezes_record_and_serializes_other_instance);
+    RUN_TEST(test_device_identity_startup_entropy_call_order_and_zero_target_preservation);
+    RUN_TEST(test_public_device_identity_persistence_never_opens_game_authority);
     return UNITY_END();
 }

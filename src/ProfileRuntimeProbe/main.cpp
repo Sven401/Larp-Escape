@@ -10,8 +10,10 @@
 #include "DeviceRuntime/ProfileApplication.h"
 #include "GameDomain/GameDefinitions.h"
 #include <Arduino.h>
+#include <Esp32DeviceIdentityStore.h>
 #include <Esp32ProfileStagingStore.h>
 #include <Esp32ProfileStore.h>
+#include <Esp32StartupIdentityEntropy.h>
 #include <FreeRtosCommandFrameQueue.h>
 #include <FreeRtosGameControlChannel.h>
 #include <FreeRtosProfileChannel.h>
@@ -23,6 +25,9 @@ using namespace larp::devices;
 using namespace larp::configuration;
 FreeRtosProfileChannel channel;
 // Two startup allocations, private profiles; workers never borrow their contents.
+Esp32DeviceIdentityStore publicIdentityStore;
+Esp32StartupIdentityEntropy identityEntropy;
+larp::companion::DeviceIdentityOwner publicIdentity(publicIdentityStore, identityEntropy);
 Esp32ProfileStore persistentStore;
 Esp32ProfileStagingStore temporarySource(persistentStore);
 ProfileApplication runtime(channel, channel, persistentStore);
@@ -250,6 +255,16 @@ void setup() {
     bootIdentity.low = esp_random();
     bootloader_random_disable();
     Serial.begin(115200);
+    if (!publicIdentityStore.begin()) {
+        Serial.println("profile_runtime_probe: public identity store failed; no erase; stopped");
+        return;
+    }
+    const auto identityResult = publicIdentity.begin();
+    if (identityResult != larp::companion::DeviceIdentityOutcome::Loaded &&
+        identityResult != larp::companion::DeviceIdentityOutcome::Created) {
+        Serial.println("profile_runtime_probe: public identity unavailable; stopped");
+        return;
+    }
     if (!persistentStore.begin()) {
         Serial.println("profile_runtime_probe: storage mount failed; no format; stopped");
         return;
@@ -275,10 +290,11 @@ void setup() {
                       applicationOutcomeName(begun.outcome));
         return;
     }
-    // Deterministic display/peer labels and verification are SYNTHETIC.
+    // Public device label is loaded from NVS; peer label/verification are SYNTHETIC.
     // No provisioning, keys, pairing, radio or real identity proof here.
     larp::companion::Identity device, peer;
-    device.bytes[0] = 1;
+    if (!publicIdentity.identity(device))
+        return;
     peer.bytes[0] = 2;
     larp::companion::VerifiedPeerEvidence evidence;
     evidence.peer = peer;

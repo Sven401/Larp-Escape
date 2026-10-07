@@ -3,6 +3,7 @@
 #include "Companion/CommandStream.h"
 #include "Companion/IdentityAccess.h"
 #include <Arduino.h>
+#include <Esp32DeviceIdentityStore.h>
 #include <FreeRtosCommandFrameQueue.h>
 #include <FreeRtosGameControlChannel.h>
 #include <FreeRtosProfileFrameQueue.h>
@@ -13,6 +14,8 @@
 namespace {
 using namespace larp::companion;
 FreeRtosGameControlChannel channel;
+// SDK/NVS symbols link only; no begin/read/write/erase in this ABIprobe.
+Esp32DeviceIdentityStore unopenedIdentityStore;
 FreeRtosCommandFrameQueue queue(channel);
 FreeRtosProfileFrameQueue profileQueue(channel);
 class ProbeClock : public IProfileImportClock {
@@ -74,6 +77,13 @@ void setup() {
     if (encodeGameCommand(command, document.data(), document.size(), length) !=
         ConfiguredEncodeResult::Success)
         return;
+    DeviceIdentityRecord unopenedDestination;
+    unopenedDestination.bytes[0] = 99;
+    if (unopenedIdentityStore.read(unopenedDestination) != IdentityRecordRead::Failure ||
+        unopenedDestination.bytes[0] != 99)
+        return; // Actual adapter fail-closed branch, still no NVS initialization/IO.
+    Serial.printf("identity_store_abi: network=false initialized=false bytes=%u\n",
+                  unsigned(sizeof(unopenedIdentityStore)));
     Serial.printf("gatts_abi_probe: synthetic=true network=false SDK_write=%u binding=%u queue=%u "
                   "admission_only=true executed=false\n",
                   unsigned(sizeof(esp_ble_gatts_cb_param_t)), unsigned(sizeof(original)),
@@ -190,6 +200,13 @@ void loop() {
     }
     offset += count;
     queued = dispatch.stream.outcome == CommandStreamOutcome::Queued;
+    DeviceIdentityRecord unopenedDestination;
+    unopenedDestination.bytes[0] = 99;
+    if (unopenedIdentityStore.read(unopenedDestination) != IdentityRecordRead::Failure ||
+        unopenedDestination.bytes[0] != 99)
+        return; // Actual adapter fail-closed branch, still no NVS initialization/IO.
+    Serial.printf("identity_store_abi: network=false initialized=false bytes=%u\n",
+                  unsigned(sizeof(unopenedIdentityStore)));
     Serial.printf("gatts_abi_probe: copied=%u local_response_copied=%s stream=%u "
                   "command_queued=%s executed=false heap=%u\n",
                   unsigned(offset), admitted.responseCopied ? "true" : "false",
