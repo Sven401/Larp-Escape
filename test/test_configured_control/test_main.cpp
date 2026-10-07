@@ -27,11 +27,14 @@
 #include <string>
 #include <unity.h>
 #include <vector>
+#define LARP_GATT_SOURCE_HOST_MODEL 1
+#include "SdkGattSourceModel.h"
 // Compile the actual adapter against the deterministic RTOS model.
 #include "../../lib/FreeRtosCommandFrameQueue/FreeRtosCommandFrameQueue.cpp"
 #include "../../lib/FreeRtosGameControlChannel/FreeRtosGameControlChannel.cpp"
 #include "../../lib/FreeRtosProfileFrameQueue/FreeRtosProfileFrameQueue.cpp"
 #include "../../lib/FreeRtosProfileResponseQueue/FreeRtosProfileResponseQueue.cpp"
+#include "../../lib/GattsWriteAdmission/Esp32GattsSource.cpp"
 #include "../../lib/GattsWriteAdmission/FreeRtosGattsConnection.cpp"
 #include "../../lib/GattsWriteAdmission/FreeRtosGattsResponseQueue.cpp"
 #include "../../lib/GattsWriteAdmission/GattsWriteAdmission.cpp"
@@ -961,6 +964,7 @@ void test_profile_capability_fixture_matches_firmware_encoder() {
 #include "ApplicationProfileStagingCases.h"
 #include "GattsLifecycleCases.h"
 #include "GattsResponseQueueCases.h"
+#include "GattsSourceCases.h"
 #include "IdentityRetirementCases.h"
 } // namespace
 void setUp() {
@@ -1308,6 +1312,18 @@ int main() {
     RUN_TEST(test_identity_retirement_stale_copied_frame_cannot_execute_or_close_new_gm);
     RUN_TEST(test_identity_old_security_failure_preserves_replacement_authority);
     RUN_TEST(test_identity_old_role_revocation_preserves_replacement_authority);
+    RUN_TEST(test_source_original_sdk_post_actual_frames_and_application);
+    RUN_TEST(test_source_posted_old_connection_dropped_after_same_handle_reconnect);
+    RUN_TEST(test_source_full_fixed_pool_failed_post_and_slot_reuse);
+    RUN_TEST(test_source_deadline_rechecked_after_post_without_refresh);
+    RUN_TEST(test_source_wrong_task_sdk_instance_and_reentrant_consumption);
+    RUN_TEST(test_source_revoked_gm_original_copy_ack_never_executes);
+    RUN_TEST(test_source_null_overlong_prepared_execute_and_unknown_writes);
+    RUN_TEST(test_source_owned_write_and_pending_response_survive_external_mutation);
+    RUN_TEST(test_source_configuration_before_any_link_and_wrong_actor_fail_closed);
+    RUN_TEST(test_source_closed_context_profile_admission_and_endpoint_immutability);
+    RUN_TEST(
+        test_source_registration_wrapper_preserves_other_callbacks_and_captures_before_forward);
     RUN_TEST(test_lifecycle_closed_sdk_context_grants_no_authority_but_copies_att_error);
     RUN_TEST(test_lifecycle_actual_frames_start_and_original_status_fixture);
     RUN_TEST(test_lifecycle_reused_handle_rejects_original_queued_output_and_old_retirement);

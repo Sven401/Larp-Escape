@@ -1,0 +1,73 @@
+#pragma once
+#include "FreeRtosGattsConnection.h"
+#include "SdkGattSourceAbi.h"
+#include <freertos/task.h>
+namespace larp {
+namespace companion {
+// Process lifetime; one BTU source actor owns all lifecycle/IdentityAccess work,
+// one response worker posts. Register once per boot; no stack stop/restart,
+// deregistration or deletion while callbacks/work may remain in the SDK.
+// Only the selected source registration is intercepted. Its write callbacks
+// replace the BTA write path; other callbacks and other applications pass through.
+class Esp32GattsSource : public IGattsResponseContext, public IGattsResponseSubmitter {
+  public:
+    Esp32GattsSource(IdentityAccess &access, const IProfileImportClock &clock,
+                     const IGameControlChannel &channel, FreeRtosCommandFrameQueue &commands,
+                     FreeRtosProfileFrameQueue &profiles)
+        : access_(access), clock_(clock), channel_(channel), commands_(commands),
+          profiles_(profiles) {}
+    Esp32GattsSource(const Esp32GattsSource &) = delete;
+    Esp32GattsSource &operator=(const Esp32GattsSource &) = delete;
+    // Registration wrapper on the actual BTU source task, before any link.
+    bool registeredSourceNow(std::uint8_t interface) noexcept;
+    // Once, on that same task, using actual created attribute handles, before
+    // ANY connection callback. Repeated/late configuration never rebinds.
+    bool configureEndpointsNow(std::uint16_t command, std::uint16_t profile,
+                               IWriteResponseBearer &responses) noexcept;
+    GattsLifecycleOutcome connectionNow(std::uint8_t interface, const std::uint8_t *address,
+                                        std::uint16_t packedConnection, bool connected) noexcept;
+    // Sole source actor only; original closed token for subsequent peer verification.
+    bool originalConnectionNow(BoundConnection &) const noexcept;
+    // Returns true only for our consumed WRITE/EXEC callbacks, even on rejection.
+    // No raw SDK pointer or event without its original binding is queued.
+    bool requestNow(std::uint16_t packedConnection, std::uint32_t transaction, std::uint8_t type,
+                    const sdk446::Request *) noexcept;
+    bool originalLive(const GattsWriteBinding &) const noexcept override;
+    std::uint32_t nowMilliseconds() const noexcept override {
+        return clock_.nowMilliseconds();
+    }
+    bool submitOriginal(const RoutedWriteResponse &) noexcept override;
+
+  private:
+    struct Pending {
+        Esp32GattsSource *owner = nullptr;
+        RoutedWriteResponse response;
+        std::uint8_t state = 0; // 0 free, 1 posted, 2 consuming
+    };
+    IdentityAccess &access_;
+    const IProfileImportClock &clock_;
+    const IGameControlChannel &channel_;
+    FreeRtosCommandFrameQueue &commands_;
+    FreeRtosProfileFrameQueue &profiles_;
+    IWriteResponseBearer *responses_ = nullptr;
+    alignas(FreeRtosGattsConnection) std::uint8_t
+        ownerStorage_[sizeof(FreeRtosGattsConnection)] = {};
+    FreeRtosGattsConnection *owner_ = nullptr;
+    GattsConnectionEvent live_;
+    BoundConnection connection_;
+    void *sdkThread_ = nullptr;
+    TaskHandle_t sourceTask_ = nullptr;
+    std::uint16_t command_ = 0, profile_ = 0;
+    std::uint8_t interface_ = 0xff;
+    bool registered_ = false, sawConnection_ = false, active_ = false, posting_ = false;
+    mutable portMUX_TYPE mutex_ = portMUX_INITIALIZER_UNLOCKED;
+    Pending pending_[GattsResponseLimits::Depth];
+    bool sourceTask() const noexcept;
+    bool validResponse(const RoutedWriteResponse &) const noexcept;
+    static void consume(void *) noexcept;
+};
+// Before SDK initialization; single process-lifetime instance/application.
+// Successful arming is not registration, service creation, BLE start or identity.
+bool armGattsSourceBeforeSdkStart(std::uint16_t application, Esp32GattsSource &) noexcept;
+} // namespace companion
+} // namespace larp

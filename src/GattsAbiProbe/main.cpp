@@ -4,6 +4,7 @@
 #include "Companion/IdentityAccess.h"
 #include <Arduino.h>
 #include <Esp32DeviceIdentityStore.h>
+#include <Esp32GattsSource.h>
 #include <FreeRtosCommandFrameQueue.h>
 #include <FreeRtosGameControlChannel.h>
 #include <FreeRtosGattsResponseQueue.h>
@@ -59,11 +60,20 @@ class SyntheticResponseSubmitter : public IGattsResponseSubmitter {
     }
 } responseSubmitter;
 GattsResponseDispatcher responseWorker(responses, responseSubmitter);
+Esp32GattsSource sourcePort(identityPolicy, profileClock, channel, queue, profileQueue);
+FreeRtosGattsResponseQueue sourceResponses(sourcePort);
 } // namespace
 void setup() {
     Serial.begin(115200);
     if (!channel.begin() || !queue.begin() || !profileQueue.begin() || !responses.begin())
         return;
+    if (!sourceResponses.begin() || !armGattsSourceBeforeSdkStart(0x4c45, sourcePort) ||
+        sourcePort.registeredSourceNow(1) ||
+        sourcePort.configureEndpointsNow(0x42, 0x43, sourceResponses))
+        return; // Actual uninitialized SDK branch; no BTU task/register/radio started.
+    Serial.printf(
+        "gatts_source_abi: network=false initialized=false source_registered=false port=%u\n",
+        unsigned(sizeof(sourcePort)));
     // Actual synchronized retirement port; no peer/security grant from SDK fields.
     TrustedAuthority firstClosed, replacementClosed, closed, observed;
     closed.epoch = 99;
