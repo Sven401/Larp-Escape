@@ -23,6 +23,11 @@ ProfileDispatchResult ProfileFramePump::service() noexcept {
     }
     Call call(busy_);
     result.outcome = source_.service();
+    if (controls_) {
+        controls_->service();
+        if (!controls_->ready())
+            return result;
+    }
     if (result.outcome == ProfileReceiveOutcome::Busy)
         return result;
     CopiedProfileFrame frame;
@@ -42,15 +47,22 @@ ProfileDispatchResult ProfileFramePump::service() noexcept {
     original.gameMaster = true; // Trusted queue attribution, never wire metadata.
     ProfileSourceEnvelope envelope;
     ProfileDataFrame data;
+    ProfileControlFrame control;
     if (decodeProfileSourceEnvelope(frame.bytes.data(), frame.count, envelope)) {
         result.metadata = true;
         result.transfer = envelope.transfer;
         result.outcome = source_.start(envelope, original, frame.receivedAt);
+        if (controls_ && result.outcome == ProfileReceiveOutcome::Receiving)
+            controls_->sourceStarted();
     } else if (decodeProfileDataFrame(frame.bytes.data(), frame.count, data)) {
         result.transfer = data.transfer;
         result.offset = data.offset;
         result.payloadBytes = static_cast<std::uint16_t>(data.count);
         result.outcome = source_.data(frame.bytes.data(), frame.count, original);
+    } else if (controls_ && decodeProfileControl(frame.bytes.data(), frame.count, control)) {
+        result.control = true;
+        result.transfer = control.transfer;
+        controls_->handle(control, original, frame.receivedAt);
     } else {
         result.outcome = ProfileReceiveOutcome::InvalidFrame;
     }

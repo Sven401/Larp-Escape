@@ -7,6 +7,7 @@
 #include "GameConfiguration/ProfileWriter.h"
 #include "Play.h"
 #include "Preview.h"
+#include "ProfileControl.h"
 #include "ProfileEnvelope.h"
 #include "ProfileReceive.h"
 #include <cstdio>
@@ -41,6 +42,8 @@ class FileReader : public larp::configuration::IProfileReader {
 };
 } // namespace
 int main(int argc, char **argv) {
+    if (argc == 5 && std::strcmp(argv[1], "--profile-control") == 0)
+        return runProfileControl(argv[2], argv[3], argv[4]);
     if (argc == 3 && std::strcmp(argv[1], "--device-identity") == 0) {
         larp::companion::Identity device;
         if (!larp::companion::decodeIdentityHex(argv[2], std::strlen(argv[2]), device))

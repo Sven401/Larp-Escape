@@ -1,4 +1,5 @@
 #pragma once
+#include "Companion/ProfileControlFrames.h"
 #include "Companion/ProfileStaging.h"
 #include <array>
 namespace larp {
@@ -26,7 +27,7 @@ class IProfileFrameQueue {
 };
 // Scalars only, never a borrowed payload into the local copied queue item.
 struct ProfileDispatchResult {
-    bool received = false, metadata = false;
+    bool received = false, metadata = false, control = false;
     ProfileReceiveOutcome outcome = ProfileReceiveOutcome::Discarded;
     std::uint32_t principal = 0, epoch = 0, receivedAt = 0, offset = 0;
     std::uint16_t transfer = 0, payloadBytes = 0;
@@ -36,8 +37,9 @@ struct ProfileDispatchResult {
 // inferred from empty FIFO. Backend work happens here, never in the callback.
 class ProfileFramePump {
   public:
-    ProfileFramePump(IProfileFrameQueue &queue, ProfileStaging &source, IProfileImportClock &clock)
-        : queue_(queue), source_(source), clock_(clock) {}
+    ProfileFramePump(IProfileFrameQueue &queue, ProfileStaging &source, IProfileImportClock &clock,
+                     IProfileControlSink *controls = nullptr)
+        : queue_(queue), source_(source), clock_(clock), controls_(controls) {}
     ProfileFramePump(const ProfileFramePump &) = delete;
     ProfileFramePump &operator=(const ProfileFramePump &) = delete;
     ProfileDispatchResult service() noexcept;
@@ -46,6 +48,7 @@ class ProfileFramePump {
     IProfileFrameQueue &queue_;
     ProfileStaging &source_;
     IProfileImportClock &clock_;
+    IProfileControlSink *controls_;
     bool busy_ = false;
 };
 } // namespace companion

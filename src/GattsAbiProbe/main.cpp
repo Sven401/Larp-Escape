@@ -98,6 +98,18 @@ void setup() {
     Serial.printf(
         "profile_queue_probe: synthetic=true network=false queue=%u frame=%u imported=false\n",
         unsigned(sizeof(profileQueue)), unsigned(sizeof(profileCopy)));
+    ProfileControlFrame control;
+    control.transfer = 1;
+    control.request = 1;
+    control.operation = ProfileOperation::Finish;
+    if (!encodeProfileControl(control, profileValue, sizeof(profileValue), profileWritten) ||
+        profileQueue.copyWrite(profileValue, profileWritten, original.authority.principal,
+                               original.authority.epoch, millis()) != ProfileCopyOutcome::Copied ||
+        !profileQueue.take(profileCopy) || profileCopy.count != ProfileControlLimits::CommandBytes)
+        return;
+    Serial.printf("profile_control_probe: synthetic=true network=false bytes=%u imported=false "
+                  "applied=false\n",
+                  unsigned(profileWritten));
     ready = true;
 }
 void loop() {

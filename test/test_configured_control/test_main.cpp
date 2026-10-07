@@ -5,12 +5,14 @@
 #include "Companion/IdentityAccess.h"
 #include "Companion/ProfileCapabilities.h"
 #include "Companion/ProfileFrames.h"
+#include "Companion/ProfileResponseSender.h"
 #include "Companion/ProfileStaging.h"
 #include "Companion/ReplyFrameSender.h"
 #include "Companion/StatusFrameSender.h"
 #include "CompanionIntegration/GameControl.h"
 #include "CompanionIntegration/ProfileApply.h"
 #include "CompanionIntegration/ProfileImport.h"
+#include "CompanionIntegration/ProfileTransferControl.h"
 #include "FakeOwners.h"
 #include "FreeRtosCommandFrameQueue.h"
 #include "FreeRtosGameControlChannel.h"
@@ -936,6 +938,8 @@ void test_profile_capability_fixture_matches_firmware_encoder() {
 #include "ProfileStagingCases.h"
 // Queue cases use completed source and actual staging fixture helpers above.
 #include "ProfileFrameQueueCases.h"
+// Control cases need the actual queue/source/application and bearer fixtures.
+#include "ProfileControlCases.h"
 } // namespace
 void setUp() {
     host_rtos::depth = 0;
@@ -1150,5 +1154,30 @@ int main() {
     RUN_TEST(test_profile_queue_reentrant_backend_cannot_take_next_pending_frame);
     RUN_TEST(test_profile_queue_bad_port_item_stays_bounded_without_backend_or_borrowed_result);
 
+    RUN_TEST(test_profile_control_codec_exact_layout_limits_and_failed_destination);
+    RUN_TEST(test_profile_control_actual_queue_source_finish_apply_saved_current_status);
+    RUN_TEST(test_profile_control_duplicate_finish_apply_replays_without_import_or_save);
+    RUN_TEST(test_profile_control_request_conflict_old_order_no_reexecution);
+    RUN_TEST(test_profile_control_abort_clears_only_temporary_and_server_proof);
+    RUN_TEST(test_profile_control_incomplete_finish_and_semantic_failure_issue_no_proof);
+    RUN_TEST(test_profile_control_running_game_denies_finish_and_preserves_game);
+    RUN_TEST(test_profile_control_stale_draft_denies_apply);
+    RUN_TEST(test_profile_control_late_apply_has_fresh_rights_without_source_deadline_reset);
+    RUN_TEST(test_profile_control_own_queue_age_future_wrap_and_response_backpressure);
+    RUN_TEST(test_profile_control_pending_response_polls_source_deadline_and_blocks_take);
+    RUN_TEST(test_profile_control_revoke_reconnect_never_relabels_old_proof_or_response);
+    RUN_TEST(test_profile_control_final_rights_observation_blocks_apply_and_response);
+    RUN_TEST(test_profile_control_later_revoke_finishes_selected_transaction_silently);
+    RUN_TEST(test_profile_control_uncertain_journal_produces_failed_never_saved);
+    RUN_TEST(test_profile_control_abort_after_selected_apply_waits_preserves_transaction);
+    RUN_TEST(test_profile_response_sender_original_copy_busy_priority_expiry);
+    RUN_TEST(test_profile_response_sender_bearer_recheck_and_old_generation);
+    RUN_TEST(test_profile_response_scheduler_completing_game_reply_owns_entire_step);
+    RUN_TEST(test_profile_control_queue_admits_exact12_rejects_malformed_and_full_retry);
+    RUN_TEST(test_profile_control_apply_while_running_is_rejected_without_game_change);
+    RUN_TEST(test_profile_control_reply_pending_revoke_and_same_source_deadline);
+    RUN_TEST(test_profile_control_freezes_command_and_reentrant_call_has_no_effect);
+    RUN_TEST(test_profile_control_new_metadata_invalidates_previous_private_proof);
+    RUN_TEST(test_profile_response_sender_selected_bytes_survive_caller_mutation);
     return UNITY_END();
 }

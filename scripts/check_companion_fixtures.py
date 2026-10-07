@@ -9,6 +9,7 @@ import json
 import sys
 
 sys.dont_write_bytecode = True
+from check_profile_control import check_profile_control
 
 
 def decode_document_frames(lines: list[str], expected_kind: int, maximum: int) -> bytes:
@@ -554,6 +555,7 @@ def main() -> int:
         profile_apply_negatives = check_profile_apply(base, validators["status-v2.schema.json"])
         profile_staging_negatives = check_profile_staging(base, validators["status-v2.schema.json"])
         profile_queue_negatives = check_profile_queue(base, validators["status-v2.schema.json"])
+        profile_control_negatives = check_profile_control(base, validators["status-v2.schema.json"])
     except ValueError as error:
         print(f"Frame counterpart: {error}", file=sys.stderr)
         return 1
@@ -574,6 +576,8 @@ def main() -> int:
     print(f"Profile staging counterpart checks actual temporary-file/model observation and current v2 status; {profile_staging_negatives} incorrect observations rejected. No radio or device durability.")
 
     print(f"Profile queue counterpart preserves original timestamp and queue/completion distinction; {profile_queue_negatives} incorrect observations rejected, actual current v2 status validated.")
+
+    print(f"Profile controls correlate finish/queued/saved/abort/failed and current v2 status; {profile_control_negatives} malformed values rejected. Host journal only.")
 
     print(f"Public identity metadata validates; {len(identity_negatives)} malformed variants rejected. No authentication proof.")
 

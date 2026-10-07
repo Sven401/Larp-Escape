@@ -30,11 +30,15 @@ ProfileCopyOutcome FreeRtosProfileFrameQueue::copyWrite(const char *bytes, std::
         return ProfileCopyOutcome::Unauthorized;
     ProfileSourceEnvelope envelope;
     ProfileDataFrame data;
+    ProfileControlFrame control;
     if (!decodeProfileSourceEnvelope(frame.bytes.data(), count, envelope) &&
-        !decodeProfileDataFrame(frame.bytes.data(), count, data))
+        !decodeProfileDataFrame(frame.bytes.data(), count, data) &&
+        !decodeProfileControl(frame.bytes.data(), count, control))
         return static_cast<unsigned char>(frame.bytes[0]) != ProfileFrameLimits::Version ||
                        (static_cast<unsigned char>(frame.bytes[1]) != ProfileSourceLimits::Kind &&
-                        static_cast<unsigned char>(frame.bytes[1]) != ProfileFrameLimits::Kind)
+                        static_cast<unsigned char>(frame.bytes[1]) != ProfileFrameLimits::Kind &&
+                        static_cast<unsigned char>(frame.bytes[1]) !=
+                            ProfileControlLimits::CommandKind)
                    ? ProfileCopyOutcome::UnsupportedFrame
                    : ProfileCopyOutcome::InvalidWrite;
     // Revocation after selection may leave a copied old item. Source/start/data
