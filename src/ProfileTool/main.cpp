@@ -8,6 +8,7 @@
 #include "Play.h"
 #include "Preview.h"
 #include "ProfileEnvelope.h"
+#include "ProfileReceive.h"
 #include <cstdio>
 #include <cstring>
 #include <memory>
@@ -67,6 +68,8 @@ int main(int argc, char **argv) {
     }
     if (argc == 3 && std::strcmp(argv[1], "--frame-command") == 0)
         return runCommandFrames(argv[2]);
+    if (argc == 3 && std::strcmp(argv[1], "--receive-profile") == 0)
+        return runProfileReceive(argv[2]);
     if ((argc == 5 || argc == 6) && std::strcmp(argv[1], "--frame-profile") == 0)
         return runProfileFrames(argv[2], argv[3], argv[4], argc == 6 ? argv[5] : "20");
     if (argc == 5 && std::strcmp(argv[1], "--profile-envelope") == 0)
@@ -111,6 +114,7 @@ int main(int argc, char **argv) {
             std::fputs("Usage: profile-tools --device-identity HEX32 | --capabilities | "
                        "--frame-command FILE | --profile-envelope FILE DRAFT_REV CONFIG_REV | "
                        "--frame-profile FILE DRAFT_REV CONFIG_REV [VALUE_BYTES] | "
+                       "--receive-profile FRAMES | "
                        "[--summary | "
                        "--preview SCRIPT "
                        "| --play SCRIPT | "

@@ -1,8 +1,10 @@
+#include "../../src/ProfileTool/TemporaryProfileFile.h"
 #include "Companion/CommandReceipt.h"
 #include "Companion/CommandStream.h"
 #include "Companion/IdentityAccess.h"
 #include "Companion/ProfileCapabilities.h"
 #include "Companion/ProfileFrames.h"
+#include "Companion/ProfileStaging.h"
 #include "Companion/ReplyFrameSender.h"
 #include "Companion/StatusFrameSender.h"
 #include "CompanionIntegration/GameControl.h"
@@ -24,6 +26,7 @@
 #include "../../lib/FreeRtosCommandFrameQueue/FreeRtosCommandFrameQueue.cpp"
 #include "../../lib/FreeRtosGameControlChannel/FreeRtosGameControlChannel.cpp"
 #include "../../lib/GattsWriteAdmission/GattsWriteAdmission.cpp"
+#include "../../src/ProfileTool/TemporaryProfileFile.cpp"
 namespace host_rtos {
 void (*beforeEnter)() = nullptr;
 unsigned depth = 0;
@@ -927,6 +930,8 @@ void test_profile_capability_fixture_matches_firmware_encoder() {
 #include "ProfileApplyCases.h"
 // Frame cases require import and apply fixture helpers above.
 #include "ProfileFrameCases.h"
+// Staging cases use the actual frame/import/apply fixtures and host file adapter.
+#include "ProfileStagingCases.h"
 } // namespace
 void setUp() {
     host_rtos::depth = 0;
@@ -1106,6 +1111,28 @@ int main() {
     RUN_TEST(test_profile_frames_revoke_or_expire_during_frame_copy_prevents_acceptance);
     RUN_TEST(test_profile_frames_original_route_and_metadata_copied_before_source_call);
     RUN_TEST(test_profile_frames_maximum_document_crosses_16bit_boundary_in_private_slot);
+
+    RUN_TEST(test_profile_staging_actual_file_20byte_frames_import_apply_confirm);
+    RUN_TEST(test_profile_staging_actual_file_128byte_frames_import_apply_confirm);
+    RUN_TEST(test_profile_staging_finish_is_explicit_and_end_is_final);
+    RUN_TEST(test_profile_staging_wrong_route_or_id_does_not_mutate_original_transfer);
+    RUN_TEST(test_profile_staging_bad_missing_duplicate_extra_or_digest_never_seals);
+    RUN_TEST(test_profile_staging_backend_open_write_seal_and_discard_failures_are_fenced);
+    RUN_TEST(test_profile_staging_waiting_revoke_or_deadline_service_discards_without_game_stop);
+    RUN_TEST(test_profile_staging_seal_does_not_restart_original_deadline);
+    RUN_TEST(test_profile_staging_revoke_or_expire_inside_backend_prevents_complete);
+    RUN_TEST(test_profile_staging_source_io_length_and_crc_are_checked_again_after_seal);
+    RUN_TEST(test_profile_staging_reentrant_storage_cannot_replace_discard_or_finish_owner);
+    RUN_TEST(test_profile_staging_copies_metadata_route_and_payload_before_backend_call);
+    RUN_TEST(test_profile_staging_actual_file_maximum_is_complete_in_existing_private_slot);
+    RUN_TEST(test_profile_staging_discard_invalid_authority_and_future_timestamp_do_not_open);
+    RUN_TEST(test_profile_staging_clock_wrap_retains_original_full_transfer_budget);
+    RUN_TEST(test_profile_staging_revoke_inside_source_read_preserves_byte_and_closes_source);
+
+    RUN_TEST(test_profile_staging_freezes_frame_before_first_authority_observation);
+    RUN_TEST(test_profile_staging_revoke_during_cleanup_does_not_open_new_source);
+
+    RUN_TEST(test_profile_staging_running_game_blocks_import_and_revoke_does_not_stop_it);
 
     return UNITY_END();
 }

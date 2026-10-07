@@ -288,6 +288,34 @@ def check_profile_apply(base: Path, status_validator) -> int:
     return len(negatives)
 
 
+def check_profile_staging(base: Path, status_validator) -> int:
+    fixture = base / "fixtures" / "profile-source"
+    expected = {"scope": "host_profile_staging", "bytes": 20220, "dataFrames": 169,
+                "temporarySource": "actual_host_file", "configurationRevision": 2,
+                "storedGeneration": 2, "storedMatchesActive": True, "running": False,
+                "storageScope": "host_journal_model", "radioMeasured": False}
+    def accept(value):
+        if value != expected:
+            raise ValueError("staged source observation differs from actual file/Application/model")
+    accept(json.loads((fixture / "staging-observation.json").read_text(encoding="utf-8")))
+    status = json.loads((fixture / "staging-status-v2.json").read_text(encoding="utf-8"))
+    status_validator.validate(status)
+    app = status["application"]
+    if (app["phase"], app["configurationRevision"], app["storedGeneration"], app["storedMatchesActive"], status["game"]["running"]) != ("ready", 2, 2, True, False):
+        raise ValueError("staged source current status differs from actual confirmation")
+    negatives = []
+    for key, value in (("temporarySource", "radio"), ("radioMeasured", True), ("storageScope", "device"),
+                       ("storedGeneration", 1), ("running", True), ("bytes", 20219), ("storedMatchesActive", False)):
+        changed = dict(expected); changed[key] = value; negatives.append(changed)
+    for bad in negatives:
+        try:
+            accept(bad)
+        except ValueError:
+            continue
+        raise ValueError("staged source counterpart accepted an incorrect observation")
+    return len(negatives)
+
+
 def check_reply_frames(base: Path) -> tuple[int, int]:
     lines = (base / "fixtures" / "reply-frames-v1.txt").read_text(encoding="utf-8").splitlines()
     expected = (base / "fixtures" / "v2" / "reply-executed.json").read_bytes().rstrip(bytes((13, 10)))
@@ -497,6 +525,7 @@ def main() -> int:
         profile_source_bytes, profile_source_negatives = check_profile_source(base, Draft202012Validator(profile))
         profile_frame_count, profile_frame_negatives = check_profile_frames(base, Draft202012Validator(profile))
         profile_apply_negatives = check_profile_apply(base, validators["status-v2.schema.json"])
+        profile_staging_negatives = check_profile_staging(base, validators["status-v2.schema.json"])
     except ValueError as error:
         print(f"Frame counterpart: {error}", file=sys.stderr)
         return 1
@@ -513,6 +542,8 @@ def main() -> int:
     print(f"Profile frame counterpart reconstructs the exact source from {profile_frame_count} data values plus two metadata values; {profile_frame_negatives} malformed sequences rejected. Complete sources only.")
 
     print(f"Profile apply counterpart distinguishes queued/confirmed/uncertain outcomes and validates two actual v2 statuses; {profile_apply_negatives} incorrect observations rejected. Host storage only.")
+
+    print(f"Profile staging counterpart checks actual temporary-file/model observation and current v2 status; {profile_staging_negatives} incorrect observations rejected. No radio or device durability.")
 
     print(f"Public identity metadata validates; {len(identity_negatives)} malformed variants rejected. No authentication proof.")
 
