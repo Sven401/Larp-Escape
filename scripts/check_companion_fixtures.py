@@ -95,6 +95,49 @@ def check_status_frames(base: Path) -> tuple[int, int, int]:
     return frame_count, document_bytes, rejected
 
 
+def check_gatts_admission(base: Path, command_validator) -> tuple[int, int, int]:
+    """Independent peer-side frame assembly and actual Host observation check.
+
+    Observation is not an ATT wire response or measured radio delivery.
+    """
+    fixture = base / "fixtures" / "gatts"
+    lines = (fixture / "command-frames-v1.txt").read_text(encoding="utf-8").splitlines()
+    expected = (fixture / "command-start-v2.json").read_bytes().rstrip(bytes((13, 10)))
+    actual = decode_document_frames(lines, 1, 1024)
+    if actual != expected or any(len(line) // 2 > 20 for line in lines):
+        raise ValueError("GATTS input differs from real native application fixture")
+    command = json.loads(actual)
+    command_validator.validate(command)
+    if command["kind"] != "start" or command["lease"] != 2:
+        raise ValueError("GATTS fixture does not use the actual newly admitted game lease")
+    observed = json.loads((fixture / "admission-observation.json").read_text(encoding="utf-8"))
+    if observed != {
+        "scope": "host_observation", "frameCopies": len(lines), "responseCopies": len(lines),
+        "beforeOwnerService": {"running": False, "nextRequest": 1},
+        "afterOwnerService": {"running": True, "outcome": "executed", "request": command["request"]},
+        "peerDeliveryMeasured": False, "rfInitialized": False,
+    }:
+        raise ValueError("GATTS observation scope/application execution differs")
+    negatives = [[], lines[:-1], [lines[0], *lines], [lines[1], lines[0], *lines[2:]],
+                 [*lines, lines[-1]], ["GG", *lines[1:]], [lines[0] + "FF" * 121, *lines[1:]]]
+    for index, value in ((0, 2), (1, 2), (1, 3), (1, 4), (2, 0), (4, 0), (6, 1)):
+        changed = bytearray.fromhex(lines[0])
+        changed[index] = value
+        if index in (2, 4):
+            changed[index + 1] = 0
+        negatives.append([changed.hex().upper(), *lines[1:]])
+    changed = bytearray.fromhex(lines[0])
+    changed[4:6] = (1025).to_bytes(2, "little")
+    negatives.append([changed.hex().upper(), *lines[1:]])
+    for bad in negatives:
+        try:
+            decode_document_frames(bad, 1, 1024)
+        except ValueError:
+            continue
+        raise ValueError("GATTS counterpart accepted malformed command sequence")
+    return len(lines), len(actual), len(negatives)
+
+
 def check_reply_frames(base: Path) -> tuple[int, int]:
     lines = (base / "fixtures" / "reply-frames-v1.txt").read_text(encoding="utf-8").splitlines()
     expected = (base / "fixtures" / "v2" / "reply-executed.json").read_bytes().rstrip(bytes((13, 10)))
@@ -300,6 +343,7 @@ def main() -> int:
         frame_count, reply_bytes = check_reply_frames(base)
         receipt_count, receipt_negatives = check_command_receipts(base)
         status_count, status_bytes, status_negatives = check_status_frames(base)
+        gatts_count, gatts_bytes, gatts_negatives = check_gatts_admission(base, validators["game-command-v2.schema.json"])
     except ValueError as error:
         print(f"Frame counterpart: {error}", file=sys.stderr)
         return 1
@@ -308,6 +352,8 @@ def main() -> int:
     print(f"Receipt counterpart correlates {receipt_count} actual command fragments; {receipt_negatives} malformed variants rejected.")
 
     print(f"Status counterpart reconstructs {status_bytes} exact bytes from {status_count} frames; {status_negatives} malformed variants rejected.")
+
+    print(f"GATTS counterpart reconstructs {gatts_bytes} exact command bytes from {gatts_count} frames; {gatts_negatives} malformed variants rejected. Host execution only.")
 
     print(f"Public identity metadata validates; {len(identity_negatives)} malformed variants rejected. No authentication proof.")
 

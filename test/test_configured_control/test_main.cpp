@@ -20,6 +20,7 @@
 // Compile the actual adapter against the deterministic RTOS model.
 #include "../../lib/FreeRtosCommandFrameQueue/FreeRtosCommandFrameQueue.cpp"
 #include "../../lib/FreeRtosGameControlChannel/FreeRtosGameControlChannel.cpp"
+#include "../../lib/GattsWriteAdmission/GattsWriteAdmission.cpp"
 namespace host_rtos {
 void (*beforeEnter)() = nullptr;
 unsigned depth = 0;
@@ -916,6 +917,8 @@ void test_profile_capability_fixture_matches_firmware_encoder() {
 #include "StatusFrameCases.h"
 // Identity cases depend on real status and bearer helpers.
 #include "IdentityAccessCases.h"
+// SDK admission cases depend on the actual identity and queue helpers.
+#include "GattsWriteCases.h"
 } // namespace
 void setUp() {
     host_rtos::depth = 0;
@@ -1045,5 +1048,17 @@ int main() {
     RUN_TEST(test_identity_route_rechecks_actual_channel_and_preserves_false_target);
     RUN_TEST(test_delayed_verification_cannot_reopen_revoked_channel_at_publish_point);
     RUN_TEST(test_delayed_local_assignment_cannot_reopen_revoked_verified_link);
+    RUN_TEST(test_gatts_complete_frames_actual_application_and_independent_tool_fixture);
+    RUN_TEST(test_gatts_wrong_sdk_context_never_copies_or_responds_on_other_peer);
+    RUN_TEST(test_gatts_missing_original_binding_does_not_infer_current_authority);
+    RUN_TEST(test_gatts_attribute_prepare_offset_length_and_header_errors_are_explicit);
+    RUN_TEST(test_gatts_queue_full_reports_resources_without_positive_copy_or_retry);
+    RUN_TEST(test_gatts_response_loss_preserves_copied_input_without_reexecution);
+    RUN_TEST(test_gatts_write_without_response_still_copies_only_one_bounded_frame);
+    RUN_TEST(test_gatts_revocation_before_copy_and_between_observations_rejects);
+    RUN_TEST(test_gatts_copied_before_revoke_retains_original_epoch_and_cannot_execute);
+    RUN_TEST(test_gatts_recycled_handle_old_envelope_never_gets_new_response_binding);
+    RUN_TEST(test_gatts_queue_wait_uses_original_callback_time_not_dispatch_time);
+    RUN_TEST(test_gatts_uninitialized_queue_cannot_ack_positive_copy);
     return UNITY_END();
 }
