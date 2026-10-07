@@ -71,7 +71,7 @@ bool IdentityAccess::publish(std::uint32_t principal, bool gm, bool requireOrigi
         : requireOriginal ? authority_.advanceAuthorityIfCurrent(expected, principal, gm, current_)
                           : authority_.advanceAuthority(principal, gm, current_);
     if (result != AuthorityUpdate::Published) {
-        if (retiring)
+        if (retiring || requireOriginal)
             authorityRetired_ = result != AuthorityUpdate::Suspended;
         else
             authority_.suspendAuthority();
@@ -79,6 +79,31 @@ bool IdentityAccess::publish(std::uint32_t principal, bool gm, bool requireOrigi
         failedLink_ = true;
         return false;
     }
+    return true;
+}
+AuthorityUpdate IdentityAccess::closeCopiedAuthority(const TrustedAuthority &caller,
+                                                     TrustedAuthority &out) const noexcept {
+    const auto expected = caller;
+    return authority_.closeAuthorityIfCurrent(expected, out);
+}
+bool IdentityAccess::acknowledgeCopiedClose(const BoundConnection &caller,
+                                            const TrustedAuthority &expectedInput,
+                                            const TrustedAuthority &closedInput) noexcept {
+    const auto original = caller;
+    const auto expected = expectedInput;
+    const auto closed = closedInput;
+    Observation observation{*this};
+    if (!matches(original) || !(current_ == expected) || !expected.epoch ||
+        closed.epoch <= expected.epoch || closed.principal || closed.gameMaster)
+        return false;
+    TrustedAuthority observed;
+    if (!authority_.readAuthority(observed) || !(observed == closed) || !matches(original) ||
+        !(current_ == expected))
+        return false;
+    current_ = closed;
+    verified_ = false;
+    failedLink_ = true;
+    peer_ = {};
     return true;
 }
 IdentityAccessOutcome IdentityAccess::connect(std::uint16_t handle,

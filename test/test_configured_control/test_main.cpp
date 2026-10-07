@@ -37,6 +37,7 @@
 // Compile the actual adapter against the deterministic RTOS model.
 #include "../../lib/FreeRtosCommandFrameQueue/FreeRtosCommandFrameQueue.cpp"
 #include "../../lib/FreeRtosGameControlChannel/FreeRtosGameControlChannel.cpp"
+#include "../../lib/FreeRtosPeerProofGrantRuntime/FreeRtosPeerProofGrantRuntime.cpp"
 #include "../../lib/FreeRtosPeerProofQueue/FreeRtosPeerProofQueue.cpp"
 #include "../../lib/FreeRtosPeerRegistryRuntime/FreeRtosPeerRegistryRuntime.cpp"
 #include "../../lib/FreeRtosProfileFrameQueue/FreeRtosProfileFrameQueue.cpp"
@@ -983,6 +984,7 @@ void test_profile_capability_fixture_matches_firmware_encoder() {
 #include "IdentityRetirementCases.h"
 #include "PeerLinkSecurityCases.h"
 #include "PeerProofCases.h"
+#include "PeerProofGrantCases.h"
 #include "PeerRegistryActorCases.h"
 #include "PeerRegistryCases.h"
 } // namespace
@@ -1462,6 +1464,29 @@ int main() {
     RUN_TEST(test_security_source_sdk_registration_failure_is_closed_without_retry);
 #if defined(LARP_REAL_PEER_CRYPTO)
     RUN_TEST(test_security_actual_crypto_original_smp_metadata_frames_game_and_revoke);
+    RUN_TEST(test_grant_actual_crypto_worker_original_sdk_ack_frames_game_and_revoke);
 #endif
+    RUN_TEST(test_grant_actor_apply_precedes_worker_confirmation_and_completed_age_does_not_revoke);
+    RUN_TEST(test_grant_wrong_boot_and_unverified_owner_cannot_post_or_change_target);
+    RUN_TEST(test_grant_cancel_before_actor_closes_exact_original_and_reconnect_recovers);
+    RUN_TEST(test_grant_lost_ack_timeout_retires_applied_rights_and_preserves_running_game);
+    RUN_TEST(test_grant_queue_and_proof_deadlines_expire_without_refresh_across_wrap);
+    RUN_TEST(test_grant_new_connection_and_foreign_publisher_survive_old_cancel);
+    RUN_TEST(test_grant_worker_binding_wrong_actor_sdk_and_full_slot_are_closed);
+    RUN_TEST(test_grant_expiry_during_sdk_read_is_rechecked_before_authentication);
+    RUN_TEST(test_grant_credential_revocation_during_metadata_never_authenticates);
+    RUN_TEST(test_grant_immutable_context_wrong_boot_scope_and_record_fail_closed);
+    RUN_TEST(test_grant_input_frozen_before_external_clock_and_observation_ports);
+    RUN_TEST(test_identity_original_auth_conflict_preserves_foreign_publisher);
+    RUN_TEST(test_grant_deadline_crossed_after_clock_sample_never_confirms_lost_ack);
+    RUN_TEST(test_grant_rejected_sdk_post_is_consumed_and_fresh_reconnect_can_recover);
+    RUN_TEST(test_grant_opaque_counter_exhaustion_never_posts_or_opens_rights);
+    RUN_TEST(test_grant_key_possession_without_stored_gm_assignment_never_opens_game_control);
+    RUN_TEST(test_grant_cancel_during_metadata_never_authenticates_or_disturbs_closed_publisher);
+    RUN_TEST(test_grant_foreign_publisher_after_applied_ack_survives_worker_rejection);
+    RUN_TEST(test_grant_close_ack_requires_exact_owned_connection_authority_and_closed_publisher);
+    RUN_TEST(test_grant_applied_cancel_and_queued_role_revoke_share_exact_own_close_ack);
+    RUN_TEST(test_grant_publisher_freezes_expected_before_lock_and_preserves_replacement);
+    RUN_TEST(test_grant_poll_during_actor_publication_remains_pending_without_mutable_owner_read);
     return UNITY_END();
 }

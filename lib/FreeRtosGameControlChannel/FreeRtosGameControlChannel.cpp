@@ -52,8 +52,9 @@ FreeRtosGameControlChannel::advanceAuthorityIfCurrent(const TrustedAuthority &ex
                                                       TrustedAuthority &published) noexcept {
     if (!started_)
         return AuthorityUpdate::Suspended;
+    const auto original = expected; // Freeze before lock acquisition can observe external work.
     portENTER_CRITICAL(&authorityMutex_);
-    const auto result = authority_.advanceIfCurrent(expected, principal, gameMaster, published);
+    const auto result = authority_.advanceIfCurrent(original, principal, gameMaster, published);
     portEXIT_CRITICAL(&authorityMutex_);
     return result;
 }

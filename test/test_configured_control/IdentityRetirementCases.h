@@ -166,7 +166,8 @@ void test_authority_retirement_unavailable_maximum_and_grant_policy_are_separate
     TEST_ASSERT_EQUAL(
         static_cast<unsigned>(AuthorityUpdate::Conflict),
         static_cast<unsigned>(grant.advanceIfCurrent(authority(1), 7, true, destination)));
-    TEST_ASSERT_FALSE(grant.read(destination)); // Grant mismatch still closes authority.
+    TEST_ASSERT_TRUE(grant.read(destination)); // Preserve the newer producer.
+    TEST_ASSERT_TRUE(destination == authority(2));
 }
 void test_authority_retirement_adapter_freezes_expected_before_lock_observation() {
     auto expected = authority(1);

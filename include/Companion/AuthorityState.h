@@ -27,12 +27,13 @@ class IAuthorityPublisher {
     virtual AuthorityUpdate advanceAuthority(std::uint32_t principal, bool gameMaster,
                                              TrustedAuthority &published) noexcept = 0;
     // Check the original observation and grant in ONE adapter lock. A later
-    // lifecycle closure must defeat a delayed verification/role grant.
+    // lifecycle closure must defeat a delayed verification/role grant. Conflict
+    // preserves the replacement producer and destination; the old owner retires.
     virtual AuthorityUpdate advanceAuthorityIfCurrent(const TrustedAuthority &expected,
                                                       std::uint32_t principal, bool gameMaster,
                                                       TrustedAuthority &published) noexcept = 0;
     // Retire only this full original authority in one lock. A replacement is
-    // preserved on Conflict; unlike a failed grant, old retirement cannot close it.
+    // preserved on Conflict; an old grant or retirement cannot close it.
     // Success allocates a new closed epoch; false preserves the destination.
     virtual AuthorityUpdate closeAuthorityIfCurrent(const TrustedAuthority &expected,
                                                     TrustedAuthority &published) noexcept = 0;

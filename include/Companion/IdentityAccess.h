@@ -91,6 +91,14 @@ class IdentityAccess {
     IdentityAccessOutcome replaceGameMastersClosed(
         const std::array<GameMasterAssignment, IdentityAccessLimits::Assignments> &,
         TrustedAuthority *closedAck = nullptr) noexcept;
+    // Immutable publisher reference only: cross-worker exact copied-authority
+    // close uses the publisher's own synchronization, never mutable policy.
+    AuthorityUpdate closeCopiedAuthority(const TrustedAuthority &,
+                                         TrustedAuthority &) const noexcept;
+    // Sole actor reconciles a confirmed own publisher close before reconnect.
+    // Never adopt an observed current binding without the exact original/ACK.
+    bool acknowledgeCopiedClose(const BoundConnection &, const TrustedAuthority &expected,
+                                const TrustedAuthority &closed) noexcept;
     // Closed or verified original link suitable for a fresh proof; no role grant.
     bool proofConnectionCurrent(const BoundConnection &) const noexcept;
     // Exact live binding AND channel observation. False preserves destination.

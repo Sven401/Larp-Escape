@@ -21,7 +21,7 @@ Der neue Regressionstest war vor der Korrektur rot: AuthorityUnavailable14 erwar
 
 Der tatsächliche FreeRTOS-Kanal friert expected vor der ersten externen Beobachtung ein. Vergleich und neue geschlossene Epoch laufen unter derselben kurzen Authoritysperre wie Aufnahme und Rechtevergabe. Keine Queuewartezeit, kein SDK-, Datei-, Parser- oder Spieltickaufruf wird hinzugefügt. Eigene Laufzeit/SMP/Gesamtstackreserve wurden nicht gemessen.
 
-Ein Entzugsmismatch ist eine abgelehnte Erwartung des alten Produzenten. Er ist kein Update einer neuen Authority und erhöht keine Highwatermark. Der bestehende Vergabepfad `advanceAuthorityIfCurrent` bleibt unverändert: Ein dortiger Konflikt schließt weiterhin die Authority. Allgemeines `update`/Faultfencing bleibt ebenso unverändert.
+Ein Entzugsmismatch ist eine abgelehnte Erwartung des alten Produzenten. Er ist kein Update einer neuen Authority und erhöht keine Highwatermark. Historisch blieb in diesem Schnitt der Vergabepfad `advanceAuthorityIfCurrent` unverändert und schloss bei Konflikt die Authority. Der nachfolgende [Original-Proof-Grant-Schnitt](peer-proof-grant-v1.md) korrigiert dies anhand eines bestätigten Gegenbeispiels: Auch ein alter Vergabekonflikt erhält nun den Ersatzpublisher und Zielwert; der alte Identitybesitzer wird lokal retired. Allgemeines `update`/Faultfencing bleibt unverändert.
 
 ## Zugangseigentümer
 

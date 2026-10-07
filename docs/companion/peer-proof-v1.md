@@ -1,5 +1,9 @@
 # Original gebundener Peer-Schlüsselnachweis v1
 
+Aktuelle Fortsetzung: [Verifizierter Workerauftrag zum Originalaktor](peer-proof-grant-v1.md).
+Die nachfolgenden Prüfzahlen und offenen Punkte beschreiben den jeweiligen
+historischen Schnitt; dessen Nachweise werden hier nicht neu behauptet.
+
 Stand: 7. Oktober 2026. Firmwarevertrag für einen schmalen Challenge-/Antwortpfad.
 Der tatsächliche Verifizierer verwendet ECDSA P-256 und SHA-256. Im separaten
 Hostpfad prüfen Mbed TLS2.28.4 und die unabhängige Gegenstelle cryptography45.0.7

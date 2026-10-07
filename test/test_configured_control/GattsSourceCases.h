@@ -2,13 +2,20 @@
 class SourceClock : public IProfileImportClock {
   public:
     mutable void (*before)() = nullptr;
+    mutable void (*after)() = nullptr;
     std::uint32_t nowMilliseconds() const noexcept override {
         if (before) {
             auto hook = before;
             before = nullptr;
             hook();
         }
-        return f->now;
+        const auto value = f->now;
+        if (after) {
+            auto hook = after;
+            after = nullptr;
+            hook();
+        }
+        return value;
     }
 };
 struct SourceFixture {

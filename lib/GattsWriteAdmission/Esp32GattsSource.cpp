@@ -20,6 +20,7 @@ std::uint8_t smpCallback(std::uint8_t event, std::uint8_t *address, sdk446::SmpD
 }
 std::uint32_t registrationCounter = 0;
 std::uint32_t peerRolePostCounter = 0;
+std::uint32_t proofGrantPostCounter = 0;
 portMUX_TYPE registrationMutex = portMUX_INITIALIZER_UNLOCKED;
 void connectionCallback(std::uint8_t interface, std::uint8_t *address, std::uint16_t packed,
                         bool connected, std::uint16_t reason, std::uint8_t transport) {
@@ -280,12 +281,28 @@ void Esp32GattsSource::applyPeerRoles(void *context) noexcept {
     portEXIT_CRITICAL(&source->mutex_);
     if (!pending)
         return;
+    source->reconcileProofGrantCloseNow();
+    // A crypto-worker cancellation may have closed this same original while
+    // its role-close job was queued. Accept only that stored exact own closure
+    // ACK after the sole Identity actor acknowledged it; never adopt a publisher.
+    TrustedAuthority expected = value.original.authority;
+    portENTER_CRITICAL(&source->mutex_);
+    const auto &grant = source->grant_;
+    if (value.kind == PeerRegistryRoleKind::Close && grant.state == 5 && grant.closeAck.epoch &&
+        grant.closeExpected == expected && grant.value.original.device == value.original.device &&
+        grant.value.original.registration == value.original.registration &&
+        grant.value.original.lifecycle == value.original.lifecycle &&
+        grant.value.original.interface == value.original.interface &&
+        source->identitySnapshot_.current && source->identitySnapshot_.connected &&
+        source->identitySnapshot_.connection == grant.value.proof.original.connection &&
+        source->identitySnapshot_.authority == grant.closeAck)
+        expected = grant.closeAck;
+    portEXIT_CRITICAL(&source->mutex_);
     TrustedAuthority observed, ack;
     Identity device;
     const bool present = source->channel_.readAuthority(observed);
     bool valid = source->sourceTask() && source->roleOriginalCurrent(value.original) &&
-                 (value.original.authority.epoch ? present && observed == value.original.authority
-                                                 : !present) &&
+                 (expected.epoch ? present && observed == expected : !present) &&
                  source->access_.deviceIdentity(device) && device == value.original.device &&
                  source->clock_.nowMilliseconds() - value.receivedAt <
                      PeerRegistryActorLimits::DeadlineMilliseconds &&
@@ -392,6 +409,276 @@ void Esp32GattsSource::installEndpoints(void *context) noexcept {
     source.setup_.state = installed ? 3 : 4;
     portEXIT_CRITICAL(&source.mutex_);
 }
+bool Esp32GattsSource::configurePeerProofGrantNow(const BootIdentity &caller,
+                                                  const IPeerProofContext &context) noexcept {
+    const auto boot = caller;
+    if (!sourceTask() || !owner_ || sawConnection_ || grantConfigured_ || !boot.valid())
+        return false;
+    portENTER_CRITICAL(&mutex_);
+    proofBoot_ = boot;
+    proofContext_ = &context;
+    grantConfigured_ = true;
+    portEXIT_CRITICAL(&mutex_);
+    return true;
+}
+bool Esp32GattsSource::readPeerProofGrantOrigin(const PeerProofBinding &caller,
+                                                PeerRegistryActorOrigin &out) const noexcept {
+    const auto original = caller;
+    portENTER_CRITICAL(&mutex_);
+    const auto boot = proofBoot_;
+    const bool configured = grantConfigured_;
+    const auto *context = proofContext_;
+    portEXIT_CRITICAL(&mutex_);
+    PeerRegistryActorOrigin value;
+    if (!configured || !context || !(original.boot == boot) || !original.valid() ||
+        !closedPeerConnectionCurrent(original) || !context->originalLive(original) ||
+        !readPeerRoleOrigin(original.device, value) || value.authority.gameMaster ||
+        value.authority.principal || !closedPeerConnectionCurrent(original))
+        return false;
+    out = value;
+    return true;
+}
+bool Esp32GattsSource::proofGrantScopeCurrent(const PeerProofGrantJob &caller,
+                                              bool beforeGrant) const noexcept {
+    // Private helper: every caller already holds its own frozen entry copy.
+    const auto &value = caller;
+    if (!grantConfigured_ || !proofContext_ || !(value.proof.original.boot == proofBoot_) ||
+        !roleOriginalCurrent(value.original) ||
+        !closedPeerConnectionCurrent(value.proof.original) ||
+        !proofContext_->originalLive(value.proof.original))
+        return false;
+    portENTER_CRITICAL(&mutex_);
+    const auto owned = identitySnapshot_;
+    portEXIT_CRITICAL(&mutex_);
+    return owned.device == value.original.device &&
+           owned.connection == value.proof.original.connection &&
+           (!beforeGrant || owned.authority == value.original.authority);
+}
+PeerProofGrantPost Esp32GattsSource::postPeerProofGrant(const PeerProofGrantJob &caller) noexcept {
+    const auto value = caller;
+    const auto worker = xTaskGetCurrentTaskHandle();
+    portENTER_CRITICAL(&mutex_);
+    const bool unavailable = grantPosting_ || !worker || worker == sourceTask_ ||
+                             (proofWorker_ && proofWorker_ != worker);
+    if (!unavailable)
+        grantPosting_ = true;
+    const auto state = grant_.state;
+    const bool same = state && grant_.value == value;
+    const bool stale = state && value.sequence <= grant_.value.sequence;
+    portEXIT_CRITICAL(&mutex_);
+    if (unavailable)
+        return PeerProofGrantPost::Rejected;
+    PeerProofGrantPost result = PeerProofGrantPost::Rejected;
+    if (same)
+        result = (state == 1 || state == 2 || state == 3 || state == 6)
+                     ? PeerProofGrantPost::Duplicate
+                     : PeerProofGrantPost::Rejected;
+    else if (state == 1 || state == 2)
+        result = PeerProofGrantPost::Busy;
+    else if (!stale && selected == this && validPeerProofGrantJob(value) &&
+             peerProofGrantFresh(value, clock_.nowMilliseconds()) &&
+             proofGrantScopeCurrent(value, true) &&
+             proofContext_->credentialCurrent(value.proof.credential) &&
+             proofGrantScopeCurrent(value, true)) {
+        portENTER_CRITICAL(&registrationMutex);
+        const auto token = proofGrantPostCounter == UINT32_MAX ? 0 : ++proofGrantPostCounter;
+        portEXIT_CRITICAL(&registrationMutex);
+        if (token) {
+            portENTER_CRITICAL(&mutex_);
+            proofWorker_ = worker;
+            grant_.value = value;
+            grant_.ack = {};
+            grant_.closeExpected = {};
+            grant_.closeAck = {};
+            grant_.postToken = token;
+            grant_.state = 1;
+            portEXIT_CRITICAL(&mutex_);
+            const bool posted =
+                peerProofGrantFresh(value, clock_.nowMilliseconds()) &&
+                proofGrantScopeCurrent(value, true) && sdkThread_ == btu_thread &&
+                osi_thread_post(static_cast<osi_thread *>(sdkThread_), &applyPeerProofGrant,
+                                reinterpret_cast<void *>(static_cast<std::uintptr_t>(token)), 0, 0);
+            if (!posted) {
+                portENTER_CRITICAL(&mutex_);
+                grant_.state = 4;
+                portEXIT_CRITICAL(&mutex_);
+            }
+            result = posted ? PeerProofGrantPost::Posted : PeerProofGrantPost::Rejected;
+        }
+    }
+    portENTER_CRITICAL(&mutex_);
+    grantPosting_ = false;
+    portEXIT_CRITICAL(&mutex_);
+    return result;
+}
+PeerProofGrantState Esp32GattsSource::peerProofGrantState(const PeerProofGrantJob &caller,
+                                                          TrustedAuthority &out) noexcept {
+    const auto value = caller;
+    portENTER_CRITICAL(&mutex_);
+    const bool match = grant_.value == value && proofWorker_ == xTaskGetCurrentTaskHandle();
+    const auto state = grant_.state;
+    const auto ack = grant_.ack;
+    portEXIT_CRITICAL(&mutex_);
+    if (!match || !state)
+        return PeerProofGrantState::Unavailable;
+    if (state == 4 || state == 5)
+        return PeerProofGrantState::Rejected;
+    if (state == 2) {
+        // IdentityAccess briefly clears its published snapshot before CAS. A
+        // worker poll must not cancel this in-flight original actor transaction.
+        // Pending never confirms rights; final ACK still uses all policy checks.
+        const auto consumingCurrent = [&]() {
+            portENTER_CRITICAL(&mutex_);
+            const bool current = grantConfigured_ && value.proof.original.boot == proofBoot_ &&
+                                 (grant_.state == 2 || grant_.state == 3) &&
+                                 grant_.value == value && peerProofOpen_ && !registryFenced_ &&
+                                 lifecycle_ == value.original.lifecycle &&
+                                 registrationToken_ == value.original.registration &&
+                                 interface_ == value.original.interface &&
+                                 identitySnapshot_.current && identitySnapshot_.connected &&
+                                 identitySnapshot_.device == value.proof.original.device &&
+                                 identitySnapshot_.connection == value.proof.original.connection;
+            portEXIT_CRITICAL(&mutex_);
+            return current;
+        };
+        return peerProofGrantFresh(value, clock_.nowMilliseconds()) &&
+                       roleOriginalCurrent(value.original) && consumingCurrent() &&
+                       proofContext_->credentialCurrent(value.proof.credential) &&
+                       peerProofGrantFresh(value, clock_.nowMilliseconds()) && consumingCurrent()
+                   ? PeerProofGrantState::Pending
+                   : PeerProofGrantState::Rejected;
+    }
+    if ((state != 6 && !peerProofGrantFresh(value, clock_.nowMilliseconds())) ||
+        !proofGrantScopeCurrent(value, state != 3 && state != 6) ||
+        !proofContext_->credentialCurrent(value.proof.credential) ||
+        !proofGrantScopeCurrent(value, state != 3 && state != 6))
+        return PeerProofGrantState::Rejected;
+    if (state != 3 && state != 6)
+        return PeerProofGrantState::Pending;
+    TrustedAuthority observed;
+    if (!channel_.readAuthority(observed) || !(observed == ack))
+        return PeerProofGrantState::Unavailable;
+    if (state != 6 && !peerProofGrantFresh(value, clock_.nowMilliseconds()))
+        return PeerProofGrantState::Rejected;
+    portENTER_CRITICAL(&mutex_);
+    const bool unchanged = (grant_.state == 3 || grant_.state == 6) && grant_.value == value &&
+                           identitySnapshot_.authority == ack && peerProofOpen_ &&
+                           !registryFenced_ && lifecycle_ == value.original.lifecycle &&
+                           identitySnapshot_.connection == value.proof.original.connection;
+    if (unchanged)
+        grant_.state = 6; // Observed ACK; deadline cannot revoke an established session.
+    portEXIT_CRITICAL(&mutex_);
+    if (!unchanged)
+        return PeerProofGrantState::Unavailable;
+    out = ack;
+    return PeerProofGrantState::Confirmed;
+}
+void Esp32GattsSource::cancelPeerProofGrant(const PeerProofGrantJob &caller) noexcept {
+    const auto value = caller;
+    TrustedAuthority expected;
+    portENTER_CRITICAL(&mutex_);
+    const bool match =
+        proofWorker_ == xTaskGetCurrentTaskHandle() && grant_.value == value && grant_.state;
+    if (match) {
+        const bool applied = grant_.state == 3 || grant_.state == 6;
+        grant_.state = 5;
+        // Only the applied grant's exact ACK may retire authority. A pre-grant
+        // cancel masks this proof link without disturbing a queued role closure.
+        if (identitySnapshot_.device == value.proof.original.device &&
+            identitySnapshot_.connection == value.proof.original.connection &&
+            lifecycle_ == value.original.lifecycle &&
+            registrationToken_ == value.original.registration) {
+            if (applied && identitySnapshot_.authority == grant_.ack)
+                expected = grant_.ack;
+            peerProofOpen_ = false;
+        }
+    }
+    portEXIT_CRITICAL(&mutex_);
+    if (!match || !expected.epoch)
+        return;
+    TrustedAuthority closed;
+    if (access_.closeCopiedAuthority(expected, closed) != AuthorityUpdate::Published)
+        return;
+    portENTER_CRITICAL(&mutex_);
+    if (grant_.value == value && grant_.state == 5) {
+        grant_.closeExpected = expected;
+        grant_.closeAck = closed;
+    }
+    portEXIT_CRITICAL(&mutex_);
+}
+void Esp32GattsSource::reconcileProofGrantCloseNow() noexcept {
+    if (!sourceTask())
+        return;
+    portENTER_CRITICAL(&mutex_);
+    const auto original = grant_.value.proof.original.connection;
+    const auto expected = grant_.closeExpected;
+    const auto closed = grant_.closeAck;
+    // Keep the immutable closure evidence until this slot is replaced. A role
+    // closure queued for the same original may need this exact transition.
+    portEXIT_CRITICAL(&mutex_);
+    if (closed.epoch)
+        (void)access_.acknowledgeCopiedClose(original, expected, closed);
+}
+void Esp32GattsSource::applyPeerProofGrant(void *context) noexcept {
+    auto *source = selected;
+    if (!source)
+        return;
+    const auto token = static_cast<std::uint32_t>(reinterpret_cast<std::uintptr_t>(context));
+    portENTER_CRITICAL(&source->mutex_);
+    const bool pending = token && source->grantConfigured_ && token == source->grant_.postToken &&
+                         source->grant_.state == 1;
+    if (pending)
+        source->grant_.state = 2;
+    const auto value = source->grant_.value;
+    portEXIT_CRITICAL(&source->mutex_);
+    source->reconcileProofGrantCloseNow();
+    if (!pending)
+        return;
+    OriginalPeerSecurity security;
+    VerifiedPeerEvidence evidence;
+    bool accepted = source->sourceTask() &&
+                    peerProofGrantFresh(value, source->clock_.nowMilliseconds()) &&
+                    source->proofGrantScopeCurrent(value, true) &&
+                    source->proofContext_->credentialCurrent(value.proof.credential) &&
+                    source->readOriginalPeerSecurityNow(value.proof.original, security) &&
+                    source->proofContext_->credentialCurrent(value.proof.credential) &&
+                    peerProofGrantFresh(value, source->clock_.nowMilliseconds()) &&
+                    source->proofGrantScopeCurrent(value, true) &&
+                    bindPeerProofEvidence(value.proof, security, evidence);
+    portENTER_CRITICAL(&source->mutex_);
+    accepted = accepted && source->grant_.state == 2 && source->grant_.value == value;
+    portEXIT_CRITICAL(&source->mutex_);
+    bool attempted = false;
+    if (accepted) {
+        attempted = true;
+        const auto outcome =
+            source->access_.authenticate(value.proof.original.connection, evidence);
+        accepted = outcome == IdentityAccessOutcome::Verified ||
+                   outcome == IdentityAccessOutcome::Duplicate;
+    }
+    accepted = accepted && source->proofGrantScopeCurrent(value, false) &&
+               source->proofContext_->credentialCurrent(value.proof.credential) &&
+               peerProofGrantFresh(value, source->clock_.nowMilliseconds()) &&
+               source->proofGrantScopeCurrent(value, false);
+    portENTER_CRITICAL(&source->mutex_);
+    const bool same = source->grant_.value == value && source->grant_.state == 2;
+    accepted = accepted && same && source->peerProofOpen_ && !source->registryFenced_ &&
+               source->lifecycle_ == value.original.lifecycle &&
+               source->identitySnapshot_.connection == value.proof.original.connection;
+
+    if (same) {
+        source->grant_.ack = accepted ? source->identitySnapshot_.authority : TrustedAuthority{};
+        source->grant_.state = accepted ? 3 : 4;
+    }
+    portEXIT_CRITICAL(&source->mutex_);
+    if (!accepted && attempted && source->sourceTask()) {
+        source->reconcileProofGrantCloseNow();
+        // Preserve a newer connection/publisher, even if an external port replaced it.
+        BoundConnection original;
+        if (source->originalConnectionNow(original) && original == value.proof.original.connection)
+            (void)source->access_.authenticate(original, {});
+    }
+}
 bool Esp32GattsSource::configureEndpointsNow(std::uint16_t command, std::uint16_t profile,
                                              IWriteResponseBearer &responses) noexcept {
     if (!sourceTask() || !registered_ || owner_ || sawConnection_ || !command || !profile ||
@@ -424,6 +711,7 @@ GattsLifecycleOutcome Esp32GattsSource::connectionNow(std::uint8_t interface,
         std::memcpy(event.peerAddress.data(), address, event.peerAddress.size());
     if (!sourceTask() || interface != interface_ || (packed & 0xff) != interface)
         return GattsLifecycleOutcome::Invalid;
+    reconcileProofGrantCloseNow();
     portENTER_CRITICAL(&mutex_);
     peerProofOpen_ = false;
     const bool lifetimeAvailable = lifecycle_ != UINT32_MAX;

@@ -1,6 +1,7 @@
 #pragma once
 #include "Companion/PeerLinkSecurity.h"
 #include "Companion/PeerProof.h"
+#include "Companion/PeerProofGrant.h"
 #include "Companion/PeerRegistryActor.h"
 #include "FreeRtosGattsConnection.h"
 #include "GattsServiceDefinition.h"
@@ -39,6 +40,16 @@ class Esp32GattsSource : public IGattsResponseContext,
     void fencePeerRoles(const PeerRegistryRoleJob &) noexcept;
     // Copied keys are tied to this installed job, but remain usable on fresh links.
     bool installedPeerRoles(const PeerRegistryRoleJob &) const noexcept;
+    // Once before any link, on the original actor; context must be a protected
+    // immutable-boot/public-registry adapter, not the mutable crypto owner.
+    bool configurePeerProofGrantNow(const BootIdentity &, const IPeerProofContext &) noexcept;
+    bool readPeerProofGrantOrigin(const PeerProofBinding &,
+                                  PeerRegistryActorOrigin &) const noexcept;
+    PeerProofGrantPost postPeerProofGrant(const PeerProofGrantJob &) noexcept;
+    PeerProofGrantState peerProofGrantState(const PeerProofGrantJob &, TrustedAuthority &) noexcept;
+    // Sole crypto worker. Fence first, atomically close only its copied owned
+    // publication, retain a close ACK for later original-actor reconciliation.
+    void cancelPeerProofGrant(const PeerProofGrantJob &) noexcept;
     // Once, on that same task, using actual created attribute handles, before
     // ANY connection callback. Repeated/late configuration never rebinds.
     bool configureEndpointsNow(std::uint16_t command, std::uint16_t profile,
@@ -85,6 +96,16 @@ class Esp32GattsSource : public IGattsResponseContext,
         std::uint32_t postToken = 0;
         std::uint8_t state = 0;
     } role_;
+    struct ProofGrantPending {
+        PeerProofGrantJob value;
+        TrustedAuthority ack, closeExpected, closeAck;
+        std::uint32_t postToken = 0;
+        std::uint8_t state = 0;
+    } grant_;
+    BootIdentity proofBoot_;
+    const IPeerProofContext *proofContext_ = nullptr;
+    TaskHandle_t proofWorker_ = nullptr;
+    bool grantConfigured_ = false, grantPosting_ = false;
     TaskHandle_t roleWorker_ = nullptr;
     std::uint32_t lifecycle_ = 0;
     bool rolePosting_ = false, registryFenced_ = false;
@@ -113,6 +134,9 @@ class Esp32GattsSource : public IGattsResponseContext,
     mutable portMUX_TYPE mutex_ = portMUX_INITIALIZER_UNLOCKED;
     Pending pending_[GattsResponseLimits::Depth];
     bool transportNow(PeerTransportBinding &) const noexcept;
+    bool proofGrantScopeCurrent(const PeerProofGrantJob &, bool beforeGrant) const noexcept;
+    void reconcileProofGrantCloseNow() noexcept;
+    static void applyPeerProofGrant(void *) noexcept;
     void copyIdentitySnapshot(const IdentityAccessSnapshot &) noexcept override;
     bool sourceTask() const noexcept;
     bool validResponse(const RoutedWriteResponse &) const noexcept;

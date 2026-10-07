@@ -135,16 +135,18 @@ void test_security_core_repair_invalidates_previous_mode_until_terminal_drain() 
 }
 struct SecurityFixture : RegistryActorFixture {
     PeerProofBinding original;
-    SecurityFixture() : RegistryActorFixture(nullptr, 0, true) {
+    explicit SecurityFixture(bool openLink = true, bool gm = true)
+        : RegistryActorFixture(nullptr, 0, true) {
         ready();
-        save(registryValue(1, true));
+        save(registryValue(1, gm));
         GattsSourceRegistration reg;
         TEST_ASSERT_TRUE(source.readRegistration(reg));
         original.device = testIdentity();
         original.boot = f->boot;
         original.registration = reg.token;
         original.interface = reg.interface;
-        original.connection = open();
+        if (openLink)
+            original.connection = open();
         actor();
     }
     void event(std::uint8_t event, PeerPairingResult result = securityResult()) {

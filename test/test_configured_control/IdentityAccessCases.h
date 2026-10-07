@@ -116,7 +116,8 @@ void test_authority_owned_epoch_advance_above_fault_and_maximum_no_wrap() {
         static_cast<unsigned>(AuthorityUpdate::Conflict),
         static_cast<unsigned>(conditional.advanceIfCurrent(expected, 7, true, conditionOutput)));
     TEST_ASSERT_EQUAL_UINT32(31, conditionOutput.epoch);
-    TEST_ASSERT_FALSE(conditional.read(conditionOutput));
+    TEST_ASSERT_TRUE(conditional.read(conditionOutput));
+    TEST_ASSERT_EQUAL_UINT32(31, conditionOutput.epoch);
     FreeRtosGameControlChannel empty;
     TEST_ASSERT_EQUAL(static_cast<unsigned>(AuthorityUpdate::Suspended),
                       static_cast<unsigned>(empty.advanceAuthority(7, true, output)));

@@ -45,10 +45,8 @@ AuthorityUpdate AuthorityState::advanceIfCurrent(const TrustedAuthority &expecte
                                                  TrustedAuthority &published) noexcept {
     if (!available_)
         return AuthorityUpdate::Suspended;
-    if (!(expected == current_)) {
-        suspend();
-        return AuthorityUpdate::Conflict;
-    }
+    if (!(expected == current_))
+        return AuthorityUpdate::Conflict; // Preserve the replacement producer.
     return advance(principal, gameMaster, published);
 }
 AuthorityUpdate AuthorityState::closeIfCurrent(const TrustedAuthority &expected,

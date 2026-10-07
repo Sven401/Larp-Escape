@@ -1,5 +1,9 @@
 # Bestätigte Registerübergabe an den ursprünglichen SDK-Akteur
 
+Aktuelle Fortsetzung: [Verifizierter Workerauftrag zum Originalaktor](peer-proof-grant-v1.md).
+Die nachfolgenden Prüfzahlen und offenen Punkte beschreiben den jeweiligen
+historischen Schnitt; dessen Nachweise werden hier nicht neu behauptet.
+
 Status: schmaler Firmware-/Host-/Toolpfad; kein Produktionszugang und keine Geräteabnahme. Datum: 2026-10-07, Basis Firmware7398d2d. Der öffentliche [404-Byte-Registervertrag](peer-registry-v1.md) und die App-v2-Verträge bleiben erhalten.
 
 ## Besitzer und vertikaler Pfad

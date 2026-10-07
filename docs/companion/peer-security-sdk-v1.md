@@ -1,5 +1,9 @@
 # Original SDK security evidence (ESP-IDF4.4.6)
 
+Aktuelle Fortsetzung: [Verifizierter Workerauftrag zum Originalaktor](peer-proof-grant-v1.md).
+Die nachfolgenden Prüfzahlen und offenen Punkte beschreiben den jeweiligen
+historischen Schnitt; dessen Nachweise werden hier nicht neu behauptet.
+
 Status: narrow firmware/tool implementation, host checked; production pairing,
 wire authentication attributes and device/RF acceptance remain open. Base9df1d36.
 No configuration/proof wire format or Appcode changed in this cut.

@@ -1,5 +1,9 @@
 # Identitätslabels und ausdrückliche Spielleitungszuordnung
 
+Aktuelle Fortsetzung: [Verifizierter Workerauftrag zum Originalaktor](peer-proof-grant-v1.md).
+Die nachfolgenden Prüfzahlen und offenen Punkte beschreiben den jeweiligen
+historischen Schnitt; dessen Nachweise werden hier nicht neu behauptet.
+
 **Stand:** 7. Oktober 2026. **Status:** fester Rechtekern gegen tatsächlichen
 Kanal/Application/Host und synthetische Firmwareprobe geprüft.
 Aktuelle Ergänzung: [Original gebundener Peer-Schlüsselnachweis v1](peer-proof-v1.md)

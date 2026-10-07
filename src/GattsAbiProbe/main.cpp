@@ -13,6 +13,7 @@
 #include <FreeRtosCommandFrameQueue.h>
 #include <FreeRtosGameControlChannel.h>
 #include <FreeRtosGattsResponseQueue.h>
+#include <FreeRtosPeerProofGrantRuntime.h>
 #include <FreeRtosPeerProofQueue.h>
 #include <FreeRtosPeerRegistryRuntime.h>
 #include <FreeRtosProfileFrameQueue.h>
@@ -70,6 +71,9 @@ GattsResponseDispatcher responseWorker(responses, responseSubmitter);
 Esp32GattsSource sourcePort(identityPolicy, profileClock, channel, queue, profileQueue);
 FreeRtosGattsResponseQueue sourceResponses(sourcePort);
 FreeRtosPeerRegistryRuntime unopenedActorRegistry(sourcePort, channel, profileClock);
+BootIdentity unopenedProofBoot;
+FreeRtosPeerProofGrantRuntime unopenedProofGrant(sourcePort, unopenedActorRegistry, profileClock,
+                                                 unopenedProofBoot);
 class UnopenedPeerContext : public IPeerProofContext {
   public:
     bool originalLive(const PeerProofBinding &) const noexcept override {
@@ -104,6 +108,16 @@ void setup() {
         !unopenedSecurity.mitm || unopenedSecurity.encrypted ||
         unopenedSecurity.secureConnections || unopenedSecurity.bonded)
         return; // Only the closed reader path links; no SMP_Register/BTM/GATT query.
+    TrustedAuthority unopenedGrantAck;
+    if (unopenedProofGrant.beginWorker() ||
+        sourcePort.configurePeerProofGrantNow(unopenedProofBoot, unopenedProofGrant) ||
+        unopenedProofGrant.submitVerified(peerProofOwner, PeerProofBinding{}) !=
+            PeerProofGrantState::Unavailable ||
+        unopenedProofGrant.service(unopenedGrantAck) != PeerProofGrantState::Unavailable)
+        return; // Closed actual worker/handoff path; no crypto, SDK post or radio.
+    unopenedProofGrant.cancel();
+    Serial.printf("peer_proof_grant_abi: initialized=false source_posted=false worker=%u job=%u\n",
+                  unsigned(sizeof(unopenedProofGrant)), unsigned(sizeof(PeerProofGrantJob)));
     Serial.printf(
         "gatts_source_abi: network=false initialized=false source_registered=false port=%u\n",
         unsigned(sizeof(sourcePort)));

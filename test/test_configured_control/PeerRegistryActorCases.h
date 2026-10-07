@@ -493,7 +493,7 @@ void test_registry_actor_owner_observer_is_single_and_failed_ack_preserves_outpu
 }
 
 #if defined(LARP_REAL_PEER_CRYPTO)
-void registryActorCryptoVertical(bool sdkSecurity) {
+void registryActorCryptoVertical(bool sdkSecurity, bool asyncGrant = false) {
     Esp32PeerProofCrypto crypto;
     RegistryActorFixture fixture(&crypto, 0x01020304, sdkSecurity);
     fixture.ready();
@@ -513,6 +513,14 @@ void registryActorCryptoVertical(bool sdkSecurity) {
     registryOutcome(PeerRegistryOutcome::Loaded, restored.service());
     TEST_ASSERT_EQUAL(8, host_sdk_source::posts);
     ActorPeerContext context(fixture);
+    FreeRtosPeerProofGrantRuntime grant(fixture.source, fixture.publication, fixture.clock,
+                                        f->boot);
+    if (asyncGrant) {
+        fixture.actor();
+        TEST_ASSERT_TRUE(fixture.source.configurePeerProofGrantNow(f->boot, grant));
+    }
+    IPeerProofContext &proofContext =
+        asyncGrant ? static_cast<IPeerProofContext &>(grant) : context;
     context.original.device = testIdentity();
     context.original.boot = f->boot;
     GattsSourceRegistration reg;
@@ -532,7 +540,9 @@ void registryActorCryptoVertical(bool sdkSecurity) {
     host_sdk_source::currentTask = reinterpret_cast<TaskHandle_t>(3); // Crypto model worker.
     PeerClock clock;
     PeerNonceModel nonce;
-    PeerProofOwner proof(context, crypto, nonce, clock);
+    PeerProofOwner proof(proofContext, crypto, nonce, clock);
+    if (asyncGrant)
+        TEST_ASSERT_TRUE(grant.beginWorker());
     PeerCredential credential;
     TEST_ASSERT_TRUE(fixture.publication.credential(testIdentity(2), credential));
     peerOutcome(PeerProofOutcome::Issued, proof.issue(context.original, credential));
@@ -542,7 +552,7 @@ void registryActorCryptoVertical(bool sdkSecurity) {
     TEST_ASSERT_TRUE(encodePeerChallenge(challenge, transcript));
     TEST_ASSERT_EQUAL_HEX8_ARRAY(peerTestTranscript, transcript.data(), 108);
     PeerProofReceiver receiver(proof);
-    FreeRtosPeerProofQueue authFrames(context, clock);
+    FreeRtosPeerProofQueue authFrames(proofContext, clock);
     TEST_ASSERT_TRUE(authFrames.begin());
     PeerProofReceive result;
     for (unsigned offset = 0; offset < 72; offset += 12) {
@@ -561,24 +571,46 @@ void registryActorCryptoVertical(bool sdkSecurity) {
     peerOutcome(PeerProofOutcome::Verified, result.proof);
     VerifiedPeerProof verified;
     TEST_ASSERT_TRUE(proof.readVerified(context.original, verified));
-    OriginalPeerSecurity MODELED;
-    MODELED.original = context.original;
-    MODELED.encrypted = MODELED.mitm = MODELED.secureConnections = MODELED.bonded = true;
-    fixture.actor();
-    if (sdkSecurity) {
-        // Verified copy handed from crypto model worker; no actor read of the
-        // mutable proof owner. Recheck protected credentials/original at grant.
-        TEST_ASSERT_TRUE(fixture.publication.credentialCurrent(verified.credential));
-        TEST_ASSERT_TRUE(context.originalLive(verified.original));
-        TEST_ASSERT_TRUE(f->now - verified.issuedAt < PeerProofLimits::MaxAgeMilliseconds);
-        TEST_ASSERT_TRUE(fixture.source.readOriginalPeerSecurityNow(verified.original, MODELED));
-        TEST_ASSERT_TRUE(fixture.publication.credentialCurrent(verified.credential));
-        TEST_ASSERT_TRUE(context.originalLive(verified.original));
+    PeerProofGrantJob grantJob;
+    TrustedAuthority grantAck;
+    if (asyncGrant) {
+        TEST_ASSERT_EQUAL(static_cast<unsigned>(PeerProofGrantState::Pending),
+                          static_cast<unsigned>(grant.submitVerified(proof, context.original)));
+        TEST_ASSERT_TRUE(grant.job(grantJob));
+        TEST_ASSERT_EQUAL(188, sizeof(grantJob));
+        TEST_ASSERT_EQUAL(static_cast<unsigned>(PeerProofGrantState::Pending),
+                          static_cast<unsigned>(grant.service(grantAck)));
+        TEST_ASSERT_EQUAL(0, grantAck.epoch);
+        fixture.actor();
+        TrustedAuthority closed;
+        TEST_ASSERT_FALSE(fixture.access.route(context.original.connection, closed));
+        host_sdk_source::drainOne(); // Actual Source callback consumes the copied slot.
+        host_sdk_source::currentTask = reinterpret_cast<TaskHandle_t>(3);
+        TEST_ASSERT_EQUAL(static_cast<unsigned>(PeerProofGrantState::Confirmed),
+                          static_cast<unsigned>(grant.service(grantAck)));
+        TEST_ASSERT_TRUE(grantAck.gameMaster && grantAck.principal == 7);
+        fixture.actor();
+    } else {
+        OriginalPeerSecurity MODELED;
+        MODELED.original = context.original;
+        MODELED.encrypted = MODELED.mitm = MODELED.secureConnections = MODELED.bonded = true;
+        fixture.actor();
+        if (sdkSecurity) {
+            // Verified copy handed from crypto model worker; no actor read of the
+            // mutable proof owner. Recheck protected credentials/original at grant.
+            TEST_ASSERT_TRUE(fixture.publication.credentialCurrent(verified.credential));
+            TEST_ASSERT_TRUE(context.originalLive(verified.original));
+            TEST_ASSERT_TRUE(f->now - verified.issuedAt < PeerProofLimits::MaxAgeMilliseconds);
+            TEST_ASSERT_TRUE(
+                fixture.source.readOriginalPeerSecurityNow(verified.original, MODELED));
+            TEST_ASSERT_TRUE(fixture.publication.credentialCurrent(verified.credential));
+            TEST_ASSERT_TRUE(context.originalLive(verified.original));
+        }
+        VerifiedPeerEvidence evidence;
+        TEST_ASSERT_TRUE(bindPeerProofEvidence(verified, MODELED, evidence));
+        accessOutcome(IdentityAccessOutcome::Verified,
+                      fixture.access.authenticate(context.original.connection, evidence));
     }
-    VerifiedPeerEvidence evidence;
-    TEST_ASSERT_TRUE(bindPeerProofEvidence(verified, MODELED, evidence));
-    accessOutcome(IdentityAccessOutcome::Verified,
-                  fixture.access.authenticate(context.original.connection, evidence));
     TrustedAuthority route;
     TEST_ASSERT_TRUE(fixture.access.route(context.original.connection, route));
     host_sdk_source::currentTask = reinterpret_cast<TaskHandle_t>(3);
@@ -640,7 +672,7 @@ void registryActorCryptoVertical(bool sdkSecurity) {
     TEST_ASSERT_TRUE(f->application.gameRunning());
     TEST_ASSERT_EQUAL(3, host_peer_nvs::sets);
     TEST_ASSERT_EQUAL(3, host_peer_nvs::commits);
-    TEST_ASSERT_EQUAL(23, host_sdk_source::posts);
+    TEST_ASSERT_EQUAL(asyncGrant ? 24 : 23, host_sdk_source::posts);
     TEST_ASSERT_EQUAL(0, host_sdk_source::passedRequests);
     TEST_ASSERT_TRUE(host_sdk_source::work.empty());
     TEST_ASSERT_TRUE(host_peer_nvs::handles.empty());
@@ -673,10 +705,42 @@ void registryActorCryptoVertical(bool sdkSecurity) {
             "\"storedExplicitRole\":true,\"oldProofRejected\":true,\"runningAfterRevocation\":true,"
             "\"bondRestoreImplemented\":false,\"smpMeasured\":false,\"rfInitialized\":false}\n";
     }
-    const char *path = sdkSecurity ? "docs/companion/fixtures/peer-security/observation.json"
-                                   : "docs/companion/fixtures/peer-registry/actor-observation.json";
-    if (std::getenv(sdkSecurity ? "LARP_EXPORT_PEER_SECURITY_FIXTURE"
-                                : "LARP_EXPORT_REGISTRY_ACTOR_FIXTURE")) {
+    if (asyncGrant) {
+        TEST_ASSERT_FALSE(host_rtos::nonzeroWait);
+        TEST_ASSERT_TRUE(grantJob.proof.original == context.original);
+        TEST_ASSERT_TRUE(grantJob.original.authority.epoch == context.original.connection.token);
+        TEST_ASSERT_TRUE(grantJob.proof.credential == registryValue().peers[0].credential);
+        observation =
+            "{\"scope\":\"host_actual_crypto_original_sdk_proof_grant_model\","
+            "\"grantSlots\":1,\"grantBytes\":188,\"grantSdkPosts\":1,\"sdkPosts\":24,"
+            "\"queueMilliseconds\":5000,\"proofMilliseconds\":30000,"
+            "\"sourceActor\":1,\"cryptoWorker\":3,\"registryWorker\":2,"
+            "\"proofFrames\":6,\"commandFrames\":13,\"setCalls\":3,\"commitCalls\":3,"
+            "\"originalSmpCallbacks\":3,\"gattReads\":1,\"flagReads\":1,"
+            "\"stateReads\":1,\"procedureReads\":2,\"bootHigh\":" +
+            std::to_string(grantJob.proof.original.boot.high) +
+            ",\"bootLow\":" + std::to_string(grantJob.proof.original.boot.low) +
+            ",\"registration\":" + std::to_string(grantJob.proof.original.registration) +
+            ",\"lifecycle\":" + std::to_string(grantJob.original.lifecycle) +
+            ",\"connectionToken\":" + std::to_string(grantJob.proof.original.connection.token) +
+            ",\"packedConnection\":" + std::to_string(grantJob.proof.original.connection.handle) +
+            ",\"interface\":" + std::to_string(grantJob.proof.original.interface) +
+            ",\"proofSequence\":" + std::to_string(grantJob.proof.sequence) +
+            ",\"grantSequence\":" + std::to_string(grantJob.sequence) +
+            ",\"ackEpoch\":" + std::to_string(grantAck.epoch) +
+            ",\"ackPrincipal\":" + std::to_string(grantAck.principal) +
+            ",\"storedExplicitRole\":true,\"immutableBootContext\":true,"
+            "\"ackBeforeWorkerConfirmation\":true,\"actorReadsMutableProofOwner\":false,"
+            "\"oldProofRejected\":true,\"runningAfterRevocation\":true,"
+            "\"rfInitialized\":false,\"smpMeasured\":false,\"physicalDurabilityMeasured\":false}\n";
+    }
+    const char *path = asyncGrant ? "docs/companion/fixtures/peer-grant/observation.json"
+                       : sdkSecurity
+                           ? "docs/companion/fixtures/peer-security/observation.json"
+                           : "docs/companion/fixtures/peer-registry/actor-observation.json";
+    if (std::getenv(asyncGrant    ? "LARP_EXPORT_PEER_GRANT_FIXTURE"
+                    : sdkSecurity ? "LARP_EXPORT_PEER_SECURITY_FIXTURE"
+                                  : "LARP_EXPORT_REGISTRY_ACTOR_FIXTURE")) {
         auto *file = std::fopen(path, "wb");
         TEST_ASSERT_NOT_NULL(file);
         TEST_ASSERT_EQUAL(observation.size(),
@@ -696,6 +760,9 @@ void test_registry_actor_actual_crypto_original_sdk_roles_frames_game_and_revoke
 }
 void test_security_actual_crypto_original_smp_metadata_frames_game_and_revoke() {
     registryActorCryptoVertical(true);
+}
+void test_grant_actual_crypto_worker_original_sdk_ack_frames_game_and_revoke() {
+    registryActorCryptoVertical(true, true);
 }
 
 #endif
