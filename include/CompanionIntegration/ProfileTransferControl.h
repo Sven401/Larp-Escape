@@ -1,5 +1,6 @@
 #pragma once
 #include "Companion/ProfileControlFrames.h"
+#include "Companion/ProfileResponseQueue.h"
 #include "Companion/ProfileStaging.h"
 #include "CompanionIntegration/ProfileApply.h"
 namespace larp {
@@ -23,6 +24,8 @@ class ProfileTransferControl : public companion::IProfileControlSink {
     void handle(const companion::ProfileControlFrame &, const companion::TrustedAuthority &,
                 std::uint32_t) noexcept override;
     bool takeResponse(companion::RoutedProfileResponse &) noexcept;
+    // Same owner, retains pending output on any non-Copied synchronized result.
+    bool offerResponse(companion::IProfileResponseQueue &) noexcept;
 
   private:
     devices::ProfileApplication &app_;

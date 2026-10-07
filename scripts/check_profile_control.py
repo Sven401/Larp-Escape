@@ -56,3 +56,30 @@ def check_profile_control(base: Path, status_validator) -> int:
         else:
             raise ValueError("accepted malformed profile control/response")
     return len(negatives)
+
+
+def check_profile_response_queue(base: Path) -> int:
+    import json
+    fixture = base / "fixtures" / "profile-source"
+    actual = response(bytes.fromhex((fixture / "response-queue-saved-v1.txt").read_text().strip()))
+    if actual != (1, 2, 3, 3, 0, 4, 2):
+        raise ValueError("response queue wire correlation")
+    expected = {"scope": "host_profile_response_queue", "depth": 4, "itemBytes": 36,
+                "producedAt": 23, "senderServiceAt": 25, "code": 3, "request": 2,
+                "configurationRevision": 2, "storedGeneration": 2, "radioMeasured": False}
+    observation = json.loads((fixture / "response-queue-observation.json").read_text())
+    def accept(value):
+        if value != expected:
+            raise ValueError("response queue changed original time/model scope")
+    accept(observation)
+    negatives = []
+    for key, value in (("depth", 5), ("itemBytes", 20), ("producedAt", 25), ("code", 2),
+                       ("configurationRevision", 1), ("storedGeneration", 1), ("radioMeasured", True)):
+        changed = dict(observation); changed[key] = value; negatives.append(changed)
+    for changed in negatives:
+        try:
+            accept(changed)
+        except ValueError:
+            continue
+        raise ValueError("response queue accepted a wrong observation")
+    return len(negatives)

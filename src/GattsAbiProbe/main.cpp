@@ -6,6 +6,7 @@
 #include <FreeRtosCommandFrameQueue.h>
 #include <FreeRtosGameControlChannel.h>
 #include <FreeRtosProfileFrameQueue.h>
+#include <FreeRtosProfileResponseQueue.h>
 #include <GattsWriteAdmission.h>
 #include <SdkGattsWrite.h>
 #include <algorithm>
@@ -14,6 +15,14 @@ using namespace larp::companion;
 FreeRtosGameControlChannel channel;
 FreeRtosCommandFrameQueue queue(channel);
 FreeRtosProfileFrameQueue profileQueue(channel);
+class ProbeClock : public IProfileImportClock {
+  public:
+    std::uint32_t nowMilliseconds() const noexcept override {
+        return millis();
+    }
+};
+ProbeClock profileClock;
+FreeRtosProfileResponseQueue profileResponses(channel, profileClock);
 IdentityAccess identityPolicy(channel);
 BoundConnection connection;
 CommandStream stream(channel);
@@ -110,6 +119,21 @@ void setup() {
     Serial.printf("profile_control_probe: synthetic=true network=false bytes=%u imported=false "
                   "applied=false\n",
                   unsigned(profileWritten));
+    RoutedProfileResponse response;
+    response.original = original.authority;
+    response.producedAt = millis();
+    response.response.command = control;
+    response.response.code = ProfileResponseCode::DraftReady;
+    response.response.detail = ProfileResponseDetail::None;
+    response.response.draftRevision = response.response.configurationRevision = 1;
+    RoutedProfileResponse copiedResponse;
+    if (!profileResponses.begin() ||
+        profileResponses.copyResponse(response) != ProfileResponseCopy::Copied ||
+        !profileResponses.takeCurrent(copiedResponse))
+        return;
+    Serial.printf(
+        "profile_response_queue_probe: synthetic=true network=false queue=%u item=%u saved=false\n",
+        unsigned(sizeof(profileResponses)), unsigned(sizeof(copiedResponse)));
     ready = true;
 }
 void loop() {

@@ -238,6 +238,27 @@ void ProfileTransferControl::handle(const ProfileControlFrame &input,
     }
     emit(cached_);
 }
+bool ProfileTransferControl::offerResponse(IProfileResponseQueue &queue) noexcept {
+    if (busy_ || !pending_)
+        return false;
+    Call call(busy_);
+    if (!current(session_)) {
+        close();
+        return false;
+    }
+    if (clock_.nowMilliseconds() - produced_ >= ProfileControlLimits::ResponseMilliseconds) {
+        pending_ = false;
+        return false;
+    }
+    RoutedProfileResponse value;
+    value.original = session_;
+    value.producedAt = produced_;
+    value.response = response_;
+    if (queue.copyResponse(value) != ProfileResponseCopy::Copied)
+        return false;
+    pending_ = false;
+    return true;
+}
 bool ProfileTransferControl::takeResponse(RoutedProfileResponse &destination) noexcept {
     if (busy_ || !pending_)
         return false;

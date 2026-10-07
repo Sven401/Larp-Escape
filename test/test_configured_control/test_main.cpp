@@ -1,4 +1,5 @@
 #include "../../lib/FreeRtosProfileFrameQueue/FreeRtosProfileFrameQueue.h"
+#include "../../lib/FreeRtosProfileResponseQueue/FreeRtosProfileResponseQueue.h"
 #include "../../src/ProfileTool/TemporaryProfileFile.h"
 #include "Companion/CommandReceipt.h"
 #include "Companion/CommandStream.h"
@@ -29,6 +30,7 @@
 #include "../../lib/FreeRtosCommandFrameQueue/FreeRtosCommandFrameQueue.cpp"
 #include "../../lib/FreeRtosGameControlChannel/FreeRtosGameControlChannel.cpp"
 #include "../../lib/FreeRtosProfileFrameQueue/FreeRtosProfileFrameQueue.cpp"
+#include "../../lib/FreeRtosProfileResponseQueue/FreeRtosProfileResponseQueue.cpp"
 #include "../../lib/GattsWriteAdmission/GattsWriteAdmission.cpp"
 #include "../../src/ProfileTool/TemporaryProfileFile.cpp"
 namespace host_rtos {
@@ -940,6 +942,8 @@ void test_profile_capability_fixture_matches_firmware_encoder() {
 #include "ProfileFrameQueueCases.h"
 // Control cases need the actual queue/source/application and bearer fixtures.
 #include "ProfileControlCases.h"
+// Response queue cases need actual control/file/application and sender helpers.
+#include "ProfileResponseQueueCases.h"
 } // namespace
 void setUp() {
     host_rtos::depth = 0;
@@ -1179,5 +1183,17 @@ int main() {
     RUN_TEST(test_profile_control_freezes_command_and_reentrant_call_has_no_effect);
     RUN_TEST(test_profile_control_new_metadata_invalidates_previous_private_proof);
     RUN_TEST(test_profile_response_sender_selected_bytes_survive_caller_mutation);
+    RUN_TEST(test_profile_response_queue_actual_owner_copied_output_sender_saved_status);
+    RUN_TEST(test_profile_response_queue_full_owner_retains_exact_output_and_input);
+    RUN_TEST(test_profile_response_queue_invalid_uninitialized_future_and_wrong_route);
+    RUN_TEST(test_profile_response_queue_freezes_all_producer_scalars_before_observation);
+    RUN_TEST(test_profile_response_queue_consumer_discards_four_stale_without_relabel);
+    RUN_TEST(test_profile_response_queue_expiry_queue_wait_wrap_preserves_original_time);
+    RUN_TEST(test_profile_response_queue_rights_loss_after_copy_selection_is_not_delivery);
+    RUN_TEST(test_profile_response_queue_rights_loss_after_take_selection_sender_rechecks);
+    RUN_TEST(test_profile_response_owner_offer_reentrant_and_expired_retains_bounds);
+    RUN_TEST(test_profile_response_owner_full_port_revoke_closes_without_game_or_store_effect);
+    RUN_TEST(test_profile_response_selection_busy_does_not_take_and_load_preserves_time);
+    RUN_TEST(test_profile_response_selection_reentrant_clock_authority_does_not_take_twice);
     return UNITY_END();
 }
