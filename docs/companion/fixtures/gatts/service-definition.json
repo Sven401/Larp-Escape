@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "service": "407e6a1d-1cc2-43fd-856b-4aff85a20001",
+  "command": "407e6a1d-1cc2-43fd-856b-4aff85a20002",
+  "profile": "407e6a1d-1cc2-43fd-856b-4aff85a20003",
+  "application": 19525,
+  "handles": 5,
+  "writeValueMaximum": 128,
+  "writeResponse": "application",
+  "writePermissions": "encrypted_mitm",
+  "setupDeadlineMilliseconds": 30000,
+  "endpointDeadlineMilliseconds": 5000
+}

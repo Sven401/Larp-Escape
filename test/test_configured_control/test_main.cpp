@@ -28,16 +28,19 @@
 #include <unity.h>
 #include <vector>
 #define LARP_GATT_SOURCE_HOST_MODEL 1
+#include "GattsServiceSdkModel.h"
 #include "SdkGattSourceModel.h"
 // Compile the actual adapter against the deterministic RTOS model.
 #include "../../lib/FreeRtosCommandFrameQueue/FreeRtosCommandFrameQueue.cpp"
 #include "../../lib/FreeRtosGameControlChannel/FreeRtosGameControlChannel.cpp"
 #include "../../lib/FreeRtosProfileFrameQueue/FreeRtosProfileFrameQueue.cpp"
 #include "../../lib/FreeRtosProfileResponseQueue/FreeRtosProfileResponseQueue.cpp"
+#include "../../lib/GattsWriteAdmission/Esp32GattsService.cpp"
 #include "../../lib/GattsWriteAdmission/Esp32GattsSource.cpp"
 #include "../../lib/GattsWriteAdmission/FreeRtosGattsConnection.cpp"
 #include "../../lib/GattsWriteAdmission/FreeRtosGattsResponseQueue.cpp"
 #include "../../lib/GattsWriteAdmission/GattsWriteAdmission.cpp"
+#include "../../lib/GattsWriteAdmission/SdkGattsService.cpp"
 #include "../../src/ProfileTool/TemporaryProfileFile.cpp"
 // Actual ESP file adapters under an isolated deterministic VFS model.
 #include "ProfileFileVfs.h"
@@ -964,6 +967,7 @@ void test_profile_capability_fixture_matches_firmware_encoder() {
 #include "ApplicationProfileStagingCases.h"
 #include "GattsLifecycleCases.h"
 #include "GattsResponseQueueCases.h"
+#include "GattsServiceCases.h"
 #include "GattsSourceCases.h"
 #include "IdentityRetirementCases.h"
 } // namespace
@@ -1312,6 +1316,22 @@ int main() {
     RUN_TEST(test_identity_retirement_stale_copied_frame_cannot_execute_or_close_new_gm);
     RUN_TEST(test_identity_old_security_failure_preserves_replacement_authority);
     RUN_TEST(test_identity_old_role_revocation_preserves_replacement_authority);
+    RUN_TEST(test_service_actual_sdk_callbacks_original_installation_start_and_game);
+    RUN_TEST(test_service_sdk_api_post_is_not_completion_and_duplicates_never_repost);
+    RUN_TEST(test_service_wrong_uuid_handle_order_instance_primary_and_failed_events);
+    RUN_TEST(test_service_local_sdk_post_failures_each_close_without_retry);
+    RUN_TEST(test_service_full_callback_queue_and_wrong_producer_close_without_sdk);
+    RUN_TEST(test_service_missing_registration_wrong_interface_and_order_never_start);
+    RUN_TEST(test_service_first_deadline_not_refreshed_and_clock_wrap);
+    RUN_TEST(test_service_endpoint_original_queue_age_failure_and_connect_before_install);
+    RUN_TEST(test_service_callbacks_and_endpoint_job_freeze_before_observation);
+    RUN_TEST(test_service_wrong_worker_reentrant_api_and_current_ready_sdk_instance);
+    RUN_TEST(test_endpoint_registration_tokens_cannot_rebind_other_instances);
+    RUN_TEST(test_endpoint_fixed_once_slot_duplicate_rejected_retry_and_snapshot_scope);
+    RUN_TEST(test_service_start_confirmation_wrong_failed_late_and_premature);
+    RUN_TEST(test_service_lost_start_confirmation_expires_without_retry);
+    RUN_TEST(test_service_callback_loss_after_ready_immediately_closes_readiness);
+    RUN_TEST(test_endpoint_failed_post_wrong_task_and_replaced_sdk_never_retry);
     RUN_TEST(test_source_original_sdk_post_actual_frames_and_application);
     RUN_TEST(test_source_posted_old_connection_dropped_after_same_handle_reconnect);
     RUN_TEST(test_source_full_fixed_pool_failed_post_and_slot_reuse);

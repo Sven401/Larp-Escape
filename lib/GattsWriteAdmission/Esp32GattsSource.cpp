@@ -8,6 +8,8 @@ Esp32GattsSource *selected = nullptr;
 std::uint16_t application = 0;
 sdk446::Callbacks originalCallbacks = {};
 bool registrationAttempted = false;
+std::uint32_t registrationCounter = 0;
+portMUX_TYPE registrationMutex = portMUX_INITIALIZER_UNLOCKED;
 void connectionCallback(std::uint8_t interface, std::uint8_t *address, std::uint16_t packed,
                         bool connected, std::uint16_t reason, std::uint8_t transport) {
     if (selected && transport == 2)
@@ -41,11 +43,116 @@ bool Esp32GattsSource::registeredSourceNow(std::uint8_t interface) noexcept {
         return false;
     // The wrapper invokes this synchronously from GATT_Register, whose source
     // caller is BTU. The source task/SDK instance remain immutable afterwards.
-    sdkThread_ = btu_thread;
-    sourceTask_ = xTaskGetCurrentTaskHandle();
+    portENTER_CRITICAL(&registrationMutex);
+    const auto token = registrationCounter == UINT32_MAX ? 0 : ++registrationCounter;
+    portEXIT_CRITICAL(&registrationMutex);
+    if (!token)
+        return false; // No registration token wrap/reuse.
+    const auto task = xTaskGetCurrentTaskHandle();
+    const auto sdk = btu_thread;
+    portENTER_CRITICAL(&mutex_);
+    sdkThread_ = sdk;
+    sourceTask_ = task;
     interface_ = interface;
+    registrationToken_ = token;
     registered_ = true;
+    portEXIT_CRITICAL(&mutex_);
     return true;
+}
+bool Esp32GattsSource::readRegistration(GattsSourceRegistration &destination) const noexcept {
+    GattsSourceRegistration value;
+    portENTER_CRITICAL(&mutex_);
+    value.token = registrationToken_;
+    value.interface = interface_;
+    const auto sdk = sdkThread_;
+    portEXIT_CRITICAL(&mutex_);
+    if (!value.token || !sdk || sdk != btu_thread)
+        return false;
+    destination = value;
+    return true;
+}
+GattsEndpointSetupPost
+Esp32GattsSource::postEndpointSetup(const GattsEndpointSetup &caller,
+                                    IWriteResponseBearer &responses) noexcept {
+    const auto value = caller;
+    if (setupPosting_)
+        return GattsEndpointSetupPost::Busy;
+    setupPosting_ = true;
+    GattsSourceRegistration current;
+    const auto end =
+        static_cast<std::uint32_t>(value.service) + GattsServiceDefinition::Handles - 1;
+    if (!readRegistration(current) || !(current == value.original) || !value.service ||
+        value.command <= value.service || value.profile <= value.command || value.profile > end ||
+        end > UINT16_MAX ||
+        clock_.nowMilliseconds() - value.receivedAt >=
+            GattsServiceDefinition::EndpointDeadlineMilliseconds) {
+        setupPosting_ = false;
+        return GattsEndpointSetupPost::Rejected;
+    }
+    portENTER_CRITICAL(&mutex_);
+    const auto state = setup_.state;
+    const bool duplicate = state && setup_.value == value;
+    if (!state) {
+        setup_.value = value;
+        setup_.responses = &responses;
+        setup_.state = 1;
+    }
+    portEXIT_CRITICAL(&mutex_);
+    if (state) {
+        setupPosting_ = false;
+        return duplicate && state != 4 ? GattsEndpointSetupPost::Duplicate
+                                       : GattsEndpointSetupPost::Rejected;
+    }
+    const bool posted =
+        sdkThread_ && sdkThread_ == btu_thread &&
+        osi_thread_post(static_cast<osi_thread *>(sdkThread_), &installEndpoints, this, 0, 0);
+    if (!posted) {
+        portENTER_CRITICAL(&mutex_);
+        setup_.state = 4;
+        portEXIT_CRITICAL(&mutex_);
+    }
+    setupPosting_ = false;
+    return posted ? GattsEndpointSetupPost::Posted : GattsEndpointSetupPost::Rejected;
+}
+GattsEndpointSetupState
+Esp32GattsSource::endpointSetupState(const GattsEndpointSetup &caller) const noexcept {
+    const auto value = caller;
+    GattsSourceRegistration current;
+    if (!readRegistration(current) || !(current == value.original))
+        return GattsEndpointSetupState::Unavailable;
+    portENTER_CRITICAL(&mutex_);
+    const auto state = setup_.state;
+    const bool matches = state && setup_.value == value;
+    portEXIT_CRITICAL(&mutex_);
+    if (!matches)
+        return GattsEndpointSetupState::Unavailable;
+    if ((state == 1 || state == 2) && clock_.nowMilliseconds() - value.receivedAt >=
+                                          GattsServiceDefinition::EndpointDeadlineMilliseconds)
+        return GattsEndpointSetupState::Rejected;
+    return state == 3   ? GattsEndpointSetupState::Installed
+           : state == 4 ? GattsEndpointSetupState::Rejected
+                        : GattsEndpointSetupState::Pending;
+}
+void Esp32GattsSource::installEndpoints(void *context) noexcept {
+    auto &source = *static_cast<Esp32GattsSource *>(context);
+    portENTER_CRITICAL(&source.mutex_);
+    const bool pending = source.setup_.state == 1;
+    if (pending)
+        source.setup_.state = 2;
+    const auto value = source.setup_.value;
+    auto *responses = source.setup_.responses;
+    portEXIT_CRITICAL(&source.mutex_);
+    if (!pending)
+        return;
+    GattsSourceRegistration current;
+    const bool installed = source.sourceTask() && source.readRegistration(current) &&
+                           current == value.original && responses &&
+                           source.clock_.nowMilliseconds() - value.receivedAt <
+                               GattsServiceDefinition::EndpointDeadlineMilliseconds &&
+                           source.configureEndpointsNow(value.command, value.profile, *responses);
+    portENTER_CRITICAL(&source.mutex_);
+    source.setup_.state = installed ? 3 : 4;
+    portEXIT_CRITICAL(&source.mutex_);
 }
 bool Esp32GattsSource::configureEndpointsNow(std::uint16_t command, std::uint16_t profile,
                                              IWriteResponseBearer &responses) noexcept {

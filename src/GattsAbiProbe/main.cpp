@@ -4,6 +4,7 @@
 #include "Companion/IdentityAccess.h"
 #include <Arduino.h>
 #include <Esp32DeviceIdentityStore.h>
+#include <Esp32GattsService.h>
 #include <Esp32GattsSource.h>
 #include <FreeRtosCommandFrameQueue.h>
 #include <FreeRtosGameControlChannel.h>
@@ -62,6 +63,8 @@ class SyntheticResponseSubmitter : public IGattsResponseSubmitter {
 GattsResponseDispatcher responseWorker(responses, responseSubmitter);
 Esp32GattsSource sourcePort(identityPolicy, profileClock, channel, queue, profileQueue);
 FreeRtosGattsResponseQueue sourceResponses(sourcePort);
+SdkGattsServiceDriver serviceDriver;
+Esp32GattsService sourceService(sourcePort, sourceResponses, profileClock, serviceDriver);
 } // namespace
 void setup() {
     Serial.begin(115200);
@@ -74,6 +77,18 @@ void setup() {
     Serial.printf(
         "gatts_source_abi: network=false initialized=false source_registered=false port=%u\n",
         unsigned(sizeof(sourcePort)));
+    if (!sourceService.begin())
+        return;
+    esp_ble_gatts_cb_param_t serviceParameter = {};
+    serviceParameter.reg.app_id = GattsServiceDefinition::Application;
+    const auto serviceEvent = fromSdkGattsService(ESP_GATTS_REG_EVT, 1, serviceParameter);
+    if (sourceService.copyEvent(serviceEvent) != GattsServiceCopy::Unavailable)
+        return;
+    sourceService.service();
+    if (sourceService.ready() || sourceService.snapshot().phase != GattsServicePhase::Failed)
+        return;
+    Serial.printf("gatts_service_abi: network=false initialized=false sdk_created=false owner=%u\n",
+                  unsigned(sizeof(sourceService)));
     // Actual synchronized retirement port; no peer/security grant from SDK fields.
     TrustedAuthority firstClosed, replacementClosed, closed, observed;
     closed.epoch = 99;

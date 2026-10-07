@@ -1,5 +1,6 @@
 #pragma once
 #include "FreeRtosGattsConnection.h"
+#include "GattsServiceDefinition.h"
 #include "SdkGattSourceAbi.h"
 #include <freertos/task.h>
 namespace larp {
@@ -20,6 +21,10 @@ class Esp32GattsSource : public IGattsResponseContext, public IGattsResponseSubm
     Esp32GattsSource &operator=(const Esp32GattsSource &) = delete;
     // Registration wrapper on the actual BTU source task, before any link.
     bool registeredSourceNow(std::uint8_t interface) noexcept;
+    bool readRegistration(GattsSourceRegistration &) const noexcept;
+    GattsEndpointSetupPost postEndpointSetup(const GattsEndpointSetup &,
+                                             IWriteResponseBearer &) noexcept;
+    GattsEndpointSetupState endpointSetupState(const GattsEndpointSetup &) const noexcept;
     // Once, on that same task, using actual created attribute handles, before
     // ANY connection callback. Repeated/late configuration never rebinds.
     bool configureEndpointsNow(std::uint16_t command, std::uint16_t profile,
@@ -44,6 +49,11 @@ class Esp32GattsSource : public IGattsResponseContext, public IGattsResponseSubm
         RoutedWriteResponse response;
         std::uint8_t state = 0; // 0 free, 1 posted, 2 consuming
     };
+    struct SetupPending {
+        GattsEndpointSetup value;
+        IWriteResponseBearer *responses = nullptr;
+        std::uint8_t state = 0; // 0 unused, 1 queued, 2 consuming, 3 installed, 4 rejected
+    } setup_;
     IdentityAccess &access_;
     const IProfileImportClock &clock_;
     const IGameControlChannel &channel_;
@@ -59,12 +69,15 @@ class Esp32GattsSource : public IGattsResponseContext, public IGattsResponseSubm
     TaskHandle_t sourceTask_ = nullptr;
     std::uint16_t command_ = 0, profile_ = 0;
     std::uint8_t interface_ = 0xff;
+    std::uint32_t registrationToken_ = 0;
+    bool setupPosting_ = false;
     bool registered_ = false, sawConnection_ = false, active_ = false, posting_ = false;
     mutable portMUX_TYPE mutex_ = portMUX_INITIALIZER_UNLOCKED;
     Pending pending_[GattsResponseLimits::Depth];
     bool sourceTask() const noexcept;
     bool validResponse(const RoutedWriteResponse &) const noexcept;
     static void consume(void *) noexcept;
+    static void installEndpoints(void *) noexcept;
 };
 // Before SDK initialization; single process-lifetime instance/application.
 // Successful arming is not registration, service creation, BLE start or identity.
