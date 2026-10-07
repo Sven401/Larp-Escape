@@ -138,6 +138,52 @@ def check_gatts_admission(base: Path, command_validator) -> tuple[int, int, int]
     return len(lines), len(actual), len(negatives)
 
 
+def check_profile_source(base: Path, profile_validator) -> tuple[int, int]:
+    import re
+    import struct
+    import zlib
+    fixture = base / "fixtures" / "profile-source"
+    document = (fixture / "hint-v1.json").read_bytes()
+    line = (fixture / "envelope-v1.txt").read_text(encoding="utf-8").strip()
+
+    def decode(value: str, data: bytes):
+        if not re.fullmatch(r"[0-9A-F]{40}", value):
+            raise ValueError("profile source envelope must contain exactly20bytes")
+        version, kind, transfer, count, crc, draft, configuration = struct.unpack("<BBHIIII", bytes.fromhex(value))
+        if version != 1 or kind != 5 or not transfer or not 1 <= count <= 131072 or draft == 0xffffffff or not configuration:
+            raise ValueError("invalid profile source envelope")
+        if count != len(data) or crc != zlib.crc32(data):
+            raise ValueError("profile source length/CRC differs from exact input bytes")
+        return transfer, draft, configuration
+
+    transfer, draft, configuration = decode(line, document)
+    if (transfer, draft, configuration) != (1, 2, 1):
+        raise ValueError("profile source fixture revisions differ from actual application")
+    profile_validator.validate(json.loads(document))
+    negatives = [(line[:-2], document), (line + "00", document), (line.lower(), document),
+                 (line, document[:-1]), (line, document + b" ")]
+    for index, value in ((0, 2), (1, 1), (2, 0), (4, 0), (8, 0), (12, 0xff), (16, 0)):
+        changed = bytearray.fromhex(line)
+        changed[index] = value
+        if index == 2:
+            changed[3] = 0
+        if index in (4, 16):
+            changed[index:index + 4] = bytes(4)
+        if index == 12:
+            changed[12:16] = bytes((255,)) * 4
+        negatives.append((changed.hex().upper(), document))
+    changed = bytearray.fromhex(line)
+    changed[4:8] = (131073).to_bytes(4, "little")
+    negatives.append((changed.hex().upper(), document))
+    for bad, data in negatives:
+        try:
+            decode(bad, data)
+        except ValueError:
+            continue
+        raise ValueError("profile source counterpart accepted invalid envelope/source")
+    return len(document), len(negatives)
+
+
 def check_reply_frames(base: Path) -> tuple[int, int]:
     lines = (base / "fixtures" / "reply-frames-v1.txt").read_text(encoding="utf-8").splitlines()
     expected = (base / "fixtures" / "v2" / "reply-executed.json").read_bytes().rstrip(bytes((13, 10)))
@@ -344,6 +390,7 @@ def main() -> int:
         receipt_count, receipt_negatives = check_command_receipts(base)
         status_count, status_bytes, status_negatives = check_status_frames(base)
         gatts_count, gatts_bytes, gatts_negatives = check_gatts_admission(base, validators["game-command-v2.schema.json"])
+        profile_source_bytes, profile_source_negatives = check_profile_source(base, Draft202012Validator(profile))
     except ValueError as error:
         print(f"Frame counterpart: {error}", file=sys.stderr)
         return 1
@@ -354,6 +401,8 @@ def main() -> int:
     print(f"Status counterpart reconstructs {status_bytes} exact bytes from {status_count} frames; {status_negatives} malformed variants rejected.")
 
     print(f"GATTS counterpart reconstructs {gatts_bytes} exact command bytes from {gatts_count} frames; {gatts_negatives} malformed variants rejected. Host execution only.")
+
+    print(f"Profile source counterpart validates {profile_source_bytes} exact UTF8 bytes, independent CRC and20-byte envelope; {profile_source_negatives} malformed variants rejected. No auth proof.")
 
     print(f"Public identity metadata validates; {len(identity_negatives)} malformed variants rejected. No authentication proof.")
 

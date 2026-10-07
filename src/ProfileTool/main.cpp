@@ -7,6 +7,7 @@
 #include "GameConfiguration/ProfileWriter.h"
 #include "Play.h"
 #include "Preview.h"
+#include "ProfileEnvelope.h"
 #include <cstdio>
 #include <cstring>
 #include <memory>
@@ -66,6 +67,8 @@ int main(int argc, char **argv) {
     }
     if (argc == 3 && std::strcmp(argv[1], "--frame-command") == 0)
         return runCommandFrames(argv[2]);
+    if (argc == 5 && std::strcmp(argv[1], "--profile-envelope") == 0)
+        return runProfileEnvelope(argv[2], argv[3], argv[4]);
     using namespace larp::configuration;
     bool summary = false;
     bool example = false;
@@ -104,7 +107,8 @@ int main(int argc, char **argv) {
             previewPath = argv[++index];
         } else {
             std::fputs("Usage: profile-tools --device-identity HEX32 | --capabilities | "
-                       "--frame-command FILE | [--summary | "
+                       "--frame-command FILE | --profile-envelope FILE DRAFT_REV CONFIG_REV | "
+                       "[--summary | "
                        "--preview SCRIPT "
                        "| --play SCRIPT | "
                        "--play-queued SCRIPT | --activate FILE] "

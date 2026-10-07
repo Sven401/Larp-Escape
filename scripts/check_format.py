@@ -36,6 +36,8 @@ ADAPTER_FILES = (
     "src/ProfileTool/Play.cpp",
     "src/ProfileTool/Activation.h",
     "src/ProfileTool/Activation.cpp",
+    "src/ProfileTool/ProfileEnvelope.h",
+    "src/ProfileTool/ProfileEnvelope.cpp",
     "src/RuntimeProbe/main.cpp",
     "src/ProfileRuntimeProbe/main.cpp",
     "src/GattsAbiProbe/main.cpp",

@@ -5,6 +5,7 @@
 #include "Companion/ReplyFrameSender.h"
 #include "Companion/StatusFrameSender.h"
 #include "CompanionIntegration/GameControl.h"
+#include "CompanionIntegration/ProfileImport.h"
 #include "FakeOwners.h"
 #include "FreeRtosCommandFrameQueue.h"
 #include "FreeRtosGameControlChannel.h"
@@ -919,6 +920,7 @@ void test_profile_capability_fixture_matches_firmware_encoder() {
 #include "IdentityAccessCases.h"
 // SDK admission cases depend on the actual identity and queue helpers.
 #include "GattsWriteCases.h"
+#include "ProfileImportCases.h"
 } // namespace
 void setUp() {
     host_rtos::depth = 0;
@@ -1060,5 +1062,19 @@ int main() {
     RUN_TEST(test_gatts_recycled_handle_old_envelope_never_gets_new_response_binding);
     RUN_TEST(test_gatts_queue_wait_uses_original_callback_time_not_dispatch_time);
     RUN_TEST(test_gatts_uninitialized_queue_cannot_ack_positive_copy);
+    RUN_TEST(test_profile_source_codec_exact_envelope_and_failure_preserves_output);
+    RUN_TEST(test_profile_source_actual_private_draft_receipt_without_activation_or_save);
+    RUN_TEST(test_profile_source_unauthorized_inputs_never_consume_or_edit);
+    RUN_TEST(test_profile_source_deadline_and_future_time_never_consume_or_extend);
+    RUN_TEST(test_profile_source_stale_running_and_busy_do_not_touch_input);
+    RUN_TEST(test_profile_source_length_digest_and_io_failure_leave_no_ready_draft);
+    RUN_TEST(test_profile_source_malformed_and_invalid_profiles_never_issue_receipt);
+    RUN_TEST(test_profile_source_revoke_during_byte_and_eof_cannot_become_complete);
+    RUN_TEST(test_profile_source_original_envelope_and_route_survive_caller_mutation);
+    RUN_TEST(test_profile_source_late_revoke_after_validated_eof_has_no_apply_receipt);
+    RUN_TEST(test_profile_source_expiry_during_input_and_after_eof_never_issues_receipt);
+    RUN_TEST(test_profile_source_maximum_document_and_clock_wrap_stay_bounded);
+    RUN_TEST(test_profile_source_reentrant_source_cannot_edit_start_or_tick_application);
+
     return UNITY_END();
 }
