@@ -184,6 +184,45 @@ def check_profile_source(base: Path, profile_validator) -> tuple[int, int]:
     return len(document), len(negatives)
 
 
+def check_profile_apply(base: Path, status_validator) -> int:
+    fixture = base / "fixtures" / "profile-source"
+    observed = json.loads((fixture / "apply-observation.json").read_text(encoding="utf-8"))
+    expected = {
+        "scope": "host_profile_apply", "transfer": 1, "importedDraftRevision": 3,
+        "queued": {"phase": "applying", "configurationRevision": 1, "storedGeneration": 1, "running": False},
+        "confirmed": {"phase": "ready", "configurationRevision": 2, "profileRevision": 4,
+                      "storedGeneration": 2, "storedMatchesActive": True, "running": False},
+        "storageScope": "host_model", "deviceAcceptanceMeasured": False,
+    }
+    def accept_observation(value):
+        if value != expected:
+            raise ValueError("profile apply observation does not distinguish queue/confirmed Host model")
+    accept_observation(observed)
+    confirmed = json.loads((fixture / "applied-status-v2.json").read_text(encoding="utf-8"))
+    uncertain = json.loads((fixture / "uncertain-status-v2.json").read_text(encoding="utf-8"))
+    for status, phase, generation, matches in ((confirmed, "ready", 2, True), (uncertain, "fault", 1, False)):
+        status_validator.validate(status)
+        app = status["application"]
+        if (app["phase"], app["configurationRevision"], app["profileRevision"],
+            app["storedGeneration"], app["storedMatchesActive"], status["game"]["running"]) != (phase, 2, 4, generation, matches, False):
+            raise ValueError("profile apply current wire status differs from actual Application result")
+    from copy import deepcopy
+    negatives = []
+    for key, value in (("scope", "radio_profile_apply"), ("storageScope", "device"), ("deviceAcceptanceMeasured", True)):
+        changed = deepcopy(expected); changed[key] = value; negatives.append(changed)
+    for section, key, value in (("queued", "phase", "ready"), ("queued", "running", True),
+                                ("queued", "configurationRevision", 2), ("confirmed", "storedMatchesActive", False),
+                                ("confirmed", "storedGeneration", 1), ("confirmed", "profileRevision", 1)):
+        changed = deepcopy(expected); changed[section][key] = value; negatives.append(changed)
+    for bad in negatives:
+        try:
+            accept_observation(bad)
+        except ValueError:
+            continue
+        raise ValueError("profile apply counterpart accepted an incorrect observation")
+    return len(negatives)
+
+
 def check_reply_frames(base: Path) -> tuple[int, int]:
     lines = (base / "fixtures" / "reply-frames-v1.txt").read_text(encoding="utf-8").splitlines()
     expected = (base / "fixtures" / "v2" / "reply-executed.json").read_bytes().rstrip(bytes((13, 10)))
@@ -391,6 +430,7 @@ def main() -> int:
         status_count, status_bytes, status_negatives = check_status_frames(base)
         gatts_count, gatts_bytes, gatts_negatives = check_gatts_admission(base, validators["game-command-v2.schema.json"])
         profile_source_bytes, profile_source_negatives = check_profile_source(base, Draft202012Validator(profile))
+        profile_apply_negatives = check_profile_apply(base, validators["status-v2.schema.json"])
     except ValueError as error:
         print(f"Frame counterpart: {error}", file=sys.stderr)
         return 1
@@ -403,6 +443,8 @@ def main() -> int:
     print(f"GATTS counterpart reconstructs {gatts_bytes} exact command bytes from {gatts_count} frames; {gatts_negatives} malformed variants rejected. Host execution only.")
 
     print(f"Profile source counterpart validates {profile_source_bytes} exact UTF8 bytes, independent CRC and20-byte envelope; {profile_source_negatives} malformed variants rejected. No auth proof.")
+
+    print(f"Profile apply counterpart distinguishes queued/confirmed/uncertain outcomes and validates two actual v2 statuses; {profile_apply_negatives} incorrect observations rejected. Host storage only.")
 
     print(f"Public identity metadata validates; {len(identity_negatives)} malformed variants rejected. No authentication proof.")
 

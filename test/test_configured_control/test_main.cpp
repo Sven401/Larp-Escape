@@ -5,6 +5,7 @@
 #include "Companion/ReplyFrameSender.h"
 #include "Companion/StatusFrameSender.h"
 #include "CompanionIntegration/GameControl.h"
+#include "CompanionIntegration/ProfileApply.h"
 #include "CompanionIntegration/ProfileImport.h"
 #include "FakeOwners.h"
 #include "FreeRtosCommandFrameQueue.h"
@@ -921,6 +922,8 @@ void test_profile_capability_fixture_matches_firmware_encoder() {
 // SDK admission cases depend on the actual identity and queue helpers.
 #include "GattsWriteCases.h"
 #include "ProfileImportCases.h"
+// Apply cases require the actual source/import fixture helpers above.
+#include "ProfileApplyCases.h"
 } // namespace
 void setUp() {
     host_rtos::depth = 0;
@@ -1075,6 +1078,18 @@ int main() {
     RUN_TEST(test_profile_source_expiry_during_input_and_after_eof_never_issues_receipt);
     RUN_TEST(test_profile_source_maximum_document_and_clock_wrap_stay_bounded);
     RUN_TEST(test_profile_source_reentrant_source_cannot_edit_start_or_tick_application);
+    RUN_TEST(test_profile_apply_actual_queue_confirmation_and_current_wire_status);
+    RUN_TEST(test_profile_apply_default_receipt_has_no_authority_or_application_effect);
+    RUN_TEST(test_profile_apply_wrong_application_rejected_even_with_same_revisions);
+    RUN_TEST(test_profile_apply_original_epoch_cannot_be_reissued_after_revocation);
+    RUN_TEST(test_profile_apply_local_draft_edit_invalidates_old_receipt);
+    RUN_TEST(test_profile_apply_game_start_after_import_denies_apply_without_stopping_game);
+    RUN_TEST(test_profile_apply_rechecks_original_authority_after_admission_selection);
+    RUN_TEST(test_profile_apply_duplicate_is_busy_then_stale_without_repeating_save);
+    RUN_TEST(test_profile_apply_later_revoke_preserves_already_selected_transaction);
+    RUN_TEST(test_profile_apply_uncertain_storage_is_fault_not_confirmed_or_started);
+    RUN_TEST(test_profile_apply_copies_original_receipt_before_external_observation);
+    RUN_TEST(test_profile_apply_late_unaccepted_import_cannot_use_locally_parsed_draft);
 
     return UNITY_END();
 }

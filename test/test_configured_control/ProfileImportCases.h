@@ -191,9 +191,9 @@ void test_profile_source_actual_private_draft_receipt_without_activation_or_save
     ImportClock clock;
     const auto result = importSource(source, decoded, clock);
     importOutcome(larp::integration::ProfileImportOutcome::Ready, result);
-    TEST_ASSERT_TRUE(result.receipt.issued && result.draft);
-    TEST_ASSERT_TRUE(result.receipt.original == authority(1));
-    TEST_ASSERT_EQUAL_UINT32(envelope.expectedDraftRevision + 1, result.receipt.draftRevision);
+    TEST_ASSERT_TRUE(result.receipt.issued() && result.draft);
+    TEST_ASSERT_TRUE(result.receipt.original() == authority(1));
+    TEST_ASSERT_EQUAL_UINT32(envelope.expectedDraftRevision + 1, result.receipt.draftRevision());
     TEST_ASSERT_EQUAL_UINT32(envelope.bytes, result.consumed);
     TEST_ASSERT_EQUAL_UINT32(envelope.bytes + 1, source.calls);
     TEST_ASSERT_FALSE(f->application.gameRunning());
@@ -204,7 +204,7 @@ void test_profile_source_actual_private_draft_receipt_without_activation_or_save
     TEST_ASSERT_EQUAL_STRING(old0.c_str(), f->store.record(0).c_str());
     TEST_ASSERT_EQUAL_STRING(old1.c_str(), f->store.record(1).c_str());
     ProfileBytes draft;
-    TEST_ASSERT_TRUE(f->application.writeDraft(draft, result.receipt.draftRevision));
+    TEST_ASSERT_TRUE(f->application.writeDraft(draft, result.receipt.draftRevision()));
     TEST_ASSERT_EQUAL_STRING(source.bytes.c_str(), (draft.bytes + char(10)).c_str());
     profileSourceFixture("hint-v1.json", source.bytes);
     profileSourceFixture("envelope-v1.txt", hex + char(10));
@@ -290,7 +290,7 @@ void test_profile_source_length_digest_and_io_failure_leave_no_ready_draft() {
         }
         const auto result = importSource(source, envelope, clock);
         importOutcome(expected, result);
-        TEST_ASSERT_FALSE(result.receipt.issued);
+        TEST_ASSERT_FALSE(result.receipt.issued());
         TEST_ASSERT_FALSE(f->application.storage().draftReady);
         TEST_ASSERT_FALSE(f->application.gameRunning());
         TEST_ASSERT_EQUAL_UINT32(1, f->application.activation().configurationRevision);
@@ -304,7 +304,7 @@ void test_profile_source_malformed_and_invalid_profiles_never_issue_receipt() {
         source.bytes = document;
         const auto result = importSource(source, importEnvelope(document), clock);
         importOutcome(larp::integration::ProfileImportOutcome::ImportFailed, result);
-        TEST_ASSERT_FALSE(result.receipt.issued);
+        TEST_ASSERT_FALSE(result.receipt.issued());
         TEST_ASSERT_FALSE(f->application.storage().draftReady);
         TEST_ASSERT_FALSE(f->application.gameRunning());
     }
@@ -319,7 +319,7 @@ void test_profile_source_revoke_during_byte_and_eof_cannot_become_complete() {
         source.revokeAt = position;
         const auto result = importSource(source, importEnvelope(document), clock, authority(epoch));
         importOutcome(larp::integration::ProfileImportOutcome::Unauthorized, result);
-        TEST_ASSERT_FALSE(result.receipt.issued);
+        TEST_ASSERT_FALSE(result.receipt.issued());
         TEST_ASSERT_FALSE(f->application.storage().draftReady);
         TEST_ASSERT_FALSE(f->application.gameRunning());
         epoch += 2;
@@ -346,9 +346,9 @@ void test_profile_source_original_envelope_and_route_survive_caller_mutation() {
     ImportClock clock;
     const auto result = importSource(source, envelope, clock, route);
     importOutcome(larp::integration::ProfileImportOutcome::Ready, result);
-    TEST_ASSERT_TRUE(result.receipt.original == authority(1));
-    TEST_ASSERT_EQUAL_UINT32(saved.bytes, result.receipt.source.bytes);
-    TEST_ASSERT_EQUAL_UINT32(saved.crc32, result.receipt.source.crc32);
+    TEST_ASSERT_TRUE(result.receipt.original() == authority(1));
+    TEST_ASSERT_EQUAL_UINT32(saved.bytes, result.receipt.source().bytes);
+    TEST_ASSERT_EQUAL_UINT32(saved.crc32, result.receipt.source().crc32);
     mutatedImportEnvelope = nullptr;
     mutatedImportRoute = nullptr;
 }
@@ -360,7 +360,7 @@ void test_profile_source_late_revoke_after_validated_eof_has_no_apply_receipt() 
     const auto result = importSource(source, importEnvelope(source.bytes), clock);
     importOutcome(larp::integration::ProfileImportOutcome::Unauthorized, result);
     TEST_ASSERT_TRUE(result.draft); // Parsed local draft, no current-route acceptance.
-    TEST_ASSERT_FALSE(result.receipt.issued);
+    TEST_ASSERT_FALSE(result.receipt.issued());
     TEST_ASSERT_FALSE(f->application.gameRunning());
     TEST_ASSERT_EQUAL_UINT32(1, f->application.activation().configurationRevision);
 }
@@ -376,7 +376,7 @@ void test_profile_source_expiry_during_input_and_after_eof_never_issues_receipt(
             source.expireAt = 50;
         const auto result = importSource(source, importEnvelope(source.bytes), clock);
         importOutcome(larp::integration::ProfileImportOutcome::Expired, result);
-        TEST_ASSERT_FALSE(result.receipt.issued);
+        TEST_ASSERT_FALSE(result.receipt.issued());
         TEST_ASSERT_EQUAL(late, static_cast<bool>(result.draft));
         TEST_ASSERT_FALSE(f->application.gameRunning());
         TEST_ASSERT_EQUAL_UINT32(1, f->application.activation().configurationRevision);
@@ -392,7 +392,7 @@ void test_profile_source_maximum_document_and_clock_wrap_stay_bounded() {
     clock.now = received + ProfileSourceLimits::DeadlineMilliseconds - 1U;
     const auto result = importSource(source, envelope, clock, authority(1), received);
     importOutcome(larp::integration::ProfileImportOutcome::Ready, result);
-    TEST_ASSERT_TRUE(result.receipt.issued);
+    TEST_ASSERT_TRUE(result.receipt.issued());
     TEST_ASSERT_EQUAL_UINT32(ImportLimits::DocumentBytes, result.consumed);
     TEST_ASSERT_EQUAL_UINT32(ImportLimits::DocumentBytes + 1, source.calls);
 }

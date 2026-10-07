@@ -119,10 +119,11 @@ ProfileImportResult importProfileSource(devices::ProfileApplication &application
         return result;
     }
     result.outcome = ProfileImportOutcome::Ready;
-    result.receipt.original = route;
-    result.receipt.source = selected;
-    result.receipt.draftRevision = application.storage().draftRevision;
-    result.receipt.issued = true;
+    result.receipt.original_ = route;
+    result.receipt.source_ = selected;
+    result.receipt.draftRevision_ = application.storage().draftRevision;
+    result.receipt.issuer_ = &application;
+    result.receipt.issued_ = true;
     return result;
 }
 } // namespace integration

@@ -134,3 +134,11 @@ SDK lifecycle/credential verifier/response bearer, provisioning/role-key
 persistence, real device owners/production reserve and physical RF/Android/SMP/
 time/stack/heap/energy/flash-failure acceptance remain open. No new upload,
 format/erase, remote CI, push, PR or merge.
+
+## Following internal apply slice
+
+The source-only138-case/receipt40/result124 measurements above describe129d2d5.
+The current receipt is privately issued and bound to the exact Application;
+receipt44/importResult128Bytes. [Authorized apply](profile-apply.md) records
+the actual guarded activation/journal/current-status path,150cases and
+remaining wire/network acceptance. Source envelope20Bytes is unchanged.

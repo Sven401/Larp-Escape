@@ -21,11 +21,37 @@ enum class ProfileImportOutcome : std::uint8_t {
 // Internal server-issued observation only. NEVER deserialize a client-supplied
 // receipt as proof. Any later apply must recheck this original authority and both
 // revisions in the sole application owner. This function never activates/saves.
-struct ProfileImportReceipt {
-    companion::TrustedAuthority original;
-    companion::ProfileSourceEnvelope source;
-    std::uint32_t draftRevision = 0;
-    bool issued = false;
+struct ProfileImportResult;
+class ProfileImportReceipt {
+  public:
+    bool issued() const noexcept {
+        return issued_;
+    }
+    bool belongsTo(const devices::ProfileApplication &application) const noexcept {
+        return issuer_ == &application;
+    }
+    const companion::TrustedAuthority &original() const noexcept {
+        return original_;
+    }
+    const companion::ProfileSourceEnvelope &source() const noexcept {
+        return source_;
+    }
+    std::uint32_t draftRevision() const noexcept {
+        return draftRevision_;
+    }
+
+  private:
+    friend ProfileImportResult importProfileSource(devices::ProfileApplication &,
+                                                   const companion::IGameControlChannel &,
+                                                   configuration::IProfileReader &,
+                                                   const companion::ProfileSourceEnvelope &,
+                                                   const companion::TrustedAuthority &,
+                                                   companion::IProfileImportClock &, std::uint32_t);
+    const devices::ProfileApplication *issuer_ = nullptr;
+    companion::TrustedAuthority original_;
+    companion::ProfileSourceEnvelope source_;
+    std::uint32_t draftRevision_ = 0;
+    bool issued_ = false;
 };
 struct ProfileImportResult {
     ProfileImportOutcome outcome = ProfileImportOutcome::InvalidEnvelope;
