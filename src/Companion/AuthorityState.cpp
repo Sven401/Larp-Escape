@@ -25,6 +25,32 @@ AuthorityUpdate AuthorityState::update(const TrustedAuthority &authority) noexce
     available_ = true;
     return AuthorityUpdate::Published;
 }
+AuthorityUpdate AuthorityState::advance(std::uint32_t principal, bool gameMaster,
+                                        TrustedAuthority &published) noexcept {
+    if (highest_ == UINT32_MAX) {
+        suspend();
+        return AuthorityUpdate::Suspended;
+    }
+    TrustedAuthority next;
+    next.epoch = highest_ + 1;
+    next.principal = principal;
+    next.gameMaster = gameMaster;
+    const auto result = update(next);
+    if (result == AuthorityUpdate::Published)
+        published = next;
+    return result;
+}
+AuthorityUpdate AuthorityState::advanceIfCurrent(const TrustedAuthority &expected,
+                                                 std::uint32_t principal, bool gameMaster,
+                                                 TrustedAuthority &published) noexcept {
+    if (!available_)
+        return AuthorityUpdate::Suspended;
+    if (!(expected == current_)) {
+        suspend();
+        return AuthorityUpdate::Conflict;
+    }
+    return advance(principal, gameMaster, published);
+}
 void AuthorityState::suspend() noexcept {
     available_ = false;
 }

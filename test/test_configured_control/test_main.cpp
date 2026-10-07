@@ -1,5 +1,6 @@
 #include "Companion/CommandReceipt.h"
 #include "Companion/CommandStream.h"
+#include "Companion/IdentityAccess.h"
 #include "Companion/ProfileCapabilities.h"
 #include "Companion/ReplyFrameSender.h"
 #include "Companion/StatusFrameSender.h"
@@ -913,6 +914,8 @@ void test_profile_capability_fixture_matches_firmware_encoder() {
 #include "StatusRoutingCases.h"
 // Depends on the real bearer and routing helpers above.
 #include "StatusFrameCases.h"
+// Identity cases depend on real status and bearer helpers.
+#include "IdentityAccessCases.h"
 } // namespace
 void setUp() {
     host_rtos::depth = 0;
@@ -1028,5 +1031,19 @@ int main() {
     RUN_TEST(test_status_reconnect_rejects_old_tags_and_new_producer_resets_counter);
     RUN_TEST(test_status_bearer_revoke_before_and_after_copy_observer_and_unavailable);
     RUN_TEST(test_status_message_exhaustion_no_wrap_and_cancel_consumes_identity);
+    RUN_TEST(test_device_identity_codec_bounds_and_public_fixture_only);
+    RUN_TEST(test_authority_owned_epoch_advance_above_fault_and_maximum_no_wrap);
+    RUN_TEST(test_verified_connection_needs_explicit_gm_assignment_before_actual_start);
+    RUN_TEST(test_assigned_peer_without_each_verification_requirement_never_admits);
+    RUN_TEST(test_duplicate_auth_and_assignment_preserve_epoch_and_game_receipt);
+    RUN_TEST(test_recycled_handle_stale_auth_and_disconnect_cannot_change_new_binding);
+    RUN_TEST(test_gm_revocation_fences_copied_stop_but_preserves_running_game);
+    RUN_TEST(test_conflicting_identity_closes_and_same_link_cannot_reopen);
+    RUN_TEST(test_identity_registry_bounds_unique_principals_and_explicit_slot_reuse);
+    RUN_TEST(test_identity_device_must_be_valid_and_remains_immutable_until_new_boot);
+    RUN_TEST(test_identity_maximum_epoch_and_channel_suspend_cannot_be_reopened_by_duplicates);
+    RUN_TEST(test_identity_route_rechecks_actual_channel_and_preserves_false_target);
+    RUN_TEST(test_delayed_verification_cannot_reopen_revoked_channel_at_publish_point);
+    RUN_TEST(test_delayed_local_assignment_cannot_reopen_revoked_verified_link);
     return UNITY_END();
 }

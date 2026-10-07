@@ -8,7 +8,9 @@ namespace companion {
 // value copies, no ISR API. Trusted transport owner attaches principal and
 // exclusively drains/routes replies by principal AND connectionEpoch.
 // Application alone receive/send/publish.
-class FreeRtosGameControlChannel : public IGameControlChannel, public ICommandIngress {
+class FreeRtosGameControlChannel : public IGameControlChannel,
+                                   public ICommandIngress,
+                                   public IAuthorityPublisher {
   public:
     FreeRtosGameControlChannel() = default;
     FreeRtosGameControlChannel(const FreeRtosGameControlChannel &) = delete;
@@ -16,7 +18,12 @@ class FreeRtosGameControlChannel : public IGameControlChannel, public ICommandIn
     bool begin();
     // Single verified transport owner; observer/disconnect also advance epoch.
     AuthorityUpdate updateAuthority(const TrustedAuthority &authority);
-    void suspendAuthority();
+    AuthorityUpdate advanceAuthority(std::uint32_t principal, bool gameMaster,
+                                     TrustedAuthority &published) noexcept override;
+    AuthorityUpdate advanceAuthorityIfCurrent(const TrustedAuthority &expected,
+                                              std::uint32_t principal, bool gameMaster,
+                                              TrustedAuthority &published) noexcept override;
+    void suspendAuthority() noexcept override;
     bool readAuthority(TrustedAuthority &authority) const noexcept override;
     bool receive(TrustedGameRequest &request) noexcept override;
     bool send(const RoutedGameReply &reply) noexcept override;

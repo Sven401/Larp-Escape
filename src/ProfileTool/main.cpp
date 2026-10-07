@@ -1,6 +1,7 @@
 // Host-side profile export/inspection. This is not an embedded entry point.
 #include "Activation.h"
 #include "CommandFrames.h"
+#include "Companion/Identity.h"
 #include "Companion/ProfileCapabilities.h"
 #include "GameConfiguration/ProfileReader.h"
 #include "GameConfiguration/ProfileWriter.h"
@@ -38,6 +39,20 @@ class FileReader : public larp::configuration::IProfileReader {
 };
 } // namespace
 int main(int argc, char **argv) {
+    if (argc == 3 && std::strcmp(argv[1], "--device-identity") == 0) {
+        larp::companion::Identity device;
+        if (!larp::companion::decodeIdentityHex(argv[2], std::strlen(argv[2]), device))
+            return 2;
+        char bytes[larp::companion::maxDeviceIdentityJsonBytes];
+        std::size_t written = 0;
+        if (larp::companion::encodeDeviceIdentity(device, bytes, sizeof(bytes), written) !=
+            larp::companion::ConfiguredEncodeResult::Success)
+            return 1;
+        return std::fwrite(bytes, 1, written, stdout) == written &&
+                       std::fputc('\n', stdout) != EOF && std::fflush(stdout) == 0
+                   ? 0
+                   : 1;
+    }
     if (argc == 2 && std::strcmp(argv[1], "--capabilities") == 0) {
         char bytes[larp::companion::maxProfileCapabilitiesJsonBytes];
         std::size_t written = 0;
@@ -88,7 +103,8 @@ int main(int argc, char **argv) {
             playable = queued || std::strcmp(argv[index], "--play") == 0;
             previewPath = argv[++index];
         } else {
-            std::fputs("Usage: profile-tools --capabilities | --frame-command FILE | [--summary | "
+            std::fputs("Usage: profile-tools --device-identity HEX32 | --capabilities | "
+                       "--frame-command FILE | [--summary | "
                        "--preview SCRIPT "
                        "| --play SCRIPT | "
                        "--play-queued SCRIPT | --activate FILE] "

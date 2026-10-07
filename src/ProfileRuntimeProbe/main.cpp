@@ -2,6 +2,7 @@
 // radio are initialized. Runtime owns actual activation/Session/queue logic.
 #include "Companion/CommandReceipt.h"
 #include "Companion/CommandStream.h"
+#include "Companion/IdentityAccess.h"
 #include "Companion/ReplyFrameSender.h"
 #include "Companion/StatusFrameSender.h"
 #include "CompanionIntegration/GameControl.h"
@@ -24,6 +25,9 @@ FreeRtosProfileChannel channel;
 Esp32ProfileStore persistentStore;
 ProfileApplication runtime(channel, channel, persistentStore);
 larp::companion::FreeRtosGameControlChannel companionChannel;
+larp::companion::IdentityAccess identityAccess(companionChannel);
+larp::companion::BoundConnection probeConnection;
+larp::companion::TrustedAuthority probeRoute;
 larp::companion::CommandStream commandStream(companionChannel);
 larp::companion::FreeRtosCommandFrameQueue frameQueue(companionChannel);
 // Synthetic bounded bearer: verifies current routing, copies one fixed value.
@@ -57,6 +61,11 @@ bool startPending = false;
 std::array<char, larp::companion::maxGameCommandJsonBytes> commandMessage = {};
 larp::companion::CommandStreamResult submitFramedCommand(std::size_t count, std::uint32_t now) {
     using namespace larp::companion;
+    if (!identityAccess.route(probeConnection, probeRoute)) {
+        CommandStreamResult unavailable;
+        unavailable.outcome = CommandStreamOutcome::Unauthorized;
+        return unavailable;
+    }
     if (commandStream.snapshot().complete)
         return commandStream.retry(now);
     CommandStreamResult result;
@@ -70,8 +79,8 @@ larp::companion::CommandStreamResult submitFramedCommand(std::size_t count, std:
             return result;
         }
         // Synthetic callback/owner handoff through the same fixed RTOS queue.
-        if (frameQueue.copyWrite(commandFrame.data(), written, 1, 1, now) !=
-            FrameCopyOutcome::Copied) {
+        if (frameQueue.copyWrite(commandFrame.data(), written, probeRoute.principal,
+                                 probeRoute.epoch, now) != FrameCopyOutcome::Copied) {
             result.outcome = CommandStreamOutcome::InvalidFrame;
             return result;
         }
@@ -250,12 +259,22 @@ void setup() {
                       applicationOutcomeName(begun.outcome));
         return;
     }
-    // Explicit local synthetic GM, not a network authentication implementation.
-    larp::companion::TrustedAuthority authority;
-    authority.epoch = 1;
-    authority.principal = 1;
-    authority.gameMaster = true;
-    if (companionChannel.updateAuthority(authority) != larp::companion::AuthorityUpdate::Published)
+    // Deterministic display/peer labels and verification are SYNTHETIC.
+    // No provisioning, keys, pairing, radio or real identity proof here.
+    larp::companion::Identity device, peer;
+    device.bytes[0] = 1;
+    peer.bytes[0] = 2;
+    larp::companion::VerifiedPeerEvidence evidence;
+    evidence.peer = peer;
+    evidence.encrypted = evidence.mitm = evidence.secureConnections = evidence.bonded = true;
+    if (identityAccess.begin(device) != larp::companion::IdentityAccessOutcome::Initialized ||
+        identityAccess.connect(0, probeConnection) !=
+            larp::companion::IdentityAccessOutcome::Connected ||
+        identityAccess.authenticate(probeConnection, evidence) !=
+            larp::companion::IdentityAccessOutcome::Verified ||
+        identityAccess.assignGameMaster(peer, 1) !=
+            larp::companion::IdentityAccessOutcome::Assigned ||
+        !identityAccess.route(probeConnection, probeRoute))
         return;
     gameControl.service(millis());
     probeLease = gameControl.snapshot().lease;
@@ -333,7 +352,7 @@ void loop() {
         !runtime.gameRunning() && lastStartedGeneration != activation.generation) {
         if (!startPending) {
             larp::companion::TrustedGameRequest request;
-            request.principal = 1;
+            request.principal = probeRoute.principal;
             request.command.boot = bootIdentity;
             request.command.lease = probeLease;
             request.command.request = gameControl.snapshot().nextRequest;
@@ -364,7 +383,8 @@ void loop() {
     gameControl.service(now);
     larp::companion::RoutedGameReply receipt;
     if (!replySender.pending() && companionChannel.takeCurrentReply(receipt)) {
-        if (receipt.principal == 1 && receipt.connectionEpoch == 1 && startPending) {
+        if (receipt.principal == probeRoute.principal &&
+            receipt.connectionEpoch == probeRoute.epoch && startPending) {
             startPending = false;
             if (receipt.reply.outcome == larp::companion::GameReplyOutcome::Executed)
                 lastStartedGeneration = runtime.activation().generation;

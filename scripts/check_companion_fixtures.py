@@ -227,6 +227,22 @@ def main() -> int:
         for error in errors:
             print(f"profile-capabilities-v1: {list(error.path)}: {error.message}", file=sys.stderr)
         return 1
+    identity = json.loads((base / "fixtures" / "device-identity-v1.json").read_text(encoding="utf-8"))
+    identity_schema = json.loads((base / "device-identity-v1.schema.json").read_text(encoding="utf-8"))
+    Draft202012Validator.check_schema(identity_schema)
+    identity_validator = Draft202012Validator(identity_schema)
+    identity_validator.validate(identity)
+    identity_negatives = [dict(identity, deviceId="0" * 32), dict(identity, deviceId=identity["deviceId"].lower()),
+                          dict(identity, requiresVerifiedConnection=False),
+                          dict(identity, requiresGameMasterAssignment=False),
+                          dict(identity, scope="authenticated_identity"), dict(identity, role="game_master"),
+                          dict(identity, deviceId="01"), dict(identity, deviceId=identity["deviceId"] + "\n")]
+    missing = dict(identity)
+    del missing["requiresGameMasterAssignment"]
+    identity_negatives.append(missing)
+    if any(identity_validator.is_valid(bad) for bad in identity_negatives):
+        print("Public identity counterpart accepted an invalid fixture", file=sys.stderr)
+        return 1
     profile = json.loads((root / "docs" / "configuration" / "profile-v1.schema.json").read_text(encoding="utf-8"))
     from generate_profile_schema import generate
     Draft202012Validator.check_schema(profile)
@@ -292,6 +308,8 @@ def main() -> int:
     print(f"Receipt counterpart correlates {receipt_count} actual command fragments; {receipt_negatives} malformed variants rejected.")
 
     print(f"Status counterpart reconstructs {status_bytes} exact bytes from {status_count} frames; {status_negatives} malformed variants rejected.")
+
+    print(f"Public identity metadata validates; {len(identity_negatives)} malformed variants rejected. No authentication proof.")
 
     return 0
 

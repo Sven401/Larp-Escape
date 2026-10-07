@@ -36,7 +36,28 @@ AuthorityUpdate FreeRtosGameControlChannel::updateAuthority(const TrustedAuthori
     portEXIT_CRITICAL(&authorityMutex_);
     return result;
 }
-void FreeRtosGameControlChannel::suspendAuthority() {
+AuthorityUpdate FreeRtosGameControlChannel::advanceAuthority(std::uint32_t principal,
+                                                             bool gameMaster,
+                                                             TrustedAuthority &published) noexcept {
+    if (!started_)
+        return AuthorityUpdate::Suspended;
+    portENTER_CRITICAL(&authorityMutex_);
+    const auto result = authority_.advance(principal, gameMaster, published);
+    portEXIT_CRITICAL(&authorityMutex_);
+    return result;
+}
+AuthorityUpdate
+FreeRtosGameControlChannel::advanceAuthorityIfCurrent(const TrustedAuthority &expected,
+                                                      std::uint32_t principal, bool gameMaster,
+                                                      TrustedAuthority &published) noexcept {
+    if (!started_)
+        return AuthorityUpdate::Suspended;
+    portENTER_CRITICAL(&authorityMutex_);
+    const auto result = authority_.advanceIfCurrent(expected, principal, gameMaster, published);
+    portEXIT_CRITICAL(&authorityMutex_);
+    return result;
+}
+void FreeRtosGameControlChannel::suspendAuthority() noexcept {
     portENTER_CRITICAL(&authorityMutex_);
     authority_.suspend();
     portEXIT_CRITICAL(&authorityMutex_);
