@@ -8,7 +8,7 @@ Vier öffentliche P256-Schlüssel werden einem Peer und einer eigenen Schlüssel
 
 `PeerRegistryOwner` prüft echte Kurvenpunkte über `IPeerProofCrypto`, hält den bestätigten Snapshot und liefert nur dessen aktuelle Credentials. `PeerRegistryRuntime` ersetzt die Rollen auf dem ursprünglichen alleinigen `IdentityAccess`-Besitzer. Wiederherstellung und Änderungen schließen den ursprünglichen Zugang; sie öffnen keine Verbindung. Eine bereits verbundene Sitzung bleibt nach Änderung gesperrt und muss sich neu verbinden und nachweisen. Das laufende Spiel wird dadurch nicht gestoppt.
 
-Der direkte Runtimeport ist für serialisierte Startup-/Hostarbeit. Ein Produktions-NVSworker braucht eine kopierte, original gebundene Actor-Anforderung mit Bestätigung auf dem tatsächlichen Identity-/SDKbesitzer. Er darf die Policy nicht direkt von einem zweiten Task aus verändern. Auch Ownergetter und der direkte Host-Proofkontext gehören zum selben serialisierten Prüflauf; `busy_` ist keine Threadsynchronisation. Ein separater Produktions-Kryptoworker braucht eine kopierte synchronisierte Veröffentlichung mit Registrygeneration und Entzugssperre. Ursprüngliche SDKsecurity, gegenseitige Geräteauthentisierung, Einrichtungsablauf und eigene Authentisierungsattribute bleiben offen. Die bestehenden beiden GATT-Schreibattribute setzen bereits GM voraus und eignen sich deshalb nicht als Authentisierungseinstieg.
+Der direkte Runtimeport ist für serialisierte Startup-/Hostarbeit. Der nachfolgende [bestätigte Akteurpfad](peer-registry-actor-v1.md) implementiert die ursprüngliche Rollenanforderung zwischen IOworker und tatsächlichem Identity-/SDKbesitzer sowie eine kopierte synchronisierte Registryveröffentlichung für Kryptoleser. Ownergetter bleiben auf ihren alleinigen IOworker beschränkt; `busy_` ist keine Threadsynchronisation. Ursprüngliche SDKsecurity, gegenseitige Geräteauthentisierung, Einrichtung und eigene Authentisierungsattribute bleiben offen. Die bestehenden beiden GATT-Schreibattribute setzen bereits GM voraus.
 
 ## Fester Vertrag
 
@@ -50,7 +50,7 @@ Die tatsächlichen NVS-/FreeRTOSadapter laufen gegen deterministische Hostmodell
 
 Vier Plätze, ein404-Byte-Record, keine dynamischen Container im eigenen Registrykern. Mehrere unveränderte lokale Snapshots sind zusätzliche Stackkopien. NVS und MbedTLS dürfen intern allokieren/blockieren. Beides gehört auf einen getrennten Worker; Wartezeit0 am Namespace-Mutex begrenzt nicht die NVS-/Kryptografiedauer. Workerstack, Heapspitzen, vollständige Aufrufketten und Worst-case-Laufzeit müssen auf dem Ziel gemessen werden. Es gibt keine übernommene2000-ms-Befehlsfrist und keine behauptete Flash-/Funkzeitgarantie.
 
-### Tatsächlicher Prüf- und Compilerstand
+### Historischer Prüf- und Compilerstand des Registerschnitts7398d2d
 
 406/406 Basis-Hostfunktionen, 410/410 im echten Kryptoziel; gegenüber ac59465 fünfzehn neue Basis- und zwei neue Kryptofunktionen. Fünf Builds erfolgreich, nach Stackoptimierung betroffener SDKbuild erneut erfolgreich. Architektur134 Dateien/284 direkte Includes, 80 unabhängige C++11-Header und279 Formatdateien erfolgreich. Drei tatsächliche C++-Datensätze unabhängig geprüft;432 beschädigte Datensätze, ein ungültiger Kurvenpunkt und15 falsche Beobachtungen zurückgewiesen. Zwölf gemeinsame App-v2-Dateien frisch byte-/SHAgleich; keine Appprüfung/-änderung.
 
@@ -58,4 +58,4 @@ ESP32-Compilergrößen: Owner832, Snapshot408, Entry96, Record404, Runtime8, Sto
 
 Finale SDKprobe44.552 RAM/1.063.661 Flash (81,2% Appslot), netto864 RAM/3.608 Flash gegenüber ac59465. Produktion55.148/1.229.077 (93,8%), USB21.480/291.881, Profilprobe107.560/406.849 plus57.272 Startup-Profilheap und Allocator/Dateisystem. Getrennte Proben sind keine kombinierte Produktionsreserve. Produktionsmain verwendet weiterhin den bisherigen Controller.
 
-Nächster kleiner vertikaler Schnitt: synchronisierte kopierte Registryveröffentlichung und original gebundener geschlossener Rollenauftrag mit Bestätigung auf dem tatsächlichen Identityactor. Danach ursprüngliche SDKsecurity und eigene Vor-GM-Authendpunkte. Keine Gerätedurabilität, RF, SMP, Android, Energie, Laufzeit oder komplette Heap-/Stackmessung aus diesen Belegen ableiten.
+Der nachfolgende [Akteurschnitt](peer-registry-actor-v1.md) erfüllt die kopierte Veröffentlichung und bestätigte Rollenübergabe; dessen aktuelle Größen und Prüfstand stehen dort. Nächster Schritt: ursprüngliche SDKsecurity und eigene Vor-GM-Authendpunkte. Keine Gerätedurabilität, RF, SMP, Android, Energie, Laufzeit oder komplette Heap-/Stackmessung aus diesen Belegen ableiten.

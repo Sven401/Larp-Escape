@@ -14,6 +14,7 @@
 #include <FreeRtosGameControlChannel.h>
 #include <FreeRtosGattsResponseQueue.h>
 #include <FreeRtosPeerProofQueue.h>
+#include <FreeRtosPeerRegistryRuntime.h>
 #include <FreeRtosProfileFrameQueue.h>
 #include <FreeRtosProfileResponseQueue.h>
 #include <GattsWriteAdmission.h>
@@ -68,6 +69,7 @@ class SyntheticResponseSubmitter : public IGattsResponseSubmitter {
 GattsResponseDispatcher responseWorker(responses, responseSubmitter);
 Esp32GattsSource sourcePort(identityPolicy, profileClock, channel, queue, profileQueue);
 FreeRtosGattsResponseQueue sourceResponses(sourcePort);
+FreeRtosPeerRegistryRuntime unopenedActorRegistry(sourcePort, channel, profileClock);
 class UnopenedPeerContext : public IPeerProofContext {
   public:
     bool originalLive(const PeerProofBinding &) const noexcept override {
@@ -99,6 +101,13 @@ void setup() {
     Serial.printf(
         "gatts_source_abi: network=false initialized=false source_registered=false port=%u\n",
         unsigned(sizeof(sourcePort)));
+    Identity unopenedActorDevice;
+    unopenedActorDevice.bytes[0] = 1;
+    if (unopenedActorRegistry.begin(unopenedActorDevice))
+        return; // No registered actor: no SDK job/NVS/radio.
+    Serial.printf("peer_registry_actor_abi: initialized=false owner=%u job=%u snapshot=%u\n",
+                  unsigned(sizeof(unopenedActorRegistry)), unsigned(sizeof(PeerRegistryRoleJob)),
+                  unsigned(sizeof(IdentityAccessSnapshot)));
     if (!sourceService.begin())
         return;
     esp_ble_gatts_cb_param_t serviceParameter = {};

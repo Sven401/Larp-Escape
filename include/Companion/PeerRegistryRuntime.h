@@ -7,8 +7,11 @@ namespace companion {
 class PeerRegistryRuntime : public IPeerRegistryRuntime {
   public:
     explicit PeerRegistryRuntime(IdentityAccess &access) : access_(access) {}
-    bool close() noexcept override;
-    bool replaceClosed(const PeerRegistrySnapshot &) noexcept override;
+    PeerRegistryRuntimeResult close() noexcept override;
+    PeerRegistryRuntimeResult replaceClosed(const PeerRegistrySnapshot &) noexcept override;
+    void fence() noexcept override {
+        (void)close();
+    }
 
   private:
     IdentityAccess &access_;

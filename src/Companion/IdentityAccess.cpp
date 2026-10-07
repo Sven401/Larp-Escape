@@ -1,13 +1,40 @@
 #include "Companion/IdentityAccess.h"
 namespace larp {
 namespace companion {
+struct IdentityAccess::Observation {
+    IdentityAccess &owner;
+    ~Observation() {
+        owner.notifyObserver();
+    }
+};
+bool IdentityAccess::attachObserver(IIdentityAccessObserver &observer) noexcept {
+    if (observer_ && observer_ != &observer)
+        return false;
+    observer_ = &observer;
+    notifyObserver();
+    return true;
+}
+void IdentityAccess::notifyObserver() noexcept {
+    if (!observer_)
+        return;
+    IdentityAccessSnapshot value;
+    value.device = device_;
+    value.connection = connection_;
+    value.authority = current_;
+    value.current = initialized_ && !fenced_ && !authorityRetired_;
+    value.connected = value.current && connected_;
+    value.proofAllowed = value.connected && !failedLink_ && current_.epoch;
+    observer_->copyIdentitySnapshot(value);
+}
 IdentityAccessOutcome IdentityAccess::begin(const Identity &device) noexcept {
+    Observation observation{*this};
     if (authorityRetired_)
         return IdentityAccessOutcome::AuthorityUnavailable;
     if (fenced_)
         return IdentityAccessOutcome::InvalidIdentity;
     if (!device.valid() || (initialized_ && !(device == device_))) {
         fenced_ = true;
+        notifyObserver();
         authority_.suspendAuthority();
         return IdentityAccessOutcome::InvalidIdentity;
     }
@@ -37,6 +64,7 @@ std::uint32_t IdentityAccess::assignedPrincipal(const Identity &peer) const noex
 bool IdentityAccess::publish(std::uint32_t principal, bool gm, bool requireOriginal) noexcept {
     const auto expected = current_;
     current_ = {};
+    notifyObserver();
     const bool retiring = connected_ && !principal && !gm && !requireOriginal;
     const auto result =
         retiring          ? authority_.closeAuthorityIfCurrent(expected, current_)
@@ -55,6 +83,7 @@ bool IdentityAccess::publish(std::uint32_t principal, bool gm, bool requireOrigi
 }
 IdentityAccessOutcome IdentityAccess::connect(std::uint16_t handle,
                                               BoundConnection &destination) noexcept {
+    Observation observation{*this};
     if (authorityRetired_)
         return IdentityAccessOutcome::AuthorityUnavailable;
     if (!initialized_ || fenced_)
@@ -79,6 +108,7 @@ IdentityAccessOutcome IdentityAccess::rejectSecurity(IdentityAccessOutcome outco
 }
 IdentityAccessOutcome IdentityAccess::authenticate(const BoundConnection &connection,
                                                    const VerifiedPeerEvidence &evidence) noexcept {
+    Observation observation{*this};
     if (!matches(connection))
         return IdentityAccessOutcome::StaleConnection;
     if (failedLink_)
@@ -98,6 +128,7 @@ IdentityAccessOutcome IdentityAccess::authenticate(const BoundConnection &connec
     return IdentityAccessOutcome::Verified;
 }
 IdentityAccessOutcome IdentityAccess::disconnect(const BoundConnection &connection) noexcept {
+    Observation observation{*this};
     const auto original = connection;
     if (!matches(original))
         return IdentityAccessOutcome::StaleConnection;
@@ -107,6 +138,7 @@ IdentityAccessOutcome IdentityAccess::disconnect(const BoundConnection &connecti
     peer_ = {};
     connection_ = {};
     current_ = {};
+    notifyObserver();
     TrustedAuthority closed;
     const auto result = authority_.closeAuthorityIfCurrent(expected, closed);
     if (result == AuthorityUpdate::Published) {
@@ -120,6 +152,7 @@ IdentityAccessOutcome IdentityAccess::disconnect(const BoundConnection &connecti
 }
 IdentityAccessOutcome IdentityAccess::assignGameMaster(const Identity &peer,
                                                        std::uint32_t principal) noexcept {
+    Observation observation{*this};
     if (authorityRetired_)
         return IdentityAccessOutcome::AuthorityUnavailable;
     if (!initialized_ || fenced_)
@@ -145,6 +178,7 @@ IdentityAccessOutcome IdentityAccess::assignGameMaster(const Identity &peer,
     return IdentityAccessOutcome::Assigned;
 }
 IdentityAccessOutcome IdentityAccess::revokeGameMaster(const Identity &peer) noexcept {
+    Observation observation{*this};
     if (authorityRetired_)
         return IdentityAccessOutcome::AuthorityUnavailable;
     if (!initialized_ || fenced_)
@@ -162,7 +196,9 @@ IdentityAccessOutcome IdentityAccess::revokeGameMaster(const Identity &peer) noe
     return IdentityAccessOutcome::Duplicate;
 }
 IdentityAccessOutcome IdentityAccess::replaceGameMastersClosed(
-    const std::array<GameMasterAssignment, IdentityAccessLimits::Assignments> &caller) noexcept {
+    const std::array<GameMasterAssignment, IdentityAccessLimits::Assignments> &caller,
+    TrustedAuthority *closedAck) noexcept {
+    Observation observation{*this};
     const auto selected = caller;
     if (authorityRetired_)
         return IdentityAccessOutcome::AuthorityUnavailable;
@@ -184,6 +220,7 @@ IdentityAccessOutcome IdentityAccess::replaceGameMastersClosed(
     peer_ = {};
     assignments_ = {};
     current_ = {};
+    notifyObserver();
     TrustedAuthority closed;
     const auto result = authority_.closeAuthorityIfCurrent(expected, closed);
     if (result == AuthorityUpdate::Published)
@@ -196,6 +233,8 @@ IdentityAccessOutcome IdentityAccess::replaceGameMastersClosed(
         assignments_[i].peer = selected[i].peer;
         assignments_[i].principal = selected[i].principal;
     }
+    if (closedAck)
+        *closedAck = current_;
     return IdentityAccessOutcome::AssignmentsReplaced;
 }
 bool IdentityAccess::proofConnectionCurrent(const BoundConnection &caller) const noexcept {

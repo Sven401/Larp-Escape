@@ -9,6 +9,7 @@ std::uint16_t application = 0;
 sdk446::Callbacks originalCallbacks = {};
 bool registrationAttempted = false;
 std::uint32_t registrationCounter = 0;
+std::uint32_t peerRolePostCounter = 0;
 portMUX_TYPE registrationMutex = portMUX_INITIALIZER_UNLOCKED;
 void connectionCallback(std::uint8_t interface, std::uint8_t *address, std::uint16_t packed,
                         bool connected, std::uint16_t reason, std::uint8_t transport) {
@@ -55,6 +56,7 @@ bool Esp32GattsSource::registeredSourceNow(std::uint8_t interface) noexcept {
     sourceTask_ = task;
     interface_ = interface;
     registrationToken_ = token;
+    lifecycle_ = 1;
     registered_ = true;
     portEXIT_CRITICAL(&mutex_);
     return true;
@@ -70,6 +72,232 @@ bool Esp32GattsSource::readRegistration(GattsSourceRegistration &destination) co
         return false;
     destination = value;
     return true;
+}
+void Esp32GattsSource::copyIdentitySnapshot(const IdentityAccessSnapshot &caller) noexcept {
+    const auto value = caller;
+    portENTER_CRITICAL(&mutex_);
+    identitySnapshot_ = value;
+    portEXIT_CRITICAL(&mutex_);
+}
+bool Esp32GattsSource::closedPeerConnectionCurrent(const PeerProofBinding &caller) const noexcept {
+    const auto original = caller;
+    if (!original.valid())
+        return false;
+    GattsSourceRegistration reg;
+    if (!readRegistration(reg) || reg.token != original.registration ||
+        reg.interface != original.interface)
+        return false;
+    portENTER_CRITICAL(&mutex_);
+    const auto owned = identitySnapshot_;
+    const bool open = peerProofOpen_ && !registryFenced_;
+    portEXIT_CRITICAL(&mutex_);
+    if (!open || !owned.proofAllowed || !(owned.connection == original.connection) ||
+        !(owned.device == original.device))
+        return false;
+    TrustedAuthority observed;
+    if (!channel_.readAuthority(observed) || !(observed == owned.authority))
+        return false;
+    portENTER_CRITICAL(&mutex_);
+    const bool current = peerProofOpen_ && !registryFenced_ && identitySnapshot_ == owned;
+    portEXIT_CRITICAL(&mutex_);
+    return current;
+}
+bool Esp32GattsSource::roleOriginalCurrent(const PeerRegistryActorOrigin &original) const noexcept {
+    GattsSourceRegistration reg;
+    if (!readRegistration(reg) || reg.token != original.registration ||
+        reg.interface != original.interface)
+        return false;
+    portENTER_CRITICAL(&mutex_);
+    const bool current = owner_ && lifecycle_ == original.lifecycle && !registryFenced_;
+    portEXIT_CRITICAL(&mutex_);
+    return current;
+}
+bool Esp32GattsSource::readPeerRoleOrigin(const Identity &caller,
+                                          PeerRegistryActorOrigin &destination) const noexcept {
+    PeerRegistryActorOrigin value;
+    value.device = caller; // Freeze before any external observation.
+    if (!value.device.valid() || selected != this)
+        return false;
+    GattsSourceRegistration reg;
+    if (!readRegistration(reg))
+        return false;
+    value.registration = reg.token;
+    value.interface = reg.interface;
+    portENTER_CRITICAL(&mutex_);
+    value.lifecycle = lifecycle_;
+    const auto owned = identitySnapshot_;
+    portEXIT_CRITICAL(&mutex_);
+    if (!owned.current || !(owned.device == value.device))
+        return false;
+    value.authority = owned.authority; // Never adopt another publisher's current authority.
+    TrustedAuthority observed;
+    const bool present = channel_.readAuthority(observed);
+    if ((value.authority.epoch ? !present || !(observed == value.authority) : present) ||
+        !value.valid() || !roleOriginalCurrent(value))
+        return false;
+    portENTER_CRITICAL(&mutex_);
+    const bool unchanged =
+        identitySnapshot_ == owned && lifecycle_ == value.lifecycle && !registryFenced_;
+    portEXIT_CRITICAL(&mutex_);
+    if (!unchanged)
+        return false;
+    destination = value;
+    return true;
+}
+PeerRegistryRolePost Esp32GattsSource::postPeerRoleJob(const PeerRegistryRoleJob &caller) noexcept {
+    const auto value = caller;
+    if (rolePosting_)
+        return PeerRegistryRolePost::Busy;
+    rolePosting_ = true;
+    const auto worker = xTaskGetCurrentTaskHandle();
+    if (selected != this || !worker || worker == sourceTask_ || !validPeerRegistryRoleJob(value) ||
+        !roleOriginalCurrent(value.original) ||
+        clock_.nowMilliseconds() - value.receivedAt >=
+            PeerRegistryActorLimits::DeadlineMilliseconds) {
+        rolePosting_ = false;
+        return PeerRegistryRolePost::Rejected;
+    }
+    portENTER_CRITICAL(&mutex_);
+    const bool wrongWorker = roleWorker_ && roleWorker_ != worker;
+    const auto state = role_.state;
+    const bool duplicate = state && role_.value == value;
+    const bool stale = state && value.sequence <= role_.value.sequence;
+    portEXIT_CRITICAL(&mutex_);
+    if (wrongWorker || state == 5 || (stale && !duplicate)) {
+        rolePosting_ = false;
+        return PeerRegistryRolePost::Rejected;
+    }
+    if (duplicate) {
+        rolePosting_ = false;
+        return state == 4 ? PeerRegistryRolePost::Rejected : PeerRegistryRolePost::Duplicate;
+    }
+    if (state == 1 || state == 2) {
+        rolePosting_ = false;
+        return PeerRegistryRolePost::Busy;
+    }
+    portENTER_CRITICAL(&registrationMutex);
+    const auto token = peerRolePostCounter == UINT32_MAX ? 0 : ++peerRolePostCounter;
+    portEXIT_CRITICAL(&registrationMutex);
+    if (!token) {
+        rolePosting_ = false;
+        return PeerRegistryRolePost::Rejected;
+    }
+    portENTER_CRITICAL(&mutex_);
+    roleWorker_ = worker;
+    role_.value = value;
+    role_.ack = {};
+    role_.postToken = token;
+    role_.state = 1;
+    portEXIT_CRITICAL(&mutex_);
+    // Opaque integer token never points into a reusable mutable slot. An old
+    // callback cannot consume a new request after the single slot is reused.
+    const bool posted =
+        roleOriginalCurrent(value.original) && sdkThread_ == btu_thread &&
+        osi_thread_post(static_cast<osi_thread *>(sdkThread_), &applyPeerRoles,
+                        reinterpret_cast<void *>(static_cast<std::uintptr_t>(token)), 0, 0);
+    if (!posted) {
+        portENTER_CRITICAL(&mutex_);
+        role_.state = 4;
+        portEXIT_CRITICAL(&mutex_);
+    }
+    rolePosting_ = false;
+    return posted ? PeerRegistryRolePost::Posted : PeerRegistryRolePost::Rejected;
+}
+PeerRegistryRoleState
+Esp32GattsSource::peerRoleState(const PeerRegistryRoleJob &caller,
+                                TrustedAuthority &destination) const noexcept {
+    const auto value = caller;
+    if (!roleOriginalCurrent(value.original))
+        return PeerRegistryRoleState::Unavailable;
+    portENTER_CRITICAL(&mutex_);
+    const auto state = role_.state;
+    const bool match = state && role_.value == value;
+    const auto ack = role_.ack;
+    const bool worker = roleWorker_ == xTaskGetCurrentTaskHandle();
+    portEXIT_CRITICAL(&mutex_);
+    if (!match || !worker)
+        return PeerRegistryRoleState::Unavailable;
+    if (clock_.nowMilliseconds() - value.receivedAt >=
+        PeerRegistryActorLimits::DeadlineMilliseconds)
+        return PeerRegistryRoleState::Rejected;
+    if (state == 4 || state == 5)
+        return PeerRegistryRoleState::Rejected;
+    if (state != 3)
+        return PeerRegistryRoleState::Pending;
+    TrustedAuthority observed;
+    const bool present = channel_.readAuthority(observed);
+    if ((ack.epoch ? !present || !(observed == ack) : present) ||
+        !roleOriginalCurrent(value.original))
+        return PeerRegistryRoleState::Unavailable;
+    destination = ack;
+    return PeerRegistryRoleState::Confirmed;
+}
+bool Esp32GattsSource::installedPeerRoles(const PeerRegistryRoleJob &caller) const noexcept {
+    const auto value = caller;
+    GattsSourceRegistration reg;
+    if (!readRegistration(reg) || reg.token != value.original.registration ||
+        reg.interface != value.original.interface)
+        return false;
+    portENTER_CRITICAL(&mutex_);
+    const bool installed = role_.state == 3 && !registryFenced_ && role_.value == value &&
+                           value.kind == PeerRegistryRoleKind::Install;
+    portEXIT_CRITICAL(&mutex_);
+    return installed;
+}
+void Esp32GattsSource::fencePeerRoles(const PeerRegistryRoleJob &caller) noexcept {
+    const auto value = caller;
+    const auto worker = xTaskGetCurrentTaskHandle();
+    portENTER_CRITICAL(&mutex_);
+    if (roleWorker_ == worker && role_.value == value) {
+        registryFenced_ = true;
+        peerProofOpen_ = false;
+        if (role_.state == 1 || role_.state == 2)
+            role_.state = 5;
+    }
+    portEXIT_CRITICAL(&mutex_);
+}
+void Esp32GattsSource::applyPeerRoles(void *context) noexcept {
+    auto *source = selected;
+    if (!source)
+        return;
+    const auto token = static_cast<std::uint32_t>(reinterpret_cast<std::uintptr_t>(context));
+    portENTER_CRITICAL(&source->mutex_);
+    const bool pending = token && token == source->role_.postToken && source->role_.state == 1 &&
+                         !source->registryFenced_;
+    if (pending)
+        source->role_.state = 2;
+    const auto value = source->role_.value;
+    portEXIT_CRITICAL(&source->mutex_);
+    if (!pending)
+        return;
+    TrustedAuthority observed, ack;
+    Identity device;
+    const bool present = source->channel_.readAuthority(observed);
+    bool valid = source->sourceTask() && source->roleOriginalCurrent(value.original) &&
+                 (value.original.authority.epoch ? present && observed == value.original.authority
+                                                 : !present) &&
+                 source->access_.deviceIdentity(device) && device == value.original.device &&
+                 source->clock_.nowMilliseconds() - value.receivedAt <
+                     PeerRegistryActorLimits::DeadlineMilliseconds &&
+                 source->roleOriginalCurrent(value.original);
+    if (valid) {
+        portENTER_CRITICAL(&source->mutex_);
+        source->peerProofOpen_ = false;
+        portEXIT_CRITICAL(&source->mutex_);
+        valid = source->access_.replaceGameMastersClosed(value.roles, &ack) ==
+                IdentityAccessOutcome::AssignmentsReplaced;
+    }
+    const bool ackPresent = source->channel_.readAuthority(observed);
+    valid = valid && (ack.epoch ? ackPresent && observed == ack : !ackPresent) &&
+            source->roleOriginalCurrent(value.original) &&
+            source->clock_.nowMilliseconds() - value.receivedAt <
+                PeerRegistryActorLimits::DeadlineMilliseconds;
+    portENTER_CRITICAL(&source->mutex_);
+    if (source->role_.state == 2 && source->role_.postToken == token && !source->registryFenced_) {
+        source->role_.ack = ack;
+        source->role_.state = valid ? 3 : 4;
+    }
+    portEXIT_CRITICAL(&source->mutex_);
 }
 GattsEndpointSetupPost
 Esp32GattsSource::postEndpointSetup(const GattsEndpointSetup &caller,
@@ -159,6 +387,9 @@ bool Esp32GattsSource::configureEndpointsNow(std::uint16_t command, std::uint16_
     if (!sourceTask() || !registered_ || owner_ || sawConnection_ || !command || !profile ||
         command == profile)
         return false;
+    Identity device;
+    if (!access_.deviceIdentity(device) || !access_.attachObserver(*this))
+        return false;
     GattsEndpoints endpoints;
     endpoints.interface = interface_;
     endpoints.command = command;
@@ -183,6 +414,24 @@ GattsLifecycleOutcome Esp32GattsSource::connectionNow(std::uint8_t interface,
         std::memcpy(event.peerAddress.data(), address, event.peerAddress.size());
     if (!sourceTask() || interface != interface_ || (packed & 0xff) != interface)
         return GattsLifecycleOutcome::Invalid;
+    portENTER_CRITICAL(&mutex_);
+    peerProofOpen_ = false;
+    const bool lifetimeAvailable = lifecycle_ != UINT32_MAX;
+    if (lifetimeAvailable)
+        ++lifecycle_;
+    else
+        registryFenced_ = true;
+    portEXIT_CRITICAL(&mutex_);
+    if (!lifetimeAvailable) {
+        const auto original = connection_;
+        const bool wasActive = active_;
+        active_ = false;
+        connection_ = {};
+        live_ = {};
+        if (wasActive)
+            (void)access_.disconnect(original); // Exact owned authority; preserve other producers.
+        return GattsLifecycleOutcome::Unavailable;
+    }
     sawConnection_ = true;
     if (!owner_)
         return GattsLifecycleOutcome::Unavailable;
@@ -193,6 +442,10 @@ GattsLifecycleOutcome Esp32GattsSource::connectionNow(std::uint8_t interface,
             live_ = event;
             connection_ = opened;
             active_ = true;
+            portENTER_CRITICAL(&mutex_);
+            peerProofOpen_ =
+                identitySnapshot_.proofAllowed && identitySnapshot_.connection == opened;
+            portEXIT_CRITICAL(&mutex_);
         } else if (outcome == GattsLifecycleOutcome::Conflict) {
             active_ = false;
             connection_ = {};

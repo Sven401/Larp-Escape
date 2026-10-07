@@ -9,6 +9,25 @@ struct BoundConnection {
         return token == other.token && handle == other.handle;
     }
 };
+// Copied only by the sole identity actor. Consumers protect their own copy;
+// the observed publisher may have moved to a different owner in the meantime.
+struct IdentityAccessSnapshot {
+    Identity device;
+    BoundConnection connection;
+    TrustedAuthority authority;
+    bool current = false, connected = false, proofAllowed = false;
+    bool operator==(const IdentityAccessSnapshot &other) const noexcept {
+        return device == other.device && connection == other.connection &&
+               authority == other.authority && current == other.current &&
+               connected == other.connected && proofAllowed == other.proofAllowed;
+    }
+};
+class IIdentityAccessObserver {
+  public:
+    virtual ~IIdentityAccessObserver() = default;
+    // Fixed copied observation only: no reentry, SDK work, storage or crypto.
+    virtual void copyIdentitySnapshot(const IdentityAccessSnapshot &) noexcept = 0;
+};
 // Supplied ONLY by a verifier for that exact connection and stable credential
 // registry identity. Never construct from advertising/GATT JSON/auth success alone.
 // The SDK adapter must prove identity attribution as well as these security flags.
@@ -52,6 +71,8 @@ class IdentityAccess {
     explicit IdentityAccess(IAuthorityPublisher &authority) : authority_(authority) {}
     IdentityAccess(const IdentityAccess &) = delete;
     IdentityAccess &operator=(const IdentityAccess &) = delete;
+    // Trusted sole actor, once for process lifetime; observer outlives this owner.
+    bool attachObserver(IIdentityAccessObserver &) noexcept;
     IdentityAccessOutcome begin(const Identity &device) noexcept;
     bool deviceIdentity(Identity &destination) const noexcept;
     IdentityAccessOutcome connect(std::uint16_t handle, BoundConnection &destination) noexcept;
@@ -68,13 +89,17 @@ class IdentityAccess {
     // a complete table. An existing link stays failed until disconnect/reconnect.
     // Does not suspend an unrelated replacement producer.
     IdentityAccessOutcome replaceGameMastersClosed(
-        const std::array<GameMasterAssignment, IdentityAccessLimits::Assignments> &) noexcept;
+        const std::array<GameMasterAssignment, IdentityAccessLimits::Assignments> &,
+        TrustedAuthority *closedAck = nullptr) noexcept;
     // Closed or verified original link suitable for a fresh proof; no role grant.
     bool proofConnectionCurrent(const BoundConnection &) const noexcept;
     // Exact live binding AND channel observation. False preserves destination.
     bool route(const BoundConnection &connection, TrustedAuthority &destination) const noexcept;
 
   private:
+    struct Observation;
+    IIdentityAccessObserver *observer_ = nullptr;
+    void notifyObserver() noexcept;
     struct Assignment {
         Identity peer;
         std::uint32_t principal = 0;

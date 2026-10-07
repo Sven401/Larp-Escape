@@ -49,14 +49,18 @@ class IPeerRegistryStore {
     // Same-boot shared fence survives store/owner object replacement. No reset.
     virtual void fence() noexcept = 0;
 };
+enum class PeerRegistryRuntimeResult : std::uint8_t { Pending, Confirmed, Failure };
 class IPeerRegistryRuntime {
   public:
     virtual ~IPeerRegistryRuntime() = default;
-    virtual bool close() noexcept = 0;
+    // Zero-wait polling. Pending retains one immutable original request.
+    virtual PeerRegistryRuntimeResult close() noexcept = 0;
     // Serialized on the original IdentityAccess owner. Always close the current
     // exact authority and invalidate old authentication BEFORE replacing roles.
     // Never opens a link. An SDK worker needs original attributed actor/ack.
-    virtual bool replaceClosed(const PeerRegistrySnapshot &) noexcept = 0;
+    virtual PeerRegistryRuntimeResult replaceClosed(const PeerRegistrySnapshot &) noexcept = 0;
+    // Immediately deny copied credential readers and cancel delayed work.
+    virtual void fence() noexcept = 0;
 };
 enum class PeerRegistryOutcome : std::uint8_t {
     Loaded,
@@ -75,7 +79,8 @@ enum class PeerRegistryOutcome : std::uint8_t {
     WriteConflict,
     WriteFailure,
     Uncertain,
-    VerifyFailure
+    VerifyFailure,
+    Pending
 };
 // One serialized trusted local admin/startup worker, never an App JSON write or
 // callback. Public keys only; crypto/NVS may allocate and block outside critical sections.
@@ -92,6 +97,8 @@ class PeerRegistryOwner {
     // Existing key rotation increments its credential generation exactly once.
     PeerRegistryOutcome replaceTrusted(std::uint32_t expectedGeneration,
                                        const PeerRegistrySnapshot &next) noexcept;
+    // Sole IO worker polls; Pending never repeats NVS/crypto or refreshes age.
+    PeerRegistryOutcome service() noexcept;
     bool snapshot(PeerRegistrySnapshot &) const noexcept;
     bool credential(const Identity &, PeerCredential &) const noexcept;
     bool credentialCurrent(const PeerCredential &) const noexcept;
@@ -102,10 +109,16 @@ class PeerRegistryOwner {
     IPeerRegistryRuntime &runtime_;
     PeerRegistrySnapshot current_;
     PeerRegistryRecord record_;
+    PeerRegistrySnapshot next_;
+    PeerRegistryRecord nextRecord_;
+    enum class Phase : std::uint8_t { Idle, BeginClose, EditClose, Read, Write, Install, Failed };
+    Phase phase_ = Phase::Idle;
+    PeerRegistryOutcome completion_ = PeerRegistryOutcome::NotReady;
     PeerRegistryOutcome last_ = PeerRegistryOutcome::NotReady;
     bool attempted_ = false, ready_ = false, busy_ = false, present_ = false;
     bool validKeys(const PeerRegistrySnapshot &) noexcept;
     PeerRegistryOutcome fail(PeerRegistryOutcome) noexcept;
+    PeerRegistryOutcome advance() noexcept;
 };
 } // namespace companion
 } // namespace larp

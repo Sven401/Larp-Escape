@@ -37,6 +37,7 @@
 #include "../../lib/FreeRtosCommandFrameQueue/FreeRtosCommandFrameQueue.cpp"
 #include "../../lib/FreeRtosGameControlChannel/FreeRtosGameControlChannel.cpp"
 #include "../../lib/FreeRtosPeerProofQueue/FreeRtosPeerProofQueue.cpp"
+#include "../../lib/FreeRtosPeerRegistryRuntime/FreeRtosPeerRegistryRuntime.cpp"
 #include "../../lib/FreeRtosProfileFrameQueue/FreeRtosProfileFrameQueue.cpp"
 #include "../../lib/FreeRtosProfileResponseQueue/FreeRtosProfileResponseQueue.cpp"
 #include "../../lib/GattsWriteAdmission/Esp32GattsService.cpp"
@@ -980,6 +981,7 @@ void test_profile_capability_fixture_matches_firmware_encoder() {
 #include "GattsSourceCases.h"
 #include "IdentityRetirementCases.h"
 #include "PeerProofCases.h"
+#include "PeerRegistryActorCases.h"
 #include "PeerRegistryCases.h"
 } // namespace
 void setUp() {
@@ -1418,5 +1420,26 @@ int main() {
     RUN_TEST(test_peer_registry_actual_crypto_restored_explicit_role_frames_game_and_revocation);
 #endif
     RUN_TEST(test_peer_registry_owner_separate_readback_failure_and_confirmed_revoke_corruption);
+    RUN_TEST(test_registry_actor_pending_ack_precedes_io_and_snapshot_publication);
+    RUN_TEST(test_registry_actor_snapshot_is_readable_on_crypto_worker_and_survives_fresh_links);
+    RUN_TEST(test_registry_actor_role_change_closes_link_before_nvs_and_retains_game);
+    RUN_TEST(test_registry_actor_lost_close_ack_expires_without_any_nvs_or_retry);
+    RUN_TEST(test_registry_actor_new_connection_and_foreign_authority_preserved_by_old_job);
+    RUN_TEST(test_registry_actor_install_wrong_sdk_task_never_publishes_stored_role);
+    RUN_TEST(test_registry_actor_nvs_uncertain_after_close_has_no_install_or_key_publication);
+    RUN_TEST(test_registry_actor_sdk_token_replay_cannot_consume_reused_slot);
+    RUN_TEST(test_registry_actor_pending_inputs_and_conflicting_retries_keep_frozen_snapshot);
+    RUN_TEST(test_registry_actor_role_slot_duplicate_full_and_wrong_worker_preserve_pending);
+    RUN_TEST(test_registry_actor_public_snapshot_freezes_peer_before_mutex_observation);
+    RUN_TEST(test_registry_actor_expired_install_and_overall_budget_never_refresh);
+    RUN_TEST(test_registry_actor_wrong_sdk_instance_and_token_exhaustion_fail_without_repost);
+    RUN_TEST(test_registry_actor_closed_proof_copy_is_original_and_closes_before_role_ports);
+    RUN_TEST(test_registry_actor_foreign_authority_before_request_is_never_retired);
+    RUN_TEST(test_registry_actor_copied_policy_remains_original_after_verification_and_revoke);
+    RUN_TEST(test_registry_actor_owner_observer_is_single_and_failed_ack_preserves_output);
+#if defined(LARP_REAL_PEER_CRYPTO)
+    RUN_TEST(test_registry_actor_actual_crypto_original_sdk_roles_frames_game_and_revoke);
+#endif
+    RUN_TEST(test_registry_actor_fixed_job_rejects_invalid_origin_roles_and_order);
     return UNITY_END();
 }

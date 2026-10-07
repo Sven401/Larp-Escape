@@ -1,4 +1,6 @@
 #pragma once
+#include "Companion/PeerProof.h"
+#include "Companion/PeerRegistryActor.h"
 #include "FreeRtosGattsConnection.h"
 #include "GattsServiceDefinition.h"
 #include "SdkGattSourceAbi.h"
@@ -10,7 +12,9 @@ namespace companion {
 // deregistration or deletion while callbacks/work may remain in the SDK.
 // Only the selected source registration is intercepted. Its write callbacks
 // replace the BTA write path; other callbacks and other applications pass through.
-class Esp32GattsSource : public IGattsResponseContext, public IGattsResponseSubmitter {
+class Esp32GattsSource : public IGattsResponseContext,
+                         public IGattsResponseSubmitter,
+                         private IIdentityAccessObserver {
   public:
     Esp32GattsSource(IdentityAccess &access, const IProfileImportClock &clock,
                      const IGameControlChannel &channel, FreeRtosCommandFrameQueue &commands,
@@ -25,6 +29,14 @@ class Esp32GattsSource : public IGattsResponseContext, public IGattsResponseSubm
     GattsEndpointSetupPost postEndpointSetup(const GattsEndpointSetup &,
                                              IWriteResponseBearer &) noexcept;
     GattsEndpointSetupState endpointSetupState(const GattsEndpointSetup &) const noexcept;
+    // Trusted sole registry worker, copied original before deferring to BTU.
+    bool readPeerRoleOrigin(const Identity &, PeerRegistryActorOrigin &) const noexcept;
+    PeerRegistryRolePost postPeerRoleJob(const PeerRegistryRoleJob &) noexcept;
+    PeerRegistryRoleState peerRoleState(const PeerRegistryRoleJob &,
+                                        TrustedAuthority &) const noexcept;
+    void fencePeerRoles(const PeerRegistryRoleJob &) noexcept;
+    // Copied keys are tied to this installed job, but remain usable on fresh links.
+    bool installedPeerRoles(const PeerRegistryRoleJob &) const noexcept;
     // Once, on that same task, using actual created attribute handles, before
     // ANY connection callback. Repeated/late configuration never rebinds.
     bool configureEndpointsNow(std::uint16_t command, std::uint16_t profile,
@@ -33,6 +45,8 @@ class Esp32GattsSource : public IGattsResponseContext, public IGattsResponseSubm
                                         std::uint16_t packedConnection, bool connected) noexcept;
     // Sole source actor only; original closed token for subsequent peer verification.
     bool originalConnectionNow(BoundConnection &) const noexcept;
+    // Crypto-worker read: copied original connection and current owned policy.
+    bool closedPeerConnectionCurrent(const PeerProofBinding &) const noexcept;
     // Returns true only for our consumed WRITE/EXEC callbacks, even on rejection.
     // No raw SDK pointer or event without its original binding is queued.
     bool requestNow(std::uint16_t packedConnection, std::uint32_t transaction, std::uint8_t type,
@@ -54,6 +68,15 @@ class Esp32GattsSource : public IGattsResponseContext, public IGattsResponseSubm
         IWriteResponseBearer *responses = nullptr;
         std::uint8_t state = 0; // 0 unused, 1 queued, 2 consuming, 3 installed, 4 rejected
     } setup_;
+    struct RolePending {
+        PeerRegistryRoleJob value;
+        TrustedAuthority ack;
+        std::uint32_t postToken = 0;
+        std::uint8_t state = 0;
+    } role_;
+    TaskHandle_t roleWorker_ = nullptr;
+    std::uint32_t lifecycle_ = 0;
+    bool rolePosting_ = false, registryFenced_ = false;
     IdentityAccess &access_;
     const IProfileImportClock &clock_;
     const IGameControlChannel &channel_;
@@ -65,6 +88,8 @@ class Esp32GattsSource : public IGattsResponseContext, public IGattsResponseSubm
     FreeRtosGattsConnection *owner_ = nullptr;
     GattsConnectionEvent live_;
     BoundConnection connection_;
+    IdentityAccessSnapshot identitySnapshot_;
+    bool peerProofOpen_ = false;
     void *sdkThread_ = nullptr;
     TaskHandle_t sourceTask_ = nullptr;
     std::uint16_t command_ = 0, profile_ = 0;
@@ -74,10 +99,13 @@ class Esp32GattsSource : public IGattsResponseContext, public IGattsResponseSubm
     bool registered_ = false, sawConnection_ = false, active_ = false, posting_ = false;
     mutable portMUX_TYPE mutex_ = portMUX_INITIALIZER_UNLOCKED;
     Pending pending_[GattsResponseLimits::Depth];
+    void copyIdentitySnapshot(const IdentityAccessSnapshot &) noexcept override;
     bool sourceTask() const noexcept;
     bool validResponse(const RoutedWriteResponse &) const noexcept;
     static void consume(void *) noexcept;
     static void installEndpoints(void *) noexcept;
+    static void applyPeerRoles(void *) noexcept;
+    bool roleOriginalCurrent(const PeerRegistryActorOrigin &) const noexcept;
 };
 // Before SDK initialization; single process-lifetime instance/application.
 // Successful arming is not registration, service creation, BLE start or identity.

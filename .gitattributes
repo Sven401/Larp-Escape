@@ -7,3 +7,4 @@ docs/companion/fixtures/peer-registry/key-only.hex text eol=lf
 docs/companion/fixtures/peer-registry/game-master.hex text eol=lf
 docs/companion/fixtures/peer-registry/revoked.hex text eol=lf
 docs/companion/fixtures/peer-registry/observation.json text eol=lf
+docs/companion/fixtures/peer-registry/actor-observation.json text eol=lf

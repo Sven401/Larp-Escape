@@ -78,6 +78,8 @@ ADAPTER_FILES = (
     "lib/Esp32PeerProofCrypto/Esp32PeerProofNonce.cpp",
     "lib/Esp32PeerProofCrypto/Esp32PeerProofCrypto.h",
     "lib/Esp32PeerProofCrypto/Esp32PeerProofCrypto.cpp",
+    "lib/FreeRtosPeerRegistryRuntime/FreeRtosPeerRegistryRuntime.h",
+    "lib/FreeRtosPeerRegistryRuntime/FreeRtosPeerRegistryRuntime.cpp",
     "lib/Esp32PeerRegistryStore/Esp32PeerRegistryStore.h",
     "lib/Esp32PeerRegistryStore/Esp32PeerRegistryStore.cpp",
     "lib/Esp32DeviceIdentityStore/Esp32DeviceIdentityStore.h",

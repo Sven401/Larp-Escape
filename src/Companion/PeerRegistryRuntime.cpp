@@ -1,16 +1,19 @@
 #include "Companion/PeerRegistryRuntime.h"
 namespace larp {
 namespace companion {
-bool PeerRegistryRuntime::close() noexcept {
+PeerRegistryRuntimeResult PeerRegistryRuntime::close() noexcept {
     std::array<GameMasterAssignment, IdentityAccessLimits::Assignments> empty = {};
-    return access_.replaceGameMastersClosed(empty) == IdentityAccessOutcome::AssignmentsReplaced;
+    return access_.replaceGameMastersClosed(empty) == IdentityAccessOutcome::AssignmentsReplaced
+               ? PeerRegistryRuntimeResult::Confirmed
+               : PeerRegistryRuntimeResult::Failure;
 }
-bool PeerRegistryRuntime::replaceClosed(const PeerRegistrySnapshot &caller) noexcept {
+PeerRegistryRuntimeResult
+PeerRegistryRuntime::replaceClosed(const PeerRegistrySnapshot &caller) noexcept {
     const auto selected = caller;
     Identity device;
     if (!validPeerRegistry(selected) || !access_.deviceIdentity(device) ||
         !(selected.device == device))
-        return false;
+        return PeerRegistryRuntimeResult::Failure;
     std::array<GameMasterAssignment, IdentityAccessLimits::Assignments> roles = {};
     unsigned count = 0;
     for (unsigned i = 0; i < selected.count; ++i)
@@ -18,7 +21,9 @@ bool PeerRegistryRuntime::replaceClosed(const PeerRegistrySnapshot &caller) noex
             roles[count].peer = selected.peers[i].credential.peer;
             roles[count++].principal = selected.peers[i].principal;
         }
-    return access_.replaceGameMastersClosed(roles) == IdentityAccessOutcome::AssignmentsReplaced;
+    return access_.replaceGameMastersClosed(roles) == IdentityAccessOutcome::AssignmentsReplaced
+               ? PeerRegistryRuntimeResult::Confirmed
+               : PeerRegistryRuntimeResult::Failure;
 }
 } // namespace companion
 } // namespace larp
