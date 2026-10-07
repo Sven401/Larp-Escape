@@ -242,3 +242,7 @@ python scripts/check_peer_crypto_sources.py --root <offizielle-quellen> --archiv
 Der letzte Prüfer verwendet isolierte temporäre Kopien;8veränderte Native- und
 2SDK-Kryptografieeingaben werden durch dieselben tatsächlichen Wächter
 zurückgewiesen. Originalquellen und installierter SDK bleiben erhalten.
+
+## Aktueller Registryanschluss
+
+Der neue [öffentliche Registerpfad](peer-registry-v1.md) liefert aktuelle persistierte Credentials und getrennte ausdrückliche GMrollen. Sein Hostpfad bindet Proofgültigkeit zusätzlich an `IdentityAccess::proofConnectionCurrent`; eine Rollenänderung entwertet die alte Verbindung auch bei unverändertem Schlüssel. Tatsächliche SDKsecurity und der Produktions-Actoranschluss bleiben offen.

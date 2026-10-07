@@ -34,10 +34,15 @@ enum class IdentityAccessOutcome : std::uint8_t {
     SecurityRejected,
     IdentityConflict,
     Capacity,
-    AuthorityUnavailable
+    AuthorityUnavailable,
+    AssignmentsReplaced
 };
 struct IdentityAccessLimits {
     static const std::size_t Assignments = 4;
+};
+struct GameMasterAssignment {
+    Identity peer;
+    std::uint32_t principal = 0;
 };
 // Single serialized trusted owner, fixed volatile registry. Persistent credentials,
 // device-ID provisioning, local-admin channel and real verification remain separate.
@@ -59,6 +64,13 @@ class IdentityAccess {
     // Explicit trusted local-administrator operations; never an untrusted App write.
     IdentityAccessOutcome assignGameMaster(const Identity &peer, std::uint32_t principal) noexcept;
     IdentityAccessOutcome revokeGameMaster(const Identity &peer) noexcept;
+    // Trusted sole actor only: close exact current authority before installing
+    // a complete table. An existing link stays failed until disconnect/reconnect.
+    // Does not suspend an unrelated replacement producer.
+    IdentityAccessOutcome replaceGameMastersClosed(
+        const std::array<GameMasterAssignment, IdentityAccessLimits::Assignments> &) noexcept;
+    // Closed or verified original link suitable for a fresh proof; no role grant.
+    bool proofConnectionCurrent(const BoundConnection &) const noexcept;
     // Exact live binding AND channel observation. False preserves destination.
     bool route(const BoundConnection &connection, TrustedAuthority &destination) const noexcept;
 

@@ -1,4 +1,5 @@
 #include "IdentityRecord.h"
+#include "PeerRegistryRecord.h"
 // Host-side profile export/inspection. This is not an embedded entry point.
 #include "Activation.h"
 #include "CommandFrames.h"
@@ -74,6 +75,8 @@ int main(int argc, char **argv) {
     }
     if (argc == 3 && std::strcmp(argv[1], "--inspect-device-identity-record") == 0)
         return runDeviceIdentityRecord(argv[2]);
+    if (argc == 3 && std::strcmp(argv[1], "--inspect-peer-registry-record") == 0)
+        return runPeerRegistryRecord(argv[2]);
     if (argc == 3 && std::strcmp(argv[1], "--frame-command") == 0)
         return runCommandFrames(argv[2]);
     if (argc == 3 && std::strcmp(argv[1], "--receive-profile") == 0)

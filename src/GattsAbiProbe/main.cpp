@@ -2,12 +2,14 @@
 // No Bluetooth initialization, advertising, radio, keys or device owners.
 #include "Companion/CommandStream.h"
 #include "Companion/IdentityAccess.h"
+#include "Companion/PeerRegistryRuntime.h"
 #include <Arduino.h>
 #include <Esp32DeviceIdentityStore.h>
 #include <Esp32GattsService.h>
 #include <Esp32GattsSource.h>
 #include <Esp32PeerProofCrypto.h>
 #include <Esp32PeerProofNonce.h>
+#include <Esp32PeerRegistryStore.h>
 #include <FreeRtosCommandFrameQueue.h>
 #include <FreeRtosGameControlChannel.h>
 #include <FreeRtosGattsResponseQueue.h>
@@ -77,6 +79,9 @@ class UnopenedPeerContext : public IPeerProofContext {
 } unopenedPeerContext;
 Esp32PeerProofCrypto peerCrypto;
 Esp32PeerProofNonce peerNonce;
+Esp32PeerRegistryStore unopenedPeerStore;
+PeerRegistryRuntime unopenedRegistryRuntime(identityPolicy);
+PeerRegistryOwner unopenedRegistry(unopenedPeerStore, peerCrypto, unopenedRegistryRuntime);
 PeerProofOwner peerProofOwner(unopenedPeerContext, peerCrypto, peerNonce, profileClock);
 PeerProofReceiver peerProofReceiver(peerProofOwner);
 FreeRtosPeerProofQueue peerProofQueue(unopenedPeerContext, profileClock);
@@ -123,6 +128,16 @@ void setup() {
     Serial.printf("peer_crypto_abi: initialized=false nonce_generated=false key_verified=false "
                   "crypto=%u nonce=%u\n",
                   unsigned(sizeof(peerCrypto)), unsigned(sizeof(peerNonce)));
+    PeerRegistryRecord unopenedRecord;
+    unopenedRecord.bytes[0] = 99;
+    if (unopenedPeerStore.read(unopenedRecord) != PeerRegistryRead::Failure ||
+        unopenedRecord.bytes[0] != 99 ||
+        unopenedRegistry.begin(Identity{}) != PeerRegistryOutcome::RuntimeRejected)
+        return;
+    Serial.printf("peer_registry_abi: initialized=false restored=false owner=%u record=%u "
+                  "snapshot=%u store=%u\n",
+                  unsigned(sizeof(unopenedRegistry)), unsigned(sizeof(PeerRegistryRecord)),
+                  unsigned(sizeof(PeerRegistrySnapshot)), unsigned(sizeof(unopenedPeerStore)));
     // Actual synchronized retirement port; no peer/security grant from SDK fields.
     TrustedAuthority firstClosed, replacementClosed, closed, observed;
     closed.epoch = 99;

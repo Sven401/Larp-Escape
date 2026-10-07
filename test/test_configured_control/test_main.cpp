@@ -6,6 +6,7 @@
 #include "Companion/IdentityAccess.h"
 #include "Companion/PeerProofFrame.h"
 #include "Companion/PeerProofReceiver.h"
+#include "Companion/PeerRegistryRuntime.h"
 #include "Companion/ProfileCapabilities.h"
 #include "Companion/ProfileFrames.h"
 #include "Companion/ProfileResponseSender.h"
@@ -51,7 +52,9 @@
 // Actual ESP file adapters under an isolated deterministic VFS model.
 #include "ProfileFileVfs.h"
 // Actual identity persistence/entropy adapters under deterministic SDK models.
+#include "../../lib/Esp32PeerRegistryStore/Esp32PeerRegistryStore.cpp"
 #include "DeviceIdentityNvsModel.h"
+#include "PeerRegistryNvsModel.h"
 namespace host_rtos {
 void (*beforeEnter)() = nullptr;
 unsigned depth = 0;
@@ -977,6 +980,7 @@ void test_profile_capability_fixture_matches_firmware_encoder() {
 #include "GattsSourceCases.h"
 #include "IdentityRetirementCases.h"
 #include "PeerProofCases.h"
+#include "PeerRegistryCases.h"
 } // namespace
 void setUp() {
     host_rtos::depth = 0;
@@ -1395,5 +1399,24 @@ int main() {
     RUN_TEST(test_peer_actual_mbedtls_p256_independent_signature_and_bad_public_inputs);
     RUN_TEST(test_peer_actual_crypto_owner_frames_explicit_role_and_application);
 #endif
+    RUN_TEST(test_peer_registry_canonical_record_crc_sorted_unique_and_target_preservation);
+    RUN_TEST(test_peer_registry_two_peers_duplicate_keys_principals_labels_and_order);
+    RUN_TEST(test_peer_registry_missing_then_key_only_and_explicit_role_persist_without_opening);
+    RUN_TEST(test_peer_registry_role_change_closes_original_proof_and_keeps_running_game);
+    RUN_TEST(test_peer_registry_rotation_generation_and_old_credential_revocation);
+    RUN_TEST(test_peer_registry_stale_duplicate_invalid_edits_do_not_write_or_close_live_link);
+    RUN_TEST(test_peer_registry_restore_corruption_device_and_read_failure_never_restore_roles);
+    RUN_TEST(test_peer_registry_uncertain_set_commit_readback_and_shared_same_boot_fence);
+    RUN_TEST(test_peer_registry_compare_entire_record_conflict_never_overwrites_other_owner);
+    RUN_TEST(test_peer_registry_record_freeze_busy_reentry_and_closed_roles_before_nvs_write);
+    RUN_TEST(test_peer_registry_init_busy_invalid_direct_write_and_fenced_read_preserve_targets);
+    RUN_TEST(test_peer_registry_counter_exhaustion_and_repeat_begin_cannot_reset_fence);
+    RUN_TEST(test_peer_registry_closed_assignment_replacement_preserves_new_authority);
+    RUN_TEST(test_peer_registry_revoke_during_proof_crypto_cannot_publish_old_verified_peer);
+#if defined(LARP_REAL_PEER_CRYPTO)
+    RUN_TEST(test_peer_registry_actual_curve_restore_and_invalid_point_rejection);
+    RUN_TEST(test_peer_registry_actual_crypto_restored_explicit_role_frames_game_and_revocation);
+#endif
+    RUN_TEST(test_peer_registry_owner_separate_readback_failure_and_confirmed_revoke_corruption);
     return UNITY_END();
 }

@@ -159,3 +159,7 @@ Lokale Messquelle %TEMP%/larp-identity-access-budget-20261007 und SDKobjekte.
 Kein gemessener Gesamtstack oder Mikrosekunden-/Funkbudget. Keine neuen
 Cppcheck-/Remote-CI-/Geräte-/SMP-/Android-/Energie-/Flashausfallprüfungen.
 Keine Schlüssel oder echten Peeridentitäten in Fixtures/Belegen.
+
+## Öffentliche persistierte Rollen
+
+[Peerregistry v1](peer-registry-v1.md) ersetzt auf dem ursprünglichen alleinigen Policybesitzer eine eingefrorene vollständige GMtabelle. `replaceGameMastersClosed` schließt atomar nur die erwartete ursprüngliche Authority und erhält einen neuen fremden Produzenten. `proofConnectionCurrent` erlaubt eine aktuelle geschlossene Verbindung für den Schlüsselnachweis, schließt sie aber nach Rollenwechsel. NVSworker und ursprüngliche SDKsecurity sind noch nicht im Produktionspfad verbunden.

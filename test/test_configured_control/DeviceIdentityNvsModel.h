@@ -1,6 +1,7 @@
 #pragma once
 #include "../../lib/Esp32DeviceIdentityStore/Esp32DeviceIdentityStore.h"
 #include "../../lib/Esp32DeviceIdentityStore/Esp32StartupIdentityEntropy.h"
+#include "PeerRegistryNvsModel.h"
 #include <bootloader_random.h>
 #include <cstdlib>
 #include <cstring>
@@ -52,6 +53,8 @@ int nvs_flash_init() {
 }
 int nvs_open(const char *name, nvs_open_mode_t mode, nvs_handle_t *destination) {
     using namespace host_identity_nvs;
+    if (std::strcmp(name, "larp-peers-v1") == 0)
+        return host_peer_nvs::open(mode, destination);
     ++opens;
     if (std::strcmp(name, "larp-companion") != 0) {
         ++unknown;
@@ -69,6 +72,8 @@ int nvs_open(const char *name, nvs_open_mode_t mode, nvs_handle_t *destination) 
 }
 int nvs_get_blob(nvs_handle_t handle, const char *key, void *destination, std::size_t *length) {
     using namespace host_identity_nvs;
+    if (host_peer_nvs::handles.count(handle))
+        return host_peer_nvs::get(handle, key, destination, length);
     ++getCalls;
     if (std::strcmp(key, "device-id-v1") != 0 || !handles.count(handle)) {
         ++unknown;
@@ -97,6 +102,8 @@ int nvs_get_blob(nvs_handle_t handle, const char *key, void *destination, std::s
 }
 int nvs_set_blob(nvs_handle_t handle, const char *key, const void *source, std::size_t count) {
     using namespace host_identity_nvs;
+    if (host_peer_nvs::handles.count(handle))
+        return host_peer_nvs::set(handle, key, source, count);
     ++sets;
     if (std::strcmp(key, "device-id-v1") != 0 || !handles.count(handle) || !handles.at(handle) ||
         count != 28) {
@@ -118,6 +125,8 @@ int nvs_set_blob(nvs_handle_t handle, const char *key, const void *source, std::
 }
 int nvs_commit(nvs_handle_t handle) {
     using namespace host_identity_nvs;
+    if (host_peer_nvs::handles.count(handle))
+        return host_peer_nvs::commit(handle);
     ++commits;
     if (!handles.count(handle) || !handles.at(handle)) {
         ++unknown;
@@ -130,6 +139,10 @@ int nvs_commit(nvs_handle_t handle) {
     return commitError;
 }
 void nvs_close(nvs_handle_t handle) {
+    if (host_peer_nvs::handles.count(handle)) {
+        host_peer_nvs::close(handle);
+        return;
+    }
     ++host_identity_nvs::closes;
     host_identity_nvs::handles.erase(handle);
 }

@@ -161,6 +161,52 @@ IdentityAccessOutcome IdentityAccess::revokeGameMaster(const Identity &peer) noe
     }
     return IdentityAccessOutcome::Duplicate;
 }
+IdentityAccessOutcome IdentityAccess::replaceGameMastersClosed(
+    const std::array<GameMasterAssignment, IdentityAccessLimits::Assignments> &caller) noexcept {
+    const auto selected = caller;
+    if (authorityRetired_)
+        return IdentityAccessOutcome::AuthorityUnavailable;
+    if (!initialized_ || fenced_)
+        return IdentityAccessOutcome::InvalidIdentity;
+    for (unsigned i = 0; i < selected.size(); ++i) {
+        const auto &entry = selected[i];
+        if (entry.principal ? !entry.peer.valid() : entry.peer.valid())
+            return IdentityAccessOutcome::InvalidAssignment;
+        for (unsigned j = 0; j < i; ++j)
+            if (entry.principal &&
+                (entry.peer == selected[j].peer || entry.principal == selected[j].principal))
+                return IdentityAccessOutcome::InvalidAssignment;
+    }
+    const auto expected = current_;
+    // Before any external observation, all local route/proof checks close.
+    verified_ = false;
+    failedLink_ = connected_;
+    peer_ = {};
+    assignments_ = {};
+    current_ = {};
+    TrustedAuthority closed;
+    const auto result = authority_.closeAuthorityIfCurrent(expected, closed);
+    if (result == AuthorityUpdate::Published)
+        current_ = closed;
+    else if (result != AuthorityUpdate::Suspended) {
+        authorityRetired_ = true;
+        return IdentityAccessOutcome::AuthorityUnavailable;
+    }
+    for (unsigned i = 0; i < selected.size(); ++i) {
+        assignments_[i].peer = selected[i].peer;
+        assignments_[i].principal = selected[i].principal;
+    }
+    return IdentityAccessOutcome::AssignmentsReplaced;
+}
+bool IdentityAccess::proofConnectionCurrent(const BoundConnection &caller) const noexcept {
+    const auto original = caller;
+    if (!matches(original) || failedLink_)
+        return false;
+    const auto expected = current_;
+    TrustedAuthority observed;
+    return authority_.readAuthority(observed) && observed == expected && matches(original) &&
+           !failedLink_ && current_ == expected;
+}
 bool IdentityAccess::route(const BoundConnection &connection,
                            TrustedAuthority &destination) const noexcept {
     if (!matches(connection) || !verified_ || failedLink_ || !current_.gameMaster ||
