@@ -99,6 +99,12 @@ struct ConfiguredStatus {
     std::array<ConfiguredDeviceStatus, configuration::Limits::Components> devices = {};
     std::uint8_t deviceCount = 0;
 };
+// Producer's observed verified connection, not metadata attached at read time.
+// Status JSON is unchanged. An old lease must never be relabeled to a new epoch.
+struct RoutedConfiguredStatus {
+    std::uint32_t principal = 0, connectionEpoch = 0;
+    ConfiguredStatus status;
+};
 // Copy-only, bounded, zero-wait application ports. Sole application owner calls
 // receive/send/publish. Transport tasks must use a synchronized adapter, never
 // touch the controller. Route replies only to a currently matching verified
@@ -110,7 +116,7 @@ class IGameControlChannel {
     virtual bool readAuthority(TrustedAuthority &authority) const noexcept = 0;
     virtual bool receive(TrustedGameRequest &request) noexcept = 0;
     virtual bool send(const RoutedGameReply &reply) noexcept = 0;
-    virtual bool publish(const ConfiguredStatus &status) noexcept = 0;
+    virtual bool publish(const RoutedConfiguredStatus &status) noexcept = 0;
 };
 constexpr std::size_t maxConfiguredStatusJsonBytes = 6144;
 constexpr std::size_t maxGameReplyJsonBytes = 512;

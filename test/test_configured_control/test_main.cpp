@@ -56,7 +56,7 @@ class ObservedChannel : public IGameControlChannel {
     bool send(const RoutedGameReply &value) noexcept override {
         return actual.send(value);
     }
-    bool publish(const ConfiguredStatus &value) noexcept override {
+    bool publish(const RoutedConfiguredStatus &value) noexcept override {
         return actual.publish(value);
     }
 };
@@ -557,8 +557,9 @@ void fixture(const char *name, const char *bytes, std::size_t count) {
     TEST_ASSERT_EQUAL_MEMORY(bytes, expected, count);
 }
 void statusFixture(const char *name) {
-    ConfiguredStatus status;
-    TEST_ASSERT_TRUE(f->channel.actual.readStatus(status));
+    RoutedConfiguredStatus routed;
+    TEST_ASSERT_TRUE(f->channel.actual.readCurrentStatus(routed));
+    const auto &status = routed.status;
     char bytes[maxConfiguredStatusJsonBytes];
     std::size_t count;
     TEST_ASSERT_EQUAL(
@@ -908,6 +909,7 @@ void test_profile_capability_fixture_matches_firmware_encoder() {
 #include "ReplyFrameCases.h"
 // Uses the stream/queue/bearer helpers defined above; preserve this order.
 #include "CommandReceiptCases.h"
+#include "StatusRoutingCases.h"
 } // namespace
 void setUp() {
     host_rtos::depth = 0;
@@ -1007,5 +1009,9 @@ int main() {
     RUN_TEST(test_receipt_distinguishes_input_from_busy_pending_message);
     RUN_TEST(test_receipt_expired_queuewait_and_empty_poll);
     RUN_TEST(test_receipt_reconnect_and_bearer_revoke_keep_original_binding);
+    RUN_TEST(test_current_status_filters_reconnect_until_new_producer_snapshot);
+    RUN_TEST(test_delayed_old_status_cannot_be_relabelled_to_current_epoch);
+    RUN_TEST(test_status_selection_revoke_observer_suspend_preserves_game);
+    RUN_TEST(test_status_producer_observation_race_keeps_original_epoch);
     return UNITY_END();
 }

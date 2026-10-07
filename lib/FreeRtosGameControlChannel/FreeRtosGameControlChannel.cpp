@@ -6,7 +6,7 @@ static_assert(std::is_trivially_copyable<TrustedGameRequest>::value,
               "Queue requires copied command values");
 static_assert(std::is_trivially_copyable<RoutedGameReply>::value,
               "Queue requires copied reply values");
-static_assert(std::is_trivially_copyable<ConfiguredStatus>::value,
+static_assert(std::is_trivially_copyable<RoutedConfiguredStatus>::value,
               "Queue requires copied status values");
 bool FreeRtosGameControlChannel::begin() {
     if (started_)
@@ -15,7 +15,7 @@ bool FreeRtosGameControlChannel::begin() {
                                    &commandControl_);
     replies_ = xQueueCreateStatic(ControlLimits::Queue, sizeof(RoutedGameReply), replyBytes_,
                                   &replyControl_);
-    status_ = xQueueCreateStatic(1, sizeof(ConfiguredStatus), statusBytes_, &statusControl_);
+    status_ = xQueueCreateStatic(1, sizeof(RoutedConfiguredStatus), statusBytes_, &statusControl_);
     started_ = commands_ && replies_ && status_;
     return started_;
 }
@@ -25,7 +25,7 @@ bool FreeRtosGameControlChannel::receive(TrustedGameRequest &request) noexcept {
 bool FreeRtosGameControlChannel::send(const RoutedGameReply &reply) noexcept {
     return started_ && xQueueSendToBack(replies_, &reply, 0) == pdTRUE;
 }
-bool FreeRtosGameControlChannel::publish(const ConfiguredStatus &status) noexcept {
+bool FreeRtosGameControlChannel::publish(const RoutedConfiguredStatus &status) noexcept {
     return started_ && xQueueOverwrite(status_, &status) == pdTRUE;
 }
 AuthorityUpdate FreeRtosGameControlChannel::updateAuthority(const TrustedAuthority &authority) {
@@ -119,7 +119,27 @@ bool FreeRtosGameControlChannel::takeCurrentReply(RoutedGameReply &reply) {
     return selected;
 }
 bool FreeRtosGameControlChannel::readStatus(ConfiguredStatus &status) const {
-    return started_ && xQueuePeek(status_, &status, 0) == pdTRUE;
+    if (!started_)
+        return false;
+    RoutedConfiguredStatus copied;
+    if (xQueuePeek(status_, &copied, 0) != pdTRUE)
+        return false;
+    status = copied.status;
+    return true;
+}
+bool FreeRtosGameControlChannel::readCurrentStatus(RoutedConfiguredStatus &status) const {
+    if (!started_)
+        return false;
+    RoutedConfiguredStatus copied;
+    bool selected = false;
+    portENTER_CRITICAL(&authorityMutex_);
+    if (xQueuePeek(status_, &copied, 0) == pdTRUE &&
+        authority_.admits(copied.principal, copied.connectionEpoch)) {
+        status = copied;
+        selected = true;
+    }
+    portEXIT_CRITICAL(&authorityMutex_);
+    return selected;
 }
 } // namespace companion
 } // namespace larp

@@ -34,7 +34,7 @@ class GameControl {
     std::uint32_t authorityEpoch_ = 0;
     // Sole-owner reusable publication value; channels copy before returning.
     // Trades bounded static RAM for a smaller FreeRTOS application stack frame.
-    companion::ConfiguredStatus status_;
+    companion::RoutedConfiguredStatus status_;
     std::array<Receipt, companion::ControlLimits::Receipts> receipts_ = {};
     std::uint32_t principal_ = 0, leaseCounter_ = 0, lease_ = 0, lastRequest_ = 0;
     std::uint32_t sample_ = 0, lastPublished_ = 0, droppedReplies_ = 0, droppedStatus_ = 0;

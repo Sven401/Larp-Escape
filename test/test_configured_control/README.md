@@ -6,7 +6,7 @@ Tatsächliche reine Firmwarequellen, tatsächlicher FreeRtosGameControlChannel, 
 
 Beobachtungshooks setzen Rechtewechsel vor/nach dem letzten synchronisierten Read bzw. vor Admission. Das prüft die definierte Entscheidungsreihenfolge und ausdrücklich auch die zulässige einzelne beanspruchte Operation nach späterem Entzug. Es ist keine atomare Abbruchgarantie. MemoryStore bestätigt ausschließlich modellierte Bytes, keine Stromausfall-/Dateisystem-Synchronisierungsabnahme.
 
-83 gezielte Fälle; keine vollständige JSON-/Profil-Fuzzing-/Ausfallsuite, keine vollständige Lease-/Request-/Sampleerschöpfung. Queuevoll/Reconnect/Entzug/Retry/Replyverlust sowie Start durch Codec bis StoredReady-Engine/Status sind enthalten. Historische Nicht-Prüfungen bleiben im Projektgedächtnis datiert; dieser neue Nachweis ersetzt sie nur für die genannten Fälle.
+87 gezielte Fälle; keine vollständige JSON-/Profil-Fuzzing-/Ausfallsuite, keine vollständige Lease-/Request-/Sampleerschöpfung. Queuevoll/Reconnect/Entzug/Retry/Replyverlust sowie Start durch Codec bis StoredReady-Engine/Status sind enthalten. Historische Nicht-Prüfungen bleiben im Projektgedächtnis datiert; dieser neue Nachweis ersetzt sie nur für die genannten Fälle.
 
 Die [Firmware-Fixtures v2](../../docs/companion/fixtures/v2/README.md) entstehen aus dem tatsächlichen Hostpfad und werden im zusätzlichen Fixturefall bytegenau verglichen.
 
@@ -65,3 +65,10 @@ erhält die erforderliche Include-Reihenfolge. Danach wurde der Code um
 semantische Grenzen ergänzt; der Codec-Test benutzt nun passende komplette
 und partielle Werte. Keine Firmwarefehler aus diesen Prüfhilfen behauptet.
 Poll ohne Eingangsframe bietet keine Aufnahmeantwort an.
+
+Vier Statusbindungscases: Producerstatus behält seine synchronisierte
+Principal/Epoch, tatsächliche Mailbox filtert aktuellen GM ohne relabeln.
+Reconnect bis neue Publikation, alte verzögerte Daten/wrong Principal,
+False-Zielerhalt, Entzug vor Auswahl/Observer/Suspend/weiterlaufendes Spiel
+und Entzug nach Producerobservation. Tatsächliche Statusfixtures lesen den
+aktuellen Port, JSONbytes bleiben gleich. Kein physischer Sendebeweis.

@@ -188,7 +188,13 @@ void GameControl::publish(std::uint32_t now) {
     const auto storage = application_.storage();
     const auto game = application_.game();
     const auto &execution = game.execution;
-    auto &s = status_;
+    companion::TrustedAuthority producer;
+    status_.principal = status_.connectionEpoch = 0;
+    if (authority_.read(producer)) {
+        status_.principal = producer.principal;
+        status_.connectionEpoch = producer.epoch;
+    }
+    auto &s = status_.status;
     s.boot = boot_;
     s.sample = ++sample_;
     s.sampledMilliseconds = now;
@@ -239,7 +245,7 @@ void GameControl::publish(std::uint32_t now) {
     // Do not retain old component metadata outside the current counted range.
     for (std::size_t i = s.deviceCount; i < s.devices.size(); ++i)
         s.devices[i] = companion::ConfiguredDeviceStatus();
-    if (!channel_.publish(s))
+    if (!channel_.publish(status_))
         increment(droppedStatus_);
     lastPublished_ = now;
     published_ = true;

@@ -20,7 +20,7 @@ class FreeRtosGameControlChannel : public IGameControlChannel, public ICommandIn
     bool readAuthority(TrustedAuthority &authority) const noexcept override;
     bool receive(TrustedGameRequest &request) noexcept override;
     bool send(const RoutedGameReply &reply) noexcept override;
-    bool publish(const ConfiguredStatus &status) noexcept override;
+    bool publish(const RoutedConfiguredStatus &status) noexcept override;
     bool submit(const TrustedGameRequest &request);
     // Complete immutable message from a trusted authenticated transport owner.
     // principal and epoch come from that specific connection, NEVER from JSON.
@@ -36,7 +36,12 @@ class FreeRtosGameControlChannel : public IGameControlChannel, public ICommandIn
     // destination. Selection is an observation point, not physical-send completion.
     // Recheck the bound epoch in the actual bearer before any later network send.
     bool takeCurrentReply(RoutedGameReply &reply);
+    // Raw diagnostic snapshot, NOT a current verified network recipient.
     bool readStatus(ConfiguredStatus &status) const;
+    // Latest copied status only if the producer's original principal+epoch
+    // still match the current GM. False preserves destination. One zero-wait
+    // peek under authority lock; bearer must recheck before physical sending.
+    bool readCurrentStatus(RoutedConfiguredStatus &status) const;
 
   private:
     QueueHandle_t commands_ = nullptr, replies_ = nullptr, status_ = nullptr;
@@ -45,7 +50,7 @@ class FreeRtosGameControlChannel : public IGameControlChannel, public ICommandIn
         commandBytes_[ControlLimits::Queue * sizeof(TrustedGameRequest)] = {};
     alignas(RoutedGameReply) std::uint8_t
         replyBytes_[ControlLimits::Queue * sizeof(RoutedGameReply)] = {};
-    alignas(ConfiguredStatus) std::uint8_t statusBytes_[sizeof(ConfiguredStatus)] = {};
+    alignas(RoutedConfiguredStatus) std::uint8_t statusBytes_[sizeof(RoutedConfiguredStatus)] = {};
     mutable portMUX_TYPE authorityMutex_ = portMUX_INITIALIZER_UNLOCKED;
     AuthorityState authority_;
     bool started_ = false;
