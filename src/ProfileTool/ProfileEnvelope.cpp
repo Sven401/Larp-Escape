@@ -1,4 +1,5 @@
 #include "ProfileEnvelope.h"
+#include "Companion/ProfileFrames.h"
 #include "Companion/ProfileSourceEnvelope.h"
 #include "GameConfiguration/ProfileReader.h"
 #include <cstdio>
@@ -64,4 +65,67 @@ int runProfileEnvelope(const char *path, const char *draft, const char *configur
         if (std::printf("%02X", static_cast<unsigned char>(encoded[i])) != 2)
             return 1;
     return std::fputc(10, stdout) != EOF && std::fflush(stdout) == 0 ? 0 : 1;
+}
+
+int runProfileFrames(const char *path, const char *draft, const char *configuration,
+                     const char *maximumValue) {
+    using namespace larp::companion;
+    ProfileSourceEnvelope envelope;
+    envelope.transfer = 1;
+    std::uint32_t maximum = 0;
+    if (!unsignedDecimal(draft, envelope.expectedDraftRevision) ||
+        !unsignedDecimal(configuration, envelope.expectedConfigurationRevision) ||
+        envelope.expectedDraftRevision == UINT32_MAX || !envelope.expectedConfigurationRevision ||
+        !unsignedDecimal(maximumValue, maximum) || maximum < ProfileSourceLimits::EnvelopeBytes ||
+        maximum > ProfileFrameLimits::ValueBytes)
+        return 2;
+    auto *file = std::fopen(path, "rb");
+    if (!file)
+        return 1;
+    MeasuredFile reader(file);
+    std::unique_ptr<larp::configuration::Profile> profile(new larp::configuration::Profile);
+    const auto parsed = larp::configuration::readDraftProfile(reader, *profile);
+    const bool rewound = std::fseek(file, 0, SEEK_SET) == 0;
+    if (!parsed || !rewound) {
+        std::fclose(file);
+        return 1;
+    }
+    profile.reset(); // No Profile is retained while emitting frame values.
+    envelope.bytes = reader.count;
+    envelope.crc32 = reader.crc ^ 0xffffffffu;
+    char encoded[ProfileFrameLimits::ValueBytes], payload[ProfileFrameLimits::PayloadBytes];
+    auto emit = [](const char *bytes, std::size_t count) {
+        for (std::size_t i = 0; i < count; ++i)
+            if (std::printf("%02X", static_cast<unsigned char>(bytes[i])) != 2)
+                return false;
+        return std::fputc(10, stdout) != EOF;
+    };
+    std::size_t written = 0;
+    bool ok = encodeProfileSourceEnvelope(envelope, encoded, sizeof(encoded), written) &&
+              emit(encoded, written);
+    MeasuredFile second(file);
+    while (ok && second.count < envelope.bytes) {
+        const auto offset = second.count;
+        std::size_t count = 0;
+        while (count < maximum - ProfileFrameLimits::HeaderBytes && second.count < envelope.bytes) {
+            std::uint8_t byte = 0;
+            if (second.readByte(byte) != larp::configuration::ReadStatus::Byte) {
+                ok = false;
+                break;
+            }
+            payload[count++] = static_cast<char>(byte);
+        }
+        ProfileDataFrame frame;
+        frame.transfer = envelope.transfer;
+        frame.offset = offset;
+        frame.payload = payload;
+        frame.count = count;
+        ok = ok && encodeProfileDataFrame(frame, encoded, sizeof(encoded), written) &&
+             emit(encoded, written);
+    }
+    std::uint8_t extra = 0;
+    ok = ok && second.readByte(extra) == larp::configuration::ReadStatus::End &&
+         second.count == envelope.bytes && (second.crc ^ 0xffffffffu) == envelope.crc32;
+    const bool closed = std::fclose(file) == 0;
+    return ok && closed && std::fflush(stdout) == 0 ? 0 : 1;
 }

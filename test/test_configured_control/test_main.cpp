@@ -2,6 +2,7 @@
 #include "Companion/CommandStream.h"
 #include "Companion/IdentityAccess.h"
 #include "Companion/ProfileCapabilities.h"
+#include "Companion/ProfileFrames.h"
 #include "Companion/ReplyFrameSender.h"
 #include "Companion/StatusFrameSender.h"
 #include "CompanionIntegration/GameControl.h"
@@ -924,6 +925,8 @@ void test_profile_capability_fixture_matches_firmware_encoder() {
 #include "ProfileImportCases.h"
 // Apply cases require the actual source/import fixture helpers above.
 #include "ProfileApplyCases.h"
+// Frame cases require import and apply fixture helpers above.
+#include "ProfileFrameCases.h"
 } // namespace
 void setUp() {
     host_rtos::depth = 0;
@@ -1090,6 +1093,19 @@ int main() {
     RUN_TEST(test_profile_apply_uncertain_storage_is_fault_not_confirmed_or_started);
     RUN_TEST(test_profile_apply_copies_original_receipt_before_external_observation);
     RUN_TEST(test_profile_apply_late_unaccepted_import_cannot_use_locally_parsed_draft);
+
+    RUN_TEST(test_profile_frames_codec_32bit_offsets_exact_bounds_and_in_place_encoding);
+    RUN_TEST(test_profile_frames_codec_rejects_bad_values_without_mutating_destination);
+    RUN_TEST(test_profile_frames_actual_20byte_complete_import_apply_and_golden_values);
+    RUN_TEST(test_profile_frames_actual_128byte_complete_import_apply_and_golden_values);
+    RUN_TEST(test_profile_frames_missing_duplicate_reordered_foreign_and_extra_are_terminal);
+    RUN_TEST(test_profile_frames_invalid_metadata_never_reads_and_end_remains_final);
+    RUN_TEST(test_profile_frames_owned_value_and_metadata_survive_caller_mutation);
+    RUN_TEST(test_profile_frames_crc_mismatch_has_no_receipt_activation_or_save);
+    RUN_TEST(test_profile_frames_partial_or_extra_source_cannot_become_accepted_draft);
+    RUN_TEST(test_profile_frames_revoke_or_expire_during_frame_copy_prevents_acceptance);
+    RUN_TEST(test_profile_frames_original_route_and_metadata_copied_before_source_call);
+    RUN_TEST(test_profile_frames_maximum_document_crosses_16bit_boundary_in_private_slot);
 
     return UNITY_END();
 }

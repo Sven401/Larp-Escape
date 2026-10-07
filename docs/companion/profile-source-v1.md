@@ -142,3 +142,5 @@ The current receipt is privately issued and bound to the exact Application;
 receipt44/importResult128Bytes. [Authorized apply](profile-apply.md) records
 the actual guarded activation/journal/current-status path,150cases and
 remaining wire/network acceptance. Source envelope20Bytes is unchanged.
+
+[Complete data framing](profile-frames-v1.md) now connects fixed kind6 values with32-bit offsets to the actual private import/apply path. Live callback collection/temporary source storage still needs its own bounded owner and explicit completion.

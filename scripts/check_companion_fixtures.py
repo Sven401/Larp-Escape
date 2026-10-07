@@ -184,6 +184,71 @@ def check_profile_source(base: Path, profile_validator) -> tuple[int, int]:
     return len(document), len(negatives)
 
 
+def decode_profile_frames(lines: list[str], maximum: int = 128) -> bytes:
+    """Complete-only counterpart, independently parses LE framing and raw CRC."""
+    import re
+    import struct
+    import zlib
+    if not 20 <= maximum <= 128 or len(lines) < 2 or not re.fullmatch(r"[0-9A-F]{40}", lines[0]):
+        raise ValueError("missing/invalid profile metadata or value budget")
+    version, kind, transfer, total, crc, draft, configuration = struct.unpack("<BBHIIII", bytes.fromhex(lines[0]))
+    if version != 1 or kind != 5 or not transfer or not 1 <= total <= 131072 or draft == 0xffffffff or not configuration:
+        raise ValueError("invalid profile metadata")
+    output = bytearray()
+    for line in lines[1:]:
+        if not re.fullmatch(r"(?:[0-9A-F]{2}){9,128}", line):
+            raise ValueError("malformed profile data value")
+        value = bytes.fromhex(line)
+        version, kind, identifier, offset = struct.unpack("<BBHI", value[:8])
+        if version != 1 or kind != 6 or identifier != transfer or offset != len(output) or len(value) > maximum:
+            raise ValueError("wrong profile kind/transfer/order/budget")
+        if len(output) + len(value) - 8 > total:
+            raise ValueError("profile data exceeds original length")
+        output.extend(value[8:])
+    if len(output) != total or zlib.crc32(output) != crc:
+        raise ValueError("incomplete/corrupt profile source")
+    return bytes(output)
+
+
+def check_profile_frames(base: Path, profile_validator) -> tuple[int, int]:
+    fixture = base / "fixtures" / "profile-source"
+    original = (fixture / "hint-v1.json").read_bytes()
+    count = 0
+    lines = []
+    for maximum, expected in ((20, 1685), (128, 169)):
+        lines = (fixture / f"frames-{maximum}-v1.txt").read_text(encoding="utf-8").splitlines()
+        if len(lines) != expected + 1 or decode_profile_frames(lines, maximum) != original:
+            raise ValueError("profile golden frames differ from exact source/count")
+        profile_validator.validate(json.loads(decode_profile_frames(lines, maximum)))
+        count += expected
+    negatives = [[], lines[:1], lines[1:], lines[:-1], lines + [lines[-1]],
+                 lines[:2] + [lines[1]] + lines[2:], [lines[0], lines[2], lines[1]] + lines[3:],
+                 [lines[0], lines[1][:-1]] + lines[2:], [lines[0], lines[1].lower()] + lines[2:],
+                 [lines[0], ""] + lines[1:], [lines[0] + "00"] + lines[1:]]
+    for byte, value in ((0, 2), (1, 5), (2, 2), (4, 1), (6, 2)):
+        changed = bytearray.fromhex(lines[1])
+        changed[byte] = value
+        negatives.append([lines[0], changed.hex().upper()] + lines[2:])
+    changed = bytearray.fromhex(lines[-1]); changed[-1] ^= 1
+    negatives.append(lines[:-1] + [changed.hex().upper()])
+    negatives.append([lines[0], lines[1] + "00"] + lines[2:])
+    changed = bytearray.fromhex(lines[0]); changed[4:8] = (131073).to_bytes(4, "little")
+    negatives.append([changed.hex().upper()] + lines[1:])
+    for bad in negatives:
+        try:
+            decode_profile_frames(bad)
+        except ValueError:
+            continue
+        raise ValueError("profile counterpart accepted invalid frame sequence")
+    try:
+        decode_profile_frames(lines, 20)
+    except ValueError:
+        pass
+    else:
+        raise ValueError("profile counterpart accepted values beyond peer budget")
+    return count, len(negatives) + 1
+
+
 def check_profile_apply(base: Path, status_validator) -> int:
     fixture = base / "fixtures" / "profile-source"
     observed = json.loads((fixture / "apply-observation.json").read_text(encoding="utf-8"))
@@ -430,6 +495,7 @@ def main() -> int:
         status_count, status_bytes, status_negatives = check_status_frames(base)
         gatts_count, gatts_bytes, gatts_negatives = check_gatts_admission(base, validators["game-command-v2.schema.json"])
         profile_source_bytes, profile_source_negatives = check_profile_source(base, Draft202012Validator(profile))
+        profile_frame_count, profile_frame_negatives = check_profile_frames(base, Draft202012Validator(profile))
         profile_apply_negatives = check_profile_apply(base, validators["status-v2.schema.json"])
     except ValueError as error:
         print(f"Frame counterpart: {error}", file=sys.stderr)
@@ -443,6 +509,8 @@ def main() -> int:
     print(f"GATTS counterpart reconstructs {gatts_bytes} exact command bytes from {gatts_count} frames; {gatts_negatives} malformed variants rejected. Host execution only.")
 
     print(f"Profile source counterpart validates {profile_source_bytes} exact UTF8 bytes, independent CRC and20-byte envelope; {profile_source_negatives} malformed variants rejected. No auth proof.")
+
+    print(f"Profile frame counterpart reconstructs the exact source from {profile_frame_count} data values plus two metadata values; {profile_frame_negatives} malformed sequences rejected. Complete sources only.")
 
     print(f"Profile apply counterpart distinguishes queued/confirmed/uncertain outcomes and validates two actual v2 statuses; {profile_apply_negatives} incorrect observations rejected. Host storage only.")
 
