@@ -1,9 +1,11 @@
 #pragma once
+#include "Companion/PeerLinkSecurity.h"
 #include "Companion/PeerProof.h"
 #include "Companion/PeerRegistryActor.h"
 #include "FreeRtosGattsConnection.h"
 #include "GattsServiceDefinition.h"
 #include "SdkGattSourceAbi.h"
+#include "SdkPeerSecurityAbi.h"
 #include <freertos/task.h>
 namespace larp {
 namespace companion {
@@ -47,6 +49,15 @@ class Esp32GattsSource : public IGattsResponseContext,
     bool originalConnectionNow(BoundConnection &) const noexcept;
     // Crypto-worker read: copied original connection and current owned policy.
     bool closedPeerConnectionCurrent(const PeerProofBinding &) const noexcept;
+    // Earliest original SMP actor callback, before the existing BTM callback.
+    // Forward original event/pointer. No SDKsecurity mutation or role grant;
+    // failed original pairing closes only this owned local identity policy.
+    bool smpEventNow(std::uint8_t, const std::uint8_t *, const sdk446::SmpData *) noexcept;
+    void smpForwardedNow() noexcept;
+    // Trusted sole actor at grant: current real SDK metadata on frozen original.
+    // Fresh pairing scope; persisted bond-mode restore is still separate.
+    bool readOriginalPeerSecurityNow(const PeerProofBinding &,
+                                     OriginalPeerSecurity &) const noexcept;
     // Returns true only for our consumed WRITE/EXEC callbacks, even on rejection.
     // No raw SDK pointer or event without its original binding is queued.
     bool requestNow(std::uint16_t packedConnection, std::uint32_t transaction, std::uint8_t type,
@@ -89,6 +100,8 @@ class Esp32GattsSource : public IGattsResponseContext,
     GattsConnectionEvent live_;
     BoundConnection connection_;
     IdentityAccessSnapshot identitySnapshot_;
+    PeerLinkSecurity linkSecurity_;
+    bool smpForwarding_ = false;
     bool peerProofOpen_ = false;
     void *sdkThread_ = nullptr;
     TaskHandle_t sourceTask_ = nullptr;
@@ -99,6 +112,7 @@ class Esp32GattsSource : public IGattsResponseContext,
     bool registered_ = false, sawConnection_ = false, active_ = false, posting_ = false;
     mutable portMUX_TYPE mutex_ = portMUX_INITIALIZER_UNLOCKED;
     Pending pending_[GattsResponseLimits::Depth];
+    bool transportNow(PeerTransportBinding &) const noexcept;
     void copyIdentitySnapshot(const IdentityAccessSnapshot &) noexcept override;
     bool sourceTask() const noexcept;
     bool validResponse(const RoutedWriteResponse &) const noexcept;

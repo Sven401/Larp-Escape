@@ -13,7 +13,7 @@ struct RegistryActorFixture {
     PeerRegistryOwner owner;
     std::uint8_t address[6] = {1, 2, 3, 4, 5, 6};
     explicit RegistryActorFixture(IPeerProofCrypto *actual = nullptr,
-                                  std::uint32_t fixtureRegistration = 0)
+                                  std::uint32_t fixtureRegistration = 0, bool installSmp = false)
         : owner(store, actual ? *actual : crypto, publication) {
         host_sdk_source::reset();
         registryBootModel();
@@ -22,12 +22,17 @@ struct RegistryActorFixture {
         larp::companion::application = 0;
         larp::companion::registrationAttempted = false;
         larp::companion::originalCallbacks = {};
+        larp::companion::smpRegistrationAttempted = larp::companion::smpRegistered = false;
+        larp::companion::originalSmpCallback = nullptr;
+        host_sdk_security::reset();
         btu_thread = nullptr;
         if (fixtureRegistration)
             larp::companion::registrationCounter = fixtureRegistration - 1; // TEST ONLY boot.
         accessOutcome(IdentityAccessOutcome::Initialized, access.begin(testIdentity()));
         TEST_ASSERT_TRUE(commands.begin() && profiles.begin() && responses.begin());
         TEST_ASSERT_TRUE(armGattsSourceBeforeSdkStart(0x4c45, source));
+        if (installSmp)
+            TEST_ASSERT_TRUE(__wrap_SMP_Register(host_sdk_security::original));
         sdk446::Uuid uuid = {};
         uuid.len = 2;
         uuid.uu.uuid16 = 0x4c45;
@@ -48,6 +53,9 @@ struct RegistryActorFixture {
         larp::companion::selected = nullptr;
         larp::companion::registrationAttempted = false;
         larp::companion::originalCallbacks = {};
+        larp::companion::smpRegistrationAttempted = larp::companion::smpRegistered = false;
+        larp::companion::originalSmpCallback = nullptr;
+        host_sdk_security::reset();
     }
     void io() {
         host_sdk_source::currentTask = reinterpret_cast<TaskHandle_t>(2);
@@ -485,9 +493,9 @@ void test_registry_actor_owner_observer_is_single_and_failed_ack_preserves_outpu
 }
 
 #if defined(LARP_REAL_PEER_CRYPTO)
-void test_registry_actor_actual_crypto_original_sdk_roles_frames_game_and_revoke() {
+void registryActorCryptoVertical(bool sdkSecurity) {
     Esp32PeerProofCrypto crypto;
-    RegistryActorFixture fixture(&crypto, 0x01020304);
+    RegistryActorFixture fixture(&crypto, 0x01020304, sdkSecurity);
     fixture.ready();
     fixture.save(registryValue());
     fixture.save(registryValue(2, true));
@@ -512,6 +520,15 @@ void test_registry_actor_actual_crypto_original_sdk_roles_frames_game_and_revoke
     context.original.registration = reg.token;
     context.original.interface = reg.interface;
     context.original.connection = fixture.open();
+    if (sdkSecurity) {
+        fixture.actor();
+        sdk446::SmpData data = {};
+        TEST_ASSERT_EQUAL(23, host_sdk_security::callback(2, fixture.address, &data));
+        TEST_ASSERT_EQUAL(23, host_sdk_security::callback(1, fixture.address, &data));
+        const std::uint8_t resolved[5] = {0, 4, 0, 0, 0x0d};
+        std::memcpy(data.complete, resolved, 5);
+        TEST_ASSERT_EQUAL(23, host_sdk_security::callback(7, fixture.address, &data));
+    }
     host_sdk_source::currentTask = reinterpret_cast<TaskHandle_t>(3); // Crypto model worker.
     PeerClock clock;
     PeerNonceModel nonce;
@@ -547,9 +564,19 @@ void test_registry_actor_actual_crypto_original_sdk_roles_frames_game_and_revoke
     OriginalPeerSecurity MODELED;
     MODELED.original = context.original;
     MODELED.encrypted = MODELED.mitm = MODELED.secureConnections = MODELED.bonded = true;
+    fixture.actor();
+    if (sdkSecurity) {
+        // Verified copy handed from crypto model worker; no actor read of the
+        // mutable proof owner. Recheck protected credentials/original at grant.
+        TEST_ASSERT_TRUE(fixture.publication.credentialCurrent(verified.credential));
+        TEST_ASSERT_TRUE(context.originalLive(verified.original));
+        TEST_ASSERT_TRUE(f->now - verified.issuedAt < PeerProofLimits::MaxAgeMilliseconds);
+        TEST_ASSERT_TRUE(fixture.source.readOriginalPeerSecurityNow(verified.original, MODELED));
+        TEST_ASSERT_TRUE(fixture.publication.credentialCurrent(verified.credential));
+        TEST_ASSERT_TRUE(context.originalLive(verified.original));
+    }
     VerifiedPeerEvidence evidence;
     TEST_ASSERT_TRUE(bindPeerProofEvidence(verified, MODELED, evidence));
-    fixture.actor();
     accessOutcome(IdentityAccessOutcome::Verified,
                   fixture.access.authenticate(context.original.connection, evidence));
     TrustedAuthority route;
@@ -617,7 +644,7 @@ void test_registry_actor_actual_crypto_original_sdk_roles_frames_game_and_revoke
     TEST_ASSERT_EQUAL(0, host_sdk_source::passedRequests);
     TEST_ASSERT_TRUE(host_sdk_source::work.empty());
     TEST_ASSERT_TRUE(host_peer_nvs::handles.empty());
-    const std::string observation =
+    std::string observation =
         "{\"scope\":\"host_actual_crypto_original_sdk_actor_nvs_model\",\"recordBytes\":404,"
         "\"roleSlots\":1,\"rolesMaximum\":4,\"roleSdkPosts\":10,\"attSdkPosts\":13,"
         "\"sdkPosts\":23,\"setCalls\":3,\"commitCalls\":3,\"proofFrames\":6,\"commandFrames\":13,"
@@ -629,8 +656,27 @@ void test_registry_actor_actual_crypto_original_sdk_roles_frames_game_and_revoke
         "\"runningAfterRevocation\":true,\"oldProofRejected\":true,\"transportSecurityModeled\":"
         "true,"
         "\"physicalDurabilityMeasured\":false,\"smpMeasured\":false,\"rfInitialized\":false}\n";
-    const char *path = "docs/companion/fixtures/peer-registry/actor-observation.json";
-    if (std::getenv("LARP_EXPORT_REGISTRY_ACTOR_FIXTURE")) {
+    if (sdkSecurity) {
+        TEST_ASSERT_EQUAL(1, host_sdk_security::registrations);
+        TEST_ASSERT_EQUAL(3, host_sdk_security::forwarded);
+        TEST_ASSERT_EQUAL(1, host_sdk_security::connections);
+        TEST_ASSERT_EQUAL(1, host_sdk_security::flagReads);
+        TEST_ASSERT_EQUAL(1, host_sdk_security::stateReads);
+        TEST_ASSERT_EQUAL(2, host_sdk_security::runningReads);
+        observation =
+            "{\"scope\":\"host_actual_crypto_original_smp_sdk_metadata_model\","
+            "\"smpRegistrations\":1,\"originalSmpCallbacks\":3,\"gattReads\":1,"
+            "\"flagReads\":1,\"stateReads\":1,\"procedureReads\":2,"
+            "\"resolvedPairingMode\":13,\"securityLevel\":4,\"flags\":22,"
+            "\"linkState\":5,\"keyBytes\":16,\"proofFrames\":6,\"commandFrames\":13,"
+            "\"sourceActor\":1,\"cryptoWorker\":3,\"pairMilliseconds\":30000,"
+            "\"storedExplicitRole\":true,\"oldProofRejected\":true,\"runningAfterRevocation\":true,"
+            "\"bondRestoreImplemented\":false,\"smpMeasured\":false,\"rfInitialized\":false}\n";
+    }
+    const char *path = sdkSecurity ? "docs/companion/fixtures/peer-security/observation.json"
+                                   : "docs/companion/fixtures/peer-registry/actor-observation.json";
+    if (std::getenv(sdkSecurity ? "LARP_EXPORT_PEER_SECURITY_FIXTURE"
+                                : "LARP_EXPORT_REGISTRY_ACTOR_FIXTURE")) {
         auto *file = std::fopen(path, "wb");
         TEST_ASSERT_NOT_NULL(file);
         TEST_ASSERT_EQUAL(observation.size(),
@@ -645,6 +691,13 @@ void test_registry_actor_actual_crypto_original_sdk_roles_frames_game_and_revoke
     TEST_ASSERT_EQUAL_STRING(observation.c_str(), std::string(read, count).c_str());
     fixture.close();
 }
+void test_registry_actor_actual_crypto_original_sdk_roles_frames_game_and_revoke() {
+    registryActorCryptoVertical(false);
+}
+void test_security_actual_crypto_original_smp_metadata_frames_game_and_revoke() {
+    registryActorCryptoVertical(true);
+}
+
 #endif
 
 void test_registry_actor_fixed_job_rejects_invalid_origin_roles_and_order() {

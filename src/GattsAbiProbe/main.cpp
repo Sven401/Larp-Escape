@@ -98,6 +98,12 @@ void setup() {
         sourcePort.registeredSourceNow(1) ||
         sourcePort.configureEndpointsNow(0x42, 0x43, sourceResponses))
         return; // Actual uninitialized SDK branch; no BTU task/register/radio started.
+    OriginalPeerSecurity unopenedSecurity;
+    unopenedSecurity.mitm = true;
+    if (sourcePort.readOriginalPeerSecurityNow(PeerProofBinding{}, unopenedSecurity) ||
+        !unopenedSecurity.mitm || unopenedSecurity.encrypted ||
+        unopenedSecurity.secureConnections || unopenedSecurity.bonded)
+        return; // Only the closed reader path links; no SMP_Register/BTM/GATT query.
     Serial.printf(
         "gatts_source_abi: network=false initialized=false source_registered=false port=%u\n",
         unsigned(sizeof(sourcePort)));

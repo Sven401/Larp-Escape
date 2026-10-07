@@ -33,6 +33,7 @@
 #define LARP_GATT_SOURCE_HOST_MODEL 1
 #include "GattsServiceSdkModel.h"
 #include "SdkGattSourceModel.h"
+#include "SdkPeerSecurityModel.h"
 // Compile the actual adapter against the deterministic RTOS model.
 #include "../../lib/FreeRtosCommandFrameQueue/FreeRtosCommandFrameQueue.cpp"
 #include "../../lib/FreeRtosGameControlChannel/FreeRtosGameControlChannel.cpp"
@@ -980,6 +981,7 @@ void test_profile_capability_fixture_matches_firmware_encoder() {
 #include "GattsServiceCases.h"
 #include "GattsSourceCases.h"
 #include "IdentityRetirementCases.h"
+#include "PeerLinkSecurityCases.h"
 #include "PeerProofCases.h"
 #include "PeerRegistryActorCases.h"
 #include "PeerRegistryCases.h"
@@ -1441,5 +1443,25 @@ int main() {
     RUN_TEST(test_registry_actor_actual_crypto_original_sdk_roles_frames_game_and_revoke);
 #endif
     RUN_TEST(test_registry_actor_fixed_job_rejects_invalid_origin_roles_and_order);
+    RUN_TEST(test_security_core_requires_original_start_and_all_resolved_mode_bits);
+    RUN_TEST(test_security_core_rejects_cancel_failure_br_and_weak_link_state);
+    RUN_TEST(test_security_core_deadline_wrap_duplicate_start_does_not_refresh);
+    RUN_TEST(test_security_core_abandoned_attempt_cannot_attach_to_recycled_connection);
+    RUN_TEST(test_security_core_repair_invalidates_previous_mode_until_terminal_drain);
+    RUN_TEST(test_security_source_original_callbacks_forward_without_roles_and_reader_needs_start);
+    RUN_TEST(test_security_source_sdk_metadata_rejections_preserve_destination);
+    RUN_TEST(test_security_source_wrong_actor_sdk_instance_and_forwarding_cannot_read);
+    RUN_TEST(test_security_source_sdk_port_input_mutation_stops_before_next_query);
+    RUN_TEST(test_security_source_borrowed_completion_frozen_before_clock_port);
+    RUN_TEST(test_security_source_reconnect_during_sdk_read_preserves_fresh_binding);
+    RUN_TEST(test_security_source_disconnect_pending_drains_old_completion_before_new_pairing);
+    RUN_TEST(test_security_source_failure_and_repair_revoke_exact_owned_gm_without_stopping_game);
+    RUN_TEST(test_security_source_security_failure_preserves_foreign_publisher);
+    RUN_TEST(test_security_source_legacy_cancel_timeout_and_restored_bond_cannot_prove_sc);
+    RUN_TEST(test_security_source_stale_proof_binding_never_queries_sdk);
+    RUN_TEST(test_security_source_sdk_registration_failure_is_closed_without_retry);
+#if defined(LARP_REAL_PEER_CRYPTO)
+    RUN_TEST(test_security_actual_crypto_original_smp_metadata_frames_game_and_revoke);
+#endif
     return UNITY_END();
 }

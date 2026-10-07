@@ -8,6 +8,16 @@ Esp32GattsSource *selected = nullptr;
 std::uint16_t application = 0;
 sdk446::Callbacks originalCallbacks = {};
 bool registrationAttempted = false;
+bool smpRegistrationAttempted = false, smpRegistered = false;
+sdk446::SmpCallback originalSmpCallback = nullptr;
+std::uint8_t smpCallback(std::uint8_t event, std::uint8_t *address, sdk446::SmpData *data) {
+    auto *source = selected;
+    const bool captured = source && source->smpEventNow(event, address, data);
+    const auto result = originalSmpCallback ? originalSmpCallback(event, address, data) : 0xff;
+    if (captured)
+        source->smpForwardedNow();
+    return result;
+}
 std::uint32_t registrationCounter = 0;
 std::uint32_t peerRolePostCounter = 0;
 portMUX_TYPE registrationMutex = portMUX_INITIALIZER_UNLOCKED;
@@ -422,6 +432,7 @@ GattsLifecycleOutcome Esp32GattsSource::connectionNow(std::uint8_t interface,
     else
         registryFenced_ = true;
     portEXIT_CRITICAL(&mutex_);
+    linkSecurity_.close();
     if (!lifetimeAvailable) {
         const auto original = connection_;
         const bool wasActive = active_;
@@ -465,6 +476,102 @@ bool Esp32GattsSource::originalConnectionNow(BoundConnection &destination) const
     if (!sourceTask() || !active_)
         return false;
     destination = connection_;
+    return true;
+}
+bool Esp32GattsSource::transportNow(PeerTransportBinding &destination) const noexcept {
+    if (!sourceTask() || !active_ || !owner_)
+        return false;
+    PeerTransportBinding value;
+    value.connection = connection_;
+    value.address = live_.peerAddress;
+    value.registration = registrationToken_;
+    value.interface = interface_;
+    portENTER_CRITICAL(&mutex_);
+    value.device = identitySnapshot_.device;
+    value.lifecycle = lifecycle_;
+    const bool available = identitySnapshot_.current && identitySnapshot_.connected &&
+                           identitySnapshot_.connection == value.connection && !registryFenced_;
+    portEXIT_CRITICAL(&mutex_);
+    if (!available || !value.valid())
+        return false;
+    destination = value;
+    return true;
+}
+bool Esp32GattsSource::smpEventNow(std::uint8_t event, const std::uint8_t *borrowedAddress,
+                                   const sdk446::SmpData *borrowed) noexcept {
+    if (!sourceTask() || smpForwarding_ || !smpRegistered)
+        return false;
+    smpForwarding_ = true; // No security query during the original callback's forwarding.
+    std::array<std::uint8_t, 6> address = {};
+    if (borrowedAddress)
+        std::memcpy(address.data(), borrowedAddress, address.size());
+    PeerPairingResult result;
+    if (event == 7 && borrowed) {
+        // Pinned tSMP_CMPL is five one-byte fields at union offset0. Byte copies
+        // also avoid interpreting an invalid bool representation in negative models.
+        std::uint8_t bytes[5];
+        std::memcpy(bytes, borrowed, sizeof(bytes));
+        result.reason = bytes[0];
+        result.securityLevel = bytes[1];
+        result.cancelled = bytes[2];
+        result.overBr = bytes[3];
+        result.mode = bytes[4];
+    }
+    if (event == 7 && linkSecurity_.discardAbandonedCompletion(address))
+        return true;
+    PeerTransportBinding original, after;
+    if (!transportNow(original) || original.address != address)
+        return true;
+    const auto now = clock_.nowMilliseconds();
+    if (!transportNow(after) || !(after == original))
+        return true;
+    PeerPairingOutcome outcome = PeerPairingOutcome::Mismatch;
+    if (event == 1 || event == 2)
+        outcome = linkSecurity_.start(original, now);
+    else if (event == 7)
+        outcome = linkSecurity_.complete(original, result, now);
+    if (outcome == PeerPairingOutcome::Failed || outcome == PeerPairingOutcome::Expired ||
+        outcome == PeerPairingOutcome::Consumed) {
+        // Exact owned link only. Reject before forwarding so its queued GM work
+        // cannot remain authorized. IdentityAccess preserves another publisher.
+        (void)access_.authenticate(original.connection, {});
+    }
+    return true;
+}
+void Esp32GattsSource::smpForwardedNow() noexcept {
+    if (sourceTask())
+        smpForwarding_ = false;
+}
+bool Esp32GattsSource::readOriginalPeerSecurityNow(
+    const PeerProofBinding &caller, OriginalPeerSecurity &destination) const noexcept {
+    const auto proof = caller;
+    PeerTransportBinding original, after;
+    if (!sourceTask() || smpForwarding_ || !smpRegistered || !proof.valid() ||
+        !closedPeerConnectionCurrent(proof) || !transportNow(original))
+        return false;
+    auto address = original.address;
+    std::array<std::uint8_t, 6> observedAddress = {};
+    std::uint8_t interface = 0, transport = 0, state = 0;
+    PeerLinkState link;
+    // These are immediate same-actor reads, never association of a queued GAP event.
+    // SDK signatures use writable address pointers: recheck the frozen input and
+    // original lifetime after each port, before querying any subsequent metadata.
+    const auto current = [&]() {
+        return address == original.address && transportNow(after) && after == original &&
+               closedPeerConnectionCurrent(proof);
+    };
+    if (!GATT_GetConnectionInfor(original.connection.handle, &interface, observedAddress.data(),
+                                 &transport) ||
+        interface != original.interface || transport != 2 || observedAddress != address ||
+        !current() || BTM_BleSecurityProcedureIsRunning(address.data()) || !current() ||
+        !BTM_GetSecurityFlagsByTransport(address.data(), &link.flags, 2) || !current() ||
+        !BTM_GetLeSecurityState(address.data(), &state, &link.keyBytes) || (state & 5) != 5 ||
+        !current() || BTM_BleSecurityProcedureIsRunning(address.data()) || !current())
+        return false;
+    OriginalPeerSecurity value;
+    if (!linkSecurity_.select(original, proof, link, value))
+        return false;
+    destination = value;
     return true;
 }
 bool Esp32GattsSource::requestNow(std::uint16_t packed, std::uint32_t transaction,
@@ -611,4 +718,16 @@ extern "C" std::uint8_t __wrap_GATT_Register(larp::companion::sdk446::Uuid *uuid
     if (!selected->registeredSourceNow(interface))
         return 0;
     return interface;
+}
+
+extern "C" bool __wrap_SMP_Register(larp::companion::sdk446::SmpCallback callback) {
+    using namespace larp::companion;
+    if (!selected)
+        return __real_SMP_Register(callback);
+    if (smpRegistrationAttempted || !callback)
+        return false;
+    smpRegistrationAttempted = true;
+    originalSmpCallback = callback;
+    smpRegistered = __real_SMP_Register(&smpCallback);
+    return smpRegistered;
 }

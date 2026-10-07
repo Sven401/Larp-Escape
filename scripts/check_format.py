@@ -54,6 +54,7 @@ ADAPTER_FILES = (
     "lib/GattsWriteAdmission/SdkGattsWrite.h",
     "lib/GattsWriteAdmission/SdkGattsLifecycle.h",
     "lib/GattsWriteAdmission/SdkGattSourceAbi.h",
+    "lib/GattsWriteAdmission/SdkPeerSecurityAbi.h",
     "lib/GattsWriteAdmission/Esp32GattsSource.h",
     "lib/GattsWriteAdmission/Esp32GattsSource.cpp",
     "lib/GattsWriteAdmission/GattsServiceDefinition.h",
