@@ -2,6 +2,7 @@
 #include "Companion/CommandStream.h"
 #include "Companion/ProfileCapabilities.h"
 #include "Companion/ReplyFrameSender.h"
+#include "Companion/StatusFrameSender.h"
 #include "CompanionIntegration/GameControl.h"
 #include "FakeOwners.h"
 #include "FreeRtosCommandFrameQueue.h"
@@ -910,6 +911,8 @@ void test_profile_capability_fixture_matches_firmware_encoder() {
 // Uses the stream/queue/bearer helpers defined above; preserve this order.
 #include "CommandReceiptCases.h"
 #include "StatusRoutingCases.h"
+// Depends on the real bearer and routing helpers above.
+#include "StatusFrameCases.h"
 } // namespace
 void setUp() {
     host_rtos::depth = 0;
@@ -1013,5 +1016,17 @@ int main() {
     RUN_TEST(test_delayed_old_status_cannot_be_relabelled_to_current_epoch);
     RUN_TEST(test_status_selection_revoke_observer_suspend_preserves_game);
     RUN_TEST(test_status_producer_observation_race_keeps_original_epoch);
+    RUN_TEST(test_status_frame_codec_kind_capacity_and_target_preservation);
+    RUN_TEST(test_ready_mailbox_status_frames_match_encoder_and_independent_fixture);
+    RUN_TEST(test_running_mailbox_status_128_frames_match_actual_start_fixture);
+    RUN_TEST(test_status_snapshot_stays_frozen_when_real_mailbox_is_overwritten);
+    RUN_TEST(test_real_reply_priority_reserves_whole_step_including_completion);
+    RUN_TEST(test_status_busy_keeps_exact_frame_then_first_copy_freshness_expires);
+    RUN_TEST(test_status_partial_busy_and_deferral_never_renew_absolute_deadline);
+    RUN_TEST(test_status_deadline_clock_wrap_capacity_invalid_and_cancel);
+    RUN_TEST(test_status_source_age_sample_and_boot_cannot_reopen_old_document);
+    RUN_TEST(test_status_reconnect_rejects_old_tags_and_new_producer_resets_counter);
+    RUN_TEST(test_status_bearer_revoke_before_and_after_copy_observer_and_unavailable);
+    RUN_TEST(test_status_message_exhaustion_no_wrap_and_cancel_consumes_identity);
     return UNITY_END();
 }

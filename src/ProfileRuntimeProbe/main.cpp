@@ -3,6 +3,7 @@
 #include "Companion/CommandReceipt.h"
 #include "Companion/CommandStream.h"
 #include "Companion/ReplyFrameSender.h"
+#include "Companion/StatusFrameSender.h"
 #include "CompanionIntegration/GameControl.h"
 #include "DeviceRuntime/OwnerConfiguration.h"
 #include "DeviceRuntime/ProfileApplication.h"
@@ -45,6 +46,9 @@ class ProbeReplyBearer : public larp::companion::IReplyFrameBearer {
     }
 } replyBearer;
 larp::companion::ReplyFrameSender replySender(companionChannel, replyBearer);
+larp::companion::StatusFrameSender statusSender(companionChannel, replyBearer);
+// Fixed owner scratch; do not place the 524-byte mailbox copy on each loop stack.
+larp::companion::RoutedConfiguredStatus statusScratch;
 std::array<char, 20> commandFrame = {};
 larp::integration::GameControl gameControl(runtime, companionChannel);
 larp::companion::BootIdentity bootIdentity;
@@ -375,8 +379,15 @@ void loop() {
             Serial.println("profile_runtime_probe: reply frame load dropped; game continues");
         }
     }
-    // At most one copied outbound value per loop; no additional game tick.
-    const auto replySend = replySender.service(now, 20);
+    // Read the producer-bound current mailbox only while the sender is free.
+    // Encoder freezes this copy; subsequent publications cannot replace fragments.
+    if (!replySender.pending() && !statusSender.pending() &&
+        companionChannel.readCurrentStatus(statusScratch))
+        statusSender.load(statusScratch, now);
+    // At most one reply/status copy per step. Inbound processing receipts above
+    // are separate. A completing reply still owns this whole step.
+    const auto sent = larp::companion::serviceConfiguredFrames(replySender, statusSender, now, 20);
+    const auto replySend = sent.reply;
     if (replySend == larp::companion::ReplySendOutcome::Expired ||
         replySend == larp::companion::ReplySendOutcome::Unauthorized ||
         replySend == larp::companion::ReplySendOutcome::TransportUnavailable) {
@@ -393,7 +404,7 @@ void loop() {
             "state=%u role=%u crystals=%u accepted=%lu replies=%lu stale=%lu timeout=%lu "
             "outstanding=%lu "
             "control_drops=%lu draft_revision=%lu stored_generation=%lu application=%s "
-            "stored_match=%s reply_frame_copies=%lu heap=%u stacks=",
+            "stored_match=%s outbound_value_copies=%lu status_pending=%s heap=%u stacks=",
             activationPhaseName(activation.phase), activationFinishName(activation.finish),
             (unsigned long)activation.configurationRevision,
             (unsigned long)activation.profileRevision, (unsigned long)activation.generation,
@@ -405,7 +416,8 @@ void loop() {
             (unsigned long)runtime.snapshot().storedGeneration,
             applicationPhaseName(runtime.snapshot().phase),
             runtime.snapshot().storedMatchesActive ? "true" : "false",
-            (unsigned long)replyBearer.copies, unsigned(ESP.getFreeHeap()));
+            (unsigned long)replyBearer.copies, statusSender.pending() ? "true" : "false",
+            unsigned(ESP.getFreeHeap()));
         for (const auto *worker : workers)
             Serial.printf("%u,", unsigned(uxTaskGetStackHighWaterMark(worker->handle)));
         Serial.println();

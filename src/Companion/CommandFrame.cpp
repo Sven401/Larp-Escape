@@ -1,5 +1,6 @@
 #include "Companion/CommandFrame.h"
 #include "Companion/ReplyFrame.h"
+#include "Companion/StatusFrame.h"
 #include <cstring>
 namespace larp {
 namespace companion {
@@ -74,6 +75,17 @@ bool encodeReplyFrame(std::uint16_t message, std::uint16_t total, std::uint16_t 
                       const char *payload, std::size_t count, char *bytes, std::size_t capacity,
                       std::size_t &written) noexcept {
     return encodeFrame(ReplyFrameLimits::Kind, ReplyFrameLimits::Document, message, total, offset,
+                       payload, count, bytes, capacity, written);
+}
+FrameDecodeResult decodeStatusFrame(const char *bytes, std::size_t count,
+                                    StatusFrame &destination) noexcept {
+    return decodeFrame(StatusFrameLimits::Kind, StatusFrameLimits::Document, bytes, count,
+                       destination);
+}
+bool encodeStatusFrame(std::uint16_t message, std::uint16_t total, std::uint16_t offset,
+                       const char *payload, std::size_t count, char *bytes, std::size_t capacity,
+                       std::size_t &written) noexcept {
+    return encodeFrame(StatusFrameLimits::Kind, StatusFrameLimits::Document, message, total, offset,
                        payload, count, bytes, capacity, written);
 }
 } // namespace companion

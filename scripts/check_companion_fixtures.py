@@ -11,22 +11,22 @@ import sys
 sys.dont_write_bytecode = True
 
 
-def decode_reply_frames(lines: list[str]) -> bytes:
-    """Independent tool/client counterpart; no identity or authorization proof."""
+def decode_document_frames(lines: list[str], expected_kind: int, maximum: int) -> bytes:
+    """Independent bounded assembly; no identity/authorization/delivery proof."""
     import re
     import struct
     output = bytearray()
     message = total = 0
     if not lines:
-        raise ValueError("empty reply frame sequence")
+        raise ValueError("empty document frame sequence")
     for index, line in enumerate(lines):
         if not re.fullmatch(r"[0-9A-F]{18,256}", line) or len(line) % 2:
             raise ValueError(f"invalid hex/outer length at frame {index}")
         value = bytes.fromhex(line)
         version, kind, identity, length, offset = struct.unpack("<BBHHH", value[:8])
         count = len(value) - 8
-        if version != 1 or kind != 2 or not identity or not 1 <= length <= 511:
-            raise ValueError(f"unsupported/invalid reply header at frame {index}")
+        if version != 1 or kind != expected_kind or not identity or not 1 <= length <= maximum:
+            raise ValueError(f"unsupported/invalid document header at frame {index}")
         if count > 120 or offset >= length or count > length - offset:
             raise ValueError(f"invalid payload range at frame {index}")
         if not message:
@@ -35,8 +35,64 @@ def decode_reply_frames(lines: list[str]) -> bytes:
             raise ValueError(f"mixed, duplicated or out-of-order frame {index}")
         output.extend(value[8:])
     if len(output) != total:
-        raise ValueError("incomplete reply document")
+        raise ValueError("incomplete framed document")
     return bytes(output)
+
+
+
+def decode_reply_frames(lines: list[str]) -> bytes:
+    return decode_document_frames(lines, 2, 511)
+
+
+def decode_status_frames(lines: list[str]) -> bytes:
+    return decode_document_frames(lines, 4, 6143)
+
+
+def check_status_frames(base: Path) -> tuple[int, int, int]:
+    """Actual native mailbox/encoder/sender fixtures; sizes are not RF rates."""
+    frame_count = document_bytes = rejected = 0
+    for name, frame_name, maximum_value in (
+        ("status-ready", "status-ready-frames-v1", 20),
+        ("status-running", "status-running128-frames-v1", 128),
+    ):
+        lines = (base / "fixtures" / (frame_name + ".txt")).read_text(encoding="utf-8").splitlines()
+        expected = (base / "fixtures" / "v2" / (name + ".json")).read_bytes().rstrip(bytes((13, 10)))
+        actual = decode_status_frames(lines)
+        if actual != expected:
+            raise ValueError("status frames differ from actual firmware snapshot: " + name)
+        if any(len(line) // 2 > maximum_value for line in lines):
+            raise ValueError("status fixture exceeds chosen outer value size")
+        if len(lines) != (len(expected) + maximum_value - 9) // (maximum_value - 8):
+            raise ValueError("status fixture fragment count differs from bound")
+        negatives = [[], lines[:-1], [lines[0], *lines],
+                     [lines[1], lines[0], *lines[2:]],
+                     [*lines, lines[-1]], ["GG", *lines[1:]],
+                     [lines[0] + "FF" * 121, *lines[1:]]]
+        for offset, value in ((0, 2), (1, 1), (1, 2), (1, 3), (2, 0), (4, 0), (6, 1)):
+            changed = bytearray.fromhex(lines[0])
+            changed[offset] = value
+            if offset in (2, 4):
+                changed[offset + 1] = 0
+            negatives.append([changed.hex().upper(), *lines[1:]])
+        changed = bytearray.fromhex(lines[0])
+        changed[4:6] = (6144).to_bytes(2, "little")
+        negatives.append([changed.hex().upper(), *lines[1:]])
+        changed = bytearray.fromhex(lines[1])
+        changed[2:4] = (2).to_bytes(2, "little")
+        negatives.append([lines[0], changed.hex().upper(), *lines[2:]])
+        changed = bytearray.fromhex(lines[1])
+        changed[4:6] = (len(expected) + 1).to_bytes(2, "little")
+        negatives.append([lines[0], changed.hex().upper(), *lines[2:]])
+        for bad in negatives:
+            try:
+                decode_status_frames(bad)
+            except ValueError:
+                rejected += 1
+                continue
+            raise ValueError("status counterpart accepted malformed fixture: " + name)
+        frame_count += len(lines)
+        document_bytes += len(actual)
+    return frame_count, document_bytes, rejected
 
 
 def check_reply_frames(base: Path) -> tuple[int, int]:
@@ -227,12 +283,15 @@ def main() -> int:
     try:
         frame_count, reply_bytes = check_reply_frames(base)
         receipt_count, receipt_negatives = check_command_receipts(base)
+        status_count, status_bytes, status_negatives = check_status_frames(base)
     except ValueError as error:
-        print(f"Reply frame counterpart: {error}", file=sys.stderr)
+        print(f"Frame counterpart: {error}", file=sys.stderr)
         return 1
     print(f"{len(names)} v2 fixtures + profile capabilities validate; vocabularies and {len(expected_limits)} limits agree.")
     print(f"Reply counterpart reconstructs {reply_bytes} exact bytes from {frame_count} frames; 11 malformed variants rejected.")
     print(f"Receipt counterpart correlates {receipt_count} actual command fragments; {receipt_negatives} malformed variants rejected.")
+
+    print(f"Status counterpart reconstructs {status_bytes} exact bytes from {status_count} frames; {status_negatives} malformed variants rejected.")
 
     return 0
 

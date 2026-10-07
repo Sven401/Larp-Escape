@@ -70,3 +70,13 @@ Kein physischer Transport, RF-/SMP-/Android-/Stack-/Zeitnachweis oder Upload.
 Produktionsmain bleibt der bisherige Einstieg. Nächster Schritt:
 begrenztes Statusframing mit tatsächlicher Mailbox/Encoder-/Toolgegenstelle,
 danach verifizierte Identität/GM-Zuordnung/Pairing/SDK und Profiltransfer.
+
+
+## Folgeschnitt vom 7. Oktober 2026
+
+[Statusframing v1](status-framing-v1.md) verbindet diesen tatsächlichen
+aktuellen Auswahlport mit festem Encoder/Sender, originaler Bindung und
+unabhängiger Gegenstelle. Die Profilprobe liest jetzt diesen Port über
+globalen Scratch, hält einen unveränderlichen Stand und gibt Spielantworten
+im gemeinsamen Versandsschritt Vorrang.99Hostfunktionen/vierBuilds
+erfolgreich; physischer Bearer und Appintegration weiterhin offen.
