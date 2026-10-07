@@ -50,6 +50,8 @@ ADAPTER_FILES = (
     "lib/GattsWriteAdmission/GattsWriteAdmission.h",
     "lib/GattsWriteAdmission/GattsWriteAdmission.cpp",
     "lib/GattsWriteAdmission/SdkGattsWrite.h",
+    "lib/GattsWriteAdmission/FreeRtosGattsResponseQueue.h",
+    "lib/GattsWriteAdmission/FreeRtosGattsResponseQueue.cpp",
     "lib/FreeRtosGameControlChannel/FreeRtosGameControlChannel.h",
     "lib/FreeRtosGameControlChannel/FreeRtosGameControlChannel.cpp",
     "lib/FreeRtosProfileFrameQueue/FreeRtosProfileFrameQueue.h",

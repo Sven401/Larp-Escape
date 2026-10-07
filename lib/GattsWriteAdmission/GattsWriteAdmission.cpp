@@ -103,6 +103,7 @@ GattsWriteResult admit(const GattsWriteEvent &callerEvent, const GattsWriteBindi
         RoutedWriteResponse response;
         response.original = original;
         response.transaction = event.transaction;
+        response.receivedAt = receivedAt;
         response.attribute = event.attribute;
         response.status = result.status;
         result.responseCopied = responses.copyWriteResponse(response);

@@ -1,0 +1,1 @@
+{"scope":"host_gatts_response_queue","depth":4,"itemBytes":44,"maxAgeMilliseconds":1000,"frameCopies":13,"responseCopies":13,"workerPosts":13,"callbackPosts":0,"firstReceivedAt":17,"lastReceivedAt":41,"lastWorkerAt":42,"runningBeforeOwner":false,"runningAfterOwner":true,"peerDeliveryMeasured":false,"rfInitialized":false}

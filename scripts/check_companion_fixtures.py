@@ -13,6 +13,7 @@ from check_profile_control import check_profile_control, check_profile_response_
 
 from check_device_identity_store import check_device_identity_store
 from check_application_file_owner import check_application_file_owner
+from check_gatts_response_queue import check_gatts_response_queue
 
 def decode_document_frames(lines: list[str], expected_kind: int, maximum: int) -> bytes:
     """Independent bounded assembly; no identity/authorization/delivery proof."""
@@ -563,6 +564,7 @@ def main() -> int:
         esp_staging_negatives = check_esp_staging(base)
         followup_proof_negatives = check_followup_proof(base)
         application_file_negatives = check_application_file_owner(base)
+        gatts_response_negatives = check_gatts_response_queue(base)
         identity_record_negatives, identity_store_negatives = check_device_identity_store(base, Draft202012Validator(identity_schema))
     except ValueError as error:
         print(f"Frame counterpart: {error}", file=sys.stderr)
@@ -594,6 +596,8 @@ def main() -> int:
     print(f"ESP staging counterpart correlates actual fixed-path adapter/model and Saved; {esp_staging_negatives} wrong observations rejected. No physical flash claim.")
 
     print(f"Followup proof counterpart requires ApplyRejected/NoReceipt on actual20-byte response; {followup_proof_negatives} stale correlations rejected.")
+
+    print(f"GATTS response queue: {gatts_response_negatives} negative observations rejected; no RF measurement")
 
     print(f"Application file ownership counterpart checks cleanup quarantine and zero running IO; {application_file_negatives} wrong observations rejected. Host model only.")
 

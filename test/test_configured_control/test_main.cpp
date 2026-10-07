@@ -32,6 +32,7 @@
 #include "../../lib/FreeRtosGameControlChannel/FreeRtosGameControlChannel.cpp"
 #include "../../lib/FreeRtosProfileFrameQueue/FreeRtosProfileFrameQueue.cpp"
 #include "../../lib/FreeRtosProfileResponseQueue/FreeRtosProfileResponseQueue.cpp"
+#include "../../lib/GattsWriteAdmission/FreeRtosGattsResponseQueue.cpp"
 #include "../../lib/GattsWriteAdmission/GattsWriteAdmission.cpp"
 #include "../../src/ProfileTool/TemporaryProfileFile.cpp"
 // Actual ESP file adapters under an isolated deterministic VFS model.
@@ -957,6 +958,7 @@ void test_profile_capability_fixture_matches_firmware_encoder() {
 #include "DeviceIdentityStoreCases.h"
 // Application file ownership uses actual ESP/source/control helpers above.
 #include "ApplicationProfileStagingCases.h"
+#include "GattsResponseQueueCases.h"
 } // namespace
 void setUp() {
     host_rtos::depth = 0;
@@ -1272,5 +1274,23 @@ int main() {
     RUN_TEST(test_profile_followup_wrong_route_cannot_cancel_current_receipt);
     RUN_TEST(test_profile_followup_expired_metadata_preserves_current_receipt);
     RUN_TEST(test_profile_followup_attempt_during_selected_apply_preserves_confirmation);
+    RUN_TEST(test_gatts_response_queue_actual_command_application_and_tool_observation);
+    RUN_TEST(test_gatts_response_queue_profile_control_private_import_and_saved_reply);
+    RUN_TEST(test_gatts_response_queue_uninitialized_invalid_status_binding_and_future);
+    RUN_TEST(test_gatts_response_queue_full_fifo_begin_idempotent_and_no_retry);
+    RUN_TEST(test_gatts_response_queue_freezes_all_fields_before_clock_observation);
+    RUN_TEST(test_gatts_response_queue_original_handle_interface_peer_attribute_never_relabels);
+    RUN_TEST(test_gatts_response_queue_drops_only_four_stale_and_keeps_output_unchanged);
+    RUN_TEST(test_gatts_response_queue_absolute_age_boundary_and_clock_wrap);
+    RUN_TEST(test_gatts_response_queue_close_after_admission_is_rechecked_by_consumer);
+    RUN_TEST(test_gatts_response_dispatch_close_or_expire_after_selection_never_posts);
+    RUN_TEST(test_gatts_response_dispatch_submitter_rechecks_original_boundary_without_retry);
+    RUN_TEST(test_gatts_response_dispatch_reentry_cannot_take_next_response);
+    RUN_TEST(test_gatts_response_queue_closed_gm_can_receive_authorization_error_on_original_link);
+    RUN_TEST(test_gatts_response_queue_full_or_failed_post_preserves_original_input);
+    RUN_TEST(test_gatts_response_queue_gm_revoke_keeps_copy_ack_but_cannot_execute_input);
+    RUN_TEST(test_gatts_response_queue_all_sdk_statuses_and_zero_transaction_are_bounded);
+    RUN_TEST(test_gatts_response_queue_raw_write_without_response_never_enqueues_output);
+    RUN_TEST(test_gatts_response_queue_actual_input_full_is_resource_error_not_success);
     return UNITY_END();
 }

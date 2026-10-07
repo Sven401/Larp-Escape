@@ -6,6 +6,7 @@
 #include <Esp32DeviceIdentityStore.h>
 #include <FreeRtosCommandFrameQueue.h>
 #include <FreeRtosGameControlChannel.h>
+#include <FreeRtosGattsResponseQueue.h>
 #include <FreeRtosProfileFrameQueue.h>
 #include <FreeRtosProfileResponseQueue.h>
 #include <GattsWriteAdmission.h>
@@ -34,25 +35,36 @@ std::array<char, maxGameCommandJsonBytes> document = {};
 std::array<char, 20> frame = {};
 std::size_t length = 0, offset = 0;
 bool ready = false, queued = false;
-class SyntheticResponse : public IWriteResponseBearer {
+class SyntheticResponseContext : public IGattsResponseContext {
+  public:
+    std::uint32_t nowMilliseconds() const noexcept override {
+        return millis();
+    }
+    bool originalLive(const GattsWriteBinding &value) const noexcept override {
+        return value.connection == connection && value.interface == original.interface &&
+               value.attribute == original.attribute && value.peerAddress == original.peerAddress;
+    }
+} responseContext;
+FreeRtosGattsResponseQueue responses(responseContext);
+class SyntheticResponseSubmitter : public IGattsResponseSubmitter {
   public:
     RoutedWriteResponse last;
     std::uint32_t copies = 0;
-    bool copyWriteResponse(const RoutedWriteResponse &response) noexcept override {
-        if (!(response.original.connection == connection) ||
-            response.original.interface != original.interface ||
-            response.original.peerAddress != original.peerAddress)
+    bool submitOriginal(const RoutedWriteResponse &response) noexcept override {
+        if (millis() - response.receivedAt >= GattsResponseLimits::MaxAgeMilliseconds ||
+            !responseContext.originalLive(response.original))
             return false;
         last = response;
         if (copies != UINT32_MAX)
             ++copies;
-        return true;
+        return true; // Synthetic posting; no esp_ble_gatts_send_response call.
     }
-} responses;
+} responseSubmitter;
+GattsResponseDispatcher responseWorker(responses, responseSubmitter);
 } // namespace
 void setup() {
     Serial.begin(115200);
-    if (!channel.begin() || !queue.begin() || !profileQueue.begin())
+    if (!channel.begin() || !queue.begin() || !profileQueue.begin() || !responses.begin())
         return;
     Identity device, peer;
     device.bytes[0] = 1;
@@ -98,7 +110,8 @@ void setup() {
         const auto event = fromSdkGattsExecute(original.interface, parameter, original);
         const auto rejected = admitGattsWrite(event, original, channel, queue, responses, millis());
         if (rejected.outcome != GattsWriteOutcome::PreparedUnsupported ||
-            rejected.status != AttWriteStatus::RequestUnsupported)
+            rejected.status != AttWriteStatus::RequestUnsupported ||
+            responseWorker.service() != GattsResponseDispatch::Submitted)
             return;
     }
     // Synthetic profile metadata copy only, no temporary store/radio/import.
@@ -142,7 +155,8 @@ void setup() {
     const auto profileAdmitted =
         admitGattsProfileWrite(profileEvent, original, channel, profileQueue, responses, millis());
     if (profileAdmitted.outcome != GattsWriteOutcome::Copied ||
-        profileAdmitted.status != AttWriteStatus::Ok || !profileQueue.take(profileCopy))
+        profileAdmitted.status != AttWriteStatus::Ok || !profileQueue.take(profileCopy) ||
+        responseWorker.service() != GattsResponseDispatch::Submitted)
         return;
     Serial.printf(
         "profile_raw_write_probe: synthetic=true network=false response_copied=%s applied=false\n",
@@ -162,6 +176,10 @@ void setup() {
     Serial.printf(
         "profile_response_queue_probe: synthetic=true network=false queue=%u item=%u saved=false\n",
         unsigned(sizeof(profileResponses)), unsigned(sizeof(copiedResponse)));
+    Serial.printf("att_response_queue_probe: synthetic=true network=false queue=%u item=%u "
+                  "age_ms=%u sdk_posted=false peer_delivered=false\n",
+                  unsigned(sizeof(responses)), unsigned(sizeof(RoutedWriteResponse)),
+                  unsigned(GattsResponseLimits::MaxAgeMilliseconds));
     ready = true;
 }
 void loop() {
@@ -190,6 +208,10 @@ void loop() {
     const auto event = fromSdkGattsWrite(original.interface, parameter);
     const auto admitted = admitGattsWrite(event, original, channel, queue, responses, now);
     if (admitted.outcome != GattsWriteOutcome::Copied) {
+        ready = false;
+        return;
+    }
+    if (responseWorker.service() != GattsResponseDispatch::Submitted) {
         ready = false;
         return;
     }

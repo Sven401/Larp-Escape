@@ -37,6 +37,8 @@ enum class AttWriteStatus : std::uint8_t {
 struct RoutedWriteResponse {
     GattsWriteBinding original;
     std::uint32_t transaction = 0;
+    // First raw callback time, never refreshed by queue/worker selection.
+    std::uint32_t receivedAt = 0;
     std::uint16_t attribute = 0;
     AttWriteStatus status = AttWriteStatus::InsufficientAuthorization;
 };
