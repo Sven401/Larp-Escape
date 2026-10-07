@@ -5,6 +5,7 @@
 #include <Arduino.h>
 #include <FreeRtosCommandFrameQueue.h>
 #include <FreeRtosGameControlChannel.h>
+#include <FreeRtosProfileFrameQueue.h>
 #include <GattsWriteAdmission.h>
 #include <SdkGattsWrite.h>
 #include <algorithm>
@@ -12,6 +13,7 @@ namespace {
 using namespace larp::companion;
 FreeRtosGameControlChannel channel;
 FreeRtosCommandFrameQueue queue(channel);
+FreeRtosProfileFrameQueue profileQueue(channel);
 IdentityAccess identityPolicy(channel);
 BoundConnection connection;
 CommandStream stream(channel);
@@ -38,7 +40,7 @@ class SyntheticResponse : public IWriteResponseBearer {
 } // namespace
 void setup() {
     Serial.begin(115200);
-    if (!channel.begin() || !queue.begin())
+    if (!channel.begin() || !queue.begin() || !profileQueue.begin())
         return;
     Identity device, peer;
     device.bytes[0] = 1;
@@ -80,6 +82,22 @@ void setup() {
             rejected.status != AttWriteStatus::RequestUnsupported)
             return;
     }
+    // Synthetic profile metadata copy only, no temporary store/radio/import.
+    ProfileSourceEnvelope metadata;
+    metadata.transfer = 1;
+    metadata.bytes = metadata.expectedConfigurationRevision = 1;
+    char profileValue[20];
+    std::size_t profileWritten = 0;
+    CopiedProfileFrame profileCopy;
+    if (!encodeProfileSourceEnvelope(metadata, profileValue, sizeof(profileValue),
+                                     profileWritten) ||
+        profileQueue.copyWrite(profileValue, profileWritten, original.authority.principal,
+                               original.authority.epoch, millis()) != ProfileCopyOutcome::Copied ||
+        !profileQueue.take(profileCopy) || profileCopy.count != profileWritten)
+        return;
+    Serial.printf(
+        "profile_queue_probe: synthetic=true network=false queue=%u frame=%u imported=false\n",
+        unsigned(sizeof(profileQueue)), unsigned(sizeof(profileCopy)));
     ready = true;
 }
 void loop() {

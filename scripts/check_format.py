@@ -50,6 +50,8 @@ ADAPTER_FILES = (
     "lib/GattsWriteAdmission/SdkGattsWrite.h",
     "lib/FreeRtosGameControlChannel/FreeRtosGameControlChannel.h",
     "lib/FreeRtosGameControlChannel/FreeRtosGameControlChannel.cpp",
+    "lib/FreeRtosProfileFrameQueue/FreeRtosProfileFrameQueue.h",
+    "lib/FreeRtosProfileFrameQueue/FreeRtosProfileFrameQueue.cpp",
     "lib/FreeRtosCommandFrameQueue/FreeRtosCommandFrameQueue.h",
     "lib/FreeRtosCommandFrameQueue/FreeRtosCommandFrameQueue.cpp",
     "lib/Esp32ProfileStore/Esp32ProfileStore.h",

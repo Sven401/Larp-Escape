@@ -316,6 +316,33 @@ def check_profile_staging(base: Path, status_validator) -> int:
     return len(negatives)
 
 
+def check_profile_queue(base: Path, status_validator) -> int:
+    fixture = base / "fixtures" / "profile-source"
+    expected = {"scope": "host_profile_queue", "dataFrames": 169, "depth": 4, "valueBytes": 128,
+                "originalReceivedAt": 17, "queuedIsComplete": False, "configurationRevision": 2,
+                "storedGeneration": 2, "storedMatchesActive": True, "running": False, "radioMeasured": False}
+    def accept(value):
+        if value != expected:
+            raise ValueError("profile queue observation lost original time/budget/confirmation scope")
+    accept(json.loads((fixture / "queue-observation.json").read_text(encoding="utf-8")))
+    status = json.loads((fixture / "queue-status-v2.json").read_text(encoding="utf-8"))
+    status_validator.validate(status)
+    app=status["application"]
+    if (app["configurationRevision"],app["storedGeneration"],app["storedMatchesActive"],status["game"]["running"]) != (2,2,True,False):
+        raise ValueError("profile queue current status differs from confirmed actual Application")
+    negatives=[]
+    for key,value in (("depth",5),("valueBytes",129),("originalReceivedAt",20),("queuedIsComplete",True),
+                      ("storedGeneration",1),("running",True),("radioMeasured",True)):
+        changed=dict(expected);changed[key]=value;negatives.append(changed)
+    for bad in negatives:
+        try:
+            accept(bad)
+        except ValueError:
+            continue
+        raise ValueError("profile queue counterpart accepted an incorrect observation")
+    return len(negatives)
+
+
 def check_reply_frames(base: Path) -> tuple[int, int]:
     lines = (base / "fixtures" / "reply-frames-v1.txt").read_text(encoding="utf-8").splitlines()
     expected = (base / "fixtures" / "v2" / "reply-executed.json").read_bytes().rstrip(bytes((13, 10)))
@@ -526,6 +553,7 @@ def main() -> int:
         profile_frame_count, profile_frame_negatives = check_profile_frames(base, Draft202012Validator(profile))
         profile_apply_negatives = check_profile_apply(base, validators["status-v2.schema.json"])
         profile_staging_negatives = check_profile_staging(base, validators["status-v2.schema.json"])
+        profile_queue_negatives = check_profile_queue(base, validators["status-v2.schema.json"])
     except ValueError as error:
         print(f"Frame counterpart: {error}", file=sys.stderr)
         return 1
@@ -544,6 +572,8 @@ def main() -> int:
     print(f"Profile apply counterpart distinguishes queued/confirmed/uncertain outcomes and validates two actual v2 statuses; {profile_apply_negatives} incorrect observations rejected. Host storage only.")
 
     print(f"Profile staging counterpart checks actual temporary-file/model observation and current v2 status; {profile_staging_negatives} incorrect observations rejected. No radio or device durability.")
+
+    print(f"Profile queue counterpart preserves original timestamp and queue/completion distinction; {profile_queue_negatives} incorrect observations rejected, actual current v2 status validated.")
 
     print(f"Public identity metadata validates; {len(identity_negatives)} malformed variants rejected. No authentication proof.")
 

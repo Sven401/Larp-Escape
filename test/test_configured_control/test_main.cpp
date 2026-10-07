@@ -1,3 +1,4 @@
+#include "../../lib/FreeRtosProfileFrameQueue/FreeRtosProfileFrameQueue.h"
 #include "../../src/ProfileTool/TemporaryProfileFile.h"
 #include "Companion/CommandReceipt.h"
 #include "Companion/CommandStream.h"
@@ -25,6 +26,7 @@
 // Compile the actual adapter against the deterministic RTOS model.
 #include "../../lib/FreeRtosCommandFrameQueue/FreeRtosCommandFrameQueue.cpp"
 #include "../../lib/FreeRtosGameControlChannel/FreeRtosGameControlChannel.cpp"
+#include "../../lib/FreeRtosProfileFrameQueue/FreeRtosProfileFrameQueue.cpp"
 #include "../../lib/GattsWriteAdmission/GattsWriteAdmission.cpp"
 #include "../../src/ProfileTool/TemporaryProfileFile.cpp"
 namespace host_rtos {
@@ -932,6 +934,8 @@ void test_profile_capability_fixture_matches_firmware_encoder() {
 #include "ProfileFrameCases.h"
 // Staging cases use the actual frame/import/apply fixtures and host file adapter.
 #include "ProfileStagingCases.h"
+// Queue cases use completed source and actual staging fixture helpers above.
+#include "ProfileFrameQueueCases.h"
 } // namespace
 void setUp() {
     host_rtos::depth = 0;
@@ -1133,6 +1137,18 @@ int main() {
     RUN_TEST(test_profile_staging_revoke_during_cleanup_does_not_open_new_source);
 
     RUN_TEST(test_profile_staging_running_game_blocks_import_and_revoke_does_not_stop_it);
+
+    RUN_TEST(test_profile_queue_actual_copied_frames_to_temp_private_apply_and_status);
+    RUN_TEST(test_profile_queue_full_exact_retry_copies_and_preserves_false_destination);
+    RUN_TEST(test_profile_queue_callback_copy_survives_first_observation_and_caller_mutation);
+    RUN_TEST(test_profile_queue_rejects_prepared_offset_wrong_kind_bounds_and_untrusted_route);
+    RUN_TEST(test_profile_queue_pump_takes_one_frame_and_does_not_finish_empty_queue);
+    RUN_TEST(test_profile_queue_original_metadata_time_counts_wait_and_deadline);
+    RUN_TEST(test_profile_queue_expired_future_and_wrapped_metadata_keep_fixed_age);
+    RUN_TEST(test_profile_queue_revoke_before_owner_start_never_opens_or_relabels_metadata);
+    RUN_TEST(test_profile_queue_revoke_before_queued_data_closes_source_without_app_effect);
+    RUN_TEST(test_profile_queue_reentrant_backend_cannot_take_next_pending_frame);
+    RUN_TEST(test_profile_queue_bad_port_item_stays_bounded_without_backend_or_borrowed_result);
 
     return UNITY_END();
 }
