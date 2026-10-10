@@ -9,12 +9,23 @@ import java.util.UUID
 interface DiagnosticRunStore {
     fun latest(): DiagnosticJournalV1?
     fun create(): DiagnosticJournalV1
+    fun loadPosition(runId: String): Int? = null
+    fun savePosition(runId: String, index: Int) {}
 }
 
 /** Each explicit run has its own journal; selecting a new run preserves previous files. */
 class AndroidDiagnosticRunStore(context: Context) : DiagnosticRunStore {
     private val directory = File(context.filesDir, "diagnostic-simulation-v1")
     private val pointer = AtomicFile(File(directory, "latest.txt"))
+    private fun positionFile(runId: String): AtomicFile {
+        require(Regex("[0-9a-f-]{36}").matches(runId))
+        return AtomicFile(File(directory, "$runId.position"))
+    }
+    override fun loadPosition(runId: String): Int? = read(positionFile(runId), 8)?.toString(Charsets.US_ASCII)?.toInt()?.also { require(it in 0..2) }
+    override fun savePosition(runId: String, index: Int) {
+        require(index in 0..2)
+        write(positionFile(runId), index.toString().toByteArray(Charsets.US_ASCII))
+    }
     private fun read(file: AtomicFile, limit: Int): ByteArray? {
         if (!file.baseFile.exists() && !File(file.baseFile.path + ".bak").exists()) return null
         return file.openRead().use { it.readNBytes(limit + 1) }.also { require(it.size <= limit) { "Diagnosedatei ist zu groß" } }

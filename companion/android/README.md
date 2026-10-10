@@ -20,8 +20,32 @@ Die vorhandene Companion-App und ihre Daten behalten ihre eigene Kennung.
 Für eine erste Vorschauinstallation `adb install` ohne `-r` verwenden;
 die Startaktivität lautet
 `de.larpescape.companion.diagnosticpreview/de.larpescape.companion.MainActivity`.
-In der App **Diagnose · Simulation** wählen. Wake- und LED-Antworten sind
+Die Vorschau öffnet direkt den geführten Diagnose-Pilotplan. Wake- und LED-Antworten sind
 synthetisch; diese Vorschau bestätigt keine Pinbelegung oder Hardwarefunktion.
+
+### Geführter Pilotplan
+
+Die feste Folge ist **Wake 1 → LED 0**. „Pilotplan starten“ legt einen neuen
+Lauf an; „Schritt 1 starten“ erzeugt erst den ersten Auftrag. Die Kopfzeile
+zeigt „Schritt 1 von 2“ bzw. „Schritt 2 von 2“ und während eines Auftrags die
+verbleibende 10-Sekunden-Frist. Die Hauptaktion bleibt am Bildschirmrand sichtbar.
+Nach einer ausdrücklich simulierten Endantwort eine eigene Beobachtung erfassen,
+die Bewertung auswählen und speichern. Erst dann führt „Weiter zum nächsten
+Schritt“ zu LED 0. „Nicht beobachtet“ hält den Ausgang unklar. Bewusstes
+Überspringen verlangt eine Bestätigung und speichert „nicht geprüft“ ohne Antwort.
+Nach Schritt 2 führt „Weiter zum Abschluss“ zur Übersicht und zum Berichtsexport.
+
+„Pilotübersicht und Rückblick“ zeigt gespeicherte Schritte ohne erneuten Auftrag.
+„Gesamtplan-Vorschau · gesperrt“ zeigt den vollständigen späteren Hardwareplan
+ohne ausführbare Hardwareaktionen. Technische Rohdetails sind eingeklappt.
+Ungespeicherter Beobachtungstext wird markiert und blockiert Navigation,
+Export und Ersatz durch einen neuen Lauf, bis er gespeichert oder verworfen wird.
+Der Lauf endet spätestens nach 60 Sekunden; danach bleiben Beobachtung und
+Export möglich, weitere Aufträge brauchen einen ausdrücklich gestarteten neuen
+Pilotlauf. Bereits gespeicherte Journale bleiben erhalten. Der Navigationsstand
+liegt separat und atomar im privaten Appspeicher; ein App-Neustart sendet nichts.
+Beim Wiederöffnen ist „Neuen Pilotlauf starten“ sichtbar, ohne den bisherigen
+Lauf automatisch zu ersetzen.
 
 Alle Befehle in diesem Abschnitt laufen aus `companion/android/`.
 Voraussetzung: JDK17 oder 21, Android SDK35 und Build Tools35.0.0. Der Gradle
@@ -68,6 +92,15 @@ Debug enthält zusätzlich einen vom Nutzer selbst bedienbaren
 für Wake-Eingang 1 und einen LED-Einzelschritt. Geräteantworten und
 Nutzerbeobachtungen bleiben getrennt; Journal, Unterbrechung und Berichtexport
 sind lokal. Der echte Firmware-/GATT-Anschluss und die Hardwareabnahme sind offen.
+
+Der [DG-Control-Hostcodec](../contract/diagnostic-control-v1/README.md) ergänzt
+bytegenaue Capability-/Grant-/Cancelrahmen gegen Firmwarequelle `3209275`.
+Er ist noch kein Produktionsanschluss und überträgt keine Wake-/LED-Endergebnisse.
+
+Der [DG-Step-/Reassembly-Codec](../contract/diagnostic-step-v1/README.md) ergänzt
+begrenzte Wake-/LED-Endantworten gegen den korrigierten Firmwarevertrag `b5a8c430`.
+Die Debugsimulation führt ihre erfundenen Antworten durch diesen Decoder;
+ein produktiver GATT-/Rollen-/Geräteanschluss bleibt offen.
 
 `BuildConfig.ALLOW_CONTRACT_LAB` ist in Debug `true`, in Release `false`.
 Debug darf den markierten Laborservice lesen. Release lehnt reine

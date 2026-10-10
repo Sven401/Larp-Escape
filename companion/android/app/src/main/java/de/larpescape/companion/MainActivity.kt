@@ -147,7 +147,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         nfcScreen = savedInstanceState?.getBoolean("nfcScreen") ?: false
         scenarioScreen = savedInstanceState?.getBoolean("scenarioScreen") ?: false
-        diagnosticScreen = BuildConfig.ALLOW_CONTRACT_LAB && (savedInstanceState?.getBoolean("diagnosticScreen") ?: false)
+        diagnosticScreen = BuildConfig.ALLOW_CONTRACT_LAB && (BuildConfig.APPLICATION_ID.endsWith(".diagnosticpreview") || savedInstanceState?.getBoolean("diagnosticScreen") == true)
         setContent {
             MaterialTheme(colorScheme = lightColorScheme()) {
                 val state by model.state.collectAsStateWithLifecycle()
@@ -161,6 +161,12 @@ class MainActivity : ComponentActivity() {
                     )
                 }
                 Surface(Modifier.fillMaxSize()) {
+                    if (BuildConfig.APPLICATION_ID.endsWith(".diagnosticpreview")) {
+                        val diagnosticState by diagnosticModel.state.collectAsStateWithLifecycle()
+                        Column(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing).imePadding().padding(16.dp)) {
+                            DiagnosticScreen(diagnosticState, diagnosticModel, exportFile = { if (diagnosticModel.beginExport()) exportDiagnostic.launch("diagnose-simulation-v1.json") })
+                        }
+                    } else {
                     Column(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing).verticalScroll(rememberScrollState()).padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
                         Text("Larp Escape", style = MaterialTheme.typography.headlineLarge)
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -203,6 +209,7 @@ class MainActivity : ComponentActivity() {
                         }
                         Text("Version 0.1 · lesender Verbindungsprüfstand", style = MaterialTheme.typography.bodySmall)
                         }
+                    }
                     }
                 }
             }

@@ -8,8 +8,15 @@ import org.junit.Test
 class DiagnosticViewModelTest {
     private class Store : DiagnosticRunStore {
         val journals = mutableListOf<DiagnosticJournalV1>()
+        val positions = mutableMapOf<String, Int>()
+        var rejectPosition = false
         override fun latest() = journals.lastOrNull()
         override fun create() = MemoryDiagnosticJournalV1().also { journals.add(it) }
+        override fun loadPosition(runId: String) = positions[runId]
+        override fun savePosition(runId: String, index: Int) {
+            check(!rejectPosition) { "Positionsspeicher nicht verfügbar" }
+            positions[runId] = index
+        }
     }
     private var time = 0L
     private fun utc() = "2026-10-10T12:00:${(time / 1000).toString().padStart(2, '0')}.${(time % 1000).toString().padStart(3, '0')}Z"
@@ -79,5 +86,65 @@ class DiagnosticViewModelTest {
         assertEquals("timeout", last(model)["state"].asString); assertTrue(last(model)["deviceReply"].isJsonNull)
         assertFalse(model.state.value.running); assertFalse(model.state.value.busy)
         assertTrue(model.beginExport()); assertEquals(listOf("unclear"), DiagnosticReportCodecV1.import(model.takeExport()!!).verdicts)
+    }
+    @Test fun guidedPlanRequiresStartResultAndExplicitObservationBeforeNext() {
+        val model = model(); model.newRun()
+        assertEquals(0, model.state.value.planIndex)
+        assertNull(model.state.value.planStep())
+        model.nextStep(); assertEquals(0, model.state.value.planIndex)
+        model.startCurrent(); assertEquals("wake_capture", last(model).getAsJsonObject("request")["operation"].asString)
+        model.startCurrent(); assertEquals(1, model.state.value.document!!.getAsJsonArray("steps").size())
+        model.nextStep(); assertEquals(0, model.state.value.planIndex)
+        model.observe(1, "matches", "Vorzeitig"); assertTrue(last(model).getAsJsonObject("observation")["recordedUtc"].isJsonNull)
+        model.simulateReply(false); assertFalse(model.state.value.canAdvance())
+        model.observe(1, "not_observed", ""); assertTrue(model.state.value.canAdvance())
+        model.nextStep(); assertEquals(1, model.state.value.planIndex); assertNull(model.state.value.planStep())
+        model.startCurrent(); model.simulateReply(false); model.observe(2, "matches", "Rot und aus simuliert")
+        model.nextStep(); assertEquals(2, model.state.value.planIndex)
+        assertTrue(model.beginExport())
+        assertEquals(listOf("unclear", "passed"), DiagnosticReportCodecV1.import(model.takeExport()!!).verdicts)
+    }
+    @Test fun guidedSkipIsExplicitNotTestedAndReviewCannotRepeatEitherStep() {
+        val model = model(); model.newRun(); model.skipCurrent()
+        assertEquals("not_tested", last(model)["verdict"].asString); assertTrue(last(model)["deviceReply"].isJsonNull)
+        model.nextStep(); model.skipCurrent(); model.nextStep()
+        assertEquals(2, model.state.value.planIndex)
+        model.reviewStep(0); model.startCurrent(); model.skipCurrent()
+        assertEquals(2, model.state.value.document!!.getAsJsonArray("steps").size())
+        model.nextStep(); model.nextStep(); assertTrue(model.beginExport())
+        assertEquals(listOf("not_tested", "not_tested"), DiagnosticReportCodecV1.import(model.takeExport()!!).verdicts)
+    }
+    @Test fun unsavedObservationBlocksNextReviewExportAndReplacementRun() {
+        val store = Store(); val model = model(store); model.newRun(); model.startCurrent(); model.simulateReply(false)
+        model.observe(1, "matches", "Gespeichert")
+        model.draft(1, "Noch nicht gespeichert"); assertTrue(model.state.value.hasDraft())
+        model.nextStep(); model.reviewStep(0); assertEquals(0, model.state.value.planIndex)
+        assertFalse(model.beginExport()); model.newRun(); assertEquals(1, store.journals.size)
+        model.observe(1, "mismatch", model.state.value.drafts[1]!!)
+        assertFalse(model.state.value.hasDraft()); assertEquals("failed", last(model)["verdict"].asString)
+        model.draft(1, "Verwerfen"); model.discardDraft(1); assertTrue(model.state.value.canAdvance())
+    }
+    @Test fun savedNavigationReopensAtNextStepWithoutResendingAndKeepsCompletion() {
+        val store = Store(); val first = model(store); first.newRun(); first.skipCurrent(); first.nextStep()
+        val second = model(store)
+        assertEquals(1, second.state.value.planIndex); assertFalse(second.state.value.running)
+        second.startCurrent(); assertEquals(1, second.state.value.document!!.getAsJsonArray("steps").size())
+        first.skipCurrent(); first.nextStep()
+        val third = model(store); assertEquals(2, third.state.value.planIndex)
+        assertTrue(third.beginExport()); assertEquals(listOf("not_tested", "not_tested"), DiagnosticReportCodecV1.import(third.takeExport()!!).verdicts)
+    }
+    @Test fun navigationStorageFailureDoesNotClaimProgress() {
+        val store = Store(); val model = model(store); model.newRun(); model.skipCurrent()
+        store.rejectPosition = true; model.nextStep()
+        assertEquals(0, model.state.value.planIndex); assertTrue(model.state.value.notice!!.contains("Positionsspeicher"))
+    }
+    @Test fun visibleCountdownExpiresAtTenSecondsAndKeepsUnknownOutcome() {
+        val model = model(); model.newRun(); model.startCurrent()
+        assertEquals(10000L, model.state.value.stepRemainingMs)
+        time = 9999; model.tick(); assertEquals(1L, model.state.value.stepRemainingMs); assertTrue(model.state.value.pending)
+        time = 10000; model.tick(); assertFalse(model.state.value.pending); assertFalse(model.state.value.running)
+        assertEquals("timeout", last(model)["state"].asString); assertEquals("unclear", last(model)["verdict"].asString)
+        model.observe(1, "not_observed", ""); model.nextStep(); model.startCurrent()
+        assertNull(model.state.value.planStep()); assertEquals(1, model.state.value.document!!.getAsJsonArray("steps").size())
     }
 }

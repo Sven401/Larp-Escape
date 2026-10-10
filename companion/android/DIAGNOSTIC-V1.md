@@ -1,5 +1,37 @@
 # Android-Diagnosevertrag v1: Hostverbraucher und bedienbare Debugsimulation
 
+## Geführte isolierte Vorschau
+
+Branch `plan/nutzergefuehrte-hardwarediagnose-android-guided` baut auf dem
+Android-Schrittrahmen `94a9a726` auf. Ausschließlich die drei Preview-Dateien
+`README.md`, `app/build.gradle.kts` und `app/src/main/AndroidManifest.xml`
+wurden zuerst aus `5305c501` übernommen; anschließend wurden Nutzerführung
+und Bedienbeschreibung gezielt weiterentwickelt. Debug bleibt die separate
+App `de.larpescape.companion.diagnosticpreview`; kein Gerätebefehl wurde ergänzt.
+
+Die feste Zweischrittfolge, sichtbare Hauptaktion, bestätigtes Überspringen,
+Rückblick ohne Wiederholung und gesperrte Gesamtplan-Vorschau sind in
+[README.md](README.md#geführter-pilotplan) beschrieben. Fortschritt wird separat
+atomar gespeichert. Ein Speicherfehler behauptet keinen Fortschritt.
+Ergebnisse, Beobachtung und Urteil stammen weiterhin aus dem bestehenden
+geprüften Journal-/Wirepfad. Ungespeicherter Text bleibt ein markierter Entwurf.
+
+Prüfstand am 2026-10-10: 100 JVM-Fälle ohne Fehler oder übersprungene Fälle
+(94 bestehende plus 6 neue Fortschritt-/Frist-/Speicherprüfungen); Debugbuild
+und Lint ohne Fehler. Die drei bestehenden Warnungen betreffen Target-API,
+Backupregeln und Appicon. Die neuen Fälle prüfen Start/Next/Skip, separate
+Beobachtung, Nichtprüfung im Export, Rückblick ohne Replay, Entwurfsblockade,
+gespeicherten Fortschritt, Positionsspeicherfehler und die sichtbare absolute
+10-Sekunden-Frist. Diese Prüfungen belegen keine physische Hardwarefunktion.
+
+Quellenprüfung 2026-10-10: Android Architecture Recommendations (UI-Zustand
+im ViewModel), Android UI Design und Compose API Defaults (beschriftete
+Material-3-Komponenten mit mindestens 48dp Bedienhöhe). Das aktuelle
+`android/skills`-Angebot wurde auf Bedarf geprüft; für diesen grundlegenden
+Compose-Ablauf wird kein Spezialskill installiert. Material-3-Buttons bleiben
+die primären Aktionen; lange Rohdaten und spätere gesperrte Bereiche werden
+nur auf ausdrückliche Auswahl sichtbar.
+
 Weiterführung: Der [DG-Step-/Reassembly-Schnitt](../contract/diagnostic-step-v1/README.md)
 ergänzt auf Basis `7e5acb5` den korrigierten Wirevertrag `b5a8c430`. Die Debugseite
 führt ihre weiterhin synthetischen Antworten nun durch diesen Bytepfad.
