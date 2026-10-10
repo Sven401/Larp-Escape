@@ -3,7 +3,7 @@
 Kuratierte Entwicklungsbasis vom 2026-10-10, Ausgangscommit
 `29da937c4309beddfd45c5dd0fbf84fdf853d8e4`. Die App war im ursprünglichen
 Arbeitsbaum unversioniert. Der Ausgangscommit allein enthält diese Quellen nicht.
-Das [Dateimanifest](source-manifest.json) nennt 57 einzeln übernommene Dateien,
+Das [Dateimanifest](source-manifest.json) nennt 60 einzeln übernommene Dateien,
 ihre ursprünglichen SHA256-Werte und die Bytes des kuratierten Pakets.
 Drei weitere Dateien dokumentieren die Abgrenzung und halten Clonebytes stabil.
 Dieses Dokument und das Manifest sind selbst keine Eingangsquellen.
@@ -67,3 +67,20 @@ Android-Grundlagen erneut gelesen am 2026-10-10:
 und [Android-Skills](https://github.com/android/skills). Bei dieser Kuratierung
 bleiben Repository/ViewModel/StateFlow und die bestehende Oberfläche erhalten;
 kein spezieller Upstream-Skill war erforderlich oder wurde installiert.
+
+## Getrennte A3-Vorbereitung
+
+Ein eigener Folgecommit übernimmt ausschließlich PeerAuthV1.kt, seine drei
+JVM-Fälle und die bytegleiche Firmware-Hostbeobachtung. SHA256 der Beobachtung:
+`de088914451110b11309c05ee4f421c9742519451de6b370f8ae22d9572d73f7`.
+Abgeglichen mit `firmware-peer-ingress` auf `7f2a3e4` plus lokalem Auth-Diff;
+bei dessen endgültiger Versionierung erneut vergleichen. Dieser Kern hat
+keinen GATT-Anschluss, keinen privaten Schlüssel, keine Signaturerzeugung
+und erteilt keine App-Spielrechte. A3-Produktintegration bleibt offen.
+
+Abschließender Lauf mit A3: BUILD SUCCESSFUL in 1m37s, 112 Tasks,
+31 ausgeführt und 81 UP-TO-DATE. Core: 29 Fälle; App: 16 Fälle, insgesamt
+45 ohne Fehler/Fehlschläge; beide Testtasks erneut ausgeführt. Debug und Release
+neu gebaut; Lintanalysen erneut ausgeführt, die identischen Reportdateien
+wiederverwendet: jeweils null Fehler und drei bestehende Warnungen.
+Herkunftshashes, Pakethashes und lokale Dokumentationslinks ohne Abweichung.

@@ -2,7 +2,7 @@
   "version": 1,
   "capturedAt": "2026-10-10",
   "sourceBaseCommit": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
-  "scope": "Android A0-A2 with already integrated NFC; selected scenario reference functions; PeerAuthV1 excluded until separate host-only commit",
+  "scope": "Android A0-A2 with already integrated NFC; selected scenario references; A3 PeerAuthV1 host-only preparation in separate commit",
   "files": [
     {
       "path": "companion/.gitattributes",
@@ -34,7 +34,7 @@
       "path": "companion/android/README.md",
       "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
       "sourceSha256": "cb7b2cd42e391ddc3e81c9171d3d079454663b843e1373aa587795f8bc62f29b",
-      "packageSha256": "dd5715cb0aec0edaba96d00fb77c07d7800a15a7006661262c2cc19138a23523",
+      "packageSha256": "dcf9ff5ff7b6fdff530db25d881b1a4fc437d75d25ecc63ffe81ab4118906118",
       "changedForPackage": true
     },
     {
@@ -171,6 +171,14 @@
       "changedForPackage": false
     },
     {
+      "path": "companion/android/core/protocol/src/main/kotlin/de/larpescape/protocol/PeerAuthV1.kt",
+      "source": "unversioned Android working tree; firmware host observation from firmware-peer-ingress 7f2a3e4 plus local Auth diff",
+      "sourceSha256": "9544d142414f52fe2fd96b77615a35172167ff7137cf2e49242d3c86a14cbee0",
+      "packageSha256": "9544d142414f52fe2fd96b77615a35172167ff7137cf2e49242d3c86a14cbee0",
+      "changedForPackage": false,
+      "scope": "A3 host-only preparation; no GATT or private key implementation"
+    },
+    {
       "path": "companion/android/core/protocol/src/main/kotlin/de/larpescape/protocol/ScenarioDraft.kt",
       "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
       "sourceSha256": "6c17d70190ec3fe8ef541bd6141785eca4921354d71c19e2c5196144534fa45c",
@@ -199,11 +207,27 @@
       "changedForPackage": false
     },
     {
+      "path": "companion/android/core/protocol/src/test/kotlin/de/larpescape/protocol/PeerAuthV1Test.kt",
+      "source": "unversioned Android working tree; firmware host observation from firmware-peer-ingress 7f2a3e4 plus local Auth diff",
+      "sourceSha256": "0ea9d57cc200cf50e5b8aba9b73fe614bac73f22c2b6351e9ce3c53f083dcda8",
+      "packageSha256": "0ea9d57cc200cf50e5b8aba9b73fe614bac73f22c2b6351e9ce3c53f083dcda8",
+      "changedForPackage": false,
+      "scope": "A3 host-only preparation; no GATT or private key implementation"
+    },
+    {
       "path": "companion/android/core/protocol/src/test/kotlin/de/larpescape/protocol/ScenarioDraftTest.kt",
       "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
       "sourceSha256": "9ea41852727af528dc7a31aca2668127f1923412b71320e6dd60945892b9ee8e",
       "packageSha256": "9ea41852727af528dc7a31aca2668127f1923412b71320e6dd60945892b9ee8e",
       "changedForPackage": false
+    },
+    {
+      "path": "companion/android/core/protocol/src/test/resources/firmware-peer-auth-observation.json",
+      "source": "unversioned Android working tree; firmware host observation from firmware-peer-ingress 7f2a3e4 plus local Auth diff",
+      "sourceSha256": "de088914451110b11309c05ee4f421c9742519451de6b370f8ae22d9572d73f7",
+      "packageSha256": "de088914451110b11309c05ee4f421c9742519451de6b370f8ae22d9572d73f7",
+      "changedForPackage": false,
+      "scope": "A3 host-only preparation; no GATT or private key implementation"
     },
     {
       "path": "companion/android/core/protocol/src/test/resources/vite-scenario-v1.json",
@@ -425,7 +449,6 @@
     "phone automation helpers",
     "APKs and build outputs",
     "local caches and raw evidence",
-    "browser localStorage and private data",
-    "PeerAuthV1 until separate host-only commit"
+    "browser localStorage and private data"
   ]
 }
