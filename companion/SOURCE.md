@@ -24,7 +24,7 @@ Experimente, Telefonautomationshilfen, APKs, Caches und lokale Messprotokolle
 sind ausgeschlossen. Die unversionierten Originaldateien bleiben erhalten.
 
 Quelldateien und Firmwarefixtures bleiben bytegleich; Änderungen betreffen
-Paketdokumentation, zwei Markdown-Zeilenumbrueche im Snapshotmanifest und LF-Zeilenenden des Unix-Wrappers. Die `.gitattributes`
+Paketdokumentation, Ausschluss des erzeugten Kotlin-Caches, zwei Markdown-Zeilenumbrueche im Snapshotmanifest und LF-Zeilenenden des Unix-Wrappers. Die `.gitattributes`
 verhindert automatische Änderungen an den kuratierten Quelldateien und setzt
 die vorgesehenen Wrapperzeilenenden. Der Unix-Wrapper wird ausführbar versioniert.
 
