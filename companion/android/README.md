@@ -14,6 +14,15 @@ Rotation. Verlassen der App beendet die Sitzung; kein Hintergrundservice.
 
 ## Bauen und installieren
 
+Dieser lokale Vorschauzweig baut Debug als zusätzliche App **Larp Diagnose
+Vorschau** mit Paketkennung `de.larpescape.companion.diagnosticpreview`.
+Die vorhandene Companion-App und ihre Daten behalten ihre eigene Kennung.
+Für eine erste Vorschauinstallation `adb install` ohne `-r` verwenden;
+die Startaktivität lautet
+`de.larpescape.companion.diagnosticpreview/de.larpescape.companion.MainActivity`.
+In der App **Diagnose · Simulation** wählen. Wake- und LED-Antworten sind
+synthetisch; diese Vorschau bestätigt keine Pinbelegung oder Hardwarefunktion.
+
 Alle Befehle in diesem Abschnitt laufen aus `companion/android/`.
 Voraussetzung: JDK17 oder 21, Android SDK35 und Build Tools35.0.0. Der Gradle
 Wrapper lädt Gradle8.9; Versionen stehen in `gradle/libs.versions.toml`.
@@ -23,8 +32,8 @@ SDK über `ANDROID_HOME` oder eine lokale, ignorierte `local.properties` angeben
 $env:JAVA_HOME='C:/Program Files/Android/openjdk/jdk-21.0.8'
 $env:ANDROID_HOME='C:/Program Files (x86)/Android/android-sdk'
 ./gradlew.bat :core:protocol:test :app:assembleDebug :app:lintDebug
-adb install -r app/build/outputs/apk/debug/app-debug.apk
-adb shell am start -n de.larpescape.companion/.MainActivity
+adb install app/build/outputs/apk/debug/app-debug.apk
+adb shell am start -n de.larpescape.companion.diagnosticpreview/de.larpescape.companion.MainActivity
 ```
 
 Die Pfade oben sind Beispiele für diesen Windows-Prüfrechner. JDK-/SDK-Pfade
