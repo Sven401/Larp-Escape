@@ -33,6 +33,7 @@ class DiagnosticViewModel(
     val state = mutable.asStateFlow()
     private var repository: FakeDiagnosticRepositoryV1? = null
     private var request: JsonObject? = null
+    private var wireExchange: SyntheticDiagnosticStepV1? = null
     private var startMs = 0L
     private var submittedMs = 0L
     private var export: ByteArray? = null
@@ -56,6 +57,7 @@ class DiagnosticViewModel(
         try { block() } catch (error: Exception) { mutable.value = mutable.value.copy(notice = "Fehler: ${error.message}", busy = false) }
     }
     private fun refresh(running: Boolean = mutable.value.running) {
+        if (!running) wireExchange?.retire()
         val doc = repository?.snapshot()
         val pending = doc?.getAsJsonArray("steps")?.lastOrNull()?.asJsonObject?.get("state")?.asString == "pending"
         mutable.value = mutable.value.copy(document = doc, running = running, pending = pending, busy = false)
@@ -63,8 +65,13 @@ class DiagnosticViewModel(
     fun newRun() = action {
         if (mutable.value.running) stop("cancelled")
         startMs = monotonic()
-        repository = FakeDiagnosticRepositoryV1.start(SyntheticDiagnosticV1.newRun("android-debug-simulation-v1", utc()), store.create(), SyntheticDiagnosticTransportV1 { request = it }, 1)
-        export = null; request = null
+        wireExchange?.retire()
+        repository = FakeDiagnosticRepositoryV1.start(SyntheticDiagnosticV1.newRun("android-debug-simulation-v1", utc()), store.create(), SyntheticDiagnosticTransportV1 {
+            request = it
+            // Repository has atomically journaled pending before invoking this synthetic transport.
+            wireExchange = SyntheticDiagnosticStepV1(it, submittedMs)
+        }, 1)
+        export = null; request = null; wireExchange = null
         mutable.value = DiagnosticUiState(notice = "Simulation gestartet. Keine Gerätefreigabe.")
         refresh(true)
     }
@@ -78,12 +85,21 @@ class DiagnosticViewModel(
     fun skip(operation: String) = action { repository!!.skip(operation, utc()); refresh() }
     fun simulateReply(failed: Boolean) = action {
         require(mutable.value.running && mutable.value.pending && !mutable.value.busy)
-        val saved = checkNotNull(request).deepCopy(); val submitted = submittedMs
+        checkNotNull(request)
+        val savedRepository = checkNotNull(repository); val exchange = checkNotNull(wireExchange); val submitted = submittedMs
+        val deviceStart = submitted - startMs
         mutable.value = mutable.value.copy(busy = true)
         val deliver = {
             action {
-                repository!!.receive(SyntheticDiagnosticV1.reply(saved, submitted - startMs, failed), 1, utc(), monotonic())
-                refresh()
+                // A delayed callback cannot enter a new run, completed step or retired repository.
+                if (repository === savedRepository && wireExchange === exchange && mutable.value.running && mutable.value.pending) {
+                    val now = monotonic()
+                    savedRepository.tick(now, utc())
+                    val pending = savedRepository.snapshot().getAsJsonArray("steps").last().asJsonObject["state"].asString == "pending"
+                    if (pending) savedRepository.receive(exchange.respond(deviceStart, failed, now), 1, utc(), now)
+                    else exchange.retire()
+                    refresh(pending && mutable.value.running)
+                }
             }
         }
         if (scheduler != null) scheduler.invoke(500, deliver) else viewModelScope.launch { delay(500); deliver() }
@@ -94,12 +110,13 @@ class DiagnosticViewModel(
         repository!!.observe(stepId, result, expected, actual, utc()); refresh()
     }
     fun stop(reason: String = "cancelled") = action {
-        if (mutable.value.running) { repository!!.interrupt(reason, utc()); refresh(false) }
+        if (mutable.value.running) { repository!!.interrupt(reason, utc()); wireExchange?.retire(); refresh(false) }
     }
     fun beginExport(): Boolean {
         export = null
         action {
             if (mutable.value.pending) repository!!.interrupt("cancelled", utc())
+            wireExchange?.retire()
             export = DiagnosticReportCodecV1.export(repository!!.finish(utc())); refresh(false)
             mutable.value = mutable.value.copy(notice = "Lauf abgeschlossen. Simulationsbericht für Export bereit.", finalized = true)
         }

@@ -87,20 +87,19 @@ Warnungen `OldTargetApi`, `DataExtractionRules` und `MissingApplicationIcon`.
 Die unabhängige Goldenbyte-Prüfung besteht mit allen 14 Vektoren.
 
 Die bestehende bedienbare Android-Debugsimulation und ihr JSON-Berichtcodec
-bleiben auf der geprüften Basis `45d3e79`. Der neue DG-Hostcodec ist noch nicht
-an ihre lokale Fake-Freigabe angeschlossen, weil DG nur Control bestätigt und
-der separate Schritt-/Endergebnistransport noch fehlt. Kein App-Cache oder
+wurden im Controlpaket auf der geprüften Basis `45d3e79` belassen. Der
+DG-Controlcodec ist weiterhin nicht an ihre lokale Fake-Freigabe angeschlossen,
+weil er ausschließlich Control bestätigt. Der folgende
+[Step-/Reassembly-Schnitt](../diagnostic-step-v1/README.md) ergänzt inzwischen
+synthetische Schrittbytes in der Debugsimulation. Kein App-Cache oder
 simulierter Controlgrant wird zu einer echten Geräteerlaubnis umgedeutet.
 
 ## Nächste konkrete Abhängigkeiten
 
-1. Ein eigenes Android-Step-/Reassembly-Paket auf dem separat committed
-   Firmware-Stepvertrag `04c145f` mit
-   `docs/companion/diagnostic-step-transport-host.md`: Schritt-/Endergebnis,
-   64 Flanken, Segmentierung, Originalbindung und feste Gesamt-/Parserbudgets.
-   Dessen Wirebytes wurden in diesem Controlpaket nicht übernommen.
-   Android kann danach den vollständigen Auftrag mit Gerätetelemetrie,
-   Beobachtung und Bericht verbinden.
+1. Der nachfolgende Android-Step-/Reassembly-Schnitt ist separat dokumentiert;
+   maßgeblich ist der korrigierte Vertrag `b5a8c430` auf Wireursprung `04c145f`.
+   Echter Serviceanschluss, konsistente Capabilities und ein Wire-AdmissionACK
+   bleiben offen. Die in diesem Controlpaket geprüften Bytes sind unverändert.
 2. F1: geprüfter Ursprung des restaurierten Bondmodus vor SMP-Reset, aktuelle
    Challenge/P256/Credential-/Registry-ACK und Entwertung derselben Verbindung.
    `d1d3b4e` belegt HCI-Dispatch, reicht für ein Rollenrecht nicht aus.

@@ -60,4 +60,24 @@ class DiagnosticViewModelTest {
         assertEquals("failed", last(model)["verdict"].asString)
         assertTrue(model.beginExport()); assertEquals(listOf("failed"), DiagnosticReportCodecV1.import(model.takeExport()!!).verdicts)
     }
+    @Test fun delayedFakeCallbackCannotEnterNewRunOrRetiredStep() {
+        val callbacks = mutableListOf<() -> Unit>()
+        val model = DiagnosticViewModel(Store(), ::utc, { time }, false) { _, block -> callbacks.add(block) }
+        model.newRun(); model.begin("wake_capture"); model.simulateReply(false)
+        model.stop(); model.newRun(); model.begin("led_single")
+        time += 500; callbacks.single().invoke()
+        assertEquals("pending", last(model)["state"].asString); assertTrue(last(model)["deviceReply"].isJsonNull)
+        assertEquals(0, last(model).getAsJsonArray("ignoredReplies").size())
+        model.simulateReply(false); time += 500; callbacks.last().invoke()
+        assertEquals("finished", last(model)["state"].asString)
+    }
+    @Test fun delayedFakeCallbackAtAbsoluteDeadlineLeavesUnclearReport() {
+        var deliver: (() -> Unit)? = null
+        val model = DiagnosticViewModel(Store(), ::utc, { time }, false) { _, block -> deliver = block }
+        model.newRun(); model.begin("led_single"); model.simulateReply(false)
+        time = 10000; deliver!!.invoke()
+        assertEquals("timeout", last(model)["state"].asString); assertTrue(last(model)["deviceReply"].isJsonNull)
+        assertFalse(model.state.value.running); assertFalse(model.state.value.busy)
+        assertTrue(model.beginExport()); assertEquals(listOf("unclear"), DiagnosticReportCodecV1.import(model.takeExport()!!).verdicts)
+    }
 }

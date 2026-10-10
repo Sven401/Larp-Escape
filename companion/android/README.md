@@ -64,6 +64,11 @@ Der [DG-Control-Hostcodec](../contract/diagnostic-control-v1/README.md) ergänzt
 bytegenaue Capability-/Grant-/Cancelrahmen gegen Firmwarequelle `3209275`.
 Er ist noch kein Produktionsanschluss und überträgt keine Wake-/LED-Endergebnisse.
 
+Der [DG-Step-/Reassembly-Codec](../contract/diagnostic-step-v1/README.md) ergänzt
+begrenzte Wake-/LED-Endantworten gegen den korrigierten Firmwarevertrag `b5a8c430`.
+Die Debugsimulation führt ihre erfundenen Antworten durch diesen Decoder;
+ein produktiver GATT-/Rollen-/Geräteanschluss bleibt offen.
+
 `BuildConfig.ALLOW_CONTRACT_LAB` ist in Debug `true`, in Release `false`.
 Debug darf den markierten Laborservice lesen. Release lehnt reine
 Laborgeräte bei der Dienstprüfung ab und verwendet auch bei gemeinsam

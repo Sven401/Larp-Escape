@@ -1,5 +1,10 @@
 # Android-Diagnosevertrag v1: Hostverbraucher und bedienbare Debugsimulation
 
+Weiterführung: Der [DG-Step-/Reassembly-Schnitt](../contract/diagnostic-step-v1/README.md)
+ergänzt auf Basis `7e5acb5` den korrigierten Wirevertrag `b5a8c430`. Die Debugseite
+führt ihre weiterhin synthetischen Antworten nun durch diesen Bytepfad.
+Die folgenden ursprünglichen Paketprüfstände beziehen sich auf `45d3e79`.
+
 Stand: 2026-10-10. Androidbasis `6383c59` (A3-Vertragskern), isolierter Branch
 `plan/nutzergefuehrte-hardwarediagnose-android-fake`.
 Vertragsquelle: Produktcommit `3ef678167c21d34f88aadebdcb1c2d1d94cc7b30`
