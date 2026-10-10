@@ -60,6 +60,10 @@ für Wake-Eingang 1 und einen LED-Einzelschritt. Geräteantworten und
 Nutzerbeobachtungen bleiben getrennt; Journal, Unterbrechung und Berichtexport
 sind lokal. Der echte Firmware-/GATT-Anschluss und die Hardwareabnahme sind offen.
 
+Der [DG-Control-Hostcodec](../contract/diagnostic-control-v1/README.md) ergänzt
+bytegenaue Capability-/Grant-/Cancelrahmen gegen Firmwarequelle `3209275`.
+Er ist noch kein Produktionsanschluss und überträgt keine Wake-/LED-Endergebnisse.
+
 `BuildConfig.ALLOW_CONTRACT_LAB` ist in Debug `true`, in Release `false`.
 Debug darf den markierten Laborservice lesen. Release lehnt reine
 Laborgeräte bei der Dienstprüfung ab und verwendet auch bei gemeinsam
