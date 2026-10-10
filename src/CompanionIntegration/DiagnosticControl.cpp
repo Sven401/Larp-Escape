@@ -113,6 +113,10 @@ Admission Control::authorize(const Uuid &run, const companion::BoundConnection &
 }
 Admission Control::submit(const Request &request, const companion::BoundConnection &binding,
                           std::uint64_t now) noexcept {
+    return submitAt(request, binding, now, now);
+}
+Admission Control::submitAt(const Request &request, const companion::BoundConnection &binding,
+                            std::uint64_t receivedAt, std::uint64_t now) noexcept {
     tick(now);
     if (clockFault_ || cleanupFault_)
         return Admission::OwnerError;
@@ -127,7 +131,9 @@ Admission Control::submit(const Request &request, const companion::BoundConnecti
         return Admission::Invalid;
     if (request.stepId <= lastStep_)
         return Admission::Consumed;
-    if (request.timeoutMs > grant_.expiresDeviceMs - now)
+    if (receivedAt < grant_.issuedDeviceMs || receivedAt > now ||
+        now - receivedAt >= request.timeoutMs ||
+        request.timeoutMs > grant_.expiresDeviceMs - receivedAt)
         return Admission::Expired;
     if (request.operation == Operation::WakeCapture) {
         if (request.channel != 1)
@@ -136,6 +142,8 @@ Admission Control::submit(const Request &request, const companion::BoundConnecti
         if (request.index || request.rgb != std::array<std::uint8_t, 3>{{16, 0, 0}} ||
             request.holdMs != 500)
             return Admission::Invalid;
+        if (request.timeoutMs - (now - receivedAt) <= request.holdMs)
+            return Admission::Expired;
     } else
         return Admission::Invalid;
     const bool polarity = result_.activeHigh;
@@ -143,7 +151,7 @@ Admission Control::submit(const Request &request, const companion::BoundConnecti
     result_.activeHigh = polarity;
     result_.request = request;
     result_.startedDeviceMs = now;
-    deadline_ = now + request.timeoutMs;
+    deadline_ = receivedAt + request.timeoutMs;
     lastStep_ = request.stepId;
     pending_ = true;
     if (request.operation == Operation::LedSingle) {

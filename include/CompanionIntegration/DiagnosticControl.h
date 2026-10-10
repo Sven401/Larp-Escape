@@ -91,6 +91,10 @@ class Control {
                         std::uint32_t ttlMs, std::uint64_t now, Grant &destination) noexcept;
     Admission submit(const Request &, const companion::BoundConnection &,
                      std::uint64_t now) noexcept;
+    // Trusted original receipt time bounds queued execution; it never renews
+    // the request timeout. Device start time remains actual execution time.
+    Admission submitAt(const Request &, const companion::BoundConnection &,
+                       std::uint64_t receivedAt, std::uint64_t now) noexcept;
     // Sole component owner supplies raw edges, including all foreign channels.
     void edge(std::uint8_t channel, bool rawHigh, std::uint64_t now) noexcept;
     void finishWake(std::uint64_t now) noexcept;
@@ -106,6 +110,11 @@ class Control {
     }
     bool pending() const noexcept {
         return pending_;
+    }
+    bool matchesGrant(const Request &request,
+                      const companion::BoundConnection &binding) const noexcept {
+        return current() && binding == binding_ && request.runId == grant_.runId &&
+               request.grantId == grant_.grantId;
     }
 
   private:
