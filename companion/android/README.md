@@ -127,6 +127,25 @@ offen. Keine Spielbefehle, keine Rechte aus öffentlichen Lease-Werten, kein
 Profiltransfer. Die Laborfirmware hat synthetische Geräte und eingespeiste
 Autorität; ihre Statusanzeige ist keine Produktfreigabe.
 
+## Peer-Anmeldung: nur Hostkern
+
+Der reine Kotlin-Kern `PeerAuthV1` verarbeitet den optionalen Firmwarevertrag
+für 18-Byte-Issue, 108-Byte-Challenge, 72-Byte-Proof und 32-Byte-Ergebnis.
+Er bindet Challenge und Ergebnis an erwartete Geräte-/Peerwerte, Nachrichten-ID
+und Sequenz und normalisiert gültige P256-r/s-Signaturen auf Low-S.
+Die Firmware-Hostbeobachtung ist bytegleich übernommen, SHA256
+`de088914451110b11309c05ee4f421c9742519451de6b370f8ae22d9572d73f7`.
+Sie stammt aus `firmware-peer-ingress` auf `7f2a3e4` plus lokalem Auth-Diff,
+verglichen am 2026-10-10; vor Integration mit dem endgültigen Firmwarecommit
+nochmals abgleichen. Die drei JVM-Fälle prüfen Bytes, Signaturgrenzen und
+widersprüchliche/falsche Bindungen.
+
+Dieser A3-Vorbereitungskern hat keinen Android-GATT-Anschluss, keinen privaten
+Schlüssel und keine Signaturerzeugung. Ein dekodiertes `Granted` gibt der App
+keine Spielrechte. Produktiver Dienststart, Firmware F1, gegenseitiger
+Gerätenachweis und vertrauenswürdige Peer-Einrichtung bleiben Abhängigkeiten.
+Kein Funk- oder Geräteergebnis dieser Funktion wird behauptet.
+
 ## Lokale Szenarien
 
 Die Seite „Szenario“ bearbeitet lokale JSON-v1-Entwürfe mit bis zu 24 Szenen.
