@@ -26,6 +26,8 @@ struct PeerChallengeReadReply {
     // ATT Ok=0, InvalidOffset=7 or InsufficientAuthorization=8 only.
     std::uint8_t status = 8;
 };
+class IPeerChallengeIssueIngress;
+class IPeerAuthIngress;
 class IPeerChallengeReadIngress {
   public:
     virtual ~IPeerChallengeReadIngress() = default;
@@ -37,8 +39,11 @@ struct PeerChallengeReadSetup {
     BootIdentity boot;
     const IPeerProofContext *context = nullptr;
     IPeerChallengeReadIngress *ingress = nullptr;
+    IPeerChallengeIssueIngress *issue = nullptr;
+    IPeerAuthIngress *auth = nullptr;
     bool operator==(const PeerChallengeReadSetup &other) const noexcept {
-        return boot == other.boot && context == other.context && ingress == other.ingress;
+        return boot == other.boot && context == other.context && ingress == other.ingress &&
+               issue == other.issue && auth == other.auth;
     }
 };
 } // namespace companion

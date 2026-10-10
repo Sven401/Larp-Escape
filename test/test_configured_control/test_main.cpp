@@ -37,12 +37,15 @@
 // Compile the actual adapter against the deterministic RTOS model.
 #include "../../lib/FreeRtosCommandFrameQueue/FreeRtosCommandFrameQueue.cpp"
 #include "../../lib/FreeRtosGameControlChannel/FreeRtosGameControlChannel.cpp"
+#include "../../lib/FreeRtosPeerAuthRuntime/FreeRtosPeerAuthRuntime.cpp"
+#include "../../lib/FreeRtosPeerChallengeIssueRuntime/FreeRtosPeerChallengeIssueRuntime.cpp"
 #include "../../lib/FreeRtosPeerChallengeReadRuntime/FreeRtosPeerChallengeReadRuntime.cpp"
 #include "../../lib/FreeRtosPeerProofGrantRuntime/FreeRtosPeerProofGrantRuntime.cpp"
 #include "../../lib/FreeRtosPeerProofQueue/FreeRtosPeerProofQueue.cpp"
 #include "../../lib/FreeRtosPeerRegistryRuntime/FreeRtosPeerRegistryRuntime.cpp"
 #include "../../lib/FreeRtosProfileFrameQueue/FreeRtosProfileFrameQueue.cpp"
 #include "../../lib/FreeRtosProfileResponseQueue/FreeRtosProfileResponseQueue.cpp"
+#include "../../lib/GattsWriteAdmission/Esp32GattsPeerAuth.cpp"
 #include "../../lib/GattsWriteAdmission/Esp32GattsService.cpp"
 #include "../../lib/GattsWriteAdmission/Esp32GattsSource.cpp"
 #include "../../lib/GattsWriteAdmission/FreeRtosGattsConnection.cpp"
@@ -983,7 +986,7 @@ void test_profile_capability_fixture_matches_firmware_encoder() {
 #include "GattsServiceCases.h"
 #include "GattsSourceCases.h"
 #include "IdentityRetirementCases.h"
-#include "PeerChallengeReadCases.h"
+#include "PeerAuthCases.h"
 #include "PeerLinkSecurityCases.h"
 #include "PeerProofCases.h"
 #include "PeerProofGrantCases.h"
@@ -1512,6 +1515,39 @@ int main() {
     RUN_TEST(test_challenge_read_requires_the_same_existing_crypto_worker_before_any_owner_getter);
 #if defined(LARP_REAL_PEER_CRYPTO)
     RUN_TEST(test_challenge_read_actual_crypto_from_original_sdk_blob_snapshot_to_grant_ack);
+#endif
+    RUN_TEST(test_issue_codec_exact_selector_no_credentials_and_failed_destination_preserved);
+    RUN_TEST(test_issue_actual_sdk_copy_worker_registry_and_read_without_gm);
+    RUN_TEST(test_issue_invalid_write_modes_sizes_context_and_missing_peer_never_call_crypto);
+    RUN_TEST(test_issue_four_static_copies_one_current_operation_and_no_duplicate_nonce_refresh);
+    RUN_TEST(test_issue_wrong_worker_and_wrong_sdk_actor_cannot_consume_or_rebind);
+    RUN_TEST(test_issue_expiry_wrap_and_reconnect_drop_old_work_without_adopting_fresh_link);
+    RUN_TEST(test_issue_sdk_borrow_and_original_scope_frozen_before_external_clock);
+    RUN_TEST(test_issue_registry_revoke_entropy_failure_and_expired_challenge_do_not_retry);
+    RUN_TEST(test_issue_optional_service_installs_nine_original_handles_before_start);
+    RUN_TEST(test_issue_setup_rejects_incomplete_bundle_wrong_handle_order_and_late_configuration);
+#if defined(LARP_REAL_PEER_CRYPTO)
+    RUN_TEST(test_issue_actual_crypto_original_sdk_write_to_read_and_existing_proof_grant);
+#endif
+    RUN_TEST(test_auth_codec_exact_states_correlations_and_failed_destination);
+    RUN_TEST(test_auth_sdk_fragments_pending_ack_and_correlated_granted_result);
+    RUN_TEST(test_auth_result_blob_pins_receiving_snapshot_across_grant_and_new_read_gets_latest);
+    RUN_TEST(test_auth_result_missing_bad_offsets_pin_expiry_and_absolute_challenge_deadline);
+    RUN_TEST(test_auth_signature_rejection_is_visible_without_grant_or_nonce_retry);
+    RUN_TEST(test_auth_invalid_write_modes_frames_foreign_task_and_first_bad_worker_binding);
+    RUN_TEST(test_auth_four_proof_copies_and_reads_full_and_one_item_per_service);
+    RUN_TEST(test_auth_proof_and_read_age_wrap_and_reconnect_never_rebind_old_work);
+    RUN_TEST(test_auth_sdk_borrows_frozen_before_clock_and_clock_reconnect_drops_original);
+    RUN_TEST(test_auth_post_failure_busy_slot_and_old_callback_cannot_send_new_reply);
+    RUN_TEST(test_auth_positive_reply_rechecks_sdk_security_credential_and_original_connection);
+    RUN_TEST(test_auth_duplicate_terminal_proof_never_reposts_grant_and_expiry_does_not_revoke);
+    RUN_TEST(test_auth_authority_retirement_at_every_reply_clock_observation_drops_old_success);
+    RUN_TEST(test_auth_non_gm_ack_has_authenticated_result_without_principal);
+    RUN_TEST(test_auth_forged_positive_job_ack_principal_and_scope_never_post);
+    RUN_TEST(test_auth_service_thirteen_handles_and_complete_source_ack_before_start);
+    RUN_TEST(test_auth_setup_wrong_handles_incomplete_bundle_and_late_configuration_fail_closed);
+#if defined(LARP_REAL_PEER_CRYPTO)
+    RUN_TEST(test_auth_actual_crypto_sdk_issue_reads_proof_writes_ack_and_result_blobs);
 #endif
     return UNITY_END();
 }

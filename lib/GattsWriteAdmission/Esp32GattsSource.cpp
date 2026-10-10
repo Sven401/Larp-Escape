@@ -22,6 +22,7 @@ std::uint32_t registrationCounter = 0;
 std::uint32_t peerRolePostCounter = 0;
 std::uint32_t proofGrantPostCounter = 0;
 std::uint32_t challengeReadPostCounter = 0;
+std::uint32_t peerAuthReadPostCounter = 0;
 portMUX_TYPE registrationMutex = portMUX_INITIALIZER_UNLOCKED;
 void connectionCallback(std::uint8_t interface, std::uint8_t *address, std::uint16_t packed,
                         bool connected, std::uint16_t reason, std::uint8_t transport) {
@@ -338,15 +339,24 @@ Esp32GattsSource::postEndpointSetup(const GattsEndpointSetup &caller,
     setupPosting_ = true;
     GattsSourceRegistration current;
     const auto end = static_cast<std::uint32_t>(value.service) +
-                     (value.challenge ? GattsServiceDefinition::ChallengeHandles
-                                      : GattsServiceDefinition::Handles) -
+                     (value.proof       ? GattsServiceDefinition::AuthHandles
+                      : value.issue     ? GattsServiceDefinition::IssueHandles
+                      : value.challenge ? GattsServiceDefinition::ChallengeHandles
+                                        : GattsServiceDefinition::Handles) -
                      1;
     if (!readRegistration(current) || !(current == value.original) || !value.service ||
         value.command <= value.service || value.profile <= value.command || value.profile > end ||
         (value.challenge &&
          (value.challenge <= value.profile || value.challenge > end || !challenge.boot.valid() ||
           !challenge.context || !challenge.ingress)) ||
-        (!value.challenge && (challenge.boot.valid() || challenge.context || challenge.ingress)) ||
+        (!value.challenge &&
+         (challenge.boot.valid() || challenge.context || challenge.ingress || challenge.issue)) ||
+        (value.issue && (!value.challenge || value.issue <= value.challenge || value.issue > end ||
+                         !challenge.issue)) ||
+        (!value.issue && challenge.issue) ||
+        ((value.proof || value.result || challenge.auth) &&
+         (!value.issue || !value.proof || !value.result || !challenge.auth ||
+          value.proof <= value.issue || value.result <= value.proof || value.result > end)) ||
         end > UINT16_MAX ||
         clock_.nowMilliseconds() - value.receivedAt >=
             GattsServiceDefinition::EndpointDeadlineMilliseconds) {
@@ -420,6 +430,12 @@ void Esp32GattsSource::installEndpoints(void *context) noexcept {
         installed = challenge.context && challenge.ingress &&
                     source.configurePeerProofGrantNow(challenge.boot, *challenge.context) &&
                     source.configureChallengeReadNow(value.challenge, *challenge.ingress);
+    if (installed && value.issue)
+        installed =
+            challenge.issue && source.configureChallengeIssueNow(value.issue, *challenge.issue);
+    if (installed && value.proof)
+        installed = challenge.auth &&
+                    source.configurePeerAuthNow(value.proof, value.result, *challenge.auth);
     portENTER_CRITICAL(&source.mutex_);
     source.setup_.state = installed ? 3 : 4;
     portEXIT_CRITICAL(&source.mutex_);
@@ -884,7 +900,8 @@ bool Esp32GattsSource::requestNow(std::uint16_t packed, std::uint32_t transactio
         if (!borrowed)
             return challengeAttribute_ != 0;
         const auto read = borrowed->read;
-        if (!challengeAttribute_ || read.handle != challengeAttribute_)
+        const bool resultRead = resultAttribute_ && read.handle == resultAttribute_;
+        if ((!challengeAttribute_ || read.handle != challengeAttribute_) && !resultRead)
             return false;
         PeerChallengeReadRequest value;
         value.attribute = read.handle;
@@ -905,7 +922,10 @@ bool Esp32GattsSource::requestNow(std::uint16_t packed, std::uint32_t transactio
         value.lifecycle = transport.lifecycle;
         value.address = transport.address;
         value.receivedAt = clock_.nowMilliseconds();
-        if (challengeReadProducerNow(value))
+        if (resultRead) {
+            if (authIngress_ && peerAuthReadProducerNow(value))
+                (void)authIngress_->copyResultRead(value);
+        } else if (challengeReadProducerNow(value))
             (void)challengeIngress_->copyRead(value);
         return true;
     }
@@ -941,6 +961,54 @@ bool Esp32GattsSource::requestNow(std::uint16_t packed, std::uint32_t transactio
     if (type == 3)
         event.attribute = command_;
     event.peerAddress = live_.peerAddress;
+    if (issueAttribute_ && event.attribute == issueAttribute_) {
+        if (type != 2 || event.needResponse || event.prepared || event.offset ||
+            event.count != PeerChallengeIssueLimits::Bytes || !event.bytes || !issueIngress_)
+            return true;
+        PeerTransportBinding transport;
+        if (!transportNow(transport))
+            return true;
+        PeerChallengeIssueRequest value;
+        value.scope.original.device = transport.device;
+        value.scope.original.boot = proofBoot_;
+        value.scope.original.connection = transport.connection;
+        value.scope.original.registration = transport.registration;
+        value.scope.original.interface = transport.interface;
+        value.scope.lifecycle = transport.lifecycle;
+        value.scope.address = transport.address;
+        value.scope.attribute = event.attribute;
+        value.scope.transaction = transaction;
+        std::memcpy(value.bytes.data(), bytes, value.bytes.size());
+        value.scope.receivedAt = clock_.nowMilliseconds();
+        if (challengeIssueProducerNow(value))
+            (void)issueIngress_->copyIssue(value);
+        return true;
+    }
+    if (proofAttribute_ && event.attribute == proofAttribute_) {
+        if (type != 2 || event.needResponse || event.prepared || event.offset || !event.bytes ||
+            event.count <= CommandFrameLimits::Header || event.count > CommandFrameLimits::Frame ||
+            !authIngress_)
+            return true;
+        PeerTransportBinding transport;
+        if (!transportNow(transport))
+            return true;
+        PeerProofWriteRequest v;
+        v.scope.original.device = transport.device;
+        v.scope.original.boot = proofBoot_;
+        v.scope.original.connection = transport.connection;
+        v.scope.original.registration = transport.registration;
+        v.scope.original.interface = transport.interface;
+        v.scope.lifecycle = transport.lifecycle;
+        v.scope.address = transport.address;
+        v.scope.attribute = event.attribute;
+        v.scope.transaction = transaction;
+        v.count = event.count;
+        std::memcpy(v.bytes.data(), bytes, v.count);
+        v.scope.receivedAt = clock_.nowMilliseconds();
+        if (peerProofWriteProducerNow(v))
+            (void)authIngress_->copyProof(v);
+        return true;
+    }
     const auto now = clock_.nowMilliseconds(); // After owned scalars and bounded bytes.
     if (event.attribute == profile_)
         admitOriginalGattsProfileWrite(event, *owner_, channel_, profiles_, *responses_, now);
@@ -958,6 +1026,39 @@ bool Esp32GattsSource::configureChallengeReadNow(std::uint16_t attribute,
     challengeIngress_ = &ingress;
     portEXIT_CRITICAL(&mutex_);
     return true;
+}
+bool Esp32GattsSource::configureChallengeIssueNow(std::uint16_t attribute,
+                                                  IPeerChallengeIssueIngress &ingress) noexcept {
+    if (!sourceTask() || !owner_ || sawConnection_ || !grantConfigured_ || !challengeAttribute_ ||
+        issueAttribute_ || !attribute || attribute == command_ || attribute == profile_ ||
+        attribute == challengeAttribute_)
+        return false;
+    portENTER_CRITICAL(&mutex_);
+    issueAttribute_ = attribute;
+    issueIngress_ = &ingress;
+    portEXIT_CRITICAL(&mutex_);
+    return true;
+}
+bool Esp32GattsSource::challengeIssueCurrent(
+    const PeerChallengeIssueRequest &caller) const noexcept {
+    const auto value = caller;
+    portENTER_CRITICAL(&mutex_);
+    const bool scope = issueAttribute_ && value.scope.attribute == issueAttribute_ && issueIngress_;
+    const auto challenge = challengeAttribute_;
+    portEXIT_CRITICAL(&mutex_);
+    auto readScope = value.scope;
+    readScope.attribute = challenge;
+    return scope && !value.scope.offset && !value.scope.isLong && challengeReadCurrent(readScope);
+}
+bool Esp32GattsSource::challengeIssueProducerNow(
+    const PeerChallengeIssueRequest &caller) const noexcept {
+    const auto value = caller;
+    auto readScope = value.scope;
+    portENTER_CRITICAL(&mutex_);
+    readScope.attribute = challengeAttribute_;
+    portEXIT_CRITICAL(&mutex_);
+    return challengeIssueCurrent(value) && challengeReadProducerNow(readScope) &&
+           challengeIssueCurrent(value);
 }
 bool Esp32GattsSource::challengeReadCurrent(const PeerChallengeReadRequest &caller) const noexcept {
     const auto value = caller;
@@ -1091,6 +1192,86 @@ void Esp32GattsSource::sendChallengeReply(void *context) noexcept {
     }
     portENTER_CRITICAL(&source->mutex_);
     source->challengePending_.state = 0;
+    portEXIT_CRITICAL(&source->mutex_);
+}
+bool Esp32GattsSource::postPeerAuthReply(const PeerAuthReadReply &caller) noexcept {
+    const auto v = caller;
+    if (!authIngress_ || !authIngress_->workerNow() || xTaskGetCurrentTaskHandle() == sourceTask_ ||
+        authPosting_)
+        return false;
+    authPosting_ = true;
+    if (!validAuthReply(v)) {
+        authPosting_ = false;
+        return false;
+    }
+    portENTER_CRITICAL(&mutex_);
+    const bool busy = authPending_.state != 0;
+    portEXIT_CRITICAL(&mutex_);
+    if (busy) {
+        authPosting_ = false;
+        return false;
+    }
+    portENTER_CRITICAL(&registrationMutex);
+    const auto token = peerAuthReadPostCounter == UINT32_MAX ? 0 : ++peerAuthReadPostCounter;
+    portEXIT_CRITICAL(&registrationMutex);
+    if (!token) {
+        authPosting_ = false;
+        return false;
+    }
+    portENTER_CRITICAL(&mutex_);
+    authPending_.value = v;
+    authPending_.token = token;
+    authPending_.state = 1;
+    portEXIT_CRITICAL(&mutex_);
+    const bool posted =
+        validAuthReply(v) && sdkThread_ == btu_thread &&
+        osi_thread_post(static_cast<osi_thread *>(sdkThread_), &sendAuthReply,
+                        reinterpret_cast<void *>(static_cast<std::uintptr_t>(token)), 0, 0);
+    if (!posted) {
+        portENTER_CRITICAL(&mutex_);
+        authPending_.state = 0;
+        portEXIT_CRITICAL(&mutex_);
+    }
+    authPosting_ = false;
+    return posted;
+}
+void Esp32GattsSource::sendAuthReply(void *context) noexcept {
+    auto *source = selected;
+    if (!source)
+        return;
+    const auto token = static_cast<std::uint32_t>(reinterpret_cast<std::uintptr_t>(context));
+    portENTER_CRITICAL(&source->mutex_);
+    const bool pending =
+        token && token == source->authPending_.token && source->authPending_.state == 1;
+    if (pending)
+        source->authPending_.state = 2;
+    const auto v = source->authPending_.value;
+    portEXIT_CRITICAL(&source->mutex_);
+    if (!pending)
+        return;
+    OriginalPeerSecurity security;
+    if (source->sourceTask() && source->peerAuthReadProducerNow(v.request) &&
+        source->validAuthReply(v) &&
+        (v.status != 0 || source->readOriginalPeerSecurityNow(v.request.original, security)) &&
+        source->peerAuthReadProducerNow(v.request) && source->validAuthReply(v)) {
+        sdk446::Response response = {};
+        response.value.connection = v.request.original.connection.handle;
+        response.value.handle = v.request.attribute;
+        response.value.offset = v.request.offset;
+        if (!v.status) {
+            std::array<std::uint8_t, 32> bytes;
+            if (encodePeerAuthResult(v.result, bytes)) {
+                response.value.length = bytes.size() - v.request.offset;
+                if (response.value.length)
+                    std::memcpy(response.value.value, bytes.data() + v.request.offset,
+                                response.value.length);
+            }
+        }
+        (void)GATTS_SendRsp(v.request.original.connection.handle, v.request.transaction, v.status,
+                            &response);
+    }
+    portENTER_CRITICAL(&source->mutex_);
+    source->authPending_.state = 0;
     portEXIT_CRITICAL(&source->mutex_);
 }
 bool Esp32GattsSource::originalLive(const GattsWriteBinding &caller) const noexcept {

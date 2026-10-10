@@ -13,6 +13,8 @@
 #include <FreeRtosCommandFrameQueue.h>
 #include <FreeRtosGameControlChannel.h>
 #include <FreeRtosGattsResponseQueue.h>
+#include <FreeRtosPeerAuthRuntime.h>
+#include <FreeRtosPeerChallengeIssueRuntime.h>
 #include <FreeRtosPeerChallengeReadRuntime.h>
 #include <FreeRtosPeerProofGrantRuntime.h>
 #include <FreeRtosPeerProofQueue.h>
@@ -94,12 +96,18 @@ PeerProofReceiver peerProofReceiver(peerProofOwner);
 FreeRtosPeerProofQueue peerProofQueue(unopenedPeerContext, profileClock);
 FreeRtosPeerChallengeReadRuntime challengeReader(sourcePort, peerProofOwner, unopenedProofGrant,
                                                  profileClock);
+FreeRtosPeerChallengeIssueRuntime challengeIssuer(sourcePort, peerProofOwner, unopenedProofGrant,
+                                                  unopenedActorRegistry, profileClock);
+FreeRtosPeerAuthRuntime peerAuth(sourcePort, peerProofOwner, peerProofReceiver, unopenedProofGrant,
+                                 profileClock);
 SdkGattsServiceDriver serviceDriver;
 PeerChallengeReadSetup unopenedChallengeSetup() {
     PeerChallengeReadSetup setup;
     setup.boot.high = 1; // Synthetic immutable boot, no identity or authority.
     setup.context = &unopenedPeerContext;
     setup.ingress = &challengeReader;
+    setup.issue = &challengeIssuer;
+    setup.auth = &peerAuth;
     return setup;
 }
 Esp32GattsService sourceService(sourcePort, sourceResponses, profileClock, serviceDriver,
@@ -126,6 +134,11 @@ void setup() {
             PeerProofGrantState::Unavailable ||
         unopenedProofGrant.service(unopenedGrantAck) != PeerProofGrantState::Unavailable)
         return; // Closed actual worker/handoff path; no crypto, SDK post or radio.
+    if (challengeIssuer.beginWorker() ||
+        challengeIssuer.service().dispatch != PeerChallengeIssueDispatch::Unavailable)
+        return; // Closed issue path links without starting radio/tasks.
+    if (peerAuth.beginWorker() || peerAuth.service() != PeerAuthDispatch::Unavailable)
+        return;
     unopenedProofGrant.cancel();
     Serial.printf("peer_proof_grant_abi: initialized=false source_posted=false worker=%u job=%u\n",
                   unsigned(sizeof(unopenedProofGrant)), unsigned(sizeof(PeerProofGrantJob)));

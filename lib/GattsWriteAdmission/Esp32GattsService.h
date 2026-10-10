@@ -12,7 +12,10 @@ enum class GattsServicePhase : std::uint8_t {
     Starting,
     Ready,
     Failed,
-    Challenge
+    Challenge,
+    Issue,
+    Proof,
+    Result
 };
 enum class GattsServiceCopy : std::uint8_t { Copied, Ignored, Unavailable, Overflow };
 struct GattsServiceSnapshot {
@@ -62,6 +65,7 @@ class Esp32GattsService {
     std::uint32_t startedAt_ = 0;
     bool broken_ = false, busy_ = false, havePrevious_ = false;
     GattsServicePhase phase_ = GattsServicePhase::Idle;
+    std::uint16_t handles() const noexcept;
     void phase(GattsServicePhase) noexcept;
     bool current(const Copied &) const noexcept;
 };

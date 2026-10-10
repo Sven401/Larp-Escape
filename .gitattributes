@@ -14,3 +14,10 @@ docs/companion/fixtures/peer-security/*.json text eol=lf
 docs/companion/fixtures/peer-grant/*.json text eol=lf
 
 docs/companion/fixtures/peer-challenge-read/*.json text eol=lf
+
+docs/companion/fixtures/device-identity-store/*.txt text eol=lf
+docs/companion/fixtures/device-identity-store/*.json text eol=lf
+docs/companion/fixtures/peer-challenge-issue/*.json text eol=lf
+docs/companion/fixtures/peer-auth/*.json text eol=lf
+
+docs/companion/fixtures/peer-proof/*.json text eol=lf

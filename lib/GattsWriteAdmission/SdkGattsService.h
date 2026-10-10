@@ -47,10 +47,14 @@ inline GattsServiceEvent fromSdkGattsService(esp_gatts_cb_event_t kind, esp_gatt
 }
 class SdkGattsServiceDriver {
   public:
-    bool create(std::uint8_t interface, bool challenge = false) noexcept;
+    bool create(std::uint8_t interface, bool challenge = false, bool issue = false,
+                bool auth = false) noexcept;
     bool addCommand(std::uint16_t service) noexcept;
     bool addProfile(std::uint16_t service) noexcept;
     bool addChallenge(std::uint16_t service) noexcept;
+    bool addIssue(std::uint16_t service) noexcept;
+    bool addProof(std::uint16_t service) noexcept;
+    bool addResult(std::uint16_t service) noexcept;
     bool start(std::uint16_t service) noexcept;
 };
 } // namespace companion

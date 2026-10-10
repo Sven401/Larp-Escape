@@ -1,5 +1,6 @@
 #pragma once
-#include "Companion/PeerChallengeRead.h"
+#include "Companion/PeerAuthResult.h"
+#include "Companion/PeerChallengeIssue.h"
 #include "Companion/PeerLinkSecurity.h"
 #include "Companion/PeerProof.h"
 #include "Companion/PeerProofGrant.h"
@@ -75,10 +76,19 @@ class Esp32GattsSource : public IGattsResponseContext,
     bool requestNow(std::uint16_t packedConnection, std::uint32_t transaction, std::uint8_t type,
                     const sdk446::Request *) noexcept;
     bool configureChallengeReadNow(std::uint16_t, IPeerChallengeReadIngress &) noexcept;
+    bool configureChallengeIssueNow(std::uint16_t, IPeerChallengeIssueIngress &) noexcept;
+    bool challengeIssueCurrent(const PeerChallengeIssueRequest &) const noexcept;
+    bool challengeIssueProducerNow(const PeerChallengeIssueRequest &) const noexcept;
     bool challengeReadCurrent(const PeerChallengeReadRequest &) const noexcept;
     bool challengeReadProducerNow(const PeerChallengeReadRequest &) const noexcept;
     bool postChallengeReadReply(const PeerChallengeReadReply &) noexcept;
-    bool originalLive(const GattsWriteBinding &) const noexcept override;
+    bool configurePeerAuthNow(std::uint16_t, std::uint16_t, IPeerAuthIngress &) noexcept;
+    bool peerProofWriteCurrent(const PeerProofWriteRequest &) const noexcept;
+    bool peerProofWriteProducerNow(const PeerProofWriteRequest &) const noexcept;
+    bool peerAuthReadCurrent(const PeerChallengeReadRequest &) const noexcept;
+    bool peerAuthReadProducerNow(const PeerChallengeReadRequest &) const noexcept;
+    bool postPeerAuthReply(const PeerAuthReadReply &) noexcept;
+    bool originalLive(const GattsWriteBinding &caller) const noexcept override;
     std::uint32_t nowMilliseconds() const noexcept override {
         return clock_.nowMilliseconds();
     }
@@ -116,8 +126,23 @@ class Esp32GattsSource : public IGattsResponseContext,
     std::uint16_t challengeAttribute_ = 0;
     IPeerChallengeReadIngress *challengeIngress_ = nullptr;
     bool challengePosting_ = false;
+    std::uint16_t issueAttribute_ = 0;
+    IPeerChallengeIssueIngress *issueIngress_ = nullptr;
     bool validChallengeReply(const PeerChallengeReadReply &) const noexcept;
     static void sendChallengeReply(void *) noexcept;
+    struct AuthPending {
+        PeerAuthReadReply value;
+        std::uint32_t token = 0;
+        std::uint8_t state = 0;
+    } authPending_;
+    std::uint16_t proofAttribute_ = 0, resultAttribute_ = 0;
+    IPeerAuthIngress *authIngress_ = nullptr;
+    bool authPosting_ = false;
+    bool validAuthReply(const PeerAuthReadReply &) const noexcept;
+    bool authAckCurrent(const PeerAuthReadReply &) const noexcept;
+    bool authScopeCurrent(const PeerChallengeReadRequest &, bool) const noexcept;
+    bool authProducerNow(const PeerChallengeReadRequest &, bool) const noexcept;
+    static void sendAuthReply(void *) noexcept;
     BootIdentity proofBoot_;
     const IPeerProofContext *proofContext_ = nullptr;
     TaskHandle_t proofWorker_ = nullptr;
