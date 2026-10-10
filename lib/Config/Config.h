@@ -7,9 +7,11 @@
 #include <Adafruit_PN532.h>
 #include <Adafruit_MCP23X17.h>
 #include "MCPConfig.h"
+#include <cstdint>
 #include <map>
-#include "OptionConfig.h"
-#include <FastLED.h>
+
+#include "FastLED.h"
+#include "GameDomain/GridPosition.h"
 
 #define PN532_SCK  (16)
 #define PN532_MOSI (23)
@@ -27,8 +29,6 @@
 
 const uint8_t VOL = 27; // Volume level
 
-#endif // CONFIG_H
-
 const std::map<int, std::pair<int, MCP_Pins>> ROWMAP = {
     {1, {1, MCP_B7}},
     {2, {1, MCP_B6}},
@@ -41,15 +41,17 @@ const std::map<int, std::pair<int, MCP_Pins>> ROWMAP = {
     {9, {0, MCP_B0}},
 };
 
-const std::map<ColLetter, std::pair<int, MCP_Pins>> COLMAP = {
-    {A, {0, MCP_B1}},
-    {B, {0, MCP_A0}},
-    {C, {0, MCP_A1}},
-    {D, {0, MCP_A2}},
-    {E, {0, MCP_A3}},
-    {F, {0, MCP_A4}},
-    {G, {0, MCP_A5}},
-    {H, {0, MCP_A6}},
-    {I, {0, MCP_B5}},
+const std::map<larp::domain::GridColumn, std::pair<int, MCP_Pins>> COLMAP = {
+    {larp::domain::GridColumn::A, {0, MCP_B1}},
+    {larp::domain::GridColumn::B, {0, MCP_A0}},
+    {larp::domain::GridColumn::C, {0, MCP_A1}},
+    {larp::domain::GridColumn::D, {0, MCP_A2}},
+    {larp::domain::GridColumn::E, {0, MCP_A3}},
+    {larp::domain::GridColumn::F, {0, MCP_A4}},
+    {larp::domain::GridColumn::G, {0, MCP_A5}},
+    {larp::domain::GridColumn::H, {0, MCP_A6}},
+    {larp::domain::GridColumn::I, {0, MCP_B5}},
 };
+
+#endif // CONFIG_H
 

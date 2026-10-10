@@ -2,32 +2,40 @@
 #define KEYMATRIX_H
 #pragma once
 
-#include <vector>
-#include "MCPHandler.h"
-#include "optionConfig.h"
-#include <map>
+#include "GamePorts/ICrystalInput.h"
+#include "GamePorts/IWakeInput.h"
 
-class KeyMatrix {
+#include <array>
+#include <map>
+#include <utility>
+#include <vector>
+
+#include "GameDomain/GridPosition.h"
+#include "MCPHandler.h"
+
+class KeyMatrix : public larp::ports::ICrystalInput, public larp::ports::IWakeInput
+{
 public:
-    KeyMatrix(std::vector<MCPHandler>& handlers, 
-        const std::map<int, std::pair<int, MCP_Pins>>& rowMap, 
-        const std::map<ColLetter, std::pair<int, MCP_Pins>>& colMap);
-    
+    KeyMatrix(std::vector<MCPHandler> &handlers,
+              const std::map<int, std::pair<int, MCP_Pins>> &rowMap,
+              const std::map<larp::domain::GridColumn, std::pair<int, MCP_Pins>> &colMap);
+
     void printMatrixState();
     bool printMatrixChanges();
-    bool getKeyState(int row, ColLetter col);
-    void debug(int row, ColLetter col);
+    bool getKeyState(const larp::domain::GridPosition &position);
+    void debug(const larp::domain::GridPosition &position);
     void begin();
-    std::vector<std::pair<int, ColLetter>> getLowKeys(); // New method declaration
-    std::vector<MCPHandler>& handlers;
+    std::vector<larp::domain::GridPosition> readPressedPositions() override;
+    std::array<bool, 4> readWakeSignals() override;
 
 private:
-    const std::map<int, std::pair<int, MCP_Pins>>& rowMapping;
-    const std::map<ColLetter, std::pair<int, MCP_Pins>>& colMapping;
+    std::vector<MCPHandler> &handlers;
+    const std::map<int, std::pair<int, MCP_Pins>> &rowMapping;
+    const std::map<larp::domain::GridColumn, std::pair<int, MCP_Pins>> &colMapping;
     std::vector<int> rows;
-    std::vector<ColLetter> cols;
+    std::vector<larp::domain::GridColumn> columns;
     bool once;
-    static std::map<std::pair<int, ColLetter>, bool> lastState;
-};;
+    static std::map<larp::domain::GridPosition, bool> lastState;
+};
 
 #endif // KEYMATRIX_H

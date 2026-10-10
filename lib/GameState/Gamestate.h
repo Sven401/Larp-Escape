@@ -4,22 +4,20 @@
 
 #pragma once
 
-#include <vector>
-#include <utility>
-#include "OptionConfig.h"
-#include "OptionDefinitions.h"
-#include "TwinkleFox.h"
-#include "NFCReader.h"
-#include "KeyMatrix.h"
-#include "DFMinniHandler.h"
-#include "StateMachine.h"
-#include "OptionConfig.h"
-#include "OptionDefinitions.h"
-#include <vector>
-#include "ripple.h"
-#include "burst.h"
+#include <array>
+#include <cstddef>
+#include <cstdint>
 
-using namespace fl;
+#include "GameDomain/GameDefinitions.h"
+#include "GameDomain/GameProgress.h"
+#include "GamePorts/IAudioPlayer.h"
+#include "GamePorts/ICardReader.h"
+#include "GamePorts/ICrystalInput.h"
+#include "GamePorts/IClock.h"
+#include "GamePorts/ILightEffects.h"
+#include "GamePorts/IWakeInput.h"
+#include "StateMachine.h"
+
 using namespace MyMachine;
 
 /**
@@ -37,7 +35,7 @@ public:
     /**
      * @brief Constructs a new ReichstagGame object.
      */
-    ReichstagGame(NFCReader &nfcReader, KeyMatrix &keymatrix, DFMinniHandler &dfmHandler, fl::MyTwinkleFox &twinkleFox, Burst &burst, Ripple ripples[4]);
+    ReichstagGame(larp::ports::ICardReader &cardReader, larp::ports::ICrystalInput &crystalInput, larp::ports::IWakeInput &wakeInput, larp::ports::IAudioPlayer &audioPlayer, larp::ports::IClock &clockPort, larp::ports::ILightEffects &lightEffects);
 
     /**
      * @brief Handles the idle state of the game.
@@ -128,11 +126,12 @@ public:
 
 private:
     /**
-     * @brief Retrieves the option configuration for a given keystone.
-     * @param keyStone The keystone to retrieve the configuration for.
-     * @return A pointer to the option configuration.
+     * @brief Finds the domain role matching a card UID.
+     * @param cardUid Fixed-size UID read from the role card.
+     * @return A pointer to the immutable role definition, or nullptr when unknown.
      */
-    OptionConfig *getOptionConfig(std::array<uint8_t, 7> &keyStone);
+    const larp::domain::RoleDefinition *getRoleDefinition(
+        const larp::domain::CardUid &cardUid) const;
 
     /**
      * @brief Retrieves the current keystone.
@@ -175,22 +174,12 @@ private:
      */
     bool roundReset();
 
-    void handleCrystaldetection(int delay);
+    void handleCrystaldetection(std::uint32_t intervalMilliseconds);
+    void playCrystalAudio(std::size_t crystalIndex);
 
     void handleKeystonedetection();
 
-    int roundCounter;                                  ///< Counts the completed game rounds. eg. for how many keystones the correct crystals have been placed.
-    std::array<uint8_t, 7> currentKeyStone;            ///< Stores the current keystone.
-    std::array<uint8_t, 7> lastKeyStone;
-    std::vector<std::array<uint8_t, 7>> seenKeyStones; ///< Stores the seen keystones.
-    bool errorState;                                   ///< Indicates if the game is in an error state.
-    std::vector<OptionConfig> options;                 ///< Stores the game options.
-    std::vector<std::pair<const ButtonPair *, bool>> seenOptionButtons;
-    const ButtonPair *currentButton;   ///< Stores the currently valid button pair. eg Crystal
-    uint8_t correctCrystals;           ///< Number of correctly placed crystals (max. 3).
-    bool incorrectCrystal;             ///< Indicates if an incorrect crystal has been placed (max. 1).
-    bool correctCrystal;               ///< Indicates if a correct crystal has been placed.
-    OptionConfig *currentOptionConfig; ///< Stores the current option configuration.
+    larp::domain::GameProgress gameProgress;
     State *Idle;
     State *WaitingForCrystals;
     State *FirstCrystalPlaced;
@@ -200,16 +189,24 @@ private:
     State *BonusState;
     State *ErrorState;
     State *StandByState;
-    NFCReader &nfcReader;
-    KeyMatrix &keymatrix;
-    DFMinniHandler &dfmHandler;
-    MyTwinkleFox &twinkleFox;
-    Burst &burst;
-    Ripple *ripples;
+    larp::ports::ICardReader &cardReader;
+    larp::ports::ICrystalInput &crystalInput;
+    larp::ports::IWakeInput &wakeInput;
+    larp::ports::IAudioPlayer &audioPlayer;
+    larp::ports::IClock &clockPort;
+    larp::ports::ILightEffects &lightEffects;
     const int INTERVALL = 150;
     unsigned long timeout = 600000;
     unsigned long lastMillis = 0;
-    uint8_t retrys;
+    std::uint32_t lastTransitionCardReadMilliseconds = 0;
+    std::uint32_t lastKeystoneReadMilliseconds = 0;
+    std::uint32_t lastCrystalScanMilliseconds = 0;
+    bool transitionCardReadTimerStarted = false;
+    bool keystoneReadTimerStarted = false;
+    bool crystalScanTimerStarted = false;
+
+    bool intervalElapsed(std::uint32_t &lastTriggerMilliseconds, bool &timerStarted,
+                        std::uint32_t intervalMilliseconds);
 
     uint8_t receiverMAC[6] = {0xB0, 0xA7, 0x32, 0xF1, 0x86, 0x54};
 

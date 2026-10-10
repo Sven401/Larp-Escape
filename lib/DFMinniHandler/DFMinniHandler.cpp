@@ -58,3 +58,7 @@ void DFMinniHandler::wakeupDFPlayer() {
     delay(100); // Wait for the DFPlayer to wake up
     digitalWrite(wakeUpPin, LOW);
 }
+
+void DFMinniHandler::wakeup() {
+    wakeupDFPlayer();
+}

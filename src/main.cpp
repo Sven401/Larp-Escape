@@ -1,12 +1,14 @@
 #include "Config.h"
 #include "NFCReader.h"
 #include "MCPHandler.h"
-#include "GameState.h"
-#include "KeyMatrix.h"
+#include "Gamestate.h"
+#include "Keymatrix.h"
 #include <vector>
 #include "FastLED.h"
 #include "twinklefox.h"
 #include "DFMinniHandler.h"
+#include "ArduinoClock.h"
+#include "GameLightEffects.h"
 #include "ripple.h"
 #include "burst.h"
 #include <esp_now.h>
@@ -23,7 +25,7 @@ CRGBArray<NUM_LEDS> leds;
 
 uint8_t receiverMAC[6] = {0xB0, 0xA7, 0x32, 0xF1, 0x86, 0x54};
 
-using namespace fl;
+using fl::MyTwinkleFox;
 MyTwinkleFox twinkleFox(NUM_LEDS);
 Burst burst (30,leds, NUM_LEDS);
 Ripple ripples[4] = {
@@ -47,7 +49,9 @@ KeyMatrix keymatrix(handlers, ROWMAP, COLMAP);
 HardwareSerial mySoftwareSerial(1);
 DFPlayerMini_Fast myMP3;
 DFMinniHandler dfmHandler(mySoftwareSerial, myMP3, DFBUSY, DFWAKEUP);
-ReichstagGame game(nfcReader, keymatrix, dfmHandler, twinkleFox, burst, ripples);
+ArduinoClock gameClock;
+GameLightEffects gameLightEffects(twinkleFox, burst, ripples, gameClock);
+ReichstagGame game(nfcReader, keymatrix, keymatrix, dfmHandler, gameClock, gameLightEffects);
 
 
 // Callback for message delivery status
