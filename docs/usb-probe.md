@@ -1,5 +1,10 @@
 # ESP32 ohne Zusatzhardware
 
+Die vollständig bestückte Originalbox hat eine **andere** Flashsicherung und einen
+eigenen Prüfablauf in [reichstagsbox-hardware.md](reichstagsbox-hardware.md). Die
+Sicherung unten gehört ausschließlich zum früheren nackten ESP32 und darf nicht
+als Rückweg für die Originalbox verwendet werden.
+
 Das Profil `esp32-runtime-probe` ist ausschließlich für ein ESP32-Board am USB vorgesehen. Es richtet keine externen GPIOs, I2C-/SPI-Geräte, LEDs, Audio oder Funkkommunikation ein. Die normale Spiel-Firmware startet ohne ihre Geräte nicht erfolgreich; deshalb ist dieses Profil getrennt.
 
 ```powershell
