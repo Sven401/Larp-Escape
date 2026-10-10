@@ -824,7 +824,60 @@ bool Esp32GattsSource::hciEncryptionNow(std::uint16_t hciHandle, std::uint8_t st
 }
 bool observeGattsHciEncryptionNow(std::uint16_t hciHandle, std::uint8_t status,
                                   std::uint8_t enabled) noexcept {
-    return selected && selected->hciEncryptionNow(hciHandle, status, enabled);
+    return selected && selected->consumeHciEncryptionEventNow(hciHandle, status, enabled);
+}
+bool enterGattsHciEventNow(std::uint8_t controller, const sdk446::HciHeader *packet) noexcept {
+    return selected && selected->enterHciEventNow(controller, packet);
+}
+void leaveGattsHciEventNow() noexcept {
+    if (selected)
+        selected->leaveHciEventNow();
+}
+bool Esp32GattsSource::enterHciEventNow(std::uint8_t controller,
+                                        const sdk446::HciHeader *packet) noexcept {
+    if (!sourceTask())
+        return false;
+    hciEventAvailable_ = false;
+    if (hciDispatching_) {
+        hciEventTainted_ = true;
+        return false;
+    }
+    hciDispatching_ = true;
+    hciEventTainted_ = false;
+    // Conservative bounded prefix: only the pinned controller's complete,
+    // zero-offset six-byte Encryption Change packet is observed. Other SDK
+    // packets still go unchanged to the original dispatcher.
+    if (!packet || controller != 0 || packet->event != 0x1000 || packet->offset != 0 ||
+        packet->length != 6)
+        return true;
+    const auto *bytes = reinterpret_cast<const std::uint8_t *>(packet + 1);
+    if (bytes[0] != 0x08 || bytes[1] != 4 || bytes[2] != 0 || bytes[5] != 1)
+        return true;
+    const auto handle = static_cast<std::uint16_t>(bytes[3] | (std::uint16_t(bytes[4]) << 8));
+    PeerTransportBinding birth, after;
+    if (transportNow(birth) && hciEncryptionNow(handle, 0, 1) && transportNow(after) &&
+        after == birth && !hciEventTainted_) {
+        hciEventBirth_ = birth;
+        hciEventHandle_ = handle;
+        hciEventAvailable_ = true;
+    }
+    return true;
+}
+void Esp32GattsSource::leaveHciEventNow() noexcept {
+    if (!sourceTask())
+        return;
+    hciEventAvailable_ = false;
+    hciDispatching_ = false;
+}
+bool Esp32GattsSource::consumeHciEncryptionEventNow(std::uint16_t handle, std::uint8_t status,
+                                                    std::uint8_t enabled) noexcept {
+    if (!sourceTask() || !hciDispatching_ || !hciEventAvailable_)
+        return false;
+    hciEventAvailable_ = false; // Consume before any SDK read or nested callback.
+    PeerTransportBinding birth, after;
+    return handle == hciEventHandle_ && status == 0 && enabled == 1 && transportNow(birth) &&
+           birth == hciEventBirth_ && hciEncryptionNow(handle, status, enabled) &&
+           transportNow(after) && after == birth && !hciEventTainted_;
 }
 bool Esp32GattsSource::transportNow(PeerTransportBinding &destination) const noexcept {
     if (!sourceTask() || !active_ || !owner_)

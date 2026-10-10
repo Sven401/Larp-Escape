@@ -988,6 +988,7 @@ void test_profile_capability_fixture_matches_firmware_encoder() {
 #include "IdentityRetirementCases.h"
 #include "PeerAuthCases.h"
 #include "PeerHciBirthCases.h"
+#include "PeerHciEventCases.h"
 #include "PeerLinkSecurityCases.h"
 #include "PeerProofCases.h"
 #include "PeerProofGrantCases.h"
@@ -1451,6 +1452,11 @@ int main() {
     RUN_TEST(test_registry_actor_actual_crypto_original_sdk_roles_frames_game_and_revoke);
 #endif
     RUN_TEST(test_registry_actor_fixed_job_rejects_invalid_origin_roles_and_order);
+    RUN_TEST(test_hci_event_only_original_change_scope_consumes_once_without_rights);
+    RUN_TEST(test_hci_event_rejects_other_kinds_lengths_controllers_status_and_handles);
+    RUN_TEST(test_hci_event_mismatch_end_nested_and_new_birth_cannot_reuse_observation);
+    RUN_TEST(test_hci_event_nested_sdk_read_invalidates_entry_and_consumption);
+    RUN_TEST(test_hci_event_actual_wrappers_forward_original_arguments_and_close_scope);
     RUN_TEST(test_hci_birth_witness_rejects_old_and_recycled_handles);
     RUN_TEST(test_security_source_hci_birth_is_current_and_recycled_handle_stays_closed);
     RUN_TEST(test_security_source_hci_observation_never_grants_security_or_roles);

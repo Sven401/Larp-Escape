@@ -9,6 +9,7 @@
 #include "FreeRtosGattsConnection.h"
 #include "GattsServiceDefinition.h"
 #include "SdkGattSourceAbi.h"
+#include "SdkHciEventAbi.h"
 #include "SdkPeerSecurityAbi.h"
 #include <freertos/task.h>
 namespace larp {
@@ -65,6 +66,13 @@ class Esp32GattsSource : public IGattsResponseContext,
     // The security hook has multiple SDK callers. This is neither evidence of
     // event kind, selected bond mode nor authorization, including after failure.
     bool hciEncryptionNow(std::uint16_t, std::uint8_t, std::uint8_t) noexcept;
+    // Original BTU dispatch scope. true means the caller owns leave, including
+    // rejected packet kinds. Nested dispatch invalidates the outer observation.
+    bool enterHciEventNow(std::uint8_t, const sdk446::HciHeader *) noexcept;
+    void leaveHciEventNow() noexcept;
+    // One matching security hook inside the same original event and birth only.
+    // No selected bond-mode evidence or access rights are created.
+    bool consumeHciEncryptionEventNow(std::uint16_t, std::uint8_t, std::uint8_t) noexcept;
     // Crypto-worker read: copied original connection and current owned policy.
     bool closedPeerConnectionCurrent(const PeerProofBinding &) const noexcept;
     // Earliest original SMP actor callback, before the existing BTM callback.
@@ -169,6 +177,11 @@ class Esp32GattsSource : public IGattsResponseContext,
     IdentityAccessSnapshot identitySnapshot_;
     PeerLinkSecurity linkSecurity_;
     PeerHciBirthWitness hciBirth_;
+    PeerTransportBinding hciEventBirth_;
+    std::uint16_t hciEventHandle_ = 0xffff;
+    bool hciDispatching_ = false;
+    bool hciEventAvailable_ = false;
+    bool hciEventTainted_ = false;
     bool smpForwarding_ = false;
     bool peerProofOpen_ = false;
     void *sdkThread_ = nullptr;
@@ -196,5 +209,7 @@ class Esp32GattsSource : public IGattsResponseContext,
 // Successful arming is not registration, service creation, BLE start or identity.
 bool armGattsSourceBeforeSdkStart(std::uint16_t application, Esp32GattsSource &) noexcept;
 bool observeGattsHciEncryptionNow(std::uint16_t, std::uint8_t, std::uint8_t) noexcept;
+bool enterGattsHciEventNow(std::uint8_t, const sdk446::HciHeader *) noexcept;
+void leaveGattsHciEventNow() noexcept;
 } // namespace companion
 } // namespace larp

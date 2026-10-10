@@ -19,10 +19,23 @@ same transport birth, status zero and enabled value one. It returns a transient
 comparison result and retains no security state. Failures, duplicates and later
 comparisons therefore cannot act as a stored encryption or role grant.
 
-Only `esp32-gatts-abi-probe` links the security-hook wrapper. The wrapper discards
-the observation and forwards every invocation unchanged to the pinned SDK.
-`btm_sec_encrypt_change` also has key-refresh and command-error callers: its
-arguments alone do not identify the originating Encryption Change event.
+Only `esp32-gatts-abi-probe` links the two observation wrappers. The outer wrapper
+enters at `btu_hcif_process_event`, called externally by the original BTU task.
+It requires controller zero, event group `0x1000`, offset zero, six payload bytes,
+event code `0x08`, four parameters, status zero and enabled value one. Unsupported
+packet shapes remain unobserved and are forwarded unchanged to the original SDK.
+
+The source copies the event fields and current GATT birth before SDK dispatch.
+Exactly one matching `btm_sec_encrypt_change` invocation may consume that copy
+within the same synchronous dispatch. The source rechecks the current birth and
+ACL mapping. Scope exit, nesting, argument mismatch and connection changes prevent
+reuse. The wrapper discards the result and forwards every invocation unchanged;
+it does not retain a security result after dispatch.
+
+The standalone security hook has key-refresh and command-error callers. The new
+outer scope distinguishes these from the original Encryption Change event.
+`check_f1_hci_origin.py` verifies original header layout, event constants, dispatch
+selection, BTU ownership and function ABI against pinned ESP-IDF 4.4.6 sources.
 
 ## Authentication boundary
 
@@ -32,8 +45,16 @@ handle, public lease, stored bond nor SDK security flags authorize a peer.
 Current challenge, P-256 proof, credential and registry ACK remain necessary for
 roles on the current connection. A completion without a start stays rejected.
 
-Before enabling reconnection, the implementation must prove original event kind,
-restore provenance and selected SC+MITM+Bond mode on the same connection, then
+The original `smp_proc_pairing_cmpl` selects `auth_mode` from either the current
+pairing control block or the device record and resets the control block before
+calling the registered callback. The pinned-source test executes that unchanged
+function with explicit model records: successful modes 13 and 29 from fresh
+pairing and stored mode produce byte-identical callback data. The callback alone
+therefore does not prove that the used mode came from the restored bond. Its
+address or strong-looking flags cannot close that provenance gap.
+
+Before enabling reconnection, the implementation must prove restore provenance
+and selected SC+MITM+Bond mode on the same original event and connection, then
 connect a separately bounded re-encryption attempt to current proof/role checks.
 Re-pair, security loss, bond deletion and registry revocation require explicit
 invalidation tests. Host/ABI tests and a successful link do not prove radio or

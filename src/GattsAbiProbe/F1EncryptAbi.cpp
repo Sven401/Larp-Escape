@@ -1,10 +1,17 @@
 #include "../../lib/GattsWriteAdmission/Esp32GattsSource.h"
 #include <cstdint>
 
-// Isolated observation probe for the pinned IDF 4.4.6 Bluedroid symbol.
-// Key refresh and command errors also call this symbol: the arguments alone
-// do not attest an original Encryption Change event or the restored bond mode.
-// Discard the observation and forward unchanged; never grant security here.
+// Original outer dispatch distinguishes Encryption Change from key refresh and
+// command errors. A bounded copy lives only on this synchronous BTU call stack.
+extern "C" void __wrap_btu_hcif_process_event(std::uint8_t controller,
+                                              larp::companion::sdk446::HciHeader *packet) {
+    const bool owned = larp::companion::enterGattsHciEventNow(controller, packet);
+    __real_btu_hcif_process_event(controller, packet);
+    if (owned)
+        larp::companion::leaveGattsHciEventNow();
+}
+// Observe only a matching original event, then forward unchanged. The selected
+// restored bond mode is still unproven; this probe never grants security.
 extern "C" void __real_btm_sec_encrypt_change(std::uint16_t, std::uint8_t, std::uint8_t);
 extern "C" void __wrap_btm_sec_encrypt_change(std::uint16_t handle, std::uint8_t status,
                                               std::uint8_t enabled) {
