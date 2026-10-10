@@ -391,15 +391,105 @@ static void fencesAndDeadlines() {
                                  100) == Admission::PermissionDenied);
     CHECK(!role.control.pending());
 }
-int main() {
+static void ownerTimeBoundaries() {
+    Fixture led;
+    led.authorize();
+    CHECK(led.control.submit(led.request(Operation::LedSingle), led.binding, 100) ==
+          Admission::Accepted);
+    led.control.tick(599);
+    CHECK(led.control.pending());
+    led.control.tick(600);
+    CHECK(!led.control.pending());
+    Reply result = led.reply();
+    CHECK(result.outcome == Outcome::Completed && result.endedDeviceMs == 600);
+    std::array<std::uint8_t, StepLimits::ReplyBytes> wire = {};
+    std::size_t written = 0;
+    CHECK(encodeStepReply(17, result, wire.data(), wire.size(), written));
+    auto unchanged = wire;
+    result.endedDeviceMs = 599;
+    CHECK(!encodeStepReply(17, result, wire.data(), wire.size(), written));
+    CHECK(!written && wire == unchanged);
+    result.endedDeviceMs = 1100;
+    CHECK(!encodeStepReply(17, result, wire.data(), wire.size(), written));
+    CHECK(!written && wire == unchanged);
+    Fixture wake;
+    wake.authorize();
+    CHECK(wake.control.submit(wake.request(), wake.binding, 100) == Admission::Accepted);
+    wake.control.tick(1100);
+    result = wake.reply();
+    CHECK(result.outcome == Outcome::Rejected && result.reason == Reason::Expired);
+    // Internal owner timeout is retained locally; it is too late for a v1 reply.
+    CHECK(!encodeStepReply(17, result, wire.data(), wire.size(), written));
+    CHECK(!written && wire == unchanged);
+}
+static void independentTimeBoundaries(const char *path) {
+    auto *file = std::fopen(path, "rb");
+    CHECK(file != nullptr);
+    unsigned vectors = 0;
+    for (;;) {
+        const int expected = std::fgetc(file);
+        if (expected == EOF)
+            break;
+        CHECK(expected == 0 || expected == 1);
+        const int low = std::fgetc(file), high = std::fgetc(file);
+        CHECK(low != EOF && high != EOF);
+        const std::size_t length = static_cast<unsigned>(low | (high << 8));
+        std::array<std::uint8_t, StepLimits::ReplyBytes> bytes = {};
+        CHECK(length >= StepLimits::ReplyHeader && length <= bytes.size());
+        CHECK(std::fread(bytes.data(), 1, length, file) == length);
+        Reply result;
+        result.request.stepId = 999;
+        std::uint32_t message = 999;
+        CHECK(decodeStepReply(bytes.data(), length, message, result) == (expected != 0));
+        if (!expected)
+            CHECK(message == 999 && result.request.stepId == 999);
+        StepFixture fixture;
+        Request request;
+        CHECK(decodeStep(bytes.data(), StepLimits::RequestBytes, message, request));
+        CHECK(fixture.assembly.begin(message, request, fixture.binding, fixture.authority, 100,
+                                     1100));
+        AssemblyResult status = AssemblyResult::Receiving;
+        for (std::size_t at = 0; at < length;) {
+            const std::size_t count = length - at > 116 ? 116 : length - at;
+            auto &frame = fixture.frame;
+            frame[0] = 'D';
+            frame[1] = 'G';
+            frame[2] = 1;
+            frame[3] = 0x84;
+            for (unsigned i = 0; i < 4; ++i)
+                frame[4 + i] = static_cast<std::uint8_t>(message >> (8 * i));
+            frame[8] = static_cast<std::uint8_t>(length);
+            frame[9] = static_cast<std::uint8_t>(length >> 8);
+            frame[10] = static_cast<std::uint8_t>(at);
+            frame[11] = static_cast<std::uint8_t>(at >> 8);
+            std::memcpy(frame.data() + 12, bytes.data() + at, count);
+            status = fixture.assembly.receive(frame.data(), count + 12, fixture.binding,
+                                              fixture.authority, 201);
+            at += count;
+            if (at < length)
+                CHECK(status == AssemblyResult::Receiving);
+        }
+        CHECK(status == (expected ? AssemblyResult::Complete : AssemblyResult::Rejected));
+        CHECK(fixture.assembly.take(202, result) == (expected != 0));
+        ++vectors;
+    }
+    CHECK(std::fclose(file) == 0);
+    CHECK(vectors == 10);
+}
+int main(int argc, char **argv) {
     codecs();
     fullWake();
     ledAndOverflow();
     badSegments();
     fencesAndDeadlines();
+    const unsigned baseline = checks;
+    CHECK(argc == 2);
+    ownerTimeBoundaries();
+    independentTimeBoundaries(argv[1]);
     std::printf(
         "Diagnostic step transport: %u assertions; synthetic components, no GATT/hardware.\n",
         checks);
+    std::printf("Baseline %u; new boundary assertions %u.\n", baseline, checks - baseline);
     std::printf("Host sizes: step transport %u, reply assembly %u bytes.\n",
                 static_cast<unsigned>(sizeof(StepTransport)),
                 static_cast<unsigned>(sizeof(ReplyAssembly)));

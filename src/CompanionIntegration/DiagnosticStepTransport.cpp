@@ -37,7 +37,7 @@ bool same(const Request &a, const Request &b) {
 }
 bool replyValid(const Reply &r) {
     if (!valid(r.request) || r.startedDeviceMs > r.endedDeviceMs || r.endedDeviceMs > maxTime ||
-        r.endedDeviceMs - r.startedDeviceMs > r.request.timeoutMs ||
+        r.endedDeviceMs - r.startedDeviceMs >= r.request.timeoutMs ||
         static_cast<unsigned>(r.outcome) > 3 || static_cast<unsigned>(r.reason) > 7 ||
         r.edgeCount > 64 || r.renderCalls > 2)
         return false;
@@ -45,7 +45,9 @@ bool replyValid(const Reply &r) {
         return false;
     if (r.request.operation == Operation::LedSingle) {
         return !r.edgeCount && !r.overflow &&
-               (r.outcome != Outcome::Completed || (r.renderCalls == 2 && r.restoredOff));
+               (r.outcome != Outcome::Completed ||
+                (r.renderCalls == 2 && r.restoredOff &&
+                 r.endedDeviceMs - r.startedDeviceMs >= r.request.holdMs));
     }
     if (r.renderCalls || r.restoredOff)
         return false;

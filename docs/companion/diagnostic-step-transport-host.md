@@ -68,6 +68,14 @@ trägt keine Flanken und keinen Flankenüberlauf; Completed braucht zwei
 Renderaufrufe und bestätigtes `restoredOff`. Completed entspricht Reason None;
 alle anderen Outcomes benötigen einen Fehlergrund. Flankenzeiten sind monoton
 nicht fallend innerhalb Start/Ende, Pegel und aktive Polarität müssen passen.
+Für alle Antworten gilt `0 <= Ende - Start < timeoutMs`; erfolgreiche LED-Schritte
+brauchen zusätzlich `Ende - Start >= holdMs` (v1: exakt 500 ms Mindestdauer).
+Kürzere Failed-/Cancelled-LED-Ergebnisse bleiben zulässig. Der Decoderstand
+`04c145f` erlaubte hier fälschlich Timeoutgleichheit und LED-Erfolg unter 500 ms;
+der Zeitgrenzenfix gleicht Encoder, Decoder und Reassembly an den bereits
+strengeren JSON-Vertragsprüfer an. Gültige Wirebytes und Offsetbelegung bleiben
+identisch. Ein internes Owner-Timeout am Deadlinezeitpunkt wird weiterhin lokal
+verarbeitet und vom Transport verworfen.
 Ein Wake-Überlauf bleibt im Rohbeleg erhalten und verhindert im übergeordneten
 Diagnosevertrag ein bestandenes Urteil. Der Codec bewertet keine Nutzerbeobachtung.
 Ohne Versorgungstelemetrie wird später JSON `null` erzeugt, kein erfundener Wert.
