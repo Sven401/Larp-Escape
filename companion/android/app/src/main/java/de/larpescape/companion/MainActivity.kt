@@ -31,10 +31,37 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import de.larpescape.companion.data.diagnostic.AndroidDiagnosticRunStore
+import de.larpescape.companion.ui.diagnostic.*
 
 class MainActivity : ComponentActivity() {
     private var nfcScreen by mutableStateOf(false)
     private var scenarioScreen by mutableStateOf(false)
+    private var diagnosticScreen by mutableStateOf(false)
+    private val diagnosticModel by viewModels<DiagnosticViewModel> {
+        object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                @Suppress("UNCHECKED_CAST")
+                return DiagnosticViewModel(AndroidDiagnosticRunStore(applicationContext)) as T
+            }
+        }
+    }
+    private val exportDiagnostic = registerForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
+        val bytes = diagnosticModel.takeExport()
+        if (uri != null && bytes != null) lifecycleScope.launch {
+            try {
+                withContext(Dispatchers.IO) { contentResolver.openOutputStream(uri, "wt")?.use { it.write(bytes) } ?: error("Datei konnte nicht geschrieben werden") }
+                diagnosticModel.notice("Simulationsbericht exportiert.")
+            } catch (error: Exception) { diagnosticModel.notice("Export fehlgeschlagen: ${error.message}") }
+        } else if (uri == null) diagnosticModel.notice("Dateiauswahl abgebrochen. Der abgeschlossene Lauf bleibt gespeichert.")
+    }
+    private fun selectDiagnostic(selected: Boolean) {
+        if (!BuildConfig.ALLOW_CONTRACT_LAB || selected == diagnosticScreen) return
+        if (!selected) diagnosticModel.backgroundEnded()
+        diagnosticScreen = selected
+        if (selected) { nfcReader.stop(); nfcScreen = false; scenarioScreen = false; model.foregroundEnded(); showPermissionExplanation = false }
+        else if (!nfcScreen && !scenarioScreen) model.foregroundStarted(permissionsGranted())
+    }
     private val scenarioModel by viewModels<ScenarioViewModel> {
         object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -64,6 +91,7 @@ class MainActivity : ComponentActivity() {
         }
     }
     private fun selectScenario(selected: Boolean) {
+        if (selected && diagnosticScreen) selectDiagnostic(false)
         if (selected == scenarioScreen) return
         scenarioScreen = selected
         if (selected) { nfcReader.stop(); nfcScreen = false; model.foregroundEnded() }
@@ -80,6 +108,7 @@ class MainActivity : ComponentActivity() {
     }
     private val nfcReader by lazy { AndroidNfcReader(this, nfcModel) }
     private fun selectNfc(selected: Boolean) {
+        if (selected && diagnosticScreen) selectDiagnostic(false)
         if (selected == nfcScreen) return
         nfcScreen = selected
         showPermissionExplanation = false
@@ -118,6 +147,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         nfcScreen = savedInstanceState?.getBoolean("nfcScreen") ?: false
         scenarioScreen = savedInstanceState?.getBoolean("scenarioScreen") ?: false
+        diagnosticScreen = BuildConfig.ALLOW_CONTRACT_LAB && (savedInstanceState?.getBoolean("diagnosticScreen") ?: false)
         setContent {
             MaterialTheme(colorScheme = lightColorScheme()) {
                 val state by model.state.collectAsStateWithLifecycle()
@@ -134,11 +164,17 @@ class MainActivity : ComponentActivity() {
                     Column(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing).verticalScroll(rememberScrollState()).padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
                         Text("Larp Escape", style = MaterialTheme.typography.headlineLarge)
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            FilterChip(selected = !nfcScreen && !scenarioScreen, onClick = { selectScenario(false); selectNfc(false) }, label = { Text("ESP") })
+                            FilterChip(selected = !nfcScreen && !scenarioScreen && !diagnosticScreen, onClick = { selectDiagnostic(false); selectScenario(false); selectNfc(false) }, label = { Text("ESP") })
                             FilterChip(selected = nfcScreen && !scenarioScreen, onClick = { selectScenario(false); selectNfc(true) }, label = { Text("NFC-Tags") })
                             FilterChip(selected = scenarioScreen, onClick = { selectScenario(true) }, label = { Text("Szenario") })
                         }
-                        if (scenarioScreen) {
+                        if (BuildConfig.ALLOW_CONTRACT_LAB) {
+                            FilterChip(selected = diagnosticScreen, onClick = { selectDiagnostic(true) }, label = { Text("Diagnose · Simulation") }, modifier = Modifier.heightIn(min = 48.dp))
+                        }
+                        if (diagnosticScreen) {
+                            val diagnosticState by diagnosticModel.state.collectAsStateWithLifecycle()
+                            DiagnosticScreen(diagnosticState, diagnosticModel, exportFile = { if (diagnosticModel.beginExport()) exportDiagnostic.launch("diagnose-simulation-v1.json") })
+                        } else if (scenarioScreen) {
                             val scenarioState by scenarioModel.state.collectAsStateWithLifecycle()
                             ScenarioScreen(scenarioState, scenarioModel,
                                 importFile = { importScenario.launch(arrayOf("application/json", "text/plain")) },
@@ -172,12 +208,12 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-    override fun onStart() { super.onStart(); if (!nfcScreen && !scenarioScreen) model.foregroundStarted(permissionsGranted()) }
-    override fun onResume() { super.onResume(); if (nfcScreen && !scenarioScreen) nfcReader.start() else if (!scenarioScreen) model.permissionsChanged(permissionsGranted()) }
+    override fun onStart() { super.onStart(); if (!nfcScreen && !scenarioScreen && !diagnosticScreen) model.foregroundStarted(permissionsGranted()) }
+    override fun onResume() { super.onResume(); if (nfcScreen && !scenarioScreen && !diagnosticScreen) nfcReader.start() else if (!scenarioScreen && !diagnosticScreen) model.permissionsChanged(permissionsGranted()) }
     override fun onPause() { nfcReader.stop(); super.onPause() }
-    override fun onSaveInstanceState(outState: Bundle) { outState.putBoolean("nfcScreen", nfcScreen); outState.putBoolean("scenarioScreen", scenarioScreen); super.onSaveInstanceState(outState) }
+    override fun onSaveInstanceState(outState: Bundle) { outState.putBoolean("diagnosticScreen", diagnosticScreen); outState.putBoolean("nfcScreen", nfcScreen); outState.putBoolean("scenarioScreen", scenarioScreen); super.onSaveInstanceState(outState) }
     override fun onStop() {
-        if (!isChangingConfigurations) { showPermissionExplanation = false; model.foregroundEnded() }
+        if (!isChangingConfigurations) { showPermissionExplanation = false; model.foregroundEnded(); if (diagnosticScreen) diagnosticModel.backgroundEnded() }
         super.onStop()
     }
 }

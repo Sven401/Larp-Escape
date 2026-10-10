@@ -1,0 +1,1053 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Larp Escape hardware diagnostic contract v1 (narrow pilot)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "kind",
+    "evidence",
+    "runId",
+    "deviceId",
+    "bootId",
+    "appVersion",
+    "firmware",
+    "startedUtc",
+    "endedUtc",
+    "clock",
+    "capabilities",
+    "grant",
+    "tools",
+    "media",
+    "steps"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "kind": {
+      "const": "diagnostic_report"
+    },
+    "evidence": {
+      "enum": [
+        "synthetic",
+        "device_and_user"
+      ]
+    },
+    "runId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "deviceId": {
+      "type": "string",
+      "pattern": "^[0-9A-F]{32}$",
+      "not": {
+        "const": "00000000000000000000000000000000"
+      }
+    },
+    "bootId": {
+      "type": "string",
+      "pattern": "^[0-9A-F]{16}$",
+      "not": {
+        "const": "0000000000000000"
+      }
+    },
+    "appVersion": {
+      "type": "string",
+      "maxLength": 64
+    },
+    "firmware": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "role",
+            "deviceId",
+            "version",
+            "source"
+          ],
+          "properties": {
+            "role": {
+              "enum": [
+                "box",
+                "receiver"
+              ]
+            },
+            "deviceId": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[0-9A-F]{32}$",
+                  "not": {
+                    "const": "00000000000000000000000000000000"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "version": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 64
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "enum": [
+                "device",
+                "unavailable",
+                "synthetic"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "role",
+            "deviceId",
+            "version",
+            "source"
+          ],
+          "properties": {
+            "role": {
+              "enum": [
+                "box",
+                "receiver"
+              ]
+            },
+            "deviceId": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[0-9A-F]{32}$",
+                  "not": {
+                    "const": "00000000000000000000000000000000"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "version": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 64
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "enum": [
+                "device",
+                "unavailable",
+                "synthetic"
+              ]
+            }
+          }
+        }
+      ],
+      "items": false,
+      "minItems": 2
+    },
+    "startedUtc": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+    },
+    "endedUtc": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+    },
+    "clock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "appUtcSource",
+        "deviceTime",
+        "uncertaintyMs"
+      ],
+      "properties": {
+        "appUtcSource": {
+          "enum": [
+            "system_clock",
+            "synthetic"
+          ]
+        },
+        "deviceTime": {
+          "const": "boot_monotonic_ms"
+        },
+        "uncertaintyMs": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4294967295
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "capabilities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operations",
+        "wakeChannels",
+        "ledIndices",
+        "maxGrantMs",
+        "maxStepMs",
+        "hardwareProfileRevision",
+        "source",
+        "polaritySource"
+      ],
+      "properties": {
+        "operations": {
+          "const": [
+            "wake_capture",
+            "led_single"
+          ]
+        },
+        "wakeChannels": {
+          "const": [
+            1
+          ]
+        },
+        "ledIndices": {
+          "const": [
+            0
+          ]
+        },
+        "maxGrantMs": {
+          "const": 60000
+        },
+        "maxStepMs": {
+          "const": 10000
+        },
+        "hardwareProfileRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "source": {
+          "enum": [
+            "device",
+            "synthetic"
+          ]
+        },
+        "polaritySource": {
+          "enum": [
+            "configured_unverified",
+            "synthetic"
+          ]
+        }
+      }
+    },
+    "grant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "runId",
+        "grantId",
+        "issuedDeviceMs",
+        "expiresDeviceMs",
+        "endedReason"
+      ],
+      "properties": {
+        "runId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "grantId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "issuedDeviceMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "expiresDeviceMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "endedReason": {
+          "enum": [
+            "completed",
+            "cancelled",
+            "disconnected",
+            "expired",
+            "app_restarted",
+            "device_restarted",
+            "rights_revoked"
+          ]
+        }
+      }
+    },
+    "tools": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "available",
+          "detail"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "available": {
+            "type": "boolean"
+          },
+          "detail": {
+            "type": "string",
+            "maxLength": 256
+          }
+        }
+      },
+      "maxItems": 16
+    },
+    "media": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "relativePath",
+          "sha256"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "relativePath": {
+            "type": "string",
+            "pattern": "^media/[A-Za-z0-9_-]+\\.(png|jpg|mp4)$"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      },
+      "maxItems": 16
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/step"
+      },
+      "maxItems": 128
+    }
+  },
+  "$defs": {
+    "request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "kind",
+        "runId",
+        "stepId",
+        "deviceId",
+        "bootId",
+        "grantId",
+        "operation",
+        "timeoutMs",
+        "parameters"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": 1
+        },
+        "kind": {
+          "const": "diagnostic_request"
+        },
+        "runId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "stepId": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "deviceId": {
+          "type": "string",
+          "pattern": "^[0-9A-F]{32}$",
+          "not": {
+            "const": "00000000000000000000000000000000"
+          }
+        },
+        "bootId": {
+          "type": "string",
+          "pattern": "^[0-9A-F]{16}$",
+          "not": {
+            "const": "0000000000000000"
+          }
+        },
+        "grantId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "operation": {
+          "enum": [
+            "wake_capture",
+            "led_single"
+          ]
+        },
+        "timeoutMs": {
+          "type": "integer",
+          "minimum": 1000,
+          "maximum": 10000
+        },
+        "parameters": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "channel"
+              ],
+              "properties": {
+                "channel": {
+                  "const": 1
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "index",
+                "rgb",
+                "holdMs"
+              ],
+              "properties": {
+                "index": {
+                  "const": 0
+                },
+                "rgb": {
+                  "const": [
+                    16,
+                    0,
+                    0
+                  ]
+                },
+                "holdMs": {
+                  "const": 500
+                }
+              }
+            }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "operation": {
+                "const": "wake_capture"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "parameters": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "channel"
+                ],
+                "properties": {
+                  "channel": {
+                    "const": 1
+                  }
+                }
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "parameters": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "index",
+                  "rgb",
+                  "holdMs"
+                ],
+                "properties": {
+                  "index": {
+                    "const": 0
+                  },
+                  "rgb": {
+                    "const": [
+                      16,
+                      0,
+                      0
+                    ]
+                  },
+                  "holdMs": {
+                    "const": 500
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "reply": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "kind",
+        "runId",
+        "stepId",
+        "deviceId",
+        "bootId",
+        "grantId",
+        "operation",
+        "outcome",
+        "reason",
+        "startedDeviceMs",
+        "endedDeviceMs",
+        "telemetry"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": 1
+        },
+        "kind": {
+          "const": "diagnostic_reply"
+        },
+        "runId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "stepId": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "deviceId": {
+          "type": "string",
+          "pattern": "^[0-9A-F]{32}$",
+          "not": {
+            "const": "00000000000000000000000000000000"
+          }
+        },
+        "bootId": {
+          "type": "string",
+          "pattern": "^[0-9A-F]{16}$",
+          "not": {
+            "const": "0000000000000000"
+          }
+        },
+        "grantId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "operation": {
+          "enum": [
+            "wake_capture",
+            "led_single"
+          ]
+        },
+        "outcome": {
+          "enum": [
+            "completed",
+            "failed",
+            "cancelled",
+            "rejected"
+          ]
+        },
+        "reason": {
+          "enum": [
+            "none",
+            "owner_error",
+            "unsupported",
+            "permission_denied",
+            "expired",
+            "busy",
+            "cancelled",
+            "overflow"
+          ]
+        },
+        "startedDeviceMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "endedDeviceMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "telemetry": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "edges",
+                "overflow",
+                "activeLevel"
+              ],
+              "properties": {
+                "edges": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "channel",
+                      "active",
+                      "deviceMs",
+                      "rawHigh"
+                    ],
+                    "properties": {
+                      "channel": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 4
+                      },
+                      "deviceMs": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "active": {
+                        "type": "boolean"
+                      },
+                      "rawHigh": {
+                        "type": "boolean"
+                      }
+                    }
+                  },
+                  "maxItems": 64
+                },
+                "overflow": {
+                  "type": "boolean"
+                },
+                "activeLevel": {
+                  "enum": [
+                    "high",
+                    "low"
+                  ]
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "renderCalls",
+                "restoredOff",
+                "supplyMillivolts"
+              ],
+              "properties": {
+                "renderCalls": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 2
+                },
+                "restoredOff": {
+                  "type": "boolean"
+                },
+                "supplyMillivolts": {
+                  "anyOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 65535
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "const": "completed"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "reason": {
+                "const": "none"
+              },
+              "telemetry": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "edges",
+                      "overflow",
+                      "activeLevel"
+                    ],
+                    "properties": {
+                      "edges": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "channel",
+                            "active",
+                            "deviceMs",
+                            "rawHigh"
+                          ],
+                          "properties": {
+                            "channel": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 4
+                            },
+                            "deviceMs": {
+                              "type": "integer",
+                              "minimum": 0,
+                              "maximum": 9007199254740991
+                            },
+                            "active": {
+                              "type": "boolean"
+                            },
+                            "rawHigh": {
+                              "type": "boolean"
+                            }
+                          }
+                        },
+                        "maxItems": 64
+                      },
+                      "overflow": {
+                        "type": "boolean"
+                      },
+                      "activeLevel": {
+                        "enum": [
+                          "high",
+                          "low"
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "renderCalls",
+                      "restoredOff",
+                      "supplyMillivolts"
+                    ],
+                    "properties": {
+                      "renderCalls": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 2
+                      },
+                      "restoredOff": {
+                        "type": "boolean"
+                      },
+                      "supplyMillivolts": {
+                        "anyOf": [
+                          {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 65535
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "reason": {
+                "not": {
+                  "const": "none"
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operation": {
+                "const": "wake_capture"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "telemetry": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "edges",
+                      "overflow",
+                      "activeLevel"
+                    ],
+                    "properties": {
+                      "edges": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "channel",
+                            "active",
+                            "deviceMs",
+                            "rawHigh"
+                          ],
+                          "properties": {
+                            "channel": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 4
+                            },
+                            "deviceMs": {
+                              "type": "integer",
+                              "minimum": 0,
+                              "maximum": 9007199254740991
+                            },
+                            "active": {
+                              "type": "boolean"
+                            },
+                            "rawHigh": {
+                              "type": "boolean"
+                            }
+                          }
+                        },
+                        "maxItems": 64
+                      },
+                      "overflow": {
+                        "type": "boolean"
+                      },
+                      "activeLevel": {
+                        "enum": [
+                          "high",
+                          "low"
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "telemetry": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "renderCalls",
+                      "restoredOff",
+                      "supplyMillivolts"
+                    ],
+                    "properties": {
+                      "renderCalls": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 2
+                      },
+                      "restoredOff": {
+                        "type": "boolean"
+                      },
+                      "supplyMillivolts": {
+                        "anyOf": [
+                          {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 65535
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "step": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "request",
+        "state",
+        "startedUtc",
+        "endedUtc",
+        "deviceReply",
+        "ignoredReplies",
+        "observation",
+        "verdict"
+      ],
+      "properties": {
+        "request": {
+          "$ref": "#/$defs/request"
+        },
+        "state": {
+          "enum": [
+            "pending",
+            "finished",
+            "not_tested",
+            "timeout",
+            "cancelled",
+            "disconnected",
+            "app_restarted",
+            "device_restarted"
+          ]
+        },
+        "startedUtc": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+        },
+        "endedUtc": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "deviceReply": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/reply"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "ignoredReplies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/reply"
+          },
+          "maxItems": 16
+        },
+        "observation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "source",
+            "result",
+            "expected",
+            "actual",
+            "recordedUtc",
+            "mediaIds"
+          ],
+          "properties": {
+            "source": {
+              "const": "user"
+            },
+            "result": {
+              "enum": [
+                "matches",
+                "mismatch",
+                "not_observed"
+              ]
+            },
+            "expected": {
+              "type": "string",
+              "maxLength": 256
+            },
+            "actual": {
+              "type": "string",
+              "maxLength": 256
+            },
+            "recordedUtc": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "mediaIds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 64
+              },
+              "maxItems": 16
+            }
+          }
+        },
+        "verdict": {
+          "enum": [
+            "passed",
+            "failed",
+            "unclear",
+            "not_tested"
+          ]
+        }
+      }
+    }
+  }
+}

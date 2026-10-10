@@ -54,6 +54,12 @@ Testlauf statt eines UP-TO-DATE-Ergebnisses:
 
 ## Debug-Labor und Release
 
+Debug enthält zusätzlich einen vom Nutzer selbst bedienbaren
+[Diagnoseablauf als ausdrücklich gekennzeichnete Simulation](DIAGNOSTIC-V1.md)
+für Wake-Eingang 1 und einen LED-Einzelschritt. Geräteantworten und
+Nutzerbeobachtungen bleiben getrennt; Journal, Unterbrechung und Berichtexport
+sind lokal. Der echte Firmware-/GATT-Anschluss und die Hardwareabnahme sind offen.
+
 `BuildConfig.ALLOW_CONTRACT_LAB` ist in Debug `true`, in Release `false`.
 Debug darf den markierten Laborservice lesen. Release lehnt reine
 Laborgeräte bei der Dienstprüfung ab und verwendet auch bei gemeinsam

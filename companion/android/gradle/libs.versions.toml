@@ -11,6 +11,7 @@ lifecycle-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", v
 lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version = "1.9.0" }
 junit = { module = "junit:junit", version = "4.13.2" }
+gson = { module = "com.google.code.gson:gson", version = "2.10.1" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
