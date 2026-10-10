@@ -27,8 +27,8 @@
       "path": "companion/android/.gitignore",
       "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
       "sourceSha256": "e7d4a4d6520c8cd8eaa48a1bb5001780ab6d56b09a090290c37967de7a8d0695",
-      "packageSha256": "e7d4a4d6520c8cd8eaa48a1bb5001780ab6d56b09a090290c37967de7a8d0695",
-      "changedForPackage": false
+      "packageSha256": "e872c8feba0be2ebc314431f67cd225830dc5c485b45f4972ee63a9deb2a1571",
+      "changedForPackage": true
     },
     {
       "path": "companion/android/README.md",
