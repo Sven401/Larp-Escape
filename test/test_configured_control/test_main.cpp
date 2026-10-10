@@ -59,6 +59,7 @@
 // Actual ESP file adapters under an isolated deterministic VFS model.
 #include "ProfileFileVfs.h"
 // Actual identity persistence/entropy adapters under deterministic SDK models.
+#include "../../lib/Esp32CompanionIdentityOwner/Esp32CompanionIdentityOwner.cpp"
 #include "../../lib/Esp32PeerRegistryStore/Esp32PeerRegistryStore.cpp"
 #include "DeviceIdentityNvsModel.h"
 #include "PeerRegistryNvsModel.h"
@@ -978,6 +979,7 @@ void test_profile_capability_fixture_matches_firmware_encoder() {
 // File cases use original Raw/Owner/response helpers and actual ESP VFS adapters.
 #include "ProfileFileCases.h"
 // Persistent public labels reuse policy and actual NVS adapter helpers.
+#include "CompanionIdentityOwnerCases.h"
 #include "DeviceIdentityStoreCases.h"
 // Application file ownership uses actual ESP/source/control helpers above.
 #include "ApplicationProfileStagingCases.h"
@@ -1284,6 +1286,10 @@ int main() {
     RUN_TEST(test_device_identity_actual_nvs_set_or_commit_uncertain_stays_closed);
     RUN_TEST(test_device_identity_actual_nvs_freezes_record_and_serializes_other_instance);
     RUN_TEST(test_device_identity_startup_entropy_call_order_and_zero_target_preservation);
+    RUN_TEST(test_product_identity_startup_create_restart_and_no_authority);
+    RUN_TEST(test_product_identity_failed_store_is_terminal_without_erase_or_retry);
+    RUN_TEST(test_product_identity_uncertain_commit_and_corrupt_record_never_publish);
+    RUN_TEST(test_product_identity_reentry_and_zero_entropy_stay_closed);
     RUN_TEST(test_public_device_identity_persistence_never_opens_game_authority);
     RUN_TEST(test_application_file_owner_spans_receive_seal_read_and_cleanup);
     RUN_TEST(test_application_file_running_refuses_all_backend_io_preserves_game);

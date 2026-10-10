@@ -5,6 +5,7 @@
 #include "ArduinoClock.h"
 #include "CompanionStatusStore.h"
 #include "DFMinniHandler.h"
+#include "Esp32CompanionIdentityOwner.h"
 #include "EspNowCommunicator.h"
 #include "EspNowRuntime.h"
 #include "FastLED.h"
@@ -52,6 +53,7 @@ EspNowCommunicator communicator(receiverMAC);
 EspNowRuntime communicationRuntime(receiverMAC);
 SerialGameDiagnostics gameDiagnostics;
 CompanionStatusStore companionStatus;
+Esp32CompanionIdentityOwner companionIdentity;
 ReichstagGame game(nfcReader, keymatrix, keymatrix, dfmHandler, gameClock, gameLightEffects,
                    communicator, &gameDiagnostics);
 larp::application::LarpEscapeApp app(game, dfmHandler, communicationRuntime, companionStatus);
@@ -61,6 +63,11 @@ std::uint32_t lastRuntimeReportMilliseconds = 0U;
 
 void setup() {
     Serial.begin(115200);
+    // Startup entropy runs before radio and device workers. An unavailable
+    // companion identity leaves standalone play running and never erases NVS.
+    const auto companionIdentityState = companionIdentity.begin();
+    Serial.print("Companion identity state (BLE/diagnosis disabled): ");
+    Serial.println(static_cast<unsigned>(companionIdentityState));
     Wire.begin();
     Serial.println("Beginning");
     if (!keymatrix.begin()) {
