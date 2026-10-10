@@ -1,9 +1,10 @@
 # Hardwareabnahme der Originalbox – laufender Prüfbericht
 
 Stand: 10. Oktober 2026. Produktzweig `codex/reichstagsbox-diagnostics` auf
-`5d3779eb99516bcf6c73ae519d7da36e480636dc` zu Beginn. Die eigenständigen
-Diagnosequellen sind noch Arbeitsbaumänderungen. Der Bericht wird nach den
-physischen Prüfungen ergänzt; offene Zeilen sind keine bestandene Abnahme.
+`5d3779eb99516bcf6c73ae519d7da36e480636dc` zu Beginn. Diagnosequellen
+und Bericht wurden lokal in `b156365` versioniert; der sichtbare LED-Ausfall
+und die Unterbrechung in `0b89ba7`. Der Bericht wird nach den physischen
+Prüfungen ergänzt; offene Zeilen sind keine bestandene Abnahme.
 
 ## Geräte und Rückwege
 
@@ -42,7 +43,7 @@ nicht zur Verfügung; der Powerbank-Start ist optisch nicht separat bestätigt.
 | --- | --- | --- |
 | Vier Aufweckeingänge | Vier inaktive Startpegel. Nach dem Funklauf erschienen Wechsel an Eingang 1 und 3. Der Nutzer könnte beide beim Anschluss der zusätzlichen Versorgung berührt haben; Zuordnung daher unklar. | Dreimalige Einzelbetätigung, Freigabe und Kombinationen offen; keine Zuordnungsfreigabe. |
 | 9×9-Matrix | Diagnose scannt 81 Koordinaten und protokolliert Down/Up. | Tatsächliche Betätigung und Abgleich mit physischer Koordinate aller erreichbaren Felder offen. |
-| PN532 Lesen/Schreiben | Schreibpfad ist auf erkannte NTAG213/215/216, identische zuvor gelesene 7-Byte-UID und Nutzdatenseite 4 beschränkt. A=`4C413031`, B=`4C423032`; pro explizitem Auftrag START und VERIFIZIERT/UNKLAR, kein automatischer Schreibversuch. Beim ersten Start meldete PN532 Firmware 1.6 und war bereit; nach weiteren Versuchen schwankte der Start zwischen `firmware=32010607 sam=1 ready=1` und `firmware=00000000 sam=0 ready=0`, auch ohne Audio-Versorgung. Zwei Tags lieferten zunächst keine UID. Nach Korrektur der Lesefolge: mit Tag 2 `detection_frame_failed`, beim zweiten Versuch `detection_start_failed`. Nach vollständiger USB-Stromtrennung ohne Tag meldete PN532 erneut `ready=1`; Tag 2 danach wieder `detection_frame_failed` und `detection_start_failed`. Ein Statusbefehl zeigt nur den beim Boot gespeicherten Bereitschaftswert und ist nach einem Laufzeitfehler kein neuer Hardwaretest. | NFC-Leseantwort genauer instrumentieren und Hardware-/Versorgungslage klären. A/B-Rücklesen, Entfernen/Wiederauflegen und Neustart offen. Kein Tag wurde beschrieben. |
+| PN532 Lesen/Schreiben | Schreibpfad ist auf erkannte NTAG213/215/216, identische zuvor gelesene 7-Byte-UID und Nutzdatenseite 4 beschränkt. A=`4C413031`, B=`4C423032`; pro explizitem Auftrag START und VERIFIZIERT/UNKLAR, kein automatischer Schreibversuch. Beim ersten Start meldete PN532 Firmware 1.6 und war bereit; nach weiteren Versuchen schwankte der Start zwischen `firmware=32010607 sam=1 ready=1` und `firmware=00000000 sam=0 ready=0`, auch ohne Audio-Versorgung. Zwei Tags lieferten zunächst keine UID. Nach Änderung der Lesefolge: mit Tag 2 `detection_frame_failed`, beim zweiten Versuch `detection_start_failed`. Nach vollständiger USB-Stromtrennung ohne Tag meldete PN532 erneut `ready=1`; Tag 2 danach wieder `detection_frame_failed` und `detection_start_failed`. Die anfängliche Erklärung, die Bibliothek lese vor Bereitschaft, war unbelegt: `readPassiveTargetID()` wartet über `sendCommandCheckAck()` bereits auf Bereitschaft. Die geänderte Folge ist keine nachgewiesene Fehlerbehebung. Ein Statusbefehl zeigt nur den beim Boot gespeicherten Bereitschaftswert und ist nach einem Laufzeitfehler kein neuer Hardwaretest. | NFC-Leseantwort genauer instrumentieren und Hardware-/Versorgungslage klären. A/B-Rücklesen, Entfernen/Wiederauflegen und Neustart offen. Kein Tag wurde beschrieben. |
 | 23 LEDs | Erster Lauf: 69 serielle Einzelkommandos 0–22 je RGB, maximal 2.066 µs `FastLED.show()`. Gruppen 0–7 rot, 8–15 grün, 16–22 blau und Helligkeiten 16/32/48/64/80 kommandiert. Wiederholung bei laufender Handykamera: erneut 69 Einzelkommandos sowie Gruppen und Helligkeiten, maximal 2.047 µs, 5 V/1 A Leistungslimit aktiv. Der Nutzer sah **keinerlei Änderung an der echten Box**. Das Foto danach zeigt viele unverändert hell/weiß wirkende Lichtpunkte. Dieselben Punkte waren laut Nutzer schon vor dem Diagnose-Upload dauerhaft an; eine eigene LED-Versorgung gibt es nicht. Die Diagnose verwendet wie die Spiel-Firmware WS2811/GRB an ESP32-GPIO 15. FastLED meldet dabei den generischen Clockless-Treiber mit möglicher Timingabweichung. | **Sichtbare LED-Ansteuerung nicht bestanden.** Serielle Kommandos und Renderzeit belegen kein elektrisches Datensignal und keine Farbänderung. Der dauerhaft helle Zustand ist vorbestehend, nicht erst im Diagnoselauf aufgetreten. Ursache noch offen: GPIO-Ausgabe beziehungsweise Treiber-Timing, Datenleitung/erste LED, reale Verdrahtung, LED-Typ/Protokoll oder Versorgung. Keine Spannung gemessen; keine feste Frame-Deadline in der Diagnose. Keine weiteren LED-Tests bis zur Eingrenzung. |
 | DFPlayer/SD/Lautsprecher | Track 100 zweimal ohne Modulversorgung angefordert; BUSY wurde beide Male für rund 504 ms aktiv. Der Nutzer stellte anschließend die fehlende Versorgung fest. Nach bestätigter Versorgung und Neustart: zweimal Track 100 angefordert, BUSY blieb inaktiv. Nutzer hörte keinen Ton; SD-Karte sitzt, DFPlayer-Power-LED leuchtet. | Kein positiver Audiotest. UART/Playerstatus, Dateibestand und Versorgung unter Last klären. |
 | ESP-NOW | Empfänger USB-Start und leerer Speicherbericht bestätigt. Lauf `0000202610100001`: 10/10 korrelierte ACKs, null lokale Sendefehler. Lauf `0000202610100002` an ca. 2 m ohne Hindernisse: 10/10 korrelierte ACKs, null lokale Sendefehler. ACK wird im Empfänger erst nach bestätigter NVS-Speicherung erzeugt. | Empfänger nach Funklauf wieder per USB auslesen und gespeicherte Nummern/Dubletten abgleichen. Powerbank-Bereitschafts-LED fehlt. |
@@ -86,10 +87,11 @@ Seitdem wurde kein weiterer Hardwarelauf ausgelöst und keine Firmware geladen.
 Die Diagnose der aktuellen LED-Lage erfolgte anhand des vorhandenen Fotos,
 der bisherigen Rohlogs und der lokalen Quell-/Treiberstände.
 
-Wake- und Matrixbetätigungen, NFC-A/B-Abfolge, hör- und sichtbare Beobachtung,
-Empfänger-USB-Bericht, drei Kaltstarts und gemeinsamer längerer Lauf. Nicht
-gemessene Versorgungsspannung und fehlende Videoaufnahme bleiben ausdrücklich
-**nicht geprüft**. Die Diagnose-Firmware bleibt bis zu einer ausdrücklichen
+Wake- und Matrixbetätigungen, NFC-A/B-Abfolge, positive Audio-Beobachtung,
+Empfänger-USB-Bericht, drei Kaltstarts und gemeinsamer längerer Lauf. Die
+Handyaufnahme wurde angekündigt, aber als Datei nicht übergeben oder ausgewertet.
+Nicht gemessene Versorgungsspannung und die ausstehende Videoauswertung bleiben
+ausdrücklich **nicht geprüft**. Die Diagnose-Firmware bleibt bis zu einer ausdrücklichen
 Restore-Aufforderung auf der Box.
 
 NFC-Seitengrenze und GET_VERSION-Auswertung beruhen auf dem
