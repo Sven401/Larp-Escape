@@ -183,6 +183,26 @@ struct SecurityFixture : RegistryActorFixture {
                       access.authenticate(original.connection, evidence));
     }
 };
+void test_security_source_hci_birth_is_current_and_recycled_handle_stays_closed() {
+    SecurityFixture fixture;
+    TEST_ASSERT_TRUE(fixture.source.hciEncryptionNow(0x123, 0, 1));
+    TEST_ASSERT_FALSE(fixture.source.hciEncryptionNow(0x124, 0, 1));
+    TEST_ASSERT_FALSE(fixture.source.hciEncryptionNow(0x123, 1, 1));
+    TEST_ASSERT_FALSE(fixture.source.hciEncryptionNow(0x123, 0, 0));
+    fixture.close();
+    fixture.actor();
+    TEST_ASSERT_FALSE(fixture.source.hciEncryptionNow(0x123, 0, 1));
+    (void)fixture.open();
+    fixture.actor();
+    TEST_ASSERT_FALSE(fixture.source.hciEncryptionNow(0x123, 0, 1));
+    fixture.close();
+    host_sdk_security::hci = 0x124;
+    (void)fixture.open();
+    fixture.actor();
+    TEST_ASSERT_TRUE(fixture.source.hciEncryptionNow(0x124, 0, 1));
+    host_sdk_security::hci = 0x125;
+    TEST_ASSERT_FALSE(fixture.source.hciEncryptionNow(0x124, 0, 1));
+}
 void test_security_source_original_callbacks_forward_without_roles_and_reader_needs_start() {
     SecurityFixture fixture;
     TEST_ASSERT_FALSE(fixture.read());
@@ -375,6 +395,7 @@ void test_security_source_legacy_cancel_timeout_and_restored_bond_cannot_prove_s
 void test_security_source_stale_proof_binding_never_queries_sdk() {
     SecurityFixture fixture;
     fixture.pair();
+    const auto connectionReads = host_sdk_security::connections;
     for (unsigned variant = 0; variant < 7; ++variant) {
         auto wrong = fixture.original;
         if (variant == 0)
@@ -394,7 +415,7 @@ void test_security_source_stale_proof_binding_never_queries_sdk() {
         OriginalPeerSecurity out;
         TEST_ASSERT_FALSE(fixture.source.readOriginalPeerSecurityNow(wrong, out));
     }
-    TEST_ASSERT_EQUAL(0, host_sdk_security::connections);
+    TEST_ASSERT_EQUAL(connectionReads, host_sdk_security::connections);
     fixture.io();
     registryOutcome(PeerRegistryOutcome::Pending,
                     fixture.owner.replaceTrusted(1, registryValue(2, false)));
@@ -406,7 +427,7 @@ void test_security_source_stale_proof_binding_never_queries_sdk() {
     registryOutcome(PeerRegistryOutcome::Saved, fixture.pump());
     fixture.actor();
     TEST_ASSERT_FALSE(fixture.read());
-    TEST_ASSERT_EQUAL(0, host_sdk_security::connections);
+    TEST_ASSERT_EQUAL(connectionReads, host_sdk_security::connections);
 }
 void test_security_source_sdk_registration_failure_is_closed_without_retry() {
     RegistryActorFixture fixture;

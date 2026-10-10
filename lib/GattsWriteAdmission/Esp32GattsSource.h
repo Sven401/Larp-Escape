@@ -1,6 +1,7 @@
 #pragma once
 #include "Companion/PeerAuthResult.h"
 #include "Companion/PeerChallengeIssue.h"
+#include "Companion/PeerHciBirthWitness.h"
 #include "Companion/PeerLinkSecurity.h"
 #include "Companion/PeerProof.h"
 #include "Companion/PeerProofGrant.h"
@@ -60,6 +61,10 @@ class Esp32GattsSource : public IGattsResponseContext,
                                         std::uint16_t packedConnection, bool connected) noexcept;
     // Sole source actor only; original closed token for subsequent peer verification.
     bool originalConnectionNow(BoundConnection &) const noexcept;
+    // BTU-only current-birth comparison; does not retain an encryption result.
+    // The security hook has multiple SDK callers. This is neither evidence of
+    // event kind, selected bond mode nor authorization, including after failure.
+    bool hciEncryptionNow(std::uint16_t, std::uint8_t, std::uint8_t) noexcept;
     // Crypto-worker read: copied original connection and current owned policy.
     bool closedPeerConnectionCurrent(const PeerProofBinding &) const noexcept;
     // Earliest original SMP actor callback, before the existing BTM callback.
@@ -163,6 +168,7 @@ class Esp32GattsSource : public IGattsResponseContext,
     BoundConnection connection_;
     IdentityAccessSnapshot identitySnapshot_;
     PeerLinkSecurity linkSecurity_;
+    PeerHciBirthWitness hciBirth_;
     bool smpForwarding_ = false;
     bool peerProofOpen_ = false;
     void *sdkThread_ = nullptr;
@@ -189,5 +195,6 @@ class Esp32GattsSource : public IGattsResponseContext,
 // Before SDK initialization; single process-lifetime instance/application.
 // Successful arming is not registration, service creation, BLE start or identity.
 bool armGattsSourceBeforeSdkStart(std::uint16_t application, Esp32GattsSource &) noexcept;
+bool observeGattsHciEncryptionNow(std::uint16_t, std::uint8_t, std::uint8_t) noexcept;
 } // namespace companion
 } // namespace larp

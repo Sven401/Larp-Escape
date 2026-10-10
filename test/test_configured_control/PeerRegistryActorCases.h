@@ -528,6 +528,9 @@ void registryActorCryptoVertical(bool sdkSecurity, bool asyncGrant = false) {
     context.original.registration = reg.token;
     context.original.interface = reg.interface;
     context.original.connection = fixture.open();
+    // The security observation below counts admission reads; connection-birth
+    // capture has its own GATT lookup before the proof/security operation starts.
+    const auto birthConnectionReads = host_sdk_security::connections;
     if (sdkSecurity) {
         fixture.actor();
         sdk446::SmpData data = {};
@@ -691,7 +694,7 @@ void registryActorCryptoVertical(bool sdkSecurity, bool asyncGrant = false) {
     if (sdkSecurity) {
         TEST_ASSERT_EQUAL(1, host_sdk_security::registrations);
         TEST_ASSERT_EQUAL(3, host_sdk_security::forwarded);
-        TEST_ASSERT_EQUAL(1, host_sdk_security::connections);
+        TEST_ASSERT_EQUAL(birthConnectionReads + 1, host_sdk_security::connections);
         TEST_ASSERT_EQUAL(1, host_sdk_security::flagReads);
         TEST_ASSERT_EQUAL(1, host_sdk_security::stateReads);
         TEST_ASSERT_EQUAL(2, host_sdk_security::runningReads);

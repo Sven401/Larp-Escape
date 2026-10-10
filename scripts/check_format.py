@@ -49,6 +49,7 @@ ADAPTER_FILES = (
     "src/RuntimeProbe/main.cpp",
     "src/ProfileRuntimeProbe/main.cpp",
     "src/GattsAbiProbe/main.cpp",
+    "src/GattsAbiProbe/F1EncryptAbi.cpp",
     "lib/GattsWriteAdmission/GattsWriteAdmission.h",
     "lib/GattsWriteAdmission/GattsWriteAdmission.cpp",
     "lib/GattsWriteAdmission/SdkGattsWrite.h",

@@ -17,6 +17,7 @@ using larp::companion::sdk446::SmpCallback;
 SmpCallback callback = nullptr;
 std::array<std::uint8_t, 6> address = {{1, 2, 3, 4, 5, 6}};
 std::uint16_t packed = 257;
+std::uint16_t hci = 0x123;
 std::uint8_t interface = 1, transport = 2, flags = 0x16, state = 5, keyBytes = 16;
 bool registerResult = true, connectionResult = true, flagsResult = true, stateResult = true,
      running = false;
@@ -29,10 +30,13 @@ void (*beforeForward)() = nullptr;
 void (*beforeConnection)() = nullptr;
 void (*beforeFlags)(std::uint8_t *) = nullptr;
 void (*beforeState)(std::uint8_t *) = nullptr;
+void (*beforeHci)(std::uint8_t *) = nullptr;
+unsigned hciReads = 0;
 void reset() {
     callback = nullptr;
     address = {{1, 2, 3, 4, 5, 6}};
     packed = 257;
+    hci = 0x123;
     interface = 1;
     transport = 2;
     flags = 0x16;
@@ -46,7 +50,8 @@ void reset() {
     lastAddress = nullptr;
     lastData = nullptr;
     beforeForward = beforeConnection = nullptr;
-    beforeFlags = beforeState = nullptr;
+    beforeFlags = beforeState = beforeHci = nullptr;
+    hciReads = 0;
 }
 std::uint8_t original(std::uint8_t event, std::uint8_t *addr,
                       larp::companion::sdk446::SmpData *data) {
@@ -121,6 +126,18 @@ bool BTM_GetLeSecurityState(std::uint8_t *address, std::uint8_t *state, std::uin
     *state = host_sdk_security::state;
     *keyBytes = host_sdk_security::keyBytes;
     return true;
+}
+std::uint16_t BTM_GetHCIConnHandle(std::uint8_t *address, std::uint8_t transport) {
+    using namespace host_sdk_security;
+    query();
+    ++hciReads;
+    if (beforeHci) {
+        auto hook = beforeHci;
+        beforeHci = nullptr;
+        hook(address);
+    }
+    return transport == 2 && !std::memcmp(address, host_sdk_security::address.data(), 6) ? hci
+                                                                                         : 0xffff;
 }
 bool BTM_BleSecurityProcedureIsRunning(std::uint8_t *address) {
     using namespace host_sdk_security;

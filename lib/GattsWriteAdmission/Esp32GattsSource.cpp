@@ -752,6 +752,7 @@ GattsLifecycleOutcome Esp32GattsSource::connectionNow(std::uint8_t interface,
         registryFenced_ = true;
     portEXIT_CRITICAL(&mutex_);
     linkSecurity_.close();
+    hciBirth_.close();
     if (!lifetimeAvailable) {
         const auto original = connection_;
         const bool wasActive = active_;
@@ -776,6 +777,19 @@ GattsLifecycleOutcome Esp32GattsSource::connectionNow(std::uint8_t interface,
             peerProofOpen_ =
                 identitySnapshot_.proofAllowed && identitySnapshot_.connection == opened;
             portEXIT_CRITICAL(&mutex_);
+            PeerTransportBinding birth, after;
+            std::array<std::uint8_t, 6> observedAddress = {};
+            std::uint8_t observedInterface = 0, transport = 0;
+            auto lookupAddress = event.peerAddress;
+            if (smpRegistered && transportNow(birth) &&
+                GATT_GetConnectionInfor(opened.handle, &observedInterface, observedAddress.data(),
+                                        &transport) &&
+                observedInterface == interface && transport == 2 &&
+                observedAddress == event.peerAddress && transportNow(after) && after == birth) {
+                const auto hci = BTM_GetHCIConnHandle(lookupAddress.data(), 2);
+                if (lookupAddress == event.peerAddress && transportNow(after) && after == birth)
+                    (void)hciBirth_.capture(birth, hci);
+            }
         } else if (outcome == GattsLifecycleOutcome::Conflict) {
             active_ = false;
             connection_ = {};
@@ -796,6 +810,21 @@ bool Esp32GattsSource::originalConnectionNow(BoundConnection &destination) const
         return false;
     destination = connection_;
     return true;
+}
+bool Esp32GattsSource::hciEncryptionNow(std::uint16_t hciHandle, std::uint8_t status,
+                                        std::uint8_t enabled) noexcept {
+    PeerTransportBinding birth, after;
+    if (!sourceTask() || !transportNow(birth) || !hciBirth_.matches(birth, hciHandle) ||
+        status != 0 || enabled != 1)
+        return false;
+    auto address = birth.address;
+    const auto current = BTM_GetHCIConnHandle(address.data(), 2);
+    return address == birth.address && current == hciHandle && transportNow(after) &&
+           after == birth && hciBirth_.matches(after, hciHandle);
+}
+bool observeGattsHciEncryptionNow(std::uint16_t hciHandle, std::uint8_t status,
+                                  std::uint8_t enabled) noexcept {
+    return selected && selected->hciEncryptionNow(hciHandle, status, enabled);
 }
 bool Esp32GattsSource::transportNow(PeerTransportBinding &destination) const noexcept {
     if (!sourceTask() || !active_ || !owner_)

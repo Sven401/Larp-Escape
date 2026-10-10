@@ -15,6 +15,7 @@ bool __wrap_SMP_Register(larp::companion::sdk446::SmpCallback);
 bool GATT_GetConnectionInfor(std::uint16_t, std::uint8_t *, std::uint8_t *, std::uint8_t *);
 bool BTM_GetSecurityFlagsByTransport(std::uint8_t *, std::uint8_t *, std::uint8_t);
 bool BTM_GetLeSecurityState(std::uint8_t *, std::uint8_t *, std::uint8_t *);
+std::uint16_t BTM_GetHCIConnHandle(std::uint8_t *, std::uint8_t);
 }
 
 extern "C" bool BTM_BleSecurityProcedureIsRunning(std::uint8_t *);
