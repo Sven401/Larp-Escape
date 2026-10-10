@@ -994,6 +994,7 @@ void test_profile_capability_fixture_matches_firmware_encoder() {
 #include "PeerProofGrantCases.h"
 #include "PeerRegistryActorCases.h"
 #include "PeerRegistryCases.h"
+#include "PeerSmpOriginCases.h"
 } // namespace
 void setUp() {
     host_rtos::depth = 0;
@@ -1561,5 +1562,12 @@ int main() {
 #if defined(LARP_REAL_PEER_CRYPTO)
     RUN_TEST(test_auth_actual_crypto_sdk_issue_reads_proof_writes_ack_and_result_blobs);
 #endif
+    RUN_TEST(test_smp_origin_copy_before_reset_consumes_once_without_security_or_roles);
+    RUN_TEST(test_smp_origin_rejects_foreign_control_pairing_and_failure_before_reset);
+    RUN_TEST(test_smp_origin_rejects_callback_mismatch_and_all_unreviewed_mode_bytes);
+    RUN_TEST(test_smp_origin_requires_live_original_hci_scope_actor_and_birth);
+    RUN_TEST(test_smp_origin_wrong_actor_cannot_read_control_or_steal_scope);
+    RUN_TEST(test_smp_origin_actual_wrapper_forwards_pointer_callback_and_ends_scope);
+    RUN_TEST(test_smp_origin_hci_duplicate_and_second_completion_cannot_reuse_match);
     return UNITY_END();
 }

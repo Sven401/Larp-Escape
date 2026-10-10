@@ -11,6 +11,7 @@
 #include "SdkGattSourceAbi.h"
 #include "SdkHciEventAbi.h"
 #include "SdkPeerSecurityAbi.h"
+#include "SdkSmpPreResetAbi.h"
 #include <freertos/task.h>
 namespace larp {
 namespace companion {
@@ -73,6 +74,12 @@ class Esp32GattsSource : public IGattsResponseContext,
     // One matching security hook inside the same original event and birth only.
     // No selected bond-mode evidence or access rights are created.
     bool consumeHciEncryptionEventNow(std::uint16_t, std::uint8_t, std::uint8_t) noexcept;
+    // Observation only: selected callback byte came from the device record.
+    // This is NOT proof of persisted keys, full 16-bit mode or current role.
+    bool enterSmpCompletionNow(const sdk446::SmpControlBlock *) noexcept;
+    bool consumeStoredSmpCompletionNow(std::uint8_t, const std::uint8_t *,
+                                       const sdk446::SmpData *) noexcept;
+    void leaveSmpCompletionNow() noexcept;
     // Crypto-worker read: copied original connection and current owned policy.
     bool closedPeerConnectionCurrent(const PeerProofBinding &) const noexcept;
     // Earliest original SMP actor callback, before the existing BTM callback.
@@ -182,6 +189,9 @@ class Esp32GattsSource : public IGattsResponseContext,
     bool hciDispatching_ = false;
     bool hciEventAvailable_ = false;
     bool hciEventTainted_ = false;
+    bool hciEventMatched_ = false, hciSmpUsed_ = false;
+    sdk446::SmpPreReset smpPreReset_;
+    bool smpCompleting_ = false, smpCompletionAvailable_ = false, smpCompletionTainted_ = false;
     bool smpForwarding_ = false;
     bool peerProofOpen_ = false;
     void *sdkThread_ = nullptr;
@@ -211,5 +221,7 @@ bool armGattsSourceBeforeSdkStart(std::uint16_t application, Esp32GattsSource &)
 bool observeGattsHciEncryptionNow(std::uint16_t, std::uint8_t, std::uint8_t) noexcept;
 bool enterGattsHciEventNow(std::uint8_t, const sdk446::HciHeader *) noexcept;
 void leaveGattsHciEventNow() noexcept;
+bool enterGattsSmpCompletionNow(const sdk446::SmpControlBlock *) noexcept;
+void leaveGattsSmpCompletionNow() noexcept;
 } // namespace companion
 } // namespace larp

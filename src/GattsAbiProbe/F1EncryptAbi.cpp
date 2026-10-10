@@ -18,3 +18,12 @@ extern "C" void __wrap_btm_sec_encrypt_change(std::uint16_t handle, std::uint8_t
     (void)larp::companion::observeGattsHciEncryptionNow(handle, status, enabled);
     __real_btm_sec_encrypt_change(handle, status, enabled);
 }
+
+// Observe pre-reset metadata only in the pinned original call. Never retain
+// private SDK pointers or turn a stored callback mode into security/authority.
+extern "C" void __wrap_smp_proc_pairing_cmpl(larp::companion::sdk446::SmpControlBlock *control) {
+    const bool owned = larp::companion::enterGattsSmpCompletionNow(control);
+    __real_smp_proc_pairing_cmpl(control);
+    if (owned)
+        larp::companion::leaveGattsSmpCompletionNow();
+}

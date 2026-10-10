@@ -838,12 +838,14 @@ bool Esp32GattsSource::enterHciEventNow(std::uint8_t controller,
     if (!sourceTask())
         return false;
     hciEventAvailable_ = false;
+    hciEventMatched_ = false;
     if (hciDispatching_) {
         hciEventTainted_ = true;
         return false;
     }
     hciDispatching_ = true;
     hciEventTainted_ = false;
+    hciSmpUsed_ = false;
     // Conservative bounded prefix: only the pinned controller's complete,
     // zero-offset six-byte Encryption Change packet is observed. Other SDK
     // packets still go unchanged to the original dispatcher.
@@ -868,16 +870,83 @@ void Esp32GattsSource::leaveHciEventNow() noexcept {
         return;
     hciEventAvailable_ = false;
     hciDispatching_ = false;
+    hciEventMatched_ = false;
 }
 bool Esp32GattsSource::consumeHciEncryptionEventNow(std::uint16_t handle, std::uint8_t status,
                                                     std::uint8_t enabled) noexcept {
-    if (!sourceTask() || !hciDispatching_ || !hciEventAvailable_)
+    if (!sourceTask() || !hciDispatching_)
         return false;
+    if (!hciEventAvailable_) {
+        hciEventMatched_ = false;
+        return false;
+    }
     hciEventAvailable_ = false; // Consume before any SDK read or nested callback.
     PeerTransportBinding birth, after;
-    return handle == hciEventHandle_ && status == 0 && enabled == 1 && transportNow(birth) &&
-           birth == hciEventBirth_ && hciEncryptionNow(handle, status, enabled) &&
-           transportNow(after) && after == birth && !hciEventTainted_;
+    hciEventMatched_ = handle == hciEventHandle_ && status == 0 && enabled == 1 &&
+                       transportNow(birth) && birth == hciEventBirth_ &&
+                       hciEncryptionNow(handle, status, enabled) && transportNow(after) &&
+                       after == birth && !hciEventTainted_;
+    return hciEventMatched_;
+}
+bool enterGattsSmpCompletionNow(const sdk446::SmpControlBlock *control) noexcept {
+    return selected && selected->enterSmpCompletionNow(control);
+}
+void leaveGattsSmpCompletionNow() noexcept {
+    if (selected)
+        selected->leaveSmpCompletionNow();
+}
+bool Esp32GattsSource::enterSmpCompletionNow(const sdk446::SmpControlBlock *control) noexcept {
+    if (!sourceTask())
+        return false;
+    smpCompletionAvailable_ = false;
+    if (smpCompleting_) {
+        smpCompletionTainted_ = true;
+        return false;
+    }
+    smpCompleting_ = true;
+    smpCompletionTainted_ = false;
+    if (hciSmpUsed_)
+        return true;
+    hciSmpUsed_ = true;
+    PeerTransportBinding birth;
+    if (!smpRegistered || smpForwarding_ || !hciDispatching_ || !hciEventMatched_ ||
+        hciEventTainted_ || !transportNow(birth) || !(birth == hciEventBirth_))
+        return true;
+    sdk446::SmpPreReset value;
+    if (!sdk446::readSmpPreReset(control, value) || value.callback != &smpCallback ||
+        value.address != birth.address || value.status != 0 || value.overBr != 0 ||
+        value.cancelled != 0 || value.pairingMode != 0)
+        return true;
+    smpPreReset_ = value;
+    smpCompletionAvailable_ = true;
+    return true;
+}
+bool Esp32GattsSource::consumeStoredSmpCompletionNow(std::uint8_t event,
+                                                     const std::uint8_t *address,
+                                                     const sdk446::SmpData *data) noexcept {
+    if (!sourceTask() || !smpCompleting_ || !smpCompletionAvailable_)
+        return false;
+    smpCompletionAvailable_ = false;
+    if (event != 7 || !address || !data || smpForwarding_ || !hciDispatching_ ||
+        !hciEventMatched_ || hciEventTainted_ || smpCompletionTainted_)
+        return false;
+    std::array<std::uint8_t, 6> copiedAddress;
+    std::memcpy(copiedAddress.data(), address, copiedAddress.size());
+    std::uint8_t result[5];
+    std::memcpy(result, data, sizeof(result));
+    PeerTransportBinding birth, after;
+    return copiedAddress == smpPreReset_.address && result[0] == 0 &&
+           result[1] == smpPreReset_.securityLevel && result[2] == 0 && result[3] == 0 &&
+           (result[4] == 13 || result[4] == 29) && transportNow(birth) && birth == hciEventBirth_ &&
+           hciEncryptionNow(hciEventHandle_, 0, 1) && transportNow(after) && after == birth &&
+           !hciEventTainted_ && !smpCompletionTainted_;
+}
+void Esp32GattsSource::leaveSmpCompletionNow() noexcept {
+    if (!sourceTask())
+        return;
+    smpCompletionAvailable_ = false;
+    smpCompleting_ = false;
+    smpPreReset_ = {};
 }
 bool Esp32GattsSource::transportNow(PeerTransportBinding &destination) const noexcept {
     if (!sourceTask() || !active_ || !owner_)
@@ -902,6 +971,7 @@ bool Esp32GattsSource::smpEventNow(std::uint8_t event, const std::uint8_t *borro
                                    const sdk446::SmpData *borrowed) noexcept {
     if (!sourceTask() || smpForwarding_ || !smpRegistered)
         return false;
+    (void)consumeStoredSmpCompletionNow(event, borrowedAddress, borrowed);
     smpForwarding_ = true; // No security query during the original callback's forwarding.
     std::array<std::uint8_t, 6> address = {};
     if (borrowedAddress)

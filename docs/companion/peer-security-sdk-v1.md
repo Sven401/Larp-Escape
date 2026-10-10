@@ -110,3 +110,46 @@ Mux sections only copy the fixed policy snapshot; SDK calls occur outside.
 sizes/frames/builds are recorded separately in the project Werkbank. The closed
 SDK probe links the reader and wrappers but starts no SDK, pairing, radio or NVS.
 Separate target build sizes do not prove a combined production reserve.
+
+## F1 pre-reset observation (closed probe)
+
+The isolated ABI probe additionally wraps original `smp_proc_pairing_cmpl`.
+`check_f1_smp_prereset_abi.py` extracts the complete unmodified 720-byte
+`tSMP_CB`, its dependencies and the original function signature from six pinned
+IDF4.4.6 headers. Xtensa compilation verifies seven metadata offsets; the pinned
+`libbt.a` instructions independently confirm those loads and reset-before-callback
+ordering. A 32-bit host run checks the actual narrow reader against that original
+type. No private keys, nonce or OOB fields are read by the adapter.
+
+Only our registered SMP callback, successful uncancelled LE completion and zero
+fresh-pairing mode can enter the observation. It requires the original BTU actor,
+the same GATT birth and a matching successful Encryption Change dispatch. A copy
+of pre-reset metadata survives the SDK reset only until that synchronous call
+returns. The callback byte must match the copied address/security metadata and
+be 13 or 29. Wrong task, nested dispatch/completion, repeated hook/completion,
+changed ACL handle or changed birth prevents reuse. Arguments still pass to the
+original SDK unchanged. No private SDK pointer is retained.
+
+This proves only the source branch of the selected **callback byte**. The SDK
+loads a 16-bit device-record mode and truncates it to 8 bits. The unmodified
+original completion function maps both 0x000d and 0x010d to 13 (and 0x001d and
+0x011d to 29). Thus neither the complete stored mode, NVS restoration, nor the
+actually selected bonded key is proven. The observation is discarded; it never
+sets link security, reconnect readiness, a role or diagnosis authority.
+
+Before positive F1 admission: independently audit the complete device-record
+ABI and full-width selected mode/key provenance at the original actor, connect
+the bounded reencryption state machine including loss/re-pair/bond deletion,
+and require current challenge/P256/credential/registry acknowledgement on the
+same birth. F2 must provide the production BTU owner and protected worker-to-
+actor handoff. Existing bond records, cached GM assignment, lease and strong
+flags alone never open diagnosis. The wrappers remain exclusive to the probe;
+no radio, production pairing or hardware acceptance is claimed.
+
+```text
+python scripts/check_f1_smp_prereset_abi.py
+  --gatt-source-dir <lifecycle-source-with-original-bt_defs.h-and-bt_target.h>
+  --security-source-dir <security-source>
+  --compiler <xtensa-esp32-elf-g++.exe> --host-compiler <32-bit-g++.exe>
+  --objdump <xtensa-esp32-elf-objdump.exe> --sdk-library <pinned-libbt.a>
+```

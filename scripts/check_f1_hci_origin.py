@@ -104,7 +104,7 @@ struct tSMP_CB {
     UINT8 status, smp_over_br, sec_level, auth_mode;
     bool is_pair_cancel;
 };
-struct tBTM_SEC_DEV_REC { struct { UINT8 auth_mode; } ble; };
+struct tBTM_SEC_DEV_REC { struct { UINT16 auth_mode; } ble; };
 static tBTM_SEC_DEV_REC record;
 static bool recordExists=true, wasReset=false;
 static tSMP_CMPL result;
@@ -124,7 +124,7 @@ static UINT8 callback(UINT8 event,UINT8 *address,tSMP_EVT_DATA *data) {
             # C++ compatibility warning around that unchanged original function.
             '#pragma GCC diagnostic push\n#pragma GCC diagnostic ignored "-Wmissing-field-initializers"',
             function(util, 'smp_proc_pairing_cmpl'), '#pragma GCC diagnostic pop', r'''
-static tSMP_CMPL completion(UINT8 fresh,UINT8 stored,bool exists=true,UINT8 status=0,bool cancelled=false) {
+static tSMP_CMPL completion(UINT8 fresh,UINT16 stored,bool exists=true,UINT8 status=0,bool cancelled=false) {
     record.ble.auth_mode=stored;recordExists=exists;wasReset=false;
     tSMP_CB cb={callback,{1,2,3,4,5,6},status,0,4,fresh,cancelled};
     smp_proc_pairing_cmpl(&cb);
@@ -142,6 +142,9 @@ int main() {
         const auto fresh=completion(mode,1); assert(fresh.auth_mode==mode && record.ble.auth_mode==mode);++cases;
         const auto restored=completion(0,mode); assert(std::memcmp(&fresh,&restored,sizeof(fresh))==0);++cases;
     }
+    // Original record is 16-bit, callback is 8-bit: retained high bits are lost.
+    assert(completion(0,0x10d).auth_mode==13);++cases;
+    assert(completion(0,0x11d).auth_mode==29);++cases;
     assert(completion(0,0).auth_mode==0);++cases;
     assert(completion(0,13,false).auth_mode==0);++cases;
     assert(completion(13,13,true,1).auth_mode==0);++cases;
