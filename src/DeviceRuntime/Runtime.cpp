@@ -50,8 +50,93 @@ const char *activationFinishName(ActivationFinish value) {
     return name(static_cast<unsigned>(value), names);
 }
 bool Runtime::busy() const {
-    return status_.phase != ActivationPhase::Empty && status_.phase != ActivationPhase::Ready &&
-           status_.phase != ActivationPhase::Fault;
+    return diagnostic_.phase != DiagnosticReservationPhase::Idle ||
+           (status_.phase != ActivationPhase::Empty && status_.phase != ActivationPhase::Ready &&
+            status_.phase != ActivationPhase::Fault);
+}
+DiagnosticReservationOutcome Runtime::reserveDiagnostics(std::uint32_t revision,
+                                                         std::uint32_t now) {
+    if (operating_ || busy())
+        return DiagnosticReservationOutcome::Busy;
+    if (session_.running())
+        return DiagnosticReservationOutcome::GameRunning;
+    if (!gameAllowed())
+        return DiagnosticReservationOutcome::NotReady;
+    if (revision != status_.configurationRevision)
+        return DiagnosticReservationOutcome::StaleRevision;
+    if (sequence_ > std::numeric_limits<std::uint32_t>::max() - ChannelLimits::Owners)
+        return DiagnosticReservationOutcome::CounterExhausted;
+    Guard guard(operating_);
+    // No callback/IO precedes closing the gate. Workers may still be executing:
+    // reservation is not Park completion and must never authorize a test.
+    diagnostic_.phase = DiagnosticReservationPhase::Parking;
+    diagnostic_.generation = status_.generation;
+    diagnostic_.configurationRevision = status_.configurationRevision;
+    diagnostic_.startedAt = now;
+    status_.hardwareReady = false;
+    cursor_ = 0;
+    hasOperation_ = sent_ = replied_ = false;
+    return DiagnosticReservationOutcome::Reserved;
+}
+void Runtime::serviceDiagnosticReservation(std::uint32_t now) {
+    if (diagnostic_.phase != DiagnosticReservationPhase::Parking)
+        return;
+    auto failClosed = [this](DiagnosticReservationError error) {
+        diagnostic_.error = error;
+        diagnostic_.phase = DiagnosticReservationPhase::Fault;
+    };
+    if (static_cast<std::uint32_t>(now - diagnostic_.startedAt) >=
+        ActivationLimits::TransactionMilliseconds) {
+        failClosed(DiagnosticReservationError::Timeout);
+        return;
+    }
+    if (!hasOperation_) {
+        operation_ = Control();
+        operation_.ticket.generation = diagnostic_.generation;
+        operation_.ticket.sequence = ++sequence_;
+        operation_.ticket.owner = static_cast<Owner>(cursor_);
+        operation_.ticket.kind = ControlKind::Park;
+        diagnostic_.operation = operation_.ticket;
+        operationStarted_ = now;
+        hasOperation_ = true;
+        sent_ = replied_ = false;
+    }
+    ControlReply reply;
+    for (std::size_t count = 0;
+         count < ActivationLimits::ReplyDrain && controls_.receiveControlReply(reply); ++count) {
+        if (!sent_ || replied_ || !sameControlTicket(reply.ticket, operation_.ticket)) {
+            increment(diagnostic_.staleReplies);
+            continue;
+        }
+        reply_ = reply;
+        replied_ = true;
+    }
+    if (static_cast<std::uint32_t>(now - operationStarted_) >=
+            ActivationLimits::OperationMilliseconds ||
+        (replied_ && static_cast<std::uint32_t>(reply_.completedMilliseconds - operationStarted_) >=
+                         ActivationLimits::OperationMilliseconds)) {
+        failClosed(DiagnosticReservationError::Timeout);
+        return;
+    }
+    if (replied_) {
+        if (reply_.outcome != ControlOutcome::Applied) {
+            failClosed(reply_.outcome == ControlOutcome::Rejected
+                           ? DiagnosticReservationError::OwnerRejected
+                           : DiagnosticReservationError::OwnerFailed);
+            return;
+        }
+        ++diagnostic_.parkedOwners;
+        hasOperation_ = sent_ = replied_ = false;
+        if (++cursor_ == ChannelLimits::Owners) {
+            if (!channel_.quiescent())
+                failClosed(DiagnosticReservationError::BarrierFailure);
+            else
+                diagnostic_.phase = DiagnosticReservationPhase::ParkedClosed;
+        }
+        return;
+    }
+    if (!sent_)
+        sent_ = controls_.sendControl(operation_);
 }
 ActivationResult Runtime::activate(const Profile &candidate, std::uint32_t expectedRevision,
                                    std::uint32_t now) {
@@ -234,6 +319,10 @@ void Runtime::service(std::uint32_t now) {
         return;
     Guard guard(operating_);
     broker_.service();
+    if (diagnostic_.phase != DiagnosticReservationPhase::Idle) {
+        serviceDiagnosticReservation(now);
+        return;
+    }
     ControlReply reply;
     for (std::size_t count = 0;
          count < ActivationLimits::ReplyDrain && controls_.receiveControlReply(reply); ++count) {
@@ -320,8 +409,8 @@ execution::SessionSnapshot Runtime::game() const {
     return value;
 }
 bool Runtime::gameAllowed() const {
-    return !operating_ && status_.phase == ActivationPhase::Ready && status_.hardwareReady &&
-           active_;
+    return !operating_ && diagnostic_.phase == DiagnosticReservationPhase::Idle &&
+           status_.phase == ActivationPhase::Ready && status_.hardwareReady && active_;
 }
 execution::Result Runtime::startGame(std::uint32_t revision, std::uint32_t now) {
     if (!gameAllowed())

@@ -1,5 +1,6 @@
 #pragma once
 #include "DeviceRuntime/Broker.h"
+#include "DeviceRuntime/DiagnosticReservation.h"
 #include "DeviceRuntime/Lifecycle.h"
 namespace larp {
 namespace devices {
@@ -72,6 +73,14 @@ class Runtime {
                               std::uint32_t now);
     void service(std::uint32_t now);
     bool busy() const;
+    // Trusted sole application owner only; serialized with every game/profile
+    // method. Reserve before async Park requests. No physical grant or release
+    // API exists until off/input/timer/visible-indicator contracts are provided.
+    DiagnosticReservationOutcome reserveDiagnostics(std::uint32_t expectedRevision,
+                                                    std::uint32_t now);
+    DiagnosticReservationSnapshot diagnosticReservation() const {
+        return diagnostic_;
+    }
     ActivationSnapshot activation() const {
         return status_;
     }
@@ -105,6 +114,7 @@ class Runtime {
     const Profile *active_ = nullptr, *candidate_ = nullptr;
     Plan activePlan_, candidatePlan_;
     ActivationSnapshot status_;
+    DiagnosticReservationSnapshot diagnostic_;
     Control operation_;
     ControlReply reply_;
     std::uint32_t gameConfigurationRevision_ = 0;
@@ -120,6 +130,7 @@ class Runtime {
     void finishFault();
     void next(ActivationPhase phase);
     bool gameAllowed() const;
+    void serviceDiagnosticReservation(std::uint32_t now);
 };
 const char *activationPhaseName(ActivationPhase value);
 const char *activationOutcomeName(ActivationOutcome value);

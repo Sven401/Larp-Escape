@@ -981,6 +981,7 @@ void test_profile_capability_fixture_matches_firmware_encoder() {
 // Persistent public labels reuse policy and actual NVS adapter helpers.
 #include "CompanionIdentityOwnerCases.h"
 #include "DeviceIdentityStoreCases.h"
+#include "DiagnosticReservationCases.h"
 // Application file ownership uses actual ESP/source/control helpers above.
 #include "ApplicationProfileStagingCases.h"
 #include "GattsLifecycleCases.h"
@@ -1290,6 +1291,13 @@ int main() {
     RUN_TEST(test_product_identity_failed_store_is_terminal_without_erase_or_retry);
     RUN_TEST(test_product_identity_uncertain_commit_and_corrupt_record_never_publish);
     RUN_TEST(test_product_identity_reentry_and_zero_entropy_stay_closed);
+    RUN_TEST(test_diagnostic_reservation_closes_before_parking_and_stays_closed_after_all_acks);
+    RUN_TEST(test_diagnostic_reservation_rejects_unready_stale_running_and_paused_games);
+    RUN_TEST(test_diagnostic_reservation_reentry_during_owner_post_cannot_start_or_reconfigure);
+    RUN_TEST(test_diagnostic_reservation_stale_replies_and_deadline_never_release_gate);
+    RUN_TEST(test_diagnostic_reservation_failed_owners_and_false_barrier_stay_fenced);
+    RUN_TEST(test_diagnostic_reservation_deadlines_work_across_clock_wrap);
+    RUN_TEST(test_diagnostic_reservation_after_stop_drains_workers_without_restarting_game);
     RUN_TEST(test_public_device_identity_persistence_never_opens_game_authority);
     RUN_TEST(test_application_file_owner_spans_receive_seal_read_and_cleanup);
     RUN_TEST(test_application_file_running_refuses_all_backend_io_preserves_game);
