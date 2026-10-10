@@ -125,6 +125,7 @@ ADAPTER_FILES = (
 )
 TEST_ROOTS = (
     "test/test_diagnostic_control",
+    "test/test_diagnostic_transport",
     "test/test_application_loop",
     "test/test_card_uid_copy",
     "test/test_crystal_input_batch",
