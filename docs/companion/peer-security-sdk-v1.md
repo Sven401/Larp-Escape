@@ -267,6 +267,37 @@ actor handoff. Existing bond records, cached GM assignment, lease and strong
 flags alone never open diagnosis. The wrappers remain exclusive to the probe;
 no radio, production pairing or hardware acceptance is claimed.
 
+### F1 selected-key provenance gate (follow-up audit, 2026-10-11)
+
+The pinned `btm_int.h` declares both `btm_find_dev(BD_ADDR)` and
+`btm_find_dev_by_handle(UINT16)`, and the installed pinned `libbt.a` exports
+both symbols. In the original `btm_ble.c`, master `btm_ble_start_encrypt`
+resolves the record by address and passes its PENC `pltk`/`rand`/`ediv` to
+`btsnd_hcic_ble_start_enc`; slave `btm_ble_ltk_request` first resolves by
+handle and, when SMP does not own the request, `btm_ble_ltk_request_reply`
+resolves by address and passes its LENC `lltk` to the HCI reply. The static
+archive audit confirms the relevant record offsets and branches. It does not
+observe which record or key the original actor used at runtime.
+
+A trustworthy immutable witness would need to freeze the current GATT birth
+on that actor, compare its address and HCI handle against one unchanged SDK
+record at the actual HCI send, check the full 16-bit mode and the selected
+PENC/LENC branch, then correlate the controller result and encryption change
+back to that same birth. Key bytes must stay in the original synchronous SDK
+call; a witness, test fixture, log or report must never contain them. The
+current probe pins neither the complete private record ABI and HCI-send
+wrapper signatures nor that whole call/result chain. Comparing only an
+address, callback byte, stored mode, key pointer or later encryption event
+would leave an attribution gap. No provenance port or positive restored-bond
+admission is installed from this audit.
+
+The regular product map check above still reports no linked BLE host key path.
+The next bounded investigation is an isolated ABI probe for the original
+record getter and both HCI-send signatures, with same-address/recycled-handle,
+PENC/LENC, short-key, wrong-mode and failed-controller-command negatives.
+Only after that probe and a real source-actor binding can a metadata-only
+witness be considered; role and diagnosis authority remain separately gated.
+
 ```text
 python scripts/check_f1_smp_prereset_abi.py
   --gatt-source-dir <lifecycle-source-with-original-bt_defs.h-and-bt_target.h>
