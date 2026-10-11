@@ -35,6 +35,18 @@ import de.larpescape.companion.data.diagnostic.AndroidDiagnosticRunStore
 import de.larpescape.companion.ui.diagnostic.*
 
 class MainActivity : ComponentActivity() {
+    private var pairingExportBytes: ByteArray? = null
+    private var pairingExportNotice by mutableStateOf<String?>(null)
+    private val exportPairing = registerForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
+        val bytes = pairingExportBytes.also { pairingExportBytes = null }
+        if (uri != null && bytes != null) lifecycleScope.launch {
+            try {
+                withContext(Dispatchers.IO) { contentResolver.openOutputStream(uri, "wt")?.use { it.write(bytes) }
+                    ?: error("Datei konnte nicht geschrieben werden") }
+                pairingExportNotice = "Android-BLE-Beobachtungsbericht exportiert. Firmware-Nachweise bleiben offen."
+            } catch (error: Exception) { pairingExportNotice = "Export fehlgeschlagen: ${error.message}" }
+        } else pairingExportNotice = "Dateiauswahl abgebrochen; Bericht bleibt in dieser App-Sitzung sichtbar."
+    }
     private var nfcScreen by mutableStateOf(false)
     private var scenarioScreen by mutableStateOf(false)
     private var diagnosticScreen by mutableStateOf(false)
@@ -205,6 +217,30 @@ class MainActivity : ComponentActivity() {
                                 Text("Reale BLE-Diagnoseverfügbarkeit", style = MaterialTheme.typography.titleMedium)
                                 Text(state.diagnosticAvailability.detail)
                                 Text("Diese Anzeige bestätigt keine Gerätefreigabe oder Hardwarefunktion.", style = MaterialTheme.typography.bodySmall)
+                            }
+                        }
+                        Card(Modifier.fillMaxWidth()) {
+                            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                Text("BLE-Kopplung beobachten", style = MaterialTheme.typography.titleMedium)
+                                Text("Bericht vor der Suche starten, dann den ESP verbinden. Android erfasst Verbindung, Produktdienst und lokalen Bond-Status mit Zeit und Herkunft.")
+                                Text("Ein OS-Bond ist kein Firmware-Nachweis für MITM, Rolle oder Diagnosefreigabe.", style = MaterialTheme.typography.bodySmall)
+                                Button(onClick = { model.startPairingReport(); pairingExportNotice = null }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                                    Text("Neuen Kopplungsbericht starten")
+                                }
+                                state.pairingReport?.let { report ->
+                                    Text("Bericht ${report.reportId.take(8)} · ${report.events.size} Beobachtungen · Beginn ${report.startedUtc}")
+                                    Text("Firmware-Belege offen: Verbindungsgeneration, Bond-Schlüssel, Verschlüsselung/MITM und Rolle.")
+                                    report.events.takeLast(5).forEach { event ->
+                                        Text("${event.recordedUtc} · ${event.kind}: ${event.value}", style = MaterialTheme.typography.bodySmall)
+                                    }
+                                    if (state.connected) OutlinedButton(onClick = model::requestBond,
+                                        modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Android-Kopplung anfragen") }
+                                    OutlinedButton(onClick = {
+                                        pairingExportBytes = model.pairingReportBytes()
+                                        if (pairingExportBytes != null) exportPairing.launch("ble-kopplungsbeobachtung-v1.json")
+                                    }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Beobachtungsbericht exportieren") }
+                                }
+                                pairingExportNotice?.let { Text(it) }
                             }
                         }
                         Button(onClick = ::startScan, enabled = !state.scanning, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {

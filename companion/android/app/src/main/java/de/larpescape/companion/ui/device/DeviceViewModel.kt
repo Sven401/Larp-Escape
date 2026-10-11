@@ -33,6 +33,9 @@ class DeviceViewModel(private val repository: DeviceRepository) : ViewModel() {
     fun scan() { if (foreground && permissionGranted) repository.scan() }
     fun connect(id: String) { if (foreground && permissionGranted) repository.connect(id) }
     fun disconnect() = repository.disconnect()
+    fun startPairingReport() = repository.startPairingReport()
+    fun requestBond() = repository.requestBond()
+    fun pairingReportBytes(): ByteArray? = repository.pairingReportBytes()
     fun foregroundEnded() {
         foreground = false
         pendingPermissionScan = false

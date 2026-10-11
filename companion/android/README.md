@@ -293,6 +293,36 @@ Tagverlust während des Schreibens. Grundlagen:
 
 ## Prüfung und Grenzen
 
+### Nutzergeführter BLE-Kopplungsbericht (Android-Beobachtung v1)
+
+Auf der ESP-Seite „Neuen Kopplungsbericht starten“ wählen, danach suchen,
+den ESP verbinden und bei bestehender Verbindung bei Bedarf
+„Android-Kopplung anfragen“ wählen. Diese Aktion ruft `BluetoothDevice.createBond()`
+auf; ihre Annahme durch Android ist noch kein erfolgreicher Bond. Der lokale
+`ACTION_BOND_STATE_CHANGED`-Status und `getBondState()` werden getrennt mit
+UTC-Zeit, Quelle, lokaler Bericht-ID, GATT-Generation und BLE-Zieladresse
+erfasst. GATT-Verbindungsrückrufe und Produktdienstsuche stehen ebenfalls als
+Beobachtungen im JSON-Export. Den Bericht erst nach dem gewünschten Ablauf
+exportieren. Der Export enthält die BLE-Adresse zur Zuordnung und sollte
+entsprechend vertraulich behandelt werden. Der Bericht lebt nur in der
+laufenden App-Sitzung; ein Prozessneustart bewahrt ihn nicht.
+
+`OS_BONDED` bedeutet ausschließlich, dass Android den lokalen Bond-Status so
+meldete. Die Firmware stellt derzeit keinen verbindungsgebundenen Bericht mit
+Boot-ID, ursprünglicher Connection-ID, Bond-Key-Herkunft, Verschlüsselung,
+MITM oder Rolle über GATT bereit; diese Nachweise stehen im Export explizit
+als fehlend. Weder dieser Export noch ein erfolgreich gestarteter Bond-Antrag
+belegen Diagnose- oder GM-Freigabe. Der ESP muss Service-Advertising und
+Verbindung erst real bereitstellen. Eine auswertbare Produktkopplung und ein
+Gerätetest sind offen.
+
+Implementierungsgrundlagen, geprüft am 11.10.2026:
+[BluetoothDevice / Bond-Zustand](https://developer.android.com/reference/android/bluetooth/BluetoothDevice),
+[Bluetooth-Berechtigungen](https://developer.android.com/develop/connectivity/bluetooth/bt-permissions),
+[BluetoothGatt](https://developer.android.com/reference/android/bluetooth/BluetoothGatt).
+In `android/skills` wurde kein für diese schmale BLE-Plattformaufgabe passender
+spezialisierter Skill gefunden; die offiziellen APIs sind direkte Referenz.
+
 NFC-Hardwarestand vom 10.10.2026: Auf dem angeschlossenen Testhandy wurde
 ein vorbereiteter Schreibauftrag auf einem NDEF-Tag mit 137 Byte Kapazität
 ausgeführt. Das App-Protokoll zeigt Schreiben abgeschlossen, frisches
