@@ -18,6 +18,7 @@ class Esp32CompanionIdentityOwner {
         ChannelUnavailable,
         StoreUnavailable,
         IdentityUnavailable,
+        BootUnavailable,
         PolicyUnavailable,
         ReadyClosed
     };
@@ -30,6 +31,9 @@ class Esp32CompanionIdentityOwner {
     }
     // Display metadata only. Failure preserves the destination.
     bool identity(larp::companion::Identity &) const noexcept;
+    // Fresh for this process start; never persisted or accepted from a client.
+    // Availability alone does not grant a peer role or diagnostic session.
+    bool bootIdentity(larp::companion::BootIdentity &) const noexcept;
     // Copied observation only. ReadyClosed must leave authority unavailable.
     bool authority(larp::companion::TrustedAuthority &) const noexcept;
 
@@ -39,5 +43,6 @@ class Esp32CompanionIdentityOwner {
     larp::companion::DeviceIdentityOwner identity_;
     larp::companion::FreeRtosGameControlChannel channel_;
     larp::companion::IdentityAccess policy_;
+    larp::companion::BootIdentity boot_;
     State state_ = State::NotStarted;
 };

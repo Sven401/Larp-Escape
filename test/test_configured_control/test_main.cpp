@@ -1288,6 +1288,7 @@ int main() {
     RUN_TEST(test_device_identity_actual_nvs_freezes_record_and_serializes_other_instance);
     RUN_TEST(test_device_identity_startup_entropy_call_order_and_zero_target_preservation);
     RUN_TEST(test_product_identity_startup_create_restart_and_no_authority);
+    RUN_TEST(test_product_boot_entropy_failure_stays_closed_without_rewriting_identity);
     RUN_TEST(test_product_identity_failed_store_is_terminal_without_erase_or_retry);
     RUN_TEST(test_product_identity_uncertain_commit_and_corrupt_record_never_publish);
     RUN_TEST(test_product_identity_reentry_and_zero_entropy_stay_closed);

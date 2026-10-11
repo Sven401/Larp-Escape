@@ -160,7 +160,7 @@ void esp_fill_random(void *destination, std::size_t count) {
     entropyOrder = 2;
     auto bytes = static_cast<std::uint8_t *>(destination);
     for (unsigned i = 0; i < count; ++i)
-        bytes[i] = zeroEntropy ? 0 : static_cast<std::uint8_t>(i + 1);
+        bytes[i] = zeroEntropy ? 0 : static_cast<std::uint8_t>(i + fills);
 }
 void bootloader_random_disable() {
     using namespace host_identity_nvs;
