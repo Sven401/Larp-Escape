@@ -103,3 +103,24 @@ installed APK hash matched the new build. The app was not opened or operated
 by Codex, and the user has not yet confirmed the screen or run a box test.
 This APK install was not a firmware upload. No firmware upload or restore has
 occurred.
+
+The separate F1 package `d3319f7` pins the original controller-result gap:
+Encryption Change carries status, handle and enabled, with no command, key or
+GATT-birth identity. A reused handle or second key can produce identical event
+bytes. The private security-record ABI remains incomplete. Its source checks
+and ESP32 ABI-probe build passed, but it grants no restored role.
+
+Android availability package `e7af181` was merged locally after its targeted
+JVM tests and offline Debug build passed. A separate `ESP · BLE` view now shows
+the actual connection/discovery/MTU/subscription block reason; the simulation
+has its own view. The merged tree's targeted availability test and offline
+Debug build also passed. The resulting APK kept package
+`de.larpescape.companion.diagnosticpreview`, versionCode 1 and the same debug
+signing certificate. Before installation on Moto G14 `ZY22J7CSQD`, the
+previous installed APK was backed up and verified as SHA-256
+`2703E2BD15405E4DEF5920E2683AFE5B7DC757E746F19D29913371E75CFD5D22`.
+The new APK installed successfully; the pulled installed APK matched the
+built SHA-256
+`6A926F339DD8F96730331F03ABC08CA42EE4E48E7D91D2775BC0BB7651301EB7`.
+The app was not opened or operated by Codex. Its device screen and any box
+behavior still require the user's own observation and later exported report.
