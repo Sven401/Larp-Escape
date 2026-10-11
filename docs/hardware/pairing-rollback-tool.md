@@ -26,7 +26,7 @@ Dieser Aufruf kann den ESP32 zurücksetzen. Vor Verwendung die aktuelle
 COM-Zuordnung prüfen; COM3 allein identifiziert kein Gerät:
 
 ```powershell
-python scripts/verify_pairing_rollback.py verify --port COM3 --esptool "C:/Users/seide/.platformio/packages/tool-esptoolpy/esptool.py"
+python scripts/verify_pairing_rollback.py verify --port COM3 --esptool "C:/Users/seide/.platformio/packages/tool-esptoolpy/esptool.py" --python "C:/Users/seide/.platformio/penv/Scripts/python.exe"
 ```
 
 ## Getrennter Restore zum heutigen Stand
@@ -34,14 +34,14 @@ python scripts/verify_pairing_rollback.py verify --port COM3 --esptool "C:/Users
 Ein Probelauf prüft Image und Gerätekennung, schreibt aber keinen Flash:
 
 ```powershell
-python scripts/verify_pairing_rollback.py restore-current --dry-run --port COM3 --esptool "C:/Users/seide/.platformio/packages/tool-esptoolpy/esptool.py"
+python scripts/verify_pairing_rollback.py restore-current --dry-run --port COM3 --esptool "C:/Users/seide/.platformio/packages/tool-esptoolpy/esptool.py" --python "C:/Users/seide/.platformio/penv/Scripts/python.exe"
 ```
 
 Nur nach einer eigenen ausdrücklichen Restore-Aufforderung darf der folgende,
 separate Befehl in Betracht kommen:
 
 ```powershell
-python scripts/verify_pairing_rollback.py restore-current --confirm-restore-current --port COM3 --esptool "C:/Users/seide/.platformio/packages/tool-esptoolpy/esptool.py"
+python scripts/verify_pairing_rollback.py restore-current --confirm-restore-current --port COM3 --esptool "C:/Users/seide/.platformio/packages/tool-esptoolpy/esptool.py" --python "C:/Users/seide/.platformio/penv/Scripts/python.exe"
 ```
 
 Er prüft Datei und Chip **vor** dem Schreibaufruf, schreibt das komplette
@@ -67,5 +67,9 @@ Der Standardaufruf hat die private Sicherung lokal verifiziert. Sieben
 Python-Tests mit einem rein dateibasierten Fake-`esptool` prüfen Offline-Modus,
 Länge/Hash, falsche MAC/Flashgröße, fehlende Bestätigung, Dry-run, volles
 Readback und abweichenden Readback. Weder Flash-Schreib- noch Geräteaufruf
-wurde für diese Werkzeugprüfung ausgeführt. Produkt-Upload und Rücksicherung
-bleiben offen.
+wurde für diese Werkzeugprüfung ausgeführt. Nach der lokalen Integration
+bestand zusätzlich ein echter **nur lesender** Dry-run an COM3: Backup-Hash,
+MAC und Flashgröße passten; kein Schreiben und kein Restore. Der erste
+Dry-run-Aufruf mit dem allgemeinen System-Python stoppte vor der Geräteabfrage
+wegen fehlender `esptool`-Abhängigkeit. Die oben angegebene PlatformIO-Python-
+Umgebung behebt das. Produkt-Upload und Rücksicherung bleiben offen.
