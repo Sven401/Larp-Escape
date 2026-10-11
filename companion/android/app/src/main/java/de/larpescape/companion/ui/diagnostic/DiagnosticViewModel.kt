@@ -61,7 +61,10 @@ class DiagnosticViewModel(
                 repository = FakeDiagnosticRepositoryV1.recover(it, utc()); refresh(false)
                 val steps = mutable.value.document!!.getAsJsonArray("steps")
                 val index = store.loadPosition(mutable.value.document!!["runId"].asString) ?: pilotOperations.indexOf(steps.lastOrNull()?.asJsonObject?.getAsJsonObject("request")?.get("operation")?.asString).coerceAtLeast(0)
-                mutable.value = mutable.value.copy(planIndex = index, notice = "Gespeicherter Lauf: Ergebnisse bleiben erhalten. Es wird kein Auftrag wiederholt.")
+                val finalized = repository!!.isFinalized
+                mutable.value = mutable.value.copy(planIndex = index, finalized = finalized,
+                    notice = if (finalized) "Abgeschlossener Bericht wieder geöffnet. Ergebnisse bleiben unverändert; kein Auftrag wird wiederholt."
+                    else "Gespeicherter Lauf: Ergebnisse bleiben erhalten. Es wird kein Auftrag wiederholt.")
             }
         }
         if (autoTimers) viewModelScope.launch {

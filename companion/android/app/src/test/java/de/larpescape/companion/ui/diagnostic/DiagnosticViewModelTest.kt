@@ -133,6 +133,19 @@ class DiagnosticViewModelTest {
         val third = model(store); assertEquals(2, third.state.value.planIndex)
         assertTrue(third.beginExport()); assertEquals(listOf("not_tested", "not_tested"), DiagnosticReportCodecV1.import(third.takeExport()!!).verdicts)
     }
+    @Test fun exportedPilotReopensReadOnlyAndProducesSameReport() {
+        val store = Store(); val first = model(store)
+        first.newRun(); first.skipCurrent(); first.nextStep(); first.skipCurrent(); first.nextStep()
+        assertTrue(first.beginExport())
+        val firstExport = first.takeExport()!!
+        time += 1000
+        val reopened = model(store)
+        assertTrue(reopened.state.value.finalized)
+        reopened.observe(1, "matches", "Changed after export")
+        assertTrue(reopened.state.value.notice!!.startsWith("Fehler:"))
+        assertTrue(reopened.beginExport())
+        assertArrayEquals(firstExport, reopened.takeExport())
+    }
     @Test fun navigationStorageFailureDoesNotClaimProgress() {
         val store = Store(); val model = model(store); model.newRun(); model.skipCurrent()
         store.rejectPosition = true; model.nextStep()

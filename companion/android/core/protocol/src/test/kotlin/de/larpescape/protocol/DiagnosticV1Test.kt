@@ -110,6 +110,18 @@ class DiagnosticV1Test {
         assertEquals("unclear", recovered.finish(end).verdicts.single())
         rejects { recovered.begin("wake_capture", end, 5000) }
     }
+    @Test fun finalizedReportStaysImmutableAcrossRecoveryAndRepeatedExport() {
+        val journal = MemoryDiagnosticJournalV1()
+        val original = repo(journal)
+        original.skip("wake_capture", start)
+        val exported = DiagnosticReportCodecV1.export(original.finish(end))
+        val saved = journal.load()!!
+        val recovered = FakeDiagnosticRepositoryV1.recover(journal, "2026-10-10T12:00:03.000Z")
+        rejects { recovered.observe(1, "matches", "expected", "changed", "2026-10-10T12:00:03.000Z") }
+        assertArrayEquals(exported, DiagnosticReportCodecV1.export(recovered.finish("2026-10-10T12:00:04.000Z")))
+        assertArrayEquals(saved, journal.load())
+        assertEquals("not_tested", DiagnosticReportCodecV1.import(exported).verdicts.single())
+    }
     @Test fun failedTelemetryAndUserMismatchCannotPass() {
         listOf<(JsonObject) -> Unit>(
             { it.getAsJsonObject("telemetry").addProperty("overflow", true) },

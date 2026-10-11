@@ -31,6 +31,7 @@ class FakeDiagnosticRepositoryV1 private constructor(
     private var closed: Boolean = false,
     private var finalized: Boolean = false,
 ) {
+    val isFinalized: Boolean get() = finalized
     fun snapshot(): JsonObject = document.deepCopy()
     private fun mutate(action: (JsonObject) -> Unit) {
         val next = document.deepCopy()
@@ -125,10 +126,13 @@ class FakeDiagnosticRepositoryV1 private constructor(
         closed = true
     }
     fun finish(utc: String): DiagnosticReportV1 {
+        if (finalized) return DiagnosticReportCodecV1.fromDocument(document)
         require(pending() == null)
         val next = document.deepCopy().apply { addProperty("endedUtc", utc); if (!closed) getAsJsonObject("grant").addProperty("endedReason", "completed") }
         val report = DiagnosticReportCodecV1.fromDocument(next)
-        journal.replace(DiagnosticJsonV1.canonical(next)); document = next; closed = true; finalized = true
+        // Keep the private completion marker in the same atomic replacement as the report.
+        val saved = JsonObject().apply { add("report", next.deepCopy()); addProperty("finalized", true) }
+        journal.replace(DiagnosticJsonV1.canonical(saved)); document = next; closed = true; finalized = true
         return report
     }
     companion object {
@@ -141,7 +145,11 @@ class FakeDiagnosticRepositoryV1 private constructor(
             return FakeDiagnosticRepositoryV1(document, journal, transport, binding)
         }
         fun recover(journal: DiagnosticJournalV1, utc: String): FakeDiagnosticRepositoryV1 {
-            val document = DiagnosticJsonV1.parse(checkNotNull(journal.load())).asJsonObject
+            val saved = DiagnosticJsonV1.parse(checkNotNull(journal.load())).asJsonObject
+            val finalized = saved.has("finalized").also { marked ->
+                if (marked) require(saved.keySet() == setOf("report", "finalized") && saved["finalized"].asBoolean)
+            }
+            val document = if (finalized) saved.getAsJsonObject("report") else saved
             require(document.text("evidence") == "synthetic")
             DiagnosticSchemaV1.validate(document)
             val pendingSteps = document.getAsJsonArray("steps").filter { it.asJsonObject.text("state") == "pending" }
@@ -152,8 +160,9 @@ class FakeDiagnosticRepositoryV1 private constructor(
                     addProperty("state", "app_restarted"); addProperty("endedUtc", utc)
                 } }
             }
-            DiagnosticReportCodecV1.validate(validation)
-            val repository = FakeDiagnosticRepositoryV1(document, journal, SyntheticDiagnosticTransportV1 { error("Recovered run cannot send") }, -1, closed = true)
+            DiagnosticReportCodecV1.validate(if (finalized) document else validation)
+            val repository = FakeDiagnosticRepositoryV1(document, journal, SyntheticDiagnosticTransportV1 { error("Recovered run cannot send") }, -1,
+                closed = true, finalized = finalized)
             if (repository.pending() != null) repository.interrupt("app_restarted", utc)
             // Preserve completed results; no grant, binding or command becomes live after recovery.
             return repository

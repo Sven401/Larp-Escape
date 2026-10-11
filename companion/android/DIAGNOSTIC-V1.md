@@ -16,6 +16,15 @@ atomar gespeichert. Ein Speicherfehler behauptet keinen Fortschritt.
 Ergebnisse, Beobachtung und Urteil stammen weiterhin aus dem bestehenden
 geprüften Journal-/Wirepfad. Ungespeicherter Text bleibt ein markierter Entwurf.
 
+Ergänzung 2026-10-11: Ein abgeschlossener Simulationsbericht trägt im privaten
+Journal einen atomar zusammen mit dem Bericht geschriebenen Abschlussmarker.
+Nach App-Neustart bleiben Beobachtungen eines solchen Laufs unveränderlich;
+erneuter Export liefert dieselben Bytes und verschiebt die Endzeit nicht.
+Ältere Rohjournale ohne Marker können ihren früheren Abschlusszustand nicht
+belegen und werden weiter nach dem bisherigen Wiederaufnahmepfad behandelt.
+Die JVM-Tests prüfen Abschluss, Wiederöffnung und bytegleichen Wiederexport;
+eine Bedienprüfung auf einem Android-Gerät steht noch aus.
+
 Prüfstand am 2026-10-10: 100 JVM-Fälle ohne Fehler oder übersprungene Fälle
 (94 bestehende plus 6 neue Fortschritt-/Frist-/Speicherprüfungen); Debugbuild
 und Lint ohne Fehler. Die drei bestehenden Warnungen betreffen Target-API,
