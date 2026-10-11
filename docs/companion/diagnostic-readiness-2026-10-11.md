@@ -1,4 +1,4 @@
-# Reichstagsbox diagnostic readiness — 2026-10-11
+# Reichstagsbox diagnostic readiness — updated 2026-10-12
 
 Status: **not ready for the complete user-run test**. This document records a
 software build and the concrete closed gates. It is not a hardware acceptance,
@@ -8,16 +8,19 @@ upload approval, installation record or instruction to start the user run.
 
 - Product source branch/implementation commit:
   `plan/nutzergefuehrte-hardwarediagnose-startintegration` /
-  `a261417` (explicit MITM transport blocker after isolated host-test sources
+  `c194518` (source-backed audio catalogue after explicit MITM transport blocker
+  `a261417`, isolated host-test sources
   `c5b16ef` and electrical qualification
   `f89a94f`, BLE history `911fc9d`, retry-safe archive `2e73e31` and
   journal-finalization fix `d386438`).
-  Firmware sources are unchanged from `77028cb74edbaa16ca33b4fcabc63a5c5cdbe94f`.
+  The productive firmware runtime paths remain unchanged from
+  `77028cb74edbaa16ca33b4fcabc63a5c5cdbe94f`; `c194518` adds an
+  unconnected audio catalogue whose source compiles for the firmware target.
 - Built firmware image:
   `.pio/build/az-delivery-devkit-v4-single-app-capacity/firmware.bin`,
-  2,000,224 bytes, SHA-256
-  `0964B7092F5ED4F2E6D038509D0D3776D196B2D87D38FB07AEFC212666BE9E67`.
-  ELF use: 1,993,929/2,621,440 bytes flash and 80,484/532,480 bytes static RAM.
+  2,000,304 bytes, SHA-256
+  `0251CD557DEC3B1F4BEC4DC34BB028F3E592E65518E5C75074C5514A303F31A5`.
+  ELF use: 1,994,013/2,621,440 bytes flash and 80,484/532,480 bytes static RAM.
   This image was not uploaded.
 - Built installable Debug APK:
   `companion/android/app/build/outputs/apk/debug/app-debug.apk`,
@@ -30,9 +33,10 @@ upload approval, installation record or instruction to start the user run.
   sends no request for the blocked areas.
 
 The APK includes the readiness UI, report contract, journal core and transport
-history from the product source commits above. No firmware source file changed
-in those commits. The new electrical-qualification helper is exercised only by
-host tests, not by a runtime grant/capability path.
+history from the earlier product source commits above; it does not include an
+audio catalogue UI. The electrical-qualification helper is exercised only by
+host tests, not by a runtime grant/capability path. The new audio
+catalogue has no productive request or DFPlayer caller.
 
 ## Connected phone state
 
@@ -116,8 +120,10 @@ flash, eFuse or restore operation occurred.
    before an 81-point or four-input grant. The host-only qualification helper
    defaults to an unknown expander variant and reports the two conflicts
    separately; the actually installed expander variant remains unverified.
-5. **Audio/SD:** DFPlayer UART/BUSY/Wake as-built wiring, SD inventory and
-   audible output remain unconfirmed; no productive owner exists.
+5. **Audio/SD:** the source-backed Reichstag/Star-Wars catalogue and provisional
+   direct range 1–999 now exist, but have no productive caller. DFPlayer
+   UART/BUSY/Wake as-built wiring, SD inventory and audible output remain
+   unconfirmed; no productive owner exists.
 6. **NFC:** PN532 readiness was intermittent. A bounded production raw port,
    stable reader ownership, tag type/capacity protection and both independent
    byte-comparison paths are absent.
@@ -127,13 +133,13 @@ flash, eFuse or restore operation occurred.
 
 ## Action-by-action capability table
 
-| Action | Firmware path at `77028cb` | Android path | Reply/evidence | Gate and targeted checks | Actual box |
+| Action | Firmware path (runtime from `77028cb`, catalogue at `c194518`) | Android path | Reply/evidence | Gate and targeted checks | Actual box |
 | --- | --- | --- | --- | --- | --- |
 | Diagnostic authority | `ProductGattsOwner` creates the closed boot identity and F0 graph; `DiagnosticGattsService` registers protected Control/Step/Reply values. No APP_MUTUAL/NFC owner publishes a current Game Master authority. | `AndroidDiagnosticGattShellV1` discovers and subscribes; its productive authority supplier remains null. | The loaded probe can emit one typed value on each Reply characteristic. Those notifications are transport evidence only. | Request writes remain `InsufficientAuthorization`. Configured-control/F0 host coverage and both Android notification probes pass, but no Finished, role ACK, diagnostic grant or revocation path exists. | `56b63bd` showed the two reply probes in the earlier user run. Current passive status has no link. |
 | LED single | `ClosedDiagnosticArbiter`, `Esp32LedParkDeadline` and `GameLightEffects` fence the game, arm a 400 ms timer and submit black under the shared mutex. The v1 `diagnostic::Control` LED operation still has only an `IPort` fake; no productive request owner connects it to the arbiter. | The pilot generates a synthetic LED request/reply and keeps user observation separate. The new readiness view exposes only GPIO15 and no alternative profile. | Host reply fields include render calls and `restoredOff`; these are software observations. There is no electrical or visible all-off signal. | No role, positive grant or component handoff. The arbiter deliberately reports no grant. Application 10/10, regression 20/20 and diagnostic owner/step checks pass; physical off, WS2811/GRB, level and supply remain open. | The loaded probe runs the game/LED worker but exposes no LED diagnostic command. No LED action was attempted in this session. |
 | LED selection, color and brightness | `GameLightEffects` owns one 23-pixel framebuffer and supports global brightness, but the diagnostic `IPort` does not expose a productive index/group renderer. | The readiness registry tracks index, group, RGB and brightness separately; all remain non-clickable. | No device reply names selected indices, applied RGB or effective brightness. | Define bounded 0–22 index/group payloads and an owner adapter behind the still-closed grant; host-test rejection and readback. Hardware profile remains GPIO15 only. | No request is loaded or executed. |
 | LED effect, start, duration, stop and independent off | `GameLightEffects` implements Twinkle, Burst, Ripple, BrightnessRamp and palette primitives. `Esp32LedParkDeadline` supplies a software deadline, but a black render is not electrical off feedback. | The readiness registry tracks configuration, start, duration expiry, stop and independent off separately; no control is enabled. | Existing host metrics prove only calls, deadlines and queue behavior. No current/level/visible evidence is returned. | Add a bounded effect contract, productive owner, correlated terminal reply and a genuinely independent off proof before enabling. | No request is loaded or executed. |
-| Audio clip/track, play, stop, repeat and volume | `DFMinniHandler` can initialize UART1 at 9600, wake and call `playTrack`; it has no stop, repeat, volume, bounded clip inventory or diagnostic owner/reply. Current source uses RX25/TX26, BUSY14 and Wake13. | The readiness registry tracks named Reichstag and Star-Wars clips, direct track, play, stop, repeat and volume separately; all remain non-clickable. | Only the local BUSY input is exposed to game logic. UART acknowledgement and typed error are not available. | Confirm the as-built wiring and SD inventory, define the bounded catalogue/direct range, extend the driver without conflating BUSY/UART/error, then bind it behind the productive grant. | No audio request is loaded; no sound or SD observation was made. |
+| Audio clip/track, play, stop, repeat and volume | `DFMinniHandler` can initialize UART1 at 9600, wake and call `playTrack`; it has no stop, repeat, volume or diagnostic owner/reply. `DiagnosticAudioCatalogV1` lists 42 source-backed entries and bounds provisional direct input to 1–999, but has no caller and no SD inventory. Current source uses RX25/TX26, BUSY14 and Wake13. | The readiness registry tracks named Reichstag and Star-Wars clips, direct track, play, stop, repeat and volume separately; all remain non-clickable. | Only the local BUSY input is exposed to game logic. UART acknowledgement and typed error are not available. | Confirm the as-built wiring and SD inventory, extend the driver without conflating BUSY/UART/error, then bind the catalogue and operations behind the productive grant. | No audio request is loaded; no sound or SD observation was made. |
 | Audio BUSY, UART and error status | `DFMinniHandler::isBusy` reads BUSY LOW; the driver does not expose UART result or a typed failure channel. | Three distinct readiness actions prevent a single boolean from being presented as complete evidence. | No diagnostic reply can currently distinguish accepted command, UART acknowledgement, BUSY transition and failure. | Add independent fields and timeout/error semantics plus host/replay tests before a UI verdict exists. | No status was requested or measured. |
 | NFC phone-write → box-read, reapply and byte comparison | `NFCReader` is a read-only UID adapter; bounded PN532 frame/adapter host tests exist, but no productive raw/tag-data diagnostic port or stable owner is installed. | The debug NFC capability host records phone-side development evidence only. It does not command the box or assert device correlation. | There is no correlated full-payload box read, removal/reapply event or byte comparison. | Stabilize PN532 startup, select supported tag/type/capacity and safe test payload, then add bounded reads behind the productive role. Keep authentication tags and test data isolated. | PN532 startup was previously intermittent; no tag was presented in this session. |
 | NFC box-write → phone-read, explicit confirmation, reapply and byte comparison | No product write operation exists in `NFCReader`; no protect/verify sequence or productive owner is present. | Android can host local NFC development capability, but no UI sends a box write or treats a phone read as box proof. | No write acknowledgement, read-back, independent phone read or byte comparison exists. | Specify allowed test pages, tag protections, one-shot/unclear-outcome behavior and explicit device read-back before enabling. | No write was requested or attempted. |
@@ -170,11 +176,14 @@ synthetic two-step preview.
   which retains exactly one archived prior connection. The history is transport
   evidence only, not a device-authorized or physical result.
 - Matrix/wake electrical qualification: 20/20 targeted host cases passed.
-  Firmware rebuilt successfully with unchanged image hash; the helper is not
-  included in the runtime grant path. The broad Unity host run initially had
+  The helper is not included in the runtime grant path. The broad Unity host run initially had
   three source-filter/link errors. With those source-specific cases isolated,
   the combined `host-regression`, `host-app-mutual-dev-transcript` and
-  `host-nfc-capability` run passed 135/135 cases. The non-Unity diagnostic GATT
+  `host-nfc-capability` run passed 135/135 cases. The subsequent audio catalogue
+  suite passed 3/3, checking all source names and track IDs, catalogue bounds
+  and duplicate numeric IDs across sources. The combined four-environment run
+  passed 138/138 cases and the firmware was rebuilt with the new image hash
+  above; the catalogue remains unconnected. The non-Unity diagnostic GATT
   route has its own host script and passed 26/26 checks. The earlier link-error
   run is not counted as a pass; other dedicated suites above remain distinct.
 - Android lint did not complete because
