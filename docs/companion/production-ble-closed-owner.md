@@ -41,3 +41,34 @@ shows source mechanics, not a live product registration. F1 full-width
 restored bond mode and selected-key provenance, the current registry/P256/
 credential and same-birth role ACK, and an original-bound diagnostic transport
 remain open. Generic bond/authentication success cannot grant authority.
+
+## Single-app development layout: isolated build check, 2026-10-11
+
+The development candidate is `partitions/development-single-app.csv`, selected
+only by `az-delivery-devkit-v4-single-app-capacity`. The standard product build
+continues to use its two-slot map. The candidate replaces `app0` and `app1`
+with one `factory` app from `0x10000` to `0x290000` (0x280000 = 2,621,440 B).
+The generated partition binary was decoded with the pinned framework's
+`gen_esp32part.py`: NVS remains at `0x9000`/`0x5000`, otadata at
+`0xe000`/`0x2000`, SPIFFS at `0x290000`/`0x160000`, and coredump at
+`0x3f0000`/`0x10000`. The parser verified the table without overlap.
+
+Build command: `platformio run -e az-delivery-devkit-v4-single-app-capacity`.
+PlatformIO `espressif32@6.6.0`, Arduino ESP32 `2.0.14`, ESP32 4 MiB board;
+result **SUCCESS**. The size gate reported 1,236,553 B used and 56,692 B
+static RAM. The generated `firmware.bin` is 1,242,848 B, leaving 1,378,592 B
+against the 2,621,440 B app partition by binary length. These figures describe
+the current identity-only product. The previous closed BLE integration was
+removed before commit `d677729`; its exact integration source is not present
+on this branch. Its reported 1,949,801 B linked size would be 671,639 B below
+the candidate's limit only as an arithmetic comparison across distinct builds,
+not a reproduced BLE build or a bound on future F1, role, and diagnosis code.
+
+This check did not execute the ESP32 bootloader. A future device procedure must
+verify how the actual bootloader chooses the sole `factory` app when existing
+otadata still contains a prior OTA selection, and must specify how the old
+otadata is handled during a USB layout migration. The app's runtime, GATT
+registration, security/role admission, and reconnect behavior are unverified.
+No upload, restore, flash write, or hardware test occurred. The accepted
+development fallback is another USB flash; two-slot OTA remains a later
+product-level feasibility and rollback target.
