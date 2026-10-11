@@ -50,7 +50,11 @@ static companion::Identity identity(unsigned n) {
 struct Port : IPort {
     companion::IdentityAccess *revokeOnAcquire = nullptr;
     bool idle = true, owned = false, light = false, onOk = true, offOk = true, high = true;
-    unsigned acquireCalls = 0, renders = 0, offs = 0, releases = 0, nextId = 10;
+    bool armOk = true, timerArmed = false, timerFault = false, timerConfirmed = false,
+         expireOnArm = false;
+    std::uint32_t timerNow = 0, timerDue = 0;
+    unsigned acquireCalls = 0, armCalls = 0, renders = 0, offs = 0, releases = 0,
+             nextId = 10;
     bool acquire(Uuid &id, bool &polarity) noexcept override {
         ++acquireCalls;
         if (!idle || owned)
@@ -62,16 +66,45 @@ struct Port : IPort {
             revokeOnAcquire->revokeGameMaster(identity(2));
         return true;
     }
+    bool armLedOffTimer(std::uint16_t holdMs) noexcept override {
+        ++armCalls;
+        if (!owned || !armOk || timerFault || timerArmed || holdMs != 500)
+            return false;
+        timerDue = timerNow + holdMs;
+        timerArmed = true;
+        timerConfirmed = false;
+        if (expireOnArm)
+            advanceTimer(timerDue);
+        return true;
+    }
     bool render(std::uint8_t index, const std::array<std::uint8_t, 3> &rgb) noexcept override {
         ++renders;
-        light = true;
-        return owned && index == 0 && rgb == std::array<std::uint8_t, 3>{{16, 0, 0}} && onOk;
+        const bool accepted = owned && timerArmed && index == 0 &&
+                              rgb == std::array<std::uint8_t, 3>{{16, 0, 0}} && onOk;
+        if (accepted)
+            light = true;
+        return accepted;
     }
     bool restoreOff() noexcept override {
         ++offs;
+        timerArmed = false;
         if (offOk)
             light = false;
-        return offOk;
+        return offOk && !timerFault;
+    }
+    bool timedOffConfirmed() noexcept override {
+        return timerConfirmed && !timerFault && !light;
+    }
+    void advanceTimer(std::uint32_t now) noexcept {
+        timerNow = now;
+        if (timerArmed && static_cast<std::int32_t>(timerNow - timerDue) >= 0) {
+            if (timerNow != timerDue)
+                timerFault = true;
+            if (restoreOff())
+                timerConfirmed = true;
+            else
+                timerFault = true;
+        }
     }
     void release() noexcept override {
         ++releases;
@@ -208,6 +241,7 @@ static void testLedHoldAndDuplicate() {
     CHECK(f.control.submit(req, f.binding, 120) == Admission::Busy);
     f.control.tick(609);
     CHECK(f.port.light && f.control.pending());
+    f.port.advanceTimer(500);
     f.control.tick(610);
     CHECK(!f.port.light && !f.control.pending());
     CHECK(f.control.submit(req, f.binding, 620) == Admission::Busy);
@@ -219,7 +253,87 @@ static void testLedHoldAndDuplicate() {
     auto result = f.reply();
     CHECK(result.outcome == Outcome::Completed && result.renderCalls == 2 && result.restoredOff);
     CHECK(f.control.submit(req, f.binding, 630) == Admission::Consumed);
-    CHECK(f.port.renders == 1 && f.port.offs == 1);
+    CHECK(f.port.renders == 1 && f.port.offs == 2);
+}
+static void testLedOwnerTimerCutsLightWithoutControlTick() {
+    Fixture f;
+    f.authorize();
+    auto req = f.request(Operation::LedSingle);
+    CHECK(f.control.submit(req, f.binding, 110) == Admission::Accepted);
+    CHECK(f.port.armCalls == 1 && f.port.light && f.control.pending());
+    f.port.advanceTimer(499);
+    CHECK(f.port.light && f.port.offs == 0);
+    f.port.advanceTimer(500);
+    CHECK(!f.port.light && f.port.offs == 1 && f.control.pending());
+    // Completion remains a separate owner action and cannot relight the LED.
+    f.control.tick(610);
+    CHECK(!f.port.light && !f.control.pending());
+    CHECK(f.reply().restoredOff);
+}
+static void testTimerArmFailurePreventsRenderAndLatchesOwner() {
+    Fixture f;
+    f.authorize();
+    f.port.armOk = false;
+    auto req = f.request(Operation::LedSingle);
+    CHECK(f.control.submit(req, f.binding, 110) == Admission::Accepted);
+    CHECK(f.port.armCalls == 1 && f.port.renders == 0 && !f.port.light);
+    CHECK(f.reply().outcome == Outcome::Failed);
+    f.control.retire(120);
+    CHECK(f.port.owned && f.port.releases == 0);
+    CHECK(f.control.authorize(uuid(2), f.binding, true, 1000, 130, f.grant) ==
+          Admission::OwnerError);
+}
+static void testTimerOffFailureRemainsFencedAfterLaterControlTick() {
+    Fixture f;
+    f.authorize();
+    f.port.offOk = false;
+    auto req = f.request(Operation::LedSingle);
+    CHECK(f.control.submit(req, f.binding, 110) == Admission::Accepted);
+    f.port.advanceTimer(500);
+    CHECK(f.port.timerFault && f.port.light && f.control.pending());
+    f.port.offOk = true;
+    f.control.tick(610);
+    auto result = f.reply();
+    CHECK(result.outcome == Outcome::Failed && result.reason == Reason::OwnerError &&
+          !result.restoredOff);
+    f.control.retire(620);
+    CHECK(f.port.owned && f.port.releases == 0);
+}
+static void testMissingTimerCallbackCannotBecomeCompletedOnLateTick() {
+    Fixture f;
+    f.authorize();
+    auto req = f.request(Operation::LedSingle);
+    CHECK(f.control.submit(req, f.binding, 110) == Admission::Accepted);
+    // No independent owner timer event is delivered.
+    f.control.tick(610);
+    auto result = f.reply();
+    CHECK(result.outcome == Outcome::Failed && result.reason == Reason::OwnerError);
+    CHECK(!f.port.light);
+    f.control.retire(620);
+    CHECK(f.port.owned && f.port.releases == 0);
+}
+static void testLateTimerCallbackCannotConfirmDeadline() {
+    Fixture f;
+    f.authorize();
+    auto req = f.request(Operation::LedSingle);
+    CHECK(f.control.submit(req, f.binding, 110) == Admission::Accepted);
+    f.port.advanceTimer(501);
+    CHECK(!f.port.light && f.port.timerFault && !f.port.timedOffConfirmed());
+    f.control.tick(611);
+    auto result = f.reply();
+    CHECK(result.outcome == Outcome::Failed && result.reason == Reason::OwnerError);
+    f.control.retire(620);
+    CHECK(f.port.owned);
+}
+static void testExpiredTimerCannotBeFollowedByLateRender() {
+    Fixture f;
+    f.authorize();
+    f.port.expireOnArm = true;
+    auto req = f.request(Operation::LedSingle);
+    CHECK(f.control.submit(req, f.binding, 110) == Admission::Accepted);
+    CHECK(!f.port.light && f.port.offs == 2 && f.port.renders == 1);
+    auto result = f.reply();
+    CHECK(result.outcome == Outcome::Failed && result.reason == Reason::OwnerError);
 }
 static void testUnsupportedAndStale() {
     Fixture f;
@@ -376,12 +490,18 @@ int main() {
     testWakeCorrelationAndForeignEdges();
     testLowPolarityOverflowAndInvalidChannel();
     testLedHoldAndDuplicate();
+    testLedOwnerTimerCutsLightWithoutControlTick();
+    testTimerArmFailurePreventsRenderAndLatchesOwner();
+    testTimerOffFailureRemainsFencedAfterLaterControlTick();
+    testMissingTimerCallbackCannotBecomeCompletedOnLateTick();
+    testLateTimerCallbackCannotConfirmDeadline();
+    testExpiredTimerCannotBeFollowedByLateRender();
     testUnsupportedAndStale();
     testCancelDisconnectRevocationAndExpiry();
     testTimeoutClockAndOwnerFaults();
     testConnectionGenerationAndFinalStep();
     testAcquireEntitlementChangeAndTimeBounds();
-    std::printf("Diagnostic C++11 owner: 10 scenarios, %u checks passed; fake ports, no hardware; "
+    std::printf("Diagnostic C++11 owner: 16 scenarios, %u checks passed; fake ports, no hardware; "
                 "owner %u bytes\n",
                 checks, static_cast<unsigned>(sizeof(Control)));
 }

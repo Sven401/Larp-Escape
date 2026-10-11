@@ -51,6 +51,8 @@ static companion::Identity identity(unsigned n) {
 struct Port : IPort {
     companion::IdentityAccess *revokeOnAcquire = nullptr;
     bool idle = true, owned = false, light = false, onOk = true, offOk = true, high = true;
+    bool timerArmed = false, timerConfirmed = false, timerFault = false;
+    std::uint64_t timerNow = 0, timerDue = 0;
     unsigned acquireCalls = 0, renders = 0, offs = 0, releases = 0, nextId = 10;
     bool acquire(Uuid &id, bool &polarity) noexcept override {
         ++acquireCalls;
@@ -65,14 +67,40 @@ struct Port : IPort {
     }
     bool render(std::uint8_t index, const std::array<std::uint8_t, 3> &rgb) noexcept override {
         ++renders;
-        light = true;
-        return owned && index == 0 && rgb == std::array<std::uint8_t, 3>{{16, 0, 0}} && onOk;
+        const bool accepted = owned && timerArmed && !timerConfirmed && !timerFault &&
+                              index == 0 && rgb == std::array<std::uint8_t, 3>{{16, 0, 0}} && onOk;
+        if (accepted)
+            light = true;
+        return accepted;
+    }
+    bool armLedOffTimer(std::uint16_t holdMs) noexcept override {
+        if (!owned || timerArmed || timerFault || holdMs != 500)
+            return false;
+        timerDue = timerNow + holdMs;
+        timerArmed = true;
+        timerConfirmed = false;
+        return true;
+    }
+    bool timedOffConfirmed() noexcept override {
+        return timerConfirmed && !timerFault && !light;
+    }
+    void advanceTimer(std::uint64_t now) noexcept {
+        timerNow = now;
+        if (!timerArmed || now < timerDue)
+            return;
+        if (now != timerDue)
+            timerFault = true;
+        if (restoreOff() && !timerFault)
+            timerConfirmed = true;
+        else
+            timerFault = true;
     }
     bool restoreOff() noexcept override {
         ++offs;
+        timerArmed = false;
         if (offOk)
             light = false;
-        return offOk;
+        return offOk && !timerFault;
     }
     void release() noexcept override {
         ++releases;
@@ -133,6 +161,7 @@ struct StepFixture : Fixture {
         CHECK(encodeStep(17, req, wire.data(), wire.size()));
     }
     Admission send(std::uint64_t received = 100, std::uint64_t now = 100) {
+        port.timerNow = now;
         return transport.receive(wire.data(), wire.size(), binding, authority, received, now);
     }
     bool next(std::uint64_t now = 201, std::size_t capacity = 128) {
@@ -228,10 +257,21 @@ static void fullWake() {
     CHECK(f.port.renders == 0);
 }
 static void ledAndOverflow() {
+    StepFixture noTimer(Operation::LedSingle);
+    CHECK(noTimer.send() == Admission::Accepted);
+    noTimer.startAssembly();
+    CHECK(noTimer.next(600));
+    CHECK(noTimer.consume(600) == AssemblyResult::Complete);
+    Reply noTimerReply;
+    CHECK(noTimer.assembly.take(600, noTimerReply));
+    CHECK(noTimerReply.outcome == Outcome::Failed &&
+          noTimerReply.reason == Reason::OwnerError && !noTimer.port.timedOffConfirmed());
+
     StepFixture led(Operation::LedSingle);
     CHECK(led.send() == Admission::Accepted);
     led.startAssembly();
     CHECK(!led.next(599));
+    led.port.advanceTimer(600);
     unsigned count = 0;
     while (led.next(600, 20)) {
         CHECK(led.written <= 20);
@@ -319,6 +359,7 @@ static void fencesAndDeadlines() {
     CHECK(later.send(100, 300) == Admission::Accepted);
     later.startAssembly();
     CHECK(!later.next(799));
+    later.port.advanceTimer(800);
     CHECK(later.next(800));
     CHECK(later.consume(800) == AssemblyResult::Complete);
     Reply out;
@@ -398,6 +439,7 @@ static void ownerTimeBoundaries() {
           Admission::Accepted);
     led.control.tick(599);
     CHECK(led.control.pending());
+    led.port.advanceTimer(500);
     led.control.tick(600);
     CHECK(!led.control.pending());
     Reply result = led.reply();

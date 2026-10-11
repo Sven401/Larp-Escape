@@ -68,6 +68,10 @@ struct Port : IPort {
         light = true;
         return owned && index == 0 && rgb == std::array<std::uint8_t, 3>{{16, 0, 0}} && onOk;
     }
+    // This control-frame fixture has no independent LED deadline. An LED
+    // request must stay closed instead of treating a black frame as evidence.
+    bool armLedOffTimer(std::uint16_t) noexcept override { return false; }
+    bool timedOffConfirmed() noexcept override { return false; }
     bool restoreOff() noexcept override {
         ++offs;
         if (offOk)
