@@ -1,11 +1,11 @@
 # App–ESP BLE pairing preflight (2026-10-11)
 
-Status: initial pairing firmware uploaded with separate user approval; full
-flash readback passed, but BLE stack startup failed on the real box. A
-phone-side pairing report is implemented in the Android preview, but an
-actual app–ESP connection has not occurred. Do not treat an
-Android OS bond, advertisement, GATT service discovery, or serial line as a
-GM role or diagnostic grant.
+Status: The box now advertises its product service and both Android and
+Windows have independently discovered it over GATT. The Android bond failed;
+the updated firmware security response has not yet been retested by the user.
+The current Android APK is built but awaits installation on the disconnected
+Moto G14. Neither a received advertisement nor successful GATT discovery
+establishes an OS bond, GM role, diagnostic grant or physical function.
 
 ## Current box and rollback material
 
@@ -355,3 +355,32 @@ The Moto G14 was disconnected at build time, so this APK is not installed.
 The user will reconnect it and conduct the next app pairing attempt; Codex
 will assess the exported report afterward. No hardware acceptance follows
 from the upload or host tests.
+
+## Independent Windows BLE observation, 2026-10-11
+
+The separately assigned `ble_diagnostics` role owns the Windows desktop
+client at `companion/desktop-ble-diagnostics/` (commits `f78c337`,
+`22d13d0`, `895204d`). Its bounded, read-only CLI scan and GUI share the
+same journal. Windows pairing requires a separate, explicit GUI action;
+the CLI cannot request it. The client exports only the expressly selected
+device's address and events, while preserving aggregate scan counts.
+Offline build completed without warnings and 24 model/parser/deadline checks
+passed.
+
+The [redacted Windows report](observations/desktop-ble-2026-10-11.json)
+(SHA-256 `71cd6d918b22489ba29b26751331430a97469ea6e68cac8136f370b58d27cfbb`)
+records a 12-second Windows scan with 33 advertisement callbacks. The box's
+public Bluetooth address `A8:42:E3:CD:4B:1A` appeared 16 times and
+advertised the canonical product service
+`407e6a1d-1cc2-43fd-856b-4aff85a20001`. An uncached GATT service query
+then returned `Success`, with the product service present and the lab
+service absent. No Windows pairing was attempted. The scan saw two addresses,
+but the unrelated address and its events are omitted from the report.
+
+An initial run inside the restricted tool environment returned
+`watcher_error:DisabledByUser`; the host run above received actual BLE
+advertisements. The client now returns a failure code for watcher errors.
+This distinction prevents the restricted environment's adapter state from
+being mistaken for a box failure. The independent Windows result confirms
+box visibility and a GATT path at this time; the Android bond, MITM/F1 role,
+diagnostic authority and physical LED-off result remain open.
