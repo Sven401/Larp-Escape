@@ -37,6 +37,21 @@ import de.larpescape.companion.data.diagnostic.AndroidDiagnosticRunStore
 import de.larpescape.companion.ui.diagnostic.*
 
 class MainActivity : ComponentActivity() {
+    private var nfcCapabilityExportNotice by mutableStateOf<String?>(null)
+    private var nfcCapabilityExportBytes: ByteArray? = null
+    private val exportNfcCapability = registerForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
+        val bytes = nfcCapabilityExportBytes.also { nfcCapabilityExportBytes = null }
+        if (uri != null && bytes != null) lifecycleScope.launch {
+            try {
+                withContext(Dispatchers.IO) {
+                    contentResolver.openOutputStream(uri, "wt")?.use { it.write(bytes) }
+                        ?: error("Datei konnte nicht geschrieben werden")
+                }
+                nfcCapabilityExportNotice = "Lokaler NFC-Beobachtungsbericht exportiert. Boxfunktion und Rechte bleiben ungeprüft."
+            } catch (error: Exception) { nfcCapabilityExportNotice = "NFC-Export fehlgeschlagen: ${error.message}" }
+        } else nfcCapabilityExportNotice = if (uri == null) "NFC-Export abgebrochen; Bericht bleibt in der App."
+            else "NFC-Bericht nicht lesbar; kein Export erstellt."
+    }
     private var pairingExportBytes: ByteArray? = null
     private var pairingExportNotice by mutableStateOf<String?>(null)
     private var connectionExportNotice by mutableStateOf<String?>(null)
@@ -236,7 +251,13 @@ class MainActivity : ComponentActivity() {
                         } else {
                         Text("Gerät verbinden", style = MaterialTheme.typography.titleLarge)
                         Text(state.message)
-                        if (BuildConfig.ALLOW_CONTRACT_LAB) NfcCapabilityCard()
+                        if (BuildConfig.ALLOW_CONTRACT_LAB) NfcCapabilityCard(
+                            export = {
+                                nfcCapabilityExportBytes = runCatching { NfcCapabilityRun.exportBytes(this@MainActivity) }.getOrNull()
+                                if (nfcCapabilityExportBytes != null) exportNfcCapability.launch("nfc-beobachtung-v1.json")
+                                else nfcCapabilityExportNotice = "NFC-Bericht nicht lesbar; kein Export erstellt."
+                            },
+                            exportNotice = nfcCapabilityExportNotice)
                         if (state.permissionMissing) Text("Suche und Verbindung benötigen die Erlaubnis „Geräte in der Nähe“.")
                         Card(Modifier.fillMaxWidth()) {
                             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {

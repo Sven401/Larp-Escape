@@ -25,13 +25,13 @@ import de.larpescape.companion.platform.nfc.NfcCapabilityRun
 import kotlinx.coroutines.delay
 
 @Composable
-fun NfcCapabilityCard() {
+fun NfcCapabilityCard(export: () -> Unit, exportNotice: String?) {
     val context = LocalContext.current
     val supported = remember { context.packageManager.hasSystemFeature(PackageManager.FEATURE_NFC_HOST_CARD_EMULATION) }
     val enabled = NfcAdapter.getDefaultAdapter(context)?.isEnabled == true
-    var snapshot by remember { mutableStateOf(NfcCapabilityRun.snapshot()) }
+    var snapshot by remember { mutableStateOf(NfcCapabilityRun.snapshot(context)) }
     LaunchedEffect(Unit) {
-        while (true) { snapshot = NfcCapabilityRun.snapshot(); delay(250) }
+        while (true) { snapshot = NfcCapabilityRun.snapshot(context); delay(250) }
     }
     Card(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -43,10 +43,10 @@ fun NfcCapabilityCard() {
                 else -> Text("NFC-Kartenemulation verfügbar und eingeschaltet.")
             }
             if (snapshot.status == "ARMED" || snapshot.status == "SELECTED") {
-                OutlinedButton(onClick = { NfcCapabilityRun.stop(); snapshot = NfcCapabilityRun.snapshot() },
+                OutlinedButton(onClick = { NfcCapabilityRun.stop(); snapshot = NfcCapabilityRun.snapshot(context) },
                     modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("NFC-Probe beenden") }
             } else {
-                Button(onClick = { NfcCapabilityRun.start(); snapshot = NfcCapabilityRun.snapshot() },
+                Button(onClick = { NfcCapabilityRun.start(context); snapshot = NfcCapabilityRun.snapshot(context) },
                     enabled = supported && enabled,
                     modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("NFC-Probe für 30 Sekunden starten") }
             }
@@ -54,6 +54,13 @@ fun NfcCapabilityCard() {
             snapshot.runId?.let { Text("Laufkennung: $it", style = MaterialTheme.typography.bodySmall) }
             snapshot.challenge?.let { Text("Öffentliche Prüfzahl: $it", style = MaterialTheme.typography.bodySmall) }
             snapshot.events.takeLast(4).forEach { Text(it.kind, style = MaterialTheme.typography.bodySmall) }
+            val report = NfcCapabilityRun.report(context)
+            if (report != null) {
+                Text("Letzter Bericht: ${report.localStatus} · ${report.events.size} Ereignisse · Geräteabgleich ${report.deviceCorrelation}")
+                OutlinedButton(onClick = export, enabled = report.endedUtc != null,
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("NFC-Beobachtungsbericht exportieren") }
+            }
+            exportNotice?.let { Text(it) }
             Text("Eine Antwort des Handys belegt noch keine Antwort der Box.", style = MaterialTheme.typography.bodySmall)
         }
     }

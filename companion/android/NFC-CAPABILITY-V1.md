@@ -9,10 +9,13 @@ challenge. The UI labels every local observation `UNVERIFIED` until a matching
 box report is received through the original BLE generation. It cannot confer
 GM role, diagnostic grant, identity, or device success.
 
-No device installation or NFC exchange is claimed here. The current UI holds
-only a bounded in-memory event list. Exportable Android evidence with app build,
-UTC times, HCE feature state and same-generation box correlation is still
-required before a user-led end-to-end test. The PN532 reader/APDU path is also
+No device installation or NFC exchange is claimed here. A bounded private
+journal now stores app build, UTC times, observed HCE feature/NFC state, the
+public run ID/challenge and at most twelve named events. Restart closes an
+interrupted arm as `APP_RESTARTED`, never re-arms it. An explicit button exports
+a frozen JSON snapshot; local assessment is `UNCLEAR` and device correlation
+is `UNVERIFIED`. Matching a box report through the original BLE generation is
+still required before a user-led end-to-end result. The PN532 reader/APDU path is also
 not verified on the original box. BLE generation replacement cannot yet close
 this separate probe because the reader correlation path is not installed. AID
 registration and a production security
@@ -26,6 +29,7 @@ the implementation uses those. The project basis is
 `C:/Users/seide/Projects/Larp-Escape-AI/docs/companion/offizielle-grundlagen.md`.
 
 Checks: `:core:protocol:test --tests de.larpescape.protocol.NfcCapabilityV1Test`,
+`:app:testDebugUnitTest --tests de.larpescape.companion.data.nfc.NfcCapabilityEvidenceJournalV1Test`,
 `:app:assembleDebug`, and `:app:processReleaseManifest` passed offline with
 JDK 21 and the installed Android SDK. Merged manifests were checked: the
 HCE declaration appears only in debug.
