@@ -30,6 +30,7 @@ data class PairingAndroidAssessmentV1(
     val targetAddress: String?,
     val evidenceSequences: List<Int>,
     val firmwareSecurityEvidence: String = "OPEN",
+    val previousBondFailureSequences: List<Int> = emptyList(),
 )
 
 data class PairingObservationReportV1(
@@ -77,9 +78,16 @@ data class PairingObservationReportV1(
             it.sequence >= attempt.sequence && it.connectionGeneration == attempt.connectionGeneration &&
                 it.targetAddress == attempt.targetAddress
         }
+        val priorFailures = events.filter { it.kind == "connection_attempt" && it.sequence < attempt.sequence &&
+            it.targetAddress == attempt.targetAddress && it.connectionGeneration != null }
+            .mapNotNull { priorAttempt ->
+                bondFailureEvidence(events.filter { it.sequence >= priorAttempt.sequence && it.sequence < attempt.sequence &&
+                    it.connectionGeneration == priorAttempt.connectionGeneration &&
+                    it.targetAddress == priorAttempt.targetAddress })
+            }.lastOrNull().orEmpty().map { it.sequence }
         fun result(code: String, label: String, vararg evidence: PairingObservationEventV1?) =
             PairingAndroidAssessmentV1(code, label, attempt.connectionGeneration, attempt.targetAddress,
-                evidence.filterNotNull().map { it.sequence })
+                evidence.filterNotNull().map { it.sequence }, previousBondFailureSequences = priorFailures)
         val connection = scope.lastOrNull { it.kind == "connection_state" }
         val service = scope.lastOrNull { it.kind == "product_service_present" }
         // A missing service is a completed discovery result. The app then
@@ -87,6 +95,11 @@ data class PairingObservationReportV1(
         if (service?.value == "false")
             return result("SERVICE_MISSING", "Produktdienst bei der Dienstsuche nicht vorhanden",
                 attempt, connection, service, scope.lastOrNull { it.kind == "connection_closed" })
+        val bondFailure = bondFailureEvidence(scope)
+        if (bondFailure != null)
+            return result("BOND_FAILED", "Android-Kopplung gescheitert · kein OS-Bond bestätigt",
+                attempt, service, *bondFailure.toTypedArray(), connection,
+                scope.lastOrNull { it.kind == "connection_closed" })
         if (scope.any { it.kind == "connection_closed" } || connection?.value != "status=0;state=2")
             return result("NOT_CONNECTED", "Keine aktuelle Android-GATT-Verbindung belegt", attempt, connection,
                 scope.lastOrNull { it.kind == "connection_closed" })
@@ -97,6 +110,17 @@ data class PairingObservationReportV1(
             return result("BOND_OPEN", "Android-Bond noch nicht bestätigt", attempt, connection, service, bond)
         return result("ANDROID_PAIRING_OBSERVED", "Android-Kopplung beobachtet · Firmware-Sicherheitsnachweis offen",
             attempt, connection, service, bond)
+    }
+
+    private fun bondFailureEvidence(scope: List<PairingObservationEventV1>): List<PairingObservationEventV1>? {
+        val request = scope.lastOrNull { it.kind == "bond_request" && it.value == "OS_REQUEST_ACCEPTED" }
+            ?: return null
+        val afterRequest = scope.filter { it.sequence > request.sequence }
+        val bonding = afterRequest.firstOrNull { it.kind == "bond_state" && it.value == "OS_BONDING" }
+            ?: return null
+        val lastState = afterRequest.lastOrNull { it.kind == "bond_state" }
+        if (lastState?.value != "OS_NOT_BONDED" || lastState.sequence <= bonding.sequence) return null
+        return listOf(request, bonding, lastState)
     }
 
     fun export(utc: String): ByteArray {

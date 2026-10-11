@@ -97,6 +97,40 @@ class PairingObservationReportV1Test {
             .androidAssessment().code)
     }
 
+    @Test fun failedBondRemainsVisibleAfterDisconnectAndLaterIncompleteAttempt() {
+        val failed = PairingObservationReportV1.start("t0", "failed-bond")
+            .observe("t1", "ANDROID_APP_USER_ACTION", 12, "AA", "connection_attempt", "connectGatt_requested")
+            .observe("t2", "ANDROID_BLUETOOTH_GATT_CALLBACK", 12, "AA", "connection_state", "status=0;state=2")
+            .observe("t3", "ANDROID_BLUETOOTH_GATT_SERVICE_TABLE", 12, "AA", "product_service_present", "true")
+            .observe("t4", "ANDROID_BLUETOOTH_DEVICE_CREATE_BOND", 12, "AA", "bond_request", "OS_REQUEST_ACCEPTED")
+            .observe("t5", "ANDROID_BOND_STATE_BROADCAST", 12, "AA", "bond_state", "OS_BONDING")
+            .observe("t6", "ANDROID_BOND_STATE_BROADCAST", 12, "AA", "bond_state", "OS_NOT_BONDED")
+            .observe("t7", "ANDROID_BLUETOOTH_GATT_CALLBACK", 12, "AA", "connection_state", "status=22;state=0")
+            .observe("t8", "ANDROID_APP_OR_GATT", 12, "AA", "connection_closed", "local_session_ended")
+        assertEquals("BOND_FAILED", failed.androidAssessment().code)
+        assertEquals(listOf(1, 3, 4, 5, 6, 7, 8), failed.androidAssessment().evidenceSequences)
+        val later = failed.observe("t9", "ANDROID_APP_USER_ACTION", 15, "AA", "connection_attempt", "connectGatt_requested")
+            .observe("t10", "ANDROID_BLUETOOTH_DEVICE_GET_BOND_STATE", 15, "AA", "bond_state", "OS_NOT_BONDED")
+        assertEquals("NOT_CONNECTED", later.androidAssessment().code)
+        assertEquals(listOf(4, 5, 6), later.androidAssessment().previousBondFailureSequences)
+        assertEquals("OPEN", later.androidAssessment().firmwareSecurityEvidence)
+        val exported = JsonParser.parseString(String(later.export("t11"))).asJsonObject
+            .getAsJsonObject("androidAssessment")
+        assertEquals("NOT_CONNECTED", exported["code"].asString)
+        assertEquals(listOf(4, 5, 6), exported.getAsJsonArray("previousBondFailureSequences").map { it.asInt })
+    }
+
+    @Test fun bondingWithoutTerminalNoneDoesNotCountAsFailure() {
+        val report = PairingObservationReportV1.start("t0", "pending-bond")
+            .observe("t1", "APP", 1, "AA", "connection_attempt", "connectGatt_requested")
+            .observe("t2", "GATT", 1, "AA", "connection_state", "status=0;state=2")
+            .observe("t3", "GATT", 1, "AA", "product_service_present", "true")
+            .observe("t4", "ANDROID", 1, "AA", "bond_request", "OS_REQUEST_ACCEPTED")
+            .observe("t5", "ANDROID", 1, "AA", "bond_state", "OS_BONDING")
+        assertEquals("BOND_OPEN", report.androidAssessment().code)
+        assertTrue(report.androidAssessment().previousBondFailureSequences.isEmpty())
+    }
+
     @Test fun journalCapClosesAssessmentAndCannotGrow() {
         var report = observed()
         repeat(PairingObservationReportV1.MAX_EVENTS) {

@@ -251,8 +251,12 @@ class MainActivity : ComponentActivity() {
                                     Text("Neuen Kopplungsbericht starten")
                                 }
                                 state.pairingReport?.let { report ->
+                                    val assessment = report.androidAssessment()
                                     Text("Bericht ${report.reportId.take(8)} · ${report.events.size} Beobachtungen · Beginn ${report.startedUtc}")
-                                    Text(report.androidAssessment().label, style = MaterialTheme.typography.titleSmall)
+                                    Text(assessment.label, style = MaterialTheme.typography.titleSmall)
+                                    if (assessment.previousBondFailureSequences.isNotEmpty() && assessment.code != "ANDROID_PAIRING_OBSERVED")
+                                        Text("Früherer Android-Bond-Versuch scheiterte; Belege im Bericht: ${assessment.previousBondFailureSequences.joinToString()}.",
+                                            style = MaterialTheme.typography.bodySmall)
                                     Text("Firmware-Belege offen: Verbindungsgeneration, Bond-Schlüssel, Verschlüsselung/MITM und Rolle.")
                                     report.events.takeLast(5).forEach { event ->
                                         Text("${event.recordedUtc} · ${event.kind}: ${event.value}", style = MaterialTheme.typography.bodySmall)

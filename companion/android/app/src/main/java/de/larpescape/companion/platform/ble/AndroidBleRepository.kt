@@ -71,10 +71,24 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
     private val bluetoothState = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (!receiverRegistered) return
+            if (intent?.action == BluetoothDevice.ACTION_PAIRING_REQUEST && permitted()) {
+                val device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE, BluetoothDevice::class.java)
+                if (device != null && (device.address == selectedAddress && gatt != null || device.address == pendingBondAddress)) {
+                    val variant = intent.getIntExtra(BluetoothDevice.EXTRA_PAIRING_VARIANT, BluetoothDevice.ERROR)
+                    // Never read EXTRA_PAIRING_KEY. A broadcast is not proof that a dialog was displayed.
+                    observePairing("ANDROID_PAIRING_REQUEST_BROADCAST", "pairing_request_variant",
+                        pairingVariantLabel(variant), pendingBondGeneration ?: generation, device.address)
+                }
+                return
+            }
             if (intent?.action == BluetoothDevice.ACTION_BOND_STATE_CHANGED && permitted()) {
                 val device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE, BluetoothDevice::class.java)
                 if (device != null && (device.address == selectedAddress && gatt != null || device.address == pendingBondAddress)) {
                     val bond = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR)
+                    val previous = intent.getIntExtra(BluetoothDevice.EXTRA_PREVIOUS_BOND_STATE, BluetoothDevice.ERROR)
+                    observePairing("ANDROID_BOND_STATE_BROADCAST", "bond_transition",
+                        "previous=${bondLabel(previous)};current=${bondLabel(bond)}",
+                        pendingBondGeneration ?: generation, device.address)
                     observePairing("ANDROID_BOND_STATE_BROADCAST", "bond_state", bondLabel(bond),
                         pendingBondGeneration ?: generation, device.address)
                     if (bond == BluetoothDevice.BOND_BONDED || bond == BluetoothDevice.BOND_NONE) {
@@ -126,6 +140,12 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
         BluetoothDevice.BOND_BONDING -> "OS_BONDING"
         BluetoothDevice.BOND_NONE -> "OS_NOT_BONDED"
         else -> "OS_UNKNOWN_$state"
+    }
+    private fun pairingVariantLabel(variant: Int) = when (variant) {
+        BluetoothDevice.PAIRING_VARIANT_PIN -> "PIN_REQUEST"
+        BluetoothDevice.PAIRING_VARIANT_PASSKEY_CONFIRMATION -> "PASSKEY_CONFIRMATION"
+        // Other platform variants are not exposed as SDK constants at compileSdk 35.
+        else -> "OS_VARIANT_$variant"
     }
     private fun observeBond(device: BluetoothDevice) {
         try { if (permitted()) observePairing("ANDROID_BLUETOOTH_DEVICE_GET_BOND_STATE", "bond_state", bondLabel(device.bondState)) }
@@ -197,10 +217,11 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
         } else {
             if (!receiverRegistered) {
                 // Bluetooth broadcasts can originate from the privileged Bluetooth UID.
-                // Only subscribe to this protected framework action.
+                // Only subscribe to these protected framework actions.
                 context.registerReceiver(bluetoothState, IntentFilter().apply {
                     addAction(BluetoothAdapter.ACTION_STATE_CHANGED)
                     addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED)
+                    addAction(BluetoothDevice.ACTION_PAIRING_REQUEST)
                 }, Context.RECEIVER_EXPORTED)
                 receiverRegistered = true
             }

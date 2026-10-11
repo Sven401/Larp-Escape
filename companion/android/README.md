@@ -319,7 +319,15 @@ allein erteilt keine Produkt- oder Diagnosefreigabe.
 Der lokale
 `ACTION_BOND_STATE_CHANGED`-Status und `getBondState()` werden getrennt mit
 UTC-Zeit, Quelle, lokaler Bericht-ID, GATT-Generation und BLE-Zieladresse
-erfasst. GATT-Verbindungsrückrufe und Produktdienstsuche stehen ebenfalls als
+erfasst. Zusätzlich hält der Bericht den vorherigen und neuen Bond-Zustand
+aus dem Broadcast fest. Ein empfangener `ACTION_PAIRING_REQUEST` wird mit
+seiner Variante protokolliert, aber ohne PIN oder Passkey; der Broadcast
+beweist nicht, dass Android einen Dialog angezeigt hat. Nach einem
+angenommenen Bond-Aufruf mit `OS_BONDING` und anschließendem
+`OS_NOT_BONDED` zeigt die Bewertung `BOND_FAILED`. Wenn danach ein neuer,
+noch unvollständiger Verbindungsversuch beginnt, bleiben die Sequenznummern
+des früheren Fehlers als `previousBondFailureSequences` sichtbar.
+GATT-Verbindungsrückrufe und Produktdienstsuche stehen ebenfalls als
 Beobachtungen im JSON-Export. Ein aktueller Android-Status wird nur aus
 zusammengehörigen Beobachtungen derselben GATT-Generation und BLE-Adresse
 berechnet: Verbindung, Produktdienst und `OS_BONDED`. Bei Trennung, neuem
@@ -329,6 +337,11 @@ exportieren. Der Export enthält die BLE-Adresse zur Zuordnung und sollte
 entsprechend vertraulich behandelt werden. Der Kopplungsbericht wird lokal
 gespeichert und nach einem Prozessneustart als historische Beobachtung geladen;
 daraus entsteht keine neue Verbindung.
+
+Plattformgrundlage, am 2026-10-11 geprüft:
+[Android BluetoothDevice API](https://developer.android.com/reference/android/bluetooth/BluetoothDevice)
+für `ACTION_PAIRING_REQUEST`, `EXTRA_PAIRING_VARIANT`,
+`ACTION_BOND_STATE_CHANGED` und `EXTRA_PREVIOUS_BOND_STATE`.
 
 ### Gespeicherter GATT-Transportbeleg
 
