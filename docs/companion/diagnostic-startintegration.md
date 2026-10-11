@@ -75,3 +75,31 @@ runtime heap, stack and timing on the connected box. The test function has no
 physical or product release. No upload, restore, RF run, device test, push,
 PR or integration into `main` was performed. The next hardware run belongs
 to the user in the app; a later session may evaluate only its exported report.
+
+## Closed follow-up, 2026-10-11
+
+Commit `db814e4` makes the fake diagnostic step owner demand an independent
+`timedOffConfirmed()` observation before an `Applied` park reply. A missed timer
+and a mere black submission stay closed. Host checks passed: diagnostic control
+16 scenarios/426 checks, control transport 350 assertions, step transport 968
+assertions. The real ESP32 timer still observes only its own software off
+submission; there is no electrical or visual off feedback on the current board.
+The firmware therefore has no production diagnostic grant.
+
+Commit `c9f21bd` generates a fresh, process-local `BootIdentity` during closed
+identity startup. Failure leaves the owner unavailable, and it never rewrites
+the persisted device identity for a failed boot nonce. Configured-control host
+tests passed 521/521. The single-app ESP32 build passed with 1,952,569 B ELF
+flash and 73,308 B static RAM against 2,621,440 B and 532,480 B respectively.
+This boot identity is not yet bound to peer proof, a registry or GATT. The
+original-bound startup prerequisites are recorded in
+`production-ble-closed-owner.md`.
+
+Android commit `8c8bd9f` adds a visible 11 October preview label and an
+explicit message that the box test is still blocked and responses are
+simulated. Its offline Debug build passed. The APK was installed on the
+connected Moto G14 after the previous same-signature APK was backed up; the
+installed APK hash matched the new build. The app was not opened or operated
+by Codex, and the user has not yet confirmed the screen or run a box test.
+This APK install was not a firmware upload. No firmware upload or restore has
+occurred.

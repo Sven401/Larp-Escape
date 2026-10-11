@@ -163,9 +163,10 @@ attributes:
 
 1. A valid immutable `BootIdentity` from the production run, plus the actual
    selected source registration and service handles before the first link.
-   `Esp32CompanionIdentityOwner` currently provides only the device identity,
-   initialized closed policy and channel; it does not create/expose a boot
-   identity for peer proof.
+   Commit `c9f21bd` makes `Esp32CompanionIdentityOwner` generate an ephemeral
+   boot identity after its closed policy starts and expose it only on a
+   successful startup. It is not yet passed to peer proof or GATT; a boot
+   identity alone establishes no peer authority.
 2. A process-lifetime `IPeerProofContext` backed by the same selected source
    and a started `FreeRtosPeerRegistryRuntime` whose credential snapshot is
    installed with an original SDK actor ACK. The product owner has no registry
@@ -185,8 +186,8 @@ attributes:
 Adding Challenge/Issue/Proof/Result UUIDs with a dummy boot/context would
 create an apparent authentication surface without a valid challenge source or
 role result. This package therefore leaves the product source and GATT layout
-unchanged. The next implementation should import a real boot/registry/worker
-contract, require its startup ACK before the first connection, and then wire
+unchanged. The next implementation should bind the real boot identity to a
+registry/worker contract, require its startup ACK before the first connection, and then wire
 the already tested complete service bundle. On any missing or stale original
 registration, credential, SDK security observation or role ACK it must remain
 closed. A real device run and user-led diagnostic report are still separate
