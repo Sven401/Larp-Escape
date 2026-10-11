@@ -12,12 +12,16 @@ data class DeviceUiState(
     val freshness: StatusFreshness = StatusFreshness.DISCONNECTED,
     val permissionMissing: Boolean = false,
     val diagnosticAvailability: DiagnosticAvailabilityV1 = DiagnosticAvailabilityV1.DISCONNECTED,
+    val pairingReport: PairingObservationReportV1? = null,
 )
 interface DeviceRepository {
     val state: StateFlow<DeviceUiState>
     fun scan()
     fun connect(id: String)
     fun disconnect()
+    fun startPairingReport() {}
+    fun requestBond() {}
+    fun pairingReportBytes(): ByteArray? = null
     fun permissionsChanged(granted: Boolean, denied: Boolean = false)
     fun close()
 }

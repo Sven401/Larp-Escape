@@ -22,6 +22,7 @@ import de.larpescape.protocol.StatusFreshness
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.util.UUID
+import java.time.Instant
 
 // Lint cannot follow the shared permission predicate/guard through asynchronous
 // callbacks. Entry points check both permissions; guarded catches revocation.
@@ -38,6 +39,9 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
     private var gatt: BluetoothGatt? = null
     private var diagnostic: AndroidDiagnosticGattShellV1? = null
     private var generation = 0
+    private var selectedAddress: String? = null
+    private var pendingBondAddress: String? = null
+    private var pendingBondGeneration: Int? = null
     private var scanGeneration = 0
     private val frames = FrameAssembler()
     private val labService = UUID.fromString("86ddc5b0-3878-4ff7-9f55-17c62aeb1001")
@@ -54,6 +58,18 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
     private val bluetoothState = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (!receiverRegistered) return
+            if (intent?.action == BluetoothDevice.ACTION_BOND_STATE_CHANGED && permitted()) {
+                val device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE, BluetoothDevice::class.java)
+                if (device != null && (device.address == selectedAddress && gatt != null || device.address == pendingBondAddress)) {
+                    val bond = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR)
+                    observePairing("ANDROID_BOND_STATE_BROADCAST", "bond_state", bondLabel(bond),
+                        pendingBondGeneration ?: generation, device.address)
+                    if (bond == BluetoothDevice.BOND_BONDED || bond == BluetoothDevice.BOND_NONE) {
+                        pendingBondAddress = null; pendingBondGeneration = null
+                    }
+                }
+                return
+            }
             if (intent?.action == BluetoothAdapter.ACTION_STATE_CHANGED) {
                 when (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR)) {
                     BluetoothAdapter.STATE_OFF, BluetoothAdapter.STATE_TURNING_OFF -> {
@@ -82,6 +98,44 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
         mutable.value = mutable.value.copy(message = message)
         Log.i("LarpEscape", message)
     }
+    private fun observePairing(source: String, kind: String, value: String,
+                               observedGeneration: Int? = generation.takeIf { selectedAddress != null },
+                               observedAddress: String? = selectedAddress) {
+        val current = mutable.value.pairingReport ?: return
+        mutable.value = mutable.value.copy(pairingReport = current.observe(
+            Instant.now().toString(), source, observedGeneration, observedAddress, kind, value))
+    }
+    private fun bondLabel(state: Int) = when (state) {
+        BluetoothDevice.BOND_BONDED -> "OS_BONDED"
+        BluetoothDevice.BOND_BONDING -> "OS_BONDING"
+        BluetoothDevice.BOND_NONE -> "OS_NOT_BONDED"
+        else -> "OS_UNKNOWN_$state"
+    }
+    private fun observeBond(device: BluetoothDevice) {
+        try { if (permitted()) observePairing("ANDROID_BLUETOOTH_DEVICE_GET_BOND_STATE", "bond_state", bondLabel(device.bondState)) }
+        catch (_: SecurityException) { observePairing("ANDROID_BLUETOOTH_DEVICE_GET_BOND_STATE", "bond_state", "PERMISSION_REVOKED") }
+    }
+    override fun startPairingReport() {
+        pendingBondAddress = null; pendingBondGeneration = null
+        val initial = PairingObservationReportV1.start()
+        mutable.value = mutable.value.copy(pairingReport = initial)
+        observePairing("ANDROID_APP_USER_ACTION", "report_started", "user_requested")
+        if (gatt != null) {
+            observePairing("ANDROID_APP_STATE", "current_connection", "already_open_before_report_start")
+            selectedAddress?.let { devices[it]?.let(::observeBond) }
+        }
+    }
+    override fun pairingReportBytes(): ByteArray? = mutable.value.pairingReport?.export(Instant.now().toString())
+    override fun requestBond() = guarded {
+        val address = selectedAddress ?: error("Zuerst einen ESP verbinden")
+        check(gatt != null && mutable.value.connected) { "Aktive Verbindung fehlt" }
+        val device = devices[address] ?: error("Zielgerät nicht mehr bekannt")
+        observeBond(device)
+        val started = device.createBond()
+        if (started) { pendingBondAddress = address; pendingBondGeneration = generation }
+        observePairing("ANDROID_BLUETOOTH_DEVICE_CREATE_BOND", "bond_request", if (started) "OS_REQUEST_ACCEPTED" else "OS_REQUEST_REJECTED")
+        report(if (started) "Android-Kopplung angefragt; auf OS-Ergebnis warten" else "Android konnte Kopplung nicht starten")
+    }
     private fun reportDiagnostic(shell: AndroidDiagnosticGattShellV1) {
         if (diagnostic === shell)
             mutable.value = mutable.value.copy(diagnosticAvailability = diagnosticAvailability(shell.link.phase, shell.link.failure, shell.blockStatus))
@@ -106,7 +160,10 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
             if (!receiverRegistered) {
                 // Bluetooth broadcasts can originate from the privileged Bluetooth UID.
                 // Only subscribe to this protected framework action.
-                context.registerReceiver(bluetoothState, IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED), Context.RECEIVER_EXPORTED)
+                context.registerReceiver(bluetoothState, IntentFilter().apply {
+                    addAction(BluetoothAdapter.ACTION_STATE_CHANGED)
+                    addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED)
+                }, Context.RECEIVER_EXPORTED)
                 receiverRegistered = true
             }
             if (mutable.value.permissionMissing) {
@@ -129,7 +186,9 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
         }
         stopScan(); disconnect(); devices.clear()
         mutable.value = DeviceUiState(message = "Suche läuft …", scanning = true,
+            pairingReport = mutable.value.pairingReport,
             diagnosticAvailability = DiagnosticAvailabilityV1.SEARCHING)
+        observePairing("ANDROID_BLUETOOTH_LE_SCANNER", "scan_started", "requested")
         val token = ++scanGeneration
         scanner = adapter.bluetoothLeScanner ?: error("BLE-Scanner fehlt")
         scanCallback = object : ScanCallback() {
@@ -150,6 +209,7 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
             } }
             override fun onScanFailed(errorCode: Int) { handler.post {
                 if (token == scanGeneration) {
+                    observePairing("ANDROID_BLUETOOTH_LE_SCAN_CALLBACK", "scan_failed", errorCode.toString())
                     stopScan(); mutable.value = mutable.value.copy(diagnosticAvailability = DiagnosticAvailabilityV1.SEARCH_FAILED)
                     report("Suche fehlgeschlagen ($errorCode)")
                 }
@@ -173,6 +233,10 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
         check(permitted()) { "Bluetoothberechtigung fehlt" }
         val device = devices[id] ?: error("Gerät erneut suchen")
         val token = ++generation
+        pendingBondAddress = null; pendingBondGeneration = null
+        selectedAddress = id
+        observePairing("ANDROID_APP_USER_ACTION", "connection_attempt", "connectGatt_requested")
+        observeBond(device)
         statuses.connect()
         mutable.value = mutable.value.copy(freshness = StatusFreshness.WAITING,
             diagnosticAvailability = DiagnosticAvailabilityV1.CONNECTING)
@@ -182,6 +246,7 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
                 if (token == generation && connection === gatt) guarded(action)
             } }
             override fun onConnectionStateChange(connection: BluetoothGatt, status: Int, newState: Int) = dispatch(connection) {
+                observePairing("ANDROID_BLUETOOTH_GATT_CALLBACK", "connection_state", "status=$status;state=$newState")
                 if (status != BluetoothGatt.GATT_SUCCESS) {
                     disconnect()
                     mutable.value = mutable.value.copy(diagnosticAvailability = DiagnosticAvailabilityV1.CONNECTION_FAILED)
@@ -189,11 +254,13 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
                     return@dispatch
                 }
                 if (newState == BluetoothProfile.STATE_CONNECTED) {
+                    observeBond(device)
                     report("BLE verbunden; prüfe Dienste …")
                     check(connection.discoverServices()) { "Dienstsuche konnte nicht starten" }
                 } else if (newState == BluetoothProfile.STATE_DISCONNECTED) { disconnect(); report("Verbindung getrennt") }
             }
             override fun onServicesDiscovered(connection: BluetoothGatt, status: Int) = dispatch(connection) {
+                observePairing("ANDROID_BLUETOOTH_GATT_CALLBACK", "service_discovery", "status=$status")
                 if (status != BluetoothGatt.GATT_SUCCESS) {
                     disconnect()
                     mutable.value = mutable.value.copy(diagnosticAvailability = DiagnosticAvailabilityV1.DISCOVERY_FAILED)
@@ -201,6 +268,9 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
                     return@dispatch
                 }
                 val lab = if (BuildConfig.ALLOW_CONTRACT_LAB) connection.getService(labService) else null
+                observePairing("ANDROID_BLUETOOTH_GATT_SERVICE_TABLE", "product_service_present", (connection.getService(canonical) != null).toString())
+                observePairing("ANDROID_BLUETOOTH_GATT_SERVICE_TABLE", "lab_service_present", (lab != null).toString())
+                observeBond(device)
                 if (lab == null && connection.getService(canonical) == null) {
                     disconnect()
                     mutable.value = mutable.value.copy(diagnosticAvailability = DiagnosticAvailabilityV1.PRODUCT_SERVICE_MISSING)
@@ -294,9 +364,11 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
         handler.postDelayed({ if (token == generation && !mutable.value.connected) { disconnect(); report("Verbindung nach 20 Sekunden abgebrochen") } }, 20000)
     }
     override fun disconnect() {
+        if (gatt != null) observePairing("ANDROID_APP_OR_GATT", "connection_closed", "local_session_ended")
         ++generation; diagnostic?.close(); diagnostic = null; frames.clear(); receivedStatus = false
         statuses.disconnect(); expiry?.let { handler.removeCallbacks(it) }; expiry = null
         val old = gatt; gatt = null
+        selectedAddress = null
         try { if (permitted()) old?.disconnect() } catch (_: SecurityException) { }
         try { old?.close() } catch (_: SecurityException) { }
         mutable.value = mutable.value.copy(connected = false, status = null, configuredStatus = null,
