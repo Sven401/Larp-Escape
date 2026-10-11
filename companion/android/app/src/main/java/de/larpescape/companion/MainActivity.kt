@@ -38,14 +38,15 @@ class MainActivity : ComponentActivity() {
     private var pairingExportBytes: ByteArray? = null
     private var pairingExportNotice by mutableStateOf<String?>(null)
     private val exportPairing = registerForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
-        val bytes = pairingExportBytes.also { pairingExportBytes = null }
+        val bytes = pairingExportBytes.also { pairingExportBytes = null } ?: model.pendingPairingReportBytes()
         if (uri != null && bytes != null) lifecycleScope.launch {
             try {
                 withContext(Dispatchers.IO) { contentResolver.openOutputStream(uri, "wt")?.use { it.write(bytes) }
                     ?: error("Datei konnte nicht geschrieben werden") }
+                model.pairingExportCompleted()
                 pairingExportNotice = "Android-BLE-Beobachtungsbericht exportiert. Firmware-Nachweise bleiben offen."
             } catch (error: Exception) { pairingExportNotice = "Export fehlgeschlagen: ${error.message}" }
-        } else pairingExportNotice = "Dateiauswahl abgebrochen; Bericht bleibt in dieser App-Sitzung sichtbar."
+        } else pairingExportNotice = "Dateiauswahl abgebrochen; Bericht bleibt in der App gespeichert."
     }
     private var nfcScreen by mutableStateOf(false)
     private var scenarioScreen by mutableStateOf(false)

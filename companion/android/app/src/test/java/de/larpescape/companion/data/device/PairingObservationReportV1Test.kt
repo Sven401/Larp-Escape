@@ -67,4 +67,25 @@ class PairingObservationReportV1Test {
         assertEquals("BOND_OPEN", base.observe("t5", "ANDROID_BOND_STATE_BROADCAST", 4, "AA",
             "bond_state", "OS_BONDING").androidAssessment().code)
     }
+
+    @Test fun redundantOsBondDoesNotIssueNewRequestOrDowngradeAssessment() {
+        assertEquals(BondRequestDecisionV1.ALREADY_BONDED, bondRequestDecisionV1("OS_BONDED"))
+        assertEquals(BondRequestDecisionV1.IN_PROGRESS, bondRequestDecisionV1("OS_BONDING"))
+        assertEquals(BondRequestDecisionV1.REQUEST, bondRequestDecisionV1("OS_NOT_BONDED"))
+        val afterRefresh = observed().observe("t5", "ANDROID_BLUETOOTH_DEVICE_GET_BOND_STATE", 4, "AA",
+            "bond_state", "OS_BONDED")
+        assertEquals("ANDROID_PAIRING_OBSERVED", afterRefresh.androidAssessment().code)
+        assertEquals("NOT_CONNECTED", afterRefresh.observe("t6", "ANDROID_APP_OR_GATT", 4, "AA",
+            "connection_closed", "local_session_ended").androidAssessment().code)
+    }
+
+    @Test fun journalCapClosesAssessmentAndCannotGrow() {
+        var report = observed()
+        repeat(PairingObservationReportV1.MAX_EVENTS) {
+            report = report.observe("t${it + 5}", "ANDROID_APP", 4, "AA", "scan_started", "requested")
+        }
+        assertEquals(PairingObservationReportV1.MAX_EVENTS, report.events.size)
+        assertEquals("journal_limit_reached;start_new_report", report.events.last().value)
+        assertEquals("NOT_CONNECTED", report.androidAssessment().code)
+    }
 }

@@ -4,6 +4,14 @@ import com.google.gson.Gson
 import java.time.Instant
 import java.util.UUID
 
+enum class BondRequestDecisionV1 { ALREADY_BONDED, IN_PROGRESS, REQUEST }
+
+fun bondRequestDecisionV1(observedOsState: String) = when (observedOsState) {
+    "OS_BONDED" -> BondRequestDecisionV1.ALREADY_BONDED
+    "OS_BONDING" -> BondRequestDecisionV1.IN_PROGRESS
+    else -> BondRequestDecisionV1.REQUEST
+}
+
 /** Android-side observations only. No field in this report asserts firmware security. */
 data class PairingObservationEventV1(
     val sequence: Int,
@@ -38,8 +46,29 @@ data class PairingObservationReportV1(
         "firmware role or diagnostic authorization",
     ),
 ) {
-    fun observe(utc: String, source: String, generation: Int?, target: String?, kind: String, value: String) =
-        copy(events = events + PairingObservationEventV1(events.size + 1, utc, source, generation, target, kind, value))
+    fun observe(utc: String, source: String, generation: Int?, target: String?, kind: String, value: String): PairingObservationReportV1 {
+        if (events.size >= MAX_EVENTS) return this
+        val lastAttempt = events.lastOrNull { it.kind == "connection_attempt" }
+        val capped = events.size == MAX_EVENTS - 1
+        val next = PairingObservationEventV1((events.lastOrNull()?.sequence ?: 0) + 1, utc,
+            if (capped) "ANDROID_APP_JOURNAL" else source,
+            if (capped) lastAttempt?.connectionGeneration else generation,
+            if (capped) lastAttempt?.targetAddress else target,
+            if (capped) "connection_closed" else kind,
+            if (capped) "journal_limit_reached;start_new_report" else value)
+        return copy(events = events + next)
+    }
+
+    fun closeRecoveredSession(utc: String): PairingObservationReportV1 {
+        val attempt = events.lastOrNull { it.kind == "connection_attempt" }
+        if (events.lastOrNull()?.kind == "connection_closed" && events.last().value == "journal_limit_reached;start_new_report")
+            return this
+        val closure = PairingObservationEventV1((events.lastOrNull()?.sequence ?: 0) + 1, utc,
+            "ANDROID_APP_RECOVERY", attempt?.connectionGeneration, attempt?.targetAddress,
+            "connection_closed", "process_restarted;live_link_unverified")
+        return if (events.size < MAX_EVENTS) copy(events = events + closure)
+            else copy(events = events.dropLast(1) + closure.copy(sequence = events.last().sequence))
+    }
 
     fun androidAssessment(): PairingAndroidAssessmentV1 {
         val attempt = events.lastOrNull { it.kind == "connection_attempt" && it.connectionGeneration != null && it.targetAddress != null }
@@ -75,6 +104,7 @@ data class PairingObservationReportV1(
     }
 
     companion object {
+        const val MAX_EVENTS = 256
         fun start(utc: String = Instant.now().toString(), id: String = UUID.randomUUID().toString()) =
             PairingObservationReportV1(reportId = id, startedUtc = utc)
     }

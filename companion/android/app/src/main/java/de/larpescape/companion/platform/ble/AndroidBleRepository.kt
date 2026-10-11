@@ -31,6 +31,13 @@ import java.time.Instant
 class AndroidBleRepository(private val context: Context) : DeviceRepository {
     private val mutable = MutableStateFlow(DeviceUiState())
     override val state = mutable.asStateFlow()
+    private val pairingJournal = PairingObservationJournalV1(context.filesDir)
+    init {
+        runCatching { pairingJournal.loadRecovered(Instant.now().toString()) }
+            .onSuccess { if (it != null) mutable.value = mutable.value.copy(pairingReport = it,
+                message = "Gespeicherter Kopplungsbericht geladen · Verbindung erneut prüfen") }
+            .onFailure { mutable.value = mutable.value.copy(message = "Gespeicherter Kopplungsbericht nicht lesbar: ${it.message}") }
+    }
     private val handler = Handler(Looper.getMainLooper())
     private val adapter = context.getSystemService(BluetoothManager::class.java)?.adapter
     private val devices = mutableMapOf<String, BluetoothDevice>()
@@ -102,8 +109,11 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
                                observedGeneration: Int? = generation.takeIf { selectedAddress != null },
                                observedAddress: String? = selectedAddress) {
         val current = mutable.value.pairingReport ?: return
-        mutable.value = mutable.value.copy(pairingReport = current.observe(
-            Instant.now().toString(), source, observedGeneration, observedAddress, kind, value))
+        val next = current.observe(Instant.now().toString(), source, observedGeneration, observedAddress, kind, value)
+        if (next === current) return
+        mutable.value = mutable.value.copy(pairingReport = next)
+        runCatching { pairingJournal.save(next) }
+            .onFailure { report("Kopplungsbericht konnte nicht gespeichert werden: ${it.message}") }
     }
     private fun bondLabel(state: Int) = when (state) {
         BluetoothDevice.BOND_BONDED -> "OS_BONDED"
@@ -118,6 +128,8 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
     override fun startPairingReport() {
         pendingBondAddress = null; pendingBondGeneration = null
         val initial = PairingObservationReportV1.start()
+        runCatching { pairingJournal.save(initial); pairingJournal.clearPendingExport() }
+            .onFailure { report("Neuer Kopplungsbericht konnte nicht gespeichert werden: ${it.message}"); return }
         mutable.value = mutable.value.copy(pairingReport = initial)
         observePairing("ANDROID_APP_USER_ACTION", "report_started", "user_requested")
         if (gatt != null) {
@@ -125,12 +137,31 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
             selectedAddress?.let { devices[it]?.let(::observeBond) }
         }
     }
-    override fun pairingReportBytes(): ByteArray? = mutable.value.pairingReport?.export(Instant.now().toString())
+    override fun pairingReportBytes(): ByteArray? {
+        val report = mutable.value.pairingReport ?: return null
+        return runCatching { pairingJournal.prepareExport(report, Instant.now().toString()) }
+            .onFailure { report("Kopplungsbericht konnte nicht für Export gesichert werden: ${it.message}") }.getOrNull()
+    }
+    override fun pendingPairingReportBytes(): ByteArray? = runCatching { pairingJournal.pendingExport() }
+        .onFailure { report("Gesicherter Export nicht lesbar: ${it.message}") }.getOrNull()
+    override fun pairingExportCompleted() {
+        runCatching { pairingJournal.clearPendingExport() }
+            .onFailure { report("Export abgeschlossen; Exportkopie konnte nicht gelöscht werden: ${it.message}") }
+    }
     override fun requestBond() = guarded {
         val address = selectedAddress ?: error("Zuerst einen ESP verbinden")
         check(gatt != null && mutable.value.connected) { "Aktive Verbindung fehlt" }
         val device = devices[address] ?: error("Zielgerät nicht mehr bekannt")
-        observeBond(device)
+        val bondState = device.bondState
+        observePairing("ANDROID_BLUETOOTH_DEVICE_GET_BOND_STATE", "bond_state", bondLabel(bondState))
+        if (bondRequestDecisionV1(bondLabel(bondState)) == BondRequestDecisionV1.ALREADY_BONDED) {
+            report("Android meldet dieses Gerät bereits als gekoppelt; kein neuer Bond angefragt")
+            return@guarded
+        }
+        if (bondRequestDecisionV1(bondLabel(bondState)) == BondRequestDecisionV1.IN_PROGRESS) {
+            report("Android-Kopplung läuft bereits; auf OS-Ergebnis warten")
+            return@guarded
+        }
         val started = device.createBond()
         if (started) { pendingBondAddress = address; pendingBondGeneration = generation }
         observePairing("ANDROID_BLUETOOTH_DEVICE_CREATE_BOND", "bond_request", if (started) "OS_REQUEST_ACCEPTED" else "OS_REQUEST_REJECTED")
