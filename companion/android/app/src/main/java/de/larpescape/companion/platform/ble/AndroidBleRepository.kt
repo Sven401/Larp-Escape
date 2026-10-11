@@ -50,6 +50,7 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
     private var pendingBondAddress: String? = null
     private var pendingBondGeneration: Int? = null
     private var scanGeneration = 0
+    private var scanEvidence: BleScanEvidenceV1? = null
     private val frames = FrameAssembler()
     private val labService = UUID.fromString("86ddc5b0-3878-4ff7-9f55-17c62aeb1001")
     private val canonical = UUID.fromString("407e6a1d-1cc2-43fd-856b-4aff85a20001")
@@ -222,16 +223,26 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
         observePairing("ANDROID_BLUETOOTH_LE_SCANNER", "scan_started", "requested")
         val token = ++scanGeneration
         scanner = adapter.bluetoothLeScanner ?: error("BLE-Scanner fehlt")
+        scanEvidence = BleScanEvidenceV1()
         scanCallback = object : ScanCallback() {
             override fun onScanResult(callbackType: Int, result: ScanResult) { handler.post {
                 if (token != scanGeneration) return@post
+                scanEvidence?.callback()
                 guarded {
                     val name = result.scanRecord?.deviceName ?: result.device.name ?: "Unbenannt"
                     val services = result.scanRecord?.serviceUuids.orEmpty().map { it.uuid }
                     val advertisesLab = labService in services
-                    if (!BuildConfig.ALLOW_CONTRACT_LAB && advertisesLab && canonical !in services) return@guarded
-                    if (!(BuildConfig.ALLOW_CONTRACT_LAB && advertisesLab) && canonical !in services && !name.contains("Larp", true) && !name.contains("ESP", true)) return@guarded
+                    val advertisesProduct = canonical in services
                     val id = result.device.address
+                    if (scanEvidence?.productCandidate(id, advertisesProduct) == true)
+                        observePairing("ANDROID_BLUETOOTH_LE_SCAN_RECORD", "product_candidate",
+                            "canonical_service_advertised", null, id)
+                    if (!BuildConfig.ALLOW_CONTRACT_LAB && advertisesLab && !advertisesProduct) {
+                        scanEvidence?.filtered(); return@guarded
+                    }
+                    if (!(BuildConfig.ALLOW_CONTRACT_LAB && advertisesLab) && !advertisesProduct && !name.contains("Larp", true) && !name.contains("ESP", true)) {
+                        scanEvidence?.filtered(); return@guarded
+                    }
                     if (devices.size >= 16 || devices.containsKey(id)) return@guarded
                     devices[id] = result.device
                     mutable.value = mutable.value.copy(targets = mutable.value.targets + DeviceTarget(id, name))
@@ -241,18 +252,20 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
             override fun onScanFailed(errorCode: Int) { handler.post {
                 if (token == scanGeneration) {
                     observePairing("ANDROID_BLUETOOTH_LE_SCAN_CALLBACK", "scan_failed", errorCode.toString())
-                    stopScan(); mutable.value = mutable.value.copy(diagnosticAvailability = DiagnosticAvailabilityV1.SEARCH_FAILED)
+                    stopScan("failed"); mutable.value = mutable.value.copy(diagnosticAvailability = DiagnosticAvailabilityV1.SEARCH_FAILED)
                     report("Suche fehlgeschlagen ($errorCode)")
                 }
             } }
         }
         scanner!!.startScan(null, ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).build(), scanCallback)
         handler.postDelayed({ if (token == scanGeneration) {
-            stopScan(); mutable.value = mutable.value.copy(diagnosticAvailability = DiagnosticAvailabilityV1.SEARCH_COMPLETE)
+            stopScan("complete"); mutable.value = mutable.value.copy(diagnosticAvailability = DiagnosticAvailabilityV1.SEARCH_COMPLETE)
             report("Suche beendet: ${devices.size} Geräte")
         } }, 10000)
     }
-    private fun stopScan() {
+    private fun stopScan(reason: String = "stopped") {
+        scanEvidence?.let { observePairing("ANDROID_BLUETOOTH_LE_SCANNER", "scan_end", it.summary(reason), null, null) }
+        scanEvidence = null
         ++scanGeneration
         try { if (permitted()) scanCallback?.let { scanner?.stopScan(it) } }
         catch (_: SecurityException) { report("Bluetoothberechtigung entzogen") }
