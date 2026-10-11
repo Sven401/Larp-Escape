@@ -113,12 +113,12 @@ diagnosis. Integrated configured-control host checks passed 529/529; the
 ESP32 single-app build passed with ELF flash 1,968,189/2,621,440 bytes and
 static RAM 76,044/532,480 bytes.
 
-The private, **not uploaded** candidate is
+The private candidate, recorded before its separate upload, is
 `C:/Users/seide/AppData/Local/LarpEscape/ESP32-Candidates/
 BLE-Stack-Diagnostic-20261011-95acedf/firmware.bin`, 1,974,480 bytes,
 SHA-256 `16a828694ba4d4a0c6705c15df154f8fa9cf58838ae2215f70566bb06738673b`.
 Bootloader and partition-table image hashes equal the first upload; otadata
-also remains unchanged. A separately approved second upload would write only
+also remains unchanged. The separately approved second upload wrote only
 this app image at `0x10000`, without mass erase.
 
 Because the first image booted, the present 4-MiB flash was captured again
@@ -129,10 +129,24 @@ It differs from the immediate first-upload readback by 113 NVS bytes; the
 app, layout, otadata and SPIFFS matched. The distinct chip-bound rollback
 tool `scripts/verify_ble_telemetry_rollback.py` and private manifest passed
 seven fake-esptool tests, offline verification and a live COM3 dry run with
-the Originalbox MAC and 4-MiB size. No second upload or restore has run.
-After any separately approved upload, read the app area back independently,
-verify the rest against this new backup, and capture the BLE error line. A
-new exact upload authorization is required before writing this image.
+the Originalbox MAC and 4-MiB size. No restore has run.
 
-No flash write, firmware upload, restore, RF pairing run, or product release
-was performed for this preflight.
+Esptool verified the app-only second write hash. Full 4-MiB readback while
+in the bootloader is stored privately at `C:/Users/seide/AppData/Local/
+LarpEscape/ESP32-Backups/COM3-20261011-PostBleStackTelemetry/
+after-ble-telemetry.bin`, SHA-256
+`ff1ac0bbd32c299006aae73045560e0a7db89a80344a6540ac9c8670fd31edb8`.
+The app image matched exactly, its final sector padding was erased, and every
+other byte matched the immediately preceding full backup, including NVS,
+otadata, SPIFFS, bootloader and partition table. The adjacent private
+`postflash-verification.json` records the comparison and serial observation.
+
+After reset, the game reached `Runtime ready`, but closed GATT registration
+again reported state 4. The added telemetry identified failing step 1,
+`esp_bt_controller_init`, with SDK error 259 (`0x103`). Controller and
+Bluedroid status stayed `0 -> 0`; internal free/largest 8-bit heap blocks
+stayed `213576/110580` bytes. Discovery phase remained 0 (`Closed`). These
+observations locate the failed SDK call; they do not yet establish why the
+controller rejected initialization. No app–ESP pairing, restore or product
+acceptance occurred. Any corrected image needs its own build, current-state
+backup check and separate upload approval.
