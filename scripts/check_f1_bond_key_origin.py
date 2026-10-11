@@ -85,7 +85,7 @@ static tBTM_SEC_DEV_REC records[2]{};
 static int hci_start=0, hci_reply=0, hci_negative=0, smp_calls=0;
 static UINT16 observed_handle=0, observed_ediv=0;
 static const UINT8 *observed_key=nullptr, *observed_rand=nullptr;
-static bool smp_owns_request=false;
+static bool smp_owns_request=false, hci_accept=true, hci_reply_accept=true;
 static tBTM_SEC_DEV_REC *btm_find_dev(const UINT8 *address) {
   for (auto &record: records) if (!std::memcmp(record.bd_addr,address,6)) return &record;
   return nullptr;
@@ -96,13 +96,13 @@ static tBTM_SEC_DEV_REC *btm_find_dev_by_handle(UINT16 handle) {
 }
 static bool smp_proc_ltk_request(const UINT8 *) { ++smp_calls; return smp_owns_request; }
 static bool btsnd_hcic_ble_start_enc(UINT16 handle,const UINT8 *rand,UINT16 ediv,const UINT8 *key) {
-  ++hci_start; observed_handle=handle; observed_rand=rand; observed_ediv=ediv; observed_key=key; return true;
+  ++hci_start; observed_handle=handle; observed_rand=rand; observed_ediv=ediv; observed_key=key; return hci_accept;
 }
-static void btsnd_hcic_ble_ltk_req_reply(UINT16 handle,const UINT8 *key) {
-  ++hci_reply; observed_handle=handle; observed_key=key;
+static bool btsnd_hcic_ble_ltk_req_reply(UINT16 handle,const UINT8 *key) {
+  ++hci_reply; observed_handle=handle; observed_key=key; return hci_reply_accept;
 }
-static void btsnd_hcic_ble_ltk_req_neg_reply(UINT16 handle) {
-  ++hci_negative; observed_handle=handle;
+static bool btsnd_hcic_ble_ltk_req_neg_reply(UINT16 handle) {
+  ++hci_negative; observed_handle=handle; return true;
 }
 void btm_ble_ltk_request_reply(BD_ADDR,BOOLEAN,BT_OCTET16);
 '''
@@ -154,8 +154,35 @@ int main() {
   assert(smp_calls==3 && hci_reply==1 && hci_negative==1);
   btm_ble_ltk_request(0x99,rand,0x58);
   assert(smp_calls==3 && hci_reply==1 && hci_negative==1);
-  // A mode value does not bind the source record to a connection birth.
-  assert(records[0].ble.auth_mode!=records[1].ble.auth_mode);
+  // The complete record mode is wider than the completion callback byte.
+  assert(records[0].ble.auth_mode==0x000d && records[1].ble.auth_mode==0x010d);
+  assert(UINT8(records[0].ble.auth_mode)==UINT8(records[1].ble.auth_mode));
+  // Master command refusal is observable only as no BTM_CMD_STARTED.
+  smp_owns_request=false;
+  records[1].ble.key_type=BTM_LE_KEY_PENC|BTM_LE_KEY_LENC;
+  records[1].sec_state=BTM_SEC_STATE_IDLE;
+  hci_accept=false;
+  const int before_refusal=hci_start;
+  assert(btm_ble_start_encrypt(records[1].bd_addr,FALSE,nullptr)==BTM_NO_RESOURCES);
+  assert(hci_start==before_refusal+1 && records[1].sec_state==BTM_SEC_STATE_IDLE);
+  hci_accept=true;
+  // A recycled HCI handle on the same address still selects this record; the
+  // original function has no application GATT-birth token to reject it.
+  records[1].ble_hci_handle=0x42;
+  assert(btm_ble_start_encrypt(records[1].bd_addr,FALSE,nullptr)==BTM_CMD_STARTED);
+  assert(observed_handle==0x42 && observed_key==records[1].ble.keys.pltk);
+  // The caller-supplied STK path also sends a key but is not a PENC restoration.
+  records[1].sec_state=BTM_SEC_STATE_IDLE;
+  UINT8 stk[16]{};
+  assert(btm_ble_start_encrypt(records[1].bd_addr,TRUE,stk)==BTM_CMD_STARTED);
+  assert(observed_key==stk && observed_key!=records[1].ble.keys.pltk);
+  // Original slave path ignores the HCI enqueue boolean entirely.
+  records[1].ble_hci_handle=0x41;
+  hci_reply_accept=false;
+  const int before_reply_refusal=hci_reply;
+  btm_ble_ltk_request(0x41,rand,0x59);
+  assert(hci_reply==before_reply_refusal+1 && observed_key==records[1].ble.keys.lltk);
+  assert(hci_negative==1);
   return 0;
 }
 '''
@@ -174,4 +201,4 @@ with tempfile.TemporaryDirectory(prefix="f1-bond-source-", dir=ROOT / ".pio") as
     if compile_result.returncode:
         raise RuntimeError(f"host compiler failed ({compile_result.returncode}):\n" + compile_result.stdout + compile_result.stderr)
     subprocess.run([str(executable)], check=True, env=environment)
-print("Pinned SDK BLE key-selection source model passed; target record ABI and actual key use remain unproved.")
+print("Pinned SDK BLE source model passed: PENC/LENC, 16-bit mode alias, recycled handle, STK and both HCI command-refusal negatives; target record ABI, controller result and actual key use remain unproved.")

@@ -298,6 +298,37 @@ PENC/LENC, short-key, wrong-mode and failed-controller-command negatives.
 Only after that probe and a real source-actor binding can a metadata-only
 witness be considered; role and diagnosis authority remain separately gated.
 
+### Isolated getter/HCI result probe (2026-10-11)
+
+`python scripts/check_f1_hci_key_send_abi.py` pins four untouched official
+ESP-IDF v4.4.6 files and the installed `libbt.a`, checks that the four getter
+and HCI-send symbols are exported, and compiles their original declarations
+for Xtensa with 32-bit pointers and one-byte `BOOLEAN`. It checks the source
+branch of both HCI sends: allocation failure returns false; true follows
+`btu_hcif_send_cmd`. Thus true means a command was enqueued, **not** that the
+controller accepted the key or encrypted the link. The original slave
+`btm_ble_ltk_request_reply` ignores the HCI-send return entirely. The handle
+getter may match either a classic or BLE handle; the address getter may match
+a direct, pseudo or resolvable address. Neither getter alone binds the record
+to our current GATT birth.
+
+The expanded pinned-source model in `check_f1_bond_key_origin.py` exercises
+both key masks, the `0x000d`/`0x010d` low-byte alias, a same-address recycled
+HCI handle, caller-supplied STK, and refused master/slave HCI enqueues. The
+slave refusal cannot be observed by its original caller. These are source
+control-flow negatives under a deliberately private host record model; no
+device key is read, printed or exported.
+
+The complete `tBTM_SEC_DEV_REC` still has conditional fields whose compiled
+configuration and full type dependencies have not been pinned for this
+Arduino archive. The previous static offset audit covers only selected
+instructions. This probe therefore does **not** establish a complete record
+ABI or a synchronous controller-result-to-GATT-birth chain. No immutable
+provenance witness was installed and restored-bond, role and diagnosis gates
+remain closed. The next probe must establish that configuration and binary
+layout, then bind the original HCI command, its later controller result and
+the encryption-change event to one birth without retaining key bytes.
+
 ```text
 python scripts/check_f1_smp_prereset_abi.py
   --gatt-source-dir <lifecycle-source-with-original-bt_defs.h-and-bt_target.h>
