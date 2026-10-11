@@ -87,3 +87,36 @@ registration, security/role admission, and reconnect behavior are unverified.
 No upload, restore, flash write, or hardware test occurred. The accepted
 development fallback is another USB flash; two-slot OTA remains a later
 product-level feasibility and rollback target.
+
+## Fresh closed BLE stack capacity cut, 2026-10-11
+
+The new `ClosedBleStackOwner` is compiled and called only by the isolated
+`az-delivery-devkit-v4-single-app-capacity` environment. After the production
+identity owner reports `ReadyClosed`, it initializes and enables the ESP32 BLE
+controller and Bluedroid exactly once. A failed stage stays failed; the game
+startup continues, but no BLE access is admitted. The class exposes no GAP
+advertising, GATT registration/service, connection, pairing, or role API.
+There is no SDK callback or GATT attribute installed. A successful return
+means only that local stack initialization calls returned `ESP_OK` in source;
+the build itself never executed them.
+
+Fresh build with the pinned PlatformIO `espressif32@6.6.0` and Arduino ESP32
+`2.0.14` toolchain: `platformio run -e
+az-delivery-devkit-v4-single-app-capacity` **SUCCESS**. The size gate reports
+1,924,613 B flash and 69,348 B static RAM. The generated `firmware.bin` is
+1,930,912 B, leaving **690,528 B** in the 2,621,440 B factory partition.
+The generated partition binary was decoded and verified again with the
+framework's `gen_esp32part.py`. This is a new, narrower build, not a
+reproduction of the removed 1,949,801 B GATT experiment. Its remaining flash
+is not a budget guarantee for the future GATT, F1, role, and diagnosis paths.
+The unchanged standard `az-delivery-devkit-v4` environment also built
+successfully: 1,236,489 B flash against its original 1,310,720 B OTA slot and
+56,692 B static RAM. Its startup does not call `ClosedBleStackOwner`.
+
+This capacity cut intentionally does not install a product GATT service:
+the original connection, restored-bond key provenance, role ACK, and
+diagnostic admission are not yet assembled into one production owner. It
+cannot serve the Android app. Before any device run, confirm the actual
+bootloader's behavior with old otadata and test BLE/Wi-Fi coexistence,
+startup heap, stack and game timing on the connected box in a user-led flow.
+No upload, RF run, authentication, or device-function claim is made here.

@@ -4,6 +4,9 @@
 
 #include "ArduinoClock.h"
 #include "CompanionStatusStore.h"
+#if defined(LARP_CLOSED_BLE_CAPACITY)
+#include "ClosedBleStackOwner.h"
+#endif
 #include "DFMinniHandler.h"
 #include "Esp32CompanionIdentityOwner.h"
 #include "EspNowCommunicator.h"
@@ -54,6 +57,9 @@ EspNowRuntime communicationRuntime(receiverMAC);
 SerialGameDiagnostics gameDiagnostics;
 CompanionStatusStore companionStatus;
 Esp32CompanionIdentityOwner companionIdentity;
+#if defined(LARP_CLOSED_BLE_CAPACITY)
+ClosedBleStackOwner closedBleStack;
+#endif
 ReichstagGame game(nfcReader, keymatrix, keymatrix, dfmHandler, gameClock, gameLightEffects,
                    communicator, &gameDiagnostics);
 larp::application::LarpEscapeApp app(game, dfmHandler, communicationRuntime, companionStatus);
@@ -66,8 +72,17 @@ void setup() {
     // Startup entropy runs before radio and device workers. An unavailable
     // companion identity leaves standalone play running and never erases NVS.
     const auto companionIdentityState = companionIdentity.begin();
-    Serial.print("Companion identity state (BLE/diagnosis disabled): ");
+    Serial.print("Companion identity state (diagnosis closed): ");
     Serial.println(static_cast<unsigned>(companionIdentityState));
+#if defined(LARP_CLOSED_BLE_CAPACITY)
+    // This capacity cut has no GATT service, advertising, or authority path.
+    // Start only after the public identity has reached its closed state.
+    if (companionIdentityState == Esp32CompanionIdentityOwner::State::ReadyClosed) {
+        const auto bleState = closedBleStack.begin();
+        Serial.print("Closed BLE stack state: ");
+        Serial.println(static_cast<unsigned>(bleState));
+    }
+#endif
     Wire.begin();
     Serial.println("Beginning");
     if (!keymatrix.begin()) {
