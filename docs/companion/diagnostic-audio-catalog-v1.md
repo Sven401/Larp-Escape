@@ -7,6 +7,16 @@ The diagnostic audio owner, protected request/reply route, Stop/Repeat/Volume,
 and separate BUSY/UART/error observations are not implemented. Audio actions
 remain blocked in the Android readiness view.
 
+The pinned `powerbroker2/DFPlayerMini_Fast@1.2.4` does not establish device presence in
+`begin()`: it initializes its stream/frames and returns `true` without a UART
+exchange. Its `playFromMP3Folder()` and `stop()` send with `NO_FEEDBACK`, so a
+call (or a successful local initialization) is not an acknowledgement from the
+module. `query()` can return a response or `-1`, but it is a separate query,
+not an acknowledgement of the preceding play/stop command. A productive
+diagnostic adapter must report command submission, BUSY pin observation, UART
+response and module error as distinct evidence, and must not turn absence of
+feedback into a confirmed failure or success.
+
 The firmware-side catalogue is `DiagnosticAudioCatalogV1` (42 entries). Its
 Reichstagsgame entries are read from the current `defaultRoleDefinitions()`;
 the source is `src/GameDomain/GameDefinitions.cpp` in this product branch.
