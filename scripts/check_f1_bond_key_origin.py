@@ -136,24 +136,36 @@ int main() {
   assert(hci_start==1 && observed_handle==0x41 && observed_ediv==0x301);
   assert(observed_rand==records[1].ble.keys.rand && observed_key==records[1].ble.keys.pltk);
   assert(observed_key!=records[0].ble.keys.pltk);
+  // The original PENC send does not validate the record's full bond mode.
+  // Therefore observing this send cannot by itself attest MITM/SC/bond.
+  records[1].sec_state=BTM_SEC_STATE_IDLE;
+  records[1].ble.auth_mode=0;
+  assert(btm_ble_start_encrypt(records[1].bd_addr,FALSE,nullptr)==BTM_CMD_STARTED);
+  assert(hci_start==2 && observed_key==records[1].ble.keys.pltk);
+  records[1].ble.auth_mode=0x010d;
   records[1].sec_state=BTM_SEC_STATE_IDLE;
   records[1].ble.key_type=BTM_LE_KEY_LENC;
   assert(btm_ble_start_encrypt(records[1].bd_addr,FALSE,nullptr)==BTM_NO_RESOURCES);
-  assert(hci_start==1);
+  assert(hci_start==2);
   records[1].ble.key_type=BTM_LE_KEY_PENC|BTM_LE_KEY_LENC;
   UINT8 rand[8]{};
   btm_ble_ltk_request(0x41,rand,0x55);
   assert(smp_calls==1 && hci_reply==1 && observed_handle==0x41);
   assert(observed_key==records[1].ble.keys.lltk && observed_key!=records[1].ble.keys.pltk);
   assert(btm_cb.ediv==0x55 && !std::memcmp(btm_cb.enc_rand,rand,8));
+  // The original LENC reply likewise sends a stored key with bad mode.
+  records[1].ble.auth_mode=0;
+  btm_ble_ltk_request(0x41,rand,0x55);
+  assert(hci_reply==2 && observed_key==records[1].ble.keys.lltk);
+  records[1].ble.auth_mode=0x010d;
   records[1].ble.key_type=BTM_LE_KEY_PENC;
   btm_ble_ltk_request(0x41,rand,0x56);
-  assert(hci_negative==1 && hci_reply==1);
+  assert(hci_negative==1 && hci_reply==2);
   smp_owns_request=true;
   btm_ble_ltk_request(0x41,rand,0x57);
-  assert(smp_calls==3 && hci_reply==1 && hci_negative==1);
+  assert(smp_calls==4 && hci_reply==2 && hci_negative==1);
   btm_ble_ltk_request(0x99,rand,0x58);
-  assert(smp_calls==3 && hci_reply==1 && hci_negative==1);
+  assert(smp_calls==4 && hci_reply==2 && hci_negative==1);
   // The complete record mode is wider than the completion callback byte.
   assert(records[0].ble.auth_mode==0x000d && records[1].ble.auth_mode==0x010d);
   assert(UINT8(records[0].ble.auth_mode)==UINT8(records[1].ble.auth_mode));
@@ -201,4 +213,4 @@ with tempfile.TemporaryDirectory(prefix="f1-bond-source-", dir=ROOT / ".pio") as
     if compile_result.returncode:
         raise RuntimeError(f"host compiler failed ({compile_result.returncode}):\n" + compile_result.stdout + compile_result.stderr)
     subprocess.run([str(executable)], check=True, env=environment)
-print("Pinned SDK BLE source model passed: PENC/LENC, 16-bit mode alias, recycled handle, STK and both HCI command-refusal negatives; target record ABI, controller result and actual key use remain unproved.")
+print("Pinned SDK BLE source model passed: PENC/LENC, bad full mode, 16-bit alias, recycled handle, STK and both HCI command-refusal negatives; target record ABI, controller result and actual key use remain unproved.")

@@ -384,6 +384,18 @@ for a second key selection on the same handle have identical event bytes.
 The existing HCI-birth witness rejects reused handles, but neither that
 witness nor a successful event can identify which key was selected.
 
+A follow-up original-source model now sets the record's full `auth_mode` to
+zero while leaving PENC or LENC key material selected. Both original key paths
+still enqueue their respective HCI command. The SDK key-send branches test
+key-type availability, not the full stored mode; even a correctly intercepted
+send cannot certify MITM/SC/bond without an independently attributed full-mode
+read. The original fresh SMP start/completion observation is bound to its own
+GATT birth by `PeerLinkSecurity`, but it cannot retrospectively identify a
+different stored key selected during a later reconnect. This is a tested
+source-control-flow negative, not evidence that a real device has a bad bond.
+The positive selected-key + fresh-SMP + current-GATT-birth conjunction remains
+unproved. F1 role and diagnosis admission stay closed.
+
 The full private `tBTM_SEC_DEV_REC` declaration depends on feature guards
 including `L2CAP_UCD_INCLUDED`, `BLE_PRIVACY_SPT`,
 `SMP_SLAVE_CON_PARAMS_UPD_ENABLE` and `BLE_50_FEATURE_SUPPORT`, and on
