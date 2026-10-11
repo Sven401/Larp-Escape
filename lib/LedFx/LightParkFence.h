@@ -39,9 +39,16 @@ class LightParkFence {
         return ticket != 0U && state.load(std::memory_order_acquire) == State::OffFrameSubmitted &&
                ticket_.load(std::memory_order_relaxed) == ticket;
     }
+    bool requestedFor(std::uint32_t ticket) const {
+        const State current = state.load(std::memory_order_acquire);
+        return ticket != 0U &&
+               (current == State::Requested || current == State::OffFrameSubmitted) &&
+               ticket_.load(std::memory_order_acquire) == ticket;
+    }
+    void workerFault() { state.store(State::Fault, std::memory_order_release); }
 
   private:
-    enum class State : std::uint8_t { Running, Claiming, Requested, OffFrameSubmitted };
+    enum class State : std::uint8_t { Running, Claiming, Requested, OffFrameSubmitted, Fault };
     std::atomic<State> state{State::Running};
     std::atomic<std::uint32_t> ticket_{0U};
 };

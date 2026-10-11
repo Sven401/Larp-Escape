@@ -128,3 +128,38 @@ only game observations. Neither means that the LED render task, queued light
 effects, DFPlayer hardware, matrix reader or radio callback is parked. There is
 no correlated worker Park/Ack API on this legacy path, so no physical quiescent
 result or transition to diagnostic ownership can follow this loop fence alone.
+
+## Closed start arbiter and independent software off attempt (11 October 2026)
+
+`src/main.cpp` now routes its application update through
+`ClosedDiagnosticArbiter`. Its internal handoff API first fences the real
+`LarpEscapeApp` loop, then arms an ESP32 timer and requests the existing
+one-way `GameLightEffects` Park ticket. The current product exposes no BLE or
+other production caller of this handoff. A rejected request leaves a running
+game alone; after a successful app fence, timer or Park failure remains
+closed. There is no grant, resume, diagnostic LED render, `Applied` reply or
+connection to the configured `DeviceRuntime` owner queue.
+
+`Esp32LedParkDeadline` arms an `esp_timer` for 400 ms. Its callback wakes a
+separate FreeRTOS off task, which tries to submit another black frame through
+FastLED independently of the render loop. A common driver mutex serializes
+both workers' buffer/driver access. The off task waits at most 20 ms for that
+mutex; failure latches a fault. It records the actual ESP monotonic timestamp
+after `FastLED.show()` returns and marks submissions later than 500 ms as a
+fault. Timer creation, task creation and arm failures also fail closed. The
+normal game's render mutex timeout skips that frame and increments the miss
+counter; it does not permanently fence the game. The timer is initialized at
+startup. An initialization failure keeps diagnostics closed while standalone
+game startup continues.
+
+The callback schedule and black-frame submissions are **software evidence**.
+No available input proves that the 23 WS2811 LEDs became physically dark:
+FastLED return, timer expiry, both frame submissions and host tests cannot
+confirm LED latch, power, level or wiring. The LED type, supply, level and a
+physically independent switching path have not been verified on the original
+box. A blocked ESP timer task, scheduling delay, driver stall or power fault
+can exceed 500 ms; the observed timestamp reports such a miss but does not
+guarantee prevention. The arbiter hardcodes diagnostic grant unavailable even
+when all software observations succeed. A verified hardware off path and
+actual electrical/user evidence remain required before any `Applied` Park
+reply, diagnostic authorization, LED step or product acceptance.

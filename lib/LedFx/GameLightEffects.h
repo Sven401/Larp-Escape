@@ -3,6 +3,7 @@
 #include "GamePorts/ILightEffects.h"
 #include "GameRuntime/BrightnessStepSchedule.h"
 #include "LightParkFence.h"
+#include "ClosedDiagnosticArbiter.h"
 #include "burst.h"
 #include "ripple.h"
 #include "twinklefox.h"
@@ -13,6 +14,7 @@
 #include <cstdint>
 #include <freertos/FreeRTOS.h>
 #include <freertos/queue.h>
+#include <freertos/semphr.h>
 #include <freertos/task.h>
 
 namespace larp {
@@ -21,7 +23,8 @@ class IClock;
 }
 } // namespace larp
 
-class GameLightEffects : public larp::ports::ILightEffects {
+class GameLightEffects : public larp::ports::ILightEffects,
+                         public larp::application::ILedParkPort {
   public:
     GameLightEffects(fl::MyTwinkleFox &twinkleFox, Burst &burst, Ripple ripples[4],
                      larp::ports::IClock &clock, CRGB *ledBuffer, std::size_t ledCount);
@@ -39,8 +42,9 @@ class GameLightEffects : public larp::ports::ILightEffects {
 
     // One-way handoff. The returned status only records that the worker called
     // FastLED.show() with a black buffer; it is not a physical off confirmation.
-    bool requestPark(std::uint32_t ticket);
-    bool offFrameSubmittedFor(std::uint32_t ticket) const;
+    bool requestPark(std::uint32_t ticket) override;
+    bool offFrameSubmittedFor(std::uint32_t ticket) const override;
+    bool forceBlackFromDeadline(std::uint32_t ticket) override;
 
     void setTwinkleDensity(std::uint8_t density) override;
     void setTwinkleSpeed(std::uint8_t speed) override;
@@ -95,6 +99,7 @@ class GameLightEffects : public larp::ports::ILightEffects {
     std::array<larp::runtime::BrightnessStepSchedule, brightnessRampCount> brightnessCommands;
     QueueHandle_t commandQueue;
     TaskHandle_t taskHandle;
+    SemaphoreHandle_t driverMutex = nullptr;
     std::atomic<std::uint32_t> droppedCommands;
     std::atomic<std::uint32_t> minimumStackFreeBytesObserved;
     std::atomic<std::uint32_t> maximumQueueDepthObserved;

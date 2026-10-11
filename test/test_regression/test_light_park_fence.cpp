@@ -6,6 +6,8 @@ void test_light_park_fence_is_one_way_and_correlated() {
     TEST_ASSERT_FALSE(fence.blocksGameCommands());
     TEST_ASSERT_FALSE(fence.request(0U));
     TEST_ASSERT_TRUE(fence.request(17U));
+    TEST_ASSERT_TRUE(fence.requestedFor(17U));
+    TEST_ASSERT_FALSE(fence.requestedFor(18U));
     TEST_ASSERT_TRUE(fence.blocksGameCommands());
     TEST_ASSERT_TRUE(fence.workerShouldSubmitOff());
     TEST_ASSERT_FALSE(fence.request(18U));
@@ -15,4 +17,7 @@ void test_light_park_fence_is_one_way_and_correlated() {
     TEST_ASSERT_FALSE(fence.offFrameSubmittedFor(18U));
     TEST_ASSERT_TRUE(fence.offFrameSubmittedFor(17U));
     TEST_ASSERT_FALSE(fence.request(17U));
+    fence.workerFault();
+    TEST_ASSERT_FALSE(fence.requestedFor(17U));
+    TEST_ASSERT_FALSE(fence.offFrameSubmittedFor(17U));
 }

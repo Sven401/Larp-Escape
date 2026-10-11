@@ -12,6 +12,8 @@
 #include "GameLightEffects.h"
 #include "Keymatrix.h"
 #include "LarpEscapeApp.h"
+#include "ClosedDiagnosticArbiter.h"
+#include "Esp32LedParkDeadline.h"
 #include "MCPHandler.h"
 #include "NFCReader.h"
 #include "SerialGameDiagnostics.h"
@@ -57,6 +59,9 @@ Esp32CompanionIdentityOwner companionIdentity;
 ReichstagGame game(nfcReader, keymatrix, keymatrix, dfmHandler, gameClock, gameLightEffects,
                    communicator, &gameDiagnostics);
 larp::application::LarpEscapeApp app(game, dfmHandler, communicationRuntime, companionStatus);
+Esp32LedParkDeadline ledParkDeadline;
+larp::application::ClosedDiagnosticArbiter diagnosticArbiter(app, gameLightEffects,
+                                                             ledParkDeadline);
 
 std::uint32_t maximumMainLoopDurationMicroseconds = 0U;
 std::uint32_t lastRuntimeReportMilliseconds = 0U;
@@ -93,13 +98,18 @@ void setup() {
         ESP.restart();
         return;
     }
+    if (!ledParkDeadline.begin()) {
+        // Standalone game remains available. Any later diagnostic handoff
+        // faults closed when its unavailable timer cannot be armed.
+        Serial.println("LED diagnostic deadline unavailable; diagnostics closed");
+    }
     companionStatus.publish(game.snapshot());
     Serial.println("Runtime ready");
 }
 
 void loop() {
     const std::uint32_t loopStarted = micros();
-    app.update();
+    diagnosticArbiter.update();
     const std::uint32_t now = millis();
     if ((now - lastRuntimeReportMilliseconds) >= 10000U) {
         lastRuntimeReportMilliseconds = now;

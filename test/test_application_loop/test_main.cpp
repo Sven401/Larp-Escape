@@ -5,6 +5,7 @@
 #include "../../src/GameDomain/PuzzleProgress.cpp"
 #include "../test_game_application/GameFakes.h"
 #include "LarpEscapeApp.h"
+#include "ClosedDiagnosticArbiter.h"
 #include <unity.h>
 #include <vector>
 
@@ -29,6 +30,129 @@ class SnapshotProbe : public larp::application::IGameSnapshotSink {
     std::vector<int> &order;
     std::vector<larp::application::GameSnapshot> values;
 };
+
+class ParkProbe : public larp::application::ILedParkPort {
+  public:
+    bool requestPark(std::uint32_t ticket) override {
+        ++requests;
+        requested = ticket;
+        return accepts;
+    }
+    bool offFrameSubmittedFor(std::uint32_t ticket) const override {
+        return ticket == requested && submitted;
+    }
+    bool forceBlackFromDeadline(std::uint32_t ticket) override {
+        independent = ticket == requested;
+        return independent;
+    }
+    std::uint32_t requested = 0;
+    unsigned requests = 0;
+    bool accepts = true, submitted = false, independent = false;
+};
+class DeadlineProbe : public larp::application::ILedParkDeadline {
+  public:
+    bool arm(std::uint32_t ticket, larp::application::ILedParkPort &) override {
+        armed = ticket;
+        return accepts;
+    }
+    bool firedFor(std::uint32_t ticket) const override { return ticket == armed && fired; }
+    bool missedFor(std::uint32_t ticket) const override { return ticket == armed && missed; }
+    bool independentBlackSubmittedFor(std::uint32_t ticket) const override {
+        return ticket == armed && independent;
+    }
+    std::uint32_t armed = 0;
+    bool accepts = true, fired = false, missed = false, independent = false;
+};
+
+void test_closed_arbiter_fences_game_before_timer_and_never_grants_on_black_frame() {
+    game_test::GameRig rig;
+    std::vector<int> order;
+    RuntimeProbe audio(order, 1), communication(order, 2);
+    SnapshotProbe sink(order);
+    larp::application::LarpEscapeApp app(rig.game, audio, communication, sink);
+    ParkProbe lights;
+    DeadlineProbe timer;
+    larp::application::ClosedDiagnosticArbiter arbiter(app, lights, timer);
+    TEST_ASSERT_TRUE(arbiter.requestClosedHandoff(73, true));
+    TEST_ASSERT_TRUE(app.gameFencedForDiagnostics());
+    TEST_ASSERT_EQUAL_UINT32(73, timer.armed);
+    TEST_ASSERT_EQUAL_UINT32(73, lights.requested);
+    lights.submitted = true;
+    timer.fired = true;
+    timer.independent = true;
+    TEST_ASSERT_TRUE(arbiter.blackFrameSubmitted());
+    TEST_ASSERT_TRUE(arbiter.timerExpired());
+    TEST_ASSERT_TRUE(arbiter.independentBlackSubmitted());
+    TEST_ASSERT_FALSE(arbiter.diagnosticGrantAvailable());
+    arbiter.update();
+    TEST_ASSERT_TRUE(order.empty());
+    TEST_ASSERT_FALSE(arbiter.requestClosedHandoff(74, true));
+}
+
+void test_closed_arbiter_timer_failure_or_miss_keeps_game_fenced() {
+    for (unsigned failure = 0; failure < 3; ++failure) {
+        game_test::GameRig rig;
+        std::vector<int> order;
+        RuntimeProbe audio(order, 1), communication(order, 2);
+        SnapshotProbe sink(order);
+        larp::application::LarpEscapeApp app(rig.game, audio, communication, sink);
+        ParkProbe lights;
+        DeadlineProbe timer;
+        timer.accepts = failure != 0;
+        lights.accepts = failure != 1;
+        larp::application::ClosedDiagnosticArbiter arbiter(app, lights, timer);
+        TEST_ASSERT_EQUAL(failure == 2, arbiter.requestClosedHandoff(9, true));
+        if (failure == 2) timer.missed = true;
+        TEST_ASSERT_EQUAL(static_cast<unsigned>(larp::application::ClosedHandoff::Fault),
+                          static_cast<unsigned>(arbiter.state()));
+        TEST_ASSERT_TRUE(app.gameFencedForDiagnostics());
+        TEST_ASSERT_FALSE(arbiter.diagnosticGrantAvailable());
+        arbiter.update();
+        TEST_ASSERT_TRUE(order.empty());
+    }
+}
+
+void test_closed_arbiter_rejects_active_game_without_arming_timer() {
+    game_test::GameRig rig;
+    std::vector<int> order;
+    RuntimeProbe audio(order, 1), communication(order, 2);
+    SnapshotProbe sink(order);
+    larp::application::LarpEscapeApp app(rig.game, audio, communication, sink);
+    ParkProbe lights;
+    DeadlineProbe timer;
+    larp::application::ClosedDiagnosticArbiter arbiter(app, lights, timer);
+    arbiter.update();
+    TEST_ASSERT_FALSE(arbiter.requestClosedHandoff(5, true));
+    TEST_ASSERT_EQUAL_UINT32(0, timer.armed);
+    TEST_ASSERT_EQUAL_UINT(0, lights.requests);
+    TEST_ASSERT_FALSE(app.gameFencedForDiagnostics());
+}
+
+void test_late_independent_black_submission_is_fault_not_off_evidence() {
+    TEST_ASSERT_TRUE(larp::application::softwareOffWithinDeadline(1000000, 1500000));
+    TEST_ASSERT_FALSE(larp::application::softwareOffWithinDeadline(1000000, 1500001));
+    TEST_ASSERT_FALSE(larp::application::softwareOffWithinDeadline(1000000, 999999));
+    game_test::GameRig rig;
+    std::vector<int> order;
+    RuntimeProbe audio(order, 1), communication(order, 2);
+    SnapshotProbe sink(order);
+    larp::application::LarpEscapeApp app(rig.game, audio, communication, sink);
+    ParkProbe lights;
+    DeadlineProbe timer;
+    larp::application::ClosedDiagnosticArbiter arbiter(app, lights, timer);
+    TEST_ASSERT_TRUE(arbiter.requestClosedHandoff(19, true));
+    lights.submitted = true;
+    timer.fired = true;
+    timer.independent = true;
+    timer.missed = true; // model: the separate task completed after 500 ms
+    TEST_ASSERT_TRUE(arbiter.independentBlackSubmitted());
+    TEST_ASSERT_TRUE(arbiter.deadlineMissed());
+    TEST_ASSERT_EQUAL(static_cast<unsigned>(larp::application::ClosedHandoff::Fault),
+                      static_cast<unsigned>(arbiter.state()));
+    TEST_ASSERT_FALSE(arbiter.diagnosticGrantAvailable());
+    arbiter.update();
+    TEST_ASSERT_TRUE(order.empty());
+}
 
 void test_application_services_then_ticks_then_publishes_copy() {
     game_test::GameRig rig;
@@ -157,6 +281,10 @@ void setUp() {}
 void tearDown() {}
 int main() {
     UNITY_BEGIN();
+    RUN_TEST(test_closed_arbiter_fences_game_before_timer_and_never_grants_on_black_frame);
+    RUN_TEST(test_closed_arbiter_timer_failure_or_miss_keeps_game_fenced);
+    RUN_TEST(test_closed_arbiter_rejects_active_game_without_arming_timer);
+    RUN_TEST(test_late_independent_black_submission_is_fault_not_off_evidence);
     RUN_TEST(test_application_services_then_ticks_then_publishes_copy);
     RUN_TEST(test_diagnostic_preflight_fences_actual_application_loop_before_game_io);
     RUN_TEST(test_diagnostic_preflight_rejects_started_game_without_fencing_it);

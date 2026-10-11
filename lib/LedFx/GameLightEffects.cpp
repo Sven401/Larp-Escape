@@ -25,12 +25,18 @@ GameLightEffects::GameLightEffects(fl::MyTwinkleFox &twinkleFox, Burst &burst, R
 
 bool GameLightEffects::begin() {
     if (ledBuffer == nullptr || ledCount == 0U || ripples == nullptr || commandQueue != nullptr ||
-        taskHandle != nullptr) {
+        taskHandle != nullptr || driverMutex != nullptr) {
         return false;
     }
 
+    driverMutex = xSemaphoreCreateMutex();
+    if (driverMutex == nullptr)
+        return false;
+
     commandQueue = xQueueCreate(commandQueueCapacity, sizeof(Command));
     if (commandQueue == nullptr) {
+        vSemaphoreDelete(driverMutex);
+        driverMutex = nullptr;
         return false;
     }
 
@@ -40,6 +46,8 @@ bool GameLightEffects::begin() {
         vQueueDelete(commandQueue);
         commandQueue = nullptr;
         taskHandle = nullptr;
+        vSemaphoreDelete(driverMutex);
+        driverMutex = nullptr;
         return false;
     }
     return true;
@@ -73,6 +81,29 @@ bool GameLightEffects::offFrameSubmittedFor(std::uint32_t ticket) const {
     return parkFence.offFrameSubmittedFor(ticket);
 }
 
+bool GameLightEffects::forceBlackFromDeadline(std::uint32_t ticket) {
+    // If the app owner stalled after arming the timer but before its immediate
+    // Park post, the independent off task closes the same one-way fence.
+    if (!parkFence.requestedFor(ticket))
+        parkFence.request(ticket);
+    const bool matched = parkFence.requestedFor(ticket);
+    if (!parkFence.blocksGameCommands() || driverMutex == nullptr ||
+        xSemaphoreTake(driverMutex, pdMS_TO_TICKS(20U)) != pdTRUE) {
+        parkFence.workerFault();
+        return false;
+    }
+    for (std::size_t index = 0U; index < ledCount; ++index)
+        ledBuffer[index] = CRGB::Black;
+    FastLED.show();
+    xSemaphoreGive(driverMutex);
+    if (!matched) {
+        parkFence.workerFault();
+        return false;
+    }
+    // This is a separate driver submission, never a physical-off confirmation.
+    return true;
+}
+
 void GameLightEffects::taskEntry(void *context) {
     static_cast<GameLightEffects *>(context)->renderLoop();
 }
@@ -93,11 +124,15 @@ void GameLightEffects::renderLoop() {
             while (xQueueReceive(commandQueue, &command, 0U) == pdTRUE) {
             }
             if (parkFence.workerShouldSubmitOff()) {
-                for (std::size_t index = 0U; index < ledCount; ++index) {
-                    ledBuffer[index] = CRGB::Black;
+                if (xSemaphoreTake(driverMutex, pdMS_TO_TICKS(20U)) == pdTRUE) {
+                    for (std::size_t index = 0U; index < ledCount; ++index)
+                        ledBuffer[index] = CRGB::Black;
+                    FastLED.show();
+                    xSemaphoreGive(driverMutex);
+                    parkFence.workerSubmittedOffFrame();
+                } else {
+                    parkFence.workerFault();
                 }
-                FastLED.show();
-                parkFence.workerSubmittedOffFrame();
             }
             vTaskDelay(1U);
             continue;
@@ -170,6 +205,10 @@ void GameLightEffects::applyCommand(const Command &command) {
         if (command.first >= brightnessRampCount) {
             break;
         }
+        if (xSemaphoreTake(driverMutex, pdMS_TO_TICKS(20U)) != pdTRUE) {
+            missedFrameDeadlines.fetch_add(1U, std::memory_order_relaxed);
+            break;
+        }
         // The application schedule already established that this step is due.
         // Checking time again here would lose steps to render-frame jitter.
         std::uint8_t brightness = FastLED.getBrightness();
@@ -177,12 +216,21 @@ void GameLightEffects::applyCommand(const Command &command) {
             brightness += (brightness < command.second) ? 1 : -1;
             FastLED.setBrightness(brightness);
         }
+        xSemaphoreGive(driverMutex);
         break;
     }
     }
 }
 
 void GameLightEffects::renderFrame() {
+    if (xSemaphoreTake(driverMutex, pdMS_TO_TICKS(20U)) != pdTRUE) {
+        missedFrameDeadlines.fetch_add(1U, std::memory_order_relaxed);
+        return;
+    }
+    if (parkFence.blocksGameCommands()) {
+        xSemaphoreGive(driverMutex);
+        return;
+    }
     const std::uint32_t now = clock.nowMilliseconds();
     twinkleFox.draw(fl::Fx::DrawContext(now, fl::span<CRGB>(ledBuffer, ledCount)));
     burst.draw();
@@ -190,6 +238,7 @@ void GameLightEffects::renderFrame() {
         ripples[index].draw();
     }
     FastLED.show();
+    xSemaphoreGive(driverMutex);
 }
 
 bool GameLightEffects::enqueue(const Command &command) {
