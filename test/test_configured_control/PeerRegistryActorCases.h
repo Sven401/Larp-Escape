@@ -123,6 +123,32 @@ void test_registry_actor_pending_ack_precedes_io_and_snapshot_publication() {
     TEST_ASSERT_TRUE(fixture.publication.snapshot(snapshot));
     TEST_ASSERT_TRUE(snapshot == registryValue(1, true));
 }
+void test_registry_actor_stored_snapshot_ack_keeps_product_authority_closed() {
+    RegistryActorFixture fixture;
+    PeerRegistrySnapshot loaded, installed;
+    TrustedAuthority authority;
+    TEST_ASSERT_FALSE(fixture.owner.snapshot(loaded));
+    TEST_ASSERT_FALSE(fixture.publication.snapshot(installed));
+    TEST_ASSERT_FALSE(f->channel.actual.readAuthority(authority));
+    registryOutcome(PeerRegistryOutcome::Pending, fixture.pump());
+    TEST_ASSERT_FALSE(fixture.owner.snapshot(loaded));
+    TEST_ASSERT_FALSE(fixture.publication.snapshot(installed));
+    registryOutcome(PeerRegistryOutcome::Empty, fixture.pump());
+    TEST_ASSERT_TRUE(fixture.owner.snapshot(loaded));
+    TEST_ASSERT_TRUE(fixture.publication.snapshot(installed));
+    TEST_ASSERT_TRUE(loaded == installed);
+    TEST_ASSERT_EQUAL(0, loaded.count);
+    TEST_ASSERT_FALSE(f->channel.actual.readAuthority(authority));
+
+    fixture.save(registryValue(1, true));
+    TEST_ASSERT_TRUE(fixture.owner.snapshot(loaded));
+    TEST_ASSERT_TRUE(fixture.publication.snapshot(installed));
+    TEST_ASSERT_TRUE(loaded == installed);
+    TEST_ASSERT_EQUAL(1, installed.count);
+    TEST_ASSERT_TRUE(fixture.publication.credentialCurrent(installed.peers[0].credential));
+    // Stored key and original role-install ACK are not a connected proof/GM grant.
+    TEST_ASSERT_FALSE(f->channel.actual.readAuthority(authority));
+}
 void test_registry_actor_snapshot_is_readable_on_crypto_worker_and_survives_fresh_links() {
     RegistryActorFixture fixture;
     fixture.ready();
