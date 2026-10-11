@@ -51,6 +51,13 @@ fun DiagnosticScreen(state: DiagnosticUiState, model: DiagnosticViewModel, expor
 
     Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text("Larp Diagnose Vorschau", style = MaterialTheme.typography.titleLarge)
+        Text("Stand 11.10.2026 · Verbindung zur Box vorbereitet", style = MaterialTheme.typography.bodySmall)
+        Card(Modifier.fillMaxWidth()) {
+            Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text("Echte Boxprüfung noch gesperrt", style = MaterialTheme.typography.titleMedium)
+                Text("Die Firmware bietet noch keinen freigegebenen Diagnosekanal. Dieser Pilot erzeugt nur simulierte Antworten; sein Bericht bestätigt keine Funktion der Box.")
+            }
+        }
         Text(if (document == null) "Pilotplan · Wake 1 → LED 0" else if (index < 2) "Schritt ${index + 1} von 2 · ${pilotTitles[index]}" else "Pilotplan beendet · 2 von 2", style = MaterialTheme.typography.titleMedium)
         if (document != null) Text(pilotOperations.indices.joinToString("\n") { position ->
             val savedStep = state.planStep(position)
