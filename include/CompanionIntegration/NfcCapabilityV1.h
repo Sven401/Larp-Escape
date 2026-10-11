@@ -30,7 +30,7 @@ enum class Result : std::uint8_t {
 SelectFrame selectFrame() noexcept;
 ChallengeFrame challengeFrame(const Nonce &challenge) noexcept;
 bool validSelectResponse(const std::uint8_t *bytes, std::size_t size,
-                         const Nonce &runId) noexcept;
+                         Nonce &runId) noexcept;
 bool validEchoResponse(const std::uint8_t *bytes, std::size_t size,
                        const Nonce &challenge) noexcept;
 
@@ -38,8 +38,7 @@ bool validEchoResponse(const std::uint8_t *bytes, std::size_t size,
 // result. This component never assigns a role, grant, key, or GATT permission.
 class Probe final {
   public:
-    bool begin(const ReaderContext &context, const Nonce &runId,
-               const Nonce &challenge, std::uint64_t nowMs,
+    bool begin(const ReaderContext &context, const Nonce &challenge, std::uint64_t nowMs,
                std::uint32_t durationMs) noexcept;
     bool onSelectResponse(const ReaderContext &context, std::uint64_t nowMs,
                           const std::uint8_t *bytes, std::size_t size) noexcept;

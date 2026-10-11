@@ -32,8 +32,15 @@ ChallengeFrame challengeFrame(const Nonce &challenge) noexcept {
 }
 
 bool validSelectResponse(const std::uint8_t *bytes, std::size_t size,
-                         const Nonce &runId) noexcept {
-    return responseMatches(bytes, size, runId);
+                         Nonce &runId) noexcept {
+    if (!bytes || size != 21 || bytes[0] != 0x4e || bytes[1] != 0x43 ||
+        bytes[2] != 0x01 || bytes[19] != 0x90 || bytes[20] != 0x00)
+        return false;
+    Nonce parsed = {};
+    for (std::size_t i = 0; i < parsed.size(); ++i) parsed[i] = bytes[3 + i];
+    if (!populated(parsed)) return false;
+    runId = parsed;
+    return true;
 }
 
 bool validEchoResponse(const std::uint8_t *bytes, std::size_t size,
@@ -41,8 +48,7 @@ bool validEchoResponse(const std::uint8_t *bytes, std::size_t size,
     return responseMatches(bytes, size, challenge);
 }
 
-bool Probe::begin(const ReaderContext &context, const Nonce &runId,
-                  const Nonce &challenge, std::uint64_t nowMs,
+bool Probe::begin(const ReaderContext &context, const Nonce &challenge, std::uint64_t nowMs,
                   std::uint32_t durationMs) noexcept {
     if (result_ != Result::NotStarted) return false;
     if (!context.exclusiveReader || !context.gameParked) {
@@ -50,13 +56,11 @@ bool Probe::begin(const ReaderContext &context, const Nonce &runId,
         return false;
     }
     if (!context.ownerTicket || !context.readerSession || !context.bleGeneration ||
-        !durationMs || durationMs > 30000 || !populated(runId) ||
-        !populated(challenge) || runId == challenge) {
+        !durationMs || durationMs > 30000 || !populated(challenge)) {
         result_ = Result::InvalidStart;
         return false;
     }
     context_ = context;
-    runId_ = runId;
     challenge_ = challenge;
     startedMs_ = nowMs;
     durationMs_ = durationMs;
@@ -84,10 +88,13 @@ bool Probe::onSelectResponse(const ReaderContext &context, std::uint64_t nowMs,
         result_ = Result::MalformedSelect;
         return false;
     }
-    if (!validSelectResponse(bytes, size, runId_)) {
+    Nonce receivedRunId = {};
+    if (!validSelectResponse(bytes, size, receivedRunId) ||
+        receivedRunId == challenge_) {
         result_ = Result::MalformedSelect;
         return false;
     }
+    runId_ = receivedRunId;
     result_ = Result::AwaitEcho;
     return true;
 }

@@ -30,8 +30,10 @@ static Probe awaitingEcho() {
     Probe probe;
     ReaderContext ctx = owner();
     const auto select = response(nonce(1));
-    CHECK(probe.begin(ctx, nonce(1), nonce(41), 100, 30000));
+    CHECK(probe.begin(ctx, nonce(41), 100, 30000));
+    CHECK(probe.runId() == Nonce{});
     CHECK(probe.onSelectResponse(ctx, 101, select.data(), select.size()));
+    CHECK(probe.runId() == nonce(1));
     CHECK(probe.result() == Result::AwaitEcho);
     return probe;
 }
@@ -45,55 +47,82 @@ static void test_nfc_capability() {
     CHECK(challengeFrame(nonce(41)) == expectedChallenge);
     auto runReply = response(nonce(1));
     auto echoReply = response(nonce(41));
-    CHECK(validSelectResponse(runReply.data(), runReply.size(), nonce(1)));
+    Nonce parsedRun = nonce(90);
+    CHECK(validSelectResponse(runReply.data(), runReply.size(), parsedRun));
+    CHECK(parsedRun == nonce(1));
     CHECK(validEchoResponse(echoReply.data(), echoReply.size(), nonce(41)));
-    CHECK(!validSelectResponse(nullptr, 21, nonce(1)));
-    CHECK(!validSelectResponse(runReply.data(), 20, nonce(1)));
-    CHECK(!validSelectResponse(runReply.data(), 22, nonce(1)));
-    CHECK(!validSelectResponse(runReply.data(), runReply.size(), nonce(2)));
+    CHECK(!validSelectResponse(nullptr, 21, parsedRun));
+    CHECK(!validSelectResponse(runReply.data(), 20, parsedRun));
+    CHECK(!validSelectResponse(runReply.data(), 22, parsedRun));
+    CHECK(parsedRun == nonce(1));
+    auto zeroRunReply = response(Nonce{});
+    CHECK(!validSelectResponse(zeroRunReply.data(), zeroRunReply.size(), parsedRun));
+    CHECK(parsedRun == nonce(1));
     for (std::size_t index : {std::size_t(0), std::size_t(1), std::size_t(2), std::size_t(19), std::size_t(20)}) {
         auto bad = runReply; bad[index] ^= 1;
-        CHECK(!validSelectResponse(bad.data(), bad.size(), nonce(1)));
+        CHECK(!validSelectResponse(bad.data(), bad.size(), parsedRun));
+        CHECK(parsedRun == nonce(1));
     }
     {
         Probe probe = awaitingEcho();
         CHECK(probe.onEchoResponse(owner(), 102, echoReply.data(), echoReply.size()));
         CHECK(probe.probeEchoOk());
         CHECK(!probe.onEchoResponse(owner(), 103, echoReply.data(), echoReply.size()));
-        CHECK(!probe.begin(owner(), nonce(1), nonce(41), 104, 30000));
+        CHECK(!probe.begin(owner(), nonce(41), 104, 30000));
     }
     {
         Probe probe;
         ReaderContext busy = owner(); busy.exclusiveReader = false;
-        CHECK(!probe.begin(busy, nonce(1), nonce(41), 100, 30000));
+        CHECK(!probe.begin(busy, nonce(41), 100, 30000));
         CHECK(probe.result() == Result::ReaderBusy);
-        CHECK(!probe.begin(owner(), nonce(1), nonce(41), 101, 30000));
+        CHECK(!probe.begin(owner(), nonce(41), 101, 30000));
     }
     {
         Probe probe;
         ReaderContext busy = owner(); busy.gameParked = false;
-        CHECK(!probe.begin(busy, nonce(1), nonce(41), 100, 30000));
+        CHECK(!probe.begin(busy, nonce(41), 100, 30000));
         CHECK(probe.result() == Result::ReaderBusy);
     }
     for (int variant = 0; variant < 6; ++variant) {
         Probe probe;
         ReaderContext ctx = owner();
-        Nonce run = nonce(1), challenge = nonce(41);
+        Nonce challenge = nonce(41);
         std::uint32_t duration = 30000;
         if (variant == 0) ctx.ownerTicket = 0;
         if (variant == 1) ctx.readerSession = 0;
         if (variant == 2) ctx.bleGeneration = 0;
-        if (variant == 3) run = {};
-        if (variant == 4) challenge = run;
+        if (variant == 3) challenge = {};
+        if (variant == 4) duration = 0;
         if (variant == 5) duration = 30001;
-        CHECK(!probe.begin(ctx, run, challenge, 100, duration));
+        CHECK(!probe.begin(ctx, challenge, 100, duration));
         CHECK(probe.result() == Result::InvalidStart);
     }
     {
         Probe probe;
-        CHECK(probe.begin(owner(), nonce(1), nonce(41), 100, 30000));
+        CHECK(probe.begin(owner(), nonce(41), 100, 30000));
         CHECK(!probe.onEchoResponse(owner(), 101, echoReply.data(), echoReply.size()));
         CHECK(probe.result() == Result::MalformedEcho);
+    }
+    {
+        Probe probe;
+        CHECK(probe.begin(owner(), nonce(41), 100, 30000));
+        CHECK(!probe.onSelectResponse(owner(), 101, zeroRunReply.data(), zeroRunReply.size()));
+        CHECK(probe.result() == Result::MalformedSelect);
+        CHECK(probe.runId() == Nonce{});
+    }
+    {
+        Probe probe;
+        CHECK(probe.begin(owner(), nonce(41), 100, 30000));
+        auto badVersion = runReply; badVersion[2] = 2;
+        CHECK(!probe.onSelectResponse(owner(), 101, badVersion.data(), badVersion.size()));
+        CHECK(probe.result() == Result::MalformedSelect);
+        CHECK(probe.runId() == Nonce{});
+    }
+    {
+        Probe probe;
+        CHECK(probe.begin(owner(), nonce(41), 100, 30000));
+        CHECK(!probe.onSelectResponse(owner(), 101, echoReply.data(), echoReply.size()));
+        CHECK(probe.result() == Result::MalformedSelect);
     }
     {
         Probe probe = awaitingEcho();
