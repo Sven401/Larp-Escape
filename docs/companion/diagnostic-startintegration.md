@@ -124,3 +124,34 @@ built SHA-256
 `6A926F339DD8F96730331F03ABC08CA42EE4E48E7D91D2775BC0BB7651301EB7`.
 The app was not opened or operated by Codex. Its device screen and any box
 behavior still require the user's own observation and later exported report.
+
+## BLE pairing candidate and installed app, 2026-10-11
+
+The closed pairing firmware package `8347d7c` is integrated at `14222a5`.
+It exposes the original service and connectable advertising only after the
+closed registry owner acknowledges readiness, and requests an Android OS bond
+with `IO_CAP_NONE`. It does not claim MITM protection, GM/F1 role, or a
+diagnostic grant; sensitive GATT writes remain closed. The integrated
+configured-control checks passed 526/526, application and regression checks
+30/30, and the ESP32 single-app build succeeded. The candidate app image is
+1,974,176 bytes with SHA-256
+`375854ad53113a035e6853f9b14346892d95f40fa10445e77c213d1643d2b522`.
+It remains **not uploaded**. The chip-bound current-flash capture and exact
+three-region upload/readback plan are in `ble-pairing-preflight.md`.
+
+The Android pairing-report package (`6d06149`, `b676bc0`, `ce1ffec`) lets the
+user scan, connect, request OS bonding and export observed results on `ESP ·
+BLE`. An `ANDROID_PAIRING_OBSERVED` label requires same-generation connected
+GATT, the product service and an OS bond for the same address. Missing
+firmware-side security evidence remains explicit. The targeted pairing test
+and offline Debug build passed. The resulting APK was installed on Moto G14
+`ZY22J7CSQD`; the pulled installed APK matched the built SHA-256
+`1260c588c8b8d01afe4c579c62ea1fa38d66dc98f3ac534e3e8f7c6b38623c36`.
+Codex did not open the app or run the pairing flow. The user has not yet
+observed a live app–ESP link or exported a report.
+
+The separate F1 package documents why the controller Encryption Change event
+cannot bind a selected key to a fresh GATT/command birth. Its report-gap
+follow-up `c323f90` explicitly distinguishes the original link, Android OS
+bond, fresh SMP completion, and live-link security. The latter two are not
+available in the present product report. No restored role is asserted.

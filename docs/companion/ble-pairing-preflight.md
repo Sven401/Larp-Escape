@@ -39,29 +39,46 @@ upload procedure must include a separately reviewed `0xe000/0x2000` erase or
 equivalent verified image step, then verify the booted partition on the real
 box. See the official [ESP-IDF v4.4 OTA guide](https://docs.espressif.com/projects/esp-idf/en/release-v4.4/esp32/api-reference/system/ota.html).
 
-## Gates before any firmware write
+## Exact candidate and narrow write plan
 
-1. Finish and build the exact closed pairing firmware. Record its commit,
-   bootloader, partition binary, app image hash/size, write offsets and
-   unchanged game/authority/diagnosis constraints.
-2. Recheck the current backup size/hash and live chip MAC/4-MiB identity.
-   Keep the current and original captures outside Git. Verify the restore
-   command's checks against the selected current manifest without running a
-   restore. The existing `restore-original` command is named and documented
-   for the 2026-10-10 original image; its confirmation flag must not be used
-   to imply approval to restore the 2026-10-11 current image. Define a
-   distinct, reviewed current-state rollback procedure first.
-3. Define and review the ordered partition/app/otadata write and readback
-   procedure, including loss-of-power recovery and the full-current-image
-   rollback path. The only intended writes are bootloader at `0x1000`, table
-   at `0x8000`, both otadata sectors at `0xe000/0x2000`, and app at `0x10000`;
-   no mass erase. Independently read back these areas, confirm all otadata
-   bytes are `0xff`, and compare retained NVS/SPIFFS with the current backup.
-   Confirm the factory selection and app start on the real device after any
-   separately authorized upload.
-4. Obtain separate authorization for the actual firmware write. The user then
-   operates pairing in the app and exports the report. A later session may
-   evaluate it. No Codex session drives the user-led pairing or box test.
+The isolated product integration branch is at commit `14222a5`. Its ESP32
+single-app build and the combined host checks passed. The immutable private
+snapshot is in `C:/Users/seide/AppData/Local/LarpEscape/ESP32-Candidates/
+BLE-Pairing-20261011-14222a5`; its manifest says `NOT_UPLOADED`.
+
+| Image | Offset | Bytes | SHA-256 | Write? |
+| --- | ---: | ---: | --- | --- |
+| `bootloader.bin` | `0x1000` | 17,536 | `0f65515a7e0dfe9cc4bc78c01bef79c941af1b2deb34d01ddd500ee3d465eedf` | No; byte-identical to current flash |
+| `partitions.bin` | `0x8000` | 3,072 | `97545f3b8c6c47f11e9aeb3e56ea662d7f70c5f48497d234a10fa653380c7d9d` | Yes |
+| `otadata-erased.bin` | `0xe000` | 8,192 | `7d2c7ac4888bfd75cd5f56e8d61f69595121183afc81556c876732fd3782c62f` | Yes; both sectors `0xff` |
+| `firmware.bin` | `0x10000` | 1,974,176 | `375854ad53113a035e6853f9b14346892d95f40fa10445e77c213d1643d2b522` | Yes; ends below factory limit `0x290000` |
+
+The candidate retains NVS, SPIFFS and coredump offsets. The three intended
+writes are one esptool multi-file operation at `0x8000`, `0xe000`, `0x10000`,
+with `--after no_reset`. This operation is not atomic; loss of power could
+require a separately authorized restore of the full current backup. There is
+no mass erase and no bootloader write. The full write has **not** run.
+
+Before a separately authorized write, check all four private image hashes,
+current backup hash/size, and live MAC/4-MiB chip identity again. The guarded
+`scripts/verify_pairing_rollback.py` supports offline verification and live
+`restore-current --dry-run`; both passed. Its real restore requires a distinct
+`--confirm-restore-current` action and has **not** run. The first dry run with
+system Python stopped for a missing esptool package; the PlatformIO Python
+dry run then passed without writing flash.
+
+After any authorized write, independently read back and compare the three
+written regions, verify both otadata sectors are `0xff`, and compare the
+unchanged bootloader, NVS and SPIFFS against the pre-pairing backup before
+normal app startup. Then observe the actual factory boot and app start. Only
+the user operates pairing in the installed app and exports its report; a
+later session evaluates the exported result. No Android bond, advertisement,
+GATT discovery or serial line alone establishes a firmware GM role or
+diagnostic grant.
+
+Separate authorization for the firmware write is still outstanding. No flash
+write, firmware upload, restore, RF pairing run, device test, or product
+release was performed for this preflight.
 
 No flash write, firmware upload, restore, RF pairing run, or product release
 was performed for this preflight.
