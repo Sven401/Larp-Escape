@@ -1464,6 +1464,7 @@ int main() {
     RUN_TEST(test_security_source_hci_birth_rejects_changed_sdk_origin);
     RUN_TEST(test_security_source_hci_birth_rejects_sdk_mutation);
     RUN_TEST(test_security_core_requires_original_start_and_all_resolved_mode_bits);
+    RUN_TEST(test_security_restored_mode_low_byte_alias_never_starts_pairing_or_grants);
     RUN_TEST(test_security_core_rejects_cancel_failure_br_and_weak_link_state);
     RUN_TEST(test_security_core_deadline_wrap_duplicate_start_does_not_refresh);
     RUN_TEST(test_security_core_abandoned_attempt_cannot_attach_to_recycled_connection);

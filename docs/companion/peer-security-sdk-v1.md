@@ -137,6 +137,14 @@ original completion function maps both 0x000d and 0x010d to 13 (and 0x001d and
 actually selected bonded key is proven. The observation is discarded; it never
 sets link security, reconnect readiness, a role or diagnosis authority.
 
+The F1 negative regression `test_security_restored_mode_low_byte_alias_never_starts_pairing_or_grants`
+passes all four full-mode values through the callback-byte narrowing. Even with
+synthetically favorable link flags, key length and proof binding, a completion
+without an original pairing start cannot select transport security. This is a
+closed host check, not a positive bond or role test. The 16-bit mode and the
+PENC/LENC key selected by the original actor still need a birth-bound source
+before restored-bond admission can be implemented.
+
 ### Restored record and key path audit (2026-10-11)
 
 The official ESP-IDF v4.4.6 source narrows the remaining question but does not

@@ -50,6 +50,23 @@ void test_security_core_requires_original_start_and_all_resolved_mode_bits() {
             TEST_ASSERT_TRUE(out.encrypted && out.mitm && out.secureConnections && out.bonded);
     }
 }
+void test_security_restored_mode_low_byte_alias_never_starts_pairing_or_grants() {
+    const auto original = securityTransport();
+    const auto proof = securityProof(original);
+    // Pinned SDK loads a UINT16 record mode but its SMP callback reports UINT8.
+    // Both full values therefore appear as 0x0d to a callback-only observer.
+    for (const std::uint16_t storedMode : {std::uint16_t(0x000d), std::uint16_t(0x010d),
+                                           std::uint16_t(0x001d), std::uint16_t(0x011d)}) {
+        PeerLinkSecurity owner;
+        auto callback = securityResult();
+        callback.mode = static_cast<std::uint8_t>(storedMode);
+        pairingOutcome(PeerPairingOutcome::Mismatch, owner.complete(original, callback, 1));
+        OriginalPeerSecurity destination;
+        TEST_ASSERT_FALSE(owner.select(original, proof, PeerLinkState{0x16, 16}, destination));
+        TEST_ASSERT_FALSE(destination.encrypted || destination.mitm ||
+                          destination.secureConnections || destination.bonded);
+    }
+}
 void test_security_core_rejects_cancel_failure_br_and_weak_link_state() {
     const auto original = securityTransport();
     const auto proof = securityProof(original);
