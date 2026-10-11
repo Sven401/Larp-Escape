@@ -16,7 +16,7 @@ class DiagnosticConnectionEvidenceJournalV1Test {
             val recovered = DiagnosticConnectionEvidenceJournalV1(directory)
             val history = recovered.loadRecovered()!!
             assertEquals(DiagnosticConnectionEvidenceV1.SCHEMA, history.schema)
-            assertEquals("OPEN", history.originalAuthority)
+            assertEquals("NOT_GRANTED", history.originalAuthority)
             assertEquals("UNVERIFIED", history.physicalResult)
             assertEquals(1, history.events.size)
             assertNull(recovered.nextSequence())
@@ -55,7 +55,7 @@ class DiagnosticConnectionEvidenceJournalV1Test {
             assertTrue(exported.size <= DiagnosticConnectionEvidenceJournalV1.MAX_BYTES)
             val decoded = Gson().fromJson(String(exported, Charsets.UTF_8), DiagnosticConnectionEvidenceV1::class.java)
             assertEquals(DiagnosticConnectionEvidenceV1.SCHEMA, decoded.schema)
-            assertEquals("OPEN", decoded.originalAuthority)
+            assertEquals("NOT_GRANTED", decoded.originalAuthority)
             assertEquals("UNVERIFIED", decoded.physicalResult)
             assertNotNull(decoded.exportedUtc)
             assertNull(restarted.loadRecovered()!!.exportedUtc)
@@ -71,12 +71,27 @@ class DiagnosticConnectionEvidenceJournalV1Test {
             val journal = DiagnosticConnectionEvidenceJournalV1(directory)
             journal.begin(7, "A8:42:E3:CD:4B:1A")
             val file = directory.resolve("diagnostic-connection-evidence-v1.json")
-            file.writeText(file.readText().replace("\"OPEN\"", "\"GRANTED\""))
+            file.writeText(file.readText().replace("\"NOT_GRANTED\"", "\"GRANTED\""))
             assertThrows(IllegalArgumentException::class.java) { journal.exportBytes() }
             file.writeText("{broken")
             assertThrows(Exception::class.java) { journal.exportBytes() }
             file.writeBytes(ByteArray(DiagnosticConnectionEvidenceJournalV1.MAX_BYTES + 1))
             assertThrows(IllegalArgumentException::class.java) { journal.exportBytes() }
+        } finally { directory.deleteRecursively() }
+    }
+
+    @Test fun legacyOpenJournalIsReadableButExportsUnverifiedAuthority() {
+        val directory = Files.createTempDirectory("diagnostic-connection-v1").toFile()
+        try {
+            val journal = DiagnosticConnectionEvidenceJournalV1(directory)
+            journal.begin(7, "A8:42:E3:CD:4B:1A")
+            val file = directory.resolve("diagnostic-connection-evidence-v1.json")
+            file.writeText(file.readText().replace("\"NOT_GRANTED\"", "\"OPEN\""))
+            assertEquals("UNVERIFIED", journal.loadRecovered()!!.originalAuthority)
+            val exported = Gson().fromJson(String(journal.exportBytes()!!, Charsets.UTF_8),
+                DiagnosticConnectionEvidenceV1::class.java)
+            assertEquals("UNVERIFIED", exported.originalAuthority)
+            assertTrue(file.readText().contains("\"originalAuthority\":\"OPEN\""))
         } finally { directory.deleteRecursively() }
     }
 }

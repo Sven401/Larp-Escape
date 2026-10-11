@@ -26,7 +26,8 @@ data class DiagnosticConnectionEvidenceV1(
     val connectionGeneration: Int,
     val targetAddress: String,
     val events: List<DiagnosticConnectionEventV1> = emptyList(),
-    val originalAuthority: String = "OPEN",
+    /** Evidence of authority, never an authorization input. This client has no original-authority provider. */
+    val originalAuthority: String = AUTHORITY_NOT_GRANTED,
     val physicalResult: String = "UNVERIFIED",
     /** Time of this export snapshot; the private journal may receive later events. */
     val exportedUtc: String? = null,
@@ -34,6 +35,10 @@ data class DiagnosticConnectionEvidenceV1(
     companion object {
         const val SCHEMA = "diagnostic_connection_evidence_v1"
         const val MAX_EVENTS = 128
+        const val AUTHORITY_NOT_GRANTED = "NOT_GRANTED"
+        const val AUTHORITY_UNVERIFIED = "UNVERIFIED"
+        // Old v1 journals used OPEN for an unimplemented provider. It never meant a grant.
+        const val LEGACY_AUTHORITY_OPEN = "OPEN"
     }
 }
 
@@ -53,7 +58,10 @@ class DiagnosticConnectionEvidenceJournalV1(private val directory: File) {
         val saved = gson.fromJson(json, DiagnosticConnectionEvidenceV1::class.java)
         validate(saved)
         // Deliberately do not set current. A process restart has no live GATT owner or pending write.
-        return saved
+        // Normalize ambiguous legacy evidence in memory and exports, without rewriting history.
+        return if (saved.originalAuthority == DiagnosticConnectionEvidenceV1.LEGACY_AUTHORITY_OPEN)
+            saved.copy(originalAuthority = DiagnosticConnectionEvidenceV1.AUTHORITY_UNVERIFIED)
+        else saved
     }
 
     /** A validated, bounded historical snapshot. Reading it never resumes a GATT session. */
@@ -87,7 +95,11 @@ class DiagnosticConnectionEvidenceJournalV1(private val directory: File) {
 
     private fun validate(saved: DiagnosticConnectionEvidenceV1) {
         require(saved.schema == DiagnosticConnectionEvidenceV1.SCHEMA && saved.connectionGeneration > 0 &&
-            ADDRESS.matches(saved.targetAddress) && saved.originalAuthority == "OPEN" &&
+            ADDRESS.matches(saved.targetAddress) && saved.originalAuthority in setOf(
+                DiagnosticConnectionEvidenceV1.AUTHORITY_NOT_GRANTED,
+                DiagnosticConnectionEvidenceV1.AUTHORITY_UNVERIFIED,
+                DiagnosticConnectionEvidenceV1.LEGACY_AUTHORITY_OPEN,
+            ) &&
             saved.physicalResult == "UNVERIFIED" && saved.events.size <= DiagnosticConnectionEvidenceV1.MAX_EVENTS)
         saved.events.forEachIndexed { index, event ->
             require(event.sequence == index + 1 && event.connectionGeneration == saved.connectionGeneration &&
