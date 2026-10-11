@@ -8,7 +8,7 @@ upload approval, installation record or instruction to start the user run.
 
 - Product source branch/implementation commit:
   `plan/nutzergefuehrte-hardwarediagnose-startintegration` /
-  `787d83bc36a2facb51a50a8d71fbf2b9ed2c30b0`.
+  `557a94b` (journal follow-up to `787d83b`).
   Firmware sources are unchanged from `77028cb74edbaa16ca33b4fcabc63a5c5cdbe94f`.
 - Built firmware image:
   `.pio/build/az-delivery-devkit-v4-single-app-capacity/firmware.bin`,
@@ -18,15 +18,15 @@ upload approval, installation record or instruction to start the user run.
   This image was not uploaded.
 - Built installable Debug APK:
   `companion/android/app/build/outputs/apk/debug/app-debug.apk`,
-  23,965,831 bytes, SHA-256
-  `986CF0EBEBB7469A89EF47CE92D42AEDF88EB9B48010B628FB5B11C4A78ECB3A`.
-  This revised build contains the report-contract corrections. It has not
+  23,977,655 bytes, SHA-256
+  `D8F8FAE82E3E9ECBDD8D7424DE71ADCBED64A006A3BF07AD2FFEB8F8738875CF`.
+  This revised build contains the report contract and journal core. It has not
   been installed because ADB no longer detected the phone at the update check.
   The APK still lists every required area with its concrete blockers and
   sends no request for the blocked areas.
 
-The APK includes the readiness UI and report contract from the product source
-commit above. No firmware source file changed in that commit.
+The APK includes the readiness UI, report contract and journal core from the
+product source commits above. No firmware source file changed in those commits.
 
 ## Connected phone state
 
@@ -60,6 +60,8 @@ the same debug signing certificate, but a subsequent `adb devices -l` returned
 no devices. Its `adb install -r` attempt returned `no devices/emulators found`;
 the installed phone version is therefore still the `B1BF72...` build unless a
 later phone-side action changes it.
+The later journal build `D8F8FA...` has also not been installed. The latest
+read-only ADB query again listed no attached device.
 
 ## Actual box state
 
@@ -122,7 +124,7 @@ flash, eFuse or restore operation occurred.
 | Wake raw levels, edges, single inputs and combinations | `diagnostic::Control::edge` and `finishWake` plus `StepTransport` implement the bounded v1 owner against an `IPort`; only fake/host ports provide the component owner. No MCP/wake adapter is installed in product startup. | The pilot uses `FakeDiagnosticRepositoryV1` and a synthetic Step exchange. Four separate future actions are non-clickable. | The v1 Step reply preserves raw level, interpreted active state, channel, time and overflow; host reassembly is byte-tested. | Authority and component ownership are absent. Wake 1 maps to MCP23017 GPB7, which cannot be an input. HIGH-active interpretation with pull-up also requires raw and interpreted values to stay separate. | No executable Wake request is loaded; no live Wake observation was made. |
 | ESP-NOW identified packet, short range, operational range and receiver report | `EspNowCommunicator` sends the game enum to fixed peer `B0:A7:32:F1:86:54`; `EspNowRuntime` counts local delivery callbacks. Neither carries a diagnostic run/packet ID or controls the receiver report. | Four readiness actions are registered but non-clickable; there is no receiver import/replay UI. | Local send callbacks cannot prove receiver processing. No durable receiver evidence correlates run, packet, MAC, channel and receipt. | Define a versioned test packet and receiver record, pin/observe the channel, preserve Wi-Fi/BLE coexistence evidence, and replay-test report reconciliation before enabling. | No packet was sent. Current passive counters remained 0/0. |
 | Three cold starts and longer combined run | Normal boot and runtime loops exist, but no productive diagnostic orchestrator owns all components or resumes a correlated run. | The current pilot is only a two-step synthetic preview. Cold-start and endurance actions are non-clickable. | No complete run ID survives device/app restart and no combined component evidence exists. | All component paths, authority, ownership and restart semantics must be implemented first; the user then performs these actions in the app. | No restart/endurance test was started. |
-| Open errors, user observations and complete report export | `DiagnosticGattsService` and the typed Step transport can carry bounded replies for the existing fake slice. There is no complete-device report producer. | `HardwareDiagnosticEvidenceV1` registers all 48 actions and holds multiple bounded attempts per action, each with a unique request identifier. It separates requests, explicitly **unverified local** acceptance/execution claims and user observations. Its canonical, checksum-protected report is immutable after finish. The existing `CreateDocument` UI still exports only the synthetic pilot; a complete hardware report export remains blocked. | Seven JVM tests cover 81 separate matrix attempts, three cold starts, correlation uniqueness, unclear-write protection, canonical replay, false provenance rejection and immutable finish. The checksum detects accidental changes but does not authenticate a device. | Add an authenticated reply type bound to device, boot, grant, connection and original request; persist each intent before send; connect the ledger to the productive guided plan and Android export. An unclear write cannot be repeated in the same run. | Only JVM export/replay was tested; no complete phone report was produced in this session. |
+| Open errors, user observations and complete report export | `DiagnosticGattsService` and the typed Step transport can carry bounded replies for the existing fake slice. There is no complete-device report producer. | `HardwareDiagnosticEvidenceV1` registers all 48 actions and holds multiple bounded attempts per action, each with a unique request identifier. It separates requests, explicitly **unverified local** acceptance/execution claims and user observations. Its canonical, checksum-protected report is immutable after finish. `DurableHardwareDiagnosticRunV1` writes each local intent to a journal before returning it for any caller to send, retires pending/accepted-but-unfinished attempts as unclear after restart, never resends them, and keeps a finalized run read-only. `AndroidHardwareDiagnosticJournalStoreV1` supplies private atomic files but is **not yet connected to the UI**. The existing `CreateDocument` UI still exports only the synthetic pilot; a complete hardware report export remains blocked. | Seven ledger and five journal JVM tests cover repeated matrix/cold-start attempts, correlation, unclear-write protection, journal failure, recovery, canonical replay, false provenance rejection and immutable finish. The checksum detects accidental changes but does not authenticate a device. | Add an authenticated reply type bound to device, boot, grant, connection and original request; connect the journal to the productive guided plan, Android recovery and export. An unclear write cannot be repeated in the same run; no protected device command is enabled by this journal. | Only JVM export/replay was tested; no complete phone report was produced in this session. |
 
 The app registry gives every required action above a stable identifier and
 state. The four display-orientation actions plus open-error retention and
@@ -145,7 +147,7 @@ synthetic two-step preview.
   companion fixture suite passed.
 - NFC capability, PN532 frame, PN532 adapter and APP_MUTUAL development
   transcript: 1, 4, 6 and 1 host cases passed.
-- Android: 105 core protocol and 77 app unit tests passed; Debug APK build
+- Android: 110 core protocol and 77 app unit tests passed; Debug APK build
   succeeded offline.
 - Android lint did not complete because
   `androidx.collection:collection-jvm:1.4.0` was absent from the offline cache.
@@ -153,6 +155,7 @@ synthetic two-step preview.
 
 All test results above remain software-only. The phone was connected and the
 earlier `B1BF72...` diagnostic APK was installed after explicit approval. The
-revised `986CF0...` build was not installed because the phone disconnected.
+revised `986CF0...` and subsequent `D8F8FA...` builds were not installed because
+the phone disconnected.
 No app workflow was exercised, no firmware was uploaded and no user hardware
 run was started.
