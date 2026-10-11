@@ -1095,19 +1095,37 @@ bool Esp32GattsSource::requestNow(std::uint16_t packed, std::uint32_t transactio
         portEXIT_CRITICAL(&mutex_);
         if (installed && diagnostic.protectedWrite(event.attribute)) {
             GattsSourceRegistration original;
+            PeerTransportBinding current;
             if (sourceTask() && readRegistration(original) &&
                 original == diagnostic.original && active_ &&
                 packed == live_.connection &&
                 (packed & 0xff) == diagnostic.original.interface &&
-                event.needResponse)
+                transportNow(current) && current.registration == original.token &&
+                current.interface == original.interface &&
+                current.connection == connection_ &&
+                current.address == live_.peerAddress && event.needResponse) {
+                // An encrypted CCCD write only prepares transport. It does
+                // not authenticate a role, grant a run or enable a sender.
+                const bool cccd = event.attribute == diagnostic.controlCccd ||
+                                  event.attribute == diagnostic.stepCccd;
+                const bool subscribe = event.count == 2 &&
+                                       borrowed->write.value[0] == 1 &&
+                                       borrowed->write.value[1] == 0;
+                const bool unsubscribe = event.count == 2 &&
+                                         borrowed->write.value[0] == 0 &&
+                                         borrowed->write.value[1] == 0;
+                const auto status = cccd && !event.prepared && !event.offset &&
+                                            (subscribe || unsubscribe)
+                                        ? AttWriteStatus::Ok
+                                        : AttWriteStatus::InsufficientAuthorization;
                 (void)GATTS_SendRsp(packed, transaction,
-                                    static_cast<std::uint8_t>(
-                                        AttWriteStatus::InsufficientAuthorization),
+                                    static_cast<std::uint8_t>(status),
                                     nullptr);
+            }
             // The SDK actor only refuses the current original connection. A
-            // successful local ATT error submission is no grant, execution or
-            // peer-delivery proof. Do not even copy diagnostic request bytes
-            // into the game/profile write buffer while this route is closed.
+            // successful local ATT response is no grant, execution or
+            // peer-delivery proof. Do not copy diagnostic request bytes into
+            // the game/profile write buffer while this route is closed.
             return true;
         }
         if (event.count && event.count <= sizeof(bytes)) {

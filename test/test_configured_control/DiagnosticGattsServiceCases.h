@@ -68,9 +68,13 @@ void test_diagnostic_gatts_exact_sdk_shape_and_closed_install_before_start() {
     const unsigned kinds[] = {1, 2, 2, 4, 2, 2, 4};
     for (std::size_t i = 0; i < 7; ++i)
         TEST_ASSERT_EQUAL(kinds[i], host_service_sdk::calls[i].kind);
-    const std::size_t writes[] = {1, 3, 4, 6};
+    const std::size_t writes[] = {1, 4};
     for (const auto i : writes)
         TEST_ASSERT_EQUAL(ESP_GATT_PERM_WRITE_ENC_MITM,
+                          host_service_sdk::calls[i].permission);
+    const std::size_t cccds[] = {3, 6};
+    for (const auto i : cccds)
+        TEST_ASSERT_EQUAL(ESP_GATT_PERM_WRITE_ENCRYPTED,
                           host_service_sdk::calls[i].permission);
     TEST_ASSERT_EQUAL(ESP_GATT_CHAR_PROP_BIT_WRITE, host_service_sdk::calls[1].property);
     TEST_ASSERT_EQUAL(ESP_GATT_CHAR_PROP_BIT_WRITE, host_service_sdk::calls[4].property);

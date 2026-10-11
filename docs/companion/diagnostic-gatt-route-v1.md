@@ -106,3 +106,28 @@ does not yet supply a captured negotiated MTU, separately correlated CCCD
 state, an admitted same-birth F1/GM authority or a serialized production
 `Control`/`StepTransport` owner. Those are mandatory before any forwarding,
 positive ATT write status or reply notification can be added.
+
+## Encrypted CCCD transport preparation, 2026-10-11
+
+The original registration now acknowledges a **normal, response-required**
+`0x0001` subscription write or `0x0000` unsubscription write to either
+diagnostic reply CCCD, only on the current original connection. The two CCCDs require an
+encrypted link, but no MITM claim; the two Control/Step request attributes
+retain their encrypted + MITM SDK permission and closed application gate.
+Prepared writes, offsets, wrong lengths/values and writes without response
+cannot receive a successful ATT response. A retired or mismatched link gets
+no response. No CCCD bytes enter the game/profile command queues.
+
+This change acknowledges **only transport preparation**. It installs no
+diagnostic notification sender, does not grant a role or run, and does not
+prove that a notification could be delivered. The descriptor remains in
+application-response mode with no read permission; no persistent CCCD state
+is inferred from the local ATT response. In the pinned SDK,
+`ESP_GATT_RSP_BY_APP` makes the application responsible for the response;
+`esp_ble_gatts_set_attr_value` is a separate API and is not called here.
+Thus the ACK does **not** establish that the CCCD database value was updated.
+The Android UI must report this as an acknowledged descriptor write, never as
+ready reply transport or diagnosis access. A future productive sender must
+track per-connection subscriptions and recheck the same original connection,
+authority and grant before transmitting. The earlier closed-registration
+description and test counts above describe the prior state.

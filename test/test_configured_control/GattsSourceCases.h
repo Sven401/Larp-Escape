@@ -86,7 +86,7 @@ static larp::diagnostic::DiagnosticClosedHandles closedDiagnosticHandles(
     value.stepCccd = 0x5a;
     return value;
 }
-void test_source_diagnostic_original_closed_handles_reject_all_writes() {
+void test_source_diagnostic_cccd_only_prepares_transport_on_current_link() {
     SourceFixture sdk;
     auto value = closedDiagnosticHandles(sdk.source);
     host_sdk_source::currentTask = reinterpret_cast<void *>(3);
@@ -100,13 +100,53 @@ void test_source_diagnostic_original_closed_handles_reject_all_writes() {
     const std::uint16_t protectedAttributes[] = {0x52, 0x55, 0x57, 0x5a};
     for (std::size_t i = 0; i < 4; ++i) {
         const auto attribute = protectedAttributes[i];
-        sdk.write("\x01\x00", attribute, attribute);
+        sdk.write(std::string("\x01\x00", 2), attribute, attribute);
         TEST_ASSERT_EQUAL(i + 1, host_sdk_source::sent.size());
-        TEST_ASSERT_EQUAL(static_cast<unsigned>(AttWriteStatus::InsufficientAuthorization),
+        const auto expected = attribute == value.controlCccd || attribute == value.stepCccd
+                                  ? AttWriteStatus::Ok
+                                  : AttWriteStatus::InsufficientAuthorization;
+        TEST_ASSERT_EQUAL(static_cast<unsigned>(expected),
                           static_cast<unsigned>(host_sdk_source::sent.back().status));
     }
     TEST_ASSERT_EQUAL(4, host_sdk_source::sent.size());
     sdk.close();
+}
+void test_source_diagnostic_cccd_rejects_malformed_and_retired_requests() {
+    SourceFixture sdk;
+    const auto handles = closedDiagnosticHandles(sdk.source);
+    host_sdk_source::currentTask = reinterpret_cast<void *>(3);
+    TEST_ASSERT_TRUE(sdk.source.postDiagnosticClosedSetup(handles));
+    host_sdk_source::currentTask = reinterpret_cast<void *>(1);
+    host_sdk_source::drainOne();
+    sdk.open(false); // No game role is needed to prepare a reply subscription.
+    sdk.write(std::string("\x00\x00", 2), 40, handles.controlCccd); // Explicit disable.
+    TEST_ASSERT_EQUAL(static_cast<unsigned>(AttWriteStatus::Ok),
+                      static_cast<unsigned>(host_sdk_source::sent.back().status));
+    sdk.write(std::string("\x01\x00", 2), 40, handles.stepCccd);
+    TEST_ASSERT_EQUAL(static_cast<unsigned>(AttWriteStatus::Ok),
+                      static_cast<unsigned>(host_sdk_source::sent.back().status));
+    const std::string malformed[] = {std::string("\x02\x00", 2), "\x01", "\x01\x01"};
+    for (const auto &bytes : malformed) {
+        sdk.write(bytes, 41, handles.stepCccd);
+        TEST_ASSERT_EQUAL(static_cast<unsigned>(AttWriteStatus::InsufficientAuthorization),
+                          static_cast<unsigned>(host_sdk_source::sent.back().status));
+    }
+    sdk.write(std::string("\x01\x00", 2), 42, handles.controlCccd, true, true);
+    TEST_ASSERT_EQUAL(static_cast<unsigned>(AttWriteStatus::InsufficientAuthorization),
+                      static_cast<unsigned>(host_sdk_source::sent.back().status));
+    sdk.write(std::string("\x01\x00", 2), 43, handles.controlCccd, true, false, 1);
+    TEST_ASSERT_EQUAL(static_cast<unsigned>(AttWriteStatus::InsufficientAuthorization),
+                      static_cast<unsigned>(host_sdk_source::sent.back().status));
+    const auto before = host_sdk_source::sent.size();
+    sdk.write(std::string("\x01\x00", 2), 44, handles.controlCccd, false);
+    TEST_ASSERT_EQUAL(before, host_sdk_source::sent.size());
+    sdk.close();
+    sdk.write(std::string("\x01\x00", 2), 45, handles.controlCccd);
+    TEST_ASSERT_EQUAL(before, host_sdk_source::sent.size());
+    CopiedCommandFrame command;
+    CopiedProfileFrame profile;
+    TEST_ASSERT_FALSE(sdk.commands.take(command));
+    TEST_ASSERT_FALSE(sdk.profiles.take(profile));
 }
 void test_source_diagnostic_closed_write_never_adopts_game_role_or_payload() {
     SourceFixture sdk;

@@ -39,7 +39,9 @@ bool addCccd(std::uint16_t service) noexcept {
     value.attr_max_len = 2;
     esp_attr_control_t control = {};
     control.auto_rsp = ESP_GATT_RSP_BY_APP;
-    return esp_ble_gatts_add_char_descr(service, &uuid, ESP_GATT_PERM_WRITE_ENC_MITM,
+    // A CCCD only prepares the reply transport. It conveys no diagnostic
+    // authority; request characteristics retain their independent MITM gate.
+    return esp_ble_gatts_add_char_descr(service, &uuid, ESP_GATT_PERM_WRITE_ENCRYPTED,
                                         &value, &control) == ESP_OK;
 }
 } // namespace

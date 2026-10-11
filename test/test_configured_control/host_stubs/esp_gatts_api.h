@@ -10,6 +10,7 @@ constexpr int ESP_GATT_OK = 0;
 constexpr std::uint16_t ESP_UUID_LEN_16 = 2, ESP_UUID_LEN_128 = 16,
                         ESP_GATT_UUID_CHAR_CLIENT_CONFIG = 0x2902,
                         ESP_GATT_PERM_WRITE_ENC_MITM = 64,
+                        ESP_GATT_PERM_WRITE_ENCRYPTED = 32,
                         ESP_GATT_PERM_READ_ENC_MITM = 4;
 constexpr std::uint8_t ESP_GATT_CHAR_PROP_BIT_READ = 2, ESP_GATT_CHAR_PROP_BIT_WRITE = 8,
                        ESP_GATT_CHAR_PROP_BIT_WRITE_NR = 4,
