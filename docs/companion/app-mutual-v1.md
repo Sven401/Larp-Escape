@@ -1,8 +1,13 @@
 # APP_MUTUAL_V1 — contract for USB-enrolled app and box identities
 
-**Decision:** On 2026-10-11 the user selected individually USB-enrolled app
-and box keys, with USB revocation of a lost phone, for the Originalbox. This
-document is a **design contract**, not an implemented protocol or a grant.
+**Status:** This is a reversible development-route design contract, not an
+implemented protocol or a grant. On 2026-10-11 the user initially selected
+individually USB-enrolled app and box keys with USB revocation. The later
+instruction makes an NFC exchange the target for **future productive Game
+Master authentication**. Pursue this USB route only while it leaves normal
+development flashing, debugging and rollback usable. The NFC plan is in the
+canonical AI Werkbank at `plans/spielleiter-nfc-authentisierung.md`.
+
 The product remains on its current closed BLE/GATT permissions and has no
 enrolled APP_MUTUAL_V1 keys. No flash, eFuse, Android Keystore, role, or
 diagnostic permission is changed by this document. See the [decision and

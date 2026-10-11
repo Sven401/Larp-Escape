@@ -1,8 +1,11 @@
 # APP_MUTUAL_V1 GATT migration matrix
 
-**Status 2026-10-11:** code-backed review matrix for the user's selected
-[USB-enrolled mutual-key design](app-mutual-v1.md). It changes no attribute,
-permission, key, role or device. Current UUIDs are canonical text order;
+**Status 2026-10-11:** code-backed review matrix for the optional reversible
+[USB-enrolled mutual-key development design](app-mutual-v1.md). The later user
+instruction targets an NFC exchange for future productive Game Master
+authentication. This matrix may inform that migration but does not authorize
+one. It changes no attribute, permission, key, role or device. Current UUIDs
+are canonical text order;
 numeric ATT handles are assigned by SDK callbacks and are **not** fixed UUID
 suffixes. `E+M` below means today's SDK encrypted **and BLE-MITM** permission,
 not an APP_MUTUAL_V1 proof. `E` means SDK encrypted permission. The planned
