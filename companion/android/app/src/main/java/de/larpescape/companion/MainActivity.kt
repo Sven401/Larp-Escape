@@ -236,6 +236,7 @@ class MainActivity : ComponentActivity() {
                         } else {
                         Text("Gerät verbinden", style = MaterialTheme.typography.titleLarge)
                         Text(state.message)
+                        if (BuildConfig.ALLOW_CONTRACT_LAB) NfcCapabilityCard()
                         if (state.permissionMissing) Text("Suche und Verbindung benötigen die Erlaubnis „Geräte in der Nähe“.")
                         Card(Modifier.fillMaxWidth()) {
                             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
