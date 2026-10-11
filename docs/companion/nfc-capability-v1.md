@@ -2,9 +2,11 @@
 
 **Status (2026-10-11):** development-only wire and evidence contract. It is
 not NFC authentication, a BLE OOB pairing procedure, a Game Master role, or a
-diagnostic grant. No product PN532 caller or Android HCE service is installed
-by this document. The productive security goal and gates are in the canonical
-AI Werkbank plan `plans/spielleiter-nfc-authentisierung.md`.
+diagnostic grant. A bounded firmware codec and PN532 frame parser have host
+tests; the Android source includes a debug-only HCE service. There is no
+product PN532 caller, installed HCE test build, or observed phone–box NFC
+exchange. The productive security goal and gates are in the canonical AI
+Werkbank plan `plans/spielleiter-nfc-authentisierung.md`.
 
 ## Purpose and admission
 
@@ -85,4 +87,5 @@ Android basis: [Host-based card emulation](https://developer.android.com/develop
 and [HostApduService](https://developer.android.com/reference/android/nfc/cardemulation/HostApduService).
 Moto G14 `ZY22J7CSQD` reported `android.hardware.nfc.hce` and
 `android.hardware.nfc.hcef` through a read-only `pm list features` on
-2026-10-11; no HCE service or reader exchange has been run on that phone.
+2026-10-11; the debug HCE build has not been installed or run on that phone,
+and no reader exchange has been observed.
