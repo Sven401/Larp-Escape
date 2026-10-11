@@ -87,6 +87,86 @@ static larp::diagnostic::DiagnosticClosedHandles closedDiagnosticHandles(
     value.stepCccd = 0x5a;
     return value;
 }
+void test_source_diagnostic_mtu_is_copied_only_from_original_btu_birth() {
+    SourceFixture sdk;
+    sdk.open(false);
+    PeerTransportBinding first;
+    TEST_ASSERT_TRUE(sdk.source.readOriginalTransport(first));
+    std::uint16_t mtu = 0x5555;
+    TEST_ASSERT_FALSE(sdk.source.readDiagnosticOriginalMtu(first, mtu));
+    TEST_ASSERT_EQUAL_HEX16(0x5555, mtu);
+    sdk446::Request request = {};
+    request.mtu = 131;
+    TEST_ASSERT_FALSE(sdk.source.requestNow(0x201, 0, 4, &request));
+    TEST_ASSERT_FALSE(sdk.source.readDiagnosticOriginalMtu(first, mtu));
+    host_sdk_source::currentTask = reinterpret_cast<void *>(3);
+    TEST_ASSERT_FALSE(sdk.source.requestNow(0x101, 0, 4, &request));
+    host_sdk_source::currentTask = reinterpret_cast<void *>(1);
+    TEST_ASSERT_FALSE(sdk.source.readDiagnosticOriginalMtu(first, mtu));
+    TEST_ASSERT_FALSE(sdk.source.requestNow(0x101, 1, 4, &request));
+    TEST_ASSERT_FALSE(sdk.source.readDiagnosticOriginalMtu(first, mtu));
+    TEST_ASSERT_FALSE(sdk.source.requestNow(0x101, 0, 4, &request));
+    request.mtu = 23; // The source must retain the original copied scalar.
+    TEST_ASSERT_TRUE(sdk.source.readDiagnosticOriginalMtu(first, mtu));
+    TEST_ASSERT_EQUAL_HEX16(131, mtu);
+    sdk.close();
+    TEST_ASSERT_FALSE(sdk.source.readDiagnosticOriginalMtu(first, mtu));
+    sdk.open(false); // Reused private packed conn_id, new original token.
+    PeerTransportBinding second;
+    TEST_ASSERT_TRUE(sdk.source.readOriginalTransport(second));
+    TEST_ASSERT_FALSE(first == second);
+    TEST_ASSERT_FALSE(sdk.source.readDiagnosticOriginalMtu(first, mtu));
+    TEST_ASSERT_FALSE(sdk.source.readDiagnosticOriginalMtu(second, mtu));
+    request.mtu = 185;
+    TEST_ASSERT_FALSE(sdk.source.requestNow(0x101, 0, 4, &request));
+    TEST_ASSERT_TRUE(sdk.source.readDiagnosticOriginalMtu(second, mtu));
+    TEST_ASSERT_EQUAL_HEX16(185, mtu);
+    TEST_ASSERT_FALSE(sdk.source.readDiagnosticOriginalMtu(first, mtu));
+    sdk.close();
+}
+void test_source_diagnostic_mtu_bad_original_request_never_opens_capacity() {
+    SourceFixture sdk;
+    const auto handles = closedDiagnosticHandles(sdk.source);
+    host_sdk_source::currentTask = reinterpret_cast<void *>(3);
+    TEST_ASSERT_TRUE(sdk.source.postDiagnosticClosedSetup(handles));
+    host_sdk_source::currentTask = reinterpret_cast<void *>(1);
+    host_sdk_source::drainOne();
+    sdk.open(true); // A GM game role must not substitute for MTU or diagnosis.
+    PeerTransportBinding original;
+    TEST_ASSERT_TRUE(sdk.source.readOriginalTransport(original));
+    std::uint16_t mtu = 0xbeef;
+    sdk446::Request request = {};
+    for (const auto bad : {static_cast<std::uint16_t>(0),
+                           static_cast<std::uint16_t>(22),
+                           static_cast<std::uint16_t>(518)}) {
+        request.mtu = bad;
+        TEST_ASSERT_FALSE(sdk.source.requestNow(0x101, 0, 4, &request));
+        TEST_ASSERT_FALSE(sdk.source.readDiagnosticOriginalMtu(original, mtu));
+        TEST_ASSERT_EQUAL_HEX16(0xbeef, mtu);
+    }
+    request.mtu = 130;
+    TEST_ASSERT_FALSE(sdk.source.requestNow(0x101, 0, 4, &request));
+    TEST_ASSERT_TRUE(sdk.source.readDiagnosticOriginalMtu(original, mtu));
+    TEST_ASSERT_EQUAL_HEX16(130, mtu); // Still below DG-v1 minimum 131.
+    request.mtu = 131;
+    TEST_ASSERT_FALSE(sdk.source.requestNow(0x101, 0, 4, &request));
+    TEST_ASSERT_TRUE(sdk.source.readDiagnosticOriginalMtu(original, mtu));
+    TEST_ASSERT_EQUAL_HEX16(131, mtu);
+    sdk.write(std::string(69, '\x7f'), 33, handles.controlWrite);
+    sdk.write(std::string(80, '\x7f'), 34, handles.stepWrite);
+    TEST_ASSERT_EQUAL(2, host_sdk_source::sent.size());
+    for (const auto &reply : host_sdk_source::sent)
+        TEST_ASSERT_EQUAL(static_cast<unsigned>(AttWriteStatus::InsufficientAuthorization),
+                          static_cast<unsigned>(reply.status));
+    TEST_ASSERT_FALSE(sdk.source.requestNow(0x101, 0, 4, nullptr));
+    TEST_ASSERT_FALSE(sdk.source.readDiagnosticOriginalMtu(original, mtu));
+    TEST_ASSERT_TRUE(host_sdk_source::notifications.empty());
+    CopiedCommandFrame command;
+    CopiedProfileFrame profile;
+    TEST_ASSERT_FALSE(sdk.commands.take(command));
+    TEST_ASSERT_FALSE(sdk.profiles.take(profile));
+    sdk.close();
+}
 void test_source_diagnostic_cccd_only_prepares_transport_on_current_link() {
     SourceFixture sdk;
     auto value = closedDiagnosticHandles(sdk.source);

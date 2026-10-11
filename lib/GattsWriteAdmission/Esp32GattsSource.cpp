@@ -822,6 +822,8 @@ GattsLifecycleOutcome Esp32GattsSource::connectionNow(std::uint8_t interface,
     portENTER_CRITICAL(&mutex_);
     peerProofOpen_ = false;
     publishedTransport_ = {};
+    diagnosticMtuBirth_ = {};
+    diagnosticMtu_ = 0;
     diagnosticProbeBirth_ = {};
     controlProbeSubscribed_ = false;
     stepProbeSubscribed_ = false;
@@ -905,6 +907,22 @@ bool Esp32GattsSource::readOriginalTransport(PeerTransportBinding &destination) 
     if (!stillCurrent)
         return false;
     destination = value;
+    return true;
+}
+bool Esp32GattsSource::readDiagnosticOriginalMtu(
+    const PeerTransportBinding &caller, std::uint16_t &destination) const noexcept {
+    const auto original = caller;
+    PeerTransportBinding captured;
+    std::uint16_t mtu;
+    portENTER_CRITICAL(&mutex_);
+    captured = diagnosticMtuBirth_;
+    mtu = diagnosticMtu_;
+    portEXIT_CRITICAL(&mutex_);
+    PeerTransportBinding current;
+    if (!original.valid() || !(captured == original) || mtu < 23 || mtu > 517 ||
+        !readOriginalTransport(current) || !(current == original))
+        return false;
+    destination = mtu;
     return true;
 }
 bool Esp32GattsSource::readOriginalLifecycle(std::uint32_t &destination) const noexcept {
@@ -1041,6 +1059,21 @@ bool Esp32GattsSource::readOriginalPeerSecurityNow(
 }
 bool Esp32GattsSource::requestNow(std::uint16_t packed, std::uint32_t transaction,
                                   std::uint8_t type, const sdk446::Request *borrowed) noexcept {
+    if (type == 4) {
+        // Pinned GATTS_REQ_TYPE_MTU=4 arrives on the original BTU actor with
+        // its private packed conn_id. Copy before forwarding to the SDK app
+        // callback; the later public MTU event carries no connection birth.
+        const auto mtu = borrowed ? borrowed->mtu : 0;
+        PeerTransportBinding original;
+        if (sourceTask() && !transaction && active_ && packed == live_.connection &&
+            transportNow(original)) {
+            portENTER_CRITICAL(&mutex_);
+            diagnosticMtuBirth_ = original;
+            diagnosticMtu_ = mtu >= 23 && mtu <= 517 ? mtu : 0;
+            portEXIT_CRITICAL(&mutex_);
+        }
+        return false; // Preserve the original callback and SDK MTU handling.
+    }
     if (type == 1) {
         // Pinned tGATTS_REQ_TYPE_READ=1. Freeze the union before any port.
         if (!borrowed)

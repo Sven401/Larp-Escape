@@ -162,3 +162,23 @@ changes an LED, or proves physical behavior. Host tests exercise the SDK call
 and stale-birth guards; an ESP32 build is compile evidence. Until a user-led
 device run yields both notifications in an exported report, radio delivery is
 unverified.
+
+## Original-bound MTU observation, 2026-10-11
+
+The selected private GATT source copies `GATTS_REQ_TYPE_MTU` (kind 4) on the
+original BTU actor before forwarding that callback unchanged. Its full packed
+connection ID, source registration and current connection birth are captured
+with the SDK-reported MTU (23..517). A read requires the caller's entire
+original `PeerTransportBinding` still to match the current link; disconnect
+and a new connection clear the observation even if the SDK reuses the packed
+ID. Invalid or missing MTU data leave capacity unknown. The later public
+`ESP_GATTS_MTU_EVT` contains only a connection ID and MTU, so it is not used
+to assign a value to a birth after a possible reconnect.
+
+This is a transport-capacity observation only. The diagnostic request handles
+still return `InsufficientAuthorization`, including at MTU 131 or above;
+neither Control/Step bytes nor a copied authority are forwarded to an owner.
+No role, grant, notification delivery, execution or physical result follows
+from an MTU observation. A production request bridge still needs a single
+serialized diagnostic owner, exact current authority, both subscribed reply
+channels and a real component port before any positive ATT response.

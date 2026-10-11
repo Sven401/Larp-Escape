@@ -68,6 +68,11 @@ class Esp32GattsSource : public IGattsResponseContext,
     // Read-only copy of the current original BTU connection birth. This is
     // connection evidence only: no bond, MITM, role or diagnosis assertion.
     bool readOriginalTransport(PeerTransportBinding &) const noexcept;
+    // The original BTU MTU request belongs to this complete connection birth.
+    // No value is available before that request; an MTU is transport capacity,
+    // never peer authority or permission to accept a diagnostic write.
+    bool readDiagnosticOriginalMtu(const PeerTransportBinding &,
+                                   std::uint16_t &) const noexcept;
     // Monotone original callback lifecycle, including disconnect; no link claim.
     bool readOriginalLifecycle(std::uint32_t &) const noexcept;
     // Exact original observer/channel agreement with no principal or GM.
@@ -179,6 +184,8 @@ class Esp32GattsSource : public IGattsResponseContext,
     GattsConnectionEvent live_;
     BoundConnection connection_;
     PeerTransportBinding publishedTransport_;
+    PeerTransportBinding diagnosticMtuBirth_;
+    std::uint16_t diagnosticMtu_ = 0;
     // BTU-only transport subscription state. An ATT ACK alone is never a
     // delivery claim; each flag belongs to one exact original link birth.
     PeerTransportBinding diagnosticProbeBirth_;

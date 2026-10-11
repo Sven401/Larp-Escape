@@ -1375,6 +1375,8 @@ int main() {
     RUN_TEST(test_service_callback_loss_after_ready_immediately_closes_readiness);
     RUN_TEST(test_endpoint_failed_post_wrong_task_and_replaced_sdk_never_retry);
     RUN_TEST(test_source_original_sdk_post_actual_frames_and_application);
+    RUN_TEST(test_source_diagnostic_mtu_is_copied_only_from_original_btu_birth);
+    RUN_TEST(test_source_diagnostic_mtu_bad_original_request_never_opens_capacity);
     RUN_TEST(test_source_diagnostic_cccd_only_prepares_transport_on_current_link);
     RUN_TEST(test_source_diagnostic_cccd_rejects_malformed_and_retired_requests);
     RUN_TEST(test_source_diagnostic_probe_requires_successful_att_ack_and_fresh_birth);
