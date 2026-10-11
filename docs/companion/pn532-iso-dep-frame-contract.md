@@ -36,3 +36,40 @@ and the locally pinned `Adafruit PN532` 1.3.4 source at
 Focused proof: `platformio test -c platformio.pn532-frame.ini -e
 host-pn532-iso-dep-frame` (4 host cases passed, 2026-10-11). No COM3 access,
 upload, RF trial, Android user action, or electrical test was performed.
+
+## Bounded capability adapter (host only)
+
+`GameRuntime/Pn532IsoDepAdapter.h` is a separate one-run command boundary.
+It requires a nonzero owner ticket, an exclusive reader lease, a parked game,
+and a deadline of at most 30 seconds. Every call rechecks ownership before
+I/O. `pollTarget()` issues only `4A 01 00` and accepts a complete ISO-DEP
+target frame; a no-target response can be retried within the same deadline.
+`selectApplication()` then issues `40 01` plus the provisional 14-byte SELECT
+APDU. `challenge()` issues `40 01` plus the 21-byte public echo challenge.
+Both replies must be complete 21-byte capability responses with version 1,
+`90 00`, and an exact challenge echo; SELECT's run ID must be nonzero. A bad
+status, changed echo, truncated frame, stale ticket, lost fence or deadline
+overrun fails closed and clears caller output. This is an echo check, never
+authentication or role evidence. A caller must still use the capability
+state machine to check BLE generation, reader session, run-ID replay, and
+application report correlation.
+
+The `Pn532RawPort` seam is intentionally **unimplemented**. Its contract
+requires a complete raw normal frame with actual byte count and a combined
+ACK/response timeout of at most the adapter's per-command limit (1 second).
+It must discard/cancel an outstanding command after timeout before any next
+poll; stale ready bytes must not satisfy a later command. The pinned Adafruit
+1.3.4 `inListPassiveTarget()` waits up to 30 seconds, while
+`inDataExchange()` silently truncates the response, so neither method may be
+bound directly. `scripts/patch_pn532.py` is hash-pinned to a UID-only repair;
+it was deliberately left unchanged. A future driver binding needs a reviewed,
+version-pinned extension, exact frame byte accounting, bounded timeout and
+stale-response cleanup tests before product wiring. Game polling must remain
+excluded through an actual reader-owner lease, not just the boolean test
+arguments of this host fake.
+
+Focused proof: `platformio test -c platformio.pn532-adapter.ini -e
+host-pn532-iso-dep-adapter` (6 host cases passed, 2026-10-11). These exercise
+exact commands, no-target retry, ticket/game fence, before/after deadline,
+truncation, status and echo failure. They cannot establish PN532 RF behavior
+or a bounded production driver.
