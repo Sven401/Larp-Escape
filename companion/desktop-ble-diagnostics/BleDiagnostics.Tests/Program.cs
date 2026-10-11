@@ -35,10 +35,19 @@ using var parsed = JsonDocument.Parse(BleReportJournal.ToJson(report));
 Check(parsed.RootElement.GetProperty("Schema").GetString() == "larp-escape-windows-ble-observation-v1",
     "export schema serializes");
 journal.Advertisement(0, "Public", "Other", -80, []);
+Check(journal.Snapshot().ScanDistinctAddresses == 2 && journal.Snapshot().Observations.Count == 1 &&
+      journal.Snapshot().Observations.Single().Address == BleIdentity.ExpectedAddress &&
+      journal.Snapshot().Events.All(x => x.Address is null || x.Address == BleIdentity.ExpectedAddress),
+    "export keeps totals but redacts unselected device and its events");
 Check(journal.Select("00:00:00:00:00:00") && journal.Snapshot().ProductServiceFound is null &&
       journal.Snapshot().GattState == "not_attempted", "switching target invalidates previous GATT result");
+Check(journal.Snapshot().Observations.Single().Address == "00:00:00:00:00:00" &&
+      journal.Snapshot().Events.All(x => x.Address is null || x.Address == "00:00:00:00:00:00"),
+    "explicitly selecting another device changes exported address and events");
 journal.ClearSelection();
 Check(journal.Snapshot().SelectedAddress is null, "new scan can discard stale selection");
+Check(journal.Snapshot().Observations.Count == 0 && journal.Snapshot().Events.All(x => x.Address is null),
+    "unselected scan exports no observed addresses");
 for (var i = 0; i < BleReportJournal.MaxAddresses + 10; i++)
     journal.Advertisement((ulong)i, "Public", "", -80, []);
 Check(journal.Snapshot().ScanDistinctAddresses == BleReportJournal.MaxAddresses &&
@@ -59,4 +68,25 @@ Check(await BoundedWait.ForStopAsync(Task.CompletedTask, TimeSpan.FromSeconds(1)
     "scan ends on watcher stop");
 Check(await BoundedWait.ForStopAsync(new TaskCompletionSource().Task, TimeSpan.FromMilliseconds(20)) == BoundedWaitResult.TimedOut,
     "scan ends at deadline without watcher event");
+Check(CliExitCode.ForResult("watcher_error:DisabledByUser", null) == CliExitCode.ScanFailed &&
+      CliExitCode.ForResult("scan_error", null) == CliExitCode.ScanFailed &&
+      CliExitCode.ForResult("bounded_timeout", null) == CliExitCode.Success,
+    "CLI reports watcher and start errors as failed runs");
+Check(CliExitCode.ForResult("watcher_error:DisabledByUser", "access denied") == CliExitCode.ReportSaveFailed &&
+      CliExitCode.ForResult("bounded_timeout", "access denied") == CliExitCode.ReportSaveFailed,
+    "CLI reports denied JSON save with dedicated exit status");
+var occupiedReportPath = Path.Combine(Path.GetTempPath(), "ble-report-occupied-" + Guid.NewGuid().ToString("N"));
+Directory.CreateDirectory(occupiedReportPath);
+try
+{
+    Check(!AtomicReportFile.TryWrite(occupiedReportPath, report, out var saveFailure) &&
+          !string.IsNullOrWhiteSpace(saveFailure),
+        "occupied report destination is handled without an unhandled exception");
+}
+finally
+{
+    var temporary = occupiedReportPath + ".tmp";
+    if (File.Exists(temporary)) File.Delete(temporary);
+    Directory.Delete(occupiedReportPath);
+}
 Console.WriteLine("All desktop BLE core checks passed.");

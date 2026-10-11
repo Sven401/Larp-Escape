@@ -181,7 +181,9 @@ public sealed class BleReportJournal
         SelectedAddress, SelectedAddressType, ScanState, ScanCallbacks, observations.Count, ScanDroppedAddresses,
         GattState, GattStatus, ProductServiceFound, LabServiceFound, PairingState, PairingStatus,
         "not_measured_by_desktop_app", "none; observation does not grant a diagnostic role",
-        observations.Values.OrderBy(x => x.Address).ToArray(), events.ToArray());
+        observations.Values.Where(x => x.Address.Equals(SelectedAddress, StringComparison.OrdinalIgnoreCase))
+            .OrderBy(x => x.Address).ToArray(),
+        events.Where(x => x.Address is null || x.Address.Equals(SelectedAddress, StringComparison.OrdinalIgnoreCase)).ToArray());
 
     public static string ToJson(BleReport report) => JsonSerializer.Serialize(report, new JsonSerializerOptions { WriteIndented = true });
 }

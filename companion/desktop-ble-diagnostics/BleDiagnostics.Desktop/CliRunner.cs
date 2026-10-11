@@ -17,15 +17,7 @@ internal static class CliRunner
         string? saveError = null;
         void Save()
         {
-            try
-            {
-                Directory.CreateDirectory(Path.GetDirectoryName(output)!);
-                var temp = output + ".tmp";
-                File.WriteAllText(temp, BleReportJournal.ToJson(journal.Snapshot()));
-                File.Move(temp, output, true);
-                saveError = null;
-            }
-            catch (Exception ex) { saveError = ex.Message; }
+            AtomicReportFile.TryWrite(output, journal.Snapshot(), out saveError);
         }
 
         var watcher = new BluetoothLEAdvertisementWatcher { ScanningMode = BluetoothLEScanningMode.Active };
@@ -90,7 +82,7 @@ internal static class CliRunner
             lock (sync)
             {
                 chosen = journal.Observations.FirstOrDefault(x => x.Address == options.ProbeAddress);
-                if (chosen is null) journal.AddEvent("probe_skipped", options.ProbeAddress, "address not observed in this scan");
+                if (chosen is null) journal.AddEvent("probe_skipped", null, "requested address not observed in this scan");
                 else journal.Select(chosen.Address);
                 Save();
             }
@@ -103,9 +95,8 @@ internal static class CliRunner
         if (saveError is not null)
         {
             Console.Error.WriteLine($"JSON report could not be saved: {saveError}");
-            return 4;
         }
-        return stopReason == "scan_error" ? 3 : 0;
+        return CliExitCode.ForResult(stopReason, saveError);
     }
 
     private static async Task ProbeGattAsync(BleReportJournal journal, BleObservation chosen, object sync, Action save)
