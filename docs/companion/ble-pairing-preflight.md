@@ -507,3 +507,28 @@ proves advertising and service discovery after reset, but neither delivery of
 the probe notifications to Android nor a diagnostic grant. A user-run Android
 probe attempt and direct USB journal read are pending; no manual transport
 JSON export is needed for development diagnosis.
+
+## User-run Android transport probe, 2026-10-11
+
+The user started the pairing report, searched for the ESP32, selected the box
+and requested Android pairing in the installed app. Codex read the persisted
+debug journals directly over USB after the user's run, without asking for a
+manual JSON export. The byte-preserved
+[pairing journal](observations/android-bonded-probe-2026-10-11.json)
+(SHA-256 `70ebd68a12d05f658ba4c6122fb296208aa09745b4ee5a0acff642a851b674e3`)
+records product advertising, GATT connect `status=0`, discovery `status=0`,
+the product service, and four Android `OS_BONDED` reads in connection
+generation 3. The local session ended later; no new bond state transition was
+needed because Android was already bonded.
+
+The [transport journal](observations/android-transport-probe-2026-10-11.json)
+(SHA-256 `990064b33ea748b650169824c5253a643520c0b2b86781ae6a9d555731998049`)
+records a CCCD ATT acknowledgment, an actual Android notification callback on
+ControlReply, the second CCCD acknowledgment and an actual callback on
+StepReply. `TRANSPORT_PROBE_COMPLETE` follows both callbacks on generation 3
+at 17:56:45 UTC; `DISCONNECTED` was recorded at 17:59:52 UTC. This proves
+the app received both firmware probe frames on this connection. It does not
+prove a Game Master role, MITM, diagnostic command delivery, LED off, or any
+physical component result. The journal's legacy top-level
+`originalAuthority: "OPEN"` means the authority question remains open; it is
+not a granted authority. No Control/Step request or reply is recorded.
