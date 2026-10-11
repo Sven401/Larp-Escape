@@ -1,6 +1,6 @@
 # BLE-Authentisierung für F1, Spielleitung und Diagnose — Entscheidungsentwurf v1
 
-**Status:** offen; Architekturentscheidung und Sicherheitsprüfung erforderlich. **Stand:** 2026-10-11, Produkt-Worktree `plan/nutzergefuehrte-hardwarediagnose-startintegration` bei `2bcfe8b`. Dieser Text ändert weder GATT-Rechte noch Schlüssel oder Gerätefirmware. Er beschreibt zwei vollständige Wege; eine Auswahl, Implementierung oder Abnahme wird nicht behauptet.
+**Status:** Weg B (individuelle USB-eingeschriebene App- und Boxschlüssel mit USB-Widerruf) am 2026-10-11 vom Nutzer gewählt; Umsetzung und Sicherheitsprüfung offen. **Basis:** Produkt-Worktree `plan/nutzergefuehrte-hardwarediagnose-startintegration` bei `2bcfe8b`. Dieser Entscheidungsentwurf ändert weder GATT-Rechte noch Schlüssel oder Gerätefirmware. Der weiterführende Vertrag steht in [app-mutual-v1.md](app-mutual-v1.md).
 
 ## Nachgewiesene Ausgangslage
 
@@ -42,8 +42,8 @@ BLE liefert hier einen verschlüsselten, aber **nicht** MITM-authentisierten Tra
 
 ## Entscheidung, Gates und Prüfplan
 
-**Benötigte Nutzerentscheidung:** (1) Soll die Originalbox um einen tatsächlich bedienbaren, geprüften OOB-/I/O-Kanal ergänzt werden, oder soll ein eingeschriebener App-/Box-Schlüsselpfad über vorhandene Hardware entstehen? (2) Falls B: Wer darf über welchen physischen USB-/Fertigungsprozess Handy und Box einschreiben oder widerrufen, und wie wird ein verlorenes Handy behandelt? Eine Antwort autorisiert noch keinen Upload, Secure-Boot/eFuse-Eingriff, Restore oder Freigabe.
+**Getroffene Wegentscheidung:** Der Nutzer wählte individuelle, über USB eingeschriebene App- und Boxschlüssel und den USB-Widerruf eines verlorenen Handys. Die genaue vertrauenswürdige Einschreibstation, Bedienerprüfung, Schlüsselablage und Rollback-Barriere sind weiterhin zu entwerfen und zu prüfen. Die Wegentscheidung autorisiert keinen Schlüsselimport, Upload, Secure-Boot-/eFuse-Eingriff, Restore oder eine Rechtefreigabe.
 
-Bis zur Entscheidung bleibt der heutige Probe-Transport lesbar, aber alle Spielleiter- und Diagnoseaktionen geschlossen. Für A sind ein realer I/O-/OOB-Aufbau, eine auf dem ESP gemessene authentisierte Pairing-/F1-Reencrypt-Kette und ein echter Rollen-ACK Eintrittstore. Für B sind zuerst der überprüfte Provisioning-/Widerrufsprozess, die genaue `APP_MUTUAL_V1`-Spezifikation samt Review und erst dann die vollständige GATT-/F0-/F1-/Android-Migration Eintrittstore. Beide Wege benötigen vor Diagnoseaktionen echte Park-/Aus-Bestätigung und den versionierten Request/Reply-Pfad.
+Bis zu diesen Nachweisen bleibt der heutige Probe-Transport lesbar, aber alle Spielleiter- und Diagnoseaktionen geschlossen. Für den gewählten Weg B sind zuerst der überprüfte Provisioning-/Widerrufsprozess, die genaue `APP_MUTUAL_V1`-Spezifikation samt Review und erst dann die vollständige GATT-/F0-/F1-/Android-Migration Eintrittstore. Vor Diagnoseaktionen sind zudem echte Park-/Aus-Bestätigung und der versionierte Request/Reply-Pfad erforderlich.
 
 Automatisiert zu prüfen: falsche Box/Telefon-Schlüssel, fehlende oder ausgetauschte Einschreibung, Just-Works-MITM-Simulation, gekürztes/umgeordnetes Transkript, Nonce-/Sequenzwiederholung, parallele und abgebrochene Verbindungen, verspätete F1-Events, Rollengeneration/Widerruf, App-/Box-Neustart, GATT-Read/Write/Prepare/MTU/CCCD, verlorene Antwort, uneindeutiger LED-Auszustand und Import/Export-Korrelation. Native Hosttests, Android-JVM-Tests und Builds sind Vorbedingungen; danach folgen ein auf die Originalbox gebundener, geprüfter Upload-Rückweg und ein Nutzerlauf in der App mit exportierbarem Endbericht. Frühere Probe-Notifications und `OS_BONDED` ersetzen keinen dieser Nachweise.
