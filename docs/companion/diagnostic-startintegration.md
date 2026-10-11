@@ -150,6 +150,17 @@ and offline Debug build passed. The resulting APK was installed on Moto G14
 Codex did not open the app or run the pairing flow. The user has not yet
 observed a live app–ESP link or exported a report.
 
+The user separately approved the exact first firmware candidate after the
+chip-bound current backup and rollback dry run were checked. Commit `14222a5`
+was written in three narrow regions; a full 4-MiB readback matched all images
+and preserved bootloader, NVS, SPIFFS and coredump. The postflash SHA-256 is
+`38682f775602b128c1e706d3d3b60d60d237596cdcbbdfd8cd10f2a6c0f2ecae`.
+The box started its game (`Runtime ready`), but reported `Closed GATT
+registration state: 4` (`StackFailed`) and discovery phase 0 (`Closed`). BLE
+pairing is therefore blocked on the real box. See `ble-pairing-preflight.md`
+for the exact write/readback evidence. No restore or user-led pairing run
+occurred; a corrected image requires a new preflight and upload approval.
+
 The separate F1 package documents why the controller Encryption Change event
 cannot bind a selected key to a fresh GATT/command birth. Its report-gap
 follow-up `c323f90` explicitly distinguishes the original link, Android OS

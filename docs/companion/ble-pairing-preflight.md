@@ -1,8 +1,9 @@
 # App–ESP BLE pairing preflight (2026-10-11)
 
-Status: read-only chip and backup evidence; no pairing firmware has been
-uploaded. A phone-side pairing report is implemented in the local Android
-preview, but an actual app–ESP connection has not occurred. Do not treat an
+Status: initial pairing firmware uploaded with separate user approval; full
+flash readback passed, but BLE stack startup failed on the real box. A
+phone-side pairing report is implemented in the Android preview, but an
+actual app–ESP connection has not occurred. Do not treat an
 Android OS bond, advertisement, GATT service discovery, or serial line as a
 GM role or diagnostic grant.
 
@@ -41,10 +42,10 @@ box. See the official [ESP-IDF v4.4 OTA guide](https://docs.espressif.com/projec
 
 ## Exact candidate and narrow write plan
 
-The isolated product integration branch is at commit `14222a5`. Its ESP32
+The initially uploaded product integration candidate was commit `14222a5`. Its ESP32
 single-app build and the combined host checks passed. The immutable private
 snapshot is in `C:/Users/seide/AppData/Local/LarpEscape/ESP32-Candidates/
-BLE-Pairing-20261011-14222a5`; its manifest says `NOT_UPLOADED`.
+BLE-Pairing-20261011-14222a5`. Its original manifest was made before upload.
 
 | Image | Offset | Bytes | SHA-256 | Write? |
 | --- | ---: | ---: | --- | --- |
@@ -57,7 +58,8 @@ The candidate retains NVS, SPIFFS and coredump offsets. The three intended
 writes are one esptool multi-file operation at `0x8000`, `0xe000`, `0x10000`,
 with `--after no_reset`. This operation is not atomic; loss of power could
 require a separately authorized restore of the full current backup. There is
-no mass erase and no bootloader write. The full write has **not** run.
+no mass erase and no bootloader write. This was the scope of the separately
+approved 2026-10-11 upload.
 
 Before a separately authorized write, check all four private image hashes,
 current backup hash/size, and live MAC/4-MiB chip identity again. The guarded
@@ -76,9 +78,30 @@ later session evaluates the exported result. No Android bond, advertisement,
 GATT discovery or serial line alone establishes a firmware GM role or
 diagnostic grant.
 
-Separate authorization for the firmware write is still outstanding. No flash
-write, firmware upload, restore, RF pairing run, device test, or product
-release was performed for this preflight.
+## First upload result, 2026-10-11
+
+The user separately approved this exact upload. The live preflight again
+matched MAC `a8:42:e3:cd:4b:18`, 4 MiB, and the current-backup hash. All
+private candidate hashes matched the table above. Esptool wrote only the
+three selected regions and verified each written image hash. A full 4-MiB
+readback was then made while the chip remained in the bootloader:
+`C:/Users/seide/AppData/Local/LarpEscape/ESP32-Backups/
+COM3-20261011-PostPairing/after-flash.bin`, SHA-256
+`38682f775602b128c1e706d3d3b60d60d237596cdcbbdfd8cd10f2a6c0f2ecae`.
+Each candidate image matched its readback bytes, both otadata sectors were
+`0xff`, and all ranges outside the erased write sectors matched the current
+backup, including bootloader, NVS, SPIFFS and coredump. The app sector tail
+through `0x1f1fff` was erased. A private `postflash-verification.json` beside
+the readback records these checks.
+
+`esptool run` reset the box. Serial observation showed `Runtime ready`, two
+MCP expanders, NFC firmware, and game phase 0. It also showed `Closed GATT
+registration state: 4`, which maps to `ProductGattsOwner::StackFailed`, and
+`BLE discovery phase: 0` (`Closed`). Therefore the advertised BLE service is
+**not running**; no app–ESP pairing was attempted or observed. A corrected
+firmware candidate needs its own build, preflight and separate upload
+approval. No restore, user-led RF pairing, physical diagnostic acceptance or
+product release occurred.
 
 No flash write, firmware upload, restore, RF pairing run, or product release
 was performed for this preflight.
