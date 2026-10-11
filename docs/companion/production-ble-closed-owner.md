@@ -192,3 +192,38 @@ the already tested complete service bundle. On any missing or stale original
 registration, credential, SDK security observation or role ACK it must remain
 closed. A real device run and user-led diagnostic report are still separate
 gates.
+
+## Stored-registry startup slice, 2026-10-11
+
+The next isolated owner now copies the fresh production `BootIdentity` and
+device identity before starting Bluetooth. Failure leaves the GATT stack
+unstarted. After the selected original SDK source has registered and the
+closed service setup reports ready, a separate IO worker starts the real
+`Esp32PeerRegistryStore`, `FreeRtosPeerRegistryRuntime` and
+`PeerRegistryOwner`. It waits for original source-actor close/install ACKs,
+reads and validates the public registry in NVS, and compares the owner's loaded
+snapshot with the installed actor snapshot. A missing registry is a confirmed
+empty snapshot; a read/validation/post/ACK failure is fenced for this boot.
+
+`StoredRegistryInstalledClosed` says only that this stored public snapshot was
+installed on the original actor while the channel had no current authority.
+Each status read rechecks the installed source snapshot and absence of current
+authority; stale observations return `RegistryRejected`.
+The worker publishes no key from an ATT packet. It does **not** prove a
+connected peer's selected key, F1 restored-bond mode, P256 possession, GM
+grant, challenge/result readiness or diagnostic admission. Those remain gated;
+the service still has only command/profile attributes, and GAP advertising
+remains off. The copied boot identity is retained for a future complete
+challenge setup but is not used to mint an authentication result here.
+
+The exact isolated single-app source built with pinned `espressif32@6.6.0` and
+Arduino ESP32 2.0.14. The ELF size gate reports **1,963,841 B flash** and
+**75,876 B static RAM**. The generated `firmware.bin` is **1,970,144 B**, leaving
+**651,296 B** of the 2,621,440 B factory app partition by image length. The
+new 8 KiB registry worker stack and runtime heap remain unmeasured on hardware.
+The first fresh build attempt stopped before compilation at a Windows path
+limit while installing FastLED; the successful build used an ignored shorter
+`PLATFORMIO_LIBDEPS_DIR` under the workspace `.pio` directory. The configured
+control host suite passed **522/522**, including a negative case showing that
+the stored GM key and original role-install ACK leave channel authority absent.
+No ESP32 boot, NVS read, RF run, upload, restore or full-box test occurred.
