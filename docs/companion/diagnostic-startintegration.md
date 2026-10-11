@@ -5,8 +5,10 @@ Status: local build and host checks only. Branch
 device-gate commit `59729500a276519e218a2c0d825849162e6e58bc`.
 The five BLE/layout commits from `d677729` through
 `e876dfbecc36b4a68de4cbff895deeda67d2e31a` were applied in order to
-this isolated branch. Neither source branch was rewritten. The Android
-transport gate `d80956d` and F1 negative check `0cfe160` remain separate.
+this isolated branch. The Android transport branch through `268f008` and
+the diagnostic GATT route branch through `c57951a` were merged locally after
+their own tests. None of the source branches was rewritten. The F1 negative
+and ABI probes remain separate at `c7843bf`; they confer no role authority.
 
 The product `main.cpp` now owns one `ClosedDiagnosticArbiter` for the actual
 legacy game loop and one process-lifetime `Esp32LedParkDeadline`. An internal
@@ -27,7 +29,7 @@ diagnostic endpoint. `diagnostic::Control` and the configured device owner
 still use fake/host ports; a black submission must not become an `Applied`
 Park reply, `restoredOff`, a step result or a permission to run a test.
 
-Verification on this exact integration HEAD before this document:
+Verification before the Android and diagnostic GATT package merges:
 
 - `pio test -e host-regression -f test_application_loop`: 10/10 passed.
 - `pio test -e host-regression -f test_regression`: 20/20 passed.
@@ -40,12 +42,36 @@ Verification on this exact integration HEAD before this document:
   long OneDrive path; the successful run reused the already installed pinned
   3.10.5 library from the BLE source worktree. No source workaround was made.
 
+Combined verification after merging Android and the diagnostic GATT route:
+
+- Diagnostic GATT route 26/26, control transport 350/350 and step transport
+  955/955 host assertions passed. The first attempts under the restricted
+  Windows process sandbox failed to start the local C++ compiler; all three
+  passed when executed with the normal local compiler permissions.
+- `pio test -e host-regression -f test_application_loop`: 10/10 passed;
+  `pio test -e host-regression -f test_regression`: 20/20 passed.
+- `pio run -e az-delivery-devkit-v4-single-app-capacity`: SUCCESS, pinned
+  GATT and peer-crypto binaries verified; ELF flash 1,952,485/2,621,440 B,
+  static RAM 73,300/532,480 B. `firmware.bin` 1,958,784 B, leaving
+  662,656 B by binary length; SHA-256 of this combined build:
+  `5A1F535D524A1960A07DC72A82FFB02B438637D24CEE86C8CCFE4EBA5362A939`.
+- Android targeted `DiagnosticGattLinkV1Test`, `DiagnosticGattPreflightV1Test`,
+  `DiagnosticControlV1Test` and `DiagnosticStepV1Test`, plus
+  `:app:assembleDebug --offline`: SUCCESS on the combined tree.
+
+The versioned diagnostic GATT UUIDs, MTU >=131 and full-origin reply fence
+are now shared by product code and Android. The firmware deliberately does
+not register those diagnostic attributes: no production same-birth F1/GM
+role owner, serialized diagnostic component owner, confirmed LED off state or
+SDK request/reply path exists. Android discovery therefore remains blocked;
+its production authority supplier is null, so no diagnostic write can occur.
+
 Open gates: independent physical all-off evidence and LED type/level/supply;
 actual owner Park acknowledgements; original current GATT/F1/GM authority;
 diagnostic request and reply attributes with an effective ATT value capacity
-of at least 128 bytes; Android transport and guided UI bound to those
+of at least 128 bytes; trusted Android authority and guided UI bound to those
 attributes; real bootloader behavior of the single-app map with old OTA data;
 runtime heap, stack and timing on the connected box. The test function has no
 physical or product release. No upload, restore, RF run, device test, push,
-PR or merge was performed. The next hardware run belongs to the user in the
-app; a later session may evaluate only its exported report.
+PR or integration into `main` was performed. The next hardware run belongs
+to the user in the app; a later session may evaluate only its exported report.
