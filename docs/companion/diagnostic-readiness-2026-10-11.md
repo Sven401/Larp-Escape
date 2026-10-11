@@ -29,9 +29,8 @@ upload approval, installation record or instruction to start the user run.
   `CE83D9036FBBD4CBF2B160E8D0534AC60BC4E5BCB49D60C82015E0B2563D7B94`.
   This revised build contains the report contract, journal core and bounded
   BLE transport-history export and strict canonical run/correlation UUID
-  validation. It has not been installed. The last successful `adb devices -l`
-  listed no attached device; a later attempt could not start the ADB server,
-  so the current connection state is unknown.
+  validation. It has not been installed. The latest successful
+  `adb devices -l` listed no attached device.
   The APK still lists every required area with its concrete blockers and
   sends no request for the blocked areas. A fresh offline test/assemble run
   produced the APK above. Package
@@ -79,9 +78,9 @@ the installed phone version is therefore still the `B1BF72...` build unless a
 later phone-side action changes it.
 The later journal builds `D8F8FA...`, `143422...`, `A6A28A...`, `DDEE76...`
 and the later `4AE78F...` and current `CE83D9...` rebuilds have also not been
-installed. The last successful `adb devices -l` listed no attached device;
-a subsequent invocation failed to start the ADB server. Current phone-side
-installation and connection state cannot be re-read.
+installed. One `adb devices -l` attempt failed to start the ADB server; a
+subsequent read-only retry succeeded but listed no attached device. The current
+phone-side installation state cannot be re-read.
 
 ## Actual box state
 
@@ -206,7 +205,7 @@ All test results above remain software-only. The phone was connected and the
 earlier `B1BF72...` diagnostic APK was installed after explicit approval. The
 revised `986CF0...`, `D8F8FA...`, `143422...`, `A6A28A...`, `DDEE76...`
 and the `4AE78F...` and current `CE83D9...` builds were not installed. The
-last successful ADB query found no attached phone; the latest attempt failed
-to start the ADB server, so present connectivity is unknown.
+latest successful ADB query found no attached phone. An intervening ADB-server
+startup failure was transient; no installation was attempted in this check.
 No app workflow was exercised, no firmware was uploaded and no user hardware
 run was started.
