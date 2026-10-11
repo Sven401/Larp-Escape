@@ -76,12 +76,17 @@ with tempfile.TemporaryDirectory(prefix="f1-binary-", dir=ROOT / ".pio") as temp
     slave = instructions("btm_ble_ltk_request_reply")
     request = instructions("btm_ble_ltk_request")
     restore = instructions("BTM_SecAddBleDevice")
+    link_encrypted = instructions("btm_ble_link_encrypted")
+    connected = instructions("btm_ble_connected")
     expected = {
         "record allocation size 328": (restore, r"movi\s+a10, 0x148[\s\S]{0,180}R_XTENSA_ASM_EXPAND\s+malloc"),
         "record initialization size 328": (restore, r"movi\s+a12, 0x148[\s\S]{0,400}R_XTENSA_ASM_EXPAND\s+memset"),
+        "record address offset 32 six-byte copy": (restore, r"movi\.n\s+a12, 6[\s\S]{0,220}addi\s+a10, a5, 32[\s\S]{0,220}R_XTENSA_ASM_EXPAND\s+memcpy"),
         "BLE subrecord base 176": (restore, r"movi\s+a10, 176[\s\S]{0,1600}add\.n\s+a10, a5, a10"),
         "restored mode offset 304 width 16": (restore, r"s16i\s+a6, a5, 0x130"),
         "security state offset 150": (master, r"l8ui\s+a2, a10, 150"),
+        "role_master read offset 152": (link_encrypted, r"l8ui\s+a2, a4, 152"),
+        "role_master write offset 152": (connected, r"s8i\s+a3, a8, 152"),
         "master HCI handle": (master, r"l16ui\s+a10, a10, 166"),
         "master PENC mask": (master, r"(?s)l8ui\s+a2, a5, 199.{0,100}bbci\s+a2, 0,"),
         "master pltk offset": (master, r"movi\s+a13, 216"),

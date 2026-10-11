@@ -66,7 +66,7 @@ selected PENC/LENC bit plus the archive's 16-bit mode offset is still
 insufficient to authorize a restored bond. The app's Android bond observation
 cannot fill this gap.
 
-The next isolated ABI probe must compile the **unchanged full**
+At this recheck, the next isolated ABI probe still had to compile the **unchanged full**
 `tBTM_SEC_DEV_REC` from the official v4.4.6 `btm_int.h`, with all dependent
 original types and the feature switches actually used to build Arduino
 2.0.14's pinned archive. At minimum compare whole size and the fields used
@@ -75,7 +75,7 @@ location, key size and full 16-bit mode against archive instructions. The
 currently installed public Arduino headers do not supply the private type
 closure, and the selective 328-byte/offset audit is not a substitute.
 
-Only after that ABI gate can a source-actor probe capture the actual selected
+After that ABI gate, a source-actor probe would still have to capture the actual selected
 PENC or LENC branch and full mode for one frozen original GATT birth, without
 retaining or exporting key bytes. It must reject STK, duplicate key sends,
 re-keying, stale callbacks and recycled handles, correlate the command's
@@ -83,3 +83,58 @@ controller status and Encryption Change to that exclusive lifetime, and close
 on disconnect. If the pinned SDK exposes no such exclusive observation,
 restored-bond role admission remains unavailable in this build. Current
 registry, challenge and credential checks remain independent requirements.
+
+## Complete active record declaration and pinned archive (2026-10-11)
+
+The isolated layout probe extracts the **unchanged complete**
+`tBTM_SEC_DEV_REC` declaration from pinned v4.4.6 `btm_int.h`, together with
+its unchanged `tBTM_SEC_BLE_KEYS`, `tBTM_SEC_BLE` and
+`tBTM_LE_CONN_PRAMS` declarations. Its primitive-width definitions are checked
+against pinned original `bt_common.h`, `bt_types.h` and `btm_api.h`. The pinned
+Arduino 2.0.14 `dio_qspi` configuration enables BLE and SMP. Original
+`bluedroid_user_config.h` and `bt_target.h` select privacy support but no
+controller RPA list, BLE 5 extension or slave connection-parameter skip field;
+`soc_caps.h` pins ESP32 device-privacy capability to zero. The original
+`BTM_DISC_DURING_RS` field is present and L2CAP UCD field absent. The probe
+compiles all active fields using the installed 32-bit Xtensa compiler. It
+neither reads NVS nor emits any key bytes.
+
+Run, from this firmware worktree:
+
+```powershell
+python scripts/check_f1_record_layout.py
+python scripts/check_f1_record_binary_path.py
+```
+
+Both passed against pinned inputs: **17 compiler static assertions** for the
+full active record and **23 archive/map disassembly checks**. The archive's
+`BTM_SecAddBleDevice` allocates and clears 328 bytes. Its key selection and
+restoration instructions agree with the compiled layout at these offsets:
+
+| Original member | Xtensa byte offset | Independent archive check |
+| --- | ---: | --- |
+| `bd_addr` | 32 | restore path six-byte copy destination |
+| `sec_state` | 150 | master byte load |
+| `role_master` | 152 | connection byte store and encryption callback byte load |
+| `ble_hci_handle` | 166 | master and slave 16-bit loads |
+| `ble` | 176 | restoration BLE-subrecord base |
+| `ble.key_type` | 199 | PENC and LENC mask tests |
+| `ble.keys.pltk` | 216 | master PENC pointer |
+| `ble.keys.lltk` | 248 | slave LENC pointer |
+| `ble.keys.rand` / `ediv` | 280 / 288 | master command pointer / 16-bit load |
+| `ble.keys.key_size` | 293 | slave byte load |
+| `ble.auth_mode` | 304 | restore 16-bit store; compiler width assertion |
+
+There is **no key union** in this original record: `tBTM_SEC_BLE_KEYS` holds
+distinct peer and local key arrays. The compiler checks the entire active
+record size, so the conditional tail is included even though only selected
+instruction offsets are cross-checked. The archive source provenance is
+bounded by its SHA-256 and these matching instructions; identical original
+source and compile flags for every unobserved archive instruction are not
+proved. This is a static layout match for the named fields, not a runtime-private-record reader
+or an unrestricted claim about every archive access.
+
+**F1 remains closed.** Neither test identifies a runtime-selected PENC/LENC
+branch on one original GATT birth, excludes competing STK or duplicate sends,
+nor associates a controller Encryption Change with exactly that key send.
+No positive restored-bond origin, role grant or diagnostic release is inferred.
