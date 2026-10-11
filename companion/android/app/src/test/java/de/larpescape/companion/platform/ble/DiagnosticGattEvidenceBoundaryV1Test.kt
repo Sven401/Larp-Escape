@@ -120,4 +120,18 @@ class DiagnosticGattEvidenceBoundaryV1Test {
             DiagnosticConnectionEventV1.Kind.TRANSPORT_PROBE_COMPLETE), received.map { it.kind })
         assertTrue(received.last().detail.contains("physical_unverified"))
     }
+
+    @Test fun rejectedCccdEvidenceCanBeRetriedWithoutASequenceGap() {
+        val received = mutableListOf<DiagnosticConnectionEventV1>()
+        var persist = false
+        val gate = DiagnosticGattEvidenceBoundaryV1(7, "A8:42:E3:CD:4B:1A") {
+            if (!persist) false else { received.add(it); true }
+        }
+        assertFalse(gate.cccdWriteAck(7, route.controlReply))
+        assertTrue(received.isEmpty())
+        persist = true
+        assertTrue(gate.cccdWriteAck(7, route.controlReply))
+        assertEquals(1, received.single().sequence)
+        assertFalse(gate.cccdWriteAck(7, route.controlReply))
+    }
 }

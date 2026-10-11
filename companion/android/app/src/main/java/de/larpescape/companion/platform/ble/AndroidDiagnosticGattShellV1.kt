@@ -115,7 +115,10 @@ internal class AndroidDiagnosticGattShellV1(
             evidence.transportError(generation, "setup", null, link.failure.name)
             return false
         }
-        evidence.cccdWriteAck(generation, expected)
+        if (!evidence.cccdWriteAck(generation, expected)) {
+            link.failed(DiagnosticGattFailureV1.PROBE_EVIDENCE_FAILED)
+            return false
+        }
         if (link.phase == DiagnosticGattPhaseV1.STEP_CCCD_PENDING)
             return subscribe(stepReply, DiagnosticGattFailureV1.STEP_CCCD_FAILED)
         if (link.phase == DiagnosticGattPhaseV1.TRANSPORT_READY && !evidence.transportProbeComplete(generation)) {
