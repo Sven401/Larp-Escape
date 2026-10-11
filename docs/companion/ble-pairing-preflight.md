@@ -161,14 +161,13 @@ and uses BLE mode for both controller init and enable. The integrated ELF map
 selects `btInUse` from `libClosedBleStackOwner.a` and discards the weak
 Arduino definition. Host checks passed 529/529; integrated ESP32 build
 passed, ELF flash 1,968,193/2,621,440 bytes and RAM 76,044/532,480 bytes.
-No real BLE start has yet been observed with this fix.
 
-The private **not uploaded** candidate is
+The private candidate, recorded before its separate upload, is
 `C:/Users/seide/AppData/Local/LarpEscape/ESP32-Candidates/
 BLE-Startup-Fix-20261011-671be0b/firmware.bin`, 1,974,496 bytes,
 SHA-256 `e3d81c8173e03e7e77e72d75669aa84226b399ad6911c6ec98961cdba7b48973`.
-Bootloader and partition-table hashes are unchanged, so a future approved
-write would touch only the app at `0x10000`.
+Bootloader and partition-table hashes are unchanged. The separately approved
+third write touched only the app at `0x10000`.
 
 An attempted new full capture after the second image booted proved byte-for-
 byte identical to the existing second-upload full readback, including NVS.
@@ -178,7 +177,29 @@ is therefore the already verified
 `ff1ac0bbd32c299006aae73045560e0a7db89a80344a6540ac9c8670fd31edb8`.
 The separate chip-bound `scripts/verify_ble_startfix_rollback.py` and
 private manifest passed seven fake-esptool tests, offline verification and a
-live COM3 dry run (MAC `a8:42:e3:cd:4b:18`, 4 MiB); no restore or write.
+live COM3 dry run (MAC `a8:42:e3:cd:4b:18`, 4 MiB); no restore.
 No further full capture is needed unless a targeted state check shows this
-source no longer matches the current chip. A new exact upload authorization
-is required before writing the fix.
+source no longer matches the current chip. A 28-KiB NVS/otadata read before
+the third write matched this source exactly.
+
+Esptool verified the third app-only write hash. To respect the user's limit
+on fresh full captures, the independent readback covered only the entire
+written app sector (`0x10000` through `0x1f2fff`) and NVS/otadata. The app
+bytes matched the candidate exactly and the sector tail was `0xff`;
+app-sector readback SHA-256 is
+`6cf1cc8c9283b74d5b644cb2deccea00df3ef251c0f9bd25a90ed6597271a026`.
+NVS and otadata matched the existing full rollback source. Bootloader,
+partition table, SPIFFS and coredump were outside esptool's reported erase
+range; they were not reread after this third write. Private targeted checks
+and a `startup-verification.json` are under
+`C:/Users/seide/AppData/Local/LarpEscape/ESP32-Checks/
+COM3-20261011-PostBleStartupFix`.
+
+After reset, serial observation showed `Runtime ready`, closed GATT
+registration state 7 (`RegistrationPending`) and BLE discovery phase 3
+(`Visible`) on the actual box. This confirms that the previous Bluetooth
+stack failure was cleared and connectable advertising reached its SDK
+completion. It is **not** an App–ESP pairing, OS bond, F1/GM role or
+diagnostic grant. The user must perform the pairing flow in the installed
+Android app and export its report. No Codex session drives that flow. No
+restore or product acceptance has occurred.

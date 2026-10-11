@@ -166,3 +166,25 @@ cannot bind a selected key to a fresh GATT/command birth. Its report-gap
 follow-up `c323f90` explicitly distinguishes the original link, Android OS
 bond, fresh SMP completion, and live-link security. The latter two are not
 available in the present product report. No restored role is asserted.
+
+## Real BLE startup follow-up, 2026-10-11
+
+The first uploaded image booted the game but failed before BLE registration.
+A separately approved telemetry image, with full readback, narrowed this to
+`esp_bt_controller_init` error 259. The pinned Arduino startup had released
+BT memory before `setup()`. The BLE package `6407199` retains that memory
+through a product-specific `btInUse()` implementation and aligns controller
+init/enable to BLE mode. Host checks 529/529 and the integrated ESP32 build
+passed; the ELF map selects the product implementation.
+
+The user separately approved this third app-only upload after the existing
+current full readback and chip-bound rollback dry run were checked. A newly
+attempted full capture had proved byte-identical to that readback and its
+redundant file was removed. The third upload's app sector was read back
+exactly, including erased padding, and NVS/otadata matched the rollback
+source; no new full postflash capture was made. Serial now shows game
+`Runtime ready`, GATT registration pending and BLE advertising `Visible` on
+the box. No pairing was run by Codex or observed yet. Role, diagnostic grant,
+physical LED-off evidence and product acceptance remain closed. The user
+operates the installed app's pairing flow and exports its report before any
+actual pairing claim.
