@@ -150,3 +150,35 @@ observations locate the failed SDK call; they do not yet establish why the
 controller rejected initialization. No app–ESP pairing, restore or product
 acceptance occurred. Any corrected image needs its own build, current-state
 backup check and separate upload approval.
+
+## BLE controller startup fix candidate, 2026-10-11
+
+The pinned Arduino 2.0.14 startup calls its weak `btInUse()` before product
+`setup()` and otherwise releases all BT controller memory. This explains the
+observed idle controller plus SDK error 259 on init. The isolated BLE fix
+`6407199`, integrated at `671be0b`, supplies a product-only strong answer
+and uses BLE mode for both controller init and enable. The integrated ELF map
+selects `btInUse` from `libClosedBleStackOwner.a` and discards the weak
+Arduino definition. Host checks passed 529/529; integrated ESP32 build
+passed, ELF flash 1,968,193/2,621,440 bytes and RAM 76,044/532,480 bytes.
+No real BLE start has yet been observed with this fix.
+
+The private **not uploaded** candidate is
+`C:/Users/seide/AppData/Local/LarpEscape/ESP32-Candidates/
+BLE-Startup-Fix-20261011-671be0b/firmware.bin`, 1,974,496 bytes,
+SHA-256 `e3d81c8173e03e7e77e72d75669aa84226b399ad6911c6ec98961cdba7b48973`.
+Bootloader and partition-table hashes are unchanged, so a future approved
+write would touch only the app at `0x10000`.
+
+An attempted new full capture after the second image booted proved byte-for-
+byte identical to the existing second-upload full readback, including NVS.
+The redundant new file was removed. The exact current-state rollback source
+is therefore the already verified
+`COM3-20261011-PostBleStackTelemetry/after-ble-telemetry.bin`, SHA-256
+`ff1ac0bbd32c299006aae73045560e0a7db89a80344a6540ac9c8670fd31edb8`.
+The separate chip-bound `scripts/verify_ble_startfix_rollback.py` and
+private manifest passed seven fake-esptool tests, offline verification and a
+live COM3 dry run (MAC `a8:42:e3:cd:4b:18`, 4 MiB); no restore or write.
+No further full capture is needed unless a targeted state check shows this
+source no longer matches the current chip. A new exact upload authorization
+is required before writing the fix.
