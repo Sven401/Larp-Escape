@@ -20,10 +20,19 @@ struct ReadResponse {
     larp::companion::sdk446::Response response = {};
 };
 std::vector<ReadResponse> readSent;
+struct Notification {
+    std::uint8_t interface = 0;
+    std::uint16_t connection = 0, attribute = 0;
+    std::vector<std::uint8_t> value;
+    bool confirm = false;
+};
+std::vector<Notification> notifications;
 larp::companion::sdk446::Callbacks registeredCallbacks = {};
 bool rejectPost = false, synchronous = false;
 unsigned posts = 0, registrations = 0, passedConnections = 0, passedRequests = 0;
 std::uint8_t registerResult = 1, sendResult = 0;
+int notificationResult = 0;
+void (*beforeNotification)() = nullptr;
 void (*beforePost)() = nullptr;
 void (*beforeSend)() = nullptr;
 void (*beforeForward)() = nullptr;
@@ -43,10 +52,13 @@ void reset() {
     work.clear();
     sent.clear();
     readSent.clear();
+    notifications.clear();
     posts = registrations = passedConnections = passedRequests = 0;
     rejectPost = synchronous = false;
     registerResult = 1;
     sendResult = 0;
+    notificationResult = 0;
+    beforeNotification = nullptr;
     beforePost = beforeSend = beforeForward = nullptr;
     currentTask = reinterpret_cast<TaskHandle_t>(1);
 }
@@ -113,6 +125,25 @@ std::uint8_t GATTS_SendRsp(std::uint16_t packed, std::uint32_t transaction, std:
     } else
         sent.push_back(value);
     return sendResult;
+}
+int esp_ble_gatts_send_indicate(std::uint8_t interface, std::uint16_t connection,
+                                std::uint16_t attribute, std::uint16_t count,
+                                std::uint8_t *bytes, bool confirm) {
+    using namespace host_sdk_source;
+    if (beforeNotification) {
+        auto hook = beforeNotification;
+        beforeNotification = nullptr;
+        hook();
+    }
+    Notification value;
+    value.interface = interface;
+    value.connection = connection;
+    value.attribute = attribute;
+    value.confirm = confirm;
+    if (bytes && count)
+        value.value.assign(bytes, bytes + count);
+    notifications.push_back(value);
+    return notificationResult;
 }
 std::uint8_t __real_GATT_Register(larp::companion::sdk446::Uuid *,
                                   const larp::companion::sdk446::Callbacks *callbacks) {

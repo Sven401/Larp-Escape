@@ -179,6 +179,10 @@ class Esp32GattsSource : public IGattsResponseContext,
     GattsConnectionEvent live_;
     BoundConnection connection_;
     PeerTransportBinding publishedTransport_;
+    // BTU-only transport subscription state. An ATT ACK alone is never a
+    // delivery claim; each flag belongs to one exact original link birth.
+    PeerTransportBinding diagnosticProbeBirth_;
+    bool controlProbeSubscribed_ = false, stepProbeSubscribed_ = false;
     IdentityAccessSnapshot identitySnapshot_;
     PeerLinkSecurity linkSecurity_;
     bool smpForwarding_ = false;

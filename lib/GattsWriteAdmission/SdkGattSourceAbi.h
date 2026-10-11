@@ -5,6 +5,7 @@
 #include <cstdint>
 #ifndef LARP_GATT_SOURCE_HOST_MODEL
 #include <esp_gatt_defs.h>
+#include <esp_gatts_api.h>
 #include <esp_idf_version.h>
 static_assert(ESP_IDF_VERSION == ESP_IDF_VERSION_VAL(4, 4, 6),
               "private GATT ABI requires IDF4.4.6");
@@ -86,4 +87,8 @@ std::uint8_t __wrap_GATT_Register(larp::companion::sdk446::Uuid *,
                                   const larp::companion::sdk446::Callbacks *);
 bool osi_thread_post(osi_thread *, void (*)(void *), void *, int, std::uint32_t);
 extern void *btu_thread;
+#ifdef LARP_GATT_SOURCE_HOST_MODEL
+int esp_ble_gatts_send_indicate(std::uint8_t, std::uint16_t, std::uint16_t,
+                                std::uint16_t, std::uint8_t *, bool);
+#endif
 }

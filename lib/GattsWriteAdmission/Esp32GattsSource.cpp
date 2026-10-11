@@ -822,6 +822,9 @@ GattsLifecycleOutcome Esp32GattsSource::connectionNow(std::uint8_t interface,
     portENTER_CRITICAL(&mutex_);
     peerProofOpen_ = false;
     publishedTransport_ = {};
+    diagnosticProbeBirth_ = {};
+    controlProbeSubscribed_ = false;
+    stepProbeSubscribed_ = false;
     const bool lifetimeAvailable = lifecycle_ != UINT32_MAX;
     if (lifetimeAvailable)
         ++lifecycle_;
@@ -1104,8 +1107,8 @@ bool Esp32GattsSource::requestNow(std::uint16_t packed, std::uint32_t transactio
                 current.interface == original.interface &&
                 current.connection == connection_ &&
                 current.address == live_.peerAddress && event.needResponse) {
-                // An encrypted CCCD write only prepares transport. It does
-                // not authenticate a role, grant a run or enable a sender.
+                // CCCD writes prepare only the reply transport. A narrow
+                // probe follows the ATT ACK; no role or command is admitted.
                 const bool cccd = event.attribute == diagnostic.controlCccd ||
                                   event.attribute == diagnostic.stepCccd;
                 const bool subscribe = event.count == 2 &&
@@ -1118,9 +1121,40 @@ bool Esp32GattsSource::requestNow(std::uint16_t packed, std::uint32_t transactio
                                             (subscribe || unsubscribe)
                                         ? AttWriteStatus::Ok
                                         : AttWriteStatus::InsufficientAuthorization;
-                (void)GATTS_SendRsp(packed, transaction,
-                                    static_cast<std::uint8_t>(status),
-                                    nullptr);
+                const auto sent = GATTS_SendRsp(packed, transaction,
+                                                static_cast<std::uint8_t>(status), nullptr);
+                if (status == AttWriteStatus::Ok && sent == 0) {
+                    PeerTransportBinding after;
+                    if (transportNow(after) && after == current &&
+                        diagnostic_.state == 3 &&
+                        diagnostic_.value.original == diagnostic.original) {
+                        if (!(diagnosticProbeBirth_ == current)) {
+                            diagnosticProbeBirth_ = current;
+                            controlProbeSubscribed_ = false;
+                            stepProbeSubscribed_ = false;
+                        }
+                        const bool control = event.attribute == diagnostic.controlCccd;
+                        bool &subscribed = control ? controlProbeSubscribed_ : stepProbeSubscribed_;
+                        const bool alreadySubscribed = subscribed;
+                        subscribed = subscribe;
+                        if (subscribe && !alreadySubscribed) {
+                            // The public API may post to BTC asynchronously:
+                            // retain the immutable wire bytes for process life.
+                            static std::uint8_t controlProbe[5] = {'D', 'G', 1, 0x50, 1};
+                            static std::uint8_t stepProbe[5] = {'D', 'G', 1, 0x50, 2};
+                            auto *probe = control ? controlProbe : stepProbe;
+                            const auto reply = control ? diagnostic.controlReply
+                                                       : diagnostic.stepReply;
+                            // Public SDK call queues a real notification. A
+                            // successful return is only enqueue evidence;
+                            // the Android callback proves delivery.
+                            (void)esp_ble_gatts_send_indicate(
+                                current.interface,
+                                static_cast<std::uint16_t>(packed >> 8), reply,
+                                5, probe, false);
+                        }
+                    }
+                }
             }
             // The SDK actor only refuses the current original connection. A
             // successful local ATT response is no grant, execution or

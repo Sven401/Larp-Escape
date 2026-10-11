@@ -73,6 +73,7 @@ struct SourceFixture {
                           static_cast<unsigned>(worker.service()));
     }
 };
+static SourceFixture *probeLifecycleFixture = nullptr;
 static larp::diagnostic::DiagnosticClosedHandles closedDiagnosticHandles(
     Esp32GattsSource &source) {
     larp::diagnostic::DiagnosticClosedHandles value;
@@ -109,6 +110,20 @@ void test_source_diagnostic_cccd_only_prepares_transport_on_current_link() {
                           static_cast<unsigned>(host_sdk_source::sent.back().status));
     }
     TEST_ASSERT_EQUAL(4, host_sdk_source::sent.size());
+    TEST_ASSERT_EQUAL(2, host_sdk_source::notifications.size());
+    TEST_ASSERT_EQUAL_HEX16(value.controlReply,
+                            host_sdk_source::notifications[0].attribute);
+    TEST_ASSERT_EQUAL_HEX16(value.stepReply,
+                            host_sdk_source::notifications[1].attribute);
+    const std::uint8_t controlProbe[] = {'D', 'G', 1, 0x50, 1};
+    const std::uint8_t stepProbe[] = {'D', 'G', 1, 0x50, 2};
+    TEST_ASSERT_EQUAL_MEMORY(controlProbe, host_sdk_source::notifications[0].value.data(), 5);
+    TEST_ASSERT_EQUAL_MEMORY(stepProbe, host_sdk_source::notifications[1].value.data(), 5);
+    for (const auto &probe : host_sdk_source::notifications) {
+        TEST_ASSERT_EQUAL_UINT8(1, probe.interface);
+        TEST_ASSERT_EQUAL_HEX16(1, probe.connection);
+        TEST_ASSERT_FALSE(probe.confirm);
+    }
     sdk.close();
 }
 void test_source_diagnostic_cccd_rejects_malformed_and_retired_requests() {
@@ -122,9 +137,11 @@ void test_source_diagnostic_cccd_rejects_malformed_and_retired_requests() {
     sdk.write(std::string("\x00\x00", 2), 40, handles.controlCccd); // Explicit disable.
     TEST_ASSERT_EQUAL(static_cast<unsigned>(AttWriteStatus::Ok),
                       static_cast<unsigned>(host_sdk_source::sent.back().status));
+    TEST_ASSERT_TRUE(host_sdk_source::notifications.empty());
     sdk.write(std::string("\x01\x00", 2), 40, handles.stepCccd);
     TEST_ASSERT_EQUAL(static_cast<unsigned>(AttWriteStatus::Ok),
                       static_cast<unsigned>(host_sdk_source::sent.back().status));
+    TEST_ASSERT_EQUAL(1, host_sdk_source::notifications.size());
     const std::string malformed[] = {std::string("\x02\x00", 2), "\x01", "\x01\x01"};
     for (const auto &bytes : malformed) {
         sdk.write(bytes, 41, handles.stepCccd);
@@ -143,10 +160,61 @@ void test_source_diagnostic_cccd_rejects_malformed_and_retired_requests() {
     sdk.close();
     sdk.write(std::string("\x01\x00", 2), 45, handles.controlCccd);
     TEST_ASSERT_EQUAL(before, host_sdk_source::sent.size());
+    TEST_ASSERT_EQUAL(1, host_sdk_source::notifications.size());
     CopiedCommandFrame command;
     CopiedProfileFrame profile;
     TEST_ASSERT_FALSE(sdk.commands.take(command));
     TEST_ASSERT_FALSE(sdk.profiles.take(profile));
+}
+void test_source_diagnostic_probe_requires_successful_att_ack_and_fresh_birth() {
+    SourceFixture sdk;
+    const auto handles = closedDiagnosticHandles(sdk.source);
+    host_sdk_source::currentTask = reinterpret_cast<void *>(3);
+    TEST_ASSERT_TRUE(sdk.source.postDiagnosticClosedSetup(handles));
+    host_sdk_source::currentTask = reinterpret_cast<void *>(1);
+    host_sdk_source::drainOne();
+    sdk.open(false);
+    host_sdk_source::sendResult = 0x82;
+    sdk.write(std::string("\x01\x00", 2), 50, handles.controlCccd);
+    TEST_ASSERT_TRUE(host_sdk_source::notifications.empty());
+    host_sdk_source::sendResult = 0;
+    sdk.write(std::string("\x01\x00", 2), 51, handles.controlCccd);
+    TEST_ASSERT_EQUAL(1, host_sdk_source::notifications.size());
+    sdk.write(std::string("\x01\x00", 2), 56, handles.controlCccd);
+    TEST_ASSERT_EQUAL(1, host_sdk_source::notifications.size());
+    // SDK enqueue failure is observable only as a missing remote callback;
+    // no asynchronous retry or diagnostic grant is fabricated.
+    host_sdk_source::notificationResult = -1;
+    sdk.write(std::string("\x01\x00", 2), 52, handles.stepCccd);
+    TEST_ASSERT_EQUAL(2, host_sdk_source::notifications.size());
+    sdk.close();
+    sdk.open(false); // Same packed conn_id, different connection birth.
+    host_sdk_source::notificationResult = 0;
+    sdk.write(std::string("\x01\x00", 2), 53, handles.stepCccd);
+    TEST_ASSERT_EQUAL(3, host_sdk_source::notifications.size());
+    TEST_ASSERT_EQUAL_HEX16(handles.stepReply,
+                            host_sdk_source::notifications.back().attribute);
+    sdk.close();
+}
+void test_source_diagnostic_probe_drops_recycled_birth_during_att_response() {
+    SourceFixture sdk;
+    const auto handles = closedDiagnosticHandles(sdk.source);
+    host_sdk_source::currentTask = reinterpret_cast<void *>(3);
+    TEST_ASSERT_TRUE(sdk.source.postDiagnosticClosedSetup(handles));
+    host_sdk_source::currentTask = reinterpret_cast<void *>(1);
+    host_sdk_source::drainOne();
+    sdk.open(false);
+    probeLifecycleFixture = &sdk;
+    host_sdk_source::beforeSend = []() {
+        probeLifecycleFixture->close();
+        probeLifecycleFixture->open(false);
+    };
+    sdk.write(std::string("\x01\x00", 2), 54, handles.controlCccd);
+    probeLifecycleFixture = nullptr;
+    TEST_ASSERT_TRUE(host_sdk_source::notifications.empty());
+    sdk.write(std::string("\x01\x00", 2), 55, handles.controlCccd);
+    TEST_ASSERT_EQUAL(1, host_sdk_source::notifications.size());
+    sdk.close();
 }
 void test_source_diagnostic_closed_write_never_adopts_game_role_or_payload() {
     SourceFixture sdk;

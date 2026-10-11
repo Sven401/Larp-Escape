@@ -118,16 +118,47 @@ Prepared writes, offsets, wrong lengths/values and writes without response
 cannot receive a successful ATT response. A retired or mismatched link gets
 no response. No CCCD bytes enter the game/profile command queues.
 
-This change acknowledges **only transport preparation**. It installs no
-diagnostic notification sender, does not grant a role or run, and does not
-prove that a notification could be delivered. The descriptor remains in
+This initial change acknowledged **only transport preparation**. It did not
+grant a role or run or prove that a notification could be delivered. The descriptor remains in
 application-response mode with no read permission; no persistent CCCD state
 is inferred from the local ATT response. In the pinned SDK,
 `ESP_GATT_RSP_BY_APP` makes the application responsible for the response;
 `esp_ble_gatts_set_attr_value` is a separate API and is not called here.
 Thus the ACK does **not** establish that the CCCD database value was updated.
 The Android UI must report this as an acknowledged descriptor write, never as
-ready reply transport or diagnosis access. A future productive sender must
-track per-connection subscriptions and recheck the same original connection,
-authority and grant before transmitting. The earlier closed-registration
+ready reply transport or diagnosis access. The earlier closed-registration
 description and test counts above describe the prior state.
+
+## Per-link notification transport probe, 2026-10-11
+
+On the original BTU connection, a well-formed encrypted `0x0001` CCCD write
+for ControlReply or StepReply receives its ATT response first. Only after an
+SDK-successful response and an exact recheck of registration, peer address,
+connection birth and lifecycle does the source enqueue one notification on
+that channel's reply characteristic, only for that channel's first enabled
+transition on the current birth. Its entire value is five octets:
+
+| Bytes | Meaning |
+| --- | --- |
+| `44 47` | ASCII `DG`, reserved for transport probe |
+| `01` | Probe wire version |
+| `50` | Probe type, distinct from the normal reply codec |
+| `01` or `02` | ControlReply or StepReply channel respectively |
+
+The SDK call uses the original GATT interface, the public connection id from
+the packed source id's upper octet, and the installed reply value handle.
+Each CCCD has its own subscription flag tied to the exact original connection
+birth. A valid `0x0000` write clears only its channel. Every connection or
+disconnection callback clears both. Malformed, stale, response-free, and
+request-characteristic writes enqueue no probe. An SDK notification enqueue
+failure is not retried or treated as delivery. The Android side requires an
+actual notification callback with these bytes on **each** expected
+characteristic in the same GATT generation before marking reply transport
+observed. ATT ACK and the firmware's successful enqueue remain insufficient.
+
+This probes transport only. It never calls a diagnostic owner, accepts a
+Control/Step request, verifies F1 identity or Game Master role, grants a run,
+changes an LED, or proves physical behavior. Host tests exercise the SDK call
+and stale-birth guards; an ESP32 build is compile evidence. Until a user-led
+device run yields both notifications in an exported report, radio delivery is
+unverified.

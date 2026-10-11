@@ -1376,6 +1376,8 @@ int main() {
     RUN_TEST(test_source_original_sdk_post_actual_frames_and_application);
     RUN_TEST(test_source_diagnostic_cccd_only_prepares_transport_on_current_link);
     RUN_TEST(test_source_diagnostic_cccd_rejects_malformed_and_retired_requests);
+    RUN_TEST(test_source_diagnostic_probe_requires_successful_att_ack_and_fresh_birth);
+    RUN_TEST(test_source_diagnostic_probe_drops_recycled_birth_during_att_response);
     RUN_TEST(test_source_diagnostic_closed_write_never_adopts_game_role_or_payload);
     RUN_TEST(test_source_diagnostic_handle_install_rejects_collision_and_wrong_origin);
     RUN_TEST(test_diagnostic_gatts_exact_sdk_shape_and_closed_install_before_start);
