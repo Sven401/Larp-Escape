@@ -1,6 +1,7 @@
 #pragma once
 #include "../../lib/ClosedBleStackOwner/ClosedBleAdvertiseGate.h"
 #include "../../lib/ClosedBleStackOwner/ClosedBleSecurityGate.h"
+#include "../../lib/ClosedBleStackOwner/ProductGattsOwnerTelemetry.h"
 #include "PeerRegistryActorCases.h"
 
 void test_ble_discovery_gate_requires_both_original_closed_acks_and_never_retries_failure() {
@@ -132,6 +133,58 @@ void test_ble_security_request_requires_current_original_birth_and_address() {
     PeerTransportBinding absent;
     TEST_ASSERT_FALSE(ClosedBleSecurityGate::allow(true, true, true,
                                                    absent, current, first.address));
+}
+
+void test_ble_security_telemetry_names_closed_unpublished_stale_and_peer_mismatch() {
+    using T = ProductGattsOwnerTelemetry;
+    RegistryActorFixture fixture;
+    fixture.ready();
+    PeerTransportBinding absent, first, current;
+    std::array<std::uint8_t, 6> address = {};
+    for (unsigned i = 0; i < address.size(); ++i)
+        address[i] = fixture.address[i];
+    TEST_ASSERT_EQUAL(static_cast<int>(T::Reason::NoOriginalLink),
+                      static_cast<int>(T::classify(true, true, true, false, false,
+                                                   absent, absent, address)));
+    TEST_ASSERT_FALSE(ClosedBleSecurityGate::allow(true, true, true,
+                                                   absent, absent, address));
+    (void)fixture.open();
+    fixture.actor();
+    TEST_ASSERT_TRUE(fixture.source.readOriginalTransport(first));
+    TEST_ASSERT_TRUE(fixture.source.readOriginalTransport(current));
+    TEST_ASSERT_EQUAL(static_cast<int>(T::Reason::Allowed),
+                      static_cast<int>(T::classify(true, true, true, true, true,
+                                                   first, current, address)));
+    TEST_ASSERT_TRUE(ClosedBleSecurityGate::allow(true, true, true,
+                                                  first, current, address));
+    auto wrongAddress = address;
+    wrongAddress[5] ^= 1;
+    TEST_ASSERT_EQUAL(static_cast<int>(T::Reason::PeerMismatch),
+                      static_cast<int>(T::classify(true, true, true, true, true,
+                                                   first, current, wrongAddress)));
+    fixture.close();
+    fixture.actor();
+    (void)fixture.open();
+    fixture.actor();
+    TEST_ASSERT_TRUE(fixture.source.readOriginalTransport(current));
+    TEST_ASSERT_EQUAL(static_cast<int>(T::Reason::RecycledLink),
+                      static_cast<int>(T::classify(true, true, true, true, true,
+                                                   first, current, address)));
+    TEST_ASSERT_FALSE(ClosedBleSecurityGate::allow(true, true, true,
+                                                   first, current, address));
+    TEST_ASSERT_EQUAL(static_cast<int>(T::Reason::ServiceUnavailable),
+                      static_cast<int>(T::classify(false, true, true, true, true,
+                                                   current, current, address)));
+    TEST_ASSERT_EQUAL(static_cast<int>(T::Reason::RegistryUnavailable),
+                      static_cast<int>(T::classify(true, false, true, true, true,
+                                                   current, current, address)));
+    TEST_ASSERT_EQUAL(static_cast<int>(T::Reason::ChannelNotClosed),
+                      static_cast<int>(T::classify(true, true, false, true, true,
+                                                   current, current, address)));
+    TrustedAuthority authority;
+    TEST_ASSERT_TRUE(f->channel.actual.readAuthority(authority));
+    TEST_ASSERT_EQUAL(0, authority.principal);
+    TEST_ASSERT_FALSE(authority.gameMaster);
 }
 
 void test_ble_late_start_ack_requires_new_stop_ack_after_failure() {

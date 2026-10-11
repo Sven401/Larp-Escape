@@ -32,6 +32,11 @@ bool ProductGattsOwner::originalLink(PeerTransportBinding &destination) const no
            registryState() == RegistryState::StoredRegistryInstalledClosed &&
            source_.readOriginalTransport(destination);
 }
+void ProductGattsOwner::recordSecurityEvent(const SecurityEvent &event) noexcept {
+    securityEventCount_.fetch_add(1, std::memory_order_relaxed);
+    if (!securityEvents_ || xQueueSend(securityEvents_, &event, 0) != pdTRUE)
+        securityEventDropped_.fetch_add(1, std::memory_order_relaxed);
+}
 void ProductGattsOwner::gapCallback(esp_gap_ble_cb_event_t event,
                                     esp_ble_gap_cb_param_t *parameter) noexcept {
     auto *owner = selected_;
@@ -52,24 +57,64 @@ void ProductGattsOwner::gapCallback(esp_gap_ble_cb_event_t event,
             address[i] = parameter->ble_security.ble_req.bd_addr[i];
         PeerTransportBinding before, after;
         const bool observed = owner->source_.readOriginalTransport(before);
-        const bool closedBefore = owner->serviceReady() &&
-                                  owner->registryState() == RegistryState::StoredRegistryInstalledClosed &&
-                                  owner->source_.closedChannelState(owner->device_);
+        const bool serviceReady = owner->serviceReady();
+        const bool registryClosed =
+            owner->registryState() == RegistryState::StoredRegistryInstalledClosed;
+        const bool channelClosed = serviceReady && registryClosed &&
+                                   owner->source_.closedChannelState(owner->device_);
         const bool current = owner->source_.readOriginalTransport(after);
-        const bool accept = observed && closedBefore && current &&
+        const auto reason = ProductGattsOwnerTelemetry::classify(
+            serviceReady, registryClosed, channelClosed, observed, current,
+            before, after, address);
+        // Preserve the security decision in the existing gate. Classification
+        // is evidence only and cannot grant a bond or product authority.
+        const bool accept = observed && serviceReady && registryClosed &&
+                            channelClosed && current &&
                             ClosedBleSecurityGate::allow(owner->serviceReady(),
                                 owner->registryState() == RegistryState::StoredRegistryInstalledClosed,
                                 owner->source_.closedChannelState(owner->device_),
                                 before, after, address);
-        const auto posted = esp_ble_gap_security_rsp(parameter->ble_security.ble_req.bd_addr,
-                                                      accept) == ESP_OK;
-        owner->securityRequestObservation_.store(
-            posted ? (accept ? 1 : 2) : (accept ? 3 : 4), std::memory_order_release);
+        const auto sdk = esp_ble_gap_security_rsp(parameter->ble_security.ble_req.bd_addr,
+                                                   accept);
+        SecurityEvent observation;
+        observation.kind = SecurityEventKind::Request;
+        observation.atMs = owner->clock_.nowMilliseconds();
+        observation.originalPublished = observed;
+        observation.peerMatch = observed && before.address == address;
+        observation.accepted = accept;
+        observation.reason = static_cast<std::uint8_t>(
+            reason == ProductGattsOwnerTelemetry::Reason::Allowed && !accept
+                ? ProductGattsOwnerTelemetry::Reason::GateChanged : reason);
+        observation.sdk = static_cast<std::int32_t>(sdk);
+        if (observed) {
+            observation.birth = before.lifecycle;
+            observation.token = before.connection.token;
+            observation.connection = before.connection.handle;
+        }
+        owner->securityRequestCount_.fetch_add(1, std::memory_order_relaxed);
+        owner->recordSecurityEvent(observation);
     } else if (event == ESP_GAP_BLE_AUTH_CMPL_EVT) {
         const auto &result = parameter->ble_security.auth_cmpl;
-        owner->authenticationObservation_.store(
-            result.success ? 1U : static_cast<std::uint16_t>(0x100U | result.fail_reason),
-            std::memory_order_release);
+        PeerTransportBinding link;
+        const bool published = owner->source_.readOriginalTransport(link);
+        bool match = published;
+        for (unsigned i = 0; match && i < link.address.size(); ++i)
+            match = link.address[i] == result.bd_addr[i];
+        SecurityEvent observation;
+        observation.kind = SecurityEventKind::Authentication;
+        observation.atMs = owner->clock_.nowMilliseconds();
+        observation.originalPublished = published;
+        observation.peerMatch = match;
+        observation.accepted = result.success;
+        observation.reason = result.success ? 0 : result.fail_reason;
+        observation.authMode = static_cast<std::uint8_t>(result.auth_mode);
+        if (published) {
+            observation.birth = link.lifecycle;
+            observation.token = link.connection.token;
+            observation.connection = link.connection.handle;
+        }
+        owner->authenticationCount_.fetch_add(1, std::memory_order_relaxed);
+        owner->recordSecurityEvent(observation);
     }
 }
 void ProductGattsOwner::quiesceAfterStart(bool startTerminal,
@@ -149,10 +194,14 @@ void ProductGattsOwner::runDiscovery() noexcept {
         publish();
         return;
     }
-    std::uint32_t connectedBirth = 0, advertisedBirth = 0;
+    std::uint32_t connectedBirth = 0, connectedToken = 0, advertisedBirth = 0;
+    std::uint16_t connectedHandle = 0;
     std::uint32_t pendingAt = clock_.nowMilliseconds();
     bool startPosted = false, startTerminal = false, startSucceeded = false;
-    std::uint8_t securityLogs = 0, authenticationLogs = 0;
+    std::uint8_t securityLogs = 0, securitySummaries = 0;
+    const auto telemetryStarted = clock_.nowMilliseconds();
+    std::uint32_t lastSummaryAt = telemetryStarted;
+    bool noEventReported = false;
     const auto abort = [&]() {
         gate.fail();
         if (startPosted)
@@ -199,8 +248,19 @@ void ProductGattsOwner::runDiscovery() noexcept {
         }
         PeerTransportBinding link;
         if (gate.phase() == ClosedBleAdvertiseGate::Phase::Visible &&
-            source_.readOriginalTransport(link) && gate.connected())
+            source_.readOriginalTransport(link) && gate.connected()) {
             connectedBirth = link.lifecycle;
+            connectedToken = link.connection.token;
+            connectedHandle = link.connection.handle;
+            SecurityEvent event;
+            event.kind = SecurityEventKind::LinkPublished;
+            event.atMs = clock_.nowMilliseconds();
+            event.birth = link.lifecycle;
+            event.token = link.connection.token;
+            event.connection = link.connection.handle;
+            event.originalPublished = true;
+            recordSecurityEvent(event);
+        }
         if (gate.phase() == ClosedBleAdvertiseGate::Phase::Visible &&
             !source_.readOriginalTransport(link)) {
             std::uint32_t lifecycle = 0;
@@ -212,6 +272,11 @@ void ProductGattsOwner::runDiscovery() noexcept {
                     return;
                 }
                 advertisedBirth = lifecycle;
+                SecurityEvent event;
+                event.kind = SecurityEventKind::LinkMissed;
+                event.atMs = clock_.nowMilliseconds();
+                event.birth = lifecycle;
+                recordSecurityEvent(event);
                 startTerminal = false;
                 startSucceeded = false;
                 startPosted = true;
@@ -233,6 +298,13 @@ void ProductGattsOwner::runDiscovery() noexcept {
                 return;
             }
             advertisedBirth = lifecycle;
+            SecurityEvent event;
+            event.kind = SecurityEventKind::LinkGone;
+            event.atMs = clock_.nowMilliseconds();
+            event.birth = connectedBirth;
+            event.token = connectedToken;
+            event.connection = connectedHandle;
+            recordSecurityEvent(event);
             startTerminal = false;
             startSucceeded = false;
             startPosted = true;
@@ -243,18 +315,46 @@ void ProductGattsOwner::runDiscovery() noexcept {
             pendingAt = clock_.nowMilliseconds();
         }
         publish();
-        const auto request = securityRequestObservation_.exchange(0, std::memory_order_acq_rel);
-        if (request && securityLogs < 8U) {
+        SecurityEvent securityEvent;
+        while (securityEvents_ && xQueueReceive(securityEvents_, &securityEvent, 0) == pdTRUE) {
+            if (securityLogs >= 24U)
+                continue;
             ++securityLogs;
-            Serial.print("BLE security request response (1=accepted, 2=rejected, 3/4=SDK error): ");
-            Serial.println(static_cast<unsigned>(request));
+            Serial.printf("BLE trace kind=%u ms=%lu birth=%lu token=%lu conn=%u "
+                          "published=%u peer_match=%u accepted=%u gate_reason=%u "
+                          "sdk=%ld auth_mode=%u auth_reason=%u\n",
+                          static_cast<unsigned>(securityEvent.kind),
+                          static_cast<unsigned long>(securityEvent.atMs),
+                          static_cast<unsigned long>(securityEvent.birth),
+                          static_cast<unsigned long>(securityEvent.token),
+                          static_cast<unsigned>(securityEvent.connection),
+                          static_cast<unsigned>(securityEvent.originalPublished),
+                          static_cast<unsigned>(securityEvent.peerMatch),
+                          static_cast<unsigned>(securityEvent.accepted),
+                          securityEvent.kind == SecurityEventKind::Request
+                              ? static_cast<unsigned>(securityEvent.reason) : 0U,
+                          static_cast<long>(securityEvent.sdk),
+                          static_cast<unsigned>(securityEvent.authMode),
+                          securityEvent.kind == SecurityEventKind::Authentication
+                              ? static_cast<unsigned>(securityEvent.reason) : 0U);
         }
-        const auto authentication = authenticationObservation_.exchange(0,
-                                                                         std::memory_order_acq_rel);
-        if (authentication && authenticationLogs < 8U) {
-            ++authenticationLogs;
-            Serial.print("BLE authentication result (1=success, 0x100+reason=failure): ");
-            Serial.println(static_cast<unsigned>(authentication));
+        const auto now = clock_.nowMilliseconds();
+        if (!noEventReported && now - telemetryStarted >= 15000U &&
+            securityRequestCount_.load(std::memory_order_relaxed) == 0 &&
+            authenticationCount_.load(std::memory_order_relaxed) == 0) {
+            noEventReported = true;
+            Serial.println("BLE trace snapshot: no SEC_REQ or AUTH_CMPL after 15000 ms");
+        }
+        if (securitySummaries < 16U && now - lastSummaryAt >= 30000U) {
+            ++securitySummaries;
+            lastSummaryAt = now;
+            Serial.printf("BLE trace counters events=%lu sec_req=%lu auth_cmpl=%lu "
+                          "dropped=%lu printed=%u\n",
+                          static_cast<unsigned long>(securityEventCount_.load(std::memory_order_relaxed)),
+                          static_cast<unsigned long>(securityRequestCount_.load(std::memory_order_relaxed)),
+                          static_cast<unsigned long>(authenticationCount_.load(std::memory_order_relaxed)),
+                          static_cast<unsigned long>(securityEventDropped_.load(std::memory_order_relaxed)),
+                          static_cast<unsigned>(securityLogs));
         }
         vTaskDelay(1);
     }
@@ -347,6 +447,9 @@ ProductGattsOwner::State ProductGattsOwner::begin() noexcept {
         !boot_.valid() ||
         !commands_.begin() || !profiles_.begin() || !responses_.begin())
         return state_ = State::QueueFailed;
+    securityEvents_ = xQueueCreate(8, sizeof(SecurityEvent));
+    if (!securityEvents_)
+        Serial.println("BLE trace unavailable: fixed event queue allocation failed");
     if (xTaskCreatePinnedToCore(worker, "gattsClosed", 6144, this, 1, &worker_, 0) != pdPASS)
         return state_ = State::WorkerFailed;
     for (unsigned i = 0; i < 100 && !workerStarted_.load(std::memory_order_acquire); ++i)

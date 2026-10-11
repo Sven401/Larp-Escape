@@ -3,6 +3,7 @@
 #include "ClosedBleStackOwner.h"
 #include "ClosedBleAdvertiseGate.h"
 #include "ClosedBleSecurityGate.h"
+#include "ProductGattsOwnerTelemetry.h"
 #include "Esp32CompanionIdentityOwner.h"
 #include "Esp32GattsService.h"
 #include "DiagnosticGattsService.h"
@@ -15,6 +16,7 @@
 #include <atomic>
 #include <esp_gap_ble_api.h>
 #include <freertos/task.h>
+#include <freertos/queue.h>
 
 // Closed product GATT registration and discovery-only GAP owner. Attribute
 // creation/advertising does not grant a peer role or diagnostic access.
@@ -79,10 +81,24 @@ class ProductGattsOwner {
     std::atomic<ClosedBleAdvertiseGate::Phase> advertisingState_{
         ClosedBleAdvertiseGate::Phase::Closed};
     std::atomic<std::uint8_t> dataAck_{0}, startAck_{0}, stopAck_{0};
-    // One pending observation of each kind; coalesced if callbacks arrive faster
-    // than the worker can print. No passkey or key material is retained.
-    std::atomic<std::uint8_t> securityRequestObservation_{0};
-    std::atomic<std::uint16_t> authenticationObservation_{0};
+    // GAP callback and discovery worker enqueue copied, key-free observations.
+    // The fixed queue never blocks the BTU task; overflow is counted.
+    enum class SecurityEventKind : std::uint8_t {
+        Request = 1, Authentication = 2, LinkPublished = 3,
+        LinkGone = 4, LinkMissed = 5
+    };
+    struct SecurityEvent {
+        std::uint32_t atMs = 0, birth = 0, token = 0;
+        std::int32_t sdk = 0;
+        std::uint16_t connection = 0;
+        SecurityEventKind kind = SecurityEventKind::Request;
+        std::uint8_t reason = 0, authMode = 0;
+        bool peerMatch = false, originalPublished = false, accepted = false;
+    };
+    QueueHandle_t securityEvents_ = nullptr;
+    std::atomic<std::uint32_t> securityEventCount_{0}, securityEventDropped_{0};
+    std::atomic<std::uint32_t> securityRequestCount_{0}, authenticationCount_{0};
+    void recordSecurityEvent(const SecurityEvent &) noexcept;
     State state_ = State::NotStarted;
     static ProductGattsOwner *selected_;
     static void worker(void *) noexcept;
