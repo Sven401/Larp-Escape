@@ -532,3 +532,9 @@ prove a Game Master role, MITM, diagnostic command delivery, LED off, or any
 physical component result. The journal's legacy top-level
 `originalAuthority: "OPEN"` means the authority question remains open; it is
 not a granted authority. No Control/Step request or reply is recorded.
+
+Follow-up Android commit `3ab29d0` removes that ambiguous label in future
+journals: this build without an authority provider writes `NOT_GRANTED`, while
+old `OPEN` files read/export as `UNVERIFIED`. Its focused journal tests and
+Debug build passed. This label-only build has not been installed on the Moto
+G14; the byte-preserved journal above reflects the earlier installed build.
