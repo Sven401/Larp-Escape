@@ -80,8 +80,8 @@ void setup() {
     Serial.print("Companion identity state (diagnosis closed): ");
     Serial.println(static_cast<unsigned>(companionIdentityState));
 #if defined(LARP_PRODUCT_GATTS_CLOSED)
-    // Register the closed service only after the public identity is ready.
-    // No GAP advertising, peer role or diagnostic admission starts here.
+    // The GATT owner advertises only after its service and closed registry ACK.
+    // A discoverable link never admits a peer role or diagnosis here.
     if (companionIdentityState == Esp32CompanionIdentityOwner::State::ReadyClosed) {
         const auto bleState = closedGatts.begin();
         Serial.print("Closed GATT registration state: ");
@@ -148,6 +148,13 @@ void loop() {
         Serial.print(communicationRuntime.successfulDeliveryCount());
         Serial.print('/');
         Serial.println(communicationRuntime.failedDeliveryCount());
+#if defined(LARP_PRODUCT_GATTS_CLOSED)
+        larp::companion::PeerTransportBinding originalLink;
+        Serial.print("BLE discovery phase (no role): ");
+        Serial.println(static_cast<unsigned>(closedGatts.advertisingState()));
+        Serial.print("Original BLE link current (no bond claim): ");
+        Serial.println(closedGatts.originalLink(originalLink) ? 1 : 0);
+#endif
     }
     // Include the diagnostic report in this measurement. Its duration is visible
     // in the next report, because this iteration has not ended while printing.

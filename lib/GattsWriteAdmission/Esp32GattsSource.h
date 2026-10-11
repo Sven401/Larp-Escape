@@ -60,6 +60,14 @@ class Esp32GattsSource : public IGattsResponseContext,
                                         std::uint16_t packedConnection, bool connected) noexcept;
     // Sole source actor only; original closed token for subsequent peer verification.
     bool originalConnectionNow(BoundConnection &) const noexcept;
+    // Read-only copy of the current original BTU connection birth. This is
+    // connection evidence only: no bond, MITM, role or diagnosis assertion.
+    bool readOriginalTransport(PeerTransportBinding &) const noexcept;
+    // Monotone original callback lifecycle, including disconnect; no link claim.
+    bool readOriginalLifecycle(std::uint32_t &) const noexcept;
+    // Exact original observer/channel agreement with no principal or GM.
+    // Anonymous connection and closed post-disconnect epochs are permitted.
+    bool closedChannelState(const Identity &) const noexcept;
     // Crypto-worker read: copied original connection and current owned policy.
     bool closedPeerConnectionCurrent(const PeerProofBinding &) const noexcept;
     // Earliest original SMP actor callback, before the existing BTM callback.
@@ -161,6 +169,7 @@ class Esp32GattsSource : public IGattsResponseContext,
     FreeRtosGattsConnection *owner_ = nullptr;
     GattsConnectionEvent live_;
     BoundConnection connection_;
+    PeerTransportBinding publishedTransport_;
     IdentityAccessSnapshot identitySnapshot_;
     PeerLinkSecurity linkSecurity_;
     bool smpForwarding_ = false;

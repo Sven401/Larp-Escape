@@ -2,8 +2,9 @@
 
 #include <cstdint>
 
-// Development capacity cut only. Owns a single, process-lifetime BLE stack
-// start. It has no GATT, GAP advertising, connection, or authority interface.
+// Owns a single, process-lifetime BLE stack start. This layer has no GATT,
+// GAP advertising, connection, or authority interface; the product owner
+// installs those separately after this closed startup succeeds.
 class ClosedBleStackOwner {
   public:
     enum class State : std::uint8_t {

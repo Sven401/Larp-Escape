@@ -21,11 +21,203 @@ ProductGattsOwner::RegistryState ProductGattsOwner::registryState() const noexce
     if (published != RegistryState::StoredRegistryInstalledClosed)
         return published;
     PeerRegistrySnapshot installed;
-    TrustedAuthority authority;
     return registryRuntime_.snapshot(installed) && installed.device == device_ &&
-                   !identity_.authority(authority)
+                   source_.closedChannelState(device_)
                ? published
                : RegistryState::RegistryRejected;
+}
+bool ProductGattsOwner::originalLink(PeerTransportBinding &destination) const noexcept {
+    return service_.ready() &&
+           registryState() == RegistryState::StoredRegistryInstalledClosed &&
+           source_.readOriginalTransport(destination);
+}
+void ProductGattsOwner::gapCallback(esp_gap_ble_cb_event_t event,
+                                    esp_ble_gap_cb_param_t *parameter) noexcept {
+    auto *owner = selected_;
+    if (!owner || !parameter)
+        return;
+    if (event == ESP_GAP_BLE_ADV_DATA_SET_COMPLETE_EVT)
+        owner->dataAck_.store(parameter->adv_data_cmpl.status == ESP_BT_STATUS_SUCCESS ? 1 : 2,
+                              std::memory_order_release);
+    else if (event == ESP_GAP_BLE_ADV_START_COMPLETE_EVT)
+        owner->startAck_.store(parameter->adv_start_cmpl.status == ESP_BT_STATUS_SUCCESS ? 1 : 2,
+                               std::memory_order_release);
+    else if (event == ESP_GAP_BLE_ADV_STOP_COMPLETE_EVT)
+        owner->stopAck_.store(parameter->adv_stop_cmpl.status == ESP_BT_STATUS_SUCCESS ? 1 : 2,
+                              std::memory_order_release);
+}
+void ProductGattsOwner::quiesceAfterStart(bool startTerminal,
+                                          bool startSucceeded) noexcept {
+    ClosedBleRadioFence fence(startTerminal, startSucceeded);
+    advertisingState_.store(ClosedBleAdvertiseGate::Phase::Quiescing,
+                            std::memory_order_release);
+    // Attempt a stop even if the start post is still pending. That attempt is
+    // not enough if a late positive start ACK subsequently arrives.
+    stopAck_.store(0, std::memory_order_release);
+    const bool initialStop = esp_ble_gap_stop_advertising() == ESP_OK;
+    if (startTerminal && startSucceeded)
+        fence.stopPosted(initialStop);
+    else if (!startTerminal)
+        fence.earlyStopPosted(initialStop);
+    const auto startedAt = clock_.nowMilliseconds();
+    std::uint32_t lastAttemptAt = startedAt;
+    for (;;) {
+        const auto stop = stopAck_.exchange(0, std::memory_order_acquire);
+        if (stop)
+            fence.stopComplete(stop == 1);
+        const auto start = startAck_.exchange(0, std::memory_order_acquire);
+        if (start)
+            fence.startComplete(start == 1);
+        if (fence.closed()) {
+            advertisingState_.store(ClosedBleAdvertiseGate::Phase::FencedClosed,
+                                    std::memory_order_release);
+            return;
+        }
+        const auto now = clock_.nowMilliseconds();
+        if (fence.needsStopAfterStart() && now - lastAttemptAt >= 100U) {
+            fence.stopPosted(esp_ble_gap_stop_advertising() == ESP_OK);
+            lastAttemptAt = now;
+        }
+        if (now - startedAt >= 10000U)
+            advertisingState_.store(ClosedBleAdvertiseGate::Phase::RadioUnconfirmed,
+                                    std::memory_order_release);
+        vTaskDelay(1);
+    }
+}
+void ProductGattsOwner::runDiscovery() noexcept {
+    ClosedBleAdvertiseGate gate;
+    const auto publish = [&]() {
+        advertisingState_.store(gate.phase(), std::memory_order_release);
+    };
+    if (!gate.configure(service_.ready(),
+                        registryState() == RegistryState::StoredRegistryInstalledClosed,
+                        source_.closedChannelState(device_))) {
+        publish();
+        return;
+    }
+    publish();
+    // No IO path proves MITM on this hardware. Bonding may be requested by the
+    // phone, but no bond/security result is treated as product authority.
+    std::uint8_t auth = ESP_LE_AUTH_BOND;
+    std::uint8_t io = ESP_IO_CAP_NONE;
+    if (esp_ble_gap_register_callback(gapCallback) != ESP_OK ||
+        esp_ble_gap_set_security_param(ESP_BLE_SM_AUTHEN_REQ_MODE, &auth, sizeof(auth)) != ESP_OK ||
+        esp_ble_gap_set_security_param(ESP_BLE_SM_IOCAP_MODE, &io, sizeof(io)) != ESP_OK) {
+        gate.fail();
+        publish();
+        return;
+    }
+    advertiseData_.set_scan_rsp = false;
+    advertiseData_.include_name = false;
+    advertiseData_.service_uuid_len = advertisedService_.size();
+    advertiseData_.p_service_uuid = advertisedService_.data();
+    advertiseData_.flag = ESP_BLE_ADV_FLAG_GEN_DISC | ESP_BLE_ADV_FLAG_BREDR_NOT_SPT;
+    advertiseParams_.adv_int_min = 0x100;
+    advertiseParams_.adv_int_max = 0x180;
+    advertiseParams_.adv_type = ADV_TYPE_IND;
+    advertiseParams_.own_addr_type = BLE_ADDR_TYPE_PUBLIC;
+    advertiseParams_.channel_map = ADV_CHNL_ALL;
+    advertiseParams_.adv_filter_policy = ADV_FILTER_ALLOW_SCAN_ANY_CON_ANY;
+    if (esp_ble_gap_config_adv_data(&advertiseData_) != ESP_OK) {
+        gate.fail();
+        publish();
+        return;
+    }
+    std::uint32_t connectedBirth = 0, advertisedBirth = 0;
+    std::uint32_t pendingAt = clock_.nowMilliseconds();
+    bool startPosted = false, startTerminal = false, startSucceeded = false;
+    const auto abort = [&]() {
+        gate.fail();
+        if (startPosted)
+            quiesceAfterStart(startTerminal, startSucceeded);
+        else
+            publish();
+    };
+    for (;;) {
+        if (!service_.ready() ||
+            registryState() != RegistryState::StoredRegistryInstalledClosed) {
+            abort();
+            return;
+        }
+        if ((gate.phase() == ClosedBleAdvertiseGate::Phase::DataPending ||
+             gate.phase() == ClosedBleAdvertiseGate::Phase::StartPending) &&
+            clock_.nowMilliseconds() - pendingAt >= 10000U) {
+            abort();
+            return;
+        }
+        const auto data = dataAck_.exchange(0, std::memory_order_acquire);
+        if (data) {
+            if (!gate.dataComplete(data == 1) ||
+                !source_.readOriginalLifecycle(advertisedBirth)) {
+                abort();
+                return;
+            }
+            startPosted = true;
+            if (esp_ble_gap_start_advertising(&advertiseParams_) != ESP_OK) {
+                abort();
+                return;
+            }
+            startTerminal = false;
+            startSucceeded = false;
+            pendingAt = clock_.nowMilliseconds();
+        }
+        const auto started = startAck_.exchange(0, std::memory_order_acquire);
+        if (started) {
+            startTerminal = true;
+            startSucceeded = started == 1;
+            if (!gate.startComplete(startSucceeded)) {
+                abort();
+                return;
+            }
+        }
+        PeerTransportBinding link;
+        if (gate.phase() == ClosedBleAdvertiseGate::Phase::Visible &&
+            source_.readOriginalTransport(link) && gate.connected())
+            connectedBirth = link.lifecycle;
+        if (gate.phase() == ClosedBleAdvertiseGate::Phase::Visible &&
+            !source_.readOriginalTransport(link)) {
+            std::uint32_t lifecycle = 0;
+            if (source_.readOriginalLifecycle(lifecycle) && lifecycle > advertisedBirth) {
+                if (!gate.missedOriginalBirth(service_.ready(),
+                                              registryState() == RegistryState::StoredRegistryInstalledClosed,
+                                              source_.closedChannelState(device_))) {
+                    abort();
+                    return;
+                }
+                advertisedBirth = lifecycle;
+                startTerminal = false;
+                startSucceeded = false;
+                startPosted = true;
+                if (esp_ble_gap_start_advertising(&advertiseParams_) != ESP_OK) {
+                    abort();
+                    return;
+                }
+                pendingAt = clock_.nowMilliseconds();
+            }
+        }
+        if (gate.phase() == ClosedBleAdvertiseGate::Phase::Connected &&
+            !source_.readOriginalTransport(link)) {
+            std::uint32_t lifecycle = 0;
+            if (!source_.readOriginalLifecycle(lifecycle) || lifecycle <= connectedBirth ||
+                !gate.disconnected(service_.ready(),
+                                   registryState() == RegistryState::StoredRegistryInstalledClosed,
+                                   source_.closedChannelState(device_))) {
+                abort();
+                return;
+            }
+            advertisedBirth = lifecycle;
+            startTerminal = false;
+            startSucceeded = false;
+            startPosted = true;
+            if (esp_ble_gap_start_advertising(&advertiseParams_) != ESP_OK) {
+                abort();
+                return;
+            }
+            pendingAt = clock_.nowMilliseconds();
+        }
+        publish();
+        vTaskDelay(1);
+    }
 }
 
 void ProductGattsOwner::worker(void *context) noexcept {
@@ -90,6 +282,7 @@ void ProductGattsOwner::loadRegistry(void *context) noexcept {
         !owner.identity_.authority(authority)) {
         owner.registryState_.store(RegistryState::StoredRegistryInstalledClosed,
                                    std::memory_order_release);
+        owner.runDiscovery();
     } else {
         owner.registryRuntime_.fence();
         owner.peerStore_.fence();

@@ -227,3 +227,54 @@ limit while installing FastLED; the successful build used an ignored shorter
 control host suite passed **522/522**, including a negative case showing that
 the stored GM key and original role-install ACK leave channel authority absent.
 No ESP32 boot, NVS read, RF run, upload, restore or full-box test occurred.
+
+## Unprivileged discovery and connection slice, 2026-10-11
+
+After the real GATT service has started and the original source actor has
+acknowledged installation of the stored registry in its closed state, the
+product configures one connectable BLE advertisement carrying only the existing
+128-bit service UUID `407e6a1d-1cc2-43fd-856b-4aff85a20001`. The advertising
+payload does not claim identity, role or diagnosis. The device requests bonding
+with no input/output capability; this can permit a phone OS pairing exchange,
+but this slice has **no firmware result** for a completed bond, selected key or
+MITM security. A phone-reported OS bond is recorded only as OS bond, explicitly
+without a firmware MITM claim. The existing Command/Profile attributes retain
+encrypted-MITM SDK permissions and closed product admission. Just Works/OS bond
+cannot write those attributes. Challenge/Issue/Proof/Result and
+diagnostic attributes remain absent. No app write is a role grant.
+
+The discovery gate fails permanently for this boot if service, registry or
+authority checks fail, or if GAP configuration/start reports failure. The
+original BTU GATT source publishes only a copied, current connection birth.
+Disconnect clears it before a packed handle can be reused. A stale/foreign
+callback cannot turn it into a role or bond claim. An original connection
+publishes an anonymous channel epoch, and disconnect leaves a closed epoch.
+The ongoing registry check therefore compares the channel to the original
+source observer and accepts only principal 0 / GM false; a foreign publisher
+invalidates the discovery gate. The first registry installation still requires
+no channel authority. After a confirmed original
+disconnect, advertising may restart only while service and closed registry
+remain valid. The serial status is observational; it cannot authorize
+diagnosis, and the Android report does not depend on serial access.
+
+Any failure after a possible GAP start post enters a persistent stop fence.
+A stop ACK before a late positive start ACK is insufficient: the worker waits
+for a second stop ACK after that start. If the SDK gives no conclusive ACK, the
+state stays `RadioUnconfirmed`; it never reports confirmed shutdown. The
+discovery gate has no retry after such a fault.
+
+The pinned ESP32 single-app build passed with **1,967,801 B ELF flash** and
+**76,020 B static RAM**. The generated `firmware.bin` measures **1,974,096 B**,
+leaving **647,344 B** in the 2,621,440 B app slot by image length. The
+configured-control host suite passed **526/526**, including closed gating,
+MITM-required write permissions, original birth recycling, foreign publisher
+rejection, and late-start/stop ACK ordering. The source and service host
+counterparts rejected 17 and 58 negative cases respectively. Actual runtime
+heap, RF visibility, pairing and NVS behavior are not measured.
+
+Until a device run, the build proves only that these SDK calls link and the
+host model exercises closed sequencing and birth invalidation. An Android GATT
+connection/service discovery and Android OS bond status are separate app-side
+observations. A successful, correlated App–ESP pairing and any firmware
+security claim require the user's own app run and exported report. No firmware
+upload, restore or RF run occurred in this package.
