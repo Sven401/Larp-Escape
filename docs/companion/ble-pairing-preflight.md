@@ -249,3 +249,41 @@ The user has been asked to start a fresh pairing report, run the scan in the
 app, and export the result. That new report is pending. The device still
 runs the separately approved `671be0b` image. No additional firmware upload,
 restore, full backup, physical diagnosis or product acceptance followed.
+
+## Filtered callbacks and unverified diagnostic scan, 2026-10-11
+
+The next user export, `ble-kopplungsbeobachtung-v1 (4).json`, is 1,566 bytes,
+SHA-256 `ff5dda2e86c466dd4b3c622e5833408188e5dd67518fa7acd6fa6b3ed89638eb`.
+Two complete app scans received 135 and 92 BLE callbacks respectively;
+all were rejected by the product/name filter and neither scan saw a
+canonical-service candidate. There was no connection attempt or OS bond.
+This proves Android delivered other BLE advertisements to the app, but does
+not distinguish absent box radio packets from packets without a parsed
+canonical service UUID. A subsequent passive, command-free 12-second COM3
+read saw the box's periodic `BLE discovery phase (no role): 3` and
+`Original BLE link current (no bond claim): 0`. The firmware phase is an SDK
+state, not an independent over-the-air capture.
+
+The loaded `671be0b` source keeps the 16-byte little-endian UUID in stable
+storage and configures connectable public-address advertising. Its UUID
+matches Android's canonical service UUID; no unconditional advertising
+timeout was found. The [ESP-IDF v4.4 system API](https://docs.espressif.com/projects/esp-idf/en/v4.4/esp32/api-reference/system/system.html)'s four-universal-MAC configuration derives the
+Bluetooth public address from the chip base MAC plus two in the last octet.
+For chip MAC `A8:42:E3:CD:4B:18`, `A8:42:E3:CD:4B:1A` is therefore the
+expected Bluetooth address, still unconfirmed by a received packet. Searching
+for `...:18` in Android's pairing settings was an invalid identity check.
+Android's `BLUETOOTH_SCAN` manifest uses `neverForLocation`, which the
+[Android documentation](https://developer.android.com/develop/connectivity/bluetooth/bt-permissions) says may suppress some BLE beacon results; whether it
+suppresses this box remains unmeasured.
+
+Commit `47f74d4` adds a second, explicitly user-started app scan showing up
+to 32 otherwise filtered advertisements as **unverified** candidates. It
+records mode and aggregate scan outcome; unrelated device addresses enter
+the report only if the user selects one. No candidate automatically connects,
+bonds, acquires a role or grants diagnosis. The selected candidate must pass
+canonical GATT service discovery even if a lab service is present. App unit
+tests passed 58/58 and the offline Debug build succeeded. The APK built and
+pulled back from Moto G14 `ZY22J7CSQD` matches SHA-256
+`d0bb1fdd37359d8c447c338ae07dc0f4d809bf85f11b31231a46a9e2253f3425`.
+The user has been asked to run this scan and export its report independently.
+No new firmware image was uploaded, restored or accepted.
