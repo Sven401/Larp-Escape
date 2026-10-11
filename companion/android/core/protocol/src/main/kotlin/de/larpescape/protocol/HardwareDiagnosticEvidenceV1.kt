@@ -8,6 +8,10 @@ import com.google.gson.JsonPrimitive
 import java.time.Instant
 import java.util.UUID
 
+private fun requireCanonicalUuid(value: String) {
+    require(UUID.fromString(value).toString() == value) { "Canonical UUID required" }
+}
+
 enum class HardwareDiagnosticActionV1(val wireId: String, val writesDeviceState: Boolean) {
     LED_SELECT_INDICES("led_select_indices", true), LED_SELECT_GROUP("led_select_group", true),
     LED_SET_COLOR("led_set_color", true), LED_SET_BRIGHTNESS("led_set_brightness", true),
@@ -86,13 +90,13 @@ class HardwareDiagnosticEvidenceLedgerV1(val runId: String, val startedUtc: Stri
     private var finished: HardwareDiagnosticReportV1? = null
 
     init {
-        UUID.fromString(runId)
+        requireCanonicalUuid(runId)
         Instant.parse(startedUtc)
     }
 
     fun request(action: HardwareDiagnosticActionV1, correlationId: String, utc: String) {
         require(finished == null)
-        UUID.fromString(correlationId)
+        requireCanonicalUuid(correlationId)
         require(!Instant.parse(utc).isBefore(Instant.parse(startedUtc)))
         require(correlationId !in correlations) { "Correlation must be unique within the run" }
         val attempts = evidence.getValue(action)
@@ -245,7 +249,7 @@ object HardwareDiagnosticReportCodecV1 {
     private fun validate(document: JsonObject) {
         require(document.keySet() == setOf("schema", "runId", "startedUtc", "endedUtc", "actions"))
         require(document.text("schema") == "hardware_diagnostic_evidence_v1")
-        UUID.fromString(document.text("runId"))
+        requireCanonicalUuid(document.text("runId"))
         val started = Instant.parse(document.text("startedUtc"))
         val ended = Instant.parse(document.text("endedUtc"))
         require(started <= ended)
@@ -310,7 +314,7 @@ private fun encodeObservation(value: DiagnosticUserObservationV1) = JsonObject()
 }
 private fun validateRequest(value: JsonObject) {
     require(value.keySet() == setOf("correlationId", "requestedUtc"))
-    UUID.fromString(value.text("correlationId")); Instant.parse(value.text("requestedUtc"))
+    requireCanonicalUuid(value.text("correlationId")); Instant.parse(value.text("requestedUtc"))
 }
 private fun validateAcceptance(value: JsonObject) {
     require(value.keySet() == setOf("state", "deviceMs", "detail", "provenance"))

@@ -110,6 +110,30 @@ class HardwareDiagnosticEvidenceV1Test {
     }
 
     @Test
+    fun noncanonicalUuidAliasesCannotEnterLedgerOrImportedReport() {
+        val shorthand = "1-1-1-1-1"
+        assertEquals("00000001-0001-0001-0001-000000000001", UUID.fromString(shorthand).toString())
+        rejects { HardwareDiagnosticEvidenceLedgerV1(shorthand, start) }
+        val ledger = HardwareDiagnosticEvidenceLedgerV1(runId, start)
+        rejects { ledger.request(HardwareDiagnosticActionV1.WAKE_EDGE, shorthand, start) }
+        ledger.request(HardwareDiagnosticActionV1.WAKE_EDGE, requestId, start)
+        val report = ledger.finish(end)
+        val noncanonicalRun = report.snapshot().apply { addProperty("runId", shorthand) }
+        val noncanonicalCorrelation = report.snapshot().apply {
+            getAsJsonArray("actions").first { it.asJsonObject["id"].asString == "wake_edge" }
+                .asJsonObject.getAsJsonArray("attempts")[0].asJsonObject
+                .getAsJsonObject("request").addProperty("correlationId", shorthand)
+        }
+        listOf(noncanonicalRun, noncanonicalCorrelation).forEach { document ->
+            val envelope = com.google.gson.JsonObject().apply {
+                add("report", document)
+                addProperty("sha256", DiagnosticJsonV1.sha256(DiagnosticJsonV1.canonical(document)))
+            }
+            rejects { HardwareDiagnosticReportCodecV1.import(DiagnosticJsonV1.canonical(envelope)) }
+        }
+    }
+
+    @Test
     fun finalizedLedgerIsImmutableAndRepeatedFinishReturnsSameReport() {
         val ledger = HardwareDiagnosticEvidenceLedgerV1(runId, start)
         val first = ledger.finish(end)
