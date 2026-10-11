@@ -9,6 +9,7 @@
 #include "GattsServiceDefinition.h"
 #include "SdkGattSourceAbi.h"
 #include "SdkPeerSecurityAbi.h"
+#include "../ClosedBleStackOwner/DiagnosticGattsDefinition.h"
 #include <freertos/task.h>
 namespace larp {
 namespace companion {
@@ -56,6 +57,10 @@ class Esp32GattsSource : public IGattsResponseContext,
     // ANY connection callback. Repeated/late configuration never rebinds.
     bool configureEndpointsNow(std::uint16_t command, std::uint16_t profile,
                                IWriteResponseBearer &responses) noexcept;
+    // Once before advertising: install the exact diagnostic handle set on the
+    // original BTU actor. This installs only a rejection fence, never an owner.
+    bool postDiagnosticClosedSetup(const diagnostic::DiagnosticClosedHandles &) noexcept;
+    bool diagnosticClosedSetupInstalled(const diagnostic::DiagnosticClosedHandles &) const noexcept;
     GattsLifecycleOutcome connectionNow(std::uint8_t interface, const std::uint8_t *address,
                                         std::uint16_t packedConnection, bool connected) noexcept;
     // Sole source actor only; original closed token for subsequent peer verification.
@@ -114,6 +119,10 @@ class Esp32GattsSource : public IGattsResponseContext,
         PeerChallengeReadSetup challenge;
         std::uint8_t state = 0; // 0 unused, 1 queued, 2 consuming, 3 installed, 4 rejected
     } setup_;
+    struct DiagnosticPending {
+        diagnostic::DiagnosticClosedHandles value;
+        std::uint8_t state = 0; // 0 unused, 1 posted, 2 consuming, 3 installed, 4 rejected
+    } diagnostic_;
     struct RolePending {
         PeerRegistryRoleJob value;
         TrustedAuthority ack;
@@ -192,6 +201,7 @@ class Esp32GattsSource : public IGattsResponseContext,
     bool validResponse(const RoutedWriteResponse &) const noexcept;
     static void consume(void *) noexcept;
     static void installEndpoints(void *) noexcept;
+    static void installDiagnosticClosed(void *) noexcept;
     static void applyPeerRoles(void *) noexcept;
     bool roleOriginalCurrent(const PeerRegistryActorOrigin &) const noexcept;
 };

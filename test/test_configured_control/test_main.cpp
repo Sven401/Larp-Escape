@@ -52,6 +52,7 @@
 #include "../../lib/GattsWriteAdmission/FreeRtosGattsResponseQueue.cpp"
 #include "../../lib/GattsWriteAdmission/GattsWriteAdmission.cpp"
 #include "../../lib/GattsWriteAdmission/SdkGattsService.cpp"
+#include "../../lib/ClosedBleStackOwner/DiagnosticGattsService.cpp"
 #if defined(LARP_REAL_PEER_CRYPTO)
 #include "../../lib/Esp32PeerProofCrypto/Esp32PeerProofCrypto.cpp"
 #endif
@@ -988,6 +989,7 @@ void test_profile_capability_fixture_matches_firmware_encoder() {
 #include "GattsResponseQueueCases.h"
 #include "GattsServiceCases.h"
 #include "GattsSourceCases.h"
+#include "DiagnosticGattsServiceCases.h"
 #include "IdentityRetirementCases.h"
 #include "PeerAuthCases.h"
 #include "PeerLinkSecurityCases.h"
@@ -1372,6 +1374,10 @@ int main() {
     RUN_TEST(test_service_callback_loss_after_ready_immediately_closes_readiness);
     RUN_TEST(test_endpoint_failed_post_wrong_task_and_replaced_sdk_never_retry);
     RUN_TEST(test_source_original_sdk_post_actual_frames_and_application);
+    RUN_TEST(test_source_diagnostic_original_closed_handles_reject_all_writes);
+    RUN_TEST(test_source_diagnostic_handle_install_rejects_collision_and_wrong_origin);
+    RUN_TEST(test_diagnostic_gatts_exact_sdk_shape_and_closed_install_before_start);
+    RUN_TEST(test_diagnostic_gatts_bad_callback_and_generation_fail_closed);
     RUN_TEST(test_source_posted_old_connection_dropped_after_same_handle_reconnect);
     RUN_TEST(test_source_full_fixed_pool_failed_post_and_slot_reuse);
     RUN_TEST(test_source_deadline_rechecked_after_post_without_refresh);
