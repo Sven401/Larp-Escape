@@ -2,12 +2,13 @@ package de.larpescape.companion.ui.device
 
 import androidx.lifecycle.ViewModel
 import de.larpescape.companion.data.device.DeviceRepository
+import de.larpescape.companion.data.device.BleScanModeV1
 
 class DeviceViewModel(private val repository: DeviceRepository) : ViewModel() {
     val state = repository.state
     private var foreground = false
     private var permissionGranted = false
-    private var pendingPermissionScan = false
+    private var pendingPermissionScan: BleScanModeV1? = null
     fun foregroundStarted(granted: Boolean) {
         foreground = true
         permissionsChanged(granted)
@@ -17,20 +18,25 @@ class DeviceViewModel(private val repository: DeviceRepository) : ViewModel() {
         permissionGranted = granted
         if (foreground || !granted) repository.permissionsChanged(granted)
     }
-    fun permissionRequestStarted() { pendingPermissionScan = foreground }
+    fun permissionRequestStarted(mode: BleScanModeV1 = BleScanModeV1.PRODUCT) {
+        pendingPermissionScan = mode.takeIf { foreground }
+    }
     fun permissionResult(granted: Boolean) {
         permissionGranted = granted
         if (foreground || !granted) repository.permissionsChanged(granted, denied = !granted)
-        if (!granted) pendingPermissionScan = false
+        if (!granted) pendingPermissionScan = null
         runPendingScan()
     }
     private fun runPendingScan() {
-        if (foreground && permissionGranted && pendingPermissionScan) {
-            pendingPermissionScan = false
-            repository.scan()
+        if (foreground && permissionGranted && pendingPermissionScan != null) {
+            val mode = pendingPermissionScan ?: return
+            pendingPermissionScan = null
+            repository.scan(mode)
         }
     }
-    fun scan() { if (foreground && permissionGranted) repository.scan() }
+    fun scan(mode: BleScanModeV1 = BleScanModeV1.PRODUCT) {
+        if (foreground && permissionGranted) repository.scan(mode)
+    }
     fun connect(id: String) { if (foreground && permissionGranted) repository.connect(id) }
     fun disconnect() = repository.disconnect()
     fun startPairingReport() = repository.startPairingReport()
@@ -40,7 +46,7 @@ class DeviceViewModel(private val repository: DeviceRepository) : ViewModel() {
     fun pairingExportCompleted() = repository.pairingExportCompleted()
     fun foregroundEnded() {
         foreground = false
-        pendingPermissionScan = false
+        pendingPermissionScan = null
         repository.close()
     }
     override fun onCleared() = repository.close()

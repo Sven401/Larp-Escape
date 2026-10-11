@@ -170,6 +170,20 @@ Die Suche endet nach zehn Sekunden. Ein Ziel antippen. Namen und Werbe-UUIDs
 sind Auswahlhilfen, kein Identitätsnachweis. Es erscheinen höchstens 16 Ziele;
 Adressen werden nur im Arbeitsspeicher gehalten.
 
+Für eine Fehlersuche nach leerer Produktliste gibt es „Alle BLE-Kandidaten anzeigen
+(Diagnose)“. Diese separate, ausdrücklich gestartete Suche zeigt bis zu 32 auch
+fremde BLE-Adressen mit dem Hinweis „Unbestätigter Kandidat“. Sie verbindet oder
+koppelt nichts automatisch. Erst wenn der Nutzer einen Kandidaten antippt, wird
+dessen Adresse im Kopplungsbericht einem Verbindungsversuch zugeordnet. Ohne den
+kanonischen Produktdienst in der GATT-Diensttabelle wird der Kandidat abgelehnt;
+Werbename, Adresse und Android-Bond gewähren keine Geräte- oder Diagnoserechte.
+Suchmodus und aggregierte Rückruf-/Filterzahlen werden ohne fremde Adressen im
+Bericht festgehalten. Die Android-Manifest-Erklärung `neverForLocation` kann nach
+[Androids Bluetooth-Dokumentation](https://developer.android.com/develop/connectivity/bluetooth/bt-permissions)
+einige BLE-Geräte schon vor dem App-Filter ausblenden; auch diese Diagnosesuche
+ist deshalb kein vollständiger Funkmitschnitt. Grundlage und Prüfdatum: offizielle
+Android-Bluetooth- und Compose-Dokumentation, 2026-10-11.
+
 Am v2-Vertragslabor (`86ddc5b0-3878-4ff7-9f55-17c62aeb1001`) liest die App den
 Labmarker und abonniert Statusframes. Sie zeigt Boot, Sample, Profilphase,
 Spielzustand und Gerätezahl aus einer vollständigen v2-Nachricht. Fragmentlimits

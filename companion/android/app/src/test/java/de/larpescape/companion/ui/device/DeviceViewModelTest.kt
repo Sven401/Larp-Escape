@@ -10,10 +10,13 @@ class DeviceViewModelTest {
     private class FakeRepository : DeviceRepository {
         override val state = MutableStateFlow(DeviceUiState())
         var scans = 0
+        val scanModes = mutableListOf<BleScanModeV1>()
         var connections = 0
         var closes = 0
         var grants = 0
-        override fun scan() { scans++; state.value = state.value.copy(scanning = true) }
+        override fun scan(mode: BleScanModeV1) {
+            scans++; scanModes += mode; state.value = state.value.copy(scanning = true, scanMode = mode)
+        }
         override fun connect(id: String) {
             connections++
             state.value = state.value.copy(connected = true, status = "sample", freshness = StatusFreshness.CURRENT)
@@ -43,6 +46,21 @@ class DeviceViewModelTest {
         model.permissionsChanged(true); model.foregroundStarted(true)
         assertEquals(1, repo.scans)
         assertFalse(model.state.value.permissionMissing)
+    }
+    @Test fun diagnosticModeSurvivesPermissionDialogButCannotStartAfterDenialOrBackground() {
+        val repo = FakeRepository(); val model = DeviceViewModel(repo)
+        model.foregroundStarted(false)
+        model.permissionRequestStarted(BleScanModeV1.UNVERIFIED_DIAGNOSTIC)
+        model.permissionResult(true)
+        assertEquals(listOf(BleScanModeV1.UNVERIFIED_DIAGNOSTIC), repo.scanModes)
+        model.permissionRequestStarted(BleScanModeV1.UNVERIFIED_DIAGNOSTIC)
+        model.permissionResult(false)
+        model.permissionResult(true)
+        assertEquals(1, repo.scans)
+        model.permissionRequestStarted(BleScanModeV1.UNVERIFIED_DIAGNOSTIC)
+        model.foregroundEnded()
+        model.permissionResult(true)
+        assertEquals(1, repo.scans)
     }
     @Test fun unsolicitedGrantDoesNotStartScan() {
         val repo = FakeRepository(); val model = DeviceViewModel(repo)

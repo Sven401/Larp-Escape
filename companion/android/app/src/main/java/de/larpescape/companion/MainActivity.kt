@@ -21,6 +21,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.larpescape.companion.platform.ble.AndroidBleRepository
 import de.larpescape.companion.ui.device.DeviceViewModel
+import de.larpescape.companion.data.device.BleScanModeV1
+import de.larpescape.companion.data.device.DeviceTargetKindV1
 import de.larpescape.protocol.StatusFreshness
 import de.larpescape.companion.platform.nfc.*
 import de.larpescape.companion.ui.nfc.*
@@ -138,20 +140,22 @@ class MainActivity : ComponentActivity() {
     }
     private val permissions = arrayOf(Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT)
     private var showPermissionExplanation by mutableStateOf(false)
+    private var permissionScanMode = BleScanModeV1.PRODUCT
     private fun permissionsGranted() = permissions.all { checkSelfPermission(it) == PackageManager.PERMISSION_GRANTED }
     private val request = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
         // Recheck both OS permissions; an empty or partial result map is not a grant.
         model.permissionResult(permissionsGranted())
     }
-    private fun requestBluetooth() {
-        model.permissionRequestStarted()
+    private fun requestBluetooth(mode: BleScanModeV1 = permissionScanMode) {
+        model.permissionRequestStarted(mode)
         request.launch(permissions)
     }
-    private fun startScan() {
+    private fun startScan(mode: BleScanModeV1) {
+        permissionScanMode = mode
         val granted = permissionsGranted()
         model.permissionsChanged(granted)
         when {
-            granted -> model.scan()
+            granted -> model.scan(mode)
             permissions.any { shouldShowRequestPermissionRationale(it) } -> showPermissionExplanation = true
             else -> requestBluetooth()
         }
@@ -245,14 +249,28 @@ class MainActivity : ComponentActivity() {
                                 pairingExportNotice?.let { Text(it) }
                             }
                         }
-                        Button(onClick = ::startScan, enabled = !state.scanning, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
-                            Text(if (state.scanning) "Suche läuft …" else "ESP suchen und Diagnose prüfen")
+                        Button(onClick = { startScan(BleScanModeV1.PRODUCT) }, enabled = !state.scanning,
+                            modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                            Text(if (state.scanning && state.scanMode == BleScanModeV1.PRODUCT) "Produktsuche läuft …" else "ESP suchen und Diagnose prüfen")
                         }
+                        OutlinedButton(onClick = { startScan(BleScanModeV1.UNVERIFIED_DIAGNOSTIC) },
+                            enabled = !state.scanning, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                            Text(if (state.scanning && state.scanMode == BleScanModeV1.UNVERIFIED_DIAGNOSTIC)
+                                "Diagnosesuche läuft …" else "Alle BLE-Kandidaten anzeigen (Diagnose)")
+                        }
+                        if (state.scanMode == BleScanModeV1.UNVERIFIED_DIAGNOSTIC)
+                            Text("Diagnosesuche: Auch fremde Geräte erscheinen. Name und Adresse beweisen nicht, dass es die Box ist. Erst der Produktdienst wird nach dem Verbinden geprüft.",
+                                style = MaterialTheme.typography.bodySmall)
                         state.targets.forEach { target ->
                             OutlinedButton(onClick = { model.connect(target.id) }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
                                 Column {
-                                    Text("${target.name} verbinden")
+                                    Text("${target.name} · ${when (target.kind) {
+                                        DeviceTargetKindV1.PRODUCT_ADVERTISED -> "Produktdienst beworben, unbestätigt"
+                                        DeviceTargetKindV1.LAB_ADVERTISED -> "Vertragslabor beworben"
+                                        DeviceTargetKindV1.UNVERIFIED -> "Unbestätigter Kandidat"
+                                    }}")
                                     Text("BLE-Adresse: ${target.id}", style = MaterialTheme.typography.bodySmall)
+                                    Text("Antippen: verbinden und Dienst prüfen", style = MaterialTheme.typography.bodySmall)
                                 }
                             }
                         }

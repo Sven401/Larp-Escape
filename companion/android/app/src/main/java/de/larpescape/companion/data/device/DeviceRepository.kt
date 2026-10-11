@@ -4,10 +4,17 @@ import kotlinx.coroutines.flow.StateFlow
 import de.larpescape.protocol.ConfiguredStatus
 import de.larpescape.protocol.StatusFreshness
 
-data class DeviceTarget(val id: String, val name: String)
+enum class BleScanModeV1(val reportValue: String) {
+    PRODUCT("product"), UNVERIFIED_DIAGNOSTIC("unverified_diagnostic")
+}
+
+enum class DeviceTargetKindV1 { PRODUCT_ADVERTISED, LAB_ADVERTISED, UNVERIFIED }
+
+data class DeviceTarget(val id: String, val name: String, val kind: DeviceTargetKindV1)
 data class DeviceUiState(
     val message: String = "Bereit zum Suchen", val targets: List<DeviceTarget> = emptyList(),
-    val scanning: Boolean = false, val connected: Boolean = false, val status: String? = null,
+    val scanning: Boolean = false, val scanMode: BleScanModeV1 = BleScanModeV1.PRODUCT,
+    val connected: Boolean = false, val status: String? = null,
     val lab: Boolean = false, val configuredStatus: ConfiguredStatus? = null,
     val freshness: StatusFreshness = StatusFreshness.DISCONNECTED,
     val permissionMissing: Boolean = false,
@@ -16,7 +23,7 @@ data class DeviceUiState(
 )
 interface DeviceRepository {
     val state: StateFlow<DeviceUiState>
-    fun scan()
+    fun scan(mode: BleScanModeV1 = BleScanModeV1.PRODUCT)
     fun connect(id: String)
     fun disconnect()
     fun startPairingReport() {}
