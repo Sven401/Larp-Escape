@@ -61,10 +61,46 @@ void test_application_services_then_ticks_then_publishes_copy() {
     TEST_ASSERT_EQUAL_UINT(0, rig.clock.delayCalls);
 }
 
+void test_diagnostic_preflight_fences_actual_application_loop_before_game_io() {
+    game_test::GameRig rig;
+    std::vector<int> order;
+    RuntimeProbe audio(order, 1), communication(order, 2);
+    SnapshotProbe sink(order);
+    larp::application::LarpEscapeApp app(rig.game, audio, communication, sink);
+    rig.wake.signals = {{true, true, true, true}};
+    TEST_ASSERT_TRUE(app.fenceUnstartedGameForDiagnostics());
+    TEST_ASSERT_TRUE(app.gameFencedForDiagnostics());
+    TEST_ASSERT_FALSE(app.fenceUnstartedGameForDiagnostics());
+    app.update();
+    app.update();
+    TEST_ASSERT_TRUE(order.empty());
+    TEST_ASSERT_EQUAL_INT(-1, rig.game.machine.currentStateIndex());
+    TEST_ASSERT_EQUAL_UINT(0, rig.wake.reads);
+    TEST_ASSERT_EQUAL_UINT(0, rig.audio.tracks.size());
+    TEST_ASSERT_EQUAL_UINT(0, rig.lights.bursts.size());
+}
+
+void test_diagnostic_preflight_rejects_started_game_without_fencing_it() {
+    game_test::GameRig rig;
+    std::vector<int> order;
+    RuntimeProbe audio(order, 1), communication(order, 2);
+    SnapshotProbe sink(order);
+    larp::application::LarpEscapeApp app(rig.game, audio, communication, sink);
+    app.update();
+    TEST_ASSERT_FALSE(app.fenceUnstartedGameForDiagnostics());
+    TEST_ASSERT_FALSE(app.gameFencedForDiagnostics());
+    const unsigned previousTicks = audio.calls;
+    app.update();
+    TEST_ASSERT_EQUAL_UINT(previousTicks + 1U, audio.calls);
+    TEST_ASSERT_EQUAL_UINT(previousTicks + 1U, sink.values.size());
+}
+
 void setUp() {}
 void tearDown() {}
 int main() {
     UNITY_BEGIN();
     RUN_TEST(test_application_services_then_ticks_then_publishes_copy);
+    RUN_TEST(test_diagnostic_preflight_fences_actual_application_loop_before_game_io);
+    RUN_TEST(test_diagnostic_preflight_rejects_started_game_without_fencing_it);
     return UNITY_END();
 }

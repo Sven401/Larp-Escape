@@ -47,3 +47,19 @@ The next vertical integration must supply those contracts and actual worker
 acknowledgements before adding any transition out of the closed states. Resetting
 software state alone is not evidence that output became safe. No upload, physical
 acceptance or 500-ms timing measurement is provided by this package.
+
+## Closed legacy game preflight
+
+`LarpEscapeApp::fenceUnstartedGameForDiagnostics()` now gives the actual
+`src/main.cpp` application loop a one-way preflight fence. It can succeed only
+before the first `update()` and must run on that loop's sole owner. Once set,
+`update()` performs no audio service,
+communication service, game machine tick or snapshot publish. A request after
+the first update fails and does not change the running game. Host tests exercise
+this exact application class and the real `update()` call order.
+
+This fence is currently an internal seam with no production caller. It does not
+park the already initialized LED, audio, matrix, NFC or radio workers, and it
+does not connect to `Runtime::reserveDiagnostics` or grant diagnostic ownership.
+The production arbiter must coordinate this fence with actual worker park
+acknowledgements and the original connection/authority before any test step.
