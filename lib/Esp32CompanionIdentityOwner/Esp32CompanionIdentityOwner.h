@@ -10,6 +10,7 @@
 // A later original SDK actor must own the complete policy handoff, never a
 // caller-supplied connection, role, or cached App authorization.
 class Esp32CompanionIdentityOwner {
+    friend class ProductGattsOwner;
   public:
     enum class State : std::uint8_t {
         NotStarted,
