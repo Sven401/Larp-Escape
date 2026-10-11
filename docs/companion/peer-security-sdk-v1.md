@@ -173,6 +173,28 @@ The full `tBTM_SEC_DEV_REC` configuration, offsets and selected-key path have
 not been matched to its actual instructions. Therefore no private record
 reader, positive F1 admission or diagnosis bypass follows from this audit.
 
+### Pinned key-selection source model (2026-10-11)
+
+`python scripts/check_f1_bond_key_origin.py` verifies the pinned upstream
+`btm_int.h` and `btm_ble.c` bytes and the installed ESP32 `libbt.a` hash, then
+compiles and executes the unchanged upstream `btm_ble_start_encrypt`,
+`btm_ble_ltk_request` and `btm_ble_ltk_request_reply` functions in a private
+host record model. It checks that master encryption selects `pltk`, `rand`
+and `ediv` from the address-resolved record only with PENC; a slave request
+resolves by handle and, if SMP does not own it, replies with that record's
+`lltk` only with LENC. Missing keys and unknown handles do not yield a key
+reply. Different modeled records and full `auth_mode` values are kept distinct.
+
+This is a source-behavior check, not an ABI check: the private model deliberately
+does not declare the complete `tBTM_SEC_DEV_REC`. The original header confirms
+the field types and conditional layout, but the target build configuration,
+all field offsets, and actual key-selection instructions in `libbt.a` remain
+unverified. No observed HCI command, controller key acceptance, GATT birth,
+restored NVS record or live bond is part of the test. The test must not be used
+to read private record offsets or grant access. A genuine selected-key-to-birth
+binding still requires an exact target ABI/binary proof and a user-driven
+device report, alongside the current proof and registry acknowledgement.
+
 Before positive F1 admission: independently audit the complete device-record
 ABI and full-width selected mode/key provenance at the original actor, connect
 the bounded reencryption state machine including loss/re-pair/bond deletion,
