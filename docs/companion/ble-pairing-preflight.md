@@ -103,5 +103,36 @@ firmware candidate needs its own build, preflight and separate upload
 approval. No restore, user-led RF pairing, physical diagnostic acceptance or
 product release occurred.
 
+## Closed BLE startup telemetry candidate, 2026-10-11
+
+The isolated BLE fix-investigation package `3c0fe4e` is integrated at
+`2028896`. It does not retry a failed stack start. On failure, it prints the
+exact ESP-IDF step and error code, controller/Bluedroid states, and internal
+free/largest heap blocks before and after the attempt. It grants no role or
+diagnosis. Integrated configured-control host checks passed 529/529; the
+ESP32 single-app build passed with ELF flash 1,968,189/2,621,440 bytes and
+static RAM 76,044/532,480 bytes.
+
+The private, **not uploaded** candidate is
+`C:/Users/seide/AppData/Local/LarpEscape/ESP32-Candidates/
+BLE-Stack-Diagnostic-20261011-95acedf/firmware.bin`, 1,974,480 bytes,
+SHA-256 `16a828694ba4d4a0c6705c15df154f8fa9cf58838ae2215f70566bb06738673b`.
+Bootloader and partition-table image hashes equal the first upload; otadata
+also remains unchanged. A separately approved second upload would write only
+this app image at `0x10000`, without mass erase.
+
+Because the first image booted, the present 4-MiB flash was captured again
+read-only in `C:/Users/seide/AppData/Local/LarpEscape/ESP32-Backups/
+COM3-20261011-PreBleStackTelemetry/before-ble-telemetry.bin`, SHA-256
+`155c425805863d9d0a4b9464116c17962ad04ffc6fb8956768c2be0411fce1ec`.
+It differs from the immediate first-upload readback by 113 NVS bytes; the
+app, layout, otadata and SPIFFS matched. The distinct chip-bound rollback
+tool `scripts/verify_ble_telemetry_rollback.py` and private manifest passed
+seven fake-esptool tests, offline verification and a live COM3 dry run with
+the Originalbox MAC and 4-MiB size. No second upload or restore has run.
+After any separately approved upload, read the app area back independently,
+verify the rest against this new backup, and capture the BLE error line. A
+new exact upload authorization is required before writing this image.
+
 No flash write, firmware upload, restore, RF pairing run, or product release
 was performed for this preflight.
