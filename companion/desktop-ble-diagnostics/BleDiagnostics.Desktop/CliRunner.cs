@@ -78,32 +78,37 @@ internal static class CliRunner
             }
         }
 
-        if (options.ProbeAddress is not null)
+        BluetoothLEDevice? retainedGattDevice = null;
+        try
         {
-            BleObservation? chosen;
-            lock (sync)
+            if (options.ProbeAddress is not null)
             {
-                chosen = journal.Observations.FirstOrDefault(x => x.Address == options.ProbeAddress);
-                if (chosen is null) journal.AddEvent("probe_skipped", null, "requested address not observed in this scan");
-                else journal.Select(chosen.Address);
-                Save();
-            }
-            if (chosen is not null) await ProbeGattAsync(journal, chosen, sync, Save);
-        }
-
-        if (options.PairOnce)
-        {
-            if (CliPairGate.MayRequestOnce(options, journal.Snapshot()))
-                await PairOnceAsync(journal, sync, Save);
-            else
-            {
+                BleObservation? chosen;
                 lock (sync)
                 {
-                    journal.PairingEnded("skipped", "same-run advertisement and successful uncached product GATT service required");
+                    chosen = journal.Observations.FirstOrDefault(x => x.Address == options.ProbeAddress);
+                    if (chosen is null) journal.AddEvent("probe_skipped", null, "requested address not observed in this scan");
+                    else journal.Select(chosen.Address);
                     Save();
+                }
+                if (chosen is not null) retainedGattDevice = await ProbeGattAsync(journal, chosen, sync, Save);
+            }
+
+            if (options.PairOnce)
+            {
+                if (CliPairGate.MayRequestOnce(options, journal.Snapshot(), retainedGattDevice is not null))
+                    await PairOnceAsync(journal, retainedGattDevice!, sync, Save);
+                else
+                {
+                    lock (sync)
+                    {
+                        journal.PairingEnded("skipped", "same-run advertisement, retained GATT device and successful uncached product service required");
+                        Save();
+                    }
                 }
             }
         }
+        finally { retainedGattDevice?.Dispose(); }
 
         lock (sync) Save();
         Console.WriteLine($"BLE report: {output}");
@@ -115,16 +120,17 @@ internal static class CliRunner
         return CliExitCode.ForResult(stopReason, saveError, options.PairOnce, journal.PairingState);
     }
 
-    private static async Task ProbeGattAsync(BleReportJournal journal, BleObservation chosen, object sync, Action save)
+    private static async Task<BluetoothLEDevice?> ProbeGattAsync(BleReportJournal journal, BleObservation chosen, object sync, Action save)
     {
         lock (sync) { journal.GattStarted(); save(); }
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(20));
+        BluetoothLEDevice? device = null;
         try
         {
             if (!BleIdentity.TryParseAddress(chosen.Address, out var address)) throw new InvalidOperationException("invalid observed address");
             var type = chosen.AddressType == BluetoothAddressType.Random.ToString()
                 ? BluetoothAddressType.Random : BluetoothAddressType.Public;
-            using var device = await BluetoothLEDevice.FromBluetoothAddressAsync(address, type).AsTask(timeout.Token);
+            device = await BluetoothLEDevice.FromBluetoothAddressAsync(address, type).AsTask(timeout.Token);
             if (device is null) throw new InvalidOperationException("Windows did not return a BLE device");
             var result = await device.GetGattServicesAsync(BluetoothCacheMode.Uncached).AsTask(timeout.Token);
             var services = result.Services.Select(x => x.Uuid).ToArray();
@@ -135,33 +141,42 @@ internal static class CliRunner
                     result.Status.ToString(), result.Status == GattCommunicationStatus.Success ? services : null);
                 save();
             }
+            if (result.Status == GattCommunicationStatus.Success) return device;
+            device.Dispose();
+            return null;
         }
         catch (OperationCanceledException)
         {
+            device?.Dispose();
             lock (sync) { journal.GattEnded("timeout", "20-second deadline", null); save(); }
+            return null;
         }
         catch (Exception ex)
         {
+            device?.Dispose();
             lock (sync) { journal.GattEnded("error", ex.Message, null); save(); }
+            return null;
         }
     }
 
-    private static async Task PairOnceAsync(BleReportJournal journal, object sync, Action save)
+    private static async Task PairOnceAsync(BleReportJournal journal, BluetoothLEDevice device, object sync, Action save)
     {
+        bool? canPair = null;
+        bool? isPairedBefore = null;
+        string? connectionStatus = null;
+        try { canPair = device.DeviceInformation.Pairing.CanPair; } catch { }
+        try { isPairedBefore = device.DeviceInformation.Pairing.IsPaired; } catch { }
+        try { connectionStatus = device.ConnectionStatus.ToString(); } catch { }
         lock (sync)
         {
+            journal.PairingPreflightObserved(canPair, isPairedBefore, connectionStatus);
             journal.PairingStarted("CLI never enters PIN/passkey or confirms a Windows system dialog; user action, if required, remains open");
             save();
         }
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(45));
-        BluetoothLEDevice? device = null;
         IAsyncOperation<DevicePairingResult>? pairingOperation = null;
         try
         {
-            if (!BleIdentity.TryParseAddress(BleIdentity.ExpectedAddress, out var address))
-                throw new InvalidOperationException("invalid fixed product address");
-            device = await BluetoothLEDevice.FromBluetoothAddressAsync(address, BluetoothAddressType.Public).AsTask(timeout.Token);
-            if (device is null) throw new InvalidOperationException("Windows did not return the observed product BLE device");
             // Exactly one public Windows pairing request. No custom ceremony or credential handler is registered.
             pairingOperation = device.DeviceInformation.Pairing.PairAsync();
             var result = await pairingOperation.AsTask(timeout.Token);
@@ -196,7 +211,6 @@ internal static class CliRunner
                 save();
             }
         }
-        finally { device?.Dispose(); }
     }
 
     private static bool? ReadOsIsPaired(BluetoothLEDevice? device, BleReportJournal journal, object sync)

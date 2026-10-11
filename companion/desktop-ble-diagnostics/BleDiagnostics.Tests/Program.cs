@@ -75,21 +75,38 @@ var pairJournal = new BleReportJournal();
 pairJournal.ScanStarted();
 pairJournal.Advertisement(address, "Public", "Box", -25, [BleIdentity.ProductService]);
 pairJournal.ScanEnded("bounded_timeout");
-Check(!CliPairGate.MayRequestOnce(pairOptions!, pairJournal.Snapshot()), "advertisement alone cannot trigger pairing");
+Check(!CliPairGate.MayRequestOnce(pairOptions!, pairJournal.Snapshot(), true), "advertisement alone cannot trigger pairing");
 Check(pairJournal.Select(BleIdentity.ExpectedAddress), "observed product address selected for gate");
 pairJournal.GattStarted();
 pairJournal.GattEnded("completed", "Success", [BleIdentity.LabService]);
-Check(!CliPairGate.MayRequestOnce(pairOptions!, pairJournal.Snapshot()), "lab-only GATT cannot trigger pairing");
+Check(!CliPairGate.MayRequestOnce(pairOptions!, pairJournal.Snapshot(), true), "lab-only GATT cannot trigger pairing");
 pairJournal.GattStarted();
 pairJournal.GattEnded("completed", "Success", [BleIdentity.ProductService]);
-Check(CliPairGate.MayRequestOnce(pairOptions!, pairJournal.Snapshot()), "same-run product GATT enables one explicit pairing request");
+Check(!CliPairGate.MayRequestOnce(pairOptions!, pairJournal.Snapshot(), false),
+    "GATT evidence cannot trigger pairing after its BLE device is released");
+Check(CliPairGate.MayRequestOnce(pairOptions!, pairJournal.Snapshot(), true),
+    "same-run product GATT and retained BLE device enable one explicit pairing request");
+pairJournal.PairingPreflightObserved(false, false, "Disconnected");
+Check(pairJournal.Snapshot().PairingPreflightCanPair == false &&
+      pairJournal.Snapshot().PairingPreflightIsPaired == false &&
+      pairJournal.Snapshot().PairingPreflightConnectionStatus == "Disconnected" &&
+      pairJournal.Snapshot().Events.Any(x => x.Kind == "windows_pairing_preflight" && x.Address == BleIdentity.ExpectedAddress),
+    "Windows pairing preflight is exported for only the selected device");
 pairJournal.PairingStarted("CLI does not handle user dialogs");
 pairJournal.PairingEnded("pending_after_deadline", "Windows may continue");
 pairJournal.PairingOsStateObserved(false);
 Check(pairJournal.Snapshot().PairingState == "pending_after_deadline" &&
       pairJournal.Snapshot().PairingOsIsPairedAtLastCheck == false &&
+      pairJournal.Snapshot().PairingPreflightCanPair == false &&
       pairJournal.Snapshot().PairingInteractionBoundary == "CLI does not handle user dialogs",
     "deadline, OS state, and interaction boundary remain separate");
+pairJournal.Advertisement(0x010203040506, "Public", "Other", -80, []);
+Check(pairJournal.Select("01:02:03:04:05:06") &&
+      pairJournal.Snapshot().PairingPreflightCanPair is null &&
+      pairJournal.Snapshot().PairingPreflightIsPaired is null &&
+      pairJournal.Snapshot().PairingPreflightConnectionStatus is null &&
+      pairJournal.Snapshot().Events.All(x => x.Address is null || x.Address == "01:02:03:04:05:06"),
+    "preflight evidence clears and prior target events redact on target switch");
 Check(PairingOutcome.ReturnedState("Paired", true) == "paired" &&
       PairingOutcome.ReturnedState("Paired", false) == "reported_paired_unconfirmed" &&
       PairingOutcome.ReturnedState("AlreadyPaired", null) == "reported_paired_unconfirmed" &&

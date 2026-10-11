@@ -41,6 +41,7 @@ public sealed record BleReport(
     string GattState, string? GattStatus, bool? ProductServiceFound, bool? LabServiceFound,
     string PairingState, string? PairingStatus,
     string? PairingInteractionBoundary,
+    bool? PairingPreflightCanPair, bool? PairingPreflightIsPaired, string? PairingPreflightConnectionStatus,
     bool? PairingOsIsPairedAtLastCheck,
     string FirmwareEvidence, string DiagnosticAuthority,
     IReadOnlyList<BleObservation> Observations, IReadOnlyList<BleEvent> Events);
@@ -65,6 +66,9 @@ public sealed class BleReportJournal
     public string PairingState { get; private set; } = "not_attempted";
     public string? PairingStatus { get; private set; }
     public string? PairingInteractionBoundary { get; private set; }
+    public bool? PairingPreflightCanPair { get; private set; }
+    public bool? PairingPreflightIsPaired { get; private set; }
+    public string? PairingPreflightConnectionStatus { get; private set; }
     public bool? PairingOsIsPairedAtLastCheck { get; private set; }
     public IReadOnlyCollection<BleObservation> Observations => observations.Values;
 
@@ -123,6 +127,9 @@ public sealed class BleReportJournal
             PairingState = "not_attempted";
             PairingStatus = null;
             PairingInteractionBoundary = null;
+            PairingPreflightCanPair = null;
+            PairingPreflightIsPaired = null;
+            PairingPreflightConnectionStatus = null;
             PairingOsIsPairedAtLastCheck = null;
         }
         SelectedAddress = found.Address;
@@ -142,6 +149,9 @@ public sealed class BleReportJournal
         PairingState = "not_attempted";
         PairingStatus = null;
         PairingInteractionBoundary = null;
+        PairingPreflightCanPair = null;
+        PairingPreflightIsPaired = null;
+        PairingPreflightConnectionStatus = null;
         PairingOsIsPairedAtLastCheck = null;
     }
 
@@ -177,6 +187,15 @@ public sealed class BleReportJournal
         AddEvent("pairing_started", SelectedAddress, "explicit Windows PairAsync request");
     }
 
+    public void PairingPreflightObserved(bool? canPair, bool? isPaired, string? connectionStatus)
+    {
+        PairingPreflightCanPair = canPair;
+        PairingPreflightIsPaired = isPaired;
+        PairingPreflightConnectionStatus = connectionStatus;
+        AddEvent("windows_pairing_preflight", SelectedAddress,
+            $"canPair={canPair?.ToString() ?? "unavailable"};isPaired={isPaired?.ToString() ?? "unavailable"};connection={connectionStatus ?? "unavailable"}");
+    }
+
     public void PairingEnded(string state, string? status)
     {
         PairingState = state;
@@ -197,6 +216,7 @@ public sealed class BleReportJournal
         SelectedAddress, SelectedAddressType, ScanState, ScanCallbacks, observations.Count, ScanDroppedAddresses,
         GattState, GattStatus, ProductServiceFound, LabServiceFound, PairingState, PairingStatus,
         PairingInteractionBoundary,
+        PairingPreflightCanPair, PairingPreflightIsPaired, PairingPreflightConnectionStatus,
         PairingOsIsPairedAtLastCheck,
         "not_measured_by_desktop_app", "none; observation does not grant a diagnostic role",
         observations.Values.Where(x => x.Address.Equals(SelectedAddress, StringComparison.OrdinalIgnoreCase))
