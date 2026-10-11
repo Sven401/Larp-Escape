@@ -4,12 +4,17 @@
 #include <type_traits>
 #include <unity.h>
 
+#include "GameRuntime/MatrixElectricalQualification.h"
 #include "GameRuntime/MatrixConfiguration.h"
 
 using larp::runtime::ExpanderPinConfiguration;
+using larp::runtime::ExpanderInputVariant;
 using larp::runtime::isValidExpanderConfiguration;
+using larp::runtime::matrixElectricalBlockerCode;
 using larp::runtime::MatrixConfiguration;
 using larp::runtime::MatrixConfigurationError;
+using larp::runtime::MatrixElectricalBlocker;
+using larp::runtime::qualifyMatrixElectricalInputs;
 using larp::runtime::validateMatrixConfiguration;
 
 static_assert(std::is_trivially_copyable<MatrixConfiguration>::value,
@@ -40,11 +45,124 @@ void assertConfigurationError(MatrixConfigurationError expected,
                           static_cast<int>(validateMatrixConfiguration(configuration)));
 }
 
-void test_installed_nine_by_nine_mapping_and_wake_pins_are_valid() {
+void test_installed_nine_by_nine_mapping_and_wake_pins_are_structurally_valid() {
     const MatrixConfiguration configuration = installedMapping();
     assertConfigurationError(MatrixConfigurationError::None, configuration);
     TEST_ASSERT_EQUAL_UINT(
         81, static_cast<unsigned>(configuration.rowCount * configuration.columnCount));
+}
+
+void test_unknown_expander_variants_fail_closed_with_specific_installed_mapping_reasons() {
+    const auto result = qualifyMatrixElectricalInputs(installedMapping());
+    TEST_ASSERT_FALSE(result.qualified());
+    TEST_ASSERT_TRUE(result.has(MatrixElectricalBlocker::UnverifiedExpanderVariant));
+    TEST_ASSERT_TRUE(result.has(MatrixElectricalBlocker::Wake1ExpanderVariantUnknown));
+    TEST_ASSERT_TRUE(result.has(MatrixElectricalBlocker::MatrixRow1ExpanderVariantUnknown));
+}
+
+void test_mcp23017_rejects_wake_1_and_matrix_row_1_gpb7_as_separate_input_conflicts() {
+    const std::array<ExpanderInputVariant, MatrixConfiguration::HandlerCount> variants = {
+        {ExpanderInputVariant::Mcp23017, ExpanderInputVariant::Mcp23017}};
+    const auto result = qualifyMatrixElectricalInputs(installedMapping(), variants);
+    TEST_ASSERT_FALSE(result.qualified());
+    TEST_ASSERT_TRUE(result.has(MatrixElectricalBlocker::Wake1Mcp23017Gpa7OrGpb7Input));
+    TEST_ASSERT_TRUE(result.has(MatrixElectricalBlocker::MatrixRow1Mcp23017Gpa7OrGpb7Input));
+    TEST_ASSERT_EQUAL_STRING(
+        "wake_1_mcp23017_gpa7_gpb7_input_unsupported",
+        matrixElectricalBlockerCode(MatrixElectricalBlocker::Wake1Mcp23017Gpa7OrGpb7Input));
+    TEST_ASSERT_EQUAL_STRING(
+        "matrix_row_1_mcp23017_gpa7_gpb7_input_unsupported",
+        matrixElectricalBlockerCode(
+            MatrixElectricalBlocker::MatrixRow1Mcp23017Gpa7OrGpb7Input));
+}
+
+void test_each_mcp23017_gpb7_conflict_remains_blocking_when_only_the_other_is_reassigned() {
+    const std::array<ExpanderInputVariant, MatrixConfiguration::HandlerCount> variants = {
+        {ExpanderInputVariant::Mcp23017, ExpanderInputVariant::Mcp23017}};
+    MatrixConfiguration configuration = installedMapping();
+    configuration.reservedInputs[0].pin = 10;
+    auto result = qualifyMatrixElectricalInputs(configuration, variants);
+    TEST_ASSERT_FALSE(result.qualified());
+    TEST_ASSERT_FALSE(result.has(MatrixElectricalBlocker::Wake1Mcp23017Gpa7OrGpb7Input));
+    TEST_ASSERT_TRUE(result.has(MatrixElectricalBlocker::MatrixRow1Mcp23017Gpa7OrGpb7Input));
+
+    configuration = installedMapping();
+    configuration.rows[0].endpoint.pin = 0;
+    result = qualifyMatrixElectricalInputs(configuration, variants);
+    TEST_ASSERT_FALSE(result.qualified());
+    TEST_ASSERT_TRUE(result.has(MatrixElectricalBlocker::Wake1Mcp23017Gpa7OrGpb7Input));
+    TEST_ASSERT_FALSE(result.has(MatrixElectricalBlocker::MatrixRow1Mcp23017Gpa7OrGpb7Input));
+}
+
+void test_mcp23017_gpa7_is_also_rejected_when_used_as_an_input() {
+    const std::array<ExpanderInputVariant, MatrixConfiguration::HandlerCount> variants = {
+        {ExpanderInputVariant::Mcp23017, ExpanderInputVariant::Mcp23017}};
+    MatrixConfiguration configuration = installedMapping();
+    configuration.reservedInputs[0].pin = 10;
+    configuration.rows[0].endpoint.pin = 7;
+    const auto result = qualifyMatrixElectricalInputs(configuration, variants);
+    TEST_ASSERT_FALSE(result.qualified());
+    TEST_ASSERT_FALSE(result.has(MatrixElectricalBlocker::Wake1Mcp23017Gpa7OrGpb7Input));
+    TEST_ASSERT_TRUE(result.has(MatrixElectricalBlocker::MatrixRow1Mcp23017Gpa7OrGpb7Input));
+}
+
+void test_later_wake_and_matrix_row_have_distinct_mcp23017_blocker_codes() {
+    const std::array<ExpanderInputVariant, MatrixConfiguration::HandlerCount> variants = {
+        {ExpanderInputVariant::Mcp23017, ExpanderInputVariant::Mcp23017}};
+    MatrixConfiguration wake = installedMapping();
+    wake.reservedInputs[0].pin = 10;
+    wake.rows[0].endpoint.pin = 0;
+    wake.reservedInputs[1].pin = 15;
+    auto result = qualifyMatrixElectricalInputs(wake, variants);
+    TEST_ASSERT_FALSE(result.qualified());
+    TEST_ASSERT_TRUE(result.has(MatrixElectricalBlocker::OtherWakeMcp23017Gpa7OrGpb7Input));
+    TEST_ASSERT_FALSE(
+        result.has(MatrixElectricalBlocker::OtherMatrixRowMcp23017Gpa7OrGpb7Input));
+    TEST_ASSERT_EQUAL_STRING(
+        "wake_other_mcp23017_gpa7_gpb7_input_unsupported",
+        matrixElectricalBlockerCode(MatrixElectricalBlocker::OtherWakeMcp23017Gpa7OrGpb7Input));
+
+    MatrixConfiguration row = installedMapping();
+    row.reservedInputs[0].pin = 10;
+    row.rows[0].endpoint.pin = 0;
+    row.rows[1].endpoint.pin = 7;
+    result = qualifyMatrixElectricalInputs(row, variants);
+    TEST_ASSERT_FALSE(result.qualified());
+    TEST_ASSERT_FALSE(result.has(MatrixElectricalBlocker::OtherWakeMcp23017Gpa7OrGpb7Input));
+    TEST_ASSERT_TRUE(
+        result.has(MatrixElectricalBlocker::OtherMatrixRowMcp23017Gpa7OrGpb7Input));
+    TEST_ASSERT_EQUAL_STRING(
+        "matrix_other_row_mcp23017_gpa7_gpb7_input_unsupported",
+        matrixElectricalBlockerCode(
+            MatrixElectricalBlocker::OtherMatrixRowMcp23017Gpa7OrGpb7Input));
+}
+
+void test_reassigned_mcp23017_inputs_can_pass_without_claiming_the_installed_hardware() {
+    const std::array<ExpanderInputVariant, MatrixConfiguration::HandlerCount> variants = {
+        {ExpanderInputVariant::Mcp23017, ExpanderInputVariant::Mcp23017}};
+    MatrixConfiguration candidate = installedMapping();
+    candidate.reservedInputs[0].pin = 10;
+    candidate.rows[0].endpoint.pin = 0;
+    TEST_ASSERT_EQUAL_INT(static_cast<int>(MatrixConfigurationError::None),
+                          static_cast<int>(validateMatrixConfiguration(candidate)));
+    TEST_ASSERT_TRUE(qualifyMatrixElectricalInputs(candidate, variants).qualified());
+}
+
+void test_verified_bidirectional_profile_is_explicit_and_unknown_remains_the_default() {
+    const std::array<ExpanderInputVariant, MatrixConfiguration::HandlerCount> verified = {
+        {ExpanderInputVariant::VerifiedGpa7Gpb7Bidirectional,
+         ExpanderInputVariant::VerifiedGpa7Gpb7Bidirectional}};
+    TEST_ASSERT_TRUE(qualifyMatrixElectricalInputs(installedMapping(), verified).qualified());
+    TEST_ASSERT_FALSE(qualifyMatrixElectricalInputs(installedMapping()).qualified());
+}
+
+void test_structural_failure_is_reported_separately_and_stops_electrical_inspection() {
+    MatrixConfiguration configuration = installedMapping();
+    configuration.rowCount = configuration.rows.size() + 1;
+    const auto result = qualifyMatrixElectricalInputs(configuration);
+    TEST_ASSERT_FALSE(result.qualified());
+    TEST_ASSERT_TRUE(result.has(MatrixElectricalBlocker::StructuralConfigurationInvalid));
+    TEST_ASSERT_FALSE(result.has(MatrixElectricalBlocker::UnverifiedExpanderVariant));
 }
 
 void test_null_handler_availability_is_rejected_before_using_any_endpoint() {
@@ -190,7 +308,15 @@ void test_unconfigured_tail_is_not_interpreted_as_active_pin_configuration() {
 
 int main() {
     UNITY_BEGIN();
-    RUN_TEST(test_installed_nine_by_nine_mapping_and_wake_pins_are_valid);
+    RUN_TEST(test_installed_nine_by_nine_mapping_and_wake_pins_are_structurally_valid);
+    RUN_TEST(test_unknown_expander_variants_fail_closed_with_specific_installed_mapping_reasons);
+    RUN_TEST(test_mcp23017_rejects_wake_1_and_matrix_row_1_gpb7_as_separate_input_conflicts);
+    RUN_TEST(test_each_mcp23017_gpb7_conflict_remains_blocking_when_only_the_other_is_reassigned);
+    RUN_TEST(test_mcp23017_gpa7_is_also_rejected_when_used_as_an_input);
+    RUN_TEST(test_later_wake_and_matrix_row_have_distinct_mcp23017_blocker_codes);
+    RUN_TEST(test_reassigned_mcp23017_inputs_can_pass_without_claiming_the_installed_hardware);
+    RUN_TEST(test_verified_bidirectional_profile_is_explicit_and_unknown_remains_the_default);
+    RUN_TEST(test_structural_failure_is_reported_separately_and_stops_electrical_inspection);
     RUN_TEST(test_null_handler_availability_is_rejected_before_using_any_endpoint);
     RUN_TEST(test_zero_or_oversized_axis_counts_are_rejected_without_indexing_arrays);
     RUN_TEST(test_logical_row_and_column_ranges_are_checked_before_narrowing);
