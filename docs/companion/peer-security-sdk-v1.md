@@ -329,6 +329,40 @@ remain closed. The next probe must establish that configuration and binary
 layout, then bind the original HCI command, its later controller result and
 the encryption-change event to one birth without retaining key bytes.
 
+### Controller result and complete-record gate (2026-10-11)
+
+The next pinned-source check, `scripts/check_f1_controller_result_gap.py`,
+uses unmodified ESP-IDF v4.4.6 `btu_hcif.c` (SHA-256
+`e4485a0f4a035119827050596c0ac707158ebafc3946afecd22725efc8e1d81f`)
+and `btm_sec.c` (SHA-256
+`d3207f4b4a369cf534f128c124fca8192979769a01986ed46bcb15ace4c8b394`).
+Supply those files from the official v4.4.6 paths
+`components/bt/host/bluedroid/stack/btu/btu_hcif.c` and
+`components/bt/host/bluedroid/stack/btm/btm_sec.c` as `--hci-source` and
+`--security-source`.
+It verifies that Encryption Change reads exactly status, HCI handle and
+enabled, then forwards those three values to ACL and security handlers.
+`btm_sec_encrypt_change` looks up a record by handle and branches on the
+current ACL transport. The event contains no command identifier, key
+identifier or GATT-birth token. An old result after handle reuse and a result
+for a second key selection on the same handle have identical event bytes.
+The existing HCI-birth witness rejects reused handles, but neither that
+witness nor a successful event can identify which key was selected.
+
+The full private `tBTM_SEC_DEV_REC` declaration depends on feature guards
+including `L2CAP_UCD_INCLUDED`, `BLE_PRIVACY_SPT`,
+`SMP_SLAVE_CON_PARAMS_UPD_ENABLE` and `BLE_50_FEATURE_SUPPORT`, and on
+transitive private types absent from the installed Arduino SDK headers. The
+verified 328-byte allocation and selected offsets remain a partial binary
+check; they are not a complete structure ABI. Consequently no positive
+metadata witness is justified by this package. A next isolated test must
+compile the complete unmodified record against the exact archived build
+configuration and compare all relevant offsets/size to `libbt.a`. A separate
+source-actor test must show one exclusive HCI command per frozen birth, reject
+re-keying and recycling, and correlate command status plus Encryption Change
+before any restored-bond security evidence is considered. No role or
+diagnosis grant follows from this source-level work.
+
 ```text
 python scripts/check_f1_smp_prereset_abi.py
   --gatt-source-dir <lifecycle-source-with-original-bt_defs.h-and-bt_target.h>
