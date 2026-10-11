@@ -24,13 +24,17 @@ upload approval, installation record or instruction to start the user run.
   This image was not uploaded.
 - Built installable Debug APK:
   `companion/android/app/build/outputs/apk/debug/app-debug.apk`,
-  23,977,835 bytes, SHA-256
-  `DDEE76FBDF63B52607DA4353C3C22E802CD98B85DE54095F6E762EE78FF684FC`.
+  23,441,147 bytes, SHA-256
+  `4AE78F6AF2DA0D492459B992FFAC91B8C6F746C4DCEDD0233BACCB6E1407E4D5`.
   This revised build contains the report contract, journal core and bounded
   BLE transport-history export. It has not been installed. The most recent
   `adb devices -l` completed but listed no attached device.
   The APK still lists every required area with its concrete blockers and
-  sends no request for the blocked areas.
+  sends no request for the blocked areas. The APK was rebuilt twice offline
+  from the current source with the same byte count and hash. Package
+  `de.larpescape.companion.diagnosticpreview` is signed with the same Android
+  debug certificate as the previously installed preview (SHA-256
+  `6B755048E55C8BE19EF3F73B1A015F96735F6E79148AC8960BD244E6F9BA4837`).
 
 The APK includes the readiness UI, report contract, journal core and transport
 history from the earlier product source commits above; it does not include an
@@ -70,8 +74,9 @@ the same debug signing certificate, but a subsequent `adb devices -l` returned
 no devices. Its `adb install -r` attempt returned `no devices/emulators found`;
 the installed phone version is therefore still the `B1BF72...` build unless a
 later phone-side action changes it.
-The later journal builds `D8F8FA...`, `143422...`, `A6A28A...` and current `DDEE76...`
-have also not been installed. After one transient ADB-server startup failure,
+The later journal builds `D8F8FA...`, `143422...`, `A6A28A...`, `DDEE76...`
+and the current `4AE78F...` rebuild have also not been installed. After one
+transient ADB-server startup failure,
 the latest `adb devices -l` completed and listed no attached device. Current
 phone-side installation state cannot be re-read.
 
@@ -171,9 +176,11 @@ synthetic two-step preview.
   companion fixture suite passed.
 - NFC capability, PN532 frame, PN532 adapter and APP_MUTUAL development
   transcript: 1, 4, 6 and 1 host cases passed.
-- Android: 112 core protocol and 80 app unit tests passed; Debug APK build
-  succeeded offline. The BLE history test includes a failed fresh-write retry,
-  which retains exactly one archived prior connection. The history is transport
+- Android: 112 core protocol and 80 app unit tests passed in a fresh
+  `--rerun-tasks` offline run; Debug APK build succeeded and an immediate
+  second fresh build reproduced its hash. The BLE history test includes a
+  failed fresh-write retry, which retains exactly one archived prior connection.
+  The history is transport
   evidence only, not a device-authorized or physical result.
 - Matrix/wake electrical qualification: 20/20 targeted host cases passed.
   The helper is not included in the runtime grant path. The broad Unity host run initially had
@@ -192,7 +199,8 @@ synthetic two-step preview.
 
 All test results above remain software-only. The phone was connected and the
 earlier `B1BF72...` diagnostic APK was installed after explicit approval. The
-revised `986CF0...`, `D8F8FA...`, `143422...`, `A6A28A...` and current `DDEE76...`
-builds were not installed; the latest ADB query found no attached phone.
+revised `986CF0...`, `D8F8FA...`, `143422...`, `A6A28A...`, `DDEE76...`
+and current `4AE78F...` builds were not installed; the latest ADB
+query found no attached phone.
 No app workflow was exercised, no firmware was uploaded and no user hardware
 run was started.
