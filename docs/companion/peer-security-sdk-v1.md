@@ -137,6 +137,42 @@ original completion function maps both 0x000d and 0x010d to 13 (and 0x001d and
 actually selected bonded key is proven. The observation is discarded; it never
 sets link security, reconnect readiness, a role or diagnosis authority.
 
+### Restored record and key path audit (2026-10-11)
+
+The official ESP-IDF v4.4.6 source narrows the remaining question but does not
+close it. `btm_int.h` declares `tBTM_SEC_BLE.auth_mode` as `UINT16`, alongside a
+key-type mask and separate peer/local LTK fields. `btc_ble_storage.c` writes the
+persisted mode through a `uint8_t` argument into an integer setting. On restore,
+it reads that integer when it first finds a key, posts `BTA_DmAddBleDevice`,
+then posts each available key. `bta_dm_add_ble_device` passes the mode to
+`BTM_SecAddBleDevice`, whose `UINT32` parameter is assigned to the record's
+`UINT16` field; `BTM_SecAddBleKey` later populates key fields on the record.
+This establishes the source-level restoration route, not a measured NVS value
+or the complete private record layout in the linked binary.
+
+The original source has two different encryption-key paths. As master,
+`btm_ble_start_encrypt` requires `BTM_LE_KEY_PENC` and passes the record's
+`rand`, `ediv` and `pltk` to the controller. As slave, an LTK request resolves
+the record by handle; absent an active SMP request, its reply requires
+`BTM_LE_KEY_LENC` and passes `lltk`. The SMP completion fallback separately
+finds a record by pairing address and copies only its low mode byte into the
+callback. None of these source-level observations proves that this callback
+used the record and key selected for the current GATT birth. A same-address
+record, a stored key and an encryption-success event cannot substitute for
+that binding.
+
+Source pins, from the official v4.4.6 Git tree: `btm_int.h`
+`57854e0a915dc3b08187d1f1b63a9704aa49bf0f`, `btm_ble.c`
+`c236d5d8aaf72f894d8977b9e900512e6d236c75`, `btc_ble_storage.c`
+`c4b67c4f1ab551dd13a5f1261cf74039de044932`, `bta_dm_act.c`
+`41a5da662cf94a09af8ecc2820997f29bd461817`, and `smp_act.c`
+`f77085870a25a0928fcd9603a9093e3d65b0da0b358a9ba55c4ed06b424dec12`.
+The local ESP32 `libbt.a` still hashes to
+`1e11ea417c83432360b7309c0d35877a884be8fa3fc8c875cc9d627ff37cf787`.
+The full `tBTM_SEC_DEV_REC` configuration, offsets and selected-key path have
+not been matched to its actual instructions. Therefore no private record
+reader, positive F1 admission or diagnosis bypass follows from this audit.
+
 Before positive F1 admission: independently audit the complete device-record
 ABI and full-width selected mode/key provenance at the original actor, connect
 the bounded reencryption state machine including loss/re-pair/bond deletion,
