@@ -18,6 +18,13 @@ grant. Missing reader ownership, Bluetooth correlation, timeout, deactivation
 or app process restart ends the run as incomplete. No automated retry of an
 uncertain exchange.
 
+The box learns the phone's run ID only from the validated SELECT response;
+there is no current App→Box BLE start command that could supply it earlier.
+It records that ID as an untrusted correlation value and the app later
+compares it with its locally generated ID. A zero ID or an ID already consumed
+in the current boot is rejected. Neither an echoed ID nor the separate box
+challenge authenticates the phone.
+
 The provisional AID `F04C4152504E4643` is for a local development build only.
 It must be replaced by an appropriately registered product AID before
 deployment. The HCE service uses Android category `other`, requires
@@ -34,7 +41,7 @@ challenge are public correlation values, not secrets.
 | Direction | Bytes | Length | Meaning |
 | --- | --- | ---: | --- |
 | Box → phone | `00 A4 04 00 08 F0 4C 41 52 50 4E 46 43 00` | 14 | SELECT provisional AID |
-| Phone → box | `4E 43 01` + run ID (16 bytes) + `90 00` | 21 | Armed HCE test, version 1 |
+| Phone → box | `4E 43 01` + run ID (16 bytes) + `90 00` | 21 | Armed HCE test, version 1; box learns run ID here |
 | Box → phone | `80 10 00 00 10` + box challenge (16 bytes) | 21 | One capability challenge |
 | Phone → box | `4E 43 01` + exact box challenge (16 bytes) + `90 00` | 21 | Echo only, no authentication |
 
