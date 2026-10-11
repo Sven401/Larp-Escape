@@ -23,6 +23,32 @@ die Startaktivität lautet
 Die Vorschau öffnet direkt den geführten Diagnose-Pilotplan. Wake- und LED-Antworten sind
 synthetisch; diese Vorschau bestätigt keine Pinbelegung oder Hardwarefunktion.
 
+### Reale BLE-Diagnoseverfügbarkeit prüfen
+
+In der Vorschau führt der Reiter **ESP** zur getrennten, lesenden BLE-Prüfung.
+„ESP suchen und Diagnose prüfen“ fragt bei Bedarf die Android-Bluetooth-Erlaubnis
+an; danach ein gefundenes ESP ausdrücklich verbinden. Die Karte **Reale
+BLE-Diagnoseverfügbarkeit** zeigt den Stand der aktuellen Verbindung und den
+konkreten Sperrgrund aus Dienstsuche, MTU oder Antwortabonnement. Sie zeigt
+beispielsweise den fehlenden Diagnosedienst, fehlende Merkmale, eine zu kleine
+Wertgröße oder die weiterhin fehlende Rollenbindung. Bei Trennung oder
+Berechtigungsverlust verfällt diese Beobachtung. Der Reiter **Diagnose ·
+Simulation** bleibt ein eigener Fake-Ablauf und übernimmt keine BLE-Belege.
+Eine Verfügbarkeit ist weder ein GRANT noch ein Hardware-Prüfbericht; die
+App sendet derzeit keinen produktiven Diagnoseauftrag.
+
+Stand 11.10.2026, Basis `bc0c383`: Die Firmware hat die festgelegten
+Diagnoseattribute noch nicht registriert. Eine aktuelle GATT-Dienstsuche muss daher
+gesperrt bleiben. Prüfweg dieses UI-Pakets: gezielte JVM-Statusprüfungen und
+Debugbuild; kein Handy- oder Originalbox-Test. Grundlagen:
+[Android-Architektur](https://developer.android.com/topic/architecture/recommendations)
+(BLE-Daten über Repository/StateFlow zur UI),
+[BLE-Berechtigungen](https://developer.android.com/develop/connectivity/bluetooth/bt-permissions)
+und [Compose-Barrierefreiheit](https://developer.android.com/develop/ui/compose/accessibility/api-defaults)
+(beschriftete Material-3-Aktionen mit mindestens 48 dp Bedienhöhe).
+Das geprüfte [android/skills-Angebot](https://github.com/android/skills)
+enthält keinen für diese BLE-Statusanzeige passenden Spezialskill.
+
 ### Geführter Pilotplan
 
 Die feste Folge ist **Wake 1 → LED 0**. „Pilotplan starten“ legt einen neuen

@@ -161,18 +161,26 @@ class MainActivity : ComponentActivity() {
                     )
                 }
                 Surface(Modifier.fillMaxSize()) {
-                    if (BuildConfig.APPLICATION_ID.endsWith(".diagnosticpreview")) {
+                    if (BuildConfig.APPLICATION_ID.endsWith(".diagnosticpreview") && diagnosticScreen) {
                         val diagnosticState by diagnosticModel.state.collectAsStateWithLifecycle()
-                        Column(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing).imePadding().padding(16.dp)) {
-                            DiagnosticScreen(diagnosticState, diagnosticModel, exportFile = { if (diagnosticModel.beginExport()) exportDiagnostic.launch("diagnose-simulation-v1.json") })
+                        Column(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing).imePadding().padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                FilterChip(selected = false, onClick = { selectDiagnostic(false) }, label = { Text("ESP · BLE") }, modifier = Modifier.heightIn(min = 48.dp))
+                                FilterChip(selected = true, onClick = {}, label = { Text("Simulation") }, modifier = Modifier.heightIn(min = 48.dp))
+                            }
+                            Box(Modifier.weight(1f)) {
+                                DiagnosticScreen(diagnosticState, diagnosticModel, exportFile = { if (diagnosticModel.beginExport()) exportDiagnostic.launch("diagnose-simulation-v1.json") })
+                            }
                         }
                     } else {
-                    Column(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing).verticalScroll(rememberScrollState()).padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                    Column(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing).imePadding().verticalScroll(rememberScrollState()).padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
                         Text("Larp Escape", style = MaterialTheme.typography.headlineLarge)
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            FilterChip(selected = !nfcScreen && !scenarioScreen && !diagnosticScreen, onClick = { selectDiagnostic(false); selectScenario(false); selectNfc(false) }, label = { Text("ESP") })
-                            FilterChip(selected = nfcScreen && !scenarioScreen, onClick = { selectScenario(false); selectNfc(true) }, label = { Text("NFC-Tags") })
-                            FilterChip(selected = scenarioScreen, onClick = { selectScenario(true) }, label = { Text("Szenario") })
+                            FilterChip(selected = !nfcScreen && !scenarioScreen && !diagnosticScreen, onClick = { selectDiagnostic(false); selectScenario(false); selectNfc(false) }, label = { Text("ESP") }, modifier = Modifier.heightIn(min = 48.dp))
+                            if (!BuildConfig.APPLICATION_ID.endsWith(".diagnosticpreview")) {
+                                FilterChip(selected = nfcScreen && !scenarioScreen, onClick = { selectScenario(false); selectNfc(true) }, label = { Text("NFC-Tags") })
+                                FilterChip(selected = scenarioScreen, onClick = { selectScenario(true) }, label = { Text("Szenario") })
+                            }
                         }
                         if (BuildConfig.ALLOW_CONTRACT_LAB) {
                             FilterChip(selected = diagnosticScreen, onClick = { selectDiagnostic(true) }, label = { Text("Diagnose · Simulation") }, modifier = Modifier.heightIn(min = 48.dp))
@@ -192,7 +200,16 @@ class MainActivity : ComponentActivity() {
                         Text("Gerät verbinden", style = MaterialTheme.typography.titleLarge)
                         Text(state.message)
                         if (state.permissionMissing) Text("Suche und Verbindung benötigen die Erlaubnis „Geräte in der Nähe“.")
-                        Button(onClick = ::startScan, enabled = !state.scanning, modifier = Modifier.fillMaxWidth()) { Text(if (state.scanning) "Suche läuft …" else "ESP suchen") }
+                        Card(Modifier.fillMaxWidth()) {
+                            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                Text("Reale BLE-Diagnoseverfügbarkeit", style = MaterialTheme.typography.titleMedium)
+                                Text(state.diagnosticAvailability.detail)
+                                Text("Diese Anzeige bestätigt keine Gerätefreigabe oder Hardwarefunktion.", style = MaterialTheme.typography.bodySmall)
+                            }
+                        }
+                        Button(onClick = ::startScan, enabled = !state.scanning, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                            Text(if (state.scanning) "Suche läuft …" else "ESP suchen und Diagnose prüfen")
+                        }
                         state.targets.forEach { target ->
                             OutlinedButton(onClick = { model.connect(target.id) }, modifier = Modifier.fillMaxWidth()) { Text("${target.name} verbinden") }
                         }

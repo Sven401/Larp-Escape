@@ -58,13 +58,18 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
                 when (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR)) {
                     BluetoothAdapter.STATE_OFF, BluetoothAdapter.STATE_TURNING_OFF -> {
                         clearSession()
+                        mutable.value = mutable.value.copy(diagnosticAvailability = DiagnosticAvailabilityV1.BLUETOOTH_OFF)
                         report("Bluetooth ausgeschaltet · erneut einschalten und suchen")
                     }
                     BluetoothAdapter.STATE_TURNING_ON -> {
-                        clearSession(); report("Bluetooth startet …")
+                        clearSession(); mutable.value = mutable.value.copy(diagnosticAvailability = DiagnosticAvailabilityV1.BLUETOOTH_OFF)
+                        report("Bluetooth startet …")
                     }
                     BluetoothAdapter.STATE_ON -> {
-                        if (permitted()) report("Bluetooth eingeschaltet · bereit zum Suchen")
+                        if (permitted()) {
+                            mutable.value = mutable.value.copy(diagnosticAvailability = DiagnosticAvailabilityV1.DISCONNECTED)
+                            report("Bluetooth eingeschaltet · bereit zum Suchen")
+                        }
                         else permissionsChanged(false)
                     }
                 }
@@ -76,6 +81,10 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
     private fun report(message: String) {
         mutable.value = mutable.value.copy(message = message)
         Log.i("LarpEscape", message)
+    }
+    private fun reportDiagnostic(shell: AndroidDiagnosticGattShellV1) {
+        if (diagnostic === shell)
+            mutable.value = mutable.value.copy(diagnosticAvailability = diagnosticAvailability(shell.link.phase, shell.link.failure, shell.blockStatus))
     }
     private fun guarded(action: () -> Unit) {
         if (!permitted()) { permissionsChanged(false); return }
@@ -91,7 +100,8 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
                 else -> "Bluetoothzugriff fehlt · Suche und Verbindung sind ausgeschaltet"
             }
             close()
-            mutable.value = mutable.value.copy(permissionMissing = true, message = message)
+            mutable.value = mutable.value.copy(permissionMissing = true, message = message,
+                diagnosticAvailability = DiagnosticAvailabilityV1.PERMISSION_MISSING)
         } else {
             if (!receiverRegistered) {
                 // Bluetooth broadcasts can originate from the privileged Bluetooth UID.
@@ -100,20 +110,26 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
                 receiverRegistered = true
             }
             if (mutable.value.permissionMissing) {
-                mutable.value = mutable.value.copy(permissionMissing = false)
+                mutable.value = mutable.value.copy(permissionMissing = false,
+                    diagnosticAvailability = DiagnosticAvailabilityV1.DISCONNECTED)
                 report("Bluetoothzugriff erlaubt · bereit zum Suchen")
             }
             try {
                 if (adapter?.isEnabled != true) {
-                    clearSession(); report("Bluetooth einschalten, danach erneut suchen")
+                    clearSession(); mutable.value = mutable.value.copy(diagnosticAvailability = DiagnosticAvailabilityV1.BLUETOOTH_OFF)
+                    report("Bluetooth einschalten, danach erneut suchen")
                 }
             } catch (_: SecurityException) { permissionsChanged(false) }
         }
     }
     override fun scan() = guarded {
-        if (adapter?.isEnabled != true) { clearSession(); report("Bluetooth einschalten, danach erneut suchen"); return@guarded }
+        if (adapter?.isEnabled != true) {
+            clearSession(); mutable.value = mutable.value.copy(diagnosticAvailability = DiagnosticAvailabilityV1.BLUETOOTH_OFF)
+            report("Bluetooth einschalten, danach erneut suchen"); return@guarded
+        }
         stopScan(); disconnect(); devices.clear()
-        mutable.value = DeviceUiState(message = "Suche läuft …", scanning = true)
+        mutable.value = DeviceUiState(message = "Suche läuft …", scanning = true,
+            diagnosticAvailability = DiagnosticAvailabilityV1.SEARCHING)
         val token = ++scanGeneration
         scanner = adapter.bluetoothLeScanner ?: error("BLE-Scanner fehlt")
         scanCallback = object : ScanCallback() {
@@ -133,11 +149,17 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
                 }
             } }
             override fun onScanFailed(errorCode: Int) { handler.post {
-                if (token == scanGeneration) { stopScan(); report("Suche fehlgeschlagen ($errorCode)") }
+                if (token == scanGeneration) {
+                    stopScan(); mutable.value = mutable.value.copy(diagnosticAvailability = DiagnosticAvailabilityV1.SEARCH_FAILED)
+                    report("Suche fehlgeschlagen ($errorCode)")
+                }
             } }
         }
         scanner!!.startScan(null, ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).build(), scanCallback)
-        handler.postDelayed({ if (token == scanGeneration) { stopScan(); report("Suche beendet: ${devices.size} Geräte") } }, 10000)
+        handler.postDelayed({ if (token == scanGeneration) {
+            stopScan(); mutable.value = mutable.value.copy(diagnosticAvailability = DiagnosticAvailabilityV1.SEARCH_COMPLETE)
+            report("Suche beendet: ${devices.size} Geräte")
+        } }, 10000)
     }
     private fun stopScan() {
         ++scanGeneration
@@ -152,33 +174,54 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
         val device = devices[id] ?: error("Gerät erneut suchen")
         val token = ++generation
         statuses.connect()
-        mutable.value = mutable.value.copy(freshness = StatusFreshness.WAITING)
+        mutable.value = mutable.value.copy(freshness = StatusFreshness.WAITING,
+            diagnosticAvailability = DiagnosticAvailabilityV1.CONNECTING)
         report("Verbinde mit ${device.name ?: "ESP"} …")
         val callback = object : BluetoothGattCallback() {
             private fun dispatch(connection: BluetoothGatt, action: () -> Unit) { handler.post {
                 if (token == generation && connection === gatt) guarded(action)
             } }
             override fun onConnectionStateChange(connection: BluetoothGatt, status: Int, newState: Int) = dispatch(connection) {
-                check(status == BluetoothGatt.GATT_SUCCESS) { "GATT-Verbindungsfehler $status" }
+                if (status != BluetoothGatt.GATT_SUCCESS) {
+                    disconnect()
+                    mutable.value = mutable.value.copy(diagnosticAvailability = DiagnosticAvailabilityV1.CONNECTION_FAILED)
+                    report("GATT-Verbindungsfehler $status")
+                    return@dispatch
+                }
                 if (newState == BluetoothProfile.STATE_CONNECTED) {
                     report("BLE verbunden; prüfe Dienste …")
                     check(connection.discoverServices()) { "Dienstsuche konnte nicht starten" }
                 } else if (newState == BluetoothProfile.STATE_DISCONNECTED) { disconnect(); report("Verbindung getrennt") }
             }
             override fun onServicesDiscovered(connection: BluetoothGatt, status: Int) = dispatch(connection) {
-                check(status == BluetoothGatt.GATT_SUCCESS) { "Dienstsuche fehlgeschlagen" }
+                if (status != BluetoothGatt.GATT_SUCCESS) {
+                    disconnect()
+                    mutable.value = mutable.value.copy(diagnosticAvailability = DiagnosticAvailabilityV1.DISCOVERY_FAILED)
+                    report("Dienstsuche fehlgeschlagen ($status)")
+                    return@dispatch
+                }
                 val lab = if (BuildConfig.ALLOW_CONTRACT_LAB) connection.getService(labService) else null
-                check(lab != null || connection.getService(canonical) != null) { "Kein passender ESP-Dienst" }
-                if (lab == null) diagnostic = AndroidDiagnosticGattShellV1(connection, token).also { shell ->
-                    if (!shell.discover()) Log.i("LarpEscape", "DIAGNOSTIC_GATT_BLOCKED ${shell.blockStatus}")
+                if (lab == null && connection.getService(canonical) == null) {
+                    disconnect()
+                    mutable.value = mutable.value.copy(diagnosticAvailability = DiagnosticAvailabilityV1.PRODUCT_SERVICE_MISSING)
+                    report("Kein passender ESP-Produktdienst")
+                    return@dispatch
+                }
+                if (lab == null) {
+                    val shell = AndroidDiagnosticGattShellV1(connection, token)
+                    diagnostic = shell
+                    val started = shell.discover()
+                    reportDiagnostic(shell)
+                    if (!started) Log.i("LarpEscape", "DIAGNOSTIC_GATT_BLOCKED ${shell.blockStatus}")
                     else handler.postDelayed({
                         if (token == generation && connection === gatt && diagnostic === shell) {
                             shell.expireSetup()
+                            reportDiagnostic(shell)
                             if (shell.link.failure == de.larpescape.protocol.DiagnosticGattFailureV1.SETUP_TIMEOUT)
                                 Log.i("LarpEscape", "DIAGNOSTIC_GATT_BLOCKED ${shell.blockStatus}")
                         }
                     }, 10000)
-                }
+                } else mutable.value = mutable.value.copy(diagnosticAvailability = DiagnosticAvailabilityV1.LAB_ONLY)
                 mutable.value = mutable.value.copy(connected = true, lab = lab != null)
                 report("GATT_SERVICE_CONFIRMED ${if (lab != null) "v2-Vertragslabor" else "Produktservice"}")
                 if (lab != null) {
@@ -202,6 +245,7 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
                     descriptor.characteristic?.uuid == de.larpescape.protocol.DiagnosticGattFirmwareV1.route.stepReply) {
                     diagnostic?.onDescriptorWrite(descriptor, status == BluetoothGatt.GATT_SUCCESS)
                     Log.i("LarpEscape", "DIAGNOSTIC_GATT ${diagnostic?.blockStatus}")
+                    diagnostic?.let(::reportDiagnostic)
                     return@dispatch
                 }
                 if (descriptor.characteristic?.uuid != outputId) return@dispatch
@@ -239,6 +283,7 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
             override fun onMtuChanged(connection: BluetoothGatt, mtu: Int, status: Int) = dispatch(connection) {
                 if (diagnostic?.onMtuChanged(mtu, status == BluetoothGatt.GATT_SUCCESS) == false)
                     Log.i("LarpEscape", "DIAGNOSTIC_GATT_BLOCKED ${diagnostic?.blockStatus}")
+                diagnostic?.let(::reportDiagnostic)
             }
             override fun onCharacteristicWrite(connection: BluetoothGatt, characteristic: BluetoothGattCharacteristic, status: Int) = dispatch(connection) {
                 diagnostic?.onCharacteristicWrite(characteristic, status == BluetoothGatt.GATT_SUCCESS)
@@ -255,7 +300,8 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
         try { if (permitted()) old?.disconnect() } catch (_: SecurityException) { }
         try { old?.close() } catch (_: SecurityException) { }
         mutable.value = mutable.value.copy(connected = false, status = null, configuredStatus = null,
-            freshness = StatusFreshness.DISCONNECTED, lab = false, message = "Getrennt")
+            freshness = StatusFreshness.DISCONNECTED, lab = false, message = "Getrennt",
+            diagnosticAvailability = DiagnosticAvailabilityV1.DISCONNECTED)
     }
     private fun clearSession() {
         stopScan(); disconnect(); handler.removeCallbacksAndMessages(null)
