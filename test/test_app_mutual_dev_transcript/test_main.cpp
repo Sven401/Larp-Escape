@@ -1,5 +1,6 @@
 #include "CompanionIntegration/AppMutualDevTranscriptV1.h"
 #include <unity.h>
+#include <cctype>
 #include <cstdio>
 
 using namespace larp::app_mutual_dev;
@@ -33,11 +34,29 @@ static Transcript fixture() {
     value.phoneRevocationGeneration = 9;
     return value;
 }
+static int nextHex(std::FILE *file) {
+    int value;
+    do { value = std::fgetc(file); } while (value != EOF && std::isspace(value));
+    if (value == EOF) return -1;
+    if (value >= '0' && value <= '9') return value - '0';
+    if (value >= 'a' && value <= 'f') return value - 'a' + 10;
+    if (value >= 'A' && value <= 'F') return value - 'A' + 10;
+    return -2;
+}
 static void test_codec_and_closed_fake() {
     CHECK(FrameSize == 289);
     Transcript original = fixture(), parsed;
     Frame frame = {}, roundtrip = {};
     CHECK(encode(original, frame));
+    std::FILE *golden = std::fopen("docs/companion/fixtures/app-mutual-dev-transcript-v1.hex", "rb");
+    CHECK(golden != nullptr);
+    for (std::size_t i = 0; i < FrameSize; ++i) {
+        const int high = nextHex(golden), low = nextHex(golden);
+        CHECK(high >= 0 && low >= 0);
+        CHECK(frame[i] == static_cast<std::uint8_t>((high << 4) | low));
+    }
+    CHECK(nextHex(golden) == -1);
+    std::fclose(golden);
     CHECK(frame[0] == 0x41 && frame[1] == 0x4d && frame[2] == 0x44 && frame[3] == 0x31);
     CHECK(frame[4] == 1 && frame[5] == 0xff && frame[6] == 0x42 && frame[7] == 0x50);
     CHECK(frame[8] == 1 && frame[14] == 11);
