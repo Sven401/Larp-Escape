@@ -7,6 +7,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import de.larpescape.companion.data.diagnostic.ReichstagsboxDiagnosticReadinessV1
 
 private fun stateLabel(value: String) = when (value) {
     "pending" -> "Antwort ausstehend"
@@ -135,9 +136,27 @@ fun DiagnosticScreen(state: DiagnosticUiState, model: DiagnosticViewModel, expor
             }
             TextButton(onClick = { showFuture = !showFuture }, modifier = Modifier.heightIn(min = 48.dp)) { Text(if (showFuture) "Gesamtplan-Vorschau schließen" else "Gesamtplan-Vorschau · gesperrt") }
             if (showFuture) {
-                Text("Spätere Hardwareprüfung · nicht ausführbar", style = MaterialTheme.typography.titleMedium)
-                Text("Alle Bereiche sind gesperrt. Die Vorschau gibt keine Box frei und sendet keinen Gerätebefehl.")
-                listOf("Vier Aufweckeingänge · je 3 Versuche und Kombinationen", "9×9-Matrix · 81 Felder drücken und loslassen", "23 LEDs · Position, Farbe und Versorgung", "PN532 / Test-Tag · geschütztes Schreiben und Rücklesen", "DFPlayer / SD / Lautsprecher · Tracks und hörbarer Ton", "ESP-NOW · kurzer und entfernter Empfang mit Empfängerbericht", "Abschluss · 3 Kaltstarts und gemeinsamer Dauerlauf").forEach { Text("Gesperrt: $it") }
+                Text("Vollständiger Hardwaretest · noch nicht ausführbar", style = MaterialTheme.typography.titleMedium)
+                Text("Die App sendet für diese Einträge keinen Geräteauftrag. Jeder Blocker bleibt offen, bis Firmware und Hardware ihn mit einem aktuellen Gerätebeleg schließen.")
+                Text("Aktives LED-Datenprofil", style = MaterialTheme.typography.titleSmall)
+                Text(ReichstagsboxDiagnosticReadinessV1.dataPinProfile)
+                Text(ReichstagsboxDiagnosticReadinessV1.alternativeDataPinProfiles)
+                ReichstagsboxDiagnosticReadinessV1.items.forEach { item ->
+                    Card(Modifier.fillMaxWidth()) {
+                        Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                            Text(item.title, style = MaterialTheme.typography.titleSmall)
+                            Text("Geforderte Aktionen: ${item.requestedActions}")
+                            item.actions.forEach { action ->
+                                val state = when (action.pathState) {
+                                    de.larpescape.companion.data.diagnostic.DiagnosticActionPathStateV1.BLOCKED -> "Gerätepfad gesperrt"
+                                    de.larpescape.companion.data.diagnostic.DiagnosticActionPathStateV1.APP_DOMAIN_READY_DEVICE_BLOCKED -> "App-Domäne geprüft · Gerätepfad gesperrt"
+                                }
+                                Text("${action.label}: $state")
+                            }
+                            item.blockers.forEach { blocker -> Text("Gesperrt: $blocker") }
+                        }
+                    }
+                }
             }
             if (document != null) {
                 TextButton(onClick = { showTools = !showTools }, modifier = Modifier.heightIn(min = 48.dp)) { Text(if (showTools) "Weitere Aktionen schließen" else "Abbruch, Export und neuer Lauf") }
