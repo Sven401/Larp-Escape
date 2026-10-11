@@ -72,7 +72,7 @@ class HardwareDiagnosticReportV1 internal constructor(private val document: Json
     val actions: List<HardwareDiagnosticActionEvidenceV1> get() = document.getAsJsonArray("actions").map(::decodeAction)
 }
 
-/** Pure, in-memory draft. A productive adapter must persist an intent before sending it. */
+/** Pure evidence model. Use DurableHardwareDiagnosticRunV1 before any productive send. */
 class HardwareDiagnosticEvidenceLedgerV1(val runId: String, val startedUtc: String) {
     private data class MutableAttempt(
         val request: DiagnosticRequestEvidenceV1,
@@ -152,6 +152,13 @@ class HardwareDiagnosticEvidenceLedgerV1(val runId: String, val startedUtc: Stri
 
     fun finish(endedUtc: String): HardwareDiagnosticReportV1 {
         finished?.let { return it }
+        return reportAt(endedUtc).also { finished = it }
+    }
+
+    /** A validated, non-final snapshot for transactional journal updates. */
+    internal fun snapshotAt(utc: String): HardwareDiagnosticReportV1 = reportAt(utc)
+
+    private fun reportAt(endedUtc: String): HardwareDiagnosticReportV1 {
         require(!Instant.parse(endedUtc).isBefore(Instant.parse(startedUtc)))
         val document = JsonObject().apply {
             addProperty("schema", "hardware_diagnostic_evidence_v1")
@@ -170,7 +177,7 @@ class HardwareDiagnosticEvidenceLedgerV1(val runId: String, val startedUtc: Stri
                 }
             })
         }
-        return HardwareDiagnosticReportCodecV1.fromDocument(document).also { finished = it }
+        return HardwareDiagnosticReportCodecV1.fromDocument(document)
     }
 
     private fun attempt(action: HardwareDiagnosticActionV1, correlationId: String): MutableAttempt =
@@ -183,7 +190,31 @@ class HardwareDiagnosticEvidenceLedgerV1(val runId: String, val startedUtc: Stri
         add("observation", item.observation?.let(::encodeObservation) ?: JsonNull.INSTANCE)
     }
 
-    companion object { const val MAX_ATTEMPTS_PER_ACTION = 128 }
+    companion object {
+        const val MAX_ATTEMPTS_PER_ACTION = 128
+
+        /** Rebuild only from a validated report. This never sends or retries a request. */
+        internal fun restore(report: HardwareDiagnosticReportV1): HardwareDiagnosticEvidenceLedgerV1 {
+            val document = report.snapshot()
+            val ledger = HardwareDiagnosticEvidenceLedgerV1(report.runId, document.text("startedUtc"))
+            report.actions.forEach { action ->
+                action.attempts.forEach { attempt ->
+                    val id = attempt.request.correlationId
+                    ledger.request(action.action, id, attempt.request.requestedUtc)
+                    attempt.acceptanceClaim?.let {
+                        ledger.recordAcceptanceClaim(action.action, id, it.state, it.deviceMs, it.detail)
+                    }
+                    attempt.executionClaim?.let {
+                        ledger.recordExecutionClaim(action.action, id, it.state, it.deviceMs, it.detail)
+                    }
+                    attempt.observation?.let {
+                        ledger.observe(action.action, id, it.state, it.recordedUtc, it.detail)
+                    }
+                }
+            }
+            return ledger
+        }
+    }
 }
 
 object HardwareDiagnosticReportCodecV1 {
