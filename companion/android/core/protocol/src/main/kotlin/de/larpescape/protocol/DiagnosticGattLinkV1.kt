@@ -7,6 +7,22 @@ enum class DiagnosticGattFailureV1 {
     NONE, WRONG_SERVICE, MISSING_CHARACTERISTIC, AMBIGUOUS_CHARACTERISTIC, WRONG_PROPERTIES, MISSING_CCCD,
     MTU_REQUEST_FAILED, MTU_TOO_SMALL, MTU_CALLBACK_FAILED, CONTROL_CCCD_FAILED, STEP_CCCD_FAILED,
     SETUP_TIMEOUT, DISCONNECTED,
+    PROBE_EVIDENCE_FAILED,
+}
+
+/** Harmless notification proving that this GATT instance can deliver each reply channel. */
+object DiagnosticGattProbeV1 {
+    private val prefix = byteArrayOf(0x44, 0x47, 0x01, 0x50)
+    fun matches(characteristic: UUID, value: ByteArray): Boolean {
+        val route = DiagnosticGattFirmwareV1.route
+        val channel = when (characteristic) {
+            route.controlReply -> 1
+            route.stepReply -> 2
+            else -> return false
+        }
+        return value.size == 5 && value.copyOfRange(0, 4).contentEquals(prefix) &&
+            value[4].toInt() == channel
+    }
 }
 
 /** One connection generation. It never grants authority to send a diagnostic command. */
@@ -18,6 +34,8 @@ class DiagnosticGattLinkV1(val generation: Int) {
         private set
     var effectiveAttValueBytes = 0
         private set
+    private var controlProbeSeen = false
+    private var stepProbeSeen = false
 
     fun discovered(service: UUID?, writes: Set<UUID>, notifies: Set<UUID>, cccds: Set<UUID>): Boolean {
         if (phase != DiagnosticGattPhaseV1.DISCOVERING) return false
@@ -54,12 +72,41 @@ class DiagnosticGattLinkV1(val generation: Int) {
         if (characteristic != expected) return false
         if (!success) return block(if (expected == route.controlReply) DiagnosticGattFailureV1.CONTROL_CCCD_FAILED else DiagnosticGattFailureV1.STEP_CCCD_FAILED)
         phase = if (expected == route.controlReply) DiagnosticGattPhaseV1.STEP_CCCD_PENDING else DiagnosticGattPhaseV1.CCCD_WRITES_ACKNOWLEDGED
+        completeProbesIfReady()
         return true
+    }
+
+    /** A probe may precede its local descriptor callback; readiness still waits for both ATT ACKs. */
+    fun canObserveProbe(observedGeneration: Int, characteristic: UUID, value: ByteArray): Boolean {
+        if (observedGeneration != generation || !DiagnosticGattProbeV1.matches(characteristic, value) ||
+            value.size > effectiveAttValueBytes) return false
+        val route = DiagnosticGattFirmwareV1.route
+        return when (characteristic) {
+            route.controlReply -> !controlProbeSeen && phase in setOf(DiagnosticGattPhaseV1.CONTROL_CCCD_PENDING,
+                DiagnosticGattPhaseV1.STEP_CCCD_PENDING, DiagnosticGattPhaseV1.CCCD_WRITES_ACKNOWLEDGED)
+            route.stepReply -> !stepProbeSeen && phase in setOf(DiagnosticGattPhaseV1.STEP_CCCD_PENDING,
+                DiagnosticGattPhaseV1.CCCD_WRITES_ACKNOWLEDGED)
+            else -> false
+        }
+    }
+
+    fun observeProbe(observedGeneration: Int, characteristic: UUID, value: ByteArray): Boolean {
+        if (!canObserveProbe(observedGeneration, characteristic, value)) return false
+        if (characteristic == DiagnosticGattFirmwareV1.route.controlReply) controlProbeSeen = true
+        else stepProbeSeen = true
+        completeProbesIfReady()
+        return true
+    }
+
+    private fun completeProbesIfReady() {
+        if (phase == DiagnosticGattPhaseV1.CCCD_WRITES_ACKNOWLEDGED && controlProbeSeen && stepProbeSeen)
+            phase = DiagnosticGattPhaseV1.TRANSPORT_READY
     }
 
     fun failed(reason: DiagnosticGattFailureV1) { require(reason != DiagnosticGattFailureV1.NONE); block(reason) }
     private fun block(reason: DiagnosticGattFailureV1): Boolean {
-        phase = DiagnosticGattPhaseV1.BLOCKED; failure = reason; effectiveAttValueBytes = 0; return false
+        phase = DiagnosticGattPhaseV1.BLOCKED; failure = reason; effectiveAttValueBytes = 0
+        controlProbeSeen = false; stepProbeSeen = false; return false
     }
     fun canReceive(generation: Int): Boolean = generation == this.generation && phase == DiagnosticGattPhaseV1.TRANSPORT_READY
     fun preflight(): Set<DiagnosticGattBlockV1> = if (phase == DiagnosticGattPhaseV1.TRANSPORT_READY)

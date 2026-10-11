@@ -29,9 +29,9 @@ enum class DiagnosticAvailabilityV1(val detail: String) {
     SUBSCRIPTION_UNPROVEN("Beide CCCD-Schreibvorgänge wurden bestätigt. Ob der ESP Benachrichtigungen für diese Verbindung sendet, ist ungeprüft; Diagnoseaktionen bleiben gesperrt."),
     SUBSCRIPTION_FAILED("Ein Diagnose-Antwortabo konnte nicht bestätigt werden."),
     SETUP_TIMEOUT("Die Diagnoseverbindung wurde nicht rechtzeitig eingerichtet."),
-    ROLE_MISSING("Diagnose-GATT ist vorbereitet. Eine geprüfte Geräte- und Spielleitungsrolle fehlt; Geräteaktionen bleiben gesperrt."),
+    ROLE_MISSING("Beide Diagnose-Benachrichtigungen sind eingetroffen. Eine geprüfte Geräte- und Spielleitungsrolle fehlt; Geräteaktionen bleiben gesperrt."),
     ROLE_CHANGED("Die Rollenbindung passt nicht mehr zur ursprünglichen Verbindung."),
-    TRANSPORT_ONLY("Diagnose-GATT ist vorbereitet. Es liegt keine bestätigte Geräteaktion oder Hardwareprüfung vor."),
+    TRANSPORT_ONLY("Beide Diagnose-Benachrichtigungen sind eingetroffen. Es liegt keine bestätigte Geräteaktion oder Hardwareprüfung vor."),
     OTHER_BLOCK("Die Diagnoseverbindung ist gesperrt. Erneut verbinden und den Status prüfen."),
 }
 

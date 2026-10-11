@@ -34,6 +34,24 @@ internal class DiagnosticGattEvidenceBoundaryV1(
         return true
     }
 
+    fun transportProbe(observedGeneration: Int, characteristic: UUID): Boolean {
+        if (observedGeneration != generation || characteristic !in setOf(route.controlReply, route.stepReply)) return false
+        val key = "probe:$characteristic"
+        if (key in acknowledged) return false
+        if (!emit(DiagnosticConnectionEventV1.Kind.TRANSPORT_PROBE, null,
+                "characteristic=$characteristic;notification_received;transport_only")) return false
+        acknowledged.add(key)
+        return true
+    }
+
+    fun transportProbeComplete(observedGeneration: Int): Boolean {
+        if (observedGeneration != generation || "probe:complete" in acknowledged) return false
+        if (!emit(DiagnosticConnectionEventV1.Kind.TRANSPORT_PROBE_COMPLETE, null,
+                "control_and_step_notification_received;transport_only;role_unverified;physical_unverified")) return false
+        acknowledged.add("probe:complete")
+        return true
+    }
+
     fun writeAck(observedGeneration: Int, characteristic: UUID, message: Long): Boolean {
         if (observedGeneration != generation || characteristic !in setOf(route.controlRequest, route.stepRequest)) return false
         val key = "$characteristic:$message"

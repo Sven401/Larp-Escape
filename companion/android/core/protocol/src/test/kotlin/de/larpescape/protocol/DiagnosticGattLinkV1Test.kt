@@ -68,4 +68,43 @@ class DiagnosticGattLinkV1Test {
         assertFalse(cccdFailure.descriptorWriteAcknowledged(route.controlReply, false))
         assertEquals(DiagnosticGattFailureV1.CONTROL_CCCD_FAILED, cccdFailure.failure)
     }
+
+    @Test fun twoExactNotificationsAfterAcksProveOnlyThisGenerationTransport() {
+        val link = DiagnosticGattLinkV1(13)
+        assertTrue(link.discovered(route.service, writes, replies, replies))
+        assertTrue(link.mtu(131, true))
+        assertTrue(link.descriptorWriteAcknowledged(route.controlReply, true))
+        assertTrue(link.descriptorWriteAcknowledged(route.stepReply, true))
+        assertFalse(link.canReceive(13))
+        assertFalse(link.observeProbe(12, route.controlReply, probe(1)))
+        assertFalse(link.observeProbe(13, route.controlReply, probe(2)))
+        assertFalse(link.observeProbe(13, route.controlRequest, probe(1)))
+        assertFalse(link.observeProbe(13, route.controlReply, byteArrayOf(0x44, 0x47, 0x01, 0x50)))
+        assertTrue(link.observeProbe(13, route.controlReply, probe(1)))
+        assertFalse(link.canReceive(13))
+        assertFalse(link.observeProbe(13, route.controlReply, probe(1)))
+        assertTrue(link.observeProbe(13, route.stepReply, probe(2)))
+        assertEquals(DiagnosticGattPhaseV1.TRANSPORT_READY, link.phase)
+        assertTrue(link.canReceive(13))
+        assertFalse(link.canReceive(12))
+        link.failed(DiagnosticGattFailureV1.DISCONNECTED)
+        assertFalse(link.canReceive(13))
+        assertFalse(link.observeProbe(13, route.stepReply, probe(2)))
+    }
+
+    @Test fun notificationBeforeDescriptorCallbackWaitsForBothAcks() {
+        val link = DiagnosticGattLinkV1(14)
+        assertTrue(link.discovered(route.service, writes, replies, replies))
+        assertTrue(link.mtu(131, true))
+        assertFalse(link.observeProbe(14, route.stepReply, probe(2)))
+        assertTrue(link.observeProbe(14, route.controlReply, probe(1)))
+        assertEquals(DiagnosticGattPhaseV1.CONTROL_CCCD_PENDING, link.phase)
+        assertTrue(link.descriptorWriteAcknowledged(route.controlReply, true))
+        assertTrue(link.observeProbe(14, route.stepReply, probe(2)))
+        assertFalse(link.canReceive(14))
+        assertTrue(link.descriptorWriteAcknowledged(route.stepReply, true))
+        assertTrue(link.canReceive(14))
+    }
+
+    private fun probe(channel: Int) = byteArrayOf(0x44, 0x47, 0x01, 0x50, channel.toByte())
 }

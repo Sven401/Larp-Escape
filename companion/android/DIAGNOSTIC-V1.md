@@ -24,6 +24,17 @@ erfolgreiche Descriptor-Write-Rückrufe führen nur zu
 `SUBSCRIPTION_UNPROVEN`. Sie öffnen weder `TRANSPORT_READY` noch den
 Diagnose-Schreibpfad. Der Export protokolliert die beiden ATT-Bestätigungen
 ausdrücklich als `CCCD_WRITE_ACK` mit offenem Abo-Nachweis. Jede
+Firmware-Probe ist fünf Bytes lang (`44 47 01 50 01` für ControlReply,
+`44 47 01 50 02` für StepReply). Nur wenn beide exakten Werte auf den
+richtigen Antwortmerkmalen derselben GATT-Generation eintreffen **und**
+beide Descriptor-Rückrufe bestätigt wurden, meldet die App
+`TRANSPORT_READY`. Eine Notification kann vor ihrem lokalen
+Descriptor-Rückruf eintreffen; sie wird dann vermerkt, aber der Abschluss
+wartet auf beide Rückrufe. Der private Bericht protokolliert
+`TRANSPORT_PROBE` je Kanal und `TRANSPORT_PROBE_COMPLETE` getrennt von
+`CCCD_WRITE_ACK`. Die festen Probe-Bytes sind ein Transportnachweis,
+keine Authentisierung und keine Berechtigung für Diagnosebefehle.
+Jede
 Rückmeldung wird über die ursprüngliche `BluetoothGatt`-Instanz und lokale
 Generation gefiltert; bei Trennung, Berechtigungsverlust oder Neustart wird
 der Zustand verworfen. Fehler bei Discovery, MTU oder Abonnement bleiben mit

@@ -100,4 +100,24 @@ class DiagnosticGattEvidenceBoundaryV1Test {
         assertTrue(received.all { it.kind == DiagnosticConnectionEventV1.Kind.CCCD_WRITE_ACK &&
             it.detail.endsWith("subscription_unproven") && it.message == null })
     }
+
+    @Test fun transportProbeEvidenceIsDistinctFromCccdAckAndNeverPhysicalProof() {
+        val received = mutableListOf<DiagnosticConnectionEventV1>()
+        val gate = DiagnosticGattEvidenceBoundaryV1(7, "A8:42:E3:CD:4B:1A") { received.add(it); true }
+        assertFalse(gate.transportProbe(6, route.controlReply))
+        assertFalse(gate.transportProbe(7, route.controlRequest))
+        assertTrue(gate.cccdWriteAck(7, route.controlReply))
+        assertTrue(gate.transportProbe(7, route.controlReply))
+        assertFalse(gate.transportProbe(7, route.controlReply))
+        assertTrue(gate.cccdWriteAck(7, route.stepReply))
+        assertTrue(gate.transportProbe(7, route.stepReply))
+        assertTrue(gate.transportProbeComplete(7))
+        assertFalse(gate.transportProbeComplete(7))
+        assertEquals(listOf(DiagnosticConnectionEventV1.Kind.CCCD_WRITE_ACK,
+            DiagnosticConnectionEventV1.Kind.TRANSPORT_PROBE,
+            DiagnosticConnectionEventV1.Kind.CCCD_WRITE_ACK,
+            DiagnosticConnectionEventV1.Kind.TRANSPORT_PROBE,
+            DiagnosticConnectionEventV1.Kind.TRANSPORT_PROBE_COMPLETE), received.map { it.kind })
+        assertTrue(received.last().detail.contains("physical_unverified"))
+    }
 }

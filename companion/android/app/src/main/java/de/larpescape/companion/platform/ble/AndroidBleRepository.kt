@@ -427,6 +427,7 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
                 val copy = value.copyOf()
                 dispatch(connection) {
                     diagnostic?.onNotification(characteristic, copy)
+                    diagnostic?.let(::reportDiagnostic)
                     if (characteristic.uuid != outputId) return@dispatch
                     val complete = frames.accept(copy, SystemClock.elapsedRealtime()) ?: return@dispatch
                     if (complete.first != 4) return@dispatch

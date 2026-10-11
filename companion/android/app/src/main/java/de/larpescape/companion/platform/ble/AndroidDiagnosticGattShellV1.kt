@@ -118,7 +118,11 @@ internal class AndroidDiagnosticGattShellV1(
         evidence.cccdWriteAck(generation, expected)
         if (link.phase == DiagnosticGattPhaseV1.STEP_CCCD_PENDING)
             return subscribe(stepReply, DiagnosticGattFailureV1.STEP_CCCD_FAILED)
-        return link.phase == DiagnosticGattPhaseV1.CCCD_WRITES_ACKNOWLEDGED
+        if (link.phase == DiagnosticGattPhaseV1.TRANSPORT_READY && !evidence.transportProbeComplete(generation)) {
+            link.failed(DiagnosticGattFailureV1.PROBE_EVIDENCE_FAILED)
+            return false
+        }
+        return link.phase == DiagnosticGattPhaseV1.CCCD_WRITES_ACKNOWLEDGED || link.phase == DiagnosticGattPhaseV1.TRANSPORT_READY
     }
 
     /** No call site currently supplies originalAuthority; consequently no live diagnostic write is possible. */
@@ -214,6 +218,17 @@ internal class AndroidDiagnosticGattShellV1(
     }
 
     fun onNotification(characteristic: BluetoothGattCharacteristic, value: ByteArray, nowMs: Long = SystemClock.elapsedRealtime()) {
+        if (characteristic.service?.uuid != route.service) return
+        if (link.canObserveProbe(generation, characteristic.uuid, value)) {
+            if (!evidence.transportProbe(generation, characteristic.uuid)) {
+                link.failed(DiagnosticGattFailureV1.PROBE_EVIDENCE_FAILED)
+                return
+            }
+            link.observeProbe(generation, characteristic.uuid, value)
+            if (link.phase == DiagnosticGattPhaseV1.TRANSPORT_READY && !evidence.transportProbeComplete(generation))
+                link.failed(DiagnosticGattFailureV1.PROBE_EVIDENCE_FAILED)
+            return
+        }
         if (!link.canReceive(generation) || characteristic.service?.uuid != route.service || value.size > link.effectiveAttValueBytes) return
         val current = originalAuthority()
         when (characteristic.uuid) {
