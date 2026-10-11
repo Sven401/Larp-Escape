@@ -37,6 +37,40 @@ outer scope distinguishes these from the original Encryption Change event.
 `check_f1_hci_origin.py` verifies original header layout, event constants, dispatch
 selection, BTU ownership and function ABI against pinned ESP-IDF 4.4.6 sources.
 
+## Linked source path check (2026-10-11)
+
+The static contract now includes the actual linked call path. Rebuild the
+isolated target and inspect its ELF with:
+
+```powershell
+pio run -e esp32-gatts-abi-probe
+python scripts/check_f1_hci_link_path.py
+```
+
+The rebuild passed with Arduino ESP32 2.0.14 and PlatformIO espressif32 6.6.0;
+the probe uses 51,552 bytes RAM and 1,094,797 bytes of its 1,310,720-byte
+app slot. The link check passed against pinned `libbt.a` (SHA-256
+`1e11ea417c83432360b7309c0d35877a884be8fa3fc8c875cc9d627ff37cf787`).
+It found two original GATT registration calls to `__wrap_GATT_Register`,
+one original BTU dispatch call to `__wrap_btu_hcif_process_event`,
+two original security-result calls to `__wrap_btm_sec_encrypt_change` and
+three original SMP-completion calls to `__wrap_smp_proc_pairing_cmpl` in the
+finished ELF. The map ties their original implementations to `libbt.a` and
+the HCI/SMP wrappers to `F1EncryptAbi.cpp` and the GATT wrapper/connection
+callback to `Esp32GattsSource.cpp`. Each original HCI/SMP function has exactly
+one direct ELF caller, inside its observer wrapper; `GATT_Register` has two
+direct calls inside its wrapper. No additional direct caller
+appears in this linked probe. This proves that the **probe's** existing
+birth/event checks are on these linked SDK call paths; it is not a product
+build or device execution.
+
+The controller Encryption Change event still exposes only status, HCI handle
+and enabled state. It has no selected-key, HCI command ID or GATT-birth token.
+The original event wrapper narrows its observation to the current birth and
+blocks reused handles, but it cannot establish exclusive command-to-result
+provenance or a restored-bond MITM mode. No reader or role gate consumes this
+link check as authority.
+
 ## Authentication boundary
 
 The selected, restored bond mode is not read by this path. Neither a matching
