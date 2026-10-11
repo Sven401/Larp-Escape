@@ -8,7 +8,8 @@ upload approval, installation record or instruction to start the user run.
 
 - Product source branch/implementation commit:
   `plan/nutzergefuehrte-hardwarediagnose-startintegration` /
-  `c5b16ef` (isolated host-test sources after electrical qualification
+  `a261417` (explicit MITM transport blocker after isolated host-test sources
+  `c5b16ef` and electrical qualification
   `f89a94f`, BLE history `911fc9d`, retry-safe archive `2e73e31` and
   journal-finalization fix `d386438`).
   Firmware sources are unchanged from `77028cb74edbaa16ca33b4fcabc63a5c5cdbe94f`.
@@ -21,7 +22,7 @@ upload approval, installation record or instruction to start the user run.
 - Built installable Debug APK:
   `companion/android/app/build/outputs/apk/debug/app-debug.apk`,
   23,977,835 bytes, SHA-256
-  `A6A28AC8F94045B104D0D23756F939700F7050B8F713A7934862157C576FC616`.
+  `DDEE76FBDF63B52607DA4353C3C22E802CD98B85DE54095F6E762EE78FF684FC`.
   This revised build contains the report contract, journal core and bounded
   BLE transport-history export. It has not been installed. The most recent
   ADB attempt could not start its server; it gives no current phone-state proof.
@@ -65,7 +66,7 @@ the same debug signing certificate, but a subsequent `adb devices -l` returned
 no devices. Its `adb install -r` attempt returned `no devices/emulators found`;
 the installed phone version is therefore still the `B1BF72...` build unless a
 later phone-side action changes it.
-The later journal builds `D8F8FA...` and `143422...` and current `A6A28A...`
+The later journal builds `D8F8FA...`, `143422...`, `A6A28A...` and current `DDEE76...`
 have also not been installed. The last successful ADB query listed no attached
 device. A subsequent query could not start the ADB server, so current phone
 connection state is unknown.
@@ -93,7 +94,15 @@ flash, eFuse or restore operation occurred.
    Game Master role. `APP_MUTUAL_V1` and the selected NFC authentication path
    remain development contracts without production enrollment, protected box
    key storage, Finished exchange, role ACK or revocation/rollback proof.
-   Control and Step writes must therefore remain `InsufficientAuthorization`.
+   The product configures `ESP_IO_CAP_NONE` and `ESP_LE_AUTH_BOND`, while its
+   Control/Step attributes require `ESP_GATT_PERM_WRITE_ENC_MITM`. Thus the
+   observed Just Works link cannot reach those writes even before the separate
+   role gate. An application-layer proof over Just Works would require a
+   reviewed, complete F0/F1/GATT/Android migration; it cannot relabel the
+   existing bond as BLE MITM or silently relax only the diagnostic attributes.
+   The future NFC role target likewise does not itself change BLE permissions.
+   The existing decision analysis is `docs/companion/diagnostic-auth-options-v1.md`.
+   Control and Step writes must remain `InsufficientAuthorization`.
 2. **Ownership and LED off:** the closed arbiter fences software and has an
    independent ESP timer, but no electrical or visible all-off feedback. There
    is no productive component-owner handoff or positive diagnostic grant.
@@ -156,7 +165,7 @@ synthetic two-step preview.
   companion fixture suite passed.
 - NFC capability, PN532 frame, PN532 adapter and APP_MUTUAL development
   transcript: 1, 4, 6 and 1 host cases passed.
-- Android: 112 core protocol and 79 app unit tests passed; Debug APK build
+- Android: 112 core protocol and 80 app unit tests passed; Debug APK build
   succeeded offline. The BLE history test includes a failed fresh-write retry,
   which retains exactly one archived prior connection. The history is transport
   evidence only, not a device-authorized or physical result.
@@ -174,7 +183,7 @@ synthetic two-step preview.
 
 All test results above remain software-only. The phone was connected and the
 earlier `B1BF72...` diagnostic APK was installed after explicit approval. The
-revised `986CF0...`, `D8F8FA...`, `143422...` and current `A6A28A...`
+revised `986CF0...`, `D8F8FA...`, `143422...`, `A6A28A...` and current `DDEE76...`
 builds were not installed; current phone connectivity is unverified.
 No app workflow was exercised, no firmware was uploaded and no user hardware
 run was started.
