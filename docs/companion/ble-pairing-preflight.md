@@ -222,3 +222,30 @@ from the phone both equal
 Codex did not open the app or conduct a pairing attempt. No exported user
 report is available yet, so App–ESP pairing and physical diagnosis remain
 unverified.
+
+## User scan reports and scan-outcome update, 2026-10-11
+
+The user exported three pairing reports after the BLE startup fix. Their
+SHA-256 values, in filename order `ble-kopplungsbeobachtung-v1.json`, `(1)`,
+`(2)`, are `a5c289951674bf229a71d53479c79f5aaae7138738213ad25c3642a924a11b9f`,
+`617d5ee22aaff2b9a0271fac041c91bf3cb564b497fccbe44606d93161beb7bc`,
+and `9d99103b564a71462631f6f58cbef2608ffa9880220c1c9ca85254454d9bb3b8`.
+The first two contain only `report_started`; the third also contains two
+`scan_started` events. None contains a product candidate, GATT connection
+attempt, service discovery or OS bond. The app log said `Suche beendet: 0
+Geräte`. Android's system pairing list showed the user only `[TV]
+UE55JU6870`, not the box. Since the product advertisement omits a device
+name, the system list alone cannot establish whether its BLE advertisement
+was currently on air. The earlier firmware `Visible` log is a point-in-time
+startup observation, not a continuous radio measurement.
+
+Commit `9733c08` adds bounded `scan_end` evidence: callback count, filtered
+count, canonical-service candidate count and a distinct end reason. Its
+targeted JVM test and offline Debug build passed. After the user confirmed
+no attempt was running, the APK was installed on Moto G14 `ZY22J7CSQD`;
+the built and pulled installed APK share SHA-256
+`87bc6f6b26ea2478a96f0f832500a518aa27e163414844697f75c6fe82c28cd6`.
+The user has been asked to start a fresh pairing report, run the scan in the
+app, and export the result. That new report is pending. The device still
+runs the separately approved `671be0b` image. No additional firmware upload,
+restore, full backup, physical diagnosis or product acceptance followed.
