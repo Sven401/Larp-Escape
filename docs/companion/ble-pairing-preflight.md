@@ -384,3 +384,32 @@ This distinction prevents the restricted environment's adapter state from
 being mistaken for a box failure. The independent Windows result confirms
 box visibility and a GATT path at this time; the Android bond, MITM/F1 role,
 diagnostic authority and physical LED-off result remain open.
+
+## One authorized Windows pairing attempt, 2026-10-11
+
+The user expressly requested one agent-run pairing test through the desktop
+app as input to the Android investigation. Commit `871f92e` adds a separate
+`--pair-once` mode to that app. It requests Windows `PairAsync` only after
+the same run has received the expected box address and an uncached GATT
+query has confirmed the product service. It has a 45-second result deadline,
+does not enter PINs or confirm Windows dialogs, and records `IsPaired`
+separately. Offline build and targeted parser, gate, deadline and pairing
+state checks passed.
+
+The [single-run pairing report](observations/desktop-ble-pair-once-2026-10-11.json)
+(SHA-256 `3aba426c611b3a16d123131f28ec88000340f0614794fe328c284a195ccf6819`)
+shows 34 BLE callbacks in a 12-second scan, including 20 for
+`A8:42:E3:CD:4B:1A`; the box advertised the product UUID. Uncached GATT
+service discovery returned `Success`, product service present, lab service
+absent. Windows `PairAsync` was called once at 17:11:55 UTC and returned
+`Failed` about 0.19 seconds later. A separate immediate OS read returned
+`IsPaired=false`. No PIN or confirmation dialog was handled by Codex, and no
+second pairing attempt was made. The other observed BLE address is omitted
+from the exported device/event list.
+
+This Windows result independently reproduces a bond failure after a working
+BLE/GATT path, but `Failed` supplies no specific SMP or firmware rejection
+reason. It must not be assigned to the Android transport or to a particular
+ESP security callback without correlated firmware evidence. The Android
+user-run attempt with the updated firmware remains necessary, as do the
+MITM/F1 and physical diagnosis checks.

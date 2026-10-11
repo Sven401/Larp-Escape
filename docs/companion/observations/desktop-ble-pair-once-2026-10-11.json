@@ -1,0 +1,95 @@
+{
+  "Schema": "larp-escape-windows-ble-observation-v1",
+  "Source": "windows-winrt-ble-desktop",
+  "RunId": "b8ce9edf3b544e7587c0f3d98f3d72c8",
+  "StartedUtc": "2026-10-11T17:11:41.3991261+00:00",
+  "ExportedUtc": null,
+  "ExpectedAddress": "A8:42:E3:CD:4B:1A",
+  "ProductServiceUuid": "407e6a1d-1cc2-43fd-856b-4aff85a20001",
+  "LabServiceUuid": "86ddc5b0-3878-4ff7-9f55-17c62aeb1001",
+  "SelectedAddress": "A8:42:E3:CD:4B:1A",
+  "SelectedAddressType": "Public",
+  "ScanState": "bounded_timeout",
+  "ScanCallbacks": 34,
+  "ScanDistinctAddresses": 2,
+  "ScanDroppedAddresses": 0,
+  "GattState": "completed",
+  "GattStatus": "Success",
+  "ProductServiceFound": true,
+  "LabServiceFound": false,
+  "PairingState": "not_paired",
+  "PairingStatus": "Failed",
+  "PairingInteractionBoundary": "CLI never enters PIN/passkey or confirms a Windows system dialog; user action, if required, remains open",
+  "PairingOsIsPairedAtLastCheck": false,
+  "FirmwareEvidence": "not_measured_by_desktop_app",
+  "DiagnosticAuthority": "none; observation does not grant a diagnostic role",
+  "Observations": [
+    {
+      "Address": "A8:42:E3:CD:4B:1A",
+      "AddressType": "Public",
+      "Name": "",
+      "Rssi": -24,
+      "LastSeenUtc": "2026-10-11T17:11:53.3655503+00:00",
+      "AdvertisedServices": [
+        "407e6a1d-1cc2-43fd-856b-4aff85a20001"
+      ],
+      "CallbackCount": 20
+    }
+  ],
+  "Events": [
+    {
+      "AtUtc": "2026-10-11T17:11:41.4757906+00:00",
+      "Kind": "scan_started",
+      "Address": null,
+      "Detail": "Windows BluetoothLEAdvertisementWatcher; active; bounded 12 seconds"
+    },
+    {
+      "AtUtc": "2026-10-11T17:11:41.9164397+00:00",
+      "Kind": "advertisement_first_seen",
+      "Address": "A8:42:E3:CD:4B:1A",
+      "Detail": "type=Public;name=;rssi=-26;services=407e6a1d-1cc2-43fd-856b-4aff85a20001"
+    },
+    {
+      "AtUtc": "2026-10-11T17:11:53.5627456+00:00",
+      "Kind": "scan_ended",
+      "Address": null,
+      "Detail": "reason=bounded_timeout;callbacks=34;distinct=2;dropped=0"
+    },
+    {
+      "AtUtc": "2026-10-11T17:11:53.5653098+00:00",
+      "Kind": "device_selected",
+      "Address": "A8:42:E3:CD:4B:1A",
+      "Detail": "type=Public"
+    },
+    {
+      "AtUtc": "2026-10-11T17:11:53.5710277+00:00",
+      "Kind": "gatt_started",
+      "Address": "A8:42:E3:CD:4B:1A",
+      "Detail": "uncached service discovery requested"
+    },
+    {
+      "AtUtc": "2026-10-11T17:11:55.5851774+00:00",
+      "Kind": "gatt_ended",
+      "Address": "A8:42:E3:CD:4B:1A",
+      "Detail": "state=completed;status=Success;product=True;lab=False"
+    },
+    {
+      "AtUtc": "2026-10-11T17:11:55.5904727+00:00",
+      "Kind": "pairing_started",
+      "Address": "A8:42:E3:CD:4B:1A",
+      "Detail": "explicit Windows PairAsync request"
+    },
+    {
+      "AtUtc": "2026-10-11T17:11:55.7823+00:00",
+      "Kind": "pairing_ended",
+      "Address": "A8:42:E3:CD:4B:1A",
+      "Detail": "state=not_paired;status=Failed"
+    },
+    {
+      "AtUtc": "2026-10-11T17:11:55.7824216+00:00",
+      "Kind": "windows_is_paired_read",
+      "Address": "A8:42:E3:CD:4B:1A",
+      "Detail": "False"
+    }
+  ]
+}
