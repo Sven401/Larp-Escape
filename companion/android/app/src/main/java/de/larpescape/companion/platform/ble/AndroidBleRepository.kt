@@ -128,7 +128,7 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
     override fun startPairingReport() {
         pendingBondAddress = null; pendingBondGeneration = null
         val initial = PairingObservationReportV1.start()
-        runCatching { pairingJournal.save(initial); pairingJournal.clearPendingExport() }
+        runCatching { pairingJournal.clearPendingExport(); pairingJournal.save(initial) }
             .onFailure { report("Neuer Kopplungsbericht konnte nicht gespeichert werden: ${it.message}"); return }
         mutable.value = mutable.value.copy(pairingReport = initial)
         observePairing("ANDROID_APP_USER_ACTION", "report_started", "user_requested")
