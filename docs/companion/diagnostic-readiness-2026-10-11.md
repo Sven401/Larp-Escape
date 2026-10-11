@@ -13,7 +13,7 @@ upload approval, installation record or instruction to start the user run.
   `c5b16ef`, electrical qualification `f89a94f`, BLE history `911fc9d`,
   retry-safe archive `2e73e31` and journal-finalization fix `d386438`.
   The current Android source includes canonical report UUID validation at
-  `878c23f`.
+  `878c23f` and qualified matrix-orientation references at `190a860`.
   The productive firmware runtime paths remain unchanged from
   `77028cb74edbaa16ca33b4fcabc63a5c5cdbe94f`; `c194518` adds an
   unconnected audio catalogue whose source compiles for the firmware target.
@@ -25,11 +25,12 @@ upload approval, installation record or instruction to start the user run.
   This image was not uploaded.
 - Built installable Debug APK:
   `companion/android/app/build/outputs/apk/debug/app-debug.apk`,
-  23,441,147 bytes, SHA-256
-  `CE83D9036FBBD4CBF2B160E8D0534AC60BC4E5BCB49D60C82015E0B2563D7B94`.
+  23,457,531 bytes, SHA-256
+  `5CA116FB0A3EEB04A1E3BE05D756C8D9F6C82E78E7E132ACB7D7FC7D4DAB3B1C`.
   This revised build contains the report contract, journal core and bounded
-  BLE transport-history export and strict canonical run/correlation UUID
-  validation. It has not been installed. The latest successful
+  BLE transport-history export, strict canonical run/correlation UUID
+  validation and the qualified display-orientation reference rule. It has not
+  been installed. The latest successful
   `adb devices -l` listed no attached device.
   The APK still lists every required area with its concrete blockers and
   sends no request for the blocked areas. A fresh offline test/assemble run
@@ -77,7 +78,7 @@ no devices. Its `adb install -r` attempt returned `no devices/emulators found`;
 the installed phone version is therefore still the `B1BF72...` build unless a
 later phone-side action changes it.
 The later journal builds `D8F8FA...`, `143422...`, `A6A28A...`, `DDEE76...`
-and the later `4AE78F...` and current `CE83D9...` rebuilds have also not been
+and the later `4AE78F...`, `CE83D9...` and current `5CA116...` rebuilds have not been
 installed. One `adb devices -l` attempt failed to start the ADB server; a
 subsequent read-only retry succeeded but listed no attached device. The current
 phone-side installation state cannot be re-read.
@@ -153,7 +154,7 @@ flash, eFuse or restore operation occurred.
 | NFC phone-write → box-read, reapply and byte comparison | `NFCReader` is a read-only UID adapter; bounded PN532 frame/adapter host tests exist, but no productive raw/tag-data diagnostic port or stable owner is installed. | The debug NFC capability host records phone-side development evidence only. It does not command the box or assert device correlation. | There is no correlated full-payload box read, removal/reapply event or byte comparison. | Stabilize PN532 startup, select supported tag/type/capacity and safe test payload, then add bounded reads behind the productive role. Keep authentication tags and test data isolated. | PN532 startup was previously intermittent; no tag was presented in this session. |
 | NFC box-write → phone-read, explicit confirmation, reapply and byte comparison | No product write operation exists in `NFCReader`; no protect/verify sequence or productive owner is present. | Android can host local NFC development capability, but no UI sends a box write or treats a phone read as box proof. | No write acknowledgement, read-back, independent phone read or byte comparison exists. | Specify allowed test pages, tag protections, one-shot/unclear-outcome behavior and explicit device read-back before enabling. | No write was requested or attempted. |
 | Matrix raw press/release, live highlight, scan error and 81 points | `KeyMatrix::readPressedPositions` returns current positions, while `MCPHandler` maps read failure to HIGH and therefore cannot surface a scan error. No diagnostic adapter emits press/release edges. | These five actions are individually registered but non-clickable. Raw coordinates must remain immutable evidence. | No typed raw event, release, scan-valid/error or complete 81-point ledger is available. | Correct/verify the hardware profile first: matrix row 1 currently maps to output-only GPB7 and boot directions conflict with scanning. Then add raw events and explicit scan validity. | No matrix command is loaded and no key was observed. |
-| Matrix rotation, mirror, multi-point suggestion and confirmation | No firmware transform is needed or allowed; firmware must report raw coordinates only. | `MatrixOrientationV1` implements all eight display transforms separately from raw coordinates. `MatrixOrientationResolverV1` ignores unconfirmed references, requires at least two confirmed points, reports no-match/ambiguous/unique, and recomputes a unique suggestion from the confirmed points before allowing explicit confirmation. The readiness view labels this app-domain path as tested while the device path remains closed. | Six JVM tests cover all 81 cells under all eight transforms, multiple confirmed references, contradiction, confirmation gating and rejection of unconfirmed references. This is display-domain evidence, not matrix evidence. | Wire this domain to a future live raw-event UI and durable setting only after the raw adapter and hardware correction exist. More points may be required when a two-point set is symmetric. | No raw coordinate was received; no orientation was suggested or saved for the box. |
+| Matrix rotation, mirror, multi-point suggestion and confirmation | No firmware transform is needed or allowed; firmware must report raw coordinates only. | `MatrixOrientationV1` implements all eight display transforms separately from raw coordinates. `MatrixOrientationResolverV1` ignores unconfirmed references, requires two distinct user-confirmed physical corners and at least one confirmed inner point, reports insufficient/no-match/ambiguous/unique, and recomputes a unique suggestion before allowing explicit confirmation. The readiness view labels this app-domain path as tested while the device path remains closed. | Eight JVM tests cover all 81 cells under all eight transforms, qualified and incomplete reference sets, symmetric ambiguity, contradiction, confirmation gating and rejection of unconfirmed references. This is display-domain evidence, not matrix evidence. | Wire this domain to a future live raw-event UI and durable setting only after the raw adapter and hardware correction exist. Opposite corners and the center still leave multiple candidate transforms. | No raw coordinate was received; no orientation was suggested or saved for the box. |
 | Wake raw levels, edges, single inputs and combinations | `diagnostic::Control::edge` and `finishWake` plus `StepTransport` implement the bounded v1 owner against an `IPort`; only fake/host ports provide the component owner. No MCP/wake adapter is installed in product startup. | The pilot uses `FakeDiagnosticRepositoryV1` and a synthetic Step exchange. Four separate future actions are non-clickable. | The v1 Step reply preserves raw level, interpreted active state, channel, time and overflow; host reassembly is byte-tested. | Authority and component ownership are absent. Wake 1 maps to MCP23017 GPB7, which cannot be an input. HIGH-active interpretation with pull-up also requires raw and interpreted values to stay separate. | No executable Wake request is loaded; no live Wake observation was made. |
 | ESP-NOW identified packet, short range, operational range and receiver report | `EspNowCommunicator` sends the game enum to fixed peer `B0:A7:32:F1:86:54`; `EspNowRuntime` counts local delivery callbacks. Neither carries a diagnostic run/packet ID or controls the receiver report. | Four readiness actions are registered but non-clickable; there is no receiver import/replay UI. | Local send callbacks cannot prove receiver processing. No durable receiver evidence correlates run, packet, MAC, channel and receipt. | Define a versioned test packet and receiver record, pin/observe the channel, preserve Wi-Fi/BLE coexistence evidence, and replay-test report reconciliation before enabling. | No packet was sent. Current passive counters remained 0/0. |
 | Three cold starts and longer combined run | Normal boot and runtime loops exist, but no productive diagnostic orchestrator owns all components or resumes a correlated run. | The current pilot is only a two-step synthetic preview. Cold-start and endurance actions are non-clickable. | No complete run ID survives device/app restart and no combined component evidence exists. | All component paths, authority, ownership and restart semantics must be implemented first; the user then performs these actions in the app. | No restart/endurance test was started. |
@@ -180,7 +181,7 @@ synthetic two-step preview.
   companion fixture suite passed.
 - NFC capability, PN532 frame, PN532 adapter and APP_MUTUAL development
   transcript: 1, 4, 6 and 1 host cases passed.
-- Android: 113 core protocol and 80 app unit tests passed in a fresh
+- Android: 115 core protocol and 80 app unit tests passed in a fresh
   `--rerun-tasks` offline run; Debug APK build succeeded. The BLE history test
   includes a failed fresh-write retry, which retains exactly one archived
   prior connection.
@@ -200,11 +201,17 @@ synthetic two-step preview.
 - Android lint did not complete because
   `androidx.collection:collection-jvm:1.4.0` was absent from the offline cache.
   Unit tests and APK assembly had already succeeded in that run.
+- Android basis checked on 2026-10-12: the official
+  [architecture recommendations](https://developer.android.com/topic/architecture/recommendations)
+  support keeping tested domain rules separate from UI and device data. The
+  [official Android skills catalogue](https://github.com/android/skills) has
+  no task-specific skill for this narrow, platform-independent orientation
+  resolver; none was installed. No Compose UI or device-access behavior changed.
 
 All test results above remain software-only. The phone was connected and the
 earlier `B1BF72...` diagnostic APK was installed after explicit approval. The
 revised `986CF0...`, `D8F8FA...`, `143422...`, `A6A28A...`, `DDEE76...`
-and the `4AE78F...` and current `CE83D9...` builds were not installed. The
+and the `4AE78F...`, `CE83D9...` and current `5CA116...` builds were not installed. The
 latest successful ADB query found no attached phone. An intervening ADB-server
 startup failure was transient; no installation was attempted in this check.
 No app workflow was exercised, no firmware was uploaded and no user hardware
