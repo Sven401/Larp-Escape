@@ -27,6 +27,9 @@ class ProductGattsOwner {
     ProductGattsOwner &operator=(const ProductGattsOwner &) = delete;
     State begin() noexcept;
     State state() const noexcept { return state_; }
+    const ClosedBleStartupAttempt::Report &stackReport() const noexcept {
+        return stack_.report();
+    }
     bool serviceReady() const noexcept { return service_.ready(); }
     // A stored public registry was validated and installed on the original
     // source actor. This does not attest a connected peer, F1 or GM authority.

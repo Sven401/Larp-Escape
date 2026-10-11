@@ -278,3 +278,20 @@ connection/service discovery and Android OS bond status are separate app-side
 observations. A successful, correlated App–ESP pairing and any firmware
 security claim require the user's own app run and exported report. No firmware
 upload, restore or RF run occurred in this package.
+
+## BLE startup fault report (2026-10-11)
+
+The first hardware boot of integration image `14222a5` reported product GATT
+state `4` (`StackFailed`) and discovery phase `0`. That state aggregates four
+SDK calls; the earlier log did not include the actual failing call or
+`esp_err_t`, so its cause is still unknown. The stack now retains and prints
+the exact failing step (`1` controller init, `2` controller enable, `3`
+Bluedroid init, `4` Bluedroid enable), the signed numeric SDK error,
+controller status (`0` idle, `1` initialized, `2` enabled), Bluedroid status
+(`0` uninitialized, `1` initialized, `2` enabled), and internal 8-bit heap
+free/largest-block bytes before and after the single attempt. Status `5`
+means only that stack startup returned success; it is no GATT, bond, role, or
+diagnostic ACK. A failed start remains closed and will not retry during that
+boot. The error report is observation only and does not change advertising
+or admission gates. The next user-run serial report is required to identify
+the cause before a corrective startup change is justified.
