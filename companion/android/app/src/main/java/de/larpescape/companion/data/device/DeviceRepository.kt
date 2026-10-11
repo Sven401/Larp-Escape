@@ -10,7 +10,8 @@ data class DeviceUiState(
     val scanning: Boolean = false, val connected: Boolean = false, val status: String? = null,
     val lab: Boolean = false, val configuredStatus: ConfiguredStatus? = null,
     val freshness: StatusFreshness = StatusFreshness.DISCONNECTED,
-    val permissionMissing: Boolean = false
+    val permissionMissing: Boolean = false,
+    val diagnosticAvailability: DiagnosticAvailabilityV1 = DiagnosticAvailabilityV1.DISCONNECTED,
 )
 interface DeviceRepository {
     val state: StateFlow<DeviceUiState>
