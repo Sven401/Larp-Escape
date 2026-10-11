@@ -69,6 +69,7 @@ internal static class CliRunner
         }
         catch (Exception ex)
         {
+            Interlocked.Exchange(ref timeoutIssued, 1);
             stopReason = "scan_error";
             lock (sync) journal.AddEvent("scan_error", null, ex.Message);
         }
