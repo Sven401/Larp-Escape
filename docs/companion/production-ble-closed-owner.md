@@ -120,3 +120,36 @@ cannot serve the Android app. Before any device run, confirm the actual
 bootloader's behavior with old otadata and test BLE/Wi-Fi coexistence,
 startup heap, stack and game timing on the connected box in a user-led flow.
 No upload, RF run, authentication, or device-function claim is made here.
+
+## Closed product GATT registration, 2026-10-11
+
+The single-app development build now uses `ProductGattsOwner` at product startup
+after the existing identity owner reaches `ReadyClosed`. It reuses that exact
+owner's initialized `IdentityAccess` and control channel. A process-lifetime
+source and response queue are installed, the pinned `GATT_Register` and
+`SMP_Register` wrappers are armed before controller/Bluedroid startup, and a
+separate worker begins before GATTS callback/application registration. The
+callback copies selected setup events to the bounded service queue. The
+service has command and profile attributes with SDK encrypted/MITM write
+permissions; the actual `IdentityAccess` remains closed. No peer registry,
+proof worker, role grant, command/profile consumer, diagnosis admission, or GAP
+advertising is started. Repeated `begin()` calls retain the first failure or
+registration-pending state; there is no automatic retry after a partial start.
+
+The pinned `espressif32@6.6.0` / Arduino ESP32 2.0.14 build succeeded for this
+exact source. The SHA-256 checks of `libbt.a` and `libmbedcrypto.a` passed. The
+ELF size gate reports **1,949,649 B flash**, **73,212 B static RAM** against a
+2,621,440 B factory app slot. The generated `firmware.bin` is **1,955,952 B**,
+leaving **665,488 B** by image length in that slot. The previous closed-stack
+image was 1,930,912 B; the GATT source/service link adds 25,040 B of image in
+this build. These are build figures, not a measured heap/stack/RF budget.
+
+The existing configured-control host suite passed **513/513** cases. The source
+and service counterpart scripts passed 17 and 58 negative model checks. The
+GATT lifecycle script could not run in the current Python environment because
+`jsonschema` is absent. None of these tests executes the ESP32 startup or
+proves original SDK registration, callback order, service readiness or a live
+connection. F1 restored-bond provenance, same-birth registry/P256/credential
+and role ACK, Android bearer, user-led full-box report, bootloader selection
+with old otadata, and an independently verified rollback remain open. No
+upload, restore or RF test occurred.

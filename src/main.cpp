@@ -4,8 +4,8 @@
 
 #include "ArduinoClock.h"
 #include "CompanionStatusStore.h"
-#if defined(LARP_CLOSED_BLE_CAPACITY)
-#include "ClosedBleStackOwner.h"
+#if defined(LARP_PRODUCT_GATTS_CLOSED)
+#include "ProductGattsOwner.h"
 #endif
 #include "DFMinniHandler.h"
 #include "Esp32CompanionIdentityOwner.h"
@@ -59,8 +59,8 @@ EspNowRuntime communicationRuntime(receiverMAC);
 SerialGameDiagnostics gameDiagnostics;
 CompanionStatusStore companionStatus;
 Esp32CompanionIdentityOwner companionIdentity;
-#if defined(LARP_CLOSED_BLE_CAPACITY)
-ClosedBleStackOwner closedBleStack;
+#if defined(LARP_PRODUCT_GATTS_CLOSED)
+ProductGattsOwner closedGatts(companionIdentity);
 #endif
 ReichstagGame game(nfcReader, keymatrix, keymatrix, dfmHandler, gameClock, gameLightEffects,
                    communicator, &gameDiagnostics);
@@ -79,12 +79,12 @@ void setup() {
     const auto companionIdentityState = companionIdentity.begin();
     Serial.print("Companion identity state (diagnosis closed): ");
     Serial.println(static_cast<unsigned>(companionIdentityState));
-#if defined(LARP_CLOSED_BLE_CAPACITY)
-    // This capacity cut has no GATT service, advertising, or authority path.
-    // Start only after the public identity has reached its closed state.
+#if defined(LARP_PRODUCT_GATTS_CLOSED)
+    // Register the closed service only after the public identity is ready.
+    // No GAP advertising, peer role or diagnostic admission starts here.
     if (companionIdentityState == Esp32CompanionIdentityOwner::State::ReadyClosed) {
-        const auto bleState = closedBleStack.begin();
-        Serial.print("Closed BLE stack state: ");
+        const auto bleState = closedGatts.begin();
+        Serial.print("Closed GATT registration state: ");
         Serial.println(static_cast<unsigned>(bleState));
     }
 #endif
