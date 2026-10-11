@@ -25,22 +25,22 @@ class DiagnosticGattLinkV1Test {
         assertEquals(128, enough.effectiveAttValueBytes)
     }
 
-    @Test fun subscriptionsAreSequentialAndBoundToConnectionGeneration() {
+    @Test fun descriptorAcksAreSequentialButNeverProveNotificationTransport() {
         val link = DiagnosticGattLinkV1(4)
         assertTrue(link.discovered(route.service, writes, replies, replies))
-        assertFalse(link.subscribed(route.controlReply, true))
+        assertFalse(link.descriptorWriteAcknowledged(route.controlReply, true))
         assertTrue(link.mtu(247, true))
-        assertFalse(link.subscribed(route.stepReply, true))
-        assertTrue(link.subscribed(route.controlReply, true))
+        assertFalse(link.descriptorWriteAcknowledged(route.stepReply, true))
+        assertTrue(link.descriptorWriteAcknowledged(route.controlReply, true))
         assertEquals(DiagnosticGattPhaseV1.STEP_CCCD_PENDING, link.phase)
-        assertTrue(link.subscribed(route.stepReply, true))
-        assertEquals(DiagnosticGattPhaseV1.TRANSPORT_READY, link.phase)
-        assertTrue(link.preflight().isEmpty())
-        assertTrue(link.canReceive(4))
+        assertTrue(link.descriptorWriteAcknowledged(route.stepReply, true))
+        assertEquals(DiagnosticGattPhaseV1.CCCD_WRITES_ACKNOWLEDGED, link.phase)
+        assertFalse(link.preflight().isEmpty())
+        assertFalse(link.canReceive(4))
         assertFalse(link.canReceive(3))
         link.failed(DiagnosticGattFailureV1.DISCONNECTED)
         assertFalse(link.canReceive(4))
-        assertFalse(link.subscribed(route.stepReply, true))
+        assertFalse(link.descriptorWriteAcknowledged(route.stepReply, true))
     }
 
     @Test fun missingGatesAndFailuresNeverBecomeReady() {
@@ -65,7 +65,7 @@ class DiagnosticGattLinkV1Test {
         val cccdFailure = DiagnosticGattLinkV1(12)
         assertTrue(cccdFailure.discovered(route.service, writes, replies, replies))
         assertTrue(cccdFailure.mtu(131, true))
-        assertFalse(cccdFailure.subscribed(route.controlReply, false))
+        assertFalse(cccdFailure.descriptorWriteAcknowledged(route.controlReply, false))
         assertEquals(DiagnosticGattFailureV1.CONTROL_CCCD_FAILED, cccdFailure.failure)
     }
 }

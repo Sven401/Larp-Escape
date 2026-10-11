@@ -5,7 +5,9 @@
 `DiagnosticGattPreflightV1` prüft als vorbereitende, reine JVM-Grenze eine
 explizit aus der Firmware übernommene GATT-Route gegen die auf **einer**
 Verbindung beobachteten Eigenschaften: beide Schreibkanäle mit Antwort,
-beide abonnierten Antwortkanäle und mindestens 128 nutzbare ATT-Wertbytes.
+beide als abonniert angenommene Antwortkanäle und mindestens 128 nutzbare ATT-Wertbytes.
+Diese reine JVM-Vorprüfung beweist keinen serverseitig gespeicherten CCCD-Zustand
+und keinen tatsächlich empfangenen Notification-Rückruf.
 Damit passen ein 69-Byte-GRANT/CANCEL-Auftrag, die 88-Byte-Kontrollantwort,
 der 80-Byte-Schrittauftrag und ein einzelnes 128-Byte-Ergebnisfragment.
 Die effektive Wertkapazität ist getrennt vom ATT-MTU mit Header zu prüfen.
@@ -16,15 +18,21 @@ Die nun festgelegte Firmware-GATT-v1-Route verwendet Dienst `...0010`,
 Control Write/Reply `...0011`/`...0012` und Step Write/Reply
 `...0013`/`...0014` innerhalb `407e6a1d-1cc2-43fd-856b-4aff85a200xx`.
 `AndroidDiagnosticGattShellV1` prüft diese Merkmale bei echter Discovery,
-fordert MTU 131 an und bestätigt Control- und Step-CCCD nacheinander. Jede
+fordert MTU 131 an und schreibt Control- und Step-CCCD nacheinander. Zwei
+erfolgreiche Descriptor-Write-Rückrufe führen nur zu
+`CCCD_WRITES_ACKNOWLEDGED` und zur sichtbaren Meldung
+`SUBSCRIPTION_UNPROVEN`. Sie öffnen weder `TRANSPORT_READY` noch den
+Diagnose-Schreibpfad. Der Export protokolliert die beiden ATT-Bestätigungen
+ausdrücklich als `CCCD_WRITE_ACK` mit offenem Abo-Nachweis. Jede
 Rückmeldung wird über die ursprüngliche `BluetoothGatt`-Instanz und lokale
 Generation gefiltert; bei Trennung, Berechtigungsverlust oder Neustart wird
 der Zustand verworfen. Fehler bei Discovery, MTU oder Abonnement bleiben mit
 konkretem Blockgrund sichtbar. Die 10-Sekunden-Einrichtungsfrist verhindert
 ein dauerhaft schwebendes Tor. Ein ATT-Wert umfasst MTU minus drei Bytes.
 
-Die Firmware hat die Diagnoseattribute noch **nicht** registriert. Eine echte
-Discovery wird somit derzeit gesperrt; die App erzeugt keinen Discovery-Erfolg.
+Der Quellstand der Firmware enthält die Diagnoseattribute; ob die aktuell
+geladene Box sie anbietet, ist separat am Gerät zu prüfen. Ein bestätigter
+CCCD-Schreibvorgang belegt derzeit keinen sendenden Firmware-Abozustand.
 Außerdem liefert die produktive Schale derzeit absichtlich keinen
 `DiagnosticControlOriginV1`: Der vertrauenswürdige F1-Rollen-/Besitzissuer
 fehlt. Deshalb erreicht keine App-Aktion `writeCharacteristic`, selbst falls

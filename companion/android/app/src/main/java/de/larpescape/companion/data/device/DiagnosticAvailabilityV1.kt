@@ -26,6 +26,7 @@ enum class DiagnosticAvailabilityV1(val detail: String) {
     MTU_TOO_SMALL("Die nutzbare BLE-Wertgröße liegt unter 128 Byte."),
     CONTROL_SUBSCRIPTION_PENDING("Kontrollantworten werden abonniert."),
     STEP_SUBSCRIPTION_PENDING("Schrittantworten werden abonniert."),
+    SUBSCRIPTION_UNPROVEN("Beide CCCD-Schreibvorgänge wurden bestätigt. Ob der ESP Benachrichtigungen für diese Verbindung sendet, ist ungeprüft; Diagnoseaktionen bleiben gesperrt."),
     SUBSCRIPTION_FAILED("Ein Diagnose-Antwortabo konnte nicht bestätigt werden."),
     SETUP_TIMEOUT("Die Diagnoseverbindung wurde nicht rechtzeitig eingerichtet."),
     ROLE_MISSING("Diagnose-GATT ist vorbereitet. Eine geprüfte Geräte- und Spielleitungsrolle fehlt; Geräteaktionen bleiben gesperrt."),
@@ -44,6 +45,7 @@ fun diagnosticAvailability(
     DiagnosticGattPhaseV1.MTU_PENDING -> DiagnosticAvailabilityV1.MTU_PENDING
     DiagnosticGattPhaseV1.CONTROL_CCCD_PENDING -> DiagnosticAvailabilityV1.CONTROL_SUBSCRIPTION_PENDING
     DiagnosticGattPhaseV1.STEP_CCCD_PENDING -> DiagnosticAvailabilityV1.STEP_SUBSCRIPTION_PENDING
+    DiagnosticGattPhaseV1.CCCD_WRITES_ACKNOWLEDGED -> DiagnosticAvailabilityV1.SUBSCRIPTION_UNPROVEN
     DiagnosticGattPhaseV1.TRANSPORT_READY -> when (blockStatus) {
         "ROLE_ISSUER_MISSING" -> DiagnosticAvailabilityV1.ROLE_MISSING
         "ROLE_GENERATION_MISMATCH" -> DiagnosticAvailabilityV1.ROLE_CHANGED

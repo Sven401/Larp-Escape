@@ -44,6 +44,7 @@ internal class AndroidDiagnosticGattShellV1(
     val blockStatus: String get() {
         val origin = originalAuthority()
         return when {
+            link.phase == DiagnosticGattPhaseV1.CCCD_WRITES_ACKNOWLEDGED -> "SUBSCRIPTION_UNPROVEN"
             link.phase != DiagnosticGattPhaseV1.TRANSPORT_READY -> "LINK_${link.phase}_${link.failure}"
             origin == null -> "ROLE_ISSUER_MISSING"
             origin.localGattGeneration != generation.toLong() -> "ROLE_GENERATION_MISMATCH"
@@ -110,13 +111,14 @@ internal class AndroidDiagnosticGattShellV1(
             else -> return false
         }
         if (characteristic.uuid != expected) return false
-        if (!link.subscribed(expected, success)) {
+        if (!link.descriptorWriteAcknowledged(expected, success)) {
             evidence.transportError(generation, "setup", null, link.failure.name)
             return false
         }
+        evidence.cccdWriteAck(generation, expected)
         if (link.phase == DiagnosticGattPhaseV1.STEP_CCCD_PENDING)
             return subscribe(stepReply, DiagnosticGattFailureV1.STEP_CCCD_FAILED)
-        return link.preflight().isEmpty()
+        return link.phase == DiagnosticGattPhaseV1.CCCD_WRITES_ACKNOWLEDGED
     }
 
     /** No call site currently supplies originalAuthority; consequently no live diagnostic write is possible. */
@@ -263,7 +265,8 @@ internal class AndroidDiagnosticGattShellV1(
     }
 
     fun expireSetup() {
-        if (link.phase != DiagnosticGattPhaseV1.TRANSPORT_READY && link.phase != DiagnosticGattPhaseV1.BLOCKED) {
+        if (link.phase != DiagnosticGattPhaseV1.CCCD_WRITES_ACKNOWLEDGED &&
+            link.phase != DiagnosticGattPhaseV1.TRANSPORT_READY && link.phase != DiagnosticGattPhaseV1.BLOCKED) {
             val pendingPhase = link.phase
             link.failed(DiagnosticGattFailureV1.SETUP_TIMEOUT)
             evidence.transportError(generation, "setup", null, link.failure.name, pendingPhase)

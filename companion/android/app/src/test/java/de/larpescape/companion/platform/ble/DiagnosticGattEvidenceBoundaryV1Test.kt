@@ -87,4 +87,17 @@ class DiagnosticGattEvidenceBoundaryV1Test {
         assertEquals("operation=setup;reason=SETUP_TIMEOUT;phase=MTU_PENDING", received.single().detail)
         assertEquals(DiagnosticConnectionEventV1.Kind.TRANSPORT_ERROR, received.single().kind)
     }
+
+    @Test fun cccdAckIsRecordedOnlyForExpectedReplyDescriptorsAndIsNotSubscriptionProof() {
+        val received = mutableListOf<DiagnosticConnectionEventV1>()
+        val gate = DiagnosticGattEvidenceBoundaryV1(7, "A8:42:E3:CD:4B:1A") { received.add(it); true }
+        assertFalse(gate.cccdWriteAck(6, route.controlReply))
+        assertFalse(gate.cccdWriteAck(7, route.controlRequest))
+        assertTrue(gate.cccdWriteAck(7, route.controlReply))
+        assertFalse(gate.cccdWriteAck(7, route.controlReply))
+        assertTrue(gate.cccdWriteAck(7, route.stepReply))
+        assertEquals(2, received.size)
+        assertTrue(received.all { it.kind == DiagnosticConnectionEventV1.Kind.CCCD_WRITE_ACK &&
+            it.detail.endsWith("subscription_unproven") && it.message == null })
+    }
 }

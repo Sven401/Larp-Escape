@@ -18,7 +18,7 @@ data class DiagnosticConnectionEventV1(
     val message: Long?,
     val detail: String,
 ) {
-    enum class Kind { WRITE_ACK, CONTROL_REPLY, STEP_REPLY, TRANSPORT_ERROR }
+    enum class Kind { CCCD_WRITE_ACK, WRITE_ACK, CONTROL_REPLY, STEP_REPLY, TRANSPORT_ERROR }
 }
 
 data class DiagnosticConnectionEvidenceV1(

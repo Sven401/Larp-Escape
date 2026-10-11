@@ -2,7 +2,7 @@ package de.larpescape.protocol
 
 import java.util.UUID
 
-enum class DiagnosticGattPhaseV1 { DISCOVERING, MTU_PENDING, CONTROL_CCCD_PENDING, STEP_CCCD_PENDING, TRANSPORT_READY, BLOCKED }
+enum class DiagnosticGattPhaseV1 { DISCOVERING, MTU_PENDING, CONTROL_CCCD_PENDING, STEP_CCCD_PENDING, CCCD_WRITES_ACKNOWLEDGED, TRANSPORT_READY, BLOCKED }
 enum class DiagnosticGattFailureV1 {
     NONE, WRONG_SERVICE, MISSING_CHARACTERISTIC, AMBIGUOUS_CHARACTERISTIC, WRONG_PROPERTIES, MISSING_CCCD,
     MTU_REQUEST_FAILED, MTU_TOO_SMALL, MTU_CALLBACK_FAILED, CONTROL_CCCD_FAILED, STEP_CCCD_FAILED,
@@ -43,7 +43,8 @@ class DiagnosticGattLinkV1(val generation: Int) {
         return true
     }
 
-    fun subscribed(characteristic: UUID, success: Boolean): Boolean {
+    /** A successful ATT descriptor write is not evidence that notifications will arrive. */
+    fun descriptorWriteAcknowledged(characteristic: UUID, success: Boolean): Boolean {
         val route = DiagnosticGattFirmwareV1.route
         val expected = when (phase) {
             DiagnosticGattPhaseV1.CONTROL_CCCD_PENDING -> route.controlReply
@@ -52,7 +53,7 @@ class DiagnosticGattLinkV1(val generation: Int) {
         }
         if (characteristic != expected) return false
         if (!success) return block(if (expected == route.controlReply) DiagnosticGattFailureV1.CONTROL_CCCD_FAILED else DiagnosticGattFailureV1.STEP_CCCD_FAILED)
-        phase = if (expected == route.controlReply) DiagnosticGattPhaseV1.STEP_CCCD_PENDING else DiagnosticGattPhaseV1.TRANSPORT_READY
+        phase = if (expected == route.controlReply) DiagnosticGattPhaseV1.STEP_CCCD_PENDING else DiagnosticGattPhaseV1.CCCD_WRITES_ACKNOWLEDGED
         return true
     }
 

@@ -28,6 +28,8 @@ class DiagnosticAvailabilityV1Test {
             diagnosticAvailability(DiagnosticGattPhaseV1.MTU_PENDING, DiagnosticGattFailureV1.NONE, "LINK_MTU_PENDING_NONE"))
         assertEquals(DiagnosticAvailabilityV1.CONTROL_SUBSCRIPTION_PENDING,
             diagnosticAvailability(DiagnosticGattPhaseV1.CONTROL_CCCD_PENDING, DiagnosticGattFailureV1.NONE, "LINK_CONTROL_CCCD_PENDING_NONE"))
+        assertEquals(DiagnosticAvailabilityV1.SUBSCRIPTION_UNPROVEN,
+            diagnosticAvailability(DiagnosticGattPhaseV1.CCCD_WRITES_ACKNOWLEDGED, DiagnosticGattFailureV1.NONE, "SUBSCRIPTION_UNPROVEN"))
         assertEquals(DiagnosticAvailabilityV1.ROLE_MISSING,
             diagnosticAvailability(DiagnosticGattPhaseV1.TRANSPORT_READY, DiagnosticGattFailureV1.NONE, "ROLE_ISSUER_MISSING"))
         assertEquals(DiagnosticAvailabilityV1.ROLE_CHANGED,

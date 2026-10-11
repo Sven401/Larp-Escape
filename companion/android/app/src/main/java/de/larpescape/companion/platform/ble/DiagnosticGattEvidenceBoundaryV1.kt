@@ -24,6 +24,16 @@ internal class DiagnosticGattEvidenceBoundaryV1(
         return true
     }
 
+    fun cccdWriteAck(observedGeneration: Int, characteristic: UUID): Boolean {
+        if (observedGeneration != generation || characteristic !in setOf(route.controlReply, route.stepReply)) return false
+        val key = "cccd:$characteristic"
+        if (key in acknowledged) return false
+        if (!emit(DiagnosticConnectionEventV1.Kind.CCCD_WRITE_ACK, null,
+                "characteristic=$characteristic;att_write_ack_only;subscription_unproven")) return false
+        acknowledged.add(key)
+        return true
+    }
+
     fun writeAck(observedGeneration: Int, characteristic: UUID, message: Long): Boolean {
         if (observedGeneration != generation || characteristic !in setOf(route.controlRequest, route.stepRequest)) return false
         val key = "$characteristic:$message"
