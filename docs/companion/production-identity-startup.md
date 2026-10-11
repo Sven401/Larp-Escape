@@ -45,3 +45,6 @@ the test session on disconnect, authority change, timeout and reboot. Only then
 can the Android-owned wake/LED diagnostic step connect to real hardware owners.
 No `GameCommand` extension, GPIO mapping, upload or physical acceptance is part of
 this startup substrate.
+
+The attempted closed registration and its measured product size gate are
+documented in `production-ble-closed-owner.md`. Bluetooth remains unstarted.
