@@ -79,6 +79,24 @@ class PairingObservationReportV1Test {
             "connection_closed", "local_session_ended").androidAssessment().code)
     }
 
+    @Test fun missingProductServiceRemainsTheFindingAfterTheAppClosesTheCandidate() {
+        val report = PairingObservationReportV1.start("t0", "missing-service")
+            .observe("t1", "ANDROID_APP_USER_ACTION", 9, "AA", "connection_attempt", "connectGatt_requested")
+            .observe("t2", "ANDROID_BLUETOOTH_GATT_CALLBACK", 9, "AA", "connection_state", "status=0;state=2")
+            .observe("t3", "ANDROID_BLUETOOTH_GATT_SERVICE_TABLE", 9, "AA", "product_service_present", "false")
+            .observe("t4", "ANDROID_APP_OR_GATT", 9, "AA", "connection_closed", "local_session_ended")
+        val assessment = report.androidAssessment()
+        assertEquals("SERVICE_MISSING", assessment.code)
+        assertEquals(listOf(1, 2, 3, 4), assessment.evidenceSequences)
+        assertEquals("OPEN", assessment.firmwareSecurityEvidence)
+        assertEquals("SERVICE_MISSING",
+            JsonParser.parseString(String(report.export("t5"))).asJsonObject
+                .getAsJsonObject("androidAssessment")["code"].asString)
+        assertEquals("NOT_CONNECTED", report
+            .observe("t5", "ANDROID_APP_USER_ACTION", 10, "AA", "connection_attempt", "connectGatt_requested")
+            .androidAssessment().code)
+    }
+
     @Test fun journalCapClosesAssessmentAndCannotGrow() {
         var report = observed()
         repeat(PairingObservationReportV1.MAX_EVENTS) {

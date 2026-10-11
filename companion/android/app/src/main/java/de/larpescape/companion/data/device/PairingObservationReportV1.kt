@@ -81,12 +81,15 @@ data class PairingObservationReportV1(
             PairingAndroidAssessmentV1(code, label, attempt.connectionGeneration, attempt.targetAddress,
                 evidence.filterNotNull().map { it.sequence })
         val connection = scope.lastOrNull { it.kind == "connection_state" }
+        val service = scope.lastOrNull { it.kind == "product_service_present" }
+        // A missing service is a completed discovery result. The app then
+        // closes that GATT link, which must not erase this useful diagnosis.
+        if (service?.value == "false")
+            return result("SERVICE_MISSING", "Produktdienst bei der Dienstsuche nicht vorhanden",
+                attempt, connection, service, scope.lastOrNull { it.kind == "connection_closed" })
         if (scope.any { it.kind == "connection_closed" } || connection?.value != "status=0;state=2")
             return result("NOT_CONNECTED", "Keine aktuelle Android-GATT-Verbindung belegt", attempt, connection,
                 scope.lastOrNull { it.kind == "connection_closed" })
-        val service = scope.lastOrNull { it.kind == "product_service_present" }
-        if (service?.value == "false")
-            return result("SERVICE_MISSING", "Produktdienst auf dieser Verbindung nicht vorhanden", attempt, connection, service)
         if (service?.value != "true")
             return result("SERVICE_OPEN", "Produktdienst noch nicht bestätigt", attempt, connection, service)
         val bond = scope.lastOrNull { it.kind == "bond_state" || it.kind == "bond_request" }
