@@ -6,13 +6,14 @@ upload approval, installation record or instruction to start the user run.
 
 ## Reproducible artifacts
 
-- Product source branch/implementation commit:
-  `plan/nutzergefuehrte-hardwarediagnose-startintegration` /
-  `c194518` (source-backed audio catalogue after explicit MITM transport blocker
-  `a261417`, isolated host-test sources
-  `c5b16ef` and electrical qualification
-  `f89a94f`, BLE history `911fc9d`, retry-safe archive `2e73e31` and
-  journal-finalization fix `d386438`).
+- Product source branch:
+  `plan/nutzergefuehrte-hardwarediagnose-startintegration`. The firmware image
+  contains the source-backed audio catalogue from `c194518`. Earlier changes
+  include the MITM transport blocker `a261417`, isolated host-test sources
+  `c5b16ef`, electrical qualification `f89a94f`, BLE history `911fc9d`,
+  retry-safe archive `2e73e31` and journal-finalization fix `d386438`.
+  The current Android source includes canonical report UUID validation at
+  `878c23f`.
   The productive firmware runtime paths remain unchanged from
   `77028cb74edbaa16ca33b4fcabc63a5c5cdbe94f`; `c194518` adds an
   unconnected audio catalogue whose source compiles for the firmware target.
@@ -25,13 +26,15 @@ upload approval, installation record or instruction to start the user run.
 - Built installable Debug APK:
   `companion/android/app/build/outputs/apk/debug/app-debug.apk`,
   23,441,147 bytes, SHA-256
-  `4AE78F6AF2DA0D492459B992FFAC91B8C6F746C4DCEDD0233BACCB6E1407E4D5`.
+  `CE83D9036FBBD4CBF2B160E8D0534AC60BC4E5BCB49D60C82015E0B2563D7B94`.
   This revised build contains the report contract, journal core and bounded
-  BLE transport-history export. It has not been installed. The most recent
-  `adb devices -l` completed but listed no attached device.
+  BLE transport-history export and strict canonical run/correlation UUID
+  validation. It has not been installed. The last successful `adb devices -l`
+  listed no attached device; a later attempt could not start the ADB server,
+  so the current connection state is unknown.
   The APK still lists every required area with its concrete blockers and
-  sends no request for the blocked areas. The APK was rebuilt twice offline
-  from the current source with the same byte count and hash. Package
+  sends no request for the blocked areas. A fresh offline test/assemble run
+  produced the APK above. Package
   `de.larpescape.companion.diagnosticpreview` is signed with the same Android
   debug certificate as the previously installed preview (SHA-256
   `6B755048E55C8BE19EF3F73B1A015F96735F6E79148AC8960BD244E6F9BA4837`).
@@ -75,10 +78,10 @@ no devices. Its `adb install -r` attempt returned `no devices/emulators found`;
 the installed phone version is therefore still the `B1BF72...` build unless a
 later phone-side action changes it.
 The later journal builds `D8F8FA...`, `143422...`, `A6A28A...`, `DDEE76...`
-and the current `4AE78F...` rebuild have also not been installed. After one
-transient ADB-server startup failure,
-the latest `adb devices -l` completed and listed no attached device. Current
-phone-side installation state cannot be re-read.
+and the later `4AE78F...` and current `CE83D9...` rebuilds have also not been
+installed. The last successful `adb devices -l` listed no attached device;
+a subsequent invocation failed to start the ADB server. Current phone-side
+installation and connection state cannot be re-read.
 
 ## Actual box state
 
@@ -155,7 +158,7 @@ flash, eFuse or restore operation occurred.
 | Wake raw levels, edges, single inputs and combinations | `diagnostic::Control::edge` and `finishWake` plus `StepTransport` implement the bounded v1 owner against an `IPort`; only fake/host ports provide the component owner. No MCP/wake adapter is installed in product startup. | The pilot uses `FakeDiagnosticRepositoryV1` and a synthetic Step exchange. Four separate future actions are non-clickable. | The v1 Step reply preserves raw level, interpreted active state, channel, time and overflow; host reassembly is byte-tested. | Authority and component ownership are absent. Wake 1 maps to MCP23017 GPB7, which cannot be an input. HIGH-active interpretation with pull-up also requires raw and interpreted values to stay separate. | No executable Wake request is loaded; no live Wake observation was made. |
 | ESP-NOW identified packet, short range, operational range and receiver report | `EspNowCommunicator` sends the game enum to fixed peer `B0:A7:32:F1:86:54`; `EspNowRuntime` counts local delivery callbacks. Neither carries a diagnostic run/packet ID or controls the receiver report. | Four readiness actions are registered but non-clickable; there is no receiver import/replay UI. | Local send callbacks cannot prove receiver processing. No durable receiver evidence correlates run, packet, MAC, channel and receipt. | Define a versioned test packet and receiver record, pin/observe the channel, preserve Wi-Fi/BLE coexistence evidence, and replay-test report reconciliation before enabling. | No packet was sent. Current passive counters remained 0/0. |
 | Three cold starts and longer combined run | Normal boot and runtime loops exist, but no productive diagnostic orchestrator owns all components or resumes a correlated run. | The current pilot is only a two-step synthetic preview. Cold-start and endurance actions are non-clickable. | No complete run ID survives device/app restart and no combined component evidence exists. | All component paths, authority, ownership and restart semantics must be implemented first; the user then performs these actions in the app. | No restart/endurance test was started. |
-| Open errors, user observations and complete report export | `DiagnosticGattsService` and the typed Step transport can carry bounded replies for the existing fake slice. There is no complete-device report producer. | `HardwareDiagnosticEvidenceV1` registers all 48 actions and holds multiple bounded attempts per action, each with a unique request identifier. It separates requests, explicitly **unverified local** acceptance/execution claims and user observations. Its canonical, checksum-protected report is immutable after finish. `DurableHardwareDiagnosticRunV1` writes each local intent to a journal before returning it for any caller to send, retires pending/accepted-but-unfinished attempts as unclear after restart **or before finalization**, never resends them, and keeps a finalized run read-only. `AndroidHardwareDiagnosticJournalStoreV1` supplies private atomic files but is **not yet connected to the UI**. The existing `CreateDocument` UI still exports only the synthetic pilot; a complete hardware report export remains blocked. | Seven ledger and seven journal JVM tests cover repeated matrix/cold-start attempts, correlation, unclear-write protection, journal failure, recovery, finalization with a pending write, canonical replay, false provenance rejection and immutable finish. The checksum detects accidental changes but does not authenticate a device. | Add an authenticated reply type bound to device, boot, grant, connection and original request; connect the journal to the productive guided plan, Android recovery and export. An unclear write cannot be repeated in the same run; no protected device command is enabled by this journal. | Only JVM export/replay was tested; no complete phone report was produced in this session. |
+| Open errors, user observations and complete report export | `DiagnosticGattsService` and the typed Step transport can carry bounded replies for the existing fake slice. There is no complete-device report producer. | `HardwareDiagnosticEvidenceV1` registers all 48 actions and holds multiple bounded attempts per action, each with a unique canonical request identifier. It separates requests, explicitly **unverified local** acceptance/execution claims and user observations. Its canonical, checksum-protected report is immutable after finish. `DurableHardwareDiagnosticRunV1` writes each local intent to a journal before returning it for any caller to send, retires pending/accepted-but-unfinished attempts as unclear after restart **or before finalization**, never resends them, and keeps a finalized run read-only. `AndroidHardwareDiagnosticJournalStoreV1` supplies private atomic files but is **not yet connected to the UI**. The existing `CreateDocument` UI still exports only the synthetic pilot; a complete hardware report export remains blocked. | Eight ledger and seven journal JVM tests cover repeated matrix/cold-start attempts, correlation, noncanonical UUID aliases, unclear-write protection, journal failure, recovery, finalization with a pending write, canonical replay, false provenance rejection and immutable finish. The checksum detects accidental changes but does not authenticate a device. | Add an authenticated reply type bound to device, boot, grant, connection and original request; connect the journal to the productive guided plan, Android recovery and export. An unclear write cannot be repeated in the same run; no protected device command is enabled by this journal. | Only JVM export/replay was tested; no complete phone report was produced in this session. |
 
 The app registry gives every required action above a stable identifier and
 state. The four display-orientation actions plus open-error retention and
@@ -178,10 +181,10 @@ synthetic two-step preview.
   companion fixture suite passed.
 - NFC capability, PN532 frame, PN532 adapter and APP_MUTUAL development
   transcript: 1, 4, 6 and 1 host cases passed.
-- Android: 112 core protocol and 80 app unit tests passed in a fresh
-  `--rerun-tasks` offline run; Debug APK build succeeded and an immediate
-  second fresh build reproduced its hash. The BLE history test includes a
-  failed fresh-write retry, which retains exactly one archived prior connection.
+- Android: 113 core protocol and 80 app unit tests passed in a fresh
+  `--rerun-tasks` offline run; Debug APK build succeeded. The BLE history test
+  includes a failed fresh-write retry, which retains exactly one archived
+  prior connection.
   The history is transport
   evidence only, not a device-authorized or physical result.
 - Matrix/wake electrical qualification: 20/20 targeted host cases passed.
@@ -202,7 +205,8 @@ synthetic two-step preview.
 All test results above remain software-only. The phone was connected and the
 earlier `B1BF72...` diagnostic APK was installed after explicit approval. The
 revised `986CF0...`, `D8F8FA...`, `143422...`, `A6A28A...`, `DDEE76...`
-and current `4AE78F...` builds were not installed; the latest ADB
-query found no attached phone.
+and the `4AE78F...` and current `CE83D9...` builds were not installed. The
+last successful ADB query found no attached phone; the latest attempt failed
+to start the ADB server, so present connectivity is unknown.
 No app workflow was exercised, no firmware was uploaded and no user hardware
 run was started.
