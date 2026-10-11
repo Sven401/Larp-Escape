@@ -1,0 +1,7 @@
+# Preserve immutable fixture bytes; use explicit text line endings.
+* text=auto eol=lf
+contract/firmware-v2/** -text
+android/core/protocol/src/test/resources/*.json -text
+android/gradle/wrapper/gradle-wrapper.jar binary
+android/gradlew text eol=lf
+android/gradlew.bat text eol=crlf

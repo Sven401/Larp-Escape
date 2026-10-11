@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Game master command v2",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "const": 2
+    },
+    "boot": {
+      "type": "string",
+      "pattern": "^(?!0000000000000000$)[0-9A-F]{16}$"
+    },
+    "lease": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4294967295
+    },
+    "request": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4294967295
+    },
+    "expectedConfigurationRevision": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4294967295
+    },
+    "expectedStateRevision": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4294967295
+    },
+    "kind": {
+      "enum": [
+        "start",
+        "stop",
+        "pause",
+        "resume",
+        "change_state",
+        "take_transition"
+      ]
+    },
+    "target": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 65535
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "boot",
+    "lease",
+    "request",
+    "expectedConfigurationRevision",
+    "expectedStateRevision",
+    "kind",
+    "target"
+  ],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "enum": [
+              "change_state",
+              "take_transition"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "target": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 65535
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "target": {
+            "const": 0
+          }
+        }
+      }
+    }
+  ],
+  "$comment": "The bounded wire decoder additionally requires unsigned decimal digit number tokens without signs, fractions, exponents or leading zeros; JSON Schema cannot express lexical number spelling. Complete input is at most 1024 UTF-8 bytes; supported field names, kinds and decoded boot text are printable ASCII. Authentication metadata is outside this object."
+}

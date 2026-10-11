@@ -22,3 +22,7 @@ docs/companion/fixtures/peer-auth/*.json text eol=lf
 
 docs/companion/fixtures/peer-proof/*.json text eol=lf
 docs/companion/fixtures/diagnostic-v1/*.json text eol=lf
+companion/android/core/protocol/src/main/resources/diagnostic-v1.schema.json text eol=lf
+companion/android/core/protocol/src/test/resources/diagnostic-v1/*.json text eol=lf
+companion/android/core/protocol/src/test/resources/diagnostic-control-v1.json text eol=lf
+companion/android/core/protocol/src/test/resources/diagnostic-step-v1.json text eol=lf

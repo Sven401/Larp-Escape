@@ -1,0 +1,454 @@
+{
+  "version": 1,
+  "capturedAt": "2026-10-10",
+  "sourceBaseCommit": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+  "scope": "Android A0-A2 with already integrated NFC; selected scenario references; A3 PeerAuthV1 host-only preparation in separate commit",
+  "files": [
+    {
+      "path": "companion/.gitattributes",
+      "source": "new package documentation or clone preservation configuration",
+      "packageSha256": "6af8435d23554a9e5a7d203e552e89bf281e29ec9571de115241bcaa79779341"
+    },
+    {
+      "path": "companion/OPEN-DEPENDENCIES.md",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "a7d9982e27adcbd179e5de49450c0b6dc7858da22bbb06d3ef74eeed1197560a",
+      "packageSha256": "41a4f5acb8d1dfc108c3fa49e8fe75ef34455ac0236ba9ba3b91e8c9280067f5",
+      "changedForPackage": true
+    },
+    {
+      "path": "companion/README.md",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "09904d85448e1d3540beaa60b8457a8b16871417cf89dd281c60f6911f3dd93c",
+      "packageSha256": "93a77e2190a0f3cd3bbdbb974de7699eea0f995ca5656500b88bc8b706e17fa0",
+      "changedForPackage": true
+    },
+    {
+      "path": "companion/android/.gitignore",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "e7d4a4d6520c8cd8eaa48a1bb5001780ab6d56b09a090290c37967de7a8d0695",
+      "packageSha256": "e872c8feba0be2ebc314431f67cd225830dc5c485b45f4972ee63a9deb2a1571",
+      "changedForPackage": true
+    },
+    {
+      "path": "companion/android/README.md",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "cb7b2cd42e391ddc3e81c9171d3d079454663b843e1373aa587795f8bc62f29b",
+      "packageSha256": "dcf9ff5ff7b6fdff530db25d881b1a4fc437d75d25ecc63ffe81ab4118906118",
+      "changedForPackage": true
+    },
+    {
+      "path": "companion/android/app/build.gradle.kts",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "430bebd33adb375c9b3662d1a6828e5bf3b42abb946c2a106a7fbf92fb94ab3f",
+      "packageSha256": "430bebd33adb375c9b3662d1a6828e5bf3b42abb946c2a106a7fbf92fb94ab3f",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/android/app/src/main/AndroidManifest.xml",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "ea866e3feaecdc6eef4017826bcfdbb9b634c7af98939201ba2a1a83f608cefa",
+      "packageSha256": "ea866e3feaecdc6eef4017826bcfdbb9b634c7af98939201ba2a1a83f608cefa",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/android/app/src/main/java/de/larpescape/companion/MainActivity.kt",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "8924f8e7f5ca72ccbd44c675c72b2067328cc81a8e088d9691cb9b0ad67a7f39",
+      "packageSha256": "8924f8e7f5ca72ccbd44c675c72b2067328cc81a8e088d9691cb9b0ad67a7f39",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/android/app/src/main/java/de/larpescape/companion/data/device/DeviceRepository.kt",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "e594668c5b055c392930f8da5e39564561bd29a4bc045711565c86487eaef3cb",
+      "packageSha256": "e594668c5b055c392930f8da5e39564561bd29a4bc045711565c86487eaef3cb",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/android/app/src/main/java/de/larpescape/companion/data/scenario/ScenarioDraftRepository.kt",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "5979e84aecbd2a79320a082f4c18ceb8c8d4bc735217dccd5c3e280b0f6991a0",
+      "packageSha256": "5979e84aecbd2a79320a082f4c18ceb8c8d4bc735217dccd5c3e280b0f6991a0",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/android/app/src/main/java/de/larpescape/companion/platform/ble/AndroidBleRepository.kt",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "1ad2b424c59d9d0d2a2ec2e1c9e616bc8824e6beb0cc3d0b578915832111cc89",
+      "packageSha256": "1ad2b424c59d9d0d2a2ec2e1c9e616bc8824e6beb0cc3d0b578915832111cc89",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/android/app/src/main/java/de/larpescape/companion/platform/nfc/AndroidNfc.kt",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "e11177d5af00ea254188e46e7d2312843135e60ddd2929577e133540d57c7012",
+      "packageSha256": "e11177d5af00ea254188e46e7d2312843135e60ddd2929577e133540d57c7012",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/android/app/src/main/java/de/larpescape/companion/ui/device/DeviceViewModel.kt",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "cebd9ad26ebd9a95a87620256cfbf657944ceb811935d1945dced832c9705cd8",
+      "packageSha256": "cebd9ad26ebd9a95a87620256cfbf657944ceb811935d1945dced832c9705cd8",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/android/app/src/main/java/de/larpescape/companion/ui/nfc/NfcScreen.kt",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "e149386d9bda6594f0d93dc25c9076cd3736c779f8b7675b9d95ee8cf77245b6",
+      "packageSha256": "e149386d9bda6594f0d93dc25c9076cd3736c779f8b7675b9d95ee8cf77245b6",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/android/app/src/main/java/de/larpescape/companion/ui/nfc/NfcViewModel.kt",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "cdf47a1f246d4ca9c3330afa6379ddd74eb956e994af0691ea0925d55e29bba1",
+      "packageSha256": "cdf47a1f246d4ca9c3330afa6379ddd74eb956e994af0691ea0925d55e29bba1",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/android/app/src/main/java/de/larpescape/companion/ui/scenario/ScenarioScreen.kt",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "503c3ad57933b796f78cd5e0b678be7f3fa488e06e59bc5a6bec5f69baad0411",
+      "packageSha256": "503c3ad57933b796f78cd5e0b678be7f3fa488e06e59bc5a6bec5f69baad0411",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/android/app/src/main/java/de/larpescape/companion/ui/scenario/ScenarioViewModel.kt",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "838e99e7d81bd8ac977e9271140957db78c1340c8db24d4b60eec78cb6eb98ab",
+      "packageSha256": "838e99e7d81bd8ac977e9271140957db78c1340c8db24d4b60eec78cb6eb98ab",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/android/app/src/test/java/de/larpescape/companion/ui/device/DeviceViewModelTest.kt",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "68b2b65a44c2601080080921ef1fdcf0293651ef0e4012d0d3ea8fd388dbbff3",
+      "packageSha256": "68b2b65a44c2601080080921ef1fdcf0293651ef0e4012d0d3ea8fd388dbbff3",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/android/app/src/test/java/de/larpescape/companion/ui/nfc/NfcViewModelTest.kt",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "bc39d9932ff56edda8fc44e497ec7c238fbb70f80ed54b27b0710ad4373c85fb",
+      "packageSha256": "bc39d9932ff56edda8fc44e497ec7c238fbb70f80ed54b27b0710ad4373c85fb",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/android/build.gradle.kts",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "7f9af72ffbe23f74851cff100ba032cc77521c4106a0cfca02dca8d0f525837d",
+      "packageSha256": "7f9af72ffbe23f74851cff100ba032cc77521c4106a0cfca02dca8d0f525837d",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/android/core/protocol/build.gradle.kts",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "7763f93adb1c511e450f0b752e69195a332f01fc252c207f3b310e7b5f5a6a76",
+      "packageSha256": "7763f93adb1c511e450f0b752e69195a332f01fc252c207f3b310e7b5f5a6a76",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/android/core/protocol/src/main/kotlin/de/larpescape/protocol/ConfiguredStatus.kt",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "19b571a1e687cf5061dd9c84c4c3b018ccdbe508dfddf78684111f7994410369",
+      "packageSha256": "19b571a1e687cf5061dd9c84c4c3b018ccdbe508dfddf78684111f7994410369",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/android/core/protocol/src/main/kotlin/de/larpescape/protocol/FrameAssembler.kt",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "8cb629c08c6a6cb4f39ccba643955b1d3e93caf03149f0540d549fe681670239",
+      "packageSha256": "8cb629c08c6a6cb4f39ccba643955b1d3e93caf03149f0540d549fe681670239",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/android/core/protocol/src/main/kotlin/de/larpescape/protocol/NfcTagData.kt",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "079df8959fd9e781eac3ec82143ef944e9ae2e9dc4f491d27755df045d0816db",
+      "packageSha256": "079df8959fd9e781eac3ec82143ef944e9ae2e9dc4f491d27755df045d0816db",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/android/core/protocol/src/main/kotlin/de/larpescape/protocol/PeerAuthV1.kt",
+      "source": "unversioned Android working tree; firmware host observation from firmware-peer-ingress 7f2a3e4 plus local Auth diff",
+      "sourceSha256": "9544d142414f52fe2fd96b77615a35172167ff7137cf2e49242d3c86a14cbee0",
+      "packageSha256": "9544d142414f52fe2fd96b77615a35172167ff7137cf2e49242d3c86a14cbee0",
+      "changedForPackage": false,
+      "scope": "A3 host-only preparation; no GATT or private key implementation"
+    },
+    {
+      "path": "companion/android/core/protocol/src/main/kotlin/de/larpescape/protocol/ScenarioDraft.kt",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "6c17d70190ec3fe8ef541bd6141785eca4921354d71c19e2c5196144534fa45c",
+      "packageSha256": "6c17d70190ec3fe8ef541bd6141785eca4921354d71c19e2c5196144534fa45c",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/android/core/protocol/src/test/kotlin/de/larpescape/protocol/ConfiguredStatusTest.kt",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "e8b74c024547727c86fdc3abb12412c5c59ae4715968b08c0dee838d61fb943d",
+      "packageSha256": "e8b74c024547727c86fdc3abb12412c5c59ae4715968b08c0dee838d61fb943d",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/android/core/protocol/src/test/kotlin/de/larpescape/protocol/FrameAssemblerTest.kt",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "6c9f88a12d611a9911e68f8168e182163524722a65188ec5181a1c5db554a7ac",
+      "packageSha256": "6c9f88a12d611a9911e68f8168e182163524722a65188ec5181a1c5db554a7ac",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/android/core/protocol/src/test/kotlin/de/larpescape/protocol/NfcTagDataTest.kt",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "320e28bc976cb606c56cab6bb7060386c96414e59c6a044dcd15a8f2f07cf8fe",
+      "packageSha256": "320e28bc976cb606c56cab6bb7060386c96414e59c6a044dcd15a8f2f07cf8fe",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/android/core/protocol/src/test/kotlin/de/larpescape/protocol/PeerAuthV1Test.kt",
+      "source": "unversioned Android working tree; firmware host observation from firmware-peer-ingress 7f2a3e4 plus local Auth diff",
+      "sourceSha256": "0ea9d57cc200cf50e5b8aba9b73fe614bac73f22c2b6351e9ce3c53f083dcda8",
+      "packageSha256": "0ea9d57cc200cf50e5b8aba9b73fe614bac73f22c2b6351e9ce3c53f083dcda8",
+      "changedForPackage": false,
+      "scope": "A3 host-only preparation; no GATT or private key implementation"
+    },
+    {
+      "path": "companion/android/core/protocol/src/test/kotlin/de/larpescape/protocol/ScenarioDraftTest.kt",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "9ea41852727af528dc7a31aca2668127f1923412b71320e6dd60945892b9ee8e",
+      "packageSha256": "9ea41852727af528dc7a31aca2668127f1923412b71320e6dd60945892b9ee8e",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/android/core/protocol/src/test/resources/firmware-peer-auth-observation.json",
+      "source": "unversioned Android working tree; firmware host observation from firmware-peer-ingress 7f2a3e4 plus local Auth diff",
+      "sourceSha256": "de088914451110b11309c05ee4f421c9742519451de6b370f8ae22d9572d73f7",
+      "packageSha256": "de088914451110b11309c05ee4f421c9742519451de6b370f8ae22d9572d73f7",
+      "changedForPackage": false,
+      "scope": "A3 host-only preparation; no GATT or private key implementation"
+    },
+    {
+      "path": "companion/android/core/protocol/src/test/resources/vite-scenario-v1.json",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "85d6b9c9aae050b7c808f47cd5ecd70b5091a8105e9088508e064fba498eac9f",
+      "packageSha256": "85d6b9c9aae050b7c808f47cd5ecd70b5091a8105e9088508e064fba498eac9f",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/android/gradle.properties",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "a467f0619f397329e116da1ac68587d5ba35ad2097abb9b2a26212bdcbe7452d",
+      "packageSha256": "a467f0619f397329e116da1ac68587d5ba35ad2097abb9b2a26212bdcbe7452d",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/android/gradle/libs.versions.toml",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "7d93645283ff294becd4bceaddea0db416b924c872c92ee973c00762178ff75f",
+      "packageSha256": "7d93645283ff294becd4bceaddea0db416b924c872c92ee973c00762178ff75f",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/android/gradle/wrapper/gradle-wrapper.jar",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "498495120a03b9a6ab5d155f5de3c8f0d986a449153702fb80fc80e134484f17",
+      "packageSha256": "498495120a03b9a6ab5d155f5de3c8f0d986a449153702fb80fc80e134484f17",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/android/gradle/wrapper/gradle-wrapper.properties",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "3d91f0932da99885c41e9dc4e85c9f9a2d3bfef4f0ad87473014dc0827a94884",
+      "packageSha256": "3d91f0932da99885c41e9dc4e85c9f9a2d3bfef4f0ad87473014dc0827a94884",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/android/gradlew",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "a3648413b47ef77af21d5ebc36c687c7d103aaef3e17f33de7d4f080a6f300a3",
+      "packageSha256": "a3648413b47ef77af21d5ebc36c687c7d103aaef3e17f33de7d4f080a6f300a3",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/android/gradlew.bat",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "57931b17dd228e5c24dac90e815d0bf82477e831a4618dfab4136f5446b42a9f",
+      "packageSha256": "57931b17dd228e5c24dac90e815d0bf82477e831a4618dfab4136f5446b42a9f",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/android/settings.gradle.kts",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "b4474979292c9784c3302a09e2b3f54699c3ecc3ade28dd0a0499433267824ef",
+      "packageSha256": "b4474979292c9784c3302a09e2b3f54699c3ecc3ade28dd0a0499433267824ef",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/app/README.md",
+      "source": "new package documentation or clone preservation configuration",
+      "packageSha256": "9f562d80460f5593a40ef03450b4be698732dd6c5bba52c803ad076732159378"
+    },
+    {
+      "path": "companion/app/src/editorDraft.mjs",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "7cb196accfb6df388f6a6cc4706988ad80a5fe70d7af9bdd8cfeaaf5b2700618",
+      "packageSha256": "7cb196accfb6df388f6a6cc4706988ad80a5fe70d7af9bdd8cfeaaf5b2700618",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/app/src/readingPreview.mjs",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "c56b9238d5133d33be1cc54b85add1257d113f5379c2934ada216789db2fceff",
+      "packageSha256": "c56b9238d5133d33be1cc54b85add1257d113f5379c2934ada216789db2fceff",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/app/test/editor-draft.test.mjs",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "3248398f49c6b80870bfc480ba7fc94b7c5728f265c39030814e9b469b1b06a3",
+      "packageSha256": "3248398f49c6b80870bfc480ba7fc94b7c5728f265c39030814e9b469b1b06a3",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/app/test/reading-preview.test.mjs",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "3955281ecab7607702583a32e7e646b1698ff3823cda29bf7072d21d27567ac4",
+      "packageSha256": "3955281ecab7607702583a32e7e646b1698ff3823cda29bf7072d21d27567ac4",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/app/web/draftStorage.mjs",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "1b159d26a165cea247d8b0834968bb90915ec4bdaa34aab12e4d6e4847127ed6",
+      "packageSha256": "1b159d26a165cea247d8b0834968bb90915ec4bdaa34aab12e4d6e4847127ed6",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/contract/README.md",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "3461c392331d6cba0acdc1188ed5c5fbcc834070e68b286aab7ee571a2978d31",
+      "packageSha256": "9228188a4d718af1d6cd67e27548d0f900eebba683bb7f6ec10a4380a56277c8",
+      "changedForPackage": true
+    },
+    {
+      "path": "companion/contract/firmware-v2/SNAPSHOT.md",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "112a6b46482238c94f0d92c06761bd686676b532dee19b5eae54bbe55f4934e0",
+      "packageSha256": "6e9436c7ea35669dc4ec5f465854bba7c20c11d28f702c185539c0cc37337bd2",
+      "changedForPackage": true
+    },
+    {
+      "path": "companion/contract/firmware-v2/fixtures/README.md",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "ae464cd47508cff0d2be239677aee4184beba06e767d301a2d88cc992edcd9b6",
+      "packageSha256": "ae464cd47508cff0d2be239677aee4184beba06e767d301a2d88cc992edcd9b6",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/contract/firmware-v2/fixtures/command-stale-state.json",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "196c9bde9619d465eaa7996b640ae61f16c6011eb0322b036cba83a2f479bae1",
+      "packageSha256": "196c9bde9619d465eaa7996b640ae61f16c6011eb0322b036cba83a2f479bae1",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/contract/firmware-v2/fixtures/command-start.json",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "a92cd55ad68816cb467dfba34d64eee288269db34959a3de1cdb6a897ac5fb9f",
+      "packageSha256": "a92cd55ad68816cb467dfba34d64eee288269db34959a3de1cdb6a897ac5fb9f",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/contract/firmware-v2/fixtures/reply-conflict.json",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "9d3ebd02b1a4596a8c41a5e5b721a7217097b243f41e3ecdb0c648c879b6b0cc",
+      "packageSha256": "9d3ebd02b1a4596a8c41a5e5b721a7217097b243f41e3ecdb0c648c879b6b0cc",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/contract/firmware-v2/fixtures/reply-duplicate.json",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "fecbcef0743df546227cd21bac32775f29451f197a07c8b33df420c2ce9fa253",
+      "packageSha256": "fecbcef0743df546227cd21bac32775f29451f197a07c8b33df420c2ce9fa253",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/contract/firmware-v2/fixtures/reply-executed.json",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "a1fed9ac2ec24b1c96aa7c5027571eb5589f38922269a4bf1db95740286c8098",
+      "packageSha256": "a1fed9ac2ec24b1c96aa7c5027571eb5589f38922269a4bf1db95740286c8098",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/contract/firmware-v2/fixtures/reply-stale-state.json",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "139cda5df6334a04186ff89b8b09801592d19b93ffcbecf09c0a5902ee41e76a",
+      "packageSha256": "139cda5df6334a04186ff89b8b09801592d19b93ffcbecf09c0a5902ee41e76a",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/contract/firmware-v2/fixtures/status-ready.json",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "eb14ec710adf2d7922b6f986f20378994965e30a446f9bc5670d65e4f9c680bc",
+      "packageSha256": "eb14ec710adf2d7922b6f986f20378994965e30a446f9bc5670d65e4f9c680bc",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/contract/firmware-v2/fixtures/status-running.json",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "ab6d2440db9336c58222654aec2397e8edefb77599625b44667b7f6e34e08aff",
+      "packageSha256": "ab6d2440db9336c58222654aec2397e8edefb77599625b44667b7f6e34e08aff",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/contract/firmware-v2/schemas/game-command-v2.schema.json",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "3e3a987ba473672cca00d1034d248a0fd7d7631fa0395b3195483c91b33cf197",
+      "packageSha256": "3e3a987ba473672cca00d1034d248a0fd7d7631fa0395b3195483c91b33cf197",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/contract/firmware-v2/schemas/game-reply-v2.schema.json",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "87bc5536a700e26af5e83bf696714b57a9c531a64d3190a1d506348f46eac5d0",
+      "packageSha256": "87bc5536a700e26af5e83bf696714b57a9c531a64d3190a1d506348f46eac5d0",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/contract/firmware-v2/schemas/status-v2.schema.json",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "a70208fd7bf8b95cec8278b0df9960210d6eabe18ddccfaf3a381bc11bd19366",
+      "packageSha256": "a70208fd7bf8b95cec8278b0df9960210d6eabe18ddccfaf3a381bc11bd19366",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/contract/lab-v2/README.md",
+      "source": "new package documentation or clone preservation configuration",
+      "packageSha256": "1af5a085294b2882f197dcd885214590f4fbd3b9bd2d8b0ae001c7c3f582b2e0"
+    },
+    {
+      "path": "companion/contract/nfc-v1/README.md",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "f97771fd2ae516dd41ec4f3f624b358389b34ee03be21b7461244ab152816d1a",
+      "packageSha256": "f97771fd2ae516dd41ec4f3f624b358389b34ee03be21b7461244ab152816d1a",
+      "changedForPackage": false
+    },
+    {
+      "path": "companion/contract/scripts/verify-firmware-v2-snapshot.mjs",
+      "source": "unversioned main working tree at 29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "sourceSha256": "33b5adb9a58ff18107f7024634125fa81317131098f458fe6c9cb476ddae5a55",
+      "packageSha256": "33b5adb9a58ff18107f7024634125fa81317131098f458fe6c9cb476ddae5a55",
+      "changedForPackage": false
+    }
+  ],
+  "exclusions": [
+    "complete Vite UI and v0 mock commands",
+    "experiments",
+    "phone automation helpers",
+    "APKs and build outputs",
+    "local caches and raw evidence",
+    "browser localStorage and private data"
+  ]
+}
