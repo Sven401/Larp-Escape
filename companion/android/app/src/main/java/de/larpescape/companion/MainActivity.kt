@@ -248,7 +248,12 @@ class MainActivity : ComponentActivity() {
                             Text(if (state.scanning) "Suche läuft …" else "ESP suchen und Diagnose prüfen")
                         }
                         state.targets.forEach { target ->
-                            OutlinedButton(onClick = { model.connect(target.id) }, modifier = Modifier.fillMaxWidth()) { Text("${target.name} verbinden") }
+                            OutlinedButton(onClick = { model.connect(target.id) }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                                Column {
+                                    Text("${target.name} verbinden")
+                                    Text("BLE-Adresse: ${target.id}", style = MaterialTheme.typography.bodySmall)
+                                }
+                            }
                         }
                         if (state.connected) {
                             Button(onClick = model::disconnect, modifier = Modifier.fillMaxWidth()) { Text("Verbindung trennen") }

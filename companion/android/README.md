@@ -299,6 +299,10 @@ Auf der ESP-Seite „Neuen Kopplungsbericht starten“ wählen, danach suchen,
 den ESP verbinden und bei bestehender Verbindung bei Bedarf
 „Android-Kopplung anfragen“ wählen. Diese Aktion ruft `BluetoothDevice.createBond()`
 auf; ihre Annahme durch Android ist noch kein erfolgreicher Bond. Der lokale
+Scan zeigt zu jedem Verbindungsziel Name und vollständige BLE-Adresse, damit
+auch gleichnamige Geräte bewusst unterschieden werden können. Die Adresse
+allein erteilt keine Produkt- oder Diagnosefreigabe.
+Der lokale
 `ACTION_BOND_STATE_CHANGED`-Status und `getBondState()` werden getrennt mit
 UTC-Zeit, Quelle, lokaler Bericht-ID, GATT-Generation und BLE-Zieladresse
 erfasst. GATT-Verbindungsrückrufe und Produktdienstsuche stehen ebenfalls als
