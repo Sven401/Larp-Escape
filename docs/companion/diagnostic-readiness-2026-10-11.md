@@ -6,9 +6,10 @@ upload approval, installation record or instruction to start the user run.
 
 ## Reproducible artifacts
 
-- Source branch/firmware commit:
+- Product source branch/implementation commit:
   `plan/nutzergefuehrte-hardwarediagnose-startintegration` /
-  `77028cb74edbaa16ca33b4fcabc63a5c5cdbe94f`.
+  `787d83bc36a2facb51a50a8d71fbf2b9ed2c30b0`.
+  Firmware sources are unchanged from `77028cb74edbaa16ca33b4fcabc63a5c5cdbe94f`.
 - Built firmware image:
   `.pio/build/az-delivery-devkit-v4-single-app-capacity/firmware.bin`,
   2,000,224 bytes, SHA-256
@@ -24,8 +25,8 @@ upload approval, installation record or instruction to start the user run.
   The APK still lists every required area with its concrete blockers and
   sends no request for the blocked areas.
 
-The APK includes the uncommitted readiness UI files in the working tree. The
-firmware sources are unchanged from the named commit.
+The APK includes the readiness UI and report contract from the product source
+commit above. No firmware source file changed in that commit.
 
 ## Connected phone state
 
