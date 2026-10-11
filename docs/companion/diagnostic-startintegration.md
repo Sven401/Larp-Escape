@@ -211,3 +211,33 @@ the box. No pairing was run by Codex or observed yet. Role, diagnostic grant,
 physical LED-off evidence and product acceptance remain closed. The user
 operates the installed app's pairing flow and exports its report before any
 actual pairing claim.
+
+## Product status after the user-run BLE return-path check, 2026-10-11
+
+The user subsequently paired the Android app to the original box, and a
+separate user-run app attempt received both ControlReply and StepReply
+transport probes on one GATT generation. Direct USB reads of the app's
+persisted journals are preserved and interpreted in
+`ble-pairing-preflight.md`. The loaded box firmware contains the narrow probe
+sender from `56b63bd`; the Android probe client was installed and its APK
+hash checked. This establishes the BLE notification return path only. It
+does not establish any authenticated diagnostic command or physical result.
+
+Commit `1410938` is a **local, not uploaded** product-start package. It
+constructs the existing F0 PeerAuth graph after a valid boot identity,
+starts its worker after original GATT source registration, and gates
+advertising on the worker's closed readiness. The empty registry, current
+`ESP_IO_CAP_NONE` bond policy, MITM-protected writes and identity gates remain
+unchanged. The configured-control host suite passed 541/541 and the ESP32
+single-app build passed (1,993,693/2,621,440 B flash;
+80,436/532,480 B static RAM). These are build and host findings, not a role
+or device proof.
+
+Hardware review found no verified input, display or OOB path on the original
+box for BLE MITM. Android `OS_BONDED` and a working notification transport
+therefore cannot satisfy F1 or Game Master authority. Protected diagnostic
+writes and the independent LED-off gate stay closed. A security contract
+decision and its separate implementation/tests are required before any
+positive role or diagnostic access can be claimed. Product hardware testing
+and release remain open for the user-led app flow and a later evaluable
+end report.
