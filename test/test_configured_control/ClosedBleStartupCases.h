@@ -6,18 +6,24 @@ struct BleStartupFakePort {
     unsigned failingCall = 0, calls = 0;
     std::int32_t failure = 0x103;
     std::uint8_t controller = 0, bluedroid = 0;
+    ClosedBleStartupAttempt::Mode initMode =
+        ClosedBleStartupAttempt::Mode::Ble;
+    ClosedBleStartupAttempt::Mode enableMode =
+        ClosedBleStartupAttempt::Mode::Ble;
     std::uint8_t controllerStatus() noexcept { return controller; }
     std::uint8_t bluedroidStatus() noexcept { return bluedroid; }
     std::uint32_t internalFree() noexcept { return 40000U - calls * 100U; }
     std::uint32_t internalLargest() noexcept { return 20000U - calls * 100U; }
-    std::int32_t controllerInit() noexcept {
+    std::int32_t controllerInit(ClosedBleStartupAttempt::Mode mode) noexcept {
         ++calls;
+        initMode = mode;
         if (calls == failingCall) return failure;
         controller = 1;
         return 0;
     }
-    std::int32_t controllerEnable() noexcept {
+    std::int32_t controllerEnable(ClosedBleStartupAttempt::Mode mode) noexcept {
         ++calls;
+        enableMode = mode;
         if (calls == failingCall) return failure;
         controller = 2;
         return 0;
@@ -71,6 +77,10 @@ void test_ble_stack_start_success_stays_closed_ready_without_second_sdk_call() {
     TEST_ASSERT_EQUAL_UINT8(2, attempt.report().controllerAfter);
     TEST_ASSERT_EQUAL_UINT8(2, attempt.report().bluedroidAfter);
     TEST_ASSERT_EQUAL_INT32(0, attempt.report().sdkError);
+    TEST_ASSERT_EQUAL(static_cast<int>(ClosedBleStartupAttempt::Mode::Ble),
+                      static_cast<int>(port.initMode));
+    TEST_ASSERT_EQUAL(static_cast<int>(port.initMode),
+                      static_cast<int>(port.enableMode));
     TEST_ASSERT_EQUAL(static_cast<int>(ClosedBleStartupAttempt::State::ReadyClosed),
                       static_cast<int>(attempt.begin(port)));
     TEST_ASSERT_EQUAL_UINT(4, port.calls);
