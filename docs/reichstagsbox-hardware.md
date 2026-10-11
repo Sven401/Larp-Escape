@@ -2,9 +2,11 @@
 
 ## BLOCKER: Matrix-Reihe 1 und Wake 1 auf GPB7
 
-Stand: 12. Oktober 2026. Produktbranch
+Stand: 12. Oktober 2026. Erneut geprüft auf Produktbranch
 `plan/nutzergefuehrte-hardwarediagnose-startintegration`, Produkt-HEAD
-`dc2237e8c7f8f62672811402bd6d661d18c12997`.
+`988367ffa0daebe72faf66e52f5e741d019560b5`; die unten genannten
+Quellzuordnungen sind gegenüber dem ursprünglichen Prüfstand `dc2237e8`
+unverändert.
 
 Die aktuelle Quellkonfiguration legt Matrix-Reihe 1 auf MCP-Instanz 1
 (`0x21`), GPB7, und Wake 1 auf MCP-Instanz 0 (`0x20`), GPB7:
@@ -45,3 +47,36 @@ damit **keine freigegebenen Ersatzprofile**. Eine Freigabe erfordert die
 As-built-Nachweise, einen versionierten Hardwarevertrag und anschließend die
 nutzergeführte physische Prüfung; Hosttests oder Busantworten reichen dafür
 nicht aus.
+
+## BLOCKER: keine aktuelle Upload- oder Restore-Freigabe
+
+Der frühere Ablauf in Produktcommit `5d3779e` gehört zur Produktbasis
+`7f2a3e4` auf `codex/reichstagsbox-hardware`. Seine damalige COM3-Zuordnung,
+lokalen Python-/Backup-Pfade, Buildbefehle und Aussagen zur geladenen Firmware
+sind nur Herkunftsnachweise. Sie identifizieren weder den heute verbundenen
+Chip noch das aktuell geladene Image und dürfen nicht als heutiger Upload-,
+Restore- oder Rückwegnachweis ausgeführt oder übernommen werden.
+
+Maßgeblich ist
+`C:/Users/seide/Projects/Larp-Escape-AI/plans/nutzergefuehrte-hardwarediagnose.md`,
+Abschnitte „Kurzer Entwicklungs- und Gerätezyklus“ und „Flashlayout“. Vor einer
+künftigen Geräteänderung ist in einem gesondert freigegebenen Geräteschritt:
+
+1. die Originalbox neu zu identifizieren und Chipkennung, Flashgröße,
+   tatsächlichen Port, geladenen Image-Hash und Partitionen in einem aktuellen
+   Faktenblatt festzuhalten;
+2. die außerhalb des Produkt-Repositories liegende Original-Vollsicherung samt
+   Manifest über Dateigröße, SHA-256, Chipbindung und Flashgröße dieser Box
+   zuzuordnen und ihre Integrität zu prüfen;
+3. Zielcommit, Zielabbild-Hash, Partitionstabelle und sämtliche Schreibbereiche
+   zu erfassen und gegen den chipgebundenen Rückweg abzugleichen; bei unbekanntem
+   Inhalt, geänderten Partitionen/Startdaten oder unklarer Backup-Integrität ist
+   der Sicherungsbedarf neu zu entscheiden;
+4. Upload und Restore als getrennte Handlungen jeweils erst nach ausdrücklicher
+   Nutzerfreigabe auszuführen; ein Restore erfolgt niemals automatisch. Nach
+   einem Schreibvorgang sind Schreib-Hashes und der erwartete Startzustand zu
+   belegen.
+
+Diese Prüfung wurde in diesem Dokumentationsschritt nicht am Gerät ausgeführt.
+Bis das aktuelle Faktenblatt und der geprüfte chipgebundene Rückweg vorliegen,
+bleibt jede Firmwareänderung an der Originalbox fail-closed gesperrt.
