@@ -1,10 +1,14 @@
-# Vorläufiger Hardwarevertrag v0.1 und Messauftrag
+# Vorläufiger Hardwarevertrag v0.1.1 und Messauftrag
 
-**Stand:** 11. Oktober 2026. **Status:** Quellenabgleich, gesperrt für echte
+**Stand:** 11. Oktober 2026. **Status:** Quellen- und Nutzerbefund, gesperrt für echte
 Diagnoseausgänge und Fertigung. **Produktbasis:**
-`plan/hardware-revision-schnittstellenabgleich` / `853dd06423d52eec30d93f394b21280903c128d1`.
-Dieser Vertrag beschreibt die Unterschiede zwischen Zeichnung und Software; er
-bestätigt keine Leitung, bestückte Revision oder elektrische Funktion der Box.
+`plan/hardware-revision-schnittstellenabgleich` / `669160f0d05fed4b901b1a2cdbb4549c22b646a4`.
+**Änderung v0.1 → v0.1.1:** Der Nutzer hat am 11. Oktober 2026 die
+LED-Datenleitung der realen Box an ESP GPIO15 als geprüft gemeldet. Diese
+Pinzuordnung ist damit ein nutzerbestätigter As-built-Befund; Prüfmittel,
+Messprotokoll und Boxrevision wurden nicht mitgeteilt. Der Vertrag trennt
+weiterhin Zeichnung, Firmwarekonfiguration und reale Box. Er bestätigt keine
+LED-Funktion oder übrige bestückte Revision.
 Er ändert keine Firmware- oder App-Fähigkeit.
 
 ## Quellenrang und Schnittstellen
@@ -16,9 +20,9 @@ Die geometrische Auswertung in `pruefung/quellnetze-2026-10-10.json` ist keine
 CAD-generierte Netzliste. F0 `e973818`, serielle Diagnose `db52d7a` und der
 App-/Firmware-Plan der getrennten KI-Werkbank wurden erneut verglichen.
 
-| Signal/Funktion | Editierbare Quelle bzw. Export | Firmwarekonfiguration | Vertrag v0.1 / Sperre |
+| Signal/Funktion | Editierbare Quelle bzw. Export | Firmwarekonfiguration | Vertrag v0.1.1 / Sperre |
 | --- | --- | --- | --- |
-| LED-DATA | Altes EasyEDA-JSON: `LED-G4:2 DATA` und `U3:26 GPIO4` im selben gezeichneten Netz. V2 zeigt `G4` an DATA und GPIO4, hat aber keine zugeordnete editierbare Quelle. | F0 `src/main.cpp`: WS2811, GRB, GPIO15, 23 LEDs; `src/HardwareAcceptance/main.cpp` bei `db52d7a` ebenfalls GPIO15. | **Konflikt.** Kein GPIO als physisch angeschlossen erklärt. GPIO4 ist zugleich PN532-SS im Firmwarepfad. Kein Pinwechsel und kein echter LED-Schritt vor As-built-Nachweis. |
+| LED-DATA | Altes EasyEDA-JSON: `LED-G4:2 DATA` und `U3:26 GPIO4` im selben gezeichneten Netz. V2 zeigt `G4` an DATA und GPIO4, hat aber keine zugeordnete editierbare Quelle. | F0 `src/main.cpp`: WS2811, GRB, GPIO15, 23 LEDs; `src/HardwareAcceptance/main.cpp` bei `db52d7a` ebenfalls GPIO15. | **Reale Box laut Nutzerprüfung vom 11.10.2026: LED-DATA an GPIO15.** Die GPIO4-Zeichnungen widersprechen dem gemeldeten As-built-Stand und bleiben historische Entwürfe. GPIO4 ist PN532-SS im Firmwarepfad. Kein Pinwechsel. LED-Typ, Signalqualität, Versorgung und Funktion offen. |
 | LED-Versorgung | Altes JSON zeichnet 5VIN, ESP-V5, DFPlayer-VCC und LED-Klemme Pin 1 auf einem +5-V-Netz, Pin 3 an GND. | FastLED-Grenze 5 V/1000 mA. | Gezeichnete Verbindung und Softwarelimit sind weder Versorgungsspannung noch Netzteilbemessung. Quelle, Rückleiter, Schutz, USB-Rückspeisung und Lastreserve offen. |
 | Wake 1–4 | Expanderquelle führt B7/B6/B4/B3 auf dreipolige Klemmen; keine bestätigte Taster- oder MCP-Chip-Verdrahtung. | MCP `0x20` B7/B6/B4/B3, `INPUT_PULLUP`, HIGH als aktiv. | Rohpegel, aktive Polarität und physische Nummerierung getrennt protokollieren. B7 als Eingang bei einem **MCP23017** unzulässig; Chipmarking offen. |
 | 9×9-Matrix | Expanderquelle benennt A-/B-Klemmen, enthält aber keinen vollständigen nachgewiesenen Matrixkabelbaum. | Zeilen 1–8 MCP `0x21` B7…B0, Zeile 9 MCP `0x20` B0; Spalten MCP `0x20` B1/A0…A6/B5, während des Scans LOW/HIGH. | MCP `0x21` B7 wäre beim MCP23017 ebenfalls ein unzulässiger Eingang. Richtung, Pull, Ruhepegel, 81 Felder und Mehrfachbetätigung offen. |
@@ -32,11 +36,12 @@ neuen, gemeinsam mit Firmware geprüften Pinvertrag vor Netzliste und Layout.
 
 ## Abhängigkeit des späteren Diagnose-LED-Schritts
 
-Der Hardwarestatus der Fähigkeit `led_single` bleibt **unbestätigt**. Firmware und
-App dürfen den Pin nicht aus einem Dateinamen, Label oder Export wählen. Für den
-ersten echten Schritt sind erforderlich: identifizierte bestückte Boxrevision und
-LED-Baugruppe; nachgewiesener Datenpfad zu DIN; Versorgung und gemeinsame Masse;
-passender Pegel gemäß den Datenblättern der tatsächlich verbauten Teile;
+Der Hardwarestatus der Fähigkeit `led_single` bleibt **unbestätigt**, obwohl
+LED-DATA an GPIO15 der realen Box nutzerbestätigt ist. Firmware und App dürfen
+andere Pins nicht aus einem Dateinamen, Label oder Export wählen. Für den
+ersten echten Schritt sind erforderlich: identifizierte LED-Baugruppe;
+Versorgung und gemeinsame Masse; passender Pegel gemäß den Datenblättern der
+tatsächlich verbauten Teile;
 produktiver GATT-/Rollenbesitzer und exklusive Übergabe vom Spiel;
 zeitbegrenzte sichtbare Testfreigabe; unabhängiger 500-ms-Aus-Timer und
 bestätigter Auszustand; korrelierte Geräteantwort. Erst dann kann die App einen
@@ -56,18 +61,10 @@ Versorgung und USB trennen. Kein Codex-gesteuerter Test, Upload oder Restore.
 1. **Identität:** Fotos der Box, Platinenrückseiten, LED-Erstbaustein-Markierung,
    ESP-, MCP-, Netzteil- und Steckermarkings, Kabelrichtung und Pin 1 dem
    Bericht zuordnen. Firmware- und App-Version sowie Boxkennung erfassen.
-   Ohne eindeutige Zuordnung bleibt jeder Pinbefund vorläufig.
-2. **Datenleitung bei stromlosem Aufbau:** Vom tatsächlich bestückten ESP-Pad
-   GPIO4 und GPIO15 getrennt zur Datenklemme, zur ersten LED-DIN-Fläche und
-   zum PN532-SS-Kontakt messen. Leiterbahn/Kabel/Serienbauteile fotografisch
-   nachverfolgen und Messgerät sowie Messbereich erfassen. Ein stabiler
-   leitender Pfad über die identifizierten Zwischenbauteile ist ein Indiz für
-   das Netz; unbekannte Halbleiter, parallel angeschlossene Module oder
-   unklare Messwerte machen den Ausgang **unklar**. GPIO4 und GPIO15 dürfen
-   nicht testweise gleichzeitig als Ausgänge betrieben werden. Kurzschluss
-   zwischen Versorgung und GND oder zwischen gegeneinander treibbaren
-   Ausgängen sperrt das Einschalten.
-3. **Versorgung vor Last:** Einspeisung, GND-Rückweg, 5-V- und 3,3-V-Rails und
+   Die Nutzerbestätigung GPIO15 mit Datum und Herkunft übernehmen; keine
+   erneute Durchgangsmessung als Startbedingung verlangen. Die Zuordnung
+   anderer Pins und die genaue Boxrevision bleiben offen.
+2. **Versorgung vor Last:** Einspeisung, GND-Rückweg, 5-V- und 3,3-V-Rails und
    mögliche USB-Rückspeisung als Schaltskizze erfassen. Mit den Markings der
    tatsächlich verbauten Module zulässige Spannungs-, Eingangspegel- und
    Stromgrenzen festlegen. Erst nach bestandenem, strombegrenztem Einschalt-
@@ -75,19 +72,20 @@ Versorgung und USB trennen. Kein Codex-gesteuerter Test, Upload oder Restore.
    ersten LED-Modul messen. Ein Messwert außerhalb einer belegten
    Herstellergrenze, Einbruch beim kurzen Lastschritt, unerwartete
    Rückspeisung oder nicht erklärter Stromanstieg führt zu **Stopp/Fehler**.
-   Mangels identifiziertem Modul gibt es in v0.1 keine erfundene absolute
+   Mangels identifiziertem Modul gibt es in v0.1.1 keine erfundene absolute
    Spannungs- oder Stromschwelle. FastLEDs 1-A-Limit ist keine solche Schwelle.
-4. **Datenpegel erst nach Gates:** Während eines einzigen von der App
-   ausgelösten, gedimmten und auf höchstens 500 ms begrenzten LED-0-Schritts
-   mit geeigneter hochohmiger Sonde Signal am konfigurierten ESP-Ausgang und
-   an LED-DIN, GND-Bezug und gemessene LED-Versorgung zeitgleich erfassen.
+3. **Datenpegel erst nach Gates:** Falls der Signalpegel gemessen wird,
+   während eines einzigen von der App ausgelösten, gedimmten und auf
+   höchstens 500 ms begrenzten LED-0-Schritts mit geeigneter hochohmiger
+   Sonde GPIO15 und LED-DIN samt GND-Bezug und LED-Versorgung erfassen.
    Der High-Pegel an DIN muss die im Datenblatt des identifizierten LED-Typs
    geforderte `VIH(min)` erreichen und `VDD`/absolute Grenzwerte einhalten;
-   sonst **Fehler**, ohne passende Teileangabe **unklar**. Bleibt am ESP
+   sonst **Fehler**, ohne passende Teileangabe oder Messung **unklar**. Bleibt an GPIO15
    Aktivität aus, ist der Firmware-/Gatepfad zu prüfen; liegt sie am ESP an,
-   aber nicht an DIN, ist der Datenpfad zu prüfen. Beides allein beweist keine
+   aber nicht an DIN, ist der Signalweg zu prüfen. Dieser optionale Pegeltest
+   wiederholt die bereits bestätigte Pinzuordnung nicht und beweist keine
    sichtbare LED-Funktion.
-5. **Sicht und Aus:** Die App fragt Farbe/Position von LED 0 und den sichtbaren
+4. **Sicht und Aus:** Die App fragt Farbe/Position von LED 0 und den sichtbaren
    Auszustand nach Fristablauf separat ab. Nur korrelierte Geräteantwort,
    belegte elektrische Grenzen und passende Nutzerbeobachtung können diesen
    Schritt bestehen lassen. Fehlende Beobachtung, fehlende Messung oder
@@ -95,7 +93,7 @@ Versorgung und USB trennen. Kein Codex-gesteuerter Test, Upload oder Restore.
    ist **fehlgeschlagen**. Bericht samt Rohwerten, Zeit, Testmitteln, Fotos
    und Fehlerstatus exportieren; erst eine spätere Sitzung wertet ihn aus.
 
-**Offen für v0.2:** Bestückungs- und Kabelbaumrevision, echte Versorgungswerte,
+**Offen für v0.2:** genaue Bestückungs- und Kabelbaumrevision, echte Versorgungswerte,
 LED-Modul und Pegelanforderung, beide MCP-B7-Neuzuordnungen, Matrix-/Wake-
 Polarität, CAD-Netzliste, ERC, PCB-Quelle und DRC. Dieser Quellenabgleich
 enthält keine CAD-Designregelprüfung und keine Fertigungsfreigabe.
