@@ -108,6 +108,33 @@ void test_source_diagnostic_original_closed_handles_reject_all_writes() {
     TEST_ASSERT_EQUAL(4, host_sdk_source::sent.size());
     sdk.close();
 }
+void test_source_diagnostic_closed_write_never_adopts_game_role_or_payload() {
+    SourceFixture sdk;
+    const auto handles = closedDiagnosticHandles(sdk.source);
+    host_sdk_source::currentTask = reinterpret_cast<void *>(3);
+    TEST_ASSERT_TRUE(sdk.source.postDiagnosticClosedSetup(handles));
+    host_sdk_source::currentTask = reinterpret_cast<void *>(1);
+    host_sdk_source::drainOne();
+    TEST_ASSERT_TRUE(sdk.source.diagnosticClosedSetupInstalled(handles));
+    sdk.open(false); // No peer authentication or Game Master role.
+    sdk.write(std::string(69, '\x7f'), 31, handles.controlWrite);
+    TEST_ASSERT_EQUAL(1, host_sdk_source::sent.size());
+    TEST_ASSERT_EQUAL(static_cast<unsigned>(AttWriteStatus::InsufficientAuthorization),
+                      static_cast<unsigned>(host_sdk_source::sent.back().status));
+    sdk.write(std::string(80, '\x7f'), 32, handles.stepWrite, true, true, 1);
+    TEST_ASSERT_EQUAL(2, host_sdk_source::sent.size());
+    TEST_ASSERT_EQUAL(static_cast<unsigned>(AttWriteStatus::InsufficientAuthorization),
+                      static_cast<unsigned>(host_sdk_source::sent.back().status));
+    sdk.write("\x01\x00", 33, handles.controlCccd, false);
+    TEST_ASSERT_EQUAL(2, host_sdk_source::sent.size());
+    CopiedCommandFrame command;
+    CopiedProfileFrame profile;
+    TEST_ASSERT_FALSE(sdk.commands.take(command));
+    TEST_ASSERT_FALSE(sdk.profiles.take(profile));
+    sdk.close();
+    sdk.write(std::string(69, '\x7f'), 34, handles.controlWrite);
+    TEST_ASSERT_EQUAL(2, host_sdk_source::sent.size());
+}
 void test_source_diagnostic_handle_install_rejects_collision_and_wrong_origin() {
     SourceFixture sdk;
     auto value = closedDiagnosticHandles(sdk.source);

@@ -62,9 +62,13 @@ BTU request callback intercepts all four writable diagnostic handles. If the
 exact installed source registration and current connection birth remain live,
 it returns `ESP_GATT_INSUF_AUTHORIZATION` for a write requiring an ATT response;
 otherwise it consumes the request closed. It never copies diagnostic bytes to
-the game/profile queues. A write without response or prepared write cannot
-open a path. No notification API is called. SDK MITM enforcement is an
-additional gate, not an authority or physical-off proof.
+the game/profile queues or even into their local write buffer. This refusal
+does not depend on an authenticated IdentityAccess snapshot: an unassigned
+client can receive the explicit closed error on its own live link. A write
+without response is silently consumed, while a prepared write requiring a
+response receives the same closed error. A stale link receives no reply and
+cannot borrow a replacement birth. No notification API is called. SDK MITM
+enforcement is an additional gate, not an authority or physical-off proof.
 
 The registrar copies callback scalars and UUID bytes into a bounded queue;
 the separate worker checks original interface/registration, expected
@@ -92,3 +96,13 @@ single-app build passed with the pinned SDK. These are software checks: no
 radio behavior, runtime heap/latency, LED power, full-box function, or product
 release is inferred. No upload, restore, physical test or user-led report was
 performed for this registrar branch.
+
+Follow-up closed-ingress check: 534/534 configured-control host cases pass
+after the refusal was moved ahead of payload copying and decoupled from the
+identity snapshot. The ESP32 single-app product build passed with 1,973,901
+program bytes of 2,621,440 (75.3%); it was not uploaded. This is still
+**not** a Control/Step bridge. The SDK source
+does not yet supply a captured negotiated MTU, separately correlated CCCD
+state, an admitted same-birth F1/GM authority or a serialized production
+`Control`/`StepTransport` owner. Those are mandatory before any forwarding,
+positive ATT write status or reply notification can be added.
