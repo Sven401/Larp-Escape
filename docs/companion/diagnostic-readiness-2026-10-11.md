@@ -25,7 +25,7 @@ upload approval, installation record or instruction to start the user run.
   `DDEE76FBDF63B52607DA4353C3C22E802CD98B85DE54095F6E762EE78FF684FC`.
   This revised build contains the report contract, journal core and bounded
   BLE transport-history export. It has not been installed. The most recent
-  ADB attempt could not start its server; it gives no current phone-state proof.
+  `adb devices -l` completed but listed no attached device.
   The APK still lists every required area with its concrete blockers and
   sends no request for the blocked areas.
 
@@ -67,9 +67,9 @@ no devices. Its `adb install -r` attempt returned `no devices/emulators found`;
 the installed phone version is therefore still the `B1BF72...` build unless a
 later phone-side action changes it.
 The later journal builds `D8F8FA...`, `143422...`, `A6A28A...` and current `DDEE76...`
-have also not been installed. The last successful ADB query listed no attached
-device. A subsequent query could not start the ADB server, so current phone
-connection state is unknown.
+have also not been installed. After one transient ADB-server startup failure,
+the latest `adb devices -l` completed and listed no attached device. Current
+phone-side installation state cannot be re-read.
 
 ## Actual box state
 
@@ -184,6 +184,6 @@ synthetic two-step preview.
 All test results above remain software-only. The phone was connected and the
 earlier `B1BF72...` diagnostic APK was installed after explicit approval. The
 revised `986CF0...`, `D8F8FA...`, `143422...`, `A6A28A...` and current `DDEE76...`
-builds were not installed; current phone connectivity is unverified.
+builds were not installed; the latest ADB query found no attached phone.
 No app workflow was exercised, no firmware was uploaded and no user hardware
 run was started.
