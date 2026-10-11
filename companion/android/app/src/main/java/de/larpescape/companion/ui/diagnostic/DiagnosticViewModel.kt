@@ -46,6 +46,9 @@ class DiagnosticViewModel(
     private val utc: () -> String = { Instant.now().truncatedTo(ChronoUnit.MILLIS).toString().let { if (it.length == 20) it.replace("Z", ".000Z") else it } },
     private val monotonic: () -> Long = { System.nanoTime() / 1_000_000 },
     private val autoTimers: Boolean = true,
+    private val controlTransport: (String) -> SyntheticDiagnosticControlTransportV1 = { grant ->
+        SyntheticDiagnosticControlTransportV1 { request -> SyntheticDiagnosticControlPeerV1.reply(request, grant) }
+    },
     private val scheduler: ((Long, () -> Unit) -> Unit)? = null,
 ) : ViewModel() {
     private val mutable = MutableStateFlow(DiagnosticUiState())
@@ -53,6 +56,7 @@ class DiagnosticViewModel(
     private var repository: FakeDiagnosticRepositoryV1? = null
     private var request: JsonObject? = null
     private var wireExchange: SyntheticDiagnosticStepV1? = null
+    private var control: SyntheticDiagnosticControlSessionV1? = null
     private var startMs = 0L
     private var submittedMs = 0L
     private var export: ByteArray? = null
@@ -104,7 +108,14 @@ class DiagnosticViewModel(
         if (mutable.value.running) stop("cancelled")
         startMs = monotonic()
         wireExchange?.retire()
-        repository = FakeDiagnosticRepositoryV1.start(SyntheticDiagnosticV1.newRun("android-debug-simulation-v1", utc()), store.create(), SyntheticDiagnosticTransportV1 {
+        val metadata = SyntheticDiagnosticV1.newRun("android-debug-simulation-v1", utc())
+        val context = metadata.snapshot()
+        val candidate = SyntheticDiagnosticControlSessionV1(context["deviceId"].asString, context["bootId"].asString,
+            context["runId"].asString, context.getAsJsonObject("grant")["grantId"].asString,
+            controlTransport(context.getAsJsonObject("grant")["grantId"].asString))
+        require(candidate.start(startMs)) { "Synthetische Startantwort fehlt oder passt nicht. Kein Diagnoseauftrag wurde freigegeben." }
+        control = candidate
+        repository = FakeDiagnosticRepositoryV1.start(metadata, store.create(), SyntheticDiagnosticTransportV1 {
             request = it
             // Repository has atomically journaled pending before invoking this synthetic transport.
             wireExchange = SyntheticDiagnosticStepV1(it, submittedMs)
@@ -179,6 +190,7 @@ class DiagnosticViewModel(
     fun stop(reason: String = "cancelled") = action {
         if (mutable.value.running) {
             repository!!.interrupt(reason, utc()); wireExchange?.retire(); refresh(false)
+            runCatching { control?.end(monotonic()) }
             mutable.value = mutable.value.copy(notice = if (reason == "timeout") "Simulationsfrist abgelaufen. Ergebnisse und Beobachtungen bleiben gespeichert; keine weiteren Aufträge." else "Lauf beendet. Keine weiteren Aufträge; offene Ausgänge bleiben unklar.")
         }
     }
@@ -188,6 +200,7 @@ class DiagnosticViewModel(
             require(!mutable.value.hasDraft()) { "Ungespeicherte Beobachtung zuerst speichern oder verwerfen." }
             if (mutable.value.pending) repository!!.interrupt("cancelled", utc())
             wireExchange?.retire()
+            runCatching { control?.end(monotonic()) }
             export = DiagnosticReportCodecV1.export(repository!!.finish(utc())); refresh(false)
             mutable.value = mutable.value.copy(notice = "Lauf abgeschlossen. Simulationsbericht für Export bereit.", finalized = true)
         }

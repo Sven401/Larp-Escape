@@ -23,6 +23,62 @@ class DiagnosticViewModelTest {
     private fun model(store: Store = Store()) = DiagnosticViewModel(store, ::utc, { time }, false) { delay, block -> time += delay; block() }
     private fun last(model: DiagnosticViewModel) = model.state.value.document!!.getAsJsonArray("steps").last().asJsonObject
 
+    @Test fun guidedFakeRequiresCorrelatedControlStartAndSendsCancelOnFinish() {
+        val commands = mutableListOf<DiagnosticControlCommandV1>()
+        val model = DiagnosticViewModel(Store(), ::utc, { time }, false, controlTransport = { grant ->
+            SyntheticDiagnosticControlTransportV1 { bytes ->
+                commands.add(DiagnosticControlV1.request(bytes).command)
+                SyntheticDiagnosticControlPeerV1.reply(bytes, grant)
+            }
+        }) { delay, block -> time += delay; block() }
+        model.newRun(); model.startCurrent(); model.simulateReply(false)
+        assertEquals("finished", last(model)["state"].asString)
+        model.observe(1, "not_observed", "")
+        assertTrue(model.beginExport())
+        assertEquals(listOf(DiagnosticControlCommandV1.GRANT, DiagnosticControlCommandV1.CANCEL), commands)
+        assertEquals(listOf("unclear"), DiagnosticReportCodecV1.import(model.takeExport()!!).verdicts)
+    }
+
+    @Test fun missingControlStartCannotJournalOrSendStep() {
+        val store = Store()
+        val model = DiagnosticViewModel(store, ::utc, { time }, false,
+            controlTransport = { SyntheticDiagnosticControlTransportV1 { null } })
+        model.newRun(); model.startCurrent()
+        assertTrue(store.journals.isEmpty())
+        assertNull(model.state.value.document)
+        assertTrue(model.state.value.notice!!.contains("Fehler:"))
+    }
+
+    @Test fun differentSyntheticGrantIdCannotStartGuidedRun() {
+        val store = Store()
+        val model = DiagnosticViewModel(store, ::utc, { time }, false, controlTransport = { grant ->
+            SyntheticDiagnosticControlTransportV1 { bytes ->
+                SyntheticDiagnosticControlPeerV1.reply(bytes, grant).apply { this[63] = (this[63] + 1).toByte() }
+            }
+        })
+        model.newRun(); model.startCurrent()
+        assertTrue(store.journals.isEmpty())
+        assertNull(model.state.value.document)
+    }
+
+    @Test fun lostControlCancelStillRetiresLocalRunWithoutReplay() {
+        val commands = mutableListOf<DiagnosticControlCommandV1>()
+        val model = DiagnosticViewModel(Store(), ::utc, { time }, false, controlTransport = { grant ->
+            SyntheticDiagnosticControlTransportV1 { bytes ->
+                val command = DiagnosticControlV1.request(bytes).command
+                commands.add(command)
+                if (command == DiagnosticControlCommandV1.CANCEL) null else SyntheticDiagnosticControlPeerV1.reply(bytes, grant)
+            }
+        })
+        model.newRun(); model.startCurrent(); model.stop("disconnected")
+        model.simulateReply(false)
+        assertEquals("disconnected", last(model)["state"].asString)
+        assertTrue(last(model)["deviceReply"].isJsonNull)
+        assertEquals(listOf(DiagnosticControlCommandV1.GRANT, DiagnosticControlCommandV1.CANCEL), commands)
+        assertTrue(model.beginExport())
+        assertEquals(listOf("unclear"), DiagnosticReportCodecV1.import(model.takeExport()!!).verdicts)
+    }
+
     @Test fun explicitTwoStepSimulationExportsSeparateEvidence() {
         val model = model(); assertNull(model.state.value.document)
         model.newRun(); model.begin("wake_capture")

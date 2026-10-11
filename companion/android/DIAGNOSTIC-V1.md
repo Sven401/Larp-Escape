@@ -1,5 +1,18 @@
 # Android-Diagnosevertrag v1: Hostverbraucher und bedienbare Debugsimulation
 
+## Synthetischer Kontrollpfad vom 11. Oktober 2026
+
+Der geführte Debuglauf führt vor dem ersten Journal und Schritt jetzt einen
+`GRANT`-Rahmen durch `DiagnosticControlV1` und dessen korrelierte Antwort. Ohne
+passende Antwort entsteht kein neuer Lauf und kein Schrittauftrag. Beim Stoppen
+oder Export wird lokal sofort gesperrt und ein `CANCEL`-Rahmen versucht; eine
+fehlende Cancel-Antwort öffnet den Lauf nicht wieder. Der vorhandene
+`DiagnosticStepV1`-Pfad bleibt für die explizite Wake-/LED-Simulation zuständig.
+Der Fake erzeugt Kontrollantwort, Ursprung und Grant-ID selbst. Diese
+Byteprüfung ist ausdrücklich **keine** BLE-Verbindung, Rollenprüfung oder
+Gerätefreigabe. Ein App-/Firmware-Ende-zu-Ende-Pfad und die physische Abnahme
+stehen weiterhin aus.
+
 ## Geführte isolierte Vorschau
 
 Branch `plan/nutzergefuehrte-hardwarediagnose-android-guided` baut auf dem
