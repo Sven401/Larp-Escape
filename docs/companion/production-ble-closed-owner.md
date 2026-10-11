@@ -64,6 +64,21 @@ on this branch. Its reported 1,949,801 B linked size would be 671,639 B below
 the candidate's limit only as an arithmetic comparison across distinct builds,
 not a reproduced BLE build or a bound on future F1, role, and diagnosis code.
 
+Reconstruction audit on 2026-10-11: `git log --all` found no committed
+`src/main.cpp` change containing `esp_bt_controller_init` or
+`Esp32GattsService`. `git fsck --full --no-reflogs --unreachable` found six
+unreachable commits, none carrying that production startup, and a scan of
+5,441 unreachable blobs found no `esp_bt_controller_init` or the attempted
+`Esp32GattsService` construction. The removed working-tree experiment was
+therefore not recoverable as a defined Git revision. Recreating a new BLE
+startup from the ABI probe would be new integration work, not reproduction of
+the 1,949,801 B build; it could silently change callback, worker, or authority
+semantics. The next gate is to implement and review a fresh, narrowly closed
+production owner from the pinned SDK and current contracts, then build that
+exact source against this layout and report its actual image length and RAM.
+It must keep advertising, registry/credential/role and diagnostic admission
+disabled until their separate proofs exist.
+
 This check did not execute the ESP32 bootloader. A future device procedure must
 verify how the actual bootloader chooses the sole `factory` app when existing
 otadata still contains a prior OTA selection, and must specify how the old
