@@ -153,3 +153,41 @@ connection. F1 restored-bond provenance, same-birth registry/P256/credential
 and role ACK, Android bearer, user-led full-box report, bootloader selection
 with old otadata, and an independently verified rollback remain open. No
 upload, restore or RF test occurred.
+
+## Challenge/Proof/Result production gate, 2026-10-11
+
+The product owner currently supplies the empty `PeerChallengeReadSetup` to
+`Esp32GattsService`. This is deliberate. The smallest real authenticated GATT
+path requires the complete original-bound chain, not merely three more
+attributes:
+
+1. A valid immutable `BootIdentity` from the production run, plus the actual
+   selected source registration and service handles before the first link.
+   `Esp32CompanionIdentityOwner` currently provides only the device identity,
+   initialized closed policy and channel; it does not create/expose a boot
+   identity for peer proof.
+2. A process-lifetime `IPeerProofContext` backed by the same selected source
+   and a started `FreeRtosPeerRegistryRuntime` whose credential snapshot is
+   installed with an original SDK actor ACK. The product owner has no registry
+   worker, loaded peer registry or credential publisher. A caller-supplied
+   public key, test credential or device identity would not establish this.
+3. The separate crypto worker with real nonce/verification, grant handoff,
+   challenge-read and issue/proof/result ingress all started against that same
+   boot and original source. `Esp32GattsService::begin` rejects an incomplete
+   setup; `Esp32GattsSource::installEndpoints` also rejects missing context or
+   ingress before binding a challenge. Result success additionally rechecks
+   current credential and same-birth grant ACK. A proof alone gives no GM role.
+4. The original selected-key and restored-bond provenance from F1 must be
+   established before a positive peer result can be trusted on reconnect.
+   The present SDK security reader documents fresh pairing only. The product
+   does not advertise, so no app connection or RF behavior is being claimed.
+
+Adding Challenge/Issue/Proof/Result UUIDs with a dummy boot/context would
+create an apparent authentication surface without a valid challenge source or
+role result. This package therefore leaves the product source and GATT layout
+unchanged. The next implementation should import a real boot/registry/worker
+contract, require its startup ACK before the first connection, and then wire
+the already tested complete service bundle. On any missing or stale original
+registration, credential, SDK security observation or role ACK it must remain
+closed. A real device run and user-led diagnostic report are still separate
+gates.
