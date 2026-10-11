@@ -15,6 +15,7 @@ import android.os.SystemClock
 import android.util.Log
 import de.larpescape.companion.BuildConfig
 import de.larpescape.companion.data.device.*
+import de.larpescape.companion.data.diagnostic_observation.DiagnosticConnectionEvidenceJournalV1
 import de.larpescape.protocol.FrameAssembler
 import de.larpescape.protocol.ConfiguredStatusDecoder
 import de.larpescape.protocol.ConfiguredStatusTracker
@@ -23,6 +24,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.util.UUID
 import java.time.Instant
+import java.io.File
 
 // Lint cannot follow the shared permission predicate/guard through asynchronous
 // callbacks. Entry points check both permissions; guarded catches revocation.
@@ -32,7 +34,10 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
     private val mutable = MutableStateFlow(DeviceUiState())
     override val state = mutable.asStateFlow()
     private val pairingJournal = PairingObservationJournalV1(context.filesDir)
+    private val diagnosticEvidence = DiagnosticConnectionEvidenceJournalV1(File(context.filesDir, "diagnostic-connection-v1"))
     init {
+        runCatching { diagnosticEvidence.loadRecovered() }
+            .onFailure { Log.w("LarpEscape", "Stored diagnostic connection evidence could not be read", it) }
         runCatching { pairingJournal.loadRecovered(Instant.now().toString()) }
             .onSuccess { if (it != null) mutable.value = mutable.value.copy(pairingReport = it,
                 message = "Gespeicherter Kopplungsbericht geladen · Verbindung erneut prüfen") }
@@ -322,19 +327,28 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
                     return@dispatch
                 }
                 if (lab == null) {
-                    val shell = AndroidDiagnosticGattShellV1(connection, token)
-                    diagnostic = shell
-                    val started = shell.discover()
-                    reportDiagnostic(shell)
-                    if (!started) Log.i("LarpEscape", "DIAGNOSTIC_GATT_BLOCKED ${shell.blockStatus}")
-                    else handler.postDelayed({
-                        if (token == generation && connection === gatt && diagnostic === shell) {
-                            shell.expireSetup()
-                            reportDiagnostic(shell)
-                            if (shell.link.failure == de.larpescape.protocol.DiagnosticGattFailureV1.SETUP_TIMEOUT)
-                                Log.i("LarpEscape", "DIAGNOSTIC_GATT_BLOCKED ${shell.blockStatus}")
-                        }
-                    }, 10000)
+                    val evidenceReady = runCatching { diagnosticEvidence.begin(token, id) }
+                        .onFailure { Log.e("LarpEscape", "Diagnostic evidence storage failed", it) }.isSuccess
+                    if (evidenceReady) {
+                        val shell = AndroidDiagnosticGattShellV1(connection, token, targetAddress = id,
+                            evidenceSink = { event -> runCatching { diagnosticEvidence.append(event) }
+                                .onFailure { Log.e("LarpEscape", "Diagnostic evidence write failed", it) }.getOrDefault(false) })
+                        diagnostic = shell
+                        val started = shell.discover()
+                        reportDiagnostic(shell)
+                        if (!started) Log.i("LarpEscape", "DIAGNOSTIC_GATT_BLOCKED ${shell.blockStatus}")
+                        else handler.postDelayed({
+                            if (token == generation && connection === gatt && diagnostic === shell) {
+                                shell.expireSetup()
+                                reportDiagnostic(shell)
+                                if (shell.link.failure == de.larpescape.protocol.DiagnosticGattFailureV1.SETUP_TIMEOUT)
+                                    Log.i("LarpEscape", "DIAGNOSTIC_GATT_BLOCKED ${shell.blockStatus}")
+                            }
+                        }, 10000)
+                    } else {
+                        mutable.value = mutable.value.copy(diagnosticAvailability = DiagnosticAvailabilityV1.OTHER_BLOCK)
+                        report("Diagnoseereignisse nicht speicherbar · Diagnosezugriff gesperrt")
+                    }
                 } else mutable.value = mutable.value.copy(diagnosticAvailability = DiagnosticAvailabilityV1.LAB_ONLY)
                 mutable.value = mutable.value.copy(connected = true, lab = lab != null)
                 report("GATT_SERVICE_CONFIRMED ${if (lab != null) "v2-Vertragslabor" else "Produktservice"}")
