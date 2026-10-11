@@ -1375,6 +1375,7 @@ int main() {
     RUN_TEST(test_endpoint_failed_post_wrong_task_and_replaced_sdk_never_retry);
     RUN_TEST(test_source_original_sdk_post_actual_frames_and_application);
     RUN_TEST(test_source_diagnostic_original_closed_handles_reject_all_writes);
+    RUN_TEST(test_source_diagnostic_closed_write_never_adopts_game_role_or_payload);
     RUN_TEST(test_source_diagnostic_handle_install_rejects_collision_and_wrong_origin);
     RUN_TEST(test_diagnostic_gatts_exact_sdk_shape_and_closed_install_before_start);
     RUN_TEST(test_diagnostic_gatts_bad_callback_and_generation_fail_closed);

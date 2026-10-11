@@ -1087,10 +1087,6 @@ bool Esp32GattsSource::requestNow(std::uint16_t packed, std::uint32_t transactio
         event.count = borrowed->write.length;
         event.needResponse = borrowed->write.needResponse;
         event.prepared = borrowed->write.prepared;
-        if (event.count && event.count <= sizeof(bytes)) {
-            std::memcpy(bytes, borrowed->write.value, event.count);
-            event.bytes = bytes;
-        }
         diagnostic::DiagnosticClosedHandles diagnostic;
         portENTER_CRITICAL(&mutex_);
         const bool installed = diagnostic_.state == 3;
@@ -1099,18 +1095,24 @@ bool Esp32GattsSource::requestNow(std::uint16_t packed, std::uint32_t transactio
         portEXIT_CRITICAL(&mutex_);
         if (installed && diagnostic.protectedWrite(event.attribute)) {
             GattsSourceRegistration original;
-            PeerTransportBinding transport;
             if (sourceTask() && readRegistration(original) &&
                 original == diagnostic.original && active_ &&
-                packed == live_.connection && transportNow(transport) &&
-                transport.registration == diagnostic.original.token &&
-                transport.interface == diagnostic.original.interface &&
+                packed == live_.connection &&
+                (packed & 0xff) == diagnostic.original.interface &&
                 event.needResponse)
                 (void)GATTS_SendRsp(packed, transaction,
                                     static_cast<std::uint8_t>(
                                         AttWriteStatus::InsufficientAuthorization),
                                     nullptr);
-            return true; // A diagnostic attribute never enters game/profile admission.
+            // The SDK actor only refuses the current original connection. A
+            // successful local ATT error submission is no grant, execution or
+            // peer-delivery proof. Do not even copy diagnostic request bytes
+            // into the game/profile write buffer while this route is closed.
+            return true;
+        }
+        if (event.count && event.count <= sizeof(bytes)) {
+            std::memcpy(bytes, borrowed->write.value, event.count);
+            event.bytes = bytes;
         }
     } else if (type == 3 && borrowed) {
         event.prepared = true;
