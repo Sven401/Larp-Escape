@@ -2,6 +2,8 @@ using BleDiagnostics.Core;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Bluetooth.Advertisement;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
+using Windows.Devices.Enumeration;
+using Windows.Foundation;
 
 namespace BleDiagnostics.Desktop;
 
@@ -89,6 +91,20 @@ internal static class CliRunner
             if (chosen is not null) await ProbeGattAsync(journal, chosen, sync, Save);
         }
 
+        if (options.PairOnce)
+        {
+            if (CliPairGate.MayRequestOnce(options, journal.Snapshot()))
+                await PairOnceAsync(journal, sync, Save);
+            else
+            {
+                lock (sync)
+                {
+                    journal.PairingEnded("skipped", "same-run advertisement and successful uncached product GATT service required");
+                    Save();
+                }
+            }
+        }
+
         lock (sync) Save();
         Console.WriteLine($"BLE report: {output}");
         Console.WriteLine($"scan={journal.ScanState}; callbacks={journal.ScanCallbacks}; devices={journal.Observations.Count}; gatt={journal.GattState}; product={journal.ProductServiceFound}; pairing={journal.PairingState}");
@@ -96,7 +112,7 @@ internal static class CliRunner
         {
             Console.Error.WriteLine($"JSON report could not be saved: {saveError}");
         }
-        return CliExitCode.ForResult(stopReason, saveError);
+        return CliExitCode.ForResult(stopReason, saveError, options.PairOnce, journal.PairingState);
     }
 
     private static async Task ProbeGattAsync(BleReportJournal journal, BleObservation chosen, object sync, Action save)
@@ -127,6 +143,70 @@ internal static class CliRunner
         catch (Exception ex)
         {
             lock (sync) { journal.GattEnded("error", ex.Message, null); save(); }
+        }
+    }
+
+    private static async Task PairOnceAsync(BleReportJournal journal, object sync, Action save)
+    {
+        lock (sync)
+        {
+            journal.PairingStarted("CLI never enters PIN/passkey or confirms a Windows system dialog; user action, if required, remains open");
+            save();
+        }
+        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(45));
+        BluetoothLEDevice? device = null;
+        IAsyncOperation<DevicePairingResult>? pairingOperation = null;
+        try
+        {
+            if (!BleIdentity.TryParseAddress(BleIdentity.ExpectedAddress, out var address))
+                throw new InvalidOperationException("invalid fixed product address");
+            device = await BluetoothLEDevice.FromBluetoothAddressAsync(address, BluetoothAddressType.Public).AsTask(timeout.Token);
+            if (device is null) throw new InvalidOperationException("Windows did not return the observed product BLE device");
+            // Exactly one public Windows pairing request. No custom ceremony or credential handler is registered.
+            pairingOperation = device.DeviceInformation.Pairing.PairAsync();
+            var result = await pairingOperation.AsTask(timeout.Token);
+            var osIsPaired = ReadOsIsPaired(device, journal, sync);
+            var state = PairingOutcome.ReturnedState(result.Status.ToString(), osIsPaired);
+            lock (sync)
+            {
+                journal.PairingEnded(state, result.Status.ToString());
+                journal.PairingOsStateObserved(osIsPaired);
+                save();
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            try { pairingOperation?.Cancel(); } catch { }
+            var osIsPaired = ReadOsIsPaired(device, journal, sync);
+            lock (sync)
+            {
+                journal.PairingEnded("pending_after_deadline",
+                    "PairAsync result unavailable at 45-second deadline; cancellation requested but Windows pairing may continue");
+                journal.PairingOsStateObserved(osIsPaired);
+                save();
+            }
+        }
+        catch (Exception ex)
+        {
+            var osIsPaired = ReadOsIsPaired(device, journal, sync);
+            lock (sync)
+            {
+                journal.PairingEnded("error", ex.Message);
+                journal.PairingOsStateObserved(osIsPaired);
+                save();
+            }
+        }
+        finally { device?.Dispose(); }
+    }
+
+    private static bool? ReadOsIsPaired(BluetoothLEDevice? device, BleReportJournal journal, object sync)
+    {
+        if (device is null) return null;
+        try { return device.DeviceInformation.Pairing.IsPaired; }
+        catch (Exception ex)
+        {
+            lock (sync) journal.AddEvent("windows_is_paired_read_error", journal.SelectedAddress, ex.GetType().Name);
+            return null;
         }
     }
 }

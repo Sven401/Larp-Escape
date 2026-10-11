@@ -13,7 +13,7 @@ internal static class Program
             if (!CliParser.TryParse(args, out var options, out var error))
             {
                 Console.Error.WriteLine(error);
-                Console.Error.WriteLine("Usage: BleDiagnostics.Desktop.exe --scan <1..60> [--probe AA:BB:CC:DD:EE:FF] [--out report.json]");
+                Console.Error.WriteLine("Usage: BleDiagnostics.Desktop.exe --scan <1..60> [--probe AA:BB:CC:DD:EE:FF] [--pair-once] [--out report.json]");
                 return 2;
             }
             return await CliRunner.RunAsync(options!);

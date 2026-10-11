@@ -40,6 +40,8 @@ public sealed record BleReport(
     string ScanState, int ScanCallbacks, int ScanDistinctAddresses, int ScanDroppedAddresses,
     string GattState, string? GattStatus, bool? ProductServiceFound, bool? LabServiceFound,
     string PairingState, string? PairingStatus,
+    string? PairingInteractionBoundary,
+    bool? PairingOsIsPairedAtLastCheck,
     string FirmwareEvidence, string DiagnosticAuthority,
     IReadOnlyList<BleObservation> Observations, IReadOnlyList<BleEvent> Events);
 
@@ -62,6 +64,8 @@ public sealed class BleReportJournal
     public bool? LabServiceFound { get; private set; }
     public string PairingState { get; private set; } = "not_attempted";
     public string? PairingStatus { get; private set; }
+    public string? PairingInteractionBoundary { get; private set; }
+    public bool? PairingOsIsPairedAtLastCheck { get; private set; }
     public IReadOnlyCollection<BleObservation> Observations => observations.Values;
 
     public void AddEvent(string kind, string? address, string detail)
@@ -118,6 +122,8 @@ public sealed class BleReportJournal
             LabServiceFound = null;
             PairingState = "not_attempted";
             PairingStatus = null;
+            PairingInteractionBoundary = null;
+            PairingOsIsPairedAtLastCheck = null;
         }
         SelectedAddress = found.Address;
         SelectedAddressType = found.AddressType;
@@ -135,6 +141,8 @@ public sealed class BleReportJournal
         LabServiceFound = null;
         PairingState = "not_attempted";
         PairingStatus = null;
+        PairingInteractionBoundary = null;
+        PairingOsIsPairedAtLastCheck = null;
     }
 
     public void GattStarted()
@@ -160,10 +168,12 @@ public sealed class BleReportJournal
             $"state={state};status={status};product={ProductServiceFound};lab={LabServiceFound}");
     }
 
-    public void PairingStarted()
+    public void PairingStarted(string interactionBoundary = "Windows system dialog is user-controlled")
     {
         PairingState = "running";
         PairingStatus = null;
+        PairingInteractionBoundary = interactionBoundary;
+        PairingOsIsPairedAtLastCheck = null;
         AddEvent("pairing_started", SelectedAddress, "explicit Windows PairAsync request");
     }
 
@@ -174,12 +184,20 @@ public sealed class BleReportJournal
         AddEvent("pairing_ended", SelectedAddress, $"state={state};status={status}");
     }
 
+    public void PairingOsStateObserved(bool? isPaired)
+    {
+        PairingOsIsPairedAtLastCheck = isPaired;
+        AddEvent("windows_is_paired_read", SelectedAddress, isPaired?.ToString() ?? "unavailable");
+    }
+
     public BleReport Snapshot(DateTimeOffset? exportedUtc = null) => new(
         "larp-escape-windows-ble-observation-v1", "windows-winrt-ble-desktop", RunId,
         StartedUtc, exportedUtc, BleIdentity.ExpectedAddress,
         BleIdentity.ProductService.ToString("D"), BleIdentity.LabService.ToString("D"),
         SelectedAddress, SelectedAddressType, ScanState, ScanCallbacks, observations.Count, ScanDroppedAddresses,
         GattState, GattStatus, ProductServiceFound, LabServiceFound, PairingState, PairingStatus,
+        PairingInteractionBoundary,
+        PairingOsIsPairedAtLastCheck,
         "not_measured_by_desktop_app", "none; observation does not grant a diagnostic role",
         observations.Values.Where(x => x.Address.Equals(SelectedAddress, StringComparison.OrdinalIgnoreCase))
             .OrderBy(x => x.Address).ToArray(),

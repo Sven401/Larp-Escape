@@ -293,21 +293,29 @@ public sealed class MainForm : Form
             if (connected is null) throw new InvalidOperationException("Windows liefert kein BLE-Gerät für diese Adresse");
             var result = await connected.DeviceInformation.Pairing.PairAsync().AsTask(timeout.Token);
             if (closing) return;
-            var state = result.Status is DevicePairingResultStatus.Paired or DevicePairingResultStatus.AlreadyPaired
-                ? "paired" : "not_paired";
+            bool? osIsPaired = null;
+            try { osIsPaired = connected.DeviceInformation.Pairing.IsPaired; } catch { }
+            var state = PairingOutcome.ReturnedState(result.Status.ToString(), osIsPaired);
             journal.PairingEnded(state, result.Status.ToString());
-            status.Text = $"Windows-Kopplungsstatus: {result.Status}. Firmware-Rolle bleibt ungeprüft.";
+            journal.PairingOsStateObserved(osIsPaired);
+            status.Text = $"Windows-Kopplungsstatus: {result.Status}; IsPaired={osIsPaired?.ToString() ?? "unbekannt"}. Firmware-Rolle bleibt ungeprüft.";
         }
         catch (OperationCanceledException)
         {
             if (closing) return;
-            journal.PairingEnded("timeout", "45-second deadline; Windows operation cancellation requested");
-            status.Text = "Kopplungsversuch: Zeitgrenze überschritten; Windows-Abbruch angefordert.";
+            bool? osIsPaired = null;
+            try { osIsPaired = connected?.DeviceInformation.Pairing.IsPaired; } catch { }
+            journal.PairingEnded("pending_after_deadline", "PairAsync result unavailable at 45-second deadline; Windows pairing may continue");
+            journal.PairingOsStateObserved(osIsPaired);
+            status.Text = "Kopplungsfrist erreicht; Windows-Ergebnis ist offen. Der Bericht enthält den separat gelesenen IsPaired-Stand.";
         }
         catch (Exception ex)
         {
             if (closing) return;
             journal.PairingEnded("error", ex.Message);
+            bool? osIsPaired = null;
+            try { osIsPaired = connected?.DeviceInformation.Pairing.IsPaired; } catch { }
+            journal.PairingOsStateObserved(osIsPaired);
             status.Text = $"Kopplungsfehler: {ex.Message}";
         }
         finally

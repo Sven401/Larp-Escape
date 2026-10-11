@@ -1,6 +1,6 @@
 namespace BleDiagnostics.Core;
 
-public sealed record CliOptions(int ScanSeconds, string? ProbeAddress, string? OutputPath);
+public sealed record CliOptions(int ScanSeconds, string? ProbeAddress, string? OutputPath, bool PairOnce);
 
 public static class CliParser
 {
@@ -12,6 +12,7 @@ public static class CliParser
         int? seconds = null;
         string? address = null;
         string? output = null;
+        var pairOnce = false;
         for (var i = 0; i < args.Length; i++)
         {
             switch (args[i])
@@ -31,13 +32,22 @@ public static class CliParser
                     { error = "--out requires one JSON file path"; return false; }
                     output = args[i];
                     break;
+                case "--pair-once":
+                    if (pairOnce) { error = "--pair-once can appear only once"; return false; }
+                    pairOnce = true;
+                    break;
                 default:
                     error = $"Unknown CLI argument: {args[i]}";
                     return false;
             }
         }
         if (seconds is null) { error = "--scan is required (1 to 60 seconds)"; return false; }
-        options = new CliOptions(seconds.Value, address, output);
+        if (pairOnce && address != BleIdentity.ExpectedAddress)
+        {
+            error = $"--pair-once requires --probe {BleIdentity.ExpectedAddress}";
+            return false;
+        }
+        options = new CliOptions(seconds.Value, address, output, pairOnce);
         return true;
     }
 }

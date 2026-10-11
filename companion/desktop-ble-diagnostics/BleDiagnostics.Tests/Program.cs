@@ -57,13 +57,44 @@ Check(journal.Snapshot().Events.Count == BleReportJournal.MaxEvents,
     "bounded event retention");
 Check(CliParser.TryParse(["--scan", "12", "--probe", "a8:42:e3:cd:4b:1a", "--out", "result.json"],
     out var options, out _) && options?.ScanSeconds == 12 &&
-    options.ProbeAddress == BleIdentity.ExpectedAddress && options.OutputPath == "result.json",
+    options.ProbeAddress == BleIdentity.ExpectedAddress && options.OutputPath == "result.json" && !options.PairOnce,
     "CLI scan and explicit probe parsing");
 Check(!CliParser.TryParse(["--scan", "0"], out _, out _) &&
       !CliParser.TryParse(["--scan", "61"], out _, out _) &&
       !CliParser.TryParse(["--scan", "12", "--probe", "invalid"], out _, out _) &&
       !CliParser.TryParse(["--probe", BleIdentity.ExpectedAddress], out _, out _),
     "CLI rejects unbounded, invalid and no-scan runs");
+Check(CliParser.TryParse(["--scan", "12", "--probe", BleIdentity.ExpectedAddress, "--pair-once"],
+    out var pairOptions, out _) && pairOptions!.PairOnce,
+    "one-time pairing requires explicit flag and fixed target");
+Check(!CliParser.TryParse(["--scan", "12", "--pair-once"], out _, out _) &&
+      !CliParser.TryParse(["--scan", "12", "--probe", "00:00:00:00:00:01", "--pair-once"], out _, out _) &&
+      !CliParser.TryParse(["--scan", "12", "--probe", BleIdentity.ExpectedAddress, "--pair-once", "--pair-once"], out _, out _),
+    "one-time pairing rejects missing, foreign, or repeated target flag");
+var pairJournal = new BleReportJournal();
+pairJournal.ScanStarted();
+pairJournal.Advertisement(address, "Public", "Box", -25, [BleIdentity.ProductService]);
+pairJournal.ScanEnded("bounded_timeout");
+Check(!CliPairGate.MayRequestOnce(pairOptions!, pairJournal.Snapshot()), "advertisement alone cannot trigger pairing");
+Check(pairJournal.Select(BleIdentity.ExpectedAddress), "observed product address selected for gate");
+pairJournal.GattStarted();
+pairJournal.GattEnded("completed", "Success", [BleIdentity.LabService]);
+Check(!CliPairGate.MayRequestOnce(pairOptions!, pairJournal.Snapshot()), "lab-only GATT cannot trigger pairing");
+pairJournal.GattStarted();
+pairJournal.GattEnded("completed", "Success", [BleIdentity.ProductService]);
+Check(CliPairGate.MayRequestOnce(pairOptions!, pairJournal.Snapshot()), "same-run product GATT enables one explicit pairing request");
+pairJournal.PairingStarted("CLI does not handle user dialogs");
+pairJournal.PairingEnded("pending_after_deadline", "Windows may continue");
+pairJournal.PairingOsStateObserved(false);
+Check(pairJournal.Snapshot().PairingState == "pending_after_deadline" &&
+      pairJournal.Snapshot().PairingOsIsPairedAtLastCheck == false &&
+      pairJournal.Snapshot().PairingInteractionBoundary == "CLI does not handle user dialogs",
+    "deadline, OS state, and interaction boundary remain separate");
+Check(PairingOutcome.ReturnedState("Paired", true) == "paired" &&
+      PairingOutcome.ReturnedState("Paired", false) == "reported_paired_unconfirmed" &&
+      PairingOutcome.ReturnedState("AlreadyPaired", null) == "reported_paired_unconfirmed" &&
+      PairingOutcome.ReturnedState("NotPaired", true) == "not_paired",
+    "reported pair result needs separate IsPaired confirmation");
 Check(await BoundedWait.ForStopAsync(Task.CompletedTask, TimeSpan.FromSeconds(1)) == BoundedWaitResult.Stopped,
     "scan ends on watcher stop");
 Check(await BoundedWait.ForStopAsync(new TaskCompletionSource().Task, TimeSpan.FromMilliseconds(20)) == BoundedWaitResult.TimedOut,
@@ -75,6 +106,9 @@ Check(CliExitCode.ForResult("watcher_error:DisabledByUser", null) == CliExitCode
 Check(CliExitCode.ForResult("watcher_error:DisabledByUser", "access denied") == CliExitCode.ReportSaveFailed &&
       CliExitCode.ForResult("bounded_timeout", "access denied") == CliExitCode.ReportSaveFailed,
     "CLI reports denied JSON save with dedicated exit status");
+Check(CliExitCode.ForResult("bounded_timeout", null, true, "pending_after_deadline") == CliExitCode.PairNotConfirmed &&
+      CliExitCode.ForResult("bounded_timeout", null, true, "paired") == CliExitCode.Success,
+    "CLI pairing exit code reflects confirmed OS state only");
 var occupiedReportPath = Path.Combine(Path.GetTempPath(), "ble-report-occupied-" + Guid.NewGuid().ToString("N"));
 Directory.CreateDirectory(occupiedReportPath);
 try
