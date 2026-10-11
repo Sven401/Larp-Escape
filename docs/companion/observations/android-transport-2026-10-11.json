@@ -1,0 +1,1 @@
+{"connectionGeneration":3,"events":[{"connectionGeneration":3,"detail":"operation\u003dsetup;reason\u003dSETUP_TIMEOUT","kind":"TRANSPORT_ERROR","recordedUtc":"2026-10-11T17:20:14.430847Z","sequence":1,"targetAddress":"A8:42:E3:CD:4B:1A"}],"originalAuthority":"OPEN","physicalResult":"UNVERIFIED","schema":"diagnostic_connection_evidence_v1","targetAddress":"A8:42:E3:CD:4B:1A"}

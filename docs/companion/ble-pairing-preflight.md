@@ -1,12 +1,11 @@
 # App–ESP BLE pairing preflight (2026-10-11)
 
-Status: The box now advertises its product service and both Android and
-Windows have independently discovered it over GATT. The Android bond failed;
-the updated firmware security response has not yet been retested by the user.
-The current Android APK is installed and verified on the Moto G14; its next
-user-run pairing report is pending. Neither a received advertisement nor
-successful GATT discovery
-establishes an OS bond, GM role, diagnostic grant or physical function.
+Status: The user-run Android app has now documented an OS bond with the box
+after GATT service discovery on the updated firmware. Diagnostic transport
+setup then timed out; firmware MITM security, F1 role, diagnostic grant and
+physical function remain unproved. The earlier Windows pairing attempt had
+failed and does not contradict this later Android result. The installed
+Android APK was pulled back from the Moto G14 and hash verified.
 
 ## Current box and rollback material
 
@@ -417,5 +416,35 @@ This Windows result independently reproduces a bond failure after a working
 BLE/GATT path, but `Failed` supplies no specific SMP or firmware rejection
 reason. It must not be assigned to the Android transport or to a particular
 ESP security callback without correlated firmware evidence. The Android
-user-run attempt with the updated firmware remains necessary, as do the
-MITM/F1 and physical diagnosis checks.
+user-run attempt with the updated firmware was subsequently completed; see
+the next section. MITM/F1 and physical diagnosis checks remain open.
+
+## First documented app-to-box OS bond, 2026-10-11
+
+The user independently ran the installed Android app and exported
+[`ble-kopplungsbeobachtung-v1 (6).json`](observations/android-app-bond-2026-10-11.json)
+from Downloads; the original bytes are preserved here
+(SHA-256 `594d6755c7689f07d9d8d71b5d9504725e0864e71786a8ad55ad9c55b43b82dc`).
+In one report and GATT generation 3, the product scan received 114 callbacks,
+selected `A8:42:E3:CD:4B:1A`, connected with GATT status 0, and discovered
+the canonical product service with status 0. Android moved from
+`OS_NOT_BONDED` to `OS_BONDING` at 17:20:04 UTC and to `OS_BONDED` at
+17:20:12 UTC. It later read `OS_BONDED` twice more before the user ended the
+local connection at 17:20:59 UTC. The report also records pairing-request
+variant 3. USB logcat independently contains the pairing-request broadcast,
+the launch of Android's `BluetoothPairingDialog`, and both bond-state
+broadcasts. The final report assessment `NOT_CONNECTED` describes the state
+after the local disconnect, not the historical OS bond; the app summary
+needs to display both facts separately.
+
+The separate user-exported [transport report](observations/android-transport-2026-10-11.json) (SHA-256
+`d3ee95dcb8930fe523a896036756a36d7b52e992a0b0e312fecbe29c4f3f60`)
+records `SETUP_TIMEOUT` at 17:20:14 UTC. The app-private transport journal,
+read directly via USB from the debug app's `files/diagnostic-connection-v1/`,
+also contains `DISCONNECTED` at 17:20:59 UTC. The manual transport export
+therefore lacked a later persisted event and its snapshot behavior requires
+review. The setup began before bonding completed and the firmware currently
+keeps diagnostic CCCD writes closed. Neither OS bond nor product-service
+discovery proves an encrypted MITM link, F1 role, diagnostic transport
+readiness or hardware authorization. No further user export or run is needed
+to establish the OS-bond result.
