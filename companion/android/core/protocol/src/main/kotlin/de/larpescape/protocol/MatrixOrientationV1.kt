@@ -76,8 +76,32 @@ object MatrixOrientationResolverV1 {
         val candidates = MatrixOrientationV1.all.filter { orientation ->
             confirmed.all { orientation.displayCoordinate(it.raw) == it.observedDisplay }
         }
+        if (candidates.isEmpty()) {
+            return MatrixOrientationSuggestionV1(
+                MatrixOrientationSuggestionStateV1.NO_MATCH,
+                confirmed.size,
+                emptyList(),
+            )
+        }
+        // A unique transform from two convenient points is not a qualified
+        // physical reference set. Require two distinct corners and an inner
+        // point confirmed by the user before offering a storable suggestion.
+        val physicalCorners = confirmed.map { it.observedDisplay }.filter {
+            (it.row == 0 || it.row == MATRIX_EDGE_V1 - 1) &&
+                (it.column == 0 || it.column == MATRIX_EDGE_V1 - 1)
+        }.distinct()
+        val hasInnerPoint = confirmed.any {
+            it.observedDisplay.row in 1 until MATRIX_EDGE_V1 - 1 &&
+                it.observedDisplay.column in 1 until MATRIX_EDGE_V1 - 1
+        }
+        if (confirmed.size < 3 || physicalCorners.size < 2 || !hasInnerPoint) {
+            return MatrixOrientationSuggestionV1(
+                MatrixOrientationSuggestionStateV1.INSUFFICIENT_CONFIRMED_REFERENCES,
+                confirmed.size,
+                emptyList(),
+            )
+        }
         val state = when (candidates.size) {
-            0 -> MatrixOrientationSuggestionStateV1.NO_MATCH
             1 -> MatrixOrientationSuggestionStateV1.UNIQUE
             else -> MatrixOrientationSuggestionStateV1.AMBIGUOUS
         }

@@ -30,26 +30,29 @@ class MatrixOrientationV1Test {
     }
 
     @Test
-    fun asymmetricConfirmedPointsProduceUniqueSuggestionWithoutChangingRawCoordinates() {
-        val rawA = MatrixCoordinateV1(0, 1)
-        val rawB = MatrixCoordinateV1(2, 7)
+    fun twoCornersAndAnInnerPointProduceUniqueSuggestionWithoutChangingRawCoordinates() {
+        val rawA = MatrixCoordinateV1(0, 0)
+        val rawB = MatrixCoordinateV1(0, 8)
+        val rawC = MatrixCoordinateV1(2, 7)
         val expected = MatrixOrientationV1(MatrixRotationV1.DEG_90, mirrorHorizontally = true)
         val result = MatrixOrientationResolverV1.suggest(
             listOf(
                 MatrixOrientationReferenceV1(rawA, expected.displayCoordinate(rawA), true),
                 MatrixOrientationReferenceV1(rawB, expected.displayCoordinate(rawB), true),
+                MatrixOrientationReferenceV1(rawC, expected.displayCoordinate(rawC), true),
             ),
         )
         assertEquals(MatrixOrientationSuggestionStateV1.UNIQUE, result.state)
         assertEquals(listOf(expected), result.candidates)
-        assertEquals(MatrixCoordinateV1(0, 1), rawA)
-        assertEquals(MatrixCoordinateV1(2, 7), rawB)
+        assertEquals(MatrixCoordinateV1(0, 0), rawA)
+        assertEquals(MatrixCoordinateV1(0, 8), rawB)
+        assertEquals(MatrixCoordinateV1(2, 7), rawC)
     }
 
     @Test
     fun orientationCannotBeStoredWithoutExplicitConfirmationOrMatchingCandidate() {
         val expected = MatrixOrientationV1(MatrixRotationV1.DEG_270, mirrorHorizontally = false)
-        val references = listOf(MatrixCoordinateV1(0, 1), MatrixCoordinateV1(3, 8)).map {
+        val references = listOf(MatrixCoordinateV1(0, 0), MatrixCoordinateV1(8, 0), MatrixCoordinateV1(3, 7)).map {
             MatrixOrientationReferenceV1(it, expected.displayCoordinate(it), true)
         }
         assertNull(MatrixOrientationResolverV1.confirmForStorage(references, expected, userConfirmed = false))
@@ -61,9 +64,41 @@ class MatrixOrientationV1Test {
             ),
         )
         assertEquals(
-            ConfirmedMatrixOrientationV1(expected, 2),
+            ConfirmedMatrixOrientationV1(expected, 3),
             MatrixOrientationResolverV1.confirmForStorage(references, expected, userConfirmed = true),
         )
+    }
+
+    @Test
+    fun apparentUniqueResultCannotSkipCornerAndInnerReferences() {
+        val expected = MatrixOrientationV1(MatrixRotationV1.DEG_90, mirrorHorizontally = true)
+        val twoCornersOnly = listOf(MatrixCoordinateV1(0, 0), MatrixCoordinateV1(0, 8)).map {
+            MatrixOrientationReferenceV1(it, expected.displayCoordinate(it), true)
+        }
+        val missingInner = listOf(MatrixCoordinateV1(0, 0), MatrixCoordinateV1(0, 8), MatrixCoordinateV1(8, 0)).map {
+            MatrixOrientationReferenceV1(it, expected.displayCoordinate(it), true)
+        }
+        val onlyOneCorner = listOf(MatrixCoordinateV1(0, 0), MatrixCoordinateV1(2, 7), MatrixCoordinateV1(4, 3)).map {
+            MatrixOrientationReferenceV1(it, expected.displayCoordinate(it), true)
+        }
+        listOf(twoCornersOnly, missingInner, onlyOneCorner).forEach { references ->
+            val suggestion = MatrixOrientationResolverV1.suggest(references)
+            assertEquals(MatrixOrientationSuggestionStateV1.INSUFFICIENT_CONFIRMED_REFERENCES, suggestion.state)
+            assertTrue(suggestion.candidates.isEmpty())
+            assertNull(MatrixOrientationResolverV1.confirmForStorage(references, expected, userConfirmed = true))
+        }
+    }
+
+    @Test
+    fun oppositeCornersAndCenterRemainAmbiguousDespiteQualifiedShape() {
+        val expected = MatrixOrientationV1(MatrixRotationV1.DEG_0, mirrorHorizontally = false)
+        val references = listOf(MatrixCoordinateV1(0, 0), MatrixCoordinateV1(8, 8), MatrixCoordinateV1(4, 4)).map {
+            MatrixOrientationReferenceV1(it, expected.displayCoordinate(it), true)
+        }
+        val suggestion = MatrixOrientationResolverV1.suggest(references)
+        assertEquals(MatrixOrientationSuggestionStateV1.AMBIGUOUS, suggestion.state)
+        assertTrue(suggestion.candidates.size > 1)
+        assertNull(MatrixOrientationResolverV1.confirmForStorage(references, expected, userConfirmed = true))
     }
 
     @Test
