@@ -17,6 +17,9 @@ class LarpEscapeApp {
     // Called only by the update() loop owner before its first update. Closed
     // preflight only: setup() workers remain active and no device is granted.
     bool fenceUnstartedGameForDiagnostics();
+    // Fences a previously observed, settled Standby loop. This only stops
+    // future application IO; it is not an acknowledgement from device workers.
+    bool fenceObservedStandbyAppLoopForDiagnostics();
     bool gameFencedForDiagnostics() const { return diagnosticFence_; }
     void update();
 
@@ -27,6 +30,7 @@ class LarpEscapeApp {
     IGameSnapshotSink &snapshots_;
     bool gameTicked_ = false;
     bool diagnosticFence_ = false;
+    std::uint8_t settledStandbyTicks_ = 0;
 };
 } // namespace application
 } // namespace larp

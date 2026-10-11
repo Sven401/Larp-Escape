@@ -95,6 +95,64 @@ void test_diagnostic_preflight_rejects_started_game_without_fencing_it() {
     TEST_ASSERT_EQUAL_UINT(previousTicks + 1U, sink.values.size());
 }
 
+void test_standby_fence_waits_for_entry_and_stops_later_game_io() {
+    game_test::GameRig rig;
+    std::vector<int> order;
+    RuntimeProbe audio(order, 1), communication(order, 2);
+    SnapshotProbe sink(order);
+    larp::application::LarpEscapeApp app(rig.game, audio, communication, sink);
+    // A partial wake schedules a light effect but leaves the game in Standby.
+    // The app-loop fence must not be interpreted as a light-owner Park Ack.
+    rig.wake.signals = {{true, false, false, false}};
+    TEST_ASSERT_FALSE(app.fenceObservedStandbyAppLoopForDiagnostics());
+    app.update();
+    TEST_ASSERT_EQUAL_UINT8(static_cast<unsigned>(larp::application::GamePhase::Standby),
+                            static_cast<unsigned>(sink.values.back().phase));
+    TEST_ASSERT_FALSE(app.fenceObservedStandbyAppLoopForDiagnostics());
+    app.update();
+    TEST_ASSERT_TRUE(rig.lights.ripples.size() > 0U);
+    TEST_ASSERT_TRUE(app.fenceObservedStandbyAppLoopForDiagnostics());
+    const auto count = order.size();
+    const auto wakeReads = rig.wake.reads;
+    app.update();
+    app.update();
+    TEST_ASSERT_EQUAL_UINT(count, order.size());
+    TEST_ASSERT_EQUAL_UINT(wakeReads, rig.wake.reads);
+    TEST_ASSERT_FALSE(app.fenceObservedStandbyAppLoopForDiagnostics());
+}
+
+void test_non_standby_game_cannot_be_fenced() {
+    game_test::GameRig rig;
+    std::vector<int> order;
+    RuntimeProbe audio(order, 1), communication(order, 2);
+    SnapshotProbe sink(order);
+    larp::application::LarpEscapeApp app(rig.game, audio, communication, sink);
+    rig.wake.signals = {{true, true, true, true}};
+    app.update();
+    app.update();
+    TEST_ASSERT_FALSE(app.fenceObservedStandbyAppLoopForDiagnostics());
+    TEST_ASSERT_FALSE(app.gameFencedForDiagnostics());
+    const auto count = order.size();
+    app.update();
+    TEST_ASSERT_EQUAL_UINT(count + 3U, order.size());
+}
+
+void test_standby_observation_is_revoked_when_game_wakes() {
+    game_test::GameRig rig;
+    std::vector<int> order;
+    RuntimeProbe audio(order, 1), communication(order, 2);
+    SnapshotProbe sink(order);
+    larp::application::LarpEscapeApp app(rig.game, audio, communication, sink);
+    app.update();
+    app.update();
+    rig.wake.signals = {{true, true, true, true}};
+    app.update();
+    TEST_ASSERT_EQUAL_UINT8(static_cast<unsigned>(larp::application::GamePhase::Idle),
+                            static_cast<unsigned>(sink.values.back().phase));
+    TEST_ASSERT_FALSE(app.fenceObservedStandbyAppLoopForDiagnostics());
+    TEST_ASSERT_FALSE(app.gameFencedForDiagnostics());
+}
+
 void setUp() {}
 void tearDown() {}
 int main() {
@@ -102,5 +160,8 @@ int main() {
     RUN_TEST(test_application_services_then_ticks_then_publishes_copy);
     RUN_TEST(test_diagnostic_preflight_fences_actual_application_loop_before_game_io);
     RUN_TEST(test_diagnostic_preflight_rejects_started_game_without_fencing_it);
+    RUN_TEST(test_standby_fence_waits_for_entry_and_stops_later_game_io);
+    RUN_TEST(test_non_standby_game_cannot_be_fenced);
+    RUN_TEST(test_standby_observation_is_revoked_when_game_wakes);
     return UNITY_END();
 }

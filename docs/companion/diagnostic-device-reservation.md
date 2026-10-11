@@ -63,3 +63,14 @@ park the already initialized LED, audio, matrix, NFC or radio workers, and it
 does not connect to `Runtime::reserveDiagnostics` or grant diagnostic ownership.
 The production arbiter must coordinate this fence with actual worker park
 acknowledgements and the original connection/authority before any test step.
+
+The same loop owner can also call
+`LarpEscapeApp::fenceObservedStandbyAppLoopForDiagnostics()` after two consecutive
+published Standby snapshots without a retained role or reported busy audio.
+The second tick lets the selected Standby state perform its pending entry action.
+This permanently stops subsequent `update()` IO; a game in another phase is
+rejected without changing its operation. Standby and `audioBusy == false` are
+only game observations. Neither means that the LED render task, queued light
+effects, DFPlayer hardware, matrix reader or radio callback is parked. There is
+no correlated worker Park/Ack API on this legacy path, so no physical quiescent
+result or transition to diagnostic ownership can follow this loop fence alone.
