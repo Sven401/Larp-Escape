@@ -3,8 +3,9 @@
 Status: The box now advertises its product service and both Android and
 Windows have independently discovered it over GATT. The Android bond failed;
 the updated firmware security response has not yet been retested by the user.
-The current Android APK is built but awaits installation on the disconnected
-Moto G14. Neither a received advertisement nor successful GATT discovery
+The current Android APK is installed and verified on the Moto G14; its next
+user-run pairing report is pending. Neither a received advertisement nor
+successful GATT discovery
 establishes an OS bond, GM role, diagnostic grant or physical function.
 
 ## Current box and rollback material
@@ -351,10 +352,15 @@ attempt. The app records the Android pairing-request variant and old/new bond
 state without a PIN or passkey. Targeted tests and an offline Debug build
 passed; the APK SHA-256 is
 `9166b6dcef7c172f8a9afa3140a392f0c0b7a2d8845c11f0d78cf80e7c3d134e`.
-The Moto G14 was disconnected at build time, so this APK is not installed.
-The user will reconnect it and conduct the next app pairing attempt; Codex
-will assess the exported report afterward. No hardware acceptance follows
-from the upload or host tests.
+The Moto G14 was disconnected at build time. After the user reconnected it,
+`adb devices -l` identified `ZY22J7CSQD` as `moto_g14` and `adb install -r`
+reported `Success`. Pulling the installed `base.apk` back from the phone
+gave the same SHA-256
+`9166b6dcef7c172f8a9afa3140a392f0c0b7a2d8845c11f0d78cf80e7c3d134e`
+as the tested input APK. The temporary pulled copy was removed. The user
+has been asked to start the next pairing attempt in the app and export its
+report. No hardware acceptance follows from the upload, install or host
+tests.
 
 ## Independent Windows BLE observation, 2026-10-11
 
