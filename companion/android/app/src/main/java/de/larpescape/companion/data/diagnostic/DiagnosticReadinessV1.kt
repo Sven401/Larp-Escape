@@ -164,8 +164,9 @@ object ReichstagsboxDiagnosticReadinessV1 {
                 DiagnosticActionReadinessV1("completion_report_export", "Vollständigen Endbericht exportieren"),
             ),
             blockers = listOf(
-                "APP_MUTUAL/NFC-Rolle ist nicht implementiert; OS-Bond ist keine Spielleiterrolle",
-                "Geschützte Control-/Step-Writes bleiben mit InsufficientAuthorization geschlossen",
+                "Box-BLE nutzt IO_CAP_NONE/Just Works; MITM-geschützte Control-/Step-Writes sind damit nicht erreichbar",
+                "APP_MUTUAL über Just Works braucht eine geprüfte Auth-/GATT-Migration; NFC-Ziel ersetzt BLE-MITM nicht",
+                "Keine produktive Spielleiterrolle; Control-/Step-Writes bleiben mit InsufficientAuthorization geschlossen",
                 "Der vollständige Lauf wartet auf die Hardwarekorrekturen und alle Komponentenpfade",
             ),
         ),

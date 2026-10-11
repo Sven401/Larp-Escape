@@ -63,4 +63,15 @@ class DiagnosticReadinessV1Test {
         assertTrue(ReichstagsboxDiagnosticReadinessV1.alternativeDataPinProfiles.startsWith("Keine"))
         assertFalse(ReichstagsboxDiagnosticReadinessV1.dataPinProfile.contains("GPIO4"))
     }
+
+    @Test
+    fun protectedGattPermissionAndJustWorksConflictStayVisibleAndClosed() {
+        val completion = ReichstagsboxDiagnosticReadinessV1.items.single { it.id == "completion" }
+        assertTrue(completion.blockers.any { it.contains("MITM-geschützte Control-/Step-Writes") })
+        assertTrue(completion.blockers.any { it.contains("APP_MUTUAL") && it.contains("GATT-Migration") })
+        assertTrue(completion.blockers.any { it.contains("InsufficientAuthorization") })
+        assertTrue(completion.actions.filter { it.id in setOf(
+            "completion_three_cold_starts", "completion_endurance", "completion_report_export",
+        ) }.all { it.pathState == DiagnosticActionPathStateV1.BLOCKED })
+    }
 }
