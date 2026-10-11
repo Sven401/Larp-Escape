@@ -287,3 +287,71 @@ pulled back from Moto G14 `ZY22J7CSQD` matches SHA-256
 `d0bb1fdd37359d8c447c338ae07dc0f4d809bf85f11b31231a46a9e2253f3425`.
 The user has been asked to run this scan and export its report independently.
 No new firmware image was uploaded, restored or accepted.
+
+## User pairing observation after the diagnostic scan, 2026-10-11
+
+The user independently exported `ble-kopplungsbeobachtung-v1 (5).json`
+(14,998 bytes; SHA-256
+`ec38598af710ccc5e806a6bd6fa3016471adbc894cf3d17e9ff136c73dc77361`).
+Its explicit diagnostic scan received 144 callbacks and directly observed a
+canonical product-service advertisement from `A8:42:E3:CD:4B:1A`. A later
+normal product scan also saw the same address (178 callbacks, 161 filtered,
+one product candidate). This confirms the derived Bluetooth address and
+product advertisement on the phone, at the time of those scans.
+
+The user selected that address repeatedly. Five recorded GATT generations
+reached `status=0;state=2`, completed service discovery with `status=0`, and
+found the canonical product service. The lab service was absent, as expected
+for the separately loaded `671be0b` image. Generation 12 recorded an Android
+`createBond()` request accepted by the OS at 16:27:23 UTC, `OS_BONDING`, then
+`OS_NOT_BONDED` about 30 seconds later. The subsequent GATT callback was
+`status=22;state=0`. The user reports that no Android PIN, numeric comparison
+or confirmation dialog appeared. The report has no SMP failure reason or
+firmware security response. Its final `NOT_CONNECTED` assessment describes
+the newest, still pending generation 15; it must not hide the earlier failed
+bond in analysis. No successful OS bond, F1/GM role, diagnostic grant or
+physical test is proven. The bond failure remains under investigation.
+
+## Closed bond-response follow-up, 2026-10-11
+
+Review of the loaded `671be0b` source found that its GAP callback handled
+advertisement completions but ignored `ESP_GAP_BLE_SEC_REQ_EVT` and
+`ESP_GAP_BLE_AUTH_CMPL_EVT`. The unanswered request is a plausible cause of
+the Android bond timeout, not a confirmed one: report `(5)` contains no
+firmware SMP event or failure reason. Filtered phone logcat showed the
+bonding and not-bonded broadcasts, but no specific failure reason.
+
+Commit `d646821` responds only when the requesting address and two current
+original-GATT-link snapshots agree and service, registry and channel remain
+closed. Other security requests are rejected. The callback captures bounded
+request and authentication outcomes without keys; a worker prints at most
+eight of each. It grants no role or diagnostic authority and leaves all
+MITM-protected product characteristics unchanged. Host tests passed 535/535;
+the integrated ESP32 build passed (1,974,801/2,621,440 program bytes). Its
+`firmware.bin` is 1,981,104 bytes, SHA-256
+`34635ff3c132df519484c4c3a837035f3a72d11e85b8c9affa46844555a76368`.
+
+The user had authorized a necessary further firmware upload without another
+full capture and confirmed no test was running. Before this fourth app-only
+write, the pinned full rollback image passed offline length/hash verification,
+the previous `671be0b` app image passed its 1,974,496-byte SHA-256 check
+(`e3d81c8173e03e7e77e72d75669aa84226b399ad6911c6ec98961cdba7b48973`),
+and live `flash_id` matched base MAC `A8:42:E3:CD:4B:18` and 4-MiB flash.
+Only the app at `0x10000` was written; esptool reported the erase interval
+`0x10000` through `0x1f3fff` and verified the data hash. No full capture or
+restore occurred. A passive 12-second serial read after reset reported BLE
+discovery phase 3 (`Visible`) and no current original link. The next OS bond,
+firmware security outcome and physical function remain unmeasured. ESP32
+`ESP_IO_CAP_NONE` still cannot provide MITM protection for product GATT
+characteristics from a Just Works bond alone.
+
+Android commits `fe5df68` and `f8d1869` add export of the durable real-GATT
+event journal and preserve an observed failed bond across a later incomplete
+attempt. The app records the Android pairing-request variant and old/new bond
+state without a PIN or passkey. Targeted tests and an offline Debug build
+passed; the APK SHA-256 is
+`9166b6dcef7c172f8a9afa3140a392f0c0b7a2d8845c11f0d78cf80e7c3d134e`.
+The Moto G14 was disconnected at build time, so this APK is not installed.
+The user will reconnect it and conduct the next app pairing attempt; Codex
+will assess the exported report afterward. No hardware acceptance follows
+from the upload or host tests.
