@@ -101,14 +101,20 @@ internal class AndroidDiagnosticGattShellV1(
 
     /** No call site currently supplies originalAuthority; consequently no live diagnostic write is possible. */
     fun submitControl(request: DiagnosticControlRequestV1, nowMs: Long = SystemClock.elapsedRealtime()): Boolean {
+        val cancelling = request.command == DiagnosticControlCommandV1.CANCEL
+        val matchingGrant = grant?.grantId == request.grantId && grant?.runId == request.runId
+        val matchingOrigin = grantOrigin
+        if (cancelling) {
+            // A local cancellation must not wait for an active step or a GATT write callback.
+            grant = null; grantOrigin = null; grantHostDeadlineMs = 0
+            pendingStep?.retire(); pendingStep = null; pendingStepOrigin = null
+            pendingControl?.cancel()
+        }
         val origin = originalAuthority() ?: return false
         if (!link.canReceive(origin.localGattGeneration.toInt()) || link.preflight().isNotEmpty() ||
             pendingControl != null || pendingStep != null || origin.localGattGeneration != generation.toLong()) return false
         if (request.command == DiagnosticControlCommandV1.GRANT && grant != null) return false
-        if (request.command == DiagnosticControlCommandV1.CANCEL) {
-            if (grant?.grantId != request.grantId || grant?.runId != request.runId || grantOrigin != origin) return false
-            grant = null; grantOrigin = null; grantHostDeadlineMs = 0 // Retire locally before the write.
-        }
+        if (cancelling && (!matchingGrant || matchingOrigin != origin)) return false
         val payload = DiagnosticControlV1.encode(request)
         if (payload.size > link.effectiveAttValueBytes) return false
         val characteristic = controlWrite ?: return false
