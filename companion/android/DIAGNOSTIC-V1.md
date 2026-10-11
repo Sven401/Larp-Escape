@@ -20,9 +20,15 @@ Ergänzung 2026-10-11: Ein abgeschlossener Simulationsbericht trägt im privaten
 Journal einen atomar zusammen mit dem Bericht geschriebenen Abschlussmarker.
 Nach App-Neustart bleiben Beobachtungen eines solchen Laufs unveränderlich;
 erneuter Export liefert dieselben Bytes und verschiebt die Endzeit nicht.
-Ältere Rohjournale ohne Marker können ihren früheren Abschlusszustand nicht
-belegen und werden weiter nach dem bisherigen Wiederaufnahmepfad behandelt.
-Die JVM-Tests prüfen Abschluss, Wiederöffnung und bytegleichen Wiederexport;
+Neu begonnene Läufe speichern auch den offenen Zustand ausdrücklich. Bei
+älteren Rohjournalen ohne Marker kann ein beendeter Schritt einen früheren
+Export nicht belegen: Er wird als Altjournal gesperrt, der vorhandene Befund
+bleibt erhalten und die Sperrherkunft auch nach weiterem Neustart sichtbar.
+Ein alter noch offener Auftrag wird als `app_restarted` unklar beendet und
+niemals automatisch wiederholt. Falls die Endzeit eines unfertigen Altjournals
+vor dem letzten Schritt liegt, wird sie beim Sperren auf den Wiederöffnungszeitpunkt
+gesetzt; eine zuvor valide Endzeit bleibt erhalten. Die JVM-Tests prüfen diese
+Fälle, Abschluss, Wiederöffnung und bytegleichen Wiederexport;
 eine Bedienprüfung auf einem Android-Gerät steht noch aus.
 
 Prüfstand am 2026-10-10: 100 JVM-Fälle ohne Fehler oder übersprungene Fälle

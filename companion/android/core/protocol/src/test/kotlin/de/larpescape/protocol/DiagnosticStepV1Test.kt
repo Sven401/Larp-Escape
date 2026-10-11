@@ -208,7 +208,7 @@ class DiagnosticStepV1Test {
         listOf("wake_capture", "led_single").forEach { op -> listOf(false, true).forEach { failed ->
             val journal = MemoryDiagnosticJournalV1(); var exchange: SyntheticDiagnosticStepV1? = null
             val repo = FakeDiagnosticRepositoryV1.start(SyntheticDiagnosticV1.newRun("step-test", utc), journal, SyntheticDiagnosticTransportV1 {
-                val saved = DiagnosticJsonV1.parse(journal.load()!!).asJsonObject.getAsJsonArray("steps").last().asJsonObject
+                val saved = DiagnosticJsonV1.parse(journal.load()!!).asJsonObject.getAsJsonObject("report").getAsJsonArray("steps").last().asJsonObject
                 assertEquals("pending", saved["state"].asString); assertEquals(it, saved.getAsJsonObject("request"))
                 exchange = SyntheticDiagnosticStepV1(it, 100)
             }, 1)

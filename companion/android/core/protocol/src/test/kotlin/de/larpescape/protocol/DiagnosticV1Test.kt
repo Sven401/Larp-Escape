@@ -47,7 +47,7 @@ class DiagnosticV1Test {
     @Test fun pendingIntentIsCommittedBeforeSendAndWriteSuccessRemainsUnclear() {
         val journal = MemoryDiagnosticJournalV1()
         val repository = repo(journal) { request ->
-            val persisted = DiagnosticJsonV1.parse(journal.load()!!).asJsonObject.getAsJsonArray("steps")[0].asJsonObject
+            val persisted = DiagnosticJsonV1.parse(journal.load()!!).asJsonObject.getAsJsonObject("report").getAsJsonArray("steps")[0].asJsonObject
             assertEquals(request, persisted.getAsJsonObject("request")); assertEquals("pending", persisted.text("state"))
         }
         repository.begin("wake_capture", start, 0)
@@ -121,6 +121,42 @@ class DiagnosticV1Test {
         assertArrayEquals(exported, DiagnosticReportCodecV1.export(recovered.finish("2026-10-10T12:00:04.000Z")))
         assertArrayEquals(saved, journal.load())
         assertEquals("not_tested", DiagnosticReportCodecV1.import(exported).verdicts.single())
+    }
+    @Test fun legacyRawJournalWithoutPendingIsFrozenWithoutInventingAnObservation() {
+        val journal = MemoryDiagnosticJournalV1()
+        val original = repo(journal)
+        original.begin("wake_capture", start, 0)
+        assertTrue(original.receive(encoded(reply()), 7, end, 500))
+        journal.replace(encoded(original.snapshot())) // v1 raw journal, possibly already exported
+        val recovered = FakeDiagnosticRepositoryV1.recover(journal, "2026-10-10T12:00:03.000Z")
+        assertTrue(recovered.isLegacyLocked); assertTrue(recovered.isFinalized)
+        rejects { recovered.observe(1, "matches", "expected", "invented", "2026-10-10T12:00:03.000Z") }
+        assertFalse(recovered.receive(encoded(reply()), 7, "2026-10-10T12:00:03.000Z", 600))
+        val report = DiagnosticReportCodecV1.export(recovered.finish("2026-10-10T12:00:04.000Z"))
+        assertEquals(listOf("unclear"), DiagnosticReportCodecV1.import(report).verdicts)
+        val reopened = FakeDiagnosticRepositoryV1.recover(journal, "2026-10-10T12:00:05.000Z")
+        assertTrue(reopened.isLegacyLocked)
+        assertArrayEquals(report, DiagnosticReportCodecV1.export(reopened.finish("2026-10-10T12:00:06.000Z")))
+    }
+    @Test fun explicitUnfinalizedMarkerAllowsObservationAfterRestartWithoutReplay() {
+        val journal = MemoryDiagnosticJournalV1()
+        val original = repo(journal)
+        original.begin("wake_capture", start, 0)
+        assertTrue(original.receive(encoded(reply()), 7, end, 500))
+        val recovered = FakeDiagnosticRepositoryV1.recover(journal, "2026-10-10T12:00:03.000Z")
+        assertFalse(recovered.isLegacyLocked); assertFalse(recovered.isFinalized)
+        recovered.observe(1, "matches", "expected", "saved after restart", "2026-10-10T12:00:03.000Z")
+        assertEquals(listOf("passed"), DiagnosticReportCodecV1.import(DiagnosticReportCodecV1.export(recovered.finish("2026-10-10T12:00:03.000Z"))).verdicts)
+    }
+    @Test fun legacyRawPendingIntentCanOnlyBeRetiredAsUnknown() {
+        val journal = MemoryDiagnosticJournalV1()
+        val original = repo(journal)
+        original.begin("led_single", start, 0)
+        journal.replace(encoded(original.snapshot()))
+        val recovered = FakeDiagnosticRepositoryV1.recover(journal, end)
+        assertFalse(recovered.isLegacyLocked)
+        assertEquals("app_restarted", recovered.snapshot().getAsJsonArray("steps")[0].asJsonObject.text("state"))
+        assertEquals(listOf("unclear"), DiagnosticReportCodecV1.import(DiagnosticReportCodecV1.export(recovered.finish(end))).verdicts)
     }
     @Test fun failedTelemetryAndUserMismatchCannotPass() {
         listOf<(JsonObject) -> Unit>(

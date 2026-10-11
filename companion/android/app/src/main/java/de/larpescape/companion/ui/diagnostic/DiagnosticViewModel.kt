@@ -20,6 +20,7 @@ data class DiagnosticUiState(
     val notice: String? = null,
     val blocked: Boolean = false,
     val finalized: Boolean = false,
+    val legacyLocked: Boolean = false,
     val planIndex: Int = 0,
     val stepRemainingMs: Long = 0,
     val runRemainingMs: Long = 0,
@@ -62,8 +63,10 @@ class DiagnosticViewModel(
                 val steps = mutable.value.document!!.getAsJsonArray("steps")
                 val index = store.loadPosition(mutable.value.document!!["runId"].asString) ?: pilotOperations.indexOf(steps.lastOrNull()?.asJsonObject?.getAsJsonObject("request")?.get("operation")?.asString).coerceAtLeast(0)
                 val finalized = repository!!.isFinalized
-                mutable.value = mutable.value.copy(planIndex = index, finalized = finalized,
-                    notice = if (finalized) "Abgeschlossener Bericht wieder geöffnet. Ergebnisse bleiben unverändert; kein Auftrag wird wiederholt."
+                val legacyLocked = repository!!.isLegacyLocked
+                mutable.value = mutable.value.copy(planIndex = index, finalized = finalized, legacyLocked = legacyLocked,
+                    notice = if (legacyLocked) "Älteres Journal ohne Abschlussmarker: Status nicht rekonstruierbar. Der vorhandene Stand ist gesperrt; kein Auftrag und keine Beobachtung werden ergänzt."
+                    else if (finalized) "Abgeschlossener Bericht wieder geöffnet. Ergebnisse bleiben unverändert; kein Auftrag wird wiederholt."
                     else "Gespeicherter Lauf: Ergebnisse bleiben erhalten. Es wird kein Auftrag wiederholt.")
             }
         }

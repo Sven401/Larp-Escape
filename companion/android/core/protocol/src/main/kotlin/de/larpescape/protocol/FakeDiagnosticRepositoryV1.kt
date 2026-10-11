@@ -30,14 +30,16 @@ class FakeDiagnosticRepositoryV1 private constructor(
     private var deadline: Long? = null,
     private var closed: Boolean = false,
     private var finalized: Boolean = false,
+    val isLegacyLocked: Boolean = false,
 ) {
     val isFinalized: Boolean get() = finalized
     fun snapshot(): JsonObject = document.deepCopy()
     private fun mutate(action: (JsonObject) -> Unit) {
+        require(!finalized)
         val next = document.deepCopy()
         action(next)
         DiagnosticSchemaV1.validate(next)
-        journal.replace(DiagnosticJsonV1.canonical(next)) // Commit intent before exposing or sending it.
+        journal.replace(journalBytes(next, false)) // Commit intent before exposing or sending it.
         document = next
     }
     private fun pending(report: JsonObject = document): JsonObject? = report.getAsJsonArray("steps").lastOrNull()?.asJsonObject?.takeIf { it.text("state") == "pending" }
@@ -76,6 +78,7 @@ class FakeDiagnosticRepositoryV1 private constructor(
         return request.deepCopy()
     }
     fun receive(bytes: ByteArray, binding: Long, utc: String, nowMs: Long): Boolean {
+        if (closed) return false
         require(nowMs >= 0 && Instant.parse(utc) >= Instant.parse(document.text("startedUtc")))
         tick(nowMs, utc)
         val reply = DiagnosticJsonV1.parse(bytes).asJsonObject
@@ -115,6 +118,7 @@ class FakeDiagnosticRepositoryV1 private constructor(
     }
     fun tick(nowMs: Long, utc: String) { if (deadline?.let { nowMs >= it } == true) interrupt("timeout", utc) }
     fun interrupt(reason: String, utc: String) {
+        require(!finalized)
         require(reason in diagnosticInterruptions)
         require(Instant.parse(utc) >= Instant.parse(document.text("startedUtc")))
         mutate { next ->
@@ -131,25 +135,32 @@ class FakeDiagnosticRepositoryV1 private constructor(
         val next = document.deepCopy().apply { addProperty("endedUtc", utc); if (!closed) getAsJsonObject("grant").addProperty("endedReason", "completed") }
         val report = DiagnosticReportCodecV1.fromDocument(next)
         // Keep the private completion marker in the same atomic replacement as the report.
-        val saved = JsonObject().apply { add("report", next.deepCopy()); addProperty("finalized", true) }
-        journal.replace(DiagnosticJsonV1.canonical(saved)); document = next; closed = true; finalized = true
+        journal.replace(journalBytes(next, true)); document = next; closed = true; finalized = true
         return report
     }
     companion object {
+        private fun journalBytes(report: JsonObject, finalized: Boolean, legacyLocked: Boolean = false): ByteArray = DiagnosticJsonV1.canonical(JsonObject().apply {
+            add("report", report.deepCopy()); addProperty("finalized", finalized)
+            if (legacyLocked) addProperty("legacyLocked", true)
+        })
         fun start(metadata: DiagnosticReportV1, journal: DiagnosticJournalV1, transport: SyntheticDiagnosticTransportV1, binding: Long): FakeDiagnosticRepositoryV1 {
             require(journal.load() == null) { "Existing journal must be recovered, never overwritten" }
             val document = metadata.snapshot()
             require(metadata.evidence == "synthetic" && document.getAsJsonArray("steps").size() == 0)
             require(document.getAsJsonObject("capabilities").text("source") == "synthetic")
-            journal.replace(DiagnosticJsonV1.canonical(document))
+            journal.replace(journalBytes(document, false))
             return FakeDiagnosticRepositoryV1(document, journal, transport, binding)
         }
         fun recover(journal: DiagnosticJournalV1, utc: String): FakeDiagnosticRepositoryV1 {
             val saved = DiagnosticJsonV1.parse(checkNotNull(journal.load())).asJsonObject
-            val finalized = saved.has("finalized").also { marked ->
-                if (marked) require(saved.keySet() == setOf("report", "finalized") && saved["finalized"].asBoolean)
+            val marked = saved.has("finalized")
+            if (marked) {
+                require(saved.keySet() == setOf("report", "finalized") || saved.keySet() == setOf("report", "finalized", "legacyLocked"))
+                require(saved["finalized"].isJsonPrimitive && saved["finalized"].asJsonPrimitive.isBoolean)
+                if (saved.has("legacyLocked")) require(saved["legacyLocked"].isJsonPrimitive && saved["legacyLocked"].asJsonPrimitive.isBoolean && saved["legacyLocked"].asBoolean && saved["finalized"].asBoolean)
             }
-            val document = if (finalized) saved.getAsJsonObject("report") else saved
+            val document = if (marked) saved.getAsJsonObject("report") else saved
+            val finalized = marked && saved["finalized"].asBoolean
             require(document.text("evidence") == "synthetic")
             DiagnosticSchemaV1.validate(document)
             val pendingSteps = document.getAsJsonArray("steps").filter { it.asJsonObject.text("state") == "pending" }
@@ -161,8 +172,13 @@ class FakeDiagnosticRepositoryV1 private constructor(
                 } }
             }
             DiagnosticReportCodecV1.validate(if (finalized) document else validation)
-            val repository = FakeDiagnosticRepositoryV1(document, journal, SyntheticDiagnosticTransportV1 { error("Recovered run cannot send") }, -1,
-                closed = true, finalized = finalized)
+            val legacyLocked = (marked && saved.has("legacyLocked")) || (!marked && pendingSteps.isEmpty())
+            // A raw journal without a pending request may already have been exported.
+            // Freeze its evidence; preserve a valid original report byte-for-byte.
+            val recovered = if (legacyLocked && runCatching { DiagnosticReportCodecV1.fromDocument(document) }.isFailure) validation else document
+            if (!marked && legacyLocked) journal.replace(journalBytes(recovered, true, true))
+            val repository = FakeDiagnosticRepositoryV1(recovered, journal, SyntheticDiagnosticTransportV1 { error("Recovered run cannot send") }, -1,
+                closed = true, finalized = finalized || legacyLocked, isLegacyLocked = legacyLocked)
             if (repository.pending() != null) repository.interrupt("app_restarted", utc)
             // Preserve completed results; no grant, binding or command becomes live after recovery.
             return repository

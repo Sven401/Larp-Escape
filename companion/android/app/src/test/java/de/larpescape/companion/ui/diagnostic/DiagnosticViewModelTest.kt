@@ -146,6 +146,20 @@ class DiagnosticViewModelTest {
         assertTrue(reopened.beginExport())
         assertArrayEquals(firstExport, reopened.takeExport())
     }
+    @Test fun legacyReportWithoutMarkerShowsLockAndKeepsUnknownVerdict() {
+        val store = Store(); val first = model(store)
+        first.newRun(); first.startCurrent(); first.simulateReply(false)
+        store.journals.single().replace(first.state.value.document!!.toString().toByteArray())
+        time += 1000
+        val reopened = model(store)
+        assertTrue(reopened.state.value.legacyLocked)
+        assertTrue(reopened.state.value.finalized)
+        assertTrue(reopened.state.value.notice!!.contains("nicht rekonstruierbar"))
+        reopened.observe(1, "matches", "Nachträglich ergänzt")
+        assertTrue(reopened.state.value.notice!!.startsWith("Fehler:"))
+        assertTrue(reopened.beginExport())
+        assertEquals(listOf("unclear"), DiagnosticReportCodecV1.import(reopened.takeExport()!!).verdicts)
+    }
     @Test fun navigationStorageFailureDoesNotClaimProgress() {
         val store = Store(); val model = model(store); model.newRun(); model.skipCurrent()
         store.rejectPosition = true; model.nextStep()

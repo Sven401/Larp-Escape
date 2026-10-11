@@ -74,7 +74,8 @@ fun DiagnosticScreen(state: DiagnosticUiState, model: DiagnosticViewModel, expor
                 Text("1. Wake 1: Drücken und Loslassen simulieren\n2. LED 0: Rot und anschließend aus simulieren\nDanach den Bericht exportieren.")
                 Text("„Pilotplan starten“ bereitet den Lauf vor. Jeder Auftrag beginnt anschließend mit seinem eigenen Startknopf.")
             } else if (index < 2) {
-                if (!state.running) Text("Lauf beendet · gespeicherte Ergebnisse ansehen und exportieren. Kein erneutes Senden.")
+                if (state.legacyLocked) Text("Altjournal gesperrt: Ob dieser Lauf bereits exportiert wurde, ist nicht nachweisbar. Gespeicherte Einstufungen bleiben sichtbar; Änderungen sind gesperrt.")
+                else if (!state.running) Text("Lauf beendet · gespeicherte Ergebnisse ansehen und exportieren. Kein erneutes Senden.")
                 if (step == null) {
                     Text("Noch nicht geprüft. Der Auftrag beginnt erst mit „Schritt starten“.")
                     Text(if (index == 0) "Soll: Eingang 1 einmal aktiv und wieder inaktiv; kein weiterer Eingang." else "Soll: nur LED 0 rot, danach aus. Keine Versorgung gemessen.")
