@@ -73,6 +73,61 @@ struct SourceFixture {
                           static_cast<unsigned>(worker.service()));
     }
 };
+static larp::diagnostic::DiagnosticClosedHandles closedDiagnosticHandles(
+    Esp32GattsSource &source) {
+    larp::diagnostic::DiagnosticClosedHandles value;
+    TEST_ASSERT_TRUE(source.readRegistration(value.original));
+    value.service = 0x50;
+    value.controlWrite = 0x52;
+    value.controlReply = 0x54;
+    value.controlCccd = 0x55;
+    value.stepWrite = 0x57;
+    value.stepReply = 0x59;
+    value.stepCccd = 0x5a;
+    return value;
+}
+void test_source_diagnostic_original_closed_handles_reject_all_writes() {
+    SourceFixture sdk;
+    auto value = closedDiagnosticHandles(sdk.source);
+    host_sdk_source::currentTask = reinterpret_cast<void *>(3);
+    TEST_ASSERT_TRUE(sdk.source.postDiagnosticClosedSetup(value));
+    TEST_ASSERT_FALSE(sdk.source.diagnosticClosedSetupInstalled(value));
+    TEST_ASSERT_FALSE(sdk.source.postDiagnosticClosedSetup(value));
+    host_sdk_source::currentTask = reinterpret_cast<void *>(1);
+    host_sdk_source::drainOne();
+    TEST_ASSERT_TRUE(sdk.source.diagnosticClosedSetupInstalled(value));
+    sdk.open(true); // Even a separately verified game role does not admit diagnosis.
+    const std::uint16_t protectedAttributes[] = {0x52, 0x55, 0x57, 0x5a};
+    for (std::size_t i = 0; i < 4; ++i) {
+        const auto attribute = protectedAttributes[i];
+        sdk.write("\x01\x00", attribute, attribute);
+        TEST_ASSERT_EQUAL(i + 1, host_sdk_source::sent.size());
+        TEST_ASSERT_EQUAL(static_cast<unsigned>(AttWriteStatus::InsufficientAuthorization),
+                          static_cast<unsigned>(host_sdk_source::sent.back().status));
+    }
+    TEST_ASSERT_EQUAL(4, host_sdk_source::sent.size());
+    sdk.close();
+}
+void test_source_diagnostic_handle_install_rejects_collision_and_wrong_origin() {
+    SourceFixture sdk;
+    auto value = closedDiagnosticHandles(sdk.source);
+    host_sdk_source::currentTask = reinterpret_cast<void *>(3);
+    auto collision = value;
+    collision.controlWrite = 0x42;
+    TEST_ASSERT_FALSE(sdk.source.postDiagnosticClosedSetup(collision));
+    auto foreign = value;
+    ++foreign.original.token;
+    TEST_ASSERT_FALSE(sdk.source.postDiagnosticClosedSetup(foreign));
+    host_sdk_source::currentTask = reinterpret_cast<void *>(1);
+    TEST_ASSERT_FALSE(sdk.source.postDiagnosticClosedSetup(value));
+    host_sdk_source::currentTask = reinterpret_cast<void *>(3);
+    TEST_ASSERT_TRUE(sdk.source.postDiagnosticClosedSetup(value));
+    host_sdk_source::currentTask = reinterpret_cast<void *>(1);
+    sdk.open(false); // A connection before the BTU install ACK invalidates setup.
+    host_sdk_source::drainOne();
+    TEST_ASSERT_FALSE(sdk.source.diagnosticClosedSetupInstalled(value));
+    sdk.close();
+}
 void test_source_original_sdk_post_actual_frames_and_application() {
     SourceFixture sdk;
     sdk.open();

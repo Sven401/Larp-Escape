@@ -65,4 +65,19 @@ esp_err_t esp_ble_gatts_start_service(std::uint16_t service) {
     value.service = service;
     return host_service_sdk::post(value);
 }
+esp_err_t esp_ble_gatts_add_char_descr(std::uint16_t service, esp_bt_uuid_t *uuid,
+                                       esp_gatt_perm_t permission, esp_attr_value_t *initial,
+                                       esp_attr_control_t *response) {
+    host_service_sdk::Call value;
+    value.kind = 4;
+    value.service = service;
+    value.permission = permission;
+    if (!uuid || uuid->len != ESP_UUID_LEN_16 ||
+        uuid->uuid.uuid16 != ESP_GATT_UUID_CHAR_CLIENT_CONFIG || !initial ||
+        initial->attr_max_len != 2 || initial->attr_len || initial->attr_value || !response)
+        return -1;
+    value.maximum = initial->attr_max_len;
+    value.response = response->auto_rsp;
+    return host_service_sdk::post(value);
+}
 }

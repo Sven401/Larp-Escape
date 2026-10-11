@@ -4,6 +4,7 @@
 #include "ClosedBleAdvertiseGate.h"
 #include "Esp32CompanionIdentityOwner.h"
 #include "Esp32GattsService.h"
+#include "DiagnosticGattsService.h"
 #include "Esp32PeerProofCrypto.h"
 #include "Esp32PeerRegistryStore.h"
 #include "FreeRtosCommandFrameQueue.h"
@@ -30,7 +31,8 @@ class ProductGattsOwner {
     const ClosedBleStartupAttempt::Report &stackReport() const noexcept {
         return stack_.report();
     }
-    bool serviceReady() const noexcept { return service_.ready(); }
+    bool serviceReady() const noexcept { return service_.ready() && diagnosticService_.ready(); }
+    bool diagnosticServiceReady() const noexcept { return diagnosticService_.ready(); }
     // A stored public registry was validated and installed on the original
     // source actor. This does not attest a connected peer, F1 or GM authority.
     enum class RegistryState : std::uint8_t {
@@ -57,6 +59,7 @@ class ProductGattsOwner {
     larp::companion::GattsResponseDispatcher responseWorker_;
     larp::companion::SdkGattsServiceDriver driver_;
     larp::companion::Esp32GattsService service_;
+    larp::diagnostic::DiagnosticGattsService diagnosticService_;
     Esp32PeerRegistryStore peerStore_;
     larp::companion::Esp32PeerProofCrypto peerCrypto_;
     larp::companion::FreeRtosPeerRegistryRuntime registryRuntime_;

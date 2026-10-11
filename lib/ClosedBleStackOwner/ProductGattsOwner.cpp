@@ -13,6 +13,7 @@ ProductGattsOwner::ProductGattsOwner(Esp32CompanionIdentityOwner &identity) noex
       source_(identity.policy_, clock_, identity.channel_, commands_, profiles_),
       responses_(source_), responseWorker_(responses_, source_),
       service_(source_, responses_, clock_, driver_),
+      diagnosticService_(source_, clock_),
       registryRuntime_(source_, identity.channel_, clock_),
       registryOwner_(peerStore_, peerCrypto_, registryRuntime_) {}
 
@@ -27,7 +28,7 @@ ProductGattsOwner::RegistryState ProductGattsOwner::registryState() const noexce
                : RegistryState::RegistryRejected;
 }
 bool ProductGattsOwner::originalLink(PeerTransportBinding &destination) const noexcept {
-    return service_.ready() &&
+    return serviceReady() &&
            registryState() == RegistryState::StoredRegistryInstalledClosed &&
            source_.readOriginalTransport(destination);
 }
@@ -89,7 +90,7 @@ void ProductGattsOwner::runDiscovery() noexcept {
     const auto publish = [&]() {
         advertisingState_.store(gate.phase(), std::memory_order_release);
     };
-    if (!gate.configure(service_.ready(),
+    if (!gate.configure(serviceReady(),
                         registryState() == RegistryState::StoredRegistryInstalledClosed,
                         source_.closedChannelState(device_))) {
         publish();
@@ -134,7 +135,7 @@ void ProductGattsOwner::runDiscovery() noexcept {
             publish();
     };
     for (;;) {
-        if (!service_.ready() ||
+        if (!serviceReady() ||
             registryState() != RegistryState::StoredRegistryInstalledClosed) {
             abort();
             return;
@@ -178,7 +179,7 @@ void ProductGattsOwner::runDiscovery() noexcept {
             !source_.readOriginalTransport(link)) {
             std::uint32_t lifecycle = 0;
             if (source_.readOriginalLifecycle(lifecycle) && lifecycle > advertisedBirth) {
-                if (!gate.missedOriginalBirth(service_.ready(),
+                if (!gate.missedOriginalBirth(serviceReady(),
                                               registryState() == RegistryState::StoredRegistryInstalledClosed,
                                               source_.closedChannelState(device_))) {
                     abort();
@@ -199,7 +200,7 @@ void ProductGattsOwner::runDiscovery() noexcept {
             !source_.readOriginalTransport(link)) {
             std::uint32_t lifecycle = 0;
             if (!source_.readOriginalLifecycle(lifecycle) || lifecycle <= connectedBirth ||
-                !gate.disconnected(service_.ready(),
+                !gate.disconnected(serviceReady(),
                                    registryState() == RegistryState::StoredRegistryInstalledClosed,
                                    source_.closedChannelState(device_))) {
                 abort();
@@ -222,11 +223,13 @@ void ProductGattsOwner::runDiscovery() noexcept {
 
 void ProductGattsOwner::worker(void *context) noexcept {
     auto &owner = *static_cast<ProductGattsOwner *>(context);
-    owner.workerReady_.store(owner.service_.begin(), std::memory_order_relaxed);
+    owner.workerReady_.store(owner.service_.begin() && owner.diagnosticService_.begin(),
+                             std::memory_order_relaxed);
     owner.workerStarted_.store(true, std::memory_order_release);
     for (;;) {
         if (owner.workerReady_.load(std::memory_order_relaxed)) {
             owner.service_.service();
+            owner.diagnosticService_.service(owner.service_.ready());
             (void)owner.responseWorker_.service();
         }
         vTaskDelay(1);
@@ -236,15 +239,21 @@ void ProductGattsOwner::worker(void *context) noexcept {
 void ProductGattsOwner::callback(esp_gatts_cb_event_t kind, esp_gatt_if_t interface,
                                  esp_ble_gatts_cb_param_t *parameter) noexcept {
     auto *owner = selected_;
-    if (owner && parameter)
-        (void)owner->service_.copyEvent(fromSdkGattsService(kind, interface, *parameter));
+    if (owner && parameter) {
+        if (owner->diagnosticService_.owns(kind, *parameter))
+            (void)owner->diagnosticService_.copyEvent(kind, interface, *parameter);
+        else
+            (void)owner->service_.copyEvent(fromSdkGattsService(kind, interface, *parameter));
+    }
 }
 
 void ProductGattsOwner::loadRegistry(void *context) noexcept {
     auto &owner = *static_cast<ProductGattsOwner *>(context);
     const auto started = owner.clock_.nowMilliseconds();
-    while (!owner.service_.ready()) {
+    while (!owner.serviceReady()) {
         if (owner.service_.snapshot().phase == GattsServicePhase::Failed ||
+            owner.diagnosticService_.phase() ==
+                larp::diagnostic::DiagnosticGattsPhase::Failed ||
             owner.clock_.nowMilliseconds() - started >= 35000U) {
             owner.registryRuntime_.fence();
             owner.peerStore_.fence();

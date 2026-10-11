@@ -731,6 +731,82 @@ bool Esp32GattsSource::configureEndpointsNow(std::uint16_t command, std::uint16_
     portEXIT_CRITICAL(&mutex_);
     return true;
 }
+bool Esp32GattsSource::postDiagnosticClosedSetup(
+    const diagnostic::DiagnosticClosedHandles &caller) noexcept {
+    const auto value = caller;
+    const std::uint16_t attributes[] = {
+        value.service, value.controlWrite, value.controlReply, value.controlCccd,
+        value.stepWrite, value.stepReply, value.stepCccd};
+    for (const auto attribute : attributes)
+        if (attribute == command_ || attribute == profile_)
+            return false;
+    GattsSourceRegistration original;
+    if (!value.complete() || !readRegistration(original) || !(original == value.original) ||
+        !owner_ || sawConnection_ || !xTaskGetCurrentTaskHandle() || sourceTask())
+        return false;
+    portENTER_CRITICAL(&mutex_);
+    const bool unused = diagnostic_.state == 0;
+    if (unused) {
+        diagnostic_.value = value;
+        diagnostic_.state = 1;
+    }
+    portEXIT_CRITICAL(&mutex_);
+    if (!unused)
+        return false;
+    if (!osi_thread_post(static_cast<osi_thread *>(sdkThread_), &installDiagnosticClosed,
+                         this, 0, 0)) {
+        portENTER_CRITICAL(&mutex_);
+        diagnostic_.state = 4;
+        portEXIT_CRITICAL(&mutex_);
+        return false;
+    }
+    return true;
+}
+void Esp32GattsSource::installDiagnosticClosed(void *context) noexcept {
+    auto &source = *static_cast<Esp32GattsSource *>(context);
+    diagnostic::DiagnosticClosedHandles value;
+    portENTER_CRITICAL(&source.mutex_);
+    const bool pending = source.diagnostic_.state == 1;
+    if (pending) {
+        value = source.diagnostic_.value;
+        source.diagnostic_.state = 2;
+    }
+    portEXIT_CRITICAL(&source.mutex_);
+    if (!pending)
+        return;
+    GattsSourceRegistration current;
+    const std::uint16_t attributes[] = {
+        value.service, value.controlWrite, value.controlReply, value.controlCccd,
+        value.stepWrite, value.stepReply, value.stepCccd};
+    bool separate = true;
+    for (const auto attribute : attributes)
+        separate = separate && attribute != source.command_ && attribute != source.profile_;
+    const bool installed = source.sourceTask() && source.readRegistration(current) &&
+                           current == value.original && value.complete() && source.owner_ &&
+                           !source.sawConnection_ && separate;
+    portENTER_CRITICAL(&source.mutex_);
+    source.diagnostic_.state = installed ? 3 : 4;
+    portEXIT_CRITICAL(&source.mutex_);
+}
+bool Esp32GattsSource::diagnosticClosedSetupInstalled(
+    const diagnostic::DiagnosticClosedHandles &caller) const noexcept {
+    const auto value = caller;
+    GattsSourceRegistration current;
+    if (!value.complete() || !readRegistration(current) || !(current == value.original))
+        return false;
+    portENTER_CRITICAL(&mutex_);
+    const bool installed = diagnostic_.state == 3 &&
+                           diagnostic_.value.original == value.original &&
+                           diagnostic_.value.service == value.service &&
+                           diagnostic_.value.controlWrite == value.controlWrite &&
+                           diagnostic_.value.controlReply == value.controlReply &&
+                           diagnostic_.value.controlCccd == value.controlCccd &&
+                           diagnostic_.value.stepWrite == value.stepWrite &&
+                           diagnostic_.value.stepReply == value.stepReply &&
+                           diagnostic_.value.stepCccd == value.stepCccd;
+    portEXIT_CRITICAL(&mutex_);
+    return installed;
+}
 GattsLifecycleOutcome Esp32GattsSource::connectionNow(std::uint8_t interface,
                                                       const std::uint8_t *address,
                                                       std::uint16_t packed,
@@ -1014,6 +1090,27 @@ bool Esp32GattsSource::requestNow(std::uint16_t packed, std::uint32_t transactio
         if (event.count && event.count <= sizeof(bytes)) {
             std::memcpy(bytes, borrowed->write.value, event.count);
             event.bytes = bytes;
+        }
+        diagnostic::DiagnosticClosedHandles diagnostic;
+        portENTER_CRITICAL(&mutex_);
+        const bool installed = diagnostic_.state == 3;
+        if (installed)
+            diagnostic = diagnostic_.value;
+        portEXIT_CRITICAL(&mutex_);
+        if (installed && diagnostic.protectedWrite(event.attribute)) {
+            GattsSourceRegistration original;
+            PeerTransportBinding transport;
+            if (sourceTask() && readRegistration(original) &&
+                original == diagnostic.original && active_ &&
+                packed == live_.connection && transportNow(transport) &&
+                transport.registration == diagnostic.original.token &&
+                transport.interface == diagnostic.original.interface &&
+                event.needResponse)
+                (void)GATTS_SendRsp(packed, transaction,
+                                    static_cast<std::uint8_t>(
+                                        AttWriteStatus::InsufficientAuthorization),
+                                    nullptr);
+            return true; // A diagnostic attribute never enters game/profile admission.
         }
     } else if (type == 3 && borrowed) {
         event.prepared = true;
