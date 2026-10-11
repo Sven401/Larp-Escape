@@ -70,6 +70,38 @@ user-confirmed data connection of the real box; LED type, level and supply
 remain unverified. The next gate is an owner-specific, independently bounded
 and physically checkable off mechanism plus a correlated Park reply.
 
+### Integration stop gate checked on 11 October 2026
+
+The separate fake-owner commit `ecec6c3` adds `IPort::armLedOffTimer()` and
+`timedOffConfirmed()` to `CompanionIntegration/DiagnosticControl`. Its host
+tests prove that a fake independent timer must expire and confirm off before a
+LED step can finish. It adds no ESP32 timer, LED driver acknowledgement or
+production `IPort` implementation. The `GameLightEffects` worker in this
+branch supplies only the weaker, sequence-correlated black-frame submission.
+
+In the actual product start, `src/main.cpp` constructs `ReichstagGame`,
+`LarpEscapeApp` and `GameLightEffects`. It constructs neither
+`DeviceRuntime::Runtime`/`FreeRtosProfileChannel` nor `diagnostic::Control`.
+The application preflight/Standby fence only stops future game-loop calls.
+Consequently there is no common production arbiter to serialize that fence,
+the worker Park ticket, the timer and the original BLE authority. Splicing a
+synthetic `ControlReply{Applied}` into the unused reservation queue would
+misrepresent physical ownership and must not be done.
+
+**Required before implementation of an `Applied` LED Park reply:** choose and
+verify a real off mechanism that can expire without progress in the app,
+BLE callback or light render loop; define what driver or electrical evidence
+confirms the output is off and how failure remains latched; specify the LED
+type, supply, level and switching path of this box. The production arbiter must
+then atomically fence the actual app loop, request Park on the sole light
+worker with its full generation/sequence/owner ticket, await the matching
+worker submission and independently confirmed off state, and only then send a
+matching `Applied` reply. A timeout, stale ticket, timer failure, unknown off
+state or authority change must leave the game and diagnostics fenced. The
+timer evidence must be bound to the same owner generation and must not be
+reused by a later request. This is an implementation gate, not a successful
+hardware test or a grant. No source in this branch satisfies it yet.
+
 ## Closed legacy game preflight
 
 `LarpEscapeApp::fenceUnstartedGameForDiagnostics()` now gives the actual
