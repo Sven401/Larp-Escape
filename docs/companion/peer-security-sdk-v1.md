@@ -169,9 +169,10 @@ Source pins, from the official v4.4.6 Git tree: `btm_int.h`
 `f77085870a25a0928fcd9603a9093e3d65b0da0b358a9ba55c4ed06b424dec12`.
 The local ESP32 `libbt.a` still hashes to
 `1e11ea417c83432360b7309c0d35877a884be8fa3fc8c875cc9d627ff37cf787`.
-The full `tBTM_SEC_DEV_REC` configuration, offsets and selected-key path have
-not been matched to its actual instructions. Therefore no private record
-reader, positive F1 admission or diagnosis bypass follows from this audit.
+At this audit stage the full `tBTM_SEC_DEV_REC` configuration, offsets and
+selected-key path had not been matched to its actual instructions. The later
+static archive check below narrows this limit. No private record reader,
+positive F1 admission or diagnosis bypass follows from either check.
 
 ### Pinned key-selection source model (2026-10-11)
 
@@ -187,13 +188,67 @@ reply. Different modeled records and full `auth_mode` values are kept distinct.
 
 This is a source-behavior check, not an ABI check: the private model deliberately
 does not declare the complete `tBTM_SEC_DEV_REC`. The original header confirms
-the field types and conditional layout, but the target build configuration,
-all field offsets, and actual key-selection instructions in `libbt.a` remain
-unverified. No observed HCI command, controller key acceptance, GATT birth,
+the field types and conditional layout. The separate static archive audit
+below verifies relevant compiled offsets and branches. No observed HCI command,
+controller key acceptance, GATT birth,
 restored NVS record or live bond is part of the test. The test must not be used
 to read private record offsets or grant access. A genuine selected-key-to-birth
-binding still requires an exact target ABI/binary proof and a user-driven
-device report, alongside the current proof and registry acknowledgement.
+binding still requires proof at the original actor and a user-driven device
+report, alongside the current proof and registry acknowledgement.
+
+### Static ESP32 archive ABI and branch audit (2026-10-11)
+
+`python scripts/check_f1_record_binary_path.py` hashes the installed ESP32
+`libbt.a` and the pinned original header, extracts only `btm_ble.c.obj`, pins
+that object's SHA-256, and checks the Xtensa disassembly plus linked ABI-probe
+map. The inspected build uses PlatformIO `espressif32@6.6.0`, Arduino ESP32
+`2.0.14`, `az-delivery-devkit-v4` and Xtensa GCC 8.4.0
+(`esp-2021r2-patch5`). The probe environment uses `-std=gnu++11`,
+`-I include`, `-Wall`, `-Wextra`, five explicit `--wrap` flags and source
+`-Werror` from `platformio.ini`; no SDK archive or source is patched.
+
+The pinned binary's `BTM_SecAddBleDevice` allots and zeros `0x148` (328) bytes
+for `tBTM_SEC_DEV_REC`. Its BLE subrecord begins at byte 176; it stores the
+restored mode with a 16-bit instruction at byte `0x130` (304). The inspected
+instructions also use these record offsets:
+
+| Field or action | Record offset | Static binary evidence |
+| --- | ---: | --- |
+| `sec_state` | 150 | 8-bit state read in master encryption |
+| LE HCI handle | 166 | 16-bit read in both key paths |
+| BLE key-type mask | 199 | PENC bit 0 / LENC bit 4 branches |
+| `pltk` | 216 | pointer passed to master start-encryption HCI call |
+| `lltk` | 248 | pointer passed to slave positive LTK reply |
+| `rand` | 280 | pointer passed to master start-encryption HCI call |
+| `ediv` | 288 | 16-bit value passed with `rand` and `pltk` |
+| key size | 293 | byte read for slave LTK reply state |
+| `auth_mode` | 304 | 16-bit restore store |
+
+`btm_ble_ltk_request` calls `btm_find_dev_by_handle`; the master path calls
+`btm_find_dev` by address. The archive contains both positive and negative
+slave LTK replies. These checks establish the archived binary's relevant
+record size, offsets and branches, and that its object is linked in the probe
+ELF. A fresh regular product build with `env:az-delivery-devkit-v4`
+(`-std=gnu++11 -I include`) succeeded at 1,229,077 / 1,310,720 flash bytes
+and 55,148 / 532,480 RAM bytes. Its map contains the controller's `bt.c.obj`
+from `libbt.a` but **does not link `btm_ble.c.obj` or these F1 host-key
+functions**. Reproduce the negative check with:
+
+```text
+python scripts/check_f1_record_binary_path.py --map .pio/build/az-delivery-devkit-v4/firmware.map --expect-no-host-ble
+```
+
+Consequently no productive F1 host-key branch is selected in this build.
+
+The audit does not compile the *complete* upstream record type under proven
+private Arduino feature macros: the original declaration has conditional
+fields and the installed Arduino SDK omits its internal `btm_int.h`. The
+archive instructions are stronger for these particular offsets than a host
+model, but they do not prove every field of the structure or that the upstream
+source matches the archive in all details. Most importantly, a static branch
+does not reveal which restored record/key a live controller used for a given
+GATT birth in a later BLE-enabled build. No private-offset reader, F1
+authorization or diagnosis privilege is enabled by this audit.
 
 Before positive F1 admission: independently audit the complete device-record
 ABI and full-width selected mode/key provenance at the original actor, connect
