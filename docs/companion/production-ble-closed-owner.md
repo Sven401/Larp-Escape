@@ -295,3 +295,22 @@ diagnostic ACK. A failed start remains closed and will not retry during that
 boot. The error report is observation only and does not change advertising
 or admission gates. The next user-run serial report is required to identify
 the cause before a corrective startup change is justified.
+
+The next chip-bound telemetry run returned controller init error `259`
+(`ESP_ERR_INVALID_STATE`) with controller status `0` before and after and
+213,576 B free internal heap. The bundled ESP-IDF 4.4.6 controller source
+returns this combination when all BT controller memory was previously
+released. In Arduino 2.0.14, `initArduino()` runs before `setup()` and calls
+`esp_bt_controller_mem_release(ESP_BT_MODE_BTDM)` when `btInUse()` is false.
+The prior ELF map resolves `btInUse()` to the weak false fallback in
+`esp32-hal-misc.c.o`; the BT-aware object was not linked. The product BLE
+owner now provides the true implementation at link time, so Arduino retains
+the controller memory before the later closed startup. This override does
+not initialize Bluetooth or authorize advertising. The next device run still
+must confirm the controller, GATT, registry and discovery acknowledgements;
+there is no retry or pairing claim from this build alone.
+The SDK default controller configuration on this ESP32 chooses dual mode;
+the product subsequently requested BLE mode at enable. The SDK requires
+these to match, so the closed owner now sets BLE mode in the init config and
+uses the same mode for enable. This removes the otherwise deterministic
+second-step `ESP_ERR_INVALID_ARG` after the memory-retention fix.

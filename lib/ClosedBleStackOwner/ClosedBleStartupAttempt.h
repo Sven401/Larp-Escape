@@ -6,6 +6,7 @@
 // remain available even if a caller invokes begin() again after failure.
 class ClosedBleStartupAttempt {
   public:
+    enum class Mode : std::uint8_t { Ble = 1 };
     enum class State : std::uint8_t {
         NotStarted, ControllerInitFailed, ControllerEnableFailed,
         BluedroidInitFailed, BluedroidEnableFailed, ReadyClosed
@@ -27,10 +28,11 @@ class ClosedBleStartupAttempt {
         report_.internalFreeBefore = port.internalFree();
         report_.internalLargestBefore = port.internalLargest();
 
-        std::int32_t result = port.controllerInit();
+        constexpr auto mode = Mode::Ble;
+        std::int32_t result = port.controllerInit(mode);
         if (result != 0)
             return finish(port, State::ControllerInitFailed, result);
-        result = port.controllerEnable();
+        result = port.controllerEnable(mode);
         if (result != 0)
             return finish(port, State::ControllerEnableFailed, result);
         result = port.bluedroidInit();
