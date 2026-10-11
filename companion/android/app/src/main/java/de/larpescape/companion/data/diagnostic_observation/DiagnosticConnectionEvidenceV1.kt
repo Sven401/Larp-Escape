@@ -106,13 +106,22 @@ class DiagnosticConnectionEvidenceJournalV1(private val directory: File) {
         val fresh = DiagnosticConnectionEvidenceV1(connectionGeneration = generation, targetAddress = address)
         validate(fresh)
         if (file.exists()) {
-            read(file) // Never replace an unvalidated prior record.
-            check(directory.listFiles()?.count { archiveName.matches(it.name) } ?: 0 < MAX_ARCHIVES) {
-                "Connection history capacity reached"
+            val prior = read(file) // Never replace an unvalidated prior record.
+            val archives = directory.listFiles()?.filter { archiveName.matches(it.name) }?.sortedBy { it.name }.orEmpty()
+            // A failed write of fresh may leave the previous current file and its archive.
+            // Reopening must not duplicate that connection or consume another history slot.
+            if (archives.lastOrNull()?.let(::read) != prior) {
+                check(archives.size < MAX_ARCHIVES) { "Connection history capacity reached" }
+                val archive = File(directory, "diagnostic-connection-evidence-v1-${System.currentTimeMillis()}-${UUID.randomUUID()}.json")
+                val staged = File(directory, archive.name + ".tmp")
+                try {
+                    FileOutputStream(staged).use { output ->
+                        file.inputStream().use { it.copyTo(output) }
+                        output.fd.sync()
+                    }
+                    Files.move(staged.toPath(), archive.toPath(), StandardCopyOption.ATOMIC_MOVE)
+                } finally { staged.delete() }
             }
-            val archive = File(directory, "diagnostic-connection-evidence-v1-${System.currentTimeMillis()}-${UUID.randomUUID()}.json")
-            try { Files.copy(file.toPath(), archive.toPath()) }
-            catch (error: Exception) { Files.deleteIfExists(archive.toPath()); throw error }
         }
         write(fresh)
         current = fresh

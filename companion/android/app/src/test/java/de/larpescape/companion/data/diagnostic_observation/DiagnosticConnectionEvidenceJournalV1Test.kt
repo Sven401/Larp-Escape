@@ -58,6 +58,28 @@ class DiagnosticConnectionEvidenceJournalV1Test {
         } finally { directory.deleteRecursively() }
     }
 
+    @Test fun retryAfterFreshWriteFailureDoesNotArchivePriorLinkTwice() {
+        val directory = Files.createTempDirectory("diagnostic-connection-retry-v1").toFile()
+        try {
+            val journal = DiagnosticConnectionEvidenceJournalV1(directory)
+            journal.begin(7, "A8:42:E3:CD:4B:18")
+            assertTrue(journal.append(DiagnosticConnectionEventV1(1, "2026-10-11T10:00:00Z", 7,
+                "A8:42:E3:CD:4B:18", DiagnosticConnectionEventV1.Kind.TRANSPORT_ERROR, null, "DISCONNECTED")))
+            val blockedTemp = directory.resolve("diagnostic-connection-evidence-v1.json.tmp")
+            assertTrue(blockedTemp.mkdir())
+            blockedTemp.resolve("keep").writeText("prevent replacement")
+            assertThrows(Exception::class.java) { journal.begin(8, "A8:42:E3:CD:4B:18") }
+            assertEquals(7, journal.loadRecovered()!!.connectionGeneration)
+            assertEquals(1, directory.listFiles()!!.count { it.name.matches(
+                Regex("diagnostic-connection-evidence-v1-[0-9]{13}-[0-9a-f-]{36}\\.json")) })
+            blockedTemp.deleteRecursively()
+            journal.begin(8, "A8:42:E3:CD:4B:18")
+            val history = Gson().fromJson(String(journal.exportHistoryBytes()!!, Charsets.UTF_8),
+                DiagnosticConnectionHistoryV1::class.java)
+            assertEquals(listOf(7, 8), history.connections.map { it.connectionGeneration })
+        } finally { directory.deleteRecursively() }
+    }
+
     @Test fun wrongGenerationAndSequenceCannotEnterCurrentConnection() {
         val directory = Files.createTempDirectory("diagnostic-connection-v1").toFile()
         try {
