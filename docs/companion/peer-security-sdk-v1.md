@@ -111,6 +111,41 @@ sizes/frames/builds are recorded separately in the project Werkbank. The closed
 SDK probe links the reader and wrappers but starts no SDK, pairing, radio or NVS.
 Separate target build sizes do not prove a combined production reserve.
 
+## Minimal App–ESP pairing observation contract (pending product wiring)
+
+An LE connection and an Android OS bond may be established while every GM and
+diagnosis route remains closed. The pairing report must distinguish these facts:
+
+1. `connected`: the original selected GATT connection callback opens one fresh
+   `PeerTransportBinding` on the BTU/source actor. Its packed GATT handle,
+   connection token, registration, interface and lifecycle form an opaque local
+   birth identifier. Disconnect closes that birth. Do not join a later event by
+   address or recycled HCI/GATT handle alone.
+2. `os_bonded`: Android may report its own bond state, with its own timestamp and
+   attempt identifier. This is an App observation only; it is not firmware bond
+   persistence, encryption, MITM, GM role or diagnosis permission.
+3. `fresh_smp_complete`: for this exact open birth, the original `SMP_Register`
+   callback has delivered start event 1 or 2 followed by terminal event 7. Copy
+   the five result bytes before forwarding: reason, security level, cancelled,
+   over-BR and the SDK's **8-bit** mode. Success requires reason 0, level 4,
+   cancelled 0, over-BR 0 and an allowed fresh-pairing mode. The callback does
+   not carry an App attempt token or a full restored-bond mode.
+4. `live_link_secure`: on the same original actor and birth, the SDK reader
+   verifies the current LE connection, no active security procedure, BTM
+   authenticated/encrypted/key-known flags and LE encrypted+MITM state with a
+   16-byte key. This is volatile link evidence after fresh pairing; it does not
+   prove selected stored-key provenance or durable NVS bond storage.
+
+For reconnect, report `restored_bond_unverified` until a separate immutable
+selected-key/full-16-bit-mode witness is tied to that GATT birth and the
+controller result. The existing callback low byte, address, HCI enqueue and
+Android `BOND_BONDED` cannot supply this witness. Keep the role and diagnosis
+routes closed even if steps 1–4 succeed: a current protected credential,
+verified P-256 proof, explicit GM assignment and registry install ACK are
+separate prerequisites. The report should use opaque per-boot birth/attempt IDs
+and outcome codes, never key bytes or private SDK records. No product report
+characteristic/UUID or physical pairing result is implemented by this F1 cut.
+
 ## F1 pre-reset observation (closed probe)
 
 The isolated ABI probe additionally wraps original `smp_proc_pairing_cmpl`.
