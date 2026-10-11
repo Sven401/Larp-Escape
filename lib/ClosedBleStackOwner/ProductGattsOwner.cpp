@@ -12,7 +12,6 @@ ProductGattsOwner::ProductGattsOwner(Esp32CompanionIdentityOwner &identity) noex
     : identity_(identity), commands_(identity.channel_), profiles_(identity.channel_),
       source_(identity.policy_, clock_, identity.channel_, commands_, profiles_),
       responses_(source_), responseWorker_(responses_, source_),
-      service_(source_, responses_, clock_, driver_),
       diagnosticService_(source_, clock_),
       registryRuntime_(source_, identity.channel_, clock_),
       registryOwner_(peerStore_, peerCrypto_, registryRuntime_) {}
@@ -160,7 +159,8 @@ void ProductGattsOwner::runDiscovery() noexcept {
     const auto publish = [&]() {
         advertisingState_.store(gate.phase(), std::memory_order_release);
     };
-    if (!gate.configure(serviceReady(),
+    if (peerAuthState() != PeerAuthState::ReadyClosed ||
+        !gate.configure(serviceReady(),
                         registryState() == RegistryState::StoredRegistryInstalledClosed,
                         source_.closedChannelState(device_))) {
         publish();
@@ -210,7 +210,7 @@ void ProductGattsOwner::runDiscovery() noexcept {
             publish();
     };
     for (;;) {
-        if (!serviceReady() ||
+        if (!serviceReady() || peerAuthState() != PeerAuthState::ReadyClosed ||
             registryState() != RegistryState::StoredRegistryInstalledClosed) {
             abort();
             return;
@@ -362,15 +362,47 @@ void ProductGattsOwner::runDiscovery() noexcept {
 
 void ProductGattsOwner::worker(void *context) noexcept {
     auto &owner = *static_cast<ProductGattsOwner *>(context);
-    owner.workerReady_.store(owner.service_.begin() && owner.diagnosticService_.begin(),
+    owner.workerReady_.store(owner.service_ && owner.service_->begin() &&
+                                 owner.diagnosticService_.begin(),
                              std::memory_order_relaxed);
     owner.workerStarted_.store(true, std::memory_order_release);
     for (;;) {
         if (owner.workerReady_.load(std::memory_order_relaxed)) {
-            owner.service_.service();
-            owner.diagnosticService_.service(owner.service_.ready());
+            owner.service_->service();
+            owner.diagnosticService_.service(owner.service_->ready());
             (void)owner.responseWorker_.service();
         }
+        vTaskDelay(1);
+    }
+}
+
+void ProductGattsOwner::runPeerAuth(void *context) noexcept {
+    auto &owner = *static_cast<ProductGattsOwner *>(context);
+    const auto started = owner.clock_.nowMilliseconds();
+    GattsSourceRegistration registration;
+    while (!owner.source_.readRegistration(registration)) {
+        if (owner.clock_.nowMilliseconds() - started >= 35000U ||
+            owner.service_->snapshot().phase == GattsServicePhase::Failed) {
+            owner.peerAuthState_.store(PeerAuthState::Unavailable, std::memory_order_release);
+            vTaskDelete(nullptr);
+            return;
+        }
+        vTaskDelay(1);
+    }
+    auto &graph = *owner.peerAuth_;
+    if (!graph.grant.beginWorker() || !graph.reader.beginWorker() ||
+        !graph.issuer.beginWorker() || !graph.auth.beginWorker()) {
+        owner.peerAuthState_.store(PeerAuthState::Unavailable, std::memory_order_release);
+        vTaskDelete(nullptr);
+        return;
+    }
+    owner.peerAuthState_.store(PeerAuthState::ReadyClosed, std::memory_order_release);
+    for (;;) {
+        // Each call drains at most one current issue, challenge read or proof,
+        // plus bounded stale entries; cryptography never runs on the BTU task.
+        (void)graph.issuer.service();
+        (void)graph.reader.service();
+        (void)graph.auth.service();
         vTaskDelay(1);
     }
 }
@@ -382,7 +414,7 @@ void ProductGattsOwner::callback(esp_gatts_cb_event_t kind, esp_gatt_if_t interf
         if (owner->diagnosticService_.owns(kind, *parameter))
             (void)owner->diagnosticService_.copyEvent(kind, interface, *parameter);
         else
-            (void)owner->service_.copyEvent(fromSdkGattsService(kind, interface, *parameter));
+            (void)owner->service_->copyEvent(fromSdkGattsService(kind, interface, *parameter));
     }
 }
 
@@ -390,7 +422,7 @@ void ProductGattsOwner::loadRegistry(void *context) noexcept {
     auto &owner = *static_cast<ProductGattsOwner *>(context);
     const auto started = owner.clock_.nowMilliseconds();
     while (!owner.serviceReady()) {
-        if (owner.service_.snapshot().phase == GattsServicePhase::Failed ||
+        if (owner.service_->snapshot().phase == GattsServicePhase::Failed ||
             owner.diagnosticService_.phase() ==
                 larp::diagnostic::DiagnosticGattsPhase::Failed ||
             owner.clock_.nowMilliseconds() - started >= 35000U) {
@@ -401,6 +433,18 @@ void ProductGattsOwner::loadRegistry(void *context) noexcept {
             return;
         }
         vTaskDelay(1);
+    }
+    const auto authStarted = owner.clock_.nowMilliseconds();
+    while (owner.peerAuthState() == PeerAuthState::WaitingSource &&
+           owner.clock_.nowMilliseconds() - authStarted < 35000U)
+        vTaskDelay(1);
+    if (owner.peerAuthState() != PeerAuthState::ReadyClosed) {
+        owner.registryRuntime_.fence();
+        owner.peerStore_.fence();
+        owner.registryState_.store(RegistryState::RuntimeUnavailable,
+                                   std::memory_order_release);
+        vTaskDelete(nullptr);
+        return;
     }
     if (!owner.peerStore_.begin()) {
         owner.peerStore_.fence();
@@ -447,6 +491,10 @@ ProductGattsOwner::State ProductGattsOwner::begin() noexcept {
         !boot_.valid() ||
         !commands_.begin() || !profiles_.begin() || !responses_.begin())
         return state_ = State::QueueFailed;
+    peerAuth_ = new (&peerAuthStorage_)
+        PeerAuthGraph(source_, registryRuntime_, clock_, boot_, peerCrypto_);
+    service_ = new (&serviceStorage_) Esp32GattsService(
+        source_, responses_, clock_, driver_, peerAuth_->setup(boot_));
     securityEvents_ = xQueueCreate(8, sizeof(SecurityEvent));
     if (!securityEvents_)
         Serial.println("BLE trace unavailable: fixed event queue allocation failed");
@@ -465,6 +513,12 @@ ProductGattsOwner::State ProductGattsOwner::begin() noexcept {
         return state_ = State::CallbackFailed;
     if (esp_ble_gatts_app_register(GattsServiceDefinition::Application) != ESP_OK)
         return state_ = State::RegistrationFailed;
+    peerAuthState_.store(PeerAuthState::WaitingSource, std::memory_order_release);
+    if (xTaskCreatePinnedToCore(runPeerAuth, "peerAuthClosed", 8192, this, 1,
+                                &peerAuthWorker_, 0) != pdPASS) {
+        peerAuthState_.store(PeerAuthState::Unavailable, std::memory_order_release);
+        return state_ = State::WorkerFailed;
+    }
     registryState_.store(RegistryState::WaitingSource, std::memory_order_release);
     if (xTaskCreatePinnedToCore(loadRegistry, "registryClosed", 8192, this, 1,
                                 &registryWorker_, 0) != pdPASS) {

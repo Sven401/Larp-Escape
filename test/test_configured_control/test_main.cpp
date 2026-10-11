@@ -992,6 +992,7 @@ void test_profile_capability_fixture_matches_firmware_encoder() {
 #include "DiagnosticGattsServiceCases.h"
 #include "IdentityRetirementCases.h"
 #include "PeerAuthCases.h"
+#include "PeerAuthProductBootCases.h"
 #include "PeerLinkSecurityCases.h"
 #include "PeerProofCases.h"
 #include "PeerProofGrantCases.h"
@@ -1583,6 +1584,8 @@ int main() {
     RUN_TEST(test_auth_forged_positive_job_ack_principal_and_scope_never_post);
     RUN_TEST(test_auth_service_thirteen_handles_and_complete_source_ack_before_start);
     RUN_TEST(test_auth_setup_wrong_handles_incomplete_bundle_and_late_configuration_fail_closed);
+    RUN_TEST(test_product_auth_worker_requires_valid_boot_and_grant_before_read_ingress);
+    RUN_TEST(test_product_auth_empty_installed_registry_rejects_selector_without_nonce_or_role);
 #if defined(LARP_REAL_PEER_CRYPTO)
     RUN_TEST(test_auth_actual_crypto_sdk_issue_reads_proof_writes_ack_and_result_blobs);
 #endif
