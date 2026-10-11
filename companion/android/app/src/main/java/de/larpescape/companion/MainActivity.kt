@@ -309,7 +309,7 @@ class MainActivity : ComponentActivity() {
                                 OutlinedButton(onClick = {
                                     connectionExportNotice = null
                                     try {
-                                        if (model.connectionEvidenceExportBytes() != null) exportConnection.launch("ble-transportbeleg-v1.json")
+                                        if (model.connectionEvidenceExportBytes() != null) exportConnection.launch("ble-transportverlauf-v1.json")
                                         else connectionExportNotice = "Noch kein gespeicherter GATT-Verbindungsverlauf vorhanden."
                                     } catch (_: Exception) {
                                         connectionExportNotice = "Gespeicherter Transportbeleg ist nicht lesbar; kein Export erstellt."

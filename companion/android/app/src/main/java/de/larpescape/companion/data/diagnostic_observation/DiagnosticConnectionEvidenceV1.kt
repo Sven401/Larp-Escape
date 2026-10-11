@@ -7,6 +7,7 @@ import java.io.FileOutputStream
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 import java.time.Instant
+import java.util.UUID
 
 /** Transport and correlated wire observations. None is a user or physical-device verdict. */
 data class DiagnosticConnectionEventV1(
@@ -42,26 +43,39 @@ data class DiagnosticConnectionEvidenceV1(
     }
 }
 
+/** Historical BLE observations only; a collection of links is not a hardware verdict. */
+data class DiagnosticConnectionHistoryV1(
+    val schema: String = "diagnostic_connection_history_v1",
+    val connections: List<DiagnosticConnectionEvidenceV1>,
+    val physicalResult: String = "UNVERIFIED",
+    val exportedUtc: String,
+)
+
 /** One connection per file. Recovery yields history only; it never recreates pending writes. */
 class DiagnosticConnectionEvidenceJournalV1(private val directory: File) {
     private val gson = Gson()
     private val file get() = File(directory, "diagnostic-connection-evidence-v1.json")
+    private val archiveName = Regex("diagnostic-connection-evidence-v1-[0-9]{13}-[0-9a-f-]{36}\\.json")
     private var current: DiagnosticConnectionEvidenceV1? = null
 
-    fun loadRecovered(): DiagnosticConnectionEvidenceV1? {
-        if (!file.exists()) return null
-        require(file.length() in 1..MAX_BYTES.toLong()) { "Connection evidence too large" }
-        val bytes = file.inputStream().use { it.readNBytes(MAX_BYTES + 1) }
+    private fun read(savedFile: File): DiagnosticConnectionEvidenceV1 {
+        require(savedFile.length() in 1..MAX_BYTES.toLong()) { "Connection evidence too large" }
+        val bytes = savedFile.inputStream().use { it.readNBytes(MAX_BYTES + 1) }
         require(bytes.size <= MAX_BYTES) { "Connection evidence too large" }
         val json = JsonParser.parseString(String(bytes, Charsets.UTF_8)).asJsonObject
         require(json["schema"]?.asString == DiagnosticConnectionEvidenceV1.SCHEMA)
         val saved = gson.fromJson(json, DiagnosticConnectionEvidenceV1::class.java)
         validate(saved)
-        // Deliberately do not set current. A process restart has no live GATT owner or pending write.
         // Normalize ambiguous legacy evidence in memory and exports, without rewriting history.
         return if (saved.originalAuthority == DiagnosticConnectionEvidenceV1.LEGACY_AUTHORITY_OPEN)
             saved.copy(originalAuthority = DiagnosticConnectionEvidenceV1.AUTHORITY_UNVERIFIED)
         else saved
+    }
+
+    fun loadRecovered(): DiagnosticConnectionEvidenceV1? {
+        if (!file.exists()) return null
+        // Deliberately do not set current. A process restart has no live GATT owner or pending write.
+        return read(file)
     }
 
     /** A validated, bounded historical snapshot. Reading it never resumes a GATT session. */
@@ -72,13 +86,39 @@ class DiagnosticConnectionEvidenceJournalV1(private val directory: File) {
         }
     }
 
+    /** Includes every retained link, including those preceding a cold start. */
+    @Synchronized
+    fun exportHistoryBytes(): ByteArray? {
+        val archives = directory.listFiles()?.filter { archiveName.matches(it.name) }?.sortedBy { it.name }.orEmpty()
+        require(archives.size <= MAX_ARCHIVES) { "Too many connection journals for one export" }
+        val files = archives + listOfNotNull(file.takeIf { it.exists() })
+        if (files.isEmpty()) return null
+        val connections = files.map(::read)
+        val bytes = gson.toJson(DiagnosticConnectionHistoryV1(
+            connections = connections, exportedUtc = Instant.now().toString(),
+        )).toByteArray(Charsets.UTF_8)
+        require(bytes.size <= MAX_HISTORY_BYTES) { "Connection history too large" }
+        return bytes
+    }
+
+    @Synchronized
     fun begin(generation: Int, address: String) {
         val fresh = DiagnosticConnectionEvidenceV1(connectionGeneration = generation, targetAddress = address)
         validate(fresh)
+        if (file.exists()) {
+            read(file) // Never replace an unvalidated prior record.
+            check(directory.listFiles()?.count { archiveName.matches(it.name) } ?: 0 < MAX_ARCHIVES) {
+                "Connection history capacity reached"
+            }
+            val archive = File(directory, "diagnostic-connection-evidence-v1-${System.currentTimeMillis()}-${UUID.randomUUID()}.json")
+            try { Files.copy(file.toPath(), archive.toPath()) }
+            catch (error: Exception) { Files.deleteIfExists(archive.toPath()); throw error }
+        }
         write(fresh)
         current = fresh
     }
 
+    @Synchronized
     fun append(event: DiagnosticConnectionEventV1): Boolean {
         val previous = current ?: return false
         if (previous.events.size >= DiagnosticConnectionEvidenceV1.MAX_EVENTS ||
@@ -121,6 +161,8 @@ class DiagnosticConnectionEvidenceJournalV1(private val directory: File) {
 
     companion object {
         const val MAX_BYTES = 65536
+        const val MAX_ARCHIVES = 128
+        const val MAX_HISTORY_BYTES = 9 * 1024 * 1024
         private val ADDRESS = Regex("[0-9A-Fa-f]{2}(:[0-9A-Fa-f]{2}){5}")
     }
 }

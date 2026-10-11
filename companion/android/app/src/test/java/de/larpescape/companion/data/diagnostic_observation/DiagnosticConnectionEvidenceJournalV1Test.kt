@@ -24,6 +24,37 @@ class DiagnosticConnectionEvidenceJournalV1Test {
                 "A8:42:E3:CD:4B:18", DiagnosticConnectionEventV1.Kind.CONTROL_REPLY, 8, "reply")))
             recovered.begin(8, "A8:42:E3:CD:4B:18")
             assertTrue(recovered.loadRecovered()!!.events.isEmpty())
+            val exportedHistory = Gson().fromJson(String(recovered.exportHistoryBytes()!!, Charsets.UTF_8),
+                DiagnosticConnectionHistoryV1::class.java)
+            assertEquals(2, exportedHistory.connections.size)
+            assertEquals(7, exportedHistory.connections.first().connectionGeneration)
+            assertEquals(1, exportedHistory.connections.first().events.size)
+            assertEquals(8, exportedHistory.connections.last().connectionGeneration)
+            assertEquals("UNVERIFIED", exportedHistory.physicalResult)
+        } finally { directory.deleteRecursively() }
+    }
+
+    @Test fun coldStartHistoryPreservesPriorLinksAndRejectsCorruptedArchive() {
+        val directory = Files.createTempDirectory("diagnostic-connection-history-v1").toFile()
+        try {
+            val first = DiagnosticConnectionEvidenceJournalV1(directory)
+            first.begin(7, "A8:42:E3:CD:4B:18")
+            assertTrue(first.append(DiagnosticConnectionEventV1(1, "2026-10-11T10:00:00Z", 7,
+                "A8:42:E3:CD:4B:18", DiagnosticConnectionEventV1.Kind.TRANSPORT_PROBE, null, "transport_only")))
+            val restarted = DiagnosticConnectionEvidenceJournalV1(directory)
+            restarted.begin(8, "A8:42:E3:CD:4B:18")
+            assertTrue(restarted.append(DiagnosticConnectionEventV1(1, "2026-10-11T10:01:00Z", 8,
+                "A8:42:E3:CD:4B:18", DiagnosticConnectionEventV1.Kind.TRANSPORT_ERROR, null, "DISCONNECTED")))
+            val afterSecondRestart = DiagnosticConnectionEvidenceJournalV1(directory)
+            val exported = afterSecondRestart.exportHistoryBytes()!!
+            val history = Gson().fromJson(String(exported, Charsets.UTF_8), DiagnosticConnectionHistoryV1::class.java)
+            assertEquals("diagnostic_connection_history_v1", history.schema)
+            assertEquals(listOf(7, 8), history.connections.map { it.connectionGeneration })
+            assertTrue(history.connections.all { it.originalAuthority == "NOT_GRANTED" && it.physicalResult == "UNVERIFIED" })
+            assertNull(afterSecondRestart.nextSequence())
+            val archive = directory.listFiles()!!.single { it.name.startsWith("diagnostic-connection-evidence-v1-") }
+            archive.writeText("{broken")
+            assertThrows(Exception::class.java) { afterSecondRestart.exportHistoryBytes() }
         } finally { directory.deleteRecursively() }
     }
 
