@@ -1,6 +1,8 @@
 package de.larpescape.protocol
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Test
@@ -74,6 +76,40 @@ class DurableHardwareDiagnosticRunV1Test {
         assertEquals(report.snapshot(), reopened.snapshot().snapshot())
         rejects { reopened.request(HardwareDiagnosticActionV1.WAKE_EDGE, secondId, "2026-10-11T20:00:05Z") }
         assertTrue(before.contentEquals(journal.load()))
+    }
+
+    @Test
+    fun finishingWithUnansweredWriteRecordsUnclearOutcomeBeforeFreezing() {
+        val journal = MemoryDiagnosticJournalV1()
+        val run = DurableHardwareDiagnosticRunV1.start(runId, start, journal)
+        run.request(action, firstId, "2026-10-11T20:00:01Z")
+        val report = run.finish("2026-10-11T20:00:02Z")
+        assertEquals(DeviceAcceptanceV1.UNCLEAR, report.attempt(action).acceptanceClaim?.state)
+        val reopened = DurableHardwareDiagnosticRunV1.recover(journal, "2026-10-11T20:00:03Z")
+        assertTrue(reopened.isFinalized)
+        assertEquals(DeviceAcceptanceV1.UNCLEAR, reopened.snapshot().attempt(action).acceptanceClaim?.state)
+    }
+
+    @Test
+    fun failedFinalJournalWriteLeavesTheRunOpenAndRequestRecoverable() {
+        val memory = MemoryDiagnosticJournalV1()
+        var failWrites = false
+        val journal = object : DiagnosticJournalV1 {
+            override fun load() = memory.load()
+            override fun replace(bytes: ByteArray) {
+                if (failWrites) throw IllegalStateException("storage failed")
+                memory.replace(bytes)
+            }
+        }
+        val run = DurableHardwareDiagnosticRunV1.start(runId, start, journal)
+        run.request(action, firstId, "2026-10-11T20:00:01Z")
+        failWrites = true
+        rejects { run.finish("2026-10-11T20:00:02Z") }
+        assertFalse(run.isFinalized)
+        assertNull(run.snapshot().attempt(action).acceptanceClaim)
+        failWrites = false
+        val recovered = DurableHardwareDiagnosticRunV1.recover(journal, "2026-10-11T20:00:03Z")
+        assertEquals(DeviceAcceptanceV1.UNCLEAR, recovered.snapshot().attempt(action).acceptanceClaim?.state)
     }
 
     @Test

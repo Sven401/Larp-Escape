@@ -10,7 +10,6 @@ import java.time.Instant
  */
 class DurableHardwareDiagnosticRunV1 private constructor(
     private val journal: DiagnosticJournalV1,
-    private var ledger: HardwareDiagnosticEvidenceLedgerV1?,
     private var saved: HardwareDiagnosticReportV1,
     private var finalized: Boolean,
 ) {
@@ -47,12 +46,12 @@ class DurableHardwareDiagnosticRunV1 private constructor(
     @Synchronized
     fun finish(utc: String): HardwareDiagnosticReportV1 {
         if (finalized) return snapshot()
-        val current = checkNotNull(ledger)
         require(Instant.parse(utc) >= Instant.parse(saved.snapshot().text("endedUtc")))
-        val next = current.snapshotAt(utc)
+        val nextLedger = HardwareDiagnosticEvidenceLedgerV1.restore(saved)
+        retireOutstanding(nextLedger, saved, "run_finished")
+        val next = nextLedger.snapshotAt(utc)
         journal.replace(journalBytes(next, true))
         saved = next
-        ledger = null
         finalized = true
         return snapshot()
     }
@@ -64,7 +63,6 @@ class DurableHardwareDiagnosticRunV1 private constructor(
         action(nextLedger)
         val next = nextLedger.snapshotAt(utc)
         journal.replace(journalBytes(next, false))
-        ledger = nextLedger
         saved = next
     }
 
@@ -92,39 +90,48 @@ class DurableHardwareDiagnosticRunV1 private constructor(
             return HardwareDiagnosticReportCodecV1.fromDocument(document) to envelope["finalized"].asBoolean
         }
 
-        fun start(runId: String, startedUtc: String, journal: DiagnosticJournalV1): DurableHardwareDiagnosticRunV1 {
-            require(journal.load() == null) { "Existing journal must be recovered, never overwritten" }
-            val ledger = HardwareDiagnosticEvidenceLedgerV1(runId, startedUtc)
-            val report = ledger.snapshotAt(startedUtc)
-            journal.replace(journalBytes(report, false))
-            return DurableHardwareDiagnosticRunV1(journal, ledger, report, false)
-        }
-
-        /** Pending intents become unverified, unclear outcomes; none is resent. */
-        fun recover(journal: DiagnosticJournalV1, utc: String): DurableHardwareDiagnosticRunV1 {
-            val (saved, finalized) = parse(checkNotNull(journal.load()) { "No run to recover" })
-            if (finalized) return DurableHardwareDiagnosticRunV1(journal, null, saved, true)
-            require(Instant.parse(utc) >= Instant.parse(saved.snapshot().text("endedUtc")))
-            val ledger = HardwareDiagnosticEvidenceLedgerV1.restore(saved)
+        private fun retireOutstanding(
+            ledger: HardwareDiagnosticEvidenceLedgerV1,
+            report: HardwareDiagnosticReportV1,
+            reason: String,
+        ): Boolean {
             var retired = false
-            saved.actions.forEach { action ->
+            report.actions.forEach { action ->
                 action.attempts.forEach { attempt ->
                     val id = attempt.request.correlationId
                     when {
                         attempt.acceptanceClaim == null -> {
-                            ledger.recordAcceptanceClaim(action.action, id, DeviceAcceptanceV1.UNCLEAR, null, "app_restarted; device acceptance unknown")
+                            ledger.recordAcceptanceClaim(action.action, id, DeviceAcceptanceV1.UNCLEAR, null, "$reason; device acceptance unknown")
                             retired = true
                         }
                         attempt.acceptanceClaim.state == DeviceAcceptanceV1.ACCEPTED && attempt.executionClaim == null -> {
-                            ledger.recordExecutionClaim(action.action, id, DeviceExecutionV1.UNCLEAR, null, "app_restarted; device execution unknown")
+                            ledger.recordExecutionClaim(action.action, id, DeviceExecutionV1.UNCLEAR, null, "$reason; device execution unknown")
                             retired = true
                         }
                     }
                 }
             }
+            return retired
+        }
+
+        fun start(runId: String, startedUtc: String, journal: DiagnosticJournalV1): DurableHardwareDiagnosticRunV1 {
+            require(journal.load() == null) { "Existing journal must be recovered, never overwritten" }
+            val ledger = HardwareDiagnosticEvidenceLedgerV1(runId, startedUtc)
+            val report = ledger.snapshotAt(startedUtc)
+            journal.replace(journalBytes(report, false))
+            return DurableHardwareDiagnosticRunV1(journal, report, false)
+        }
+
+        /** Pending intents become unverified, unclear outcomes; none is resent. */
+        fun recover(journal: DiagnosticJournalV1, utc: String): DurableHardwareDiagnosticRunV1 {
+            val (saved, finalized) = parse(checkNotNull(journal.load()) { "No run to recover" })
+            if (finalized) return DurableHardwareDiagnosticRunV1(journal, saved, true)
+            require(Instant.parse(utc) >= Instant.parse(saved.snapshot().text("endedUtc")))
+            val ledger = HardwareDiagnosticEvidenceLedgerV1.restore(saved)
+            val retired = retireOutstanding(ledger, saved, "app_restarted")
             val current = if (retired) ledger.snapshotAt(utc) else saved
             if (retired) journal.replace(journalBytes(current, false))
-            return DurableHardwareDiagnosticRunV1(journal, ledger, current, false)
+            return DurableHardwareDiagnosticRunV1(journal, current, false)
         }
     }
 }
