@@ -39,6 +39,14 @@ nicht verlängern. Ein Schritt muss vollständig in die verbleibende Freigabe pa
 `startedDeviceMs` und `endedDeviceMs` sind Gerätezeit; App-UTC wird separat erfasst.
 Es gibt ohne gemessenen Offset keine behauptete Synchronität beider Uhren.
 
+Für jede übertragbare Endantwort gilt `0 <= endedDeviceMs - startedDeviceMs <
+timeoutMs`. Gleichheit mit dem Timeout ist bereits zu spät. Eine Endantwort
+`led_single/completed` braucht zusätzlich mindestens 500 ms Dauer, zwei
+Renderaufrufe und bestätigtes `restoredOff`. Abgebrochene oder fehlgeschlagene
+LED-Schritte dürfen kürzer sein. Diese Grenzen entsprechen dem bestehenden
+JSON-Semantikprüfer; ein intern erzeugtes Timeout-Ergebnis ist keine noch
+fristgerechte Geräteantwort.
+
 ## Rechte, Freigabe und Lebenszyklus
 
 Diagnosezugang braucht den aktuellen vertrauenswürdigen `IdentityAccess.route`-
