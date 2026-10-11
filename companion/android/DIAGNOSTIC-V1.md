@@ -1,5 +1,39 @@
 # Android-Diagnosevertrag v1: Hostverbraucher und bedienbare Debugsimulation
 
+## BLE-Transporttor vom 11. Oktober 2026
+
+`DiagnosticGattPreflightV1` prüft als vorbereitende, reine JVM-Grenze eine
+explizit aus der Firmware übernommene GATT-Route gegen die auf **einer**
+Verbindung beobachteten Eigenschaften: beide Schreibkanäle mit Antwort,
+beide abonnierten Antwortkanäle und mindestens 128 nutzbare ATT-Wertbytes.
+Damit passen ein 69-Byte-GRANT/CANCEL-Auftrag, die 88-Byte-Kontrollantwort,
+der 80-Byte-Schrittauftrag und ein einzelnes 128-Byte-Ergebnisfragment.
+Die effektive Wertkapazität ist getrennt vom ATT-MTU mit Header zu prüfen.
+`PendingDiagnosticControlV1` und `DiagnosticStepAssemblyV1` binden Antworten
+zusätzlich an den ursprünglichen Verbindungs-/Rollenursprung und Fristen.
+
+Im geprüften Firmware-GATT-Stand existiert keine verbindliche Diagnose-UUID,
+kein Diagnose-Antwortkanal und keine bestätigte effektive ATT-Kapazität. Die
+Produkt-App hat außerdem noch keinen vertrauenswürdigen Rollenissuer für
+`DiagnosticControlOriginV1`. Deshalb bleibt die produktive Route `null`:
+Preflight liefert `MISSING_REVIEWED_ROUTE`; es gibt keinen Geräte-GRANT,
+keinen Schrittversand und keine produktive UI-Freigabe. Weder die bestehenden
+Command-/Profile- noch die Peer-Auth-Merkmale werden dafür umgedeutet.
+Die Debugseite verwendet weiterhin ausschließlich die gekennzeichnete
+Simulation. Ein GATT-Schreiber darf erst nach Firmware-Abgleich und getrennter
+Rollen-/Verbindungsprüfung ergänzt werden; insbesondere bestätigt ein
+GATT-Schreiberfolg keine ausgeführte LED-Abschaltung.
+
+Prüfung: gezielte JVM-Tests zu fehlender Route, Diensteigenschaften und
+ATT-Grenze; danach Debugbuild. Diese Prüfung enthält kein Handy und keine
+physische Originalbox. Offizielle Grundlagen, geprüft am 11.10.2026:
+[BLE-Überblick](https://developer.android.com/develop/connectivity/bluetooth/ble/ble-overview),
+[GATT-Verbindung und Rückrufe](https://developer.android.com/develop/connectivity/bluetooth/ble/connect-gatt-server),
+[Bluetooth-Berechtigungen](https://developer.android.com/develop/connectivity/bluetooth/bt-permissions).
+Das aktuelle [android/skills-Angebot](https://github.com/android/skills)
+enthält keinen auf diesen BLE-Transport passenden Spezialskill; es wurde
+keiner installiert.
+
 ## Synthetischer Kontrollpfad vom 11. Oktober 2026
 
 Der geführte Debuglauf führt vor dem ersten Journal und Schritt jetzt einen
