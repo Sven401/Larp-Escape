@@ -34,5 +34,37 @@ class PairingObservationReportV1Test {
         assertEquals(0, json.getAsJsonArray("events").size())
         assertFalse(json.has("success"))
         assertEquals(4, json.getAsJsonArray("missingFirmwareEvidence").size())
+        assertEquals("NO_ATTEMPT", json.getAsJsonObject("androidAssessment")["code"].asString)
+    }
+
+    private fun observed() = PairingObservationReportV1.start("2026-10-11T10:00:00Z", "attempt-3")
+        .observe("t1", "ANDROID_APP_USER_ACTION", 4, "AA", "connection_attempt", "connectGatt_requested")
+        .observe("t2", "ANDROID_BLUETOOTH_GATT_CALLBACK", 4, "AA", "connection_state", "status=0;state=2")
+        .observe("t3", "ANDROID_BLUETOOTH_GATT_SERVICE_TABLE", 4, "AA", "product_service_present", "true")
+        .observe("t4", "ANDROID_BOND_STATE_BROADCAST", 4, "AA", "bond_state", "OS_BONDED")
+
+    @Test fun currentConnectionServiceAndOsBondProduceOnlyAndroidAssessment() {
+        val report = observed()
+        val assessment = report.androidAssessment()
+        assertEquals("ANDROID_PAIRING_OBSERVED", assessment.code)
+        assertEquals(listOf(1, 2, 3, 4), assessment.evidenceSequences)
+        assertEquals("OPEN", assessment.firmwareSecurityEvidence)
+        val json = JsonParser.parseString(String(report.export("t5"))).asJsonObject
+        assertEquals("ANDROID_PAIRING_OBSERVED", json.getAsJsonObject("androidAssessment")["code"].asString)
+        assertEquals(4, json.getAsJsonObject("androidAssessment").getAsJsonArray("evidenceSequences").size())
+    }
+
+    @Test fun disconnectRebondAndNewGenerationInvalidatePreviousSuccess() {
+        val base = observed()
+        assertEquals("NOT_CONNECTED", base.observe("t5", "ANDROID_APP_OR_GATT", 4, "AA",
+            "connection_closed", "local_session_ended").androidAssessment().code)
+        assertEquals("BOND_OPEN", base.observe("t5", "ANDROID_BLUETOOTH_DEVICE_CREATE_BOND", 4, "AA",
+            "bond_request", "OS_REQUEST_ACCEPTED").androidAssessment().code)
+        val next = base.observe("t5", "ANDROID_APP_USER_ACTION", 6, "AA", "connection_attempt", "connectGatt_requested")
+        assertEquals("NOT_CONNECTED", next.androidAssessment().code)
+        assertEquals("SERVICE_OPEN", next.observe("t6", "ANDROID_BLUETOOTH_GATT_CALLBACK", 6, "AA",
+            "connection_state", "status=0;state=2").androidAssessment().code)
+        assertEquals("BOND_OPEN", base.observe("t5", "ANDROID_BOND_STATE_BROADCAST", 4, "AA",
+            "bond_state", "OS_BONDING").androidAssessment().code)
     }
 }

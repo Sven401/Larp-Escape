@@ -302,7 +302,11 @@ auf; ihre Annahme durch Android ist noch kein erfolgreicher Bond. Der lokale
 `ACTION_BOND_STATE_CHANGED`-Status und `getBondState()` werden getrennt mit
 UTC-Zeit, Quelle, lokaler Bericht-ID, GATT-Generation und BLE-Zieladresse
 erfasst. GATT-Verbindungsrückrufe und Produktdienstsuche stehen ebenfalls als
-Beobachtungen im JSON-Export. Den Bericht erst nach dem gewünschten Ablauf
+Beobachtungen im JSON-Export. Ein aktueller Android-Status wird nur aus
+zusammengehörigen Beobachtungen derselben GATT-Generation und BLE-Adresse
+berechnet: Verbindung, Produktdienst und `OS_BONDED`. Bei Trennung, neuem
+Verbindungsversuch oder erneutem Bond-Antrag fällt er zurück. Der JSON-Export
+enthält den Status und die Sequenznummern seiner Rohbelege. Den Bericht erst nach dem gewünschten Ablauf
 exportieren. Der Export enthält die BLE-Adresse zur Zuordnung und sollte
 entsprechend vertraulich behandelt werden. Der Bericht lebt nur in der
 laufenden App-Sitzung; ein Prozessneustart bewahrt ihn nicht.

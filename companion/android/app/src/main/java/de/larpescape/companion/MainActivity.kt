@@ -229,6 +229,7 @@ class MainActivity : ComponentActivity() {
                                 }
                                 state.pairingReport?.let { report ->
                                     Text("Bericht ${report.reportId.take(8)} · ${report.events.size} Beobachtungen · Beginn ${report.startedUtc}")
+                                    Text(report.androidAssessment().label, style = MaterialTheme.typography.titleSmall)
                                     Text("Firmware-Belege offen: Verbindungsgeneration, Bond-Schlüssel, Verschlüsselung/MITM und Rolle.")
                                     report.events.takeLast(5).forEach { event ->
                                         Text("${event.recordedUtc} · ${event.kind}: ${event.value}", style = MaterialTheme.typography.bodySmall)
