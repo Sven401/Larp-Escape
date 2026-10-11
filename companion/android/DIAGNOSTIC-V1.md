@@ -1,6 +1,6 @@
 # Android-Diagnosevertrag v1: Hostverbraucher und bedienbare Debugsimulation
 
-## BLE-Transporttor vom 11. Oktober 2026
+## Verbindungsgebundene BLE-Transportschale vom 11. Oktober 2026
 
 `DiagnosticGattPreflightV1` prüft als vorbereitende, reine JVM-Grenze eine
 explizit aus der Firmware übernommene GATT-Route gegen die auf **einer**
@@ -12,23 +12,42 @@ Die effektive Wertkapazität ist getrennt vom ATT-MTU mit Header zu prüfen.
 `PendingDiagnosticControlV1` und `DiagnosticStepAssemblyV1` binden Antworten
 zusätzlich an den ursprünglichen Verbindungs-/Rollenursprung und Fristen.
 
-Im geprüften Firmware-GATT-Stand existiert keine verbindliche Diagnose-UUID,
-kein Diagnose-Antwortkanal und keine bestätigte effektive ATT-Kapazität. Die
-Produkt-App hat außerdem noch keinen vertrauenswürdigen Rollenissuer für
-`DiagnosticControlOriginV1`. Deshalb bleibt die produktive Route `null`:
-Preflight liefert `MISSING_REVIEWED_ROUTE`; es gibt keinen Geräte-GRANT,
-keinen Schrittversand und keine produktive UI-Freigabe. Weder die bestehenden
-Command-/Profile- noch die Peer-Auth-Merkmale werden dafür umgedeutet.
-Die Debugseite verwendet weiterhin ausschließlich die gekennzeichnete
-Simulation. Ein GATT-Schreiber darf erst nach Firmware-Abgleich und getrennter
-Rollen-/Verbindungsprüfung ergänzt werden; insbesondere bestätigt ein
-GATT-Schreiberfolg keine ausgeführte LED-Abschaltung.
+Die nun festgelegte Firmware-GATT-v1-Route verwendet Dienst `...0010`,
+Control Write/Reply `...0011`/`...0012` und Step Write/Reply
+`...0013`/`...0014` innerhalb `407e6a1d-1cc2-43fd-856b-4aff85a200xx`.
+`AndroidDiagnosticGattShellV1` prüft diese Merkmale bei echter Discovery,
+fordert MTU 131 an und bestätigt Control- und Step-CCCD nacheinander. Jede
+Rückmeldung wird über die ursprüngliche `BluetoothGatt`-Instanz und lokale
+Generation gefiltert; bei Trennung, Berechtigungsverlust oder Neustart wird
+der Zustand verworfen. Fehler bei Discovery, MTU oder Abonnement bleiben mit
+konkretem Blockgrund sichtbar. Die 10-Sekunden-Einrichtungsfrist verhindert
+ein dauerhaft schwebendes Tor. Ein ATT-Wert umfasst MTU minus drei Bytes.
 
-Prüfung: gezielte JVM-Tests zu fehlender Route, Diensteigenschaften und
-ATT-Grenze; danach Debugbuild. Diese Prüfung enthält kein Handy und keine
+Die Firmware hat die Diagnoseattribute noch **nicht** registriert. Eine echte
+Discovery wird somit derzeit gesperrt; die App erzeugt keinen Discovery-Erfolg.
+Außerdem liefert die produktive Schale derzeit absichtlich keinen
+`DiagnosticControlOriginV1`: Der vertrauenswürdige F1-Rollen-/Besitzissuer
+fehlt. Deshalb erreicht keine App-Aktion `writeCharacteristic`, selbst falls
+der GATT-Link später vollständig aufgebaut wird. Die vorbereiteten
+Schreib-/Rückrufmethoden serialisieren je einen Auftrag, verlangen den
+ursprünglichen Rollenursprung und die bestätigte Schreibquittung, prüfen
+korrelierte Controlantworten und setzen Step-Fragmente nur innerhalb der
+ursprünglichen Verbindung zusammen. `CANCEL` sperrt den lokalen Grant vor
+dem Sendeversuch. Ein angefragter Schreibvorgang und `ACCEPTED` allein
+bestätigen keine LED-Abschaltung oder physische Funktion. Es gibt weiterhin
+keinen Geräte-GRANT und keine produktive UI-Freigabe. Die Debugseite bleibt
+eine gekennzeichnete Simulation. Die Android-GATT-Discovery belegt auch nicht
+die serverseitigen ENCRYPTED+MITM-Berechtigungsflags; diese sind im
+Firmwarevertrag und später mit echtem Rollenpfad zu prüfen.
+
+Prüfung: gezielte JVM-Tests zu Dienst, Eigenschaften, Reihenfolge,
+Verbindungsgeneration, MTU- und Blockgrenzen; danach Debugbuild. Diese
+Prüfung enthält kein Handy und keine
 physische Originalbox. Offizielle Grundlagen, geprüft am 11.10.2026:
 [BLE-Überblick](https://developer.android.com/develop/connectivity/bluetooth/ble/ble-overview),
 [GATT-Verbindung und Rückrufe](https://developer.android.com/develop/connectivity/bluetooth/ble/connect-gatt-server),
+[BluetoothGatt-API](https://developer.android.com/reference/android/bluetooth/BluetoothGatt),
+[BluetoothGattCallback-API](https://developer.android.com/reference/android/bluetooth/BluetoothGattCallback),
 [Bluetooth-Berechtigungen](https://developer.android.com/develop/connectivity/bluetooth/bt-permissions).
 Das aktuelle [android/skills-Angebot](https://github.com/android/skills)
 enthält keinen auf diesen BLE-Transport passenden Spezialskill; es wurde

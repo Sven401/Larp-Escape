@@ -36,6 +36,7 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
     private var scanner: BluetoothLeScanner? = null
     private var scanCallback: ScanCallback? = null
     private var gatt: BluetoothGatt? = null
+    private var diagnostic: AndroidDiagnosticGattShellV1? = null
     private var generation = 0
     private var scanGeneration = 0
     private val frames = FrameAssembler()
@@ -168,6 +169,16 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
                 check(status == BluetoothGatt.GATT_SUCCESS) { "Dienstsuche fehlgeschlagen" }
                 val lab = if (BuildConfig.ALLOW_CONTRACT_LAB) connection.getService(labService) else null
                 check(lab != null || connection.getService(canonical) != null) { "Kein passender ESP-Dienst" }
+                if (lab == null) diagnostic = AndroidDiagnosticGattShellV1(connection, token).also { shell ->
+                    if (!shell.discover()) Log.i("LarpEscape", "DIAGNOSTIC_GATT_BLOCKED ${shell.blockStatus}")
+                    else handler.postDelayed({
+                        if (token == generation && connection === gatt && diagnostic === shell) {
+                            shell.expireSetup()
+                            if (shell.link.failure == de.larpescape.protocol.DiagnosticGattFailureV1.SETUP_TIMEOUT)
+                                Log.i("LarpEscape", "DIAGNOSTIC_GATT_BLOCKED ${shell.blockStatus}")
+                        }
+                    }, 10000)
+                }
                 mutable.value = mutable.value.copy(connected = true, lab = lab != null)
                 report("GATT_SERVICE_CONFIRMED ${if (lab != null) "v2-Vertragslabor" else "Produktservice"}")
                 if (lab != null) {
@@ -187,6 +198,13 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
                 }
             }
             override fun onDescriptorWrite(connection: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) = dispatch(connection) {
+                if (descriptor.characteristic?.uuid == de.larpescape.protocol.DiagnosticGattFirmwareV1.route.controlReply ||
+                    descriptor.characteristic?.uuid == de.larpescape.protocol.DiagnosticGattFirmwareV1.route.stepReply) {
+                    diagnostic?.onDescriptorWrite(descriptor, status == BluetoothGatt.GATT_SUCCESS)
+                    Log.i("LarpEscape", "DIAGNOSTIC_GATT ${diagnostic?.blockStatus}")
+                    return@dispatch
+                }
+                if (descriptor.characteristic?.uuid != outputId) return@dispatch
                 check(status == BluetoothGatt.GATT_SUCCESS) { "Abonnement fehlgeschlagen" }
                 report("ESP verbunden; warte auf vollständigen Status …")
                 handler.postDelayed({ if (token == generation && !receivedStatus) { disconnect(); report("Vollständiger Status fehlt nach 40 Sekunden") } }, 40000)
@@ -194,6 +212,7 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
             override fun onCharacteristicChanged(connection: BluetoothGatt, characteristic: BluetoothGattCharacteristic, value: ByteArray) {
                 val copy = value.copyOf()
                 dispatch(connection) {
+                    diagnostic?.onNotification(characteristic, copy)
                     if (characteristic.uuid != outputId) return@dispatch
                     val complete = frames.accept(copy, SystemClock.elapsedRealtime()) ?: return@dispatch
                     if (complete.first != 4) return@dispatch
@@ -217,13 +236,20 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
                     report("Verbunden · vollständiger ESP-Status empfangen")
                 }
             }
+            override fun onMtuChanged(connection: BluetoothGatt, mtu: Int, status: Int) = dispatch(connection) {
+                if (diagnostic?.onMtuChanged(mtu, status == BluetoothGatt.GATT_SUCCESS) == false)
+                    Log.i("LarpEscape", "DIAGNOSTIC_GATT_BLOCKED ${diagnostic?.blockStatus}")
+            }
+            override fun onCharacteristicWrite(connection: BluetoothGatt, characteristic: BluetoothGattCharacteristic, status: Int) = dispatch(connection) {
+                diagnostic?.onCharacteristicWrite(characteristic, status == BluetoothGatt.GATT_SUCCESS)
+            }
         }
         gatt = device.connectGatt(context, false, callback, BluetoothDevice.TRANSPORT_LE)
         check(gatt != null) { "Verbindung konnte nicht starten" }
         handler.postDelayed({ if (token == generation && !mutable.value.connected) { disconnect(); report("Verbindung nach 20 Sekunden abgebrochen") } }, 20000)
     }
     override fun disconnect() {
-        ++generation; frames.clear(); receivedStatus = false
+        ++generation; diagnostic?.close(); diagnostic = null; frames.clear(); receivedStatus = false
         statuses.disconnect(); expiry?.let { handler.removeCallbacks(it) }; expiry = null
         val old = gatt; gatt = null
         try { if (permitted()) old?.disconnect() } catch (_: SecurityException) { }
