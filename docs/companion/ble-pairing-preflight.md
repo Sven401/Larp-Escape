@@ -448,3 +448,62 @@ keeps diagnostic CCCD writes closed. Neither OS bond nor product-service
 discovery proves an encrypted MITM link, F1 role, diagnostic transport
 readiness or hardware authorization. No further user export or run is needed
 to establish the OS-bond result.
+
+## Debugging evidence without repeated manual exports
+
+For a connected debug build on the Moto G14, read the app's persisted
+`files/diagnostic-connection-v1/diagnostic-connection-evidence-v1.json` through
+USB with `adb shell run-as de.larpescape.companion.diagnosticpreview cat ...`.
+The direct read after the user-run attempt contained both `SETUP_TIMEOUT` and
+the later `DISCONNECTED` event; the separately exported transport JSON was an
+earlier snapshot and was not needed to locate this failure. Android logcat
+also showed the pairing request, pairing dialog launch and bond-state changes.
+The app-owned journal and logcat are development diagnostics. A single
+completed, user-exported pairing report remains the durable correlated record
+of the user's own run. Earlier repeated scan exports were avoidable when USB
+debugging was available; do not request another export merely to inspect a
+live scan or transport setup failure.
+
+## Transport-probe Android build, 2026-10-11
+
+Commits `8ad26cd` and `d0eacc3` separate historical OS bonding from current
+GATT connection and keep the transport closed after CCCD ATT acknowledgments.
+Commits `c6d1fe2` and `398ac37` require valid notifications on both reply
+characteristics in the same GATT generation, with the CCCD acknowledgments
+and probe events durably recorded, before the app reports reply transport
+ready. This is transport evidence only; role issuer, Control/Step writes and
+physical diagnosis remain closed. The final offline run passed 83 protocol
+and 69 app tests and built the Debug APK. Its SHA-256 was
+`BE2626C2519D15E189FDF947B23FE7B4014801D23784825777C132E34523DCC0`.
+`adb install -r` succeeded on Moto G14 `ZY22J7CSQD`; the pulled installed
+`base.apk` had the same hash. No user-run probe report has been collected from
+this build yet.
+
+## Narrow notification-probe firmware upload, 2026-10-11
+
+Firmware commit `56b63bd` adds a per-original-link subscription record and
+posts one harmless five-byte probe on each diagnostic reply characteristic
+after a valid CCCD enable and successful ATT response. It does not forward
+Control/Step writes or assign a role. The configured-control host suite passed
+539/539 and the ESP32 single-app build passed (76,660 B static RAM and
+1,976,493 B program flash). The 1,982,784-byte `firmware.bin` had SHA-256
+`FADD7A7E13D9A4A96792A6762E87CC825CC3C7D6892B7D4B254290B3E9205644`.
+
+Before the already authorized app-only upload, the existing pre-pairing full
+rollback image was checked offline against its pinned 4,194,304-byte length
+and SHA-256 `170b9392dd1970ce53c8d2d16fbcc78c6e590b625576494375626193322075a9`.
+The separate live read matched original-box MAC `A8:42:E3:CD:4B:18` and 4 MiB
+flash. No new full backup was made. Esptool wrote only at `0x10000`, reported
+erase through `0x1f4fff`, verified the written data hash and reset the box.
+No restore was performed.
+
+The read-only Windows desktop client subsequently saw the box's Bluetooth
+address `A8:42:E3:CD:4B:1A` 20 times in a 12-second scan and the product
+service in an uncached GATT query (`Success`). Its
+[post-upload observation](observations/desktop-ble-after-probe-upload-2026-10-11.json)
+has SHA-256 `090ed02e03899ae04cc0d874f3fe7ec9d7e27d69c1b98897d69c440b10a8bd42`.
+The Windows client did not pair or subscribe to the diagnostic replies. This
+proves advertising and service discovery after reset, but neither delivery of
+the probe notifications to Android nor a diagnostic grant. A user-run Android
+probe attempt and direct USB journal read are pending; no manual transport
+JSON export is needed for development diagnosis.
