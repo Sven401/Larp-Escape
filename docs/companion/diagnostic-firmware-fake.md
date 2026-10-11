@@ -12,6 +12,33 @@ ein synthetisches Portmodell bereit. Es gibt keine GPIO-, Bus-, LED-Chip- oder
 physisch bestätigte Polaritätsannahme. Der Owner hat keine Verbindung zur
 Spiel-Engine und erzeugt keine Spielbefehle oder Nutzerurteile.
 
+## Unabhängiger LED-Off-Vertrag (Hostmodell)
+
+Vor `IPort::render` muss `Control` jetzt `armLedOffTimer(500)` erfolgreich
+ausführen. Der alleinige LED-Owner muss spätestens 500 ms nach diesem Aufruf
+unabhängig von `Control.tick`, BLE und App die Ausgabe abschalten.
+`timedOffConfirmed()` darf erst nach diesem unabhängigen, rechtzeitigen
+Ausereignis wahr werden. Ein später Control-Tick ohne diese Bestätigung ergibt
+`failed/owner_error` und hält den Besitzer verriegelt. `restoreOff`
+muss den Auszustand und das Ausbleiben eines früheren Timerfehlers bestätigen
+und den Timer deaktivieren. Ein fehlgeschlagenes Arming verhindert den
+Renderaufruf und verriegelt den Owner; ein Timer-/Off-Fehler bleibt ebenfalls
+verriegelt. `renderCalls` zählt nur direkte Control-Aufrufe und keine
+Timer-Callback-Ausgabe.
+
+Der LED-Owner muss zudem einen noch laufenden oder verspäteten Renderaufruf so
+serialisieren, dass er nach Timerablauf nicht erneut Licht ausgeben kann. Das
+Hostmodell beweist diese FreeRTOS-/Treiber-Rennen nicht.
+
+Der Fake-Port prüft das Abschaltereignis ohne weiteren Control-Tick sowie
+Arming- und Off-Fehler. Er simuliert eine garantierte lokale Zeitbasis. Es gibt
+auf diesem Branch noch keinen produktiven ESP32-`IPort`, keine bestätigte
+Zeitgrenze für `FastLED.show`, keinen unabhängigen aktiven ESP32-Timer und keine
+physische Aus-Rückmeldung. Der Produktionsbuild kompiliert nur den Vertrag und
+den Control-Pfad. Bis ein LED-Worker Arming, ausfallsichere Callback-Ausführung,
+Off-Bestätigung und Fehlerverriegelung implementiert und geprüft hat, darf
+kein Diagnose-LED-Schritt freigegeben werden.
+
 ## Rechte und Besitz
 
 Die Freigabe benötigt ausdrückliche Zustimmung und den aktuellen tatsächlichen
@@ -50,9 +77,11 @@ muss im nächsten Adapterpaket festgelegt werden; Fristablauf ersetzt dieses
 Ereignis nicht durch Erfolg. Ein `completed`-Ergebnis kann falsche oder keine
 Flanken enthalten; die App bewertet den Gerätebeleg und die Nutzerbeobachtung.
 
-LED-Ausgabe und Aus-Rückkehr werden getrennt aufgerufen und gezählt. `tick`
-beendet den Reiz nach 500 ms; Lebenszyklusende beendet ihn sofort. Eine
-fehlgeschlagene Aus-Bestätigung meldet `failed/owner_error`, sperrt weitere
+LED-Ausgabe und Aus-Rückkehr werden getrennt aufgerufen und gezählt. Der
+Portvertrag verlangt ein vorab armiertes, unabhängig bedientes 500-ms-Aus;
+`tick` schließt anschließend nur den Control-Schritt ab. Lebenszyklusende
+fordert das Aus sofort an. Eine fehlgeschlagene Aus-Bestätigung meldet
+`failed/owner_error`, sperrt weitere
 Diagnosen und **hält den Komponentenbesitz gegen Spielstart fest**. Der Owner
 versucht keine automatische Wiederholung. Sichere Wiederherstellung und
 Entsperrung gehören in eine separat belegte Produkt-Recovery. Spannung ist in
@@ -73,19 +102,21 @@ freigibt. Er darf sie keinem Ersatzlink zustellen.
 
 `python scripts/check_diagnostic_control.py` kompiliert den tatsächlichen Owner,
 `IdentityAccess`, `Identity` und `AuthorityState` mit C++11, `-Wall -Wextra
--Wpedantic -Werror` und führt zehn Host-Szenarien aus. Der Runner nutzt den
+-Wpedantic -Werror` und führt 16 Host-Szenarien aus. Der Runner nutzt den
 vorhandenen MinGW-Compiler wie der öffentliche Headercheck. Die Testfälle
 prüfen Zustimmung/Rolle/Spielruhe, Kennungen und Historienbudget, Korrelation,
 Fremdflanken/Polarität/Überlauf, LED-Dauer und Doppelanforderungen, ungültige
 Parameter, Abbruch/Disconnect/Entzug/Ablauf, Owner-/Uhrenfehler,
-Verbindungsgeneration, maximale Schrittkennung und Rechtewechsel in acquire.
+Timerablauf ohne Control-Tick, fehlende oder späte Timer-Rückmeldung,
+Arming-/Off-Fehler, verspätetes Rendern, Verbindungsgeneration, maximale
+Schrittkennung und Rechtewechsel in acquire.
 
 Zusätzlich gelten `check_architecture.py`, `check_headers.py`, `check_format.py`,
 `check_diagnostic_contract.py` und der Produktions-Zielbuild. Das Testverzeichnis
 ist Teil der Formatbaseline. Der Produktionsbuild kompiliert den neuen Owner,
 instanziiert oder verbindet ihn jedoch nicht mit echter Hardware.
 
-Gemessener Stand am 10. Oktober 2026: zehn C++-Szenarien/358 Checks bestanden;
+Gemessener Hoststand am 11. Oktober 2026: 16 C++-Szenarien/426 Checks bestanden;
 Ownergröße im 32-Bit-MinGW-Host 5376 Byte (kein gemessener ESP32-Taskstack).
 Architekturcheck 147 Dateien/307 Includes; 87 unabhängige öffentliche C++11-Header;
 Formatbaseline 312 Dateien mit clang-format 19.1.7, zuletzt ergänzte Testdatei

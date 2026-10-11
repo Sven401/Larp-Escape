@@ -49,6 +49,7 @@ struct Reply {
     std::array<Edge, 64> edges = {};
     std::size_t edgeCount = 0;
     bool overflow = false, activeHigh = true, restoredOff = false;
+    // Counts Control calls; an independent timer callback is not included.
     std::uint8_t renderCalls = 0;
     // Supply voltage is unavailable in this narrow port, mapped to JSON null.
 };
@@ -63,7 +64,16 @@ class IPort {
   public:
     virtual ~IPort() = default;
     virtual bool acquire(Uuid &grantId, bool &activeHigh) noexcept = 0;
+    // Arm before render. The sole LED owner must independently force off no
+    // later than holdMs after this call, even if Control never ticks again.
+    // A late/in-flight render must not relight after expiry. A failed callback
+    // must latch fault; restoreOff then returns false.
+    virtual bool armLedOffTimer(std::uint16_t holdMs) noexcept = 0;
     virtual bool render(std::uint8_t index, const std::array<std::uint8_t, 3> &rgb) noexcept = 0;
+    // True only after the independent timer has forced and confirmed off
+    // within its deadline. A late Control.tick cannot substitute for this.
+    virtual bool timedOffConfirmed() noexcept = 0;
+    // Confirm both off and no prior timed-off failure. Also disarm the timer.
     virtual bool restoreOff() noexcept = 0;
     virtual void release() noexcept = 0;
 };

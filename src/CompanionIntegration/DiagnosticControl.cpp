@@ -148,6 +148,11 @@ Admission Control::submit(const Request &request, const companion::BoundConnecti
     pending_ = true;
     if (request.operation == Operation::LedSingle) {
         ledAttempted_ = true;
+        if (!port_.armLedOffTimer(request.holdMs)) {
+            cleanupFault_ = true;
+            finish(Outcome::Failed, Reason::OwnerError, now);
+            return Admission::Accepted;
+        }
         result_.renderCalls = 1;
         if (!port_.render(0, request.rgb))
             finish(Outcome::Failed, Reason::OwnerError, now);
@@ -173,8 +178,14 @@ void Control::tick(std::uint64_t now) noexcept {
         finish(Outcome::Rejected, Reason::Expired, now);
         return;
     }
-    if (result_.request.operation == Operation::LedSingle && now >= result_.startedDeviceMs + 500)
-        finish(Outcome::Completed, Reason::None, now);
+    if (result_.request.operation == Operation::LedSingle && now >= result_.startedDeviceMs + 500) {
+        if (!port_.timedOffConfirmed()) {
+            cleanupFault_ = true;
+            finish(Outcome::Failed, Reason::OwnerError, now);
+        } else {
+            finish(Outcome::Completed, Reason::None, now);
+        }
+    }
 }
 void Control::edge(std::uint8_t channel, bool rawHigh, std::uint64_t now) noexcept {
     tick(now);
