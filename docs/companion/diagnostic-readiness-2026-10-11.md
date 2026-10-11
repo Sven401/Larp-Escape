@@ -8,8 +8,9 @@ upload approval, installation record or instruction to start the user run.
 
 - Product source branch/implementation commit:
   `plan/nutzergefuehrte-hardwarediagnose-startintegration` /
-  `f89a94f` (electrical qualification after BLE history `911fc9d`,
-  retry-safe archive `2e73e31` and journal-finalization fix `d386438`).
+  `c5b16ef` (isolated host-test sources after electrical qualification
+  `f89a94f`, BLE history `911fc9d`, retry-safe archive `2e73e31` and
+  journal-finalization fix `d386438`).
   Firmware sources are unchanged from `77028cb74edbaa16ca33b4fcabc63a5c5cdbe94f`.
 - Built firmware image:
   `.pio/build/az-delivery-devkit-v4-single-app-capacity/firmware.bin`,
@@ -161,9 +162,12 @@ synthetic two-step preview.
   evidence only, not a device-authorized or physical result.
 - Matrix/wake electrical qualification: 20/20 targeted host cases passed.
   Firmware rebuilt successfully with unchanged image hash; the helper is not
-  included in the runtime grant path. A broader host-regression attempt earlier
-  in this session reached 131/134 cases and had three source-filter/link
-  failures; it is not recorded as a full pass.
+  included in the runtime grant path. The broad Unity host run initially had
+  three source-filter/link errors. With those source-specific cases isolated,
+  the combined `host-regression`, `host-app-mutual-dev-transcript` and
+  `host-nfc-capability` run passed 135/135 cases. The non-Unity diagnostic GATT
+  route has its own host script and passed 26/26 checks. The earlier link-error
+  run is not counted as a pass; other dedicated suites above remain distinct.
 - Android lint did not complete because
   `androidx.collection:collection-jvm:1.4.0` was absent from the offline cache.
   Unit tests and APK assembly had already succeeded in that run.
