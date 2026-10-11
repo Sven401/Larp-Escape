@@ -86,6 +86,23 @@ void setup() {
         const auto bleState = closedGatts.begin();
         Serial.print("Closed GATT registration state: ");
         Serial.println(static_cast<unsigned>(bleState));
+        if (bleState == ProductGattsOwner::State::StackFailed) {
+            const auto &report = closedGatts.stackReport();
+            Serial.print("BLE stack failed step/error: ");
+            Serial.print(static_cast<unsigned>(report.state));
+            Serial.print(" / ");
+            Serial.println(static_cast<long>(report.sdkError));
+            Serial.print("BLE stack controller/bluedroid before->after: ");
+            Serial.print(report.controllerBefore); Serial.print("->");
+            Serial.print(report.controllerAfter); Serial.print(" / ");
+            Serial.print(report.bluedroidBefore); Serial.print("->");
+            Serial.println(report.bluedroidAfter);
+            Serial.print("BLE stack internal free/largest before->after: ");
+            Serial.print(report.internalFreeBefore); Serial.print("/");
+            Serial.print(report.internalLargestBefore); Serial.print(" -> ");
+            Serial.print(report.internalFreeAfter); Serial.print("/");
+            Serial.println(report.internalLargestAfter);
+        }
     }
 #endif
     Wire.begin();
