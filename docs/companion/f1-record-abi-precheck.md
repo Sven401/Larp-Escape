@@ -24,3 +24,25 @@ No private field reader or positive F1 admission from inferred offsets.
 reproducible offset checks, and identify instructions for both PENC and LENC
 branches or document exactly why either cannot be established. Runtime-selected
 key, same-birth correlation and current authorization remain independent gates.
+
+## 2026-10-11: target configuration and competing sends
+
+`python scripts/check_f1_key_send_exclusivity.py` passed. It pins the installed
+Arduino ESP32 `dio_qspi/include/sdkconfig.h` (SHA-256
+`5a87fa1f3311cb7c832dce58b9b842cb31642907d74ebf9e94fec4b502c07f3b`),
+`libbt.a` (`1e11ea417c83432360b7309c0d35877a884be8fa3fc8c875cc9d627ff37cf787`)
+and the checked original `btm_ble.c`. The target enables Bluedroid, BLE, SMP
+and GATTS. The original master function can send either STK or stored PENC;
+the slave function can reply with either STK or stored LENC. Neither sender
+checks `ble.auth_mode` or carries an application GATT-birth token. An identical
+Encryption Change tuple can follow different modes, keys and recycled births.
+
+The existing binary audit passed again: 20 disassembly/map checks verify the
+328-byte archive allocation and relevant PENC/LENC, handle and full 16-bit
+mode offsets. The source model and HCI declaration check also passed. These
+tests do **not** compile the complete original `tBTM_SEC_DEV_REC` with all
+Arduino private feature macros, and the Arduino package does not provide its
+internal header. The target config pin narrows the configuration uncertainty;
+it does not turn the partial offset audit into a complete private ABI proof.
+No runtime-selected record, exclusive HCI command-to-result lifetime or
+same-original-GATT-birth link was observed. F1 role admission stays closed.
