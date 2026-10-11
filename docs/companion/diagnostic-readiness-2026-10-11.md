@@ -8,7 +8,8 @@ upload approval, installation record or instruction to start the user run.
 
 - Product source branch/implementation commit:
   `plan/nutzergefuehrte-hardwarediagnose-startintegration` /
-  `d386438` (journal-finalization fix after `557a94b` and `787d83b`).
+  `f89a94f` (electrical qualification after BLE history `911fc9d`,
+  retry-safe archive `2e73e31` and journal-finalization fix `d386438`).
   Firmware sources are unchanged from `77028cb74edbaa16ca33b4fcabc63a5c5cdbe94f`.
 - Built firmware image:
   `.pio/build/az-delivery-devkit-v4-single-app-capacity/firmware.bin`,
@@ -19,14 +20,17 @@ upload approval, installation record or instruction to start the user run.
 - Built installable Debug APK:
   `companion/android/app/build/outputs/apk/debug/app-debug.apk`,
   23,977,835 bytes, SHA-256
-  `143422EB0D314F5823C01EB9E9AF500394E83E4AF6FFA5B959640880D9985BBB`.
-  This revised build contains the report contract and journal core. It has not
-  been installed because ADB no longer detected the phone at the update check.
+  `A6A28AC8F94045B104D0D23756F939700F7050B8F713A7934862157C576FC616`.
+  This revised build contains the report contract, journal core and bounded
+  BLE transport-history export. It has not been installed. The most recent
+  ADB attempt could not start its server; it gives no current phone-state proof.
   The APK still lists every required area with its concrete blockers and
   sends no request for the blocked areas.
 
-The APK includes the readiness UI, report contract and journal core from the
-product source commits above. No firmware source file changed in those commits.
+The APK includes the readiness UI, report contract, journal core and transport
+history from the product source commits above. No firmware source file changed
+in those commits. The new electrical-qualification helper is exercised only by
+host tests, not by a runtime grant/capability path.
 
 ## Connected phone state
 
@@ -60,8 +64,10 @@ the same debug signing certificate, but a subsequent `adb devices -l` returned
 no devices. Its `adb install -r` attempt returned `no devices/emulators found`;
 the installed phone version is therefore still the `B1BF72...` build unless a
 later phone-side action changes it.
-The later journal builds `D8F8FA...` and `143422...` have also not been installed. The latest
-read-only ADB query again listed no attached device.
+The later journal builds `D8F8FA...` and `143422...` and current `A6A28A...`
+have also not been installed. The last successful ADB query listed no attached
+device. A subsequent query could not start the ADB server, so current phone
+connection state is unknown.
 
 ## Actual box state
 
@@ -97,7 +103,9 @@ flash, eFuse or restore operation occurred.
    to MCP23017 GPB7 pins used as inputs. On an actual MCP23017 GPB7 is
    output-only. Startup directions also conflict with scan directions. A
    hardware correction and a confirmed pin/idle-level contract are required
-   before an 81-point or four-input grant.
+   before an 81-point or four-input grant. The host-only qualification helper
+   defaults to an unknown expander variant and reports the two conflicts
+   separately; the actually installed expander variant remains unverified.
 5. **Audio/SD:** DFPlayer UART/BUSY/Wake as-built wiring, SD inventory and
    audible output remain unconfirmed; no productive owner exists.
 6. **NFC:** PN532 readiness was intermittent. A bounded production raw port,
@@ -147,15 +155,22 @@ synthetic two-step preview.
   companion fixture suite passed.
 - NFC capability, PN532 frame, PN532 adapter and APP_MUTUAL development
   transcript: 1, 4, 6 and 1 host cases passed.
-- Android: 112 core protocol and 77 app unit tests passed; Debug APK build
-  succeeded offline.
+- Android: 112 core protocol and 79 app unit tests passed; Debug APK build
+  succeeded offline. The BLE history test includes a failed fresh-write retry,
+  which retains exactly one archived prior connection. The history is transport
+  evidence only, not a device-authorized or physical result.
+- Matrix/wake electrical qualification: 20/20 targeted host cases passed.
+  Firmware rebuilt successfully with unchanged image hash; the helper is not
+  included in the runtime grant path. A broader host-regression attempt earlier
+  in this session reached 131/134 cases and had three source-filter/link
+  failures; it is not recorded as a full pass.
 - Android lint did not complete because
   `androidx.collection:collection-jvm:1.4.0` was absent from the offline cache.
   Unit tests and APK assembly had already succeeded in that run.
 
 All test results above remain software-only. The phone was connected and the
 earlier `B1BF72...` diagnostic APK was installed after explicit approval. The
-revised `986CF0...`, `D8F8FA...` and current `143422...` builds were not installed because
-the phone disconnected.
+revised `986CF0...`, `D8F8FA...`, `143422...` and current `A6A28A...`
+builds were not installed; current phone connectivity is unverified.
 No app workflow was exercised, no firmware was uploaded and no user hardware
 run was started.
