@@ -203,3 +203,22 @@ completion. It is **not** an App–ESP pairing, OS bond, F1/GM role or
 diagnostic grant. The user must perform the pairing flow in the installed
 Android app and export its report. No Codex session drives that flow. No
 restore or product acceptance has occurred.
+
+## Android report durability update, 2026-10-11
+
+The Android report follow-up `f80440c` plus `08e1f61` is integrated at
+`8eb1489`. A versioned app-private journal bounds the observation history
+to 256 events and 128 KiB, saves it atomically, and retains a pending export
+snapshot across process restart. Recovery adds `connection_closed`; stored
+events remain historical evidence and do not revive the live BLE connection
+or authority. An already bonded or bonding Android device does not receive
+another `createBond()` request. Ten targeted JVM tests and the integrated
+offline Debug build passed.
+
+The updated preview APK was installed on Moto G14 `ZY22J7CSQD` while no
+pairing attempt was running. SHA-256 of the built APK and the APK read back
+from the phone both equal
+`79bd30ead3751f8c1d904ef533a374e595535b87d5f63dd648ab71519794ca37`.
+Codex did not open the app or conduct a pairing attempt. No exported user
+report is available yet, so App–ESP pairing and physical diagnosis remain
+unverified.
