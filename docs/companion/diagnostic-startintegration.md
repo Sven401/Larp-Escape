@@ -1,5 +1,28 @@
 # Closed diagnostic startup integration (2026-10-11)
 
+## Current integrated gate, 2026-10-11
+
+The closed diagnostic GATT registrar `b0e4913` is integrated at `4968e38`.
+It installs the versioned Control, Step, two Reply and two CCCD attributes
+on the original GATT registration. Control, Step and CCCD writes remain
+closed with no diagnostic owner or grant. Advertising waits for both services
+and the closed registry acknowledgement. On the combined tree, configured
+control host checks passed 533/533; source and service model checks rejected
+17 and 58 negative cases; the route contract passed 26 checks. The ESP32
+single-app build succeeded with 1,974,053/2,621,440 B ELF flash and
+76,572/532,480 B static RAM. This image has **not** been uploaded.
+
+The Android report durability commits `f80440c` and `08e1f61` are also
+integrated. Ten targeted JVM tests and the offline Debug build passed. The
+resulting APK was installed on Moto G14 `ZY22J7CSQD`; its built and pulled
+SHA-256 both equal
+`79bd30ead3751f8c1d904ef533a374e595535b87d5f63dd648ab71519794ca37`.
+Codex did not open the app or run pairing. The box still runs the previously
+approved BLE startup image, not this new registrar build. A user-exported
+pairing report, F1 role proof, confirmed physical off state and productive
+diagnostic Control/Step/Reply admission remain open. F1 negative follow-up
+`57c7dec` stays on its separate branch and grants no role.
+
 Status: local build and host checks only. Branch
 `plan/nutzergefuehrte-hardwarediagnose-startintegration`, based on the
 device-gate commit `59729500a276519e218a2c0d825849162e6e58bc`.

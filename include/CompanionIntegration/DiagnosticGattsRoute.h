@@ -7,7 +7,7 @@
 namespace larp {
 namespace diagnostic {
 // v1 attribute UUIDs in canonical text order. The legacy game service remains
-// separate. Registration of this service is deliberately disabled in product.
+// separate. Product registration is closed: attribute writes have no authority.
 struct GattsRouteV1 {
     static const std::uint8_t Version = 1;
     static const std::size_t AttValueBytes = 128;
