@@ -264,8 +264,9 @@ internal class AndroidDiagnosticGattShellV1(
 
     fun expireSetup() {
         if (link.phase != DiagnosticGattPhaseV1.TRANSPORT_READY && link.phase != DiagnosticGattPhaseV1.BLOCKED) {
+            val pendingPhase = link.phase
             link.failed(DiagnosticGattFailureV1.SETUP_TIMEOUT)
-            evidence.transportError(generation, "setup", null, link.failure.name)
+            evidence.transportError(generation, "setup", null, link.failure.name, pendingPhase)
         }
     }
 

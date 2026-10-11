@@ -6,6 +6,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
+import java.time.Instant
 
 /** Transport and correlated wire observations. None is a user or physical-device verdict. */
 data class DiagnosticConnectionEventV1(
@@ -27,6 +28,8 @@ data class DiagnosticConnectionEvidenceV1(
     val events: List<DiagnosticConnectionEventV1> = emptyList(),
     val originalAuthority: String = "OPEN",
     val physicalResult: String = "UNVERIFIED",
+    /** Time of this export snapshot; the private journal may receive later events. */
+    val exportedUtc: String? = null,
 ) {
     companion object {
         const val SCHEMA = "diagnostic_connection_evidence_v1"
@@ -56,7 +59,7 @@ class DiagnosticConnectionEvidenceJournalV1(private val directory: File) {
     /** A validated, bounded historical snapshot. Reading it never resumes a GATT session. */
     fun exportBytes(): ByteArray? {
         val saved = loadRecovered() ?: return null
-        return gson.toJson(saved).toByteArray(Charsets.UTF_8).also {
+        return gson.toJson(saved.copy(exportedUtc = Instant.now().toString())).toByteArray(Charsets.UTF_8).also {
             require(it.size in 1..MAX_BYTES) { "Connection evidence too large" }
         }
     }

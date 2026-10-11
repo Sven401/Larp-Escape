@@ -31,6 +31,9 @@ data class PairingAndroidAssessmentV1(
     val evidenceSequences: List<Int>,
     val firmwareSecurityEvidence: String = "OPEN",
     val previousBondFailureSequences: List<Int> = emptyList(),
+    /** Historical Android observations in this attempt, never firmware security or a live link. */
+    val observedOsBondSequences: List<Int> = emptyList(),
+    val latestObservedOsBondState: String? = null,
 )
 
 data class PairingObservationReportV1(
@@ -85,9 +88,12 @@ data class PairingObservationReportV1(
                     it.connectionGeneration == priorAttempt.connectionGeneration &&
                     it.targetAddress == priorAttempt.targetAddress })
             }.lastOrNull().orEmpty().map { it.sequence }
+        val observedBond = scope.filter { it.kind == "bond_state" && it.value == "OS_BONDED" }
+        val lastBondState = scope.lastOrNull { it.kind == "bond_state" }?.value
         fun result(code: String, label: String, vararg evidence: PairingObservationEventV1?) =
             PairingAndroidAssessmentV1(code, label, attempt.connectionGeneration, attempt.targetAddress,
-                evidence.filterNotNull().map { it.sequence }, previousBondFailureSequences = priorFailures)
+                evidence.filterNotNull().map { it.sequence }, previousBondFailureSequences = priorFailures,
+                observedOsBondSequences = observedBond.map { it.sequence }, latestObservedOsBondState = lastBondState)
         val connection = scope.lastOrNull { it.kind == "connection_state" }
         val service = scope.lastOrNull { it.kind == "product_service_present" }
         // A missing service is a completed discovery result. The app then

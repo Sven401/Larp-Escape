@@ -39,12 +39,14 @@ import de.larpescape.companion.ui.diagnostic.*
 class MainActivity : ComponentActivity() {
     private var pairingExportBytes: ByteArray? = null
     private var pairingExportNotice by mutableStateOf<String?>(null)
-    private var connectionExportBytes: ByteArray? = null
     private var connectionExportNotice by mutableStateOf<String?>(null)
     private val exportConnection = registerForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
-        val bytes = connectionExportBytes.also { connectionExportBytes = null }
+        // Read after the document picker returns: the link may have closed while it was open.
+        val snapshot = if (uri != null) runCatching { model.connectionEvidenceExportBytes() } else null
+        val bytes = snapshot?.getOrNull()
         when {
             uri == null -> connectionExportNotice = "Dateiauswahl abgebrochen. Der gespeicherte Transportbeleg bleibt in der App."
+            snapshot?.isFailure == true -> connectionExportNotice = "Gespeicherter Transportbeleg ist nicht lesbar; kein Export erstellt."
             bytes == null -> connectionExportNotice = "Exportvorbereitung nicht mehr verfügbar. Bitte erneut exportieren."
             else -> lifecycleScope.launch {
                 try {
@@ -254,6 +256,13 @@ class MainActivity : ComponentActivity() {
                                     val assessment = report.androidAssessment()
                                     Text("Bericht ${report.reportId.take(8)} · ${report.events.size} Beobachtungen · Beginn ${report.startedUtc}")
                                     Text(assessment.label, style = MaterialTheme.typography.titleSmall)
+                                    if (assessment.observedOsBondSequences.isNotEmpty()) {
+                                        Text("Android meldete OS_BONDED in diesem Bericht (Belege: ${assessment.observedOsBondSequences.joinToString()}). " +
+                                            if (assessment.latestObservedOsBondState == "OS_BONDED")
+                                                "Dies ist ein lokaler Bond-Status, keine aktuelle GATT-Verbindung."
+                                            else "Späterer Android-Bond-Status: ${assessment.latestObservedOsBondState ?: "unbekannt"}.",
+                                            style = MaterialTheme.typography.bodySmall)
+                                    }
                                     if (assessment.previousBondFailureSequences.isNotEmpty() && assessment.code != "ANDROID_PAIRING_OBSERVED")
                                         Text("Früherer Android-Bond-Versuch scheiterte; Belege im Bericht: ${assessment.previousBondFailureSequences.joinToString()}.",
                                             style = MaterialTheme.typography.bodySmall)
@@ -278,11 +287,9 @@ class MainActivity : ComponentActivity() {
                                 OutlinedButton(onClick = {
                                     connectionExportNotice = null
                                     try {
-                                        connectionExportBytes = model.connectionEvidenceExportBytes()
-                                        if (connectionExportBytes != null) exportConnection.launch("ble-transportbeleg-v1.json")
+                                        if (model.connectionEvidenceExportBytes() != null) exportConnection.launch("ble-transportbeleg-v1.json")
                                         else connectionExportNotice = "Noch kein gespeicherter GATT-Verbindungsverlauf vorhanden."
                                     } catch (_: Exception) {
-                                        connectionExportBytes = null
                                         connectionExportNotice = "Gespeicherter Transportbeleg ist nicht lesbar; kein Export erstellt."
                                     }
                                 }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {

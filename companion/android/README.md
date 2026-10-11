@@ -332,7 +332,12 @@ Beobachtungen im JSON-Export. Ein aktueller Android-Status wird nur aus
 zusammengehörigen Beobachtungen derselben GATT-Generation und BLE-Adresse
 berechnet: Verbindung, Produktdienst und `OS_BONDED`. Bei Trennung, neuem
 Verbindungsversuch oder erneutem Bond-Antrag fällt er zurück. Der JSON-Export
-enthält den Status und die Sequenznummern seiner Rohbelege. Den Bericht erst nach dem gewünschten Ablauf
+enthält den Status und die Sequenznummern seiner Rohbelege. Zusätzlich hält
+`observedOsBondSequences` einen innerhalb dieses Versuchs historisch beobachteten
+`OS_BONDED`-Status fest, auch wenn die GATT-Verbindung später geschlossen wurde.
+`latestObservedOsBondState` unterscheidet einen späteren `OS_NOT_BONDED`-Status.
+Beides sind Android-Beobachtungen, keine Aussage über einen aktuellen Link oder
+Firmware-Sicherheit. Den Bericht erst nach dem gewünschten Ablauf
 exportieren. Der Export enthält die BLE-Adresse zur Zuordnung und sollte
 entsprechend vertraulich behandelt werden. Der Kopplungsbericht wird lokal
 gespeichert und nach einem Prozessneustart als historische Beobachtung geladen;
@@ -353,7 +358,11 @@ gespeicherte Momentaufnahme erneut; fehlende, beschädigte oder zu große Daten
 erzeugen keinen Bericht. Der Speicher ist auf eine Verbindung, 128 Ereignisse
 und 64 KiB begrenzt. Ein neuer Verbindungsversuch beginnt eine neue
 Momentaufnahme. Die Datei enthält Zieladresse, Verbindungsgeneration,
-Zeitstempel und korrelierte Transportereignisse; die BLE-Adresse entsprechend
+Zeitstempel und korrelierte Transportereignisse. `exportedUtc` markiert den
+Zeitpunkt der exportierten Momentaufnahme; spätere Ereignisse im App-Journal
+fehlen in diesem Export. Die App liest den Beleg nach Rückkehr aus der
+Dateiauswahl erneut. Bei `SETUP_TIMEOUT` steht zusätzlich die wartende
+Einrichtungsphase im Ereignis. Die BLE-Adresse entsprechend
 vertraulich behandeln. Aus dem Lesen wird kein Gerätebefehl wiederholt.
 
 `originalAuthority=OPEN` und `physicalResult=UNVERIFIED` sind feste offene

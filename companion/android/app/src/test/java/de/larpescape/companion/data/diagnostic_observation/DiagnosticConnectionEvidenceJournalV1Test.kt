@@ -57,6 +57,8 @@ class DiagnosticConnectionEvidenceJournalV1Test {
             assertEquals(DiagnosticConnectionEvidenceV1.SCHEMA, decoded.schema)
             assertEquals("OPEN", decoded.originalAuthority)
             assertEquals("UNVERIFIED", decoded.physicalResult)
+            assertNotNull(decoded.exportedUtc)
+            assertNull(restarted.loadRecovered()!!.exportedUtc)
             assertEquals("A8:42:E3:CD:4B:1A", decoded.targetAddress)
             assertEquals(listOf("REJECTED"), decoded.events.map { it.detail })
             assertNull(restarted.nextSequence())

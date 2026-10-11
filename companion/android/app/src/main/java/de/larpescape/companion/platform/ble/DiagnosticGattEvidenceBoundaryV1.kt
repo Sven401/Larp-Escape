@@ -62,13 +62,15 @@ internal class DiagnosticGattEvidenceBoundaryV1(
         return true
     }
 
-    fun transportError(observedGeneration: Int, operation: String, message: Long?, reason: String): Boolean {
+    fun transportError(observedGeneration: Int, operation: String, message: Long?, reason: String,
+                       pendingPhase: DiagnosticGattPhaseV1? = null): Boolean {
         if (observedGeneration != generation || operation !in setOf("setup", "control", "step", "link") ||
             reason.length !in 1..100) return false
         val key = "error:$operation:$message"
         if (key in terminal) return false
         if (!emit(DiagnosticConnectionEventV1.Kind.TRANSPORT_ERROR, message,
-                "operation=$operation;reason=$reason")) return false
+                "operation=$operation;reason=$reason" +
+                    (if (operation == "setup" && pendingPhase != null) ";phase=${pendingPhase.name}" else ""))) return false
         terminal.add(key)
         return true
     }

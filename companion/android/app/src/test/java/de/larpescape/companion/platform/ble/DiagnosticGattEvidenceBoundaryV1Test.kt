@@ -79,4 +79,12 @@ class DiagnosticGattEvidenceBoundaryV1Test {
         assertEquals(3, received.size)
         assertTrue(received.all { it.kind == DiagnosticConnectionEventV1.Kind.TRANSPORT_ERROR })
     }
+
+    @Test fun setupTimeoutRecordsPendingPhaseWithoutGrantingAuthority() {
+        val received = mutableListOf<DiagnosticConnectionEventV1>()
+        val gate = DiagnosticGattEvidenceBoundaryV1(7, "A8:42:E3:CD:4B:1A") { received.add(it); true }
+        assertTrue(gate.transportError(7, "setup", null, "SETUP_TIMEOUT", DiagnosticGattPhaseV1.MTU_PENDING))
+        assertEquals("operation=setup;reason=SETUP_TIMEOUT;phase=MTU_PENDING", received.single().detail)
+        assertEquals(DiagnosticConnectionEventV1.Kind.TRANSPORT_ERROR, received.single().kind)
+    }
 }

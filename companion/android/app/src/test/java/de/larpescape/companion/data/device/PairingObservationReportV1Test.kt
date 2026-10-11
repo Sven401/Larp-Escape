@@ -56,16 +56,31 @@ class PairingObservationReportV1Test {
 
     @Test fun disconnectRebondAndNewGenerationInvalidatePreviousSuccess() {
         val base = observed()
-        assertEquals("NOT_CONNECTED", base.observe("t5", "ANDROID_APP_OR_GATT", 4, "AA",
-            "connection_closed", "local_session_ended").androidAssessment().code)
+        val closed = base.observe("t5", "ANDROID_APP_OR_GATT", 4, "AA",
+            "connection_closed", "local_session_ended").androidAssessment()
+        assertEquals("NOT_CONNECTED", closed.code)
+        assertEquals(listOf(4), closed.observedOsBondSequences)
+        assertEquals("OS_BONDED", closed.latestObservedOsBondState)
+        val exported = JsonParser.parseString(String(base.observe("t5", "ANDROID_APP_OR_GATT", 4, "AA",
+            "connection_closed", "local_session_ended").export("t6"))).asJsonObject.getAsJsonObject("androidAssessment")
+        assertEquals(listOf(4), exported.getAsJsonArray("observedOsBondSequences").map { it.asInt })
         assertEquals("BOND_OPEN", base.observe("t5", "ANDROID_BLUETOOTH_DEVICE_CREATE_BOND", 4, "AA",
             "bond_request", "OS_REQUEST_ACCEPTED").androidAssessment().code)
         val next = base.observe("t5", "ANDROID_APP_USER_ACTION", 6, "AA", "connection_attempt", "connectGatt_requested")
         assertEquals("NOT_CONNECTED", next.androidAssessment().code)
+        assertTrue(next.androidAssessment().observedOsBondSequences.isEmpty())
         assertEquals("SERVICE_OPEN", next.observe("t6", "ANDROID_BLUETOOTH_GATT_CALLBACK", 6, "AA",
             "connection_state", "status=0;state=2").androidAssessment().code)
         assertEquals("BOND_OPEN", base.observe("t5", "ANDROID_BOND_STATE_BROADCAST", 4, "AA",
             "bond_state", "OS_BONDING").androidAssessment().code)
+    }
+
+    @Test fun laterOsNotBondedKeepsHistoricalObservationWithoutClaimingCurrentBond() {
+        val changed = observed().observe("t5", "ANDROID_BOND_STATE_BROADCAST", 4, "AA",
+            "bond_state", "OS_NOT_BONDED")
+        assertEquals(listOf(4), changed.androidAssessment().observedOsBondSequences)
+        assertEquals("OS_NOT_BONDED", changed.androidAssessment().latestObservedOsBondState)
+        assertEquals("BOND_OPEN", changed.androidAssessment().code)
     }
 
     @Test fun redundantOsBondDoesNotIssueNewRequestOrDowngradeAssessment() {
