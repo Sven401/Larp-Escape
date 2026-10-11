@@ -14,6 +14,11 @@ class DeviceViewModelTest {
         var connections = 0
         var closes = 0
         var grants = 0
+        var exportReads = 0
+        override fun connectionEvidenceExportBytes(): ByteArray? {
+            exportReads++
+            return "{\"schema\":\"diagnostic_connection_evidence_v1\"}".toByteArray()
+        }
         override fun scan(mode: BleScanModeV1) {
             scans++; scanModes += mode; state.value = state.value.copy(scanning = true, scanMode = mode)
         }
@@ -103,5 +108,12 @@ class DeviceViewModelTest {
         assertEquals(1, repo.connections); assertEquals(0, repo.closes)
         assertEquals("sample", model.state.value.status)
         assertNull(DeviceViewModel(FakeRepository()).state.value.status)
+    }
+    @Test fun transportEvidenceExportReadDoesNotStartScanOrConnect() {
+        val repo = FakeRepository(); val model = DeviceViewModel(repo)
+        assertNotNull(model.connectionEvidenceExportBytes())
+        assertEquals(1, repo.exportReads)
+        assertEquals(0, repo.scans)
+        assertEquals(0, repo.connections)
     }
 }

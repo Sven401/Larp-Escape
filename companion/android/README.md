@@ -326,8 +326,30 @@ berechnet: Verbindung, Produktdienst und `OS_BONDED`. Bei Trennung, neuem
 Verbindungsversuch oder erneutem Bond-Antrag fällt er zurück. Der JSON-Export
 enthält den Status und die Sequenznummern seiner Rohbelege. Den Bericht erst nach dem gewünschten Ablauf
 exportieren. Der Export enthält die BLE-Adresse zur Zuordnung und sollte
-entsprechend vertraulich behandelt werden. Der Bericht lebt nur in der
-laufenden App-Sitzung; ein Prozessneustart bewahrt ihn nicht.
+entsprechend vertraulich behandelt werden. Der Kopplungsbericht wird lokal
+gespeichert und nach einem Prozessneustart als historische Beobachtung geladen;
+daraus entsteht keine neue Verbindung.
+
+### Gespeicherter GATT-Transportbeleg
+
+Auf der ESP-Seite kann „BLE-Transportbeleg exportieren“ den zuletzt gespeicherten
+GATT-Verbindungsverlauf als `diagnostic_connection_evidence_v1` über die
+Android-Dateiauswahl ausgeben. Der Export benötigt keine aktive Verbindung und
+funktioniert auch nach einem App-Neustart. Er liest und validiert die
+gespeicherte Momentaufnahme erneut; fehlende, beschädigte oder zu große Daten
+erzeugen keinen Bericht. Der Speicher ist auf eine Verbindung, 128 Ereignisse
+und 64 KiB begrenzt. Ein neuer Verbindungsversuch beginnt eine neue
+Momentaufnahme. Die Datei enthält Zieladresse, Verbindungsgeneration,
+Zeitstempel und korrelierte Transportereignisse; die BLE-Adresse entsprechend
+vertraulich behandeln. Aus dem Lesen wird kein Gerätebefehl wiederholt.
+
+`originalAuthority=OPEN` und `physicalResult=UNVERIFIED` sind feste offene
+Marker, keine Gerätebestätigung. Der Transportbeleg ist kein Simulationsbericht,
+kein Rollen- oder Diagnosegrant und kein physischer Funktionsnachweis.
+Implementierungsgrundlagen (11.10.2026):
+[Android-Dokumente erstellen](https://developer.android.com/training/data-storage/shared/documents-files#create-file),
+[Android-Architektur](https://developer.android.com/topic/architecture/recommendations),
+[Compose-Barrierefreiheit](https://developer.android.com/develop/ui/compose/accessibility/api-defaults).
 
 `OS_BONDED` bedeutet ausschließlich, dass Android den lokalen Bond-Status so
 meldete. Die Firmware stellt derzeit keinen verbindungsgebundenen Bericht mit

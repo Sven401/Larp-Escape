@@ -31,6 +31,7 @@ interface DeviceRepository {
     fun pairingReportBytes(): ByteArray? = null
     fun pendingPairingReportBytes(): ByteArray? = null
     fun pairingExportCompleted() {}
+    fun connectionEvidenceExportBytes(): ByteArray? = null
     fun permissionsChanged(granted: Boolean, denied: Boolean = false)
     fun close()
 }

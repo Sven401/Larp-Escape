@@ -44,6 +44,7 @@ class DeviceViewModel(private val repository: DeviceRepository) : ViewModel() {
     fun pairingReportBytes(): ByteArray? = repository.pairingReportBytes()
     fun pendingPairingReportBytes(): ByteArray? = repository.pendingPairingReportBytes()
     fun pairingExportCompleted() = repository.pairingExportCompleted()
+    fun connectionEvidenceExportBytes(): ByteArray? = repository.connectionEvidenceExportBytes()
     fun foregroundEnded() {
         foreground = false
         pendingPermissionScan = null

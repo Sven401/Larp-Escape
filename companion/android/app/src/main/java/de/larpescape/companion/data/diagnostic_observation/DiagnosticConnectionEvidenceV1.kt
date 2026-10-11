@@ -53,6 +53,14 @@ class DiagnosticConnectionEvidenceJournalV1(private val directory: File) {
         return saved
     }
 
+    /** A validated, bounded historical snapshot. Reading it never resumes a GATT session. */
+    fun exportBytes(): ByteArray? {
+        val saved = loadRecovered() ?: return null
+        return gson.toJson(saved).toByteArray(Charsets.UTF_8).also {
+            require(it.size in 1..MAX_BYTES) { "Connection evidence too large" }
+        }
+    }
+
     fun begin(generation: Int, address: String) {
         val fresh = DiagnosticConnectionEvidenceV1(connectionGeneration = generation, targetAddress = address)
         validate(fresh)

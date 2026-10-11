@@ -154,6 +154,7 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
         runCatching { pairingJournal.clearPendingExport() }
             .onFailure { report("Export abgeschlossen; Exportkopie konnte nicht gelöscht werden: ${it.message}") }
     }
+    override fun connectionEvidenceExportBytes(): ByteArray? = diagnosticEvidence.exportBytes()
     override fun requestBond() = guarded {
         val address = selectedAddress ?: error("Zuerst einen ESP verbinden")
         check(gatt != null && mutable.value.connected) { "Aktive Verbindung fehlt" }

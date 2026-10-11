@@ -39,6 +39,24 @@ import de.larpescape.companion.ui.diagnostic.*
 class MainActivity : ComponentActivity() {
     private var pairingExportBytes: ByteArray? = null
     private var pairingExportNotice by mutableStateOf<String?>(null)
+    private var connectionExportBytes: ByteArray? = null
+    private var connectionExportNotice by mutableStateOf<String?>(null)
+    private val exportConnection = registerForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
+        val bytes = connectionExportBytes.also { connectionExportBytes = null }
+        when {
+            uri == null -> connectionExportNotice = "Dateiauswahl abgebrochen. Der gespeicherte Transportbeleg bleibt in der App."
+            bytes == null -> connectionExportNotice = "Exportvorbereitung nicht mehr verfügbar. Bitte erneut exportieren."
+            else -> lifecycleScope.launch {
+                try {
+                    withContext(Dispatchers.IO) {
+                        contentResolver.openOutputStream(uri, "wt")?.use { it.write(bytes) }
+                            ?: error("Datei konnte nicht geschrieben werden")
+                    }
+                    connectionExportNotice = "BLE-Transportbeleg exportiert. Autorität und physisches Ergebnis bleiben offen."
+                } catch (error: Exception) { connectionExportNotice = "Export fehlgeschlagen: ${error.message}" }
+            }
+        }
+    }
     private val exportPairing = registerForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
         val bytes = pairingExportBytes.also { pairingExportBytes = null } ?: model.pendingPairingReportBytes()
         if (uri != null && bytes != null) lifecycleScope.launch {
@@ -247,6 +265,26 @@ class MainActivity : ComponentActivity() {
                                     }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Beobachtungsbericht exportieren") }
                                 }
                                 pairingExportNotice?.let { Text(it) }
+                            }
+                        }
+                        Card(Modifier.fillMaxWidth()) {
+                            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                Text("Gespeicherter BLE-Transportbeleg", style = MaterialTheme.typography.titleMedium)
+                                Text("Der letzte GATT-Verbindungsverlauf kann auch nach einem App-Neustart exportiert werden. Er enthält keine bestätigte Rolle, Diagnosefreigabe oder physische Geräteprüfung.")
+                                OutlinedButton(onClick = {
+                                    connectionExportNotice = null
+                                    try {
+                                        connectionExportBytes = model.connectionEvidenceExportBytes()
+                                        if (connectionExportBytes != null) exportConnection.launch("ble-transportbeleg-v1.json")
+                                        else connectionExportNotice = "Noch kein gespeicherter GATT-Verbindungsverlauf vorhanden."
+                                    } catch (_: Exception) {
+                                        connectionExportBytes = null
+                                        connectionExportNotice = "Gespeicherter Transportbeleg ist nicht lesbar; kein Export erstellt."
+                                    }
+                                }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                                    Text("BLE-Transportbeleg exportieren")
+                                }
+                                connectionExportNotice?.let { Text(it) }
                             }
                         }
                         Button(onClick = { startScan(BleScanModeV1.PRODUCT) }, enabled = !state.scanning,
