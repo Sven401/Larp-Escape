@@ -745,6 +745,7 @@ GattsLifecycleOutcome Esp32GattsSource::connectionNow(std::uint8_t interface,
     reconcileProofGrantCloseNow();
     portENTER_CRITICAL(&mutex_);
     peerProofOpen_ = false;
+    publishedTransport_ = {};
     const bool lifetimeAvailable = lifecycle_ != UINT32_MAX;
     if (lifetimeAvailable)
         ++lifecycle_;
@@ -776,6 +777,12 @@ GattsLifecycleOutcome Esp32GattsSource::connectionNow(std::uint8_t interface,
             peerProofOpen_ =
                 identitySnapshot_.proofAllowed && identitySnapshot_.connection == opened;
             portEXIT_CRITICAL(&mutex_);
+            PeerTransportBinding current;
+            if (transportNow(current)) {
+                portENTER_CRITICAL(&mutex_);
+                publishedTransport_ = current;
+                portEXIT_CRITICAL(&mutex_);
+            }
         } else if (outcome == GattsLifecycleOutcome::Conflict) {
             active_ = false;
             connection_ = {};
@@ -796,6 +803,66 @@ bool Esp32GattsSource::originalConnectionNow(BoundConnection &destination) const
         return false;
     destination = connection_;
     return true;
+}
+bool Esp32GattsSource::readOriginalTransport(PeerTransportBinding &destination) const noexcept {
+    PeerTransportBinding value;
+    IdentityAccessSnapshot owned;
+    bool fenced;
+    portENTER_CRITICAL(&mutex_);
+    value = publishedTransport_;
+    owned = identitySnapshot_;
+    fenced = registryFenced_;
+    portEXIT_CRITICAL(&mutex_);
+    GattsSourceRegistration registration;
+    if (fenced || !value.valid() || !owned.current || !owned.connected ||
+        !(owned.device == value.device) || !(owned.connection == value.connection) ||
+        !readRegistration(registration) || registration.token != value.registration ||
+        registration.interface != value.interface)
+        return false;
+    portENTER_CRITICAL(&mutex_);
+    const bool stillCurrent = !registryFenced_ && publishedTransport_ == value &&
+                              identitySnapshot_ == owned;
+    portEXIT_CRITICAL(&mutex_);
+    if (!stillCurrent)
+        return false;
+    destination = value;
+    return true;
+}
+bool Esp32GattsSource::readOriginalLifecycle(std::uint32_t &destination) const noexcept {
+    portENTER_CRITICAL(&mutex_);
+    const auto value = lifecycle_;
+    const bool current = registered_ && !registryFenced_;
+    portEXIT_CRITICAL(&mutex_);
+    if (!current)
+        return false;
+    destination = value;
+    return true;
+}
+bool Esp32GattsSource::closedChannelState(const Identity &device) const noexcept {
+    IdentityAccessSnapshot owned;
+    bool fenced;
+    portENTER_CRITICAL(&mutex_);
+    owned = identitySnapshot_;
+    fenced = registryFenced_;
+    portEXIT_CRITICAL(&mutex_);
+    if (fenced || !owned.current || !(owned.device == device) ||
+        owned.authority.principal || owned.authority.gameMaster)
+        return false;
+    if (owned.connected) {
+        PeerTransportBinding birth;
+        if (!readOriginalTransport(birth) ||
+            !(owned.connection == birth.connection) ||
+            owned.authority.epoch != birth.connection.token)
+            return false;
+    }
+    TrustedAuthority observed;
+    const bool present = channel_.readAuthority(observed);
+    if (owned.authority.epoch ? !present || !(observed == owned.authority) : present)
+        return false;
+    portENTER_CRITICAL(&mutex_);
+    const bool current = !registryFenced_ && identitySnapshot_ == owned;
+    portEXIT_CRITICAL(&mutex_);
+    return current;
 }
 bool Esp32GattsSource::transportNow(PeerTransportBinding &destination) const noexcept {
     if (!sourceTask() || !active_ || !owner_)

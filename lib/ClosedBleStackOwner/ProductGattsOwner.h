@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ClosedBleStackOwner.h"
+#include "ClosedBleAdvertiseGate.h"
 #include "Esp32CompanionIdentityOwner.h"
 #include "Esp32GattsService.h"
 #include "Esp32PeerProofCrypto.h"
@@ -10,10 +11,11 @@
 #include "FreeRtosPeerRegistryRuntime.h"
 #include "FreeRtosProfileFrameQueue.h"
 #include <atomic>
+#include <esp_gap_ble_api.h>
 #include <freertos/task.h>
 
-// Closed product GATT registration. Attribute creation does not grant access:
-// the identity policy remains closed, and no GAP advertising is started.
+// Closed product GATT registration and discovery-only GAP owner. Attribute
+// creation/advertising does not grant a peer role or diagnostic access.
 class ProductGattsOwner {
   public:
     enum class State : std::uint8_t {
@@ -33,6 +35,11 @@ class ProductGattsOwner {
         RuntimeUnavailable, RegistryRejected, StoredRegistryInstalledClosed
     };
     RegistryState registryState() const noexcept;
+    ClosedBleAdvertiseGate::Phase advertisingState() const noexcept {
+        return advertisingState_.load(std::memory_order_acquire);
+    }
+    // Current original BTU birth only. False also covers stale/disconnected.
+    bool originalLink(larp::companion::PeerTransportBinding &) const noexcept;
 
   private:
     class Clock : public larp::companion::IProfileImportClock {
@@ -53,15 +60,25 @@ class ProductGattsOwner {
     larp::companion::PeerRegistryOwner registryOwner_;
     larp::companion::Identity device_;
     larp::companion::BootIdentity boot_;
+    std::array<std::uint8_t, 16> advertisedService_ =
+        larp::companion::GattsServiceDefinition::service();
+    esp_ble_adv_data_t advertiseData_ = {};
+    esp_ble_adv_params_t advertiseParams_ = {};
     ClosedBleStackOwner stack_;
     TaskHandle_t worker_ = nullptr, registryWorker_ = nullptr;
     std::atomic<bool> workerStarted_{false};
     std::atomic<bool> workerReady_{false};
     std::atomic<RegistryState> registryState_{RegistryState::NotStarted};
+    std::atomic<ClosedBleAdvertiseGate::Phase> advertisingState_{
+        ClosedBleAdvertiseGate::Phase::Closed};
+    std::atomic<std::uint8_t> dataAck_{0}, startAck_{0}, stopAck_{0};
     State state_ = State::NotStarted;
     static ProductGattsOwner *selected_;
     static void worker(void *) noexcept;
     static void loadRegistry(void *) noexcept;
+    static void gapCallback(esp_gap_ble_cb_event_t, esp_ble_gap_cb_param_t *) noexcept;
+    void runDiscovery() noexcept;
+    void quiesceAfterStart(bool startTerminal, bool startSucceeded) noexcept;
     static void callback(esp_gatts_cb_event_t, esp_gatt_if_t,
                          esp_ble_gatts_cb_param_t *) noexcept;
 };
