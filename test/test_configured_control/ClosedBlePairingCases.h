@@ -1,5 +1,6 @@
 #pragma once
 #include "../../lib/ClosedBleStackOwner/ClosedBleAdvertiseGate.h"
+#include "../../lib/ClosedBleStackOwner/ClosedBleSecurityGate.h"
 #include "PeerRegistryActorCases.h"
 
 void test_ble_discovery_gate_requires_both_original_closed_acks_and_never_retries_failure() {
@@ -97,6 +98,40 @@ void test_ble_pairing_surface_has_only_mitm_required_closed_writes() {
     TEST_ASSERT_EQUAL(static_cast<int>(AuthorityUpdate::Published),
                       static_cast<int>(f->channel.actual.advanceAuthority(17, true, foreign)));
     TEST_ASSERT_FALSE(fixture.source.closedChannelState(testIdentity()));
+}
+
+void test_ble_security_request_requires_current_original_birth_and_address() {
+    RegistryActorFixture fixture;
+    fixture.ready();
+    const auto firstConnection = fixture.open();
+    fixture.actor();
+    PeerTransportBinding first, current;
+    TEST_ASSERT_TRUE(fixture.source.readOriginalTransport(first));
+    TEST_ASSERT_TRUE(fixture.source.readOriginalTransport(current));
+    TEST_ASSERT_TRUE(first.connection == firstConnection);
+    TEST_ASSERT_TRUE(ClosedBleSecurityGate::allow(true, true, true,
+                                                  first, current, first.address));
+    auto wrongAddress = first.address;
+    wrongAddress[5] ^= 1;
+    TEST_ASSERT_FALSE(ClosedBleSecurityGate::allow(true, true, true,
+                                                   first, current, wrongAddress));
+    TEST_ASSERT_FALSE(ClosedBleSecurityGate::allow(false, true, true,
+                                                   first, current, first.address));
+    TEST_ASSERT_FALSE(ClosedBleSecurityGate::allow(true, false, true,
+                                                   first, current, first.address));
+    TEST_ASSERT_FALSE(ClosedBleSecurityGate::allow(true, true, false,
+                                                   first, current, first.address));
+    fixture.close();
+    fixture.actor();
+    (void)fixture.open();
+    fixture.actor();
+    TEST_ASSERT_TRUE(fixture.source.readOriginalTransport(current));
+    TEST_ASSERT_FALSE(first == current);
+    TEST_ASSERT_FALSE(ClosedBleSecurityGate::allow(true, true, true,
+                                                   first, current, first.address));
+    PeerTransportBinding absent;
+    TEST_ASSERT_FALSE(ClosedBleSecurityGate::allow(true, true, true,
+                                                   absent, current, first.address));
 }
 
 void test_ble_late_start_ack_requires_new_stop_ack_after_failure() {

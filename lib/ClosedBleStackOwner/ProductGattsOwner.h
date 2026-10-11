@@ -2,6 +2,7 @@
 
 #include "ClosedBleStackOwner.h"
 #include "ClosedBleAdvertiseGate.h"
+#include "ClosedBleSecurityGate.h"
 #include "Esp32CompanionIdentityOwner.h"
 #include "Esp32GattsService.h"
 #include "DiagnosticGattsService.h"
@@ -78,6 +79,10 @@ class ProductGattsOwner {
     std::atomic<ClosedBleAdvertiseGate::Phase> advertisingState_{
         ClosedBleAdvertiseGate::Phase::Closed};
     std::atomic<std::uint8_t> dataAck_{0}, startAck_{0}, stopAck_{0};
+    // One pending observation of each kind; coalesced if callbacks arrive faster
+    // than the worker can print. No passkey or key material is retained.
+    std::atomic<std::uint8_t> securityRequestObservation_{0};
+    std::atomic<std::uint16_t> authenticationObservation_{0};
     State state_ = State::NotStarted;
     static ProductGattsOwner *selected_;
     static void worker(void *) noexcept;

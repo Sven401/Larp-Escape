@@ -1460,6 +1460,7 @@ int main() {
     RUN_TEST(test_ble_stack_preexisting_controller_state_is_reported_without_adoption);
     RUN_TEST(test_ble_original_link_publication_closes_on_disconnect_and_recycled_birth);
     RUN_TEST(test_ble_pairing_surface_has_only_mitm_required_closed_writes);
+    RUN_TEST(test_ble_security_request_requires_current_original_birth_and_address);
     RUN_TEST(test_ble_late_start_ack_requires_new_stop_ack_after_failure);
     RUN_TEST(test_registry_actor_stored_snapshot_ack_keeps_product_authority_closed);
     RUN_TEST(test_registry_actor_snapshot_is_readable_on_crypto_worker_and_survives_fresh_links);

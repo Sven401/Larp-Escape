@@ -46,6 +46,31 @@ void ProductGattsOwner::gapCallback(esp_gap_ble_cb_event_t event,
     else if (event == ESP_GAP_BLE_ADV_STOP_COMPLETE_EVT)
         owner->stopAck_.store(parameter->adv_stop_cmpl.status == ESP_BT_STATUS_SUCCESS ? 1 : 2,
                               std::memory_order_release);
+    else if (event == ESP_GAP_BLE_SEC_REQ_EVT) {
+        std::array<std::uint8_t, 6> address;
+        for (unsigned i = 0; i < address.size(); ++i)
+            address[i] = parameter->ble_security.ble_req.bd_addr[i];
+        PeerTransportBinding before, after;
+        const bool observed = owner->source_.readOriginalTransport(before);
+        const bool closedBefore = owner->serviceReady() &&
+                                  owner->registryState() == RegistryState::StoredRegistryInstalledClosed &&
+                                  owner->source_.closedChannelState(owner->device_);
+        const bool current = owner->source_.readOriginalTransport(after);
+        const bool accept = observed && closedBefore && current &&
+                            ClosedBleSecurityGate::allow(owner->serviceReady(),
+                                owner->registryState() == RegistryState::StoredRegistryInstalledClosed,
+                                owner->source_.closedChannelState(owner->device_),
+                                before, after, address);
+        const auto posted = esp_ble_gap_security_rsp(parameter->ble_security.ble_req.bd_addr,
+                                                      accept) == ESP_OK;
+        owner->securityRequestObservation_.store(
+            posted ? (accept ? 1 : 2) : (accept ? 3 : 4), std::memory_order_release);
+    } else if (event == ESP_GAP_BLE_AUTH_CMPL_EVT) {
+        const auto &result = parameter->ble_security.auth_cmpl;
+        owner->authenticationObservation_.store(
+            result.success ? 1U : static_cast<std::uint16_t>(0x100U | result.fail_reason),
+            std::memory_order_release);
+    }
 }
 void ProductGattsOwner::quiesceAfterStart(bool startTerminal,
                                           bool startSucceeded) noexcept {
@@ -127,6 +152,7 @@ void ProductGattsOwner::runDiscovery() noexcept {
     std::uint32_t connectedBirth = 0, advertisedBirth = 0;
     std::uint32_t pendingAt = clock_.nowMilliseconds();
     bool startPosted = false, startTerminal = false, startSucceeded = false;
+    std::uint8_t securityLogs = 0, authenticationLogs = 0;
     const auto abort = [&]() {
         gate.fail();
         if (startPosted)
@@ -217,6 +243,19 @@ void ProductGattsOwner::runDiscovery() noexcept {
             pendingAt = clock_.nowMilliseconds();
         }
         publish();
+        const auto request = securityRequestObservation_.exchange(0, std::memory_order_acq_rel);
+        if (request && securityLogs < 8U) {
+            ++securityLogs;
+            Serial.print("BLE security request response (1=accepted, 2=rejected, 3/4=SDK error): ");
+            Serial.println(static_cast<unsigned>(request));
+        }
+        const auto authentication = authenticationObservation_.exchange(0,
+                                                                         std::memory_order_acq_rel);
+        if (authentication && authenticationLogs < 8U) {
+            ++authenticationLogs;
+            Serial.print("BLE authentication result (1=success, 0x100+reason=failure): ");
+            Serial.println(static_cast<unsigned>(authentication));
+        }
         vTaskDelay(1);
     }
 }
