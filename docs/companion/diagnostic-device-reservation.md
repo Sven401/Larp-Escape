@@ -48,6 +48,28 @@ acknowledgements before adding any transition out of the closed states. Resettin
 software state alone is not evidence that output became safe. No upload, physical
 acceptance or 500-ms timing measurement is provided by this package.
 
+## Light-worker handoff slice (11 October 2026)
+
+`GameLightEffects::requestPark(ticket)` is a one-way, internal fence for the
+actual FreeRTOS light worker. It rejects zero and duplicate tickets, closes
+game-command admission, ignores commands already queued or racing with the
+fence, and stops effect drawing. On its next worker cycle it fills the existing
+LED buffer with black and calls `FastLED.show()` once. The worker exposes only
+`offFrameSubmittedFor(ticket)`, correlated to the original request. This is
+evidence of a software frame submission, **not** an owner Park success or a
+confirmed physical all-off state. There is no release or diagnostic render API.
+
+This slice is not yet called by the application arbiter or mapped to the
+`DeviceRuntime` LED owner. The running render call can finish after the request;
+there is no measured bound on when the black frame reaches the LEDs. FastLED's
+return does not prove the LED controller accepted it, and no independent off
+timer, supply/level check or user observation exists. Consequently no caller
+may turn `offFrameSubmittedFor` into `ControlOutcome::Completed`, grant
+diagnostic LED ownership or advertise a 500-ms safety guarantee. GPIO15 is the
+user-confirmed data connection of the real box; LED type, level and supply
+remain unverified. The next gate is an owner-specific, independently bounded
+and physically checkable off mechanism plus a correlated Park reply.
+
 ## Closed legacy game preflight
 
 `LarpEscapeApp::fenceUnstartedGameForDiagnostics()` now gives the actual

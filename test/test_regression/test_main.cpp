@@ -21,6 +21,7 @@ void test_round_reset_clears_only_round_progress_and_retry_streak();
 void test_game_reset_clears_rounds_keystones_seen_tags_and_errors();
 void test_error_transition_waits_for_audio_then_consumes_crystal_before_keystone_error();
 void test_transition_wait_is_nonblocking_and_resets_after_elapsed();
+void test_light_park_fence_is_one_way_and_correlated();
 
 
 
@@ -116,6 +117,7 @@ int runUnityTests()
     RUN_TEST(test_game_reset_clears_rounds_keystones_seen_tags_and_errors);
     RUN_TEST(test_error_transition_waits_for_audio_then_consumes_crystal_before_keystone_error);
     RUN_TEST(test_transition_wait_is_nonblocking_and_resets_after_elapsed);
+    RUN_TEST(test_light_park_fence_is_one_way_and_correlated);
     return UNITY_END();
 }
 

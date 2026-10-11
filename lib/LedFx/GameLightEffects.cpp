@@ -65,6 +65,14 @@ std::uint32_t GameLightEffects::frameDeadlineMissCount() const {
     return missedFrameDeadlines.load(std::memory_order_relaxed);
 }
 
+bool GameLightEffects::requestPark(std::uint32_t ticket) {
+    return commandQueue != nullptr && taskHandle != nullptr && parkFence.request(ticket);
+}
+
+bool GameLightEffects::offFrameSubmittedFor(std::uint32_t ticket) const {
+    return parkFence.offFrameSubmittedFor(ticket);
+}
+
 void GameLightEffects::taskEntry(void *context) {
     static_cast<GameLightEffects *>(context)->renderLoop();
 }
@@ -78,13 +86,35 @@ void GameLightEffects::renderLoop() {
     Command command = {};
 
     for (;;) {
+        if (parkFence.blocksGameCommands()) {
+            // A producer already inside xQueueSend may still append a command.
+            // No queued command is applied after the fence; the sole worker
+            // submits black once and then permanently stops rendering.
+            while (xQueueReceive(commandQueue, &command, 0U) == pdTRUE) {
+            }
+            if (parkFence.workerShouldSubmitOff()) {
+                for (std::size_t index = 0U; index < ledCount; ++index) {
+                    ledBuffer[index] = CRGB::Black;
+                }
+                FastLED.show();
+                parkFence.workerSubmittedOffFrame();
+            }
+            vTaskDelay(1U);
+            continue;
+        }
         updateMaximum(maximumQueueDepthObserved,
                       static_cast<std::uint32_t>(uxQueueMessagesWaiting(commandQueue)));
         // A refilling producer cannot delay rendering beyond this command budget.
         for (std::size_t processed = 0U; processed < commandQueueCapacity &&
                                          xQueueReceive(commandQueue, &command, 0U) == pdTRUE;
              ++processed) {
+            if (parkFence.blocksGameCommands()) {
+                break;
+            }
             applyCommand(command);
+        }
+        if (parkFence.blocksGameCommands()) {
+            continue;
         }
         const std::uint32_t renderStarted = micros();
         renderFrame();
@@ -163,7 +193,7 @@ void GameLightEffects::renderFrame() {
 }
 
 bool GameLightEffects::enqueue(const Command &command) {
-    if (commandQueue == nullptr) {
+    if (parkFence.blocksGameCommands() || commandQueue == nullptr) {
         droppedCommands.fetch_add(1U, std::memory_order_relaxed);
         return false;
     }

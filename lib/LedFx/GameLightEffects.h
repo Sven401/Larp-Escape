@@ -2,6 +2,7 @@
 
 #include "GamePorts/ILightEffects.h"
 #include "GameRuntime/BrightnessStepSchedule.h"
+#include "LightParkFence.h"
 #include "burst.h"
 #include "ripple.h"
 #include "twinklefox.h"
@@ -35,6 +36,11 @@ class GameLightEffects : public larp::ports::ILightEffects {
     std::uint32_t maximumQueueDepth() const;
     std::uint32_t maximumRenderDurationMicroseconds() const;
     std::uint32_t frameDeadlineMissCount() const;
+
+    // One-way handoff. The returned status only records that the worker called
+    // FastLED.show() with a black buffer; it is not a physical off confirmation.
+    bool requestPark(std::uint32_t ticket);
+    bool offFrameSubmittedFor(std::uint32_t ticket) const;
 
     void setTwinkleDensity(std::uint8_t density) override;
     void setTwinkleSpeed(std::uint8_t speed) override;
@@ -94,4 +100,5 @@ class GameLightEffects : public larp::ports::ILightEffects {
     std::atomic<std::uint32_t> maximumQueueDepthObserved;
     std::atomic<std::uint32_t> maximumRenderDurationObserved;
     std::atomic<std::uint32_t> missedFrameDeadlines;
+    LightParkFence parkFence;
 };
