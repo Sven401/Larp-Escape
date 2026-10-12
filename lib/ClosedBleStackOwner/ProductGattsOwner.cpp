@@ -491,6 +491,10 @@ ProductGattsOwner::State ProductGattsOwner::begin() noexcept {
         !boot_.valid() ||
         !commands_.begin() || !profiles_.begin() || !responses_.begin())
         return state_ = State::QueueFailed;
+#if defined(LARP_DIAGNOSTIC_TEST_FIRMWARE)
+    if (!source_.configureDevelopmentInfo(device_, boot_))
+        return state_ = State::QueueFailed;
+#endif
     peerAuth_ = new (&peerAuthStorage_)
         PeerAuthGraph(source_, registryRuntime_, clock_, boot_, peerCrypto_);
     service_ = new (&serviceStorage_) Esp32GattsService(

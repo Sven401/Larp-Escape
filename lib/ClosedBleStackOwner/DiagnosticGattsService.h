@@ -11,7 +11,11 @@ namespace larp {
 namespace diagnostic {
 enum class DiagnosticGattsPhase : std::uint8_t {
     Idle, Creating, ControlWrite, ControlReply, ControlCccd, StepWrite,
-    StepReply, StepCccd, Installing, Starting, Ready, Failed
+    StepReply, StepCccd,
+#if defined(LARP_DIAGNOSTIC_TEST_FIRMWARE)
+    DevelopmentInfo,
+#endif
+    Installing, Starting, Ready, Failed
 };
 enum class DiagnosticGattsEventKind : std::uint8_t {
     Other, Created, Characteristic, Descriptor, Started

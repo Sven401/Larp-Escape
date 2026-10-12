@@ -44,6 +44,17 @@ bool addCccd(std::uint16_t service) noexcept {
     return esp_ble_gatts_add_char_descr(service, &uuid, ESP_GATT_PERM_WRITE_ENCRYPTED,
                                         &value, &control) == ESP_OK;
 }
+#if defined(LARP_DIAGNOSTIC_TEST_FIRMWARE)
+bool addDevelopmentInfo(std::uint16_t service) noexcept {
+    auto uuid = sdkUuid(DiagnosticGattsDefinition::developmentInfo());
+    esp_attr_value_t value = {};
+    value.attr_max_len = 27;
+    esp_attr_control_t control = {};
+    control.auto_rsp = ESP_GATT_RSP_BY_APP;
+    return esp_ble_gatts_add_char(service, &uuid, ESP_GATT_PERM_READ_ENCRYPTED,
+                                  ESP_GATT_CHAR_PROP_BIT_READ, &value, &control) == ESP_OK;
+}
+#endif
 } // namespace
 bool DiagnosticGattsService::begin() noexcept {
     const auto task = xTaskGetCurrentTaskHandle();
@@ -166,6 +177,10 @@ bool DiagnosticGattsService::postNext() noexcept {
         return addCharacteristic(handles_.service, DiagnosticGattsDefinition::stepReply(), false);
     case DiagnosticGattsPhase::StepCccd:
         return addCccd(handles_.service);
+#if defined(LARP_DIAGNOSTIC_TEST_FIRMWARE)
+    case DiagnosticGattsPhase::DevelopmentInfo:
+        return addDevelopmentInfo(handles_.service);
+#endif
     default:
         return false;
     }
@@ -253,6 +268,13 @@ void DiagnosticGattsService::service(bool gameServiceReady) noexcept {
                 destination = &handles_.stepCccd; previous = handles_.stepReply;
                 expected = event.kind == DiagnosticGattsEventKind::Descriptor &&
                            event.uuid16 == ESP_GATT_UUID_CHAR_CLIENT_CONFIG;
+#if defined(LARP_DIAGNOSTIC_TEST_FIRMWARE)
+                phase_ = DiagnosticGattsPhase::DevelopmentInfo; break;
+            case DiagnosticGattsPhase::DevelopmentInfo:
+                destination = &handles_.developmentInfo; previous = handles_.stepCccd;
+                expected = event.kind == DiagnosticGattsEventKind::Characteristic &&
+                           event.uuid128 && event.uuid == DiagnosticGattsDefinition::developmentInfo();
+#endif
                 phase_ = DiagnosticGattsPhase::Installing; break;
             default: break;
             }

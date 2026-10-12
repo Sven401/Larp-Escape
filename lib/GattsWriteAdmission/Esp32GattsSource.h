@@ -61,6 +61,10 @@ class Esp32GattsSource : public IGattsResponseContext,
     // original BTU actor. This installs only a rejection fence, never an owner.
     bool postDiagnosticClosedSetup(const diagnostic::DiagnosticClosedHandles &) noexcept;
     bool diagnosticClosedSetupInstalled(const diagnostic::DiagnosticClosedHandles &) const noexcept;
+#if defined(LARP_DIAGNOSTIC_TEST_FIRMWARE)
+    // Immutable public identity for the development-only encrypted read.
+    bool configureDevelopmentInfo(const Identity &, const BootIdentity &) noexcept;
+#endif
     GattsLifecycleOutcome connectionNow(std::uint8_t interface, const std::uint8_t *address,
                                         std::uint16_t packedConnection, bool connected) noexcept;
     // Sole source actor only; original closed token for subsequent peer verification.
@@ -128,6 +132,11 @@ class Esp32GattsSource : public IGattsResponseContext,
         diagnostic::DiagnosticClosedHandles value;
         std::uint8_t state = 0; // 0 unused, 1 posted, 2 consuming, 3 installed, 4 rejected
     } diagnostic_;
+#if defined(LARP_DIAGNOSTIC_TEST_FIRMWARE)
+    Identity developmentDevice_;
+    BootIdentity developmentBoot_;
+    bool developmentInfoConfigured_ = false;
+#endif
     struct RolePending {
         PeerRegistryRoleJob value;
         TrustedAuthority ack;

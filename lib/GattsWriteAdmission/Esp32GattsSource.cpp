@@ -736,7 +736,11 @@ bool Esp32GattsSource::postDiagnosticClosedSetup(
     const auto value = caller;
     const std::uint16_t attributes[] = {
         value.service, value.controlWrite, value.controlReply, value.controlCccd,
-        value.stepWrite, value.stepReply, value.stepCccd};
+        value.stepWrite, value.stepReply, value.stepCccd
+#if defined(LARP_DIAGNOSTIC_TEST_FIRMWARE)
+        , value.developmentInfo
+#endif
+    };
     for (const auto attribute : attributes)
         if (attribute == command_ || attribute == profile_)
             return false;
@@ -777,7 +781,11 @@ void Esp32GattsSource::installDiagnosticClosed(void *context) noexcept {
     GattsSourceRegistration current;
     const std::uint16_t attributes[] = {
         value.service, value.controlWrite, value.controlReply, value.controlCccd,
-        value.stepWrite, value.stepReply, value.stepCccd};
+        value.stepWrite, value.stepReply, value.stepCccd
+#if defined(LARP_DIAGNOSTIC_TEST_FIRMWARE)
+        , value.developmentInfo
+#endif
+    };
     bool separate = true;
     for (const auto attribute : attributes)
         separate = separate && attribute != source.command_ && attribute != source.profile_;
@@ -803,10 +811,25 @@ bool Esp32GattsSource::diagnosticClosedSetupInstalled(
                            diagnostic_.value.controlCccd == value.controlCccd &&
                            diagnostic_.value.stepWrite == value.stepWrite &&
                            diagnostic_.value.stepReply == value.stepReply &&
-                           diagnostic_.value.stepCccd == value.stepCccd;
+                           diagnostic_.value.stepCccd == value.stepCccd
+#if defined(LARP_DIAGNOSTIC_TEST_FIRMWARE)
+                           && diagnostic_.value.developmentInfo == value.developmentInfo
+#endif
+                           ;
     portEXIT_CRITICAL(&mutex_);
     return installed;
 }
+#if defined(LARP_DIAGNOSTIC_TEST_FIRMWARE)
+bool Esp32GattsSource::configureDevelopmentInfo(const Identity &device,
+                                                const BootIdentity &boot) noexcept {
+    if (developmentInfoConfigured_ || registered_ || !device.valid() || !boot.valid())
+        return false;
+    developmentDevice_ = device;
+    developmentBoot_ = boot;
+    developmentInfoConfigured_ = true;
+    return true;
+}
+#endif
 GattsLifecycleOutcome Esp32GattsSource::connectionNow(std::uint8_t interface,
                                                       const std::uint8_t *address,
                                                       std::uint16_t packed,
@@ -1079,6 +1102,58 @@ bool Esp32GattsSource::requestNow(std::uint16_t packed, std::uint32_t transactio
         if (!borrowed)
             return challengeAttribute_ != 0;
         const auto read = borrowed->read;
+#if defined(LARP_DIAGNOSTIC_TEST_FIRMWARE)
+        diagnostic::DiagnosticClosedHandles development;
+        portENTER_CRITICAL(&mutex_);
+        const bool installed = diagnostic_.state == 3;
+        if (installed)
+            development = diagnostic_.value;
+        portEXIT_CRITICAL(&mutex_);
+        if (installed && read.handle == development.developmentInfo) {
+            if (!sourceTask() || !read.needResponse)
+                return true;
+            GattsSourceRegistration original;
+            PeerTransportBinding link;
+            const bool current = developmentInfoConfigured_ &&
+                                 readRegistration(original) &&
+                                 original == development.original && active_ &&
+                                 packed == live_.connection &&
+                                 (packed & 0xff) == original.interface &&
+                                 transportNow(link) &&
+                                 link.registration == original.token &&
+                                 link.interface == original.interface &&
+                                 link.connection == connection_ &&
+                                 link.address == live_.peerAddress;
+            if (!current) {
+                (void)GATTS_SendRsp(packed, transaction, ESP_GATT_INSUF_AUTHORIZATION,
+                                    nullptr);
+                return true;
+            }
+            // Version 1: "DT", version, public device ID, boot identity LE.
+            // The read is evidence of this image and boot, never a peer grant.
+            std::uint8_t payload[27] = {'D', 'T', 1};
+            std::memcpy(payload + 3, developmentDevice_.bytes.data(), 16);
+            for (unsigned index = 0; index < 4; ++index) {
+                payload[19 + index] = static_cast<std::uint8_t>(developmentBoot_.low >> (8 * index));
+                payload[23 + index] = static_cast<std::uint8_t>(developmentBoot_.high >> (8 * index));
+            }
+            if (read.offset > sizeof(payload)) {
+                (void)GATTS_SendRsp(packed, transaction, ESP_GATT_INVALID_OFFSET, nullptr);
+                return true;
+            }
+            sdk446::Response response = {};
+            response.value.connection = packed;
+            response.value.handle = read.handle;
+            response.value.offset = read.offset;
+            const std::size_t remaining = sizeof(payload) - read.offset;
+            // Fit the minimum ATT MTU (23); a long read continues at offset 22.
+            response.value.length = static_cast<std::uint16_t>(remaining > 22 ? 22 : remaining);
+            if (response.value.length)
+                std::memcpy(response.value.value, payload + read.offset, response.value.length);
+            (void)GATTS_SendRsp(packed, transaction, ESP_GATT_OK, &response);
+            return true;
+        }
+#endif
         const bool resultRead = resultAttribute_ && read.handle == resultAttribute_;
         if ((!challengeAttribute_ || read.handle != challengeAttribute_) && !resultRead)
             return false;
