@@ -8,6 +8,7 @@
 #include "CompanionIntegration/DiagnosticDevelopmentControl.h"
 #include "CompanionIntegration/DiagnosticRawExpanderProbe.h"
 #include "RawExpanderWire.h"
+#include "DevelopmentLedDeadline.h"
 
 #if !defined(LARP_DIAGNOSTIC_TEST_FIRMWARE) || !defined(LARP_PRODUCT_GATTS_CLOSED)
 #error "This entry point requires the isolated diagnostic test-firmware build"
@@ -23,6 +24,8 @@ static std::aligned_storage<sizeof(larp::diagnostic::DevelopmentAdmission),
 static larp::diagnostic::DevelopmentAdmission *admission = nullptr;
 static std::aligned_storage<sizeof(larp::diagnostic::DevelopmentControl),
                             alignof(larp::diagnostic::DevelopmentControl)>::type controlStorage;
+DevelopmentLedDeadline ledDeadline;
+bool ledDeadlineStarted = false;
 
 void setup() {
     Serial.begin(115200);
@@ -52,6 +55,8 @@ void setup() {
     const auto state = gatts.begin();
     Serial.printf("TEST_BLE startup=%u product_writes=closed development_control=configured\n",
                   static_cast<unsigned>(state));
+    ledDeadlineStarted = ledDeadline.begin();
+    Serial.printf("TEST_LED deadline_ready=%u output=closed\n", ledDeadlineStarted);
 }
 
 void loop() {
@@ -88,10 +93,11 @@ void loop() {
     if (now - lastReport >= 10000UL) {
         lastReport = now;
         Serial.printf("TEST_STATUS ble_service=%u diagnostic_service=%u registry=%u "
-                      "advertising=%u game=disabled component_actions=closed\n",
+                      "advertising=%u led_deadline=%u led_fault=%u game=disabled component_actions=closed\n",
                       gatts.serviceReady(), gatts.diagnosticServiceReady(),
                       static_cast<unsigned>(gatts.registryState()),
-                      static_cast<unsigned>(gatts.advertisingState()));
+                      static_cast<unsigned>(gatts.advertisingState()),
+                      ledDeadlineStarted, ledDeadline.failed());
         if (admission)
             Serial.printf("TEST_ADMISSION boot=%08lX%08lX path=development-control\n",
                           static_cast<unsigned long>(admission->boot() >> 32),
