@@ -52,6 +52,17 @@ internal class DiagnosticGattEvidenceBoundaryV1(
         return true
     }
 
+    fun developmentInfo(observedGeneration: Int, characteristic: UUID,
+                        info: DiagnosticDevelopmentInfoV1): Boolean {
+        if (observedGeneration != generation ||
+            characteristic != DiagnosticDevelopmentInfoCodecV1.characteristic ||
+            "development-info" in acknowledged) return false
+        if (!emit(DiagnosticConnectionEventV1.Kind.DEVELOPMENT_INFO, null,
+                "device=${info.deviceId};boot=${info.bootId};image_identity_only;physical_unverified")) return false
+        acknowledged.add("development-info")
+        return true
+    }
+
     fun writeAck(observedGeneration: Int, characteristic: UUID, message: Long): Boolean {
         if (observedGeneration != generation || characteristic !in setOf(route.controlRequest, route.stepRequest)) return false
         val key = "$characteristic:$message"

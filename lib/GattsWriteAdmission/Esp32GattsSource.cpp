@@ -1146,8 +1146,16 @@ bool Esp32GattsSource::requestNow(std::uint16_t packed, std::uint32_t transactio
             response.value.handle = read.handle;
             response.value.offset = read.offset;
             const std::size_t remaining = sizeof(payload) - read.offset;
-            // Fit the minimum ATT MTU (23); a long read continues at offset 22.
-            response.value.length = static_cast<std::uint16_t>(remaining > 22 ? 22 : remaining);
+            std::uint16_t mtu = 23;
+            portENTER_CRITICAL(&mutex_);
+            if (diagnosticMtuBirth_ == link && diagnosticMtu_ >= 23 && diagnosticMtu_ <= 517)
+                mtu = diagnosticMtu_;
+            portEXIT_CRITICAL(&mutex_);
+            // A short response ends an Android read. Use the captured MTU;
+            // with the default MTU, a long read continues at offset 22.
+            const std::size_t capacity = mtu - 1;
+            response.value.length = static_cast<std::uint16_t>(
+                remaining > capacity ? capacity : remaining);
             if (response.value.length)
                 std::memcpy(response.value.value, payload + read.offset, response.value.length);
             (void)GATTS_SendRsp(packed, transaction, ESP_GATT_OK, &response);

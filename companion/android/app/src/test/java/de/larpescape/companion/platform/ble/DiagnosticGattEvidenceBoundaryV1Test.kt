@@ -14,6 +14,18 @@ class DiagnosticGattEvidenceBoundaryV1Test {
     private val grant = "12345678-1234-4123-8123-123456789abd"
     private val origin = DiagnosticControlOriginV1(7, 1, 1, 1, 1, true)
 
+    @Test fun developmentIdentityIsRecordedOnceForTheCurrentGenerationOnly() {
+        val received = mutableListOf<DiagnosticConnectionEventV1>()
+        val gate = DiagnosticGattEvidenceBoundaryV1(7, "A8:42:E3:CD:4B:18") { received.add(it); true }
+        val info = DiagnosticDevelopmentInfoV1(device, boot)
+        assertFalse(gate.developmentInfo(6, DiagnosticDevelopmentInfoCodecV1.characteristic, info))
+        assertFalse(gate.developmentInfo(7, route.controlReply, info))
+        assertTrue(gate.developmentInfo(7, DiagnosticDevelopmentInfoCodecV1.characteristic, info))
+        assertFalse(gate.developmentInfo(7, DiagnosticDevelopmentInfoCodecV1.characteristic, info))
+        assertEquals(DiagnosticConnectionEventV1.Kind.DEVELOPMENT_INFO, received.single().kind)
+        assertTrue(received.single().detail.contains("physical_unverified"))
+    }
+
     private fun controlReply(request: DiagnosticControlRequestV1): DiagnosticControlReplyV1 {
         val bytes = ByteArray(DiagnosticControlV1.REPLY_BYTES)
         val encoded = DiagnosticControlV1.encode(request)

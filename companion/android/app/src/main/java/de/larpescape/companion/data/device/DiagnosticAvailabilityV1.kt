@@ -32,6 +32,9 @@ enum class DiagnosticAvailabilityV1(val detail: String) {
     ROLE_MISSING("Beide Diagnose-Benachrichtigungen sind eingetroffen. Eine geprüfte Geräte- und Spielleitungsrolle fehlt; Geräteaktionen bleiben gesperrt."),
     ROLE_CHANGED("Die Rollenbindung passt nicht mehr zur ursprünglichen Verbindung."),
     TRANSPORT_ONLY("Beide Diagnose-Benachrichtigungen sind eingetroffen. Es liegt keine bestätigte Geräteaktion oder Hardwareprüfung vor."),
+    DEVELOPMENT_INFO_PENDING("Test-Firmware erkannt; Geräte- und Bootkennung werden auf dieser Verbindung gelesen."),
+    DEVELOPMENT_INFO_FAILED("Test-Firmware-Kennung konnte nicht bestätigt werden. Geräteaktionen bleiben gesperrt."),
+    DEVELOPMENT_IMAGE_IDENTIFIED("Test-Firmware und Bootkennung auf dieser Verbindung gelesen. Geräteaktionen sind noch nicht freigegeben."),
     OTHER_BLOCK("Die Diagnoseverbindung ist gesperrt. Erneut verbinden und den Status prüfen."),
 }
 
@@ -47,6 +50,9 @@ fun diagnosticAvailability(
     DiagnosticGattPhaseV1.STEP_CCCD_PENDING -> DiagnosticAvailabilityV1.STEP_SUBSCRIPTION_PENDING
     DiagnosticGattPhaseV1.CCCD_WRITES_ACKNOWLEDGED -> DiagnosticAvailabilityV1.SUBSCRIPTION_UNPROVEN
     DiagnosticGattPhaseV1.TRANSPORT_READY -> when (blockStatus) {
+        "DEVELOPMENT_INFO_PENDING" -> DiagnosticAvailabilityV1.DEVELOPMENT_INFO_PENDING
+        "DEVELOPMENT_INFO_FAILED" -> DiagnosticAvailabilityV1.DEVELOPMENT_INFO_FAILED
+        "DEVELOPMENT_IMAGE_IDENTIFIED" -> DiagnosticAvailabilityV1.DEVELOPMENT_IMAGE_IDENTIFIED
         "ROLE_ISSUER_MISSING" -> DiagnosticAvailabilityV1.ROLE_MISSING
         "ROLE_GENERATION_MISMATCH" -> DiagnosticAvailabilityV1.ROLE_CHANGED
         else -> DiagnosticAvailabilityV1.TRANSPORT_ONLY

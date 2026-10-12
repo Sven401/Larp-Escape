@@ -402,6 +402,11 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
             override fun onCharacteristicRead(connection: BluetoothGatt, characteristic: BluetoothGattCharacteristic, value: ByteArray, status: Int) {
                 val copy = value.copyOf()
                 dispatch(connection) {
+                    if (diagnostic?.onDevelopmentInfoRead(characteristic, copy,
+                            status == BluetoothGatt.GATT_SUCCESS) == true) {
+                        diagnostic?.let(::reportDiagnostic)
+                        return@dispatch
+                    }
                     if (characteristic.uuid != markerId) return@dispatch
                     check(status == BluetoothGatt.GATT_SUCCESS && copy.toString(Charsets.UTF_8) == "V2 LAB; fake owners; injected authority; RAM journal") { "Labmarker ungültig" }
                     val output = connection.getService(labService).getCharacteristic(outputId) ?: error("Statusausgabe fehlt")
@@ -414,6 +419,7 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
                 if (descriptor.characteristic?.uuid == de.larpescape.protocol.DiagnosticGattFirmwareV1.route.controlReply ||
                     descriptor.characteristic?.uuid == de.larpescape.protocol.DiagnosticGattFirmwareV1.route.stepReply) {
                     diagnostic?.onDescriptorWrite(descriptor, status == BluetoothGatt.GATT_SUCCESS)
+                    diagnostic?.readDevelopmentInfoIfReady()
                     Log.i("LarpEscape", "DIAGNOSTIC_GATT ${diagnostic?.blockStatus}")
                     diagnostic?.let(::reportDiagnostic)
                     return@dispatch
@@ -427,6 +433,7 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
                 val copy = value.copyOf()
                 dispatch(connection) {
                     diagnostic?.onNotification(characteristic, copy)
+                    diagnostic?.readDevelopmentInfoIfReady()
                     diagnostic?.let(::reportDiagnostic)
                     if (characteristic.uuid != outputId) return@dispatch
                     val complete = frames.accept(copy, SystemClock.elapsedRealtime()) ?: return@dispatch
