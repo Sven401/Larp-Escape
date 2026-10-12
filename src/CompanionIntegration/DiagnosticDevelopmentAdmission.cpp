@@ -82,10 +82,19 @@ void DevelopmentAdmission::disconnect(
         active_ = false;
 }
 
-void DevelopmentAdmission::cancel(const DevelopmentLink &link, const Uuid &run,
-                                  const Uuid &grant) noexcept {
-    if (current(link) && run == run_ && grant == grant_)
+DevelopmentAdmissionResult DevelopmentAdmission::cancel(
+    const DevelopmentLink &link, const Uuid &run, const Uuid &grant,
+    std::uint64_t now) noexcept {
+    if (!clock(now))
+        return DevelopmentAdmissionResult::Unavailable;
+    if (!current(link)) {
         active_ = false;
+        return DevelopmentAdmissionResult::StaleLink;
+    }
+    if (!(run == run_) || !(grant == grant_))
+        return DevelopmentAdmissionResult::Invalid;
+    active_ = false;
+    return DevelopmentAdmissionResult::Accepted;
 }
 
 } // namespace diagnostic

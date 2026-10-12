@@ -1,4 +1,5 @@
 #include "CompanionIntegration/DiagnosticDevelopmentAdmission.h"
+#include "CompanionIntegration/DiagnosticDevelopmentControl.h"
 #include <cstdio>
 #include <cstdlib>
 
@@ -26,7 +27,7 @@ static DevelopmentLink link() {
     DevelopmentLink result;
     result.original.device = device();
     result.original.connection.token = 41;
-    result.original.connection.handle = 3;
+    result.original.connection.handle = 1;
     result.original.address = {{1, 2, 3, 4, 5, 6}};
     result.original.registration = 7;
     result.original.lifecycle = 2;
@@ -88,9 +89,13 @@ int main() {
           DevelopmentAdmissionResult::Invalid);
     CHECK(owner.step(current, run, grant, 2, 100, 23) ==
           DevelopmentAdmissionResult::Accepted);
-    owner.cancel(broken, run, grant);
+    CHECK(owner.cancel(broken, run, grant, 23) == DevelopmentAdmissionResult::StaleLink);
+    CHECK(!owner.active());
+    CHECK(owner.begin(current, uuid(21), uuid(22), 1000, true, 23) ==
+          DevelopmentAdmissionResult::Accepted);
+    run = uuid(21); grant = uuid(22);
     CHECK(owner.active());
-    owner.cancel(current, run, grant);
+    CHECK(owner.cancel(current, run, grant, 23) == DevelopmentAdmissionResult::Accepted);
     CHECK(!owner.active());
     CHECK(owner.begin(current, run, uuid(5), 1000, true, 24) ==
           DevelopmentAdmissionResult::Replay);
@@ -111,5 +116,55 @@ int main() {
     CHECK(!owner.active());
     CHECK(owner.begin(current, uuid(7), uuid(8), 1000, true, 1099) ==
           DevelopmentAdmissionResult::Unavailable); // clock went backwards
+
+    DevelopmentAdmission wireAdmission(device(), 123);
+    DevelopmentControl control(wireAdmission, device(), 123);
+    const auto makeFrame = [](ControlCommand command, std::uint32_t message,
+                              const Uuid &runId, const Uuid &grantId,
+                              std::uint32_t ttl, bool consent) {
+        std::array<std::uint8_t, TransportLimits::RequestBytes> frame = {};
+        frame[0] = 'D'; frame[1] = 'G'; frame[2] = 1;
+        frame[3] = static_cast<std::uint8_t>(command);
+        for (unsigned i = 0; i < 4; ++i) {
+            frame[4 + i] = static_cast<std::uint8_t>(message >> (8 * i));
+            frame[64 + i] = static_cast<std::uint8_t>(ttl >> (8 * i));
+        }
+        frame[8] = 1;
+        frame[24] = 123;
+        for (unsigned i = 0; i < 16; ++i) {
+            frame[32 + i] = runId.bytes[i];
+            frame[48 + i] = grantId.bytes[i];
+        }
+        frame[68] = consent ? 1 : 0;
+        return frame;
+    };
+    std::array<std::uint8_t, TransportLimits::ReplyBytes> reply = {};
+    const auto capability = makeFrame(ControlCommand::Capabilities, 1, {}, {}, 0, false);
+    CHECK(control.process(capability.data(), capability.size(), current, {}, 10,
+                          reply.data(), reply.size()));
+    CHECK(reply[3] == 0x81 && reply[64] == 0 && reply[65] == 4 && reply[66] == 1);
+    const auto request = makeFrame(ControlCommand::Grant, 2, uuid(31), {}, 1000, true);
+    broken = current; broken.bonded = false;
+    CHECK(control.process(request.data(), request.size(), broken, uuid(32), 11,
+                          reply.data(), reply.size()));
+    CHECK(reply[64] == 1 && !wireAdmission.active());
+    CHECK(control.process(request.data(), request.size(), current, uuid(32), 12,
+                          reply.data(), reply.size()));
+    CHECK(reply[3] == 0x82 && reply[64] == 0 && reply[65] == 4 &&
+          reply[48 + 6] == 0x40 && reply[48 + 8] == 0x80 && reply[63] == 32);
+    CHECK(wireAdmission.active());
+    const auto cancel = makeFrame(ControlCommand::Cancel, 3, uuid(31), uuid(32), 0, false);
+    CHECK(control.process(cancel.data(), cancel.size(), current, {}, 13,
+                          reply.data(), reply.size()));
+    CHECK(reply[3] == 0x83 && reply[64] == 0 && !wireAdmission.active());
+    CHECK(control.process(request.data(), request.size(), current, uuid(33), 14,
+                          reply.data(), reply.size()));
+    CHECK(reply[64] == 4 && !wireAdmission.active()); // consumed run cannot recur
+    auto malformed = request;
+    malformed[8] = 2;
+    reply.fill(0x5a);
+    CHECK(!control.process(malformed.data(), malformed.size(), current, uuid(34), 15,
+                           reply.data(), reply.size()));
+    CHECK(reply[0] == 0x5a); // invalid context cannot forge a correlated reply
     std::printf("development admission: %u checks passed\n", checks);
 }

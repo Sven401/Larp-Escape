@@ -18,10 +18,14 @@ def main():
     sources = [
         "test/test_diagnostic_development_admission/test_main.cpp",
         "src/CompanionIntegration/DiagnosticDevelopmentAdmission.cpp",
+        "src/CompanionIntegration/DiagnosticDevelopmentControl.cpp",
+        "src/CompanionIntegration/DiagnosticTransport.cpp",
         "src/CompanionIntegration/DiagnosticControl.cpp",
         "src/Companion/Identity.cpp",
         "src/Companion/IdentityAccess.cpp",
         "src/Companion/AuthorityState.cpp",
+        "src/Companion/PeerLinkSecurity.cpp",
+        "src/Companion/PeerProof.cpp",
     ]
     with tempfile.TemporaryDirectory(prefix="larp-diagnostic-development-") as directory:
         output = Path(directory) / "development-admission.exe"
