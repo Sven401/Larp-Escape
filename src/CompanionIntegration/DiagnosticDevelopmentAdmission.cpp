@@ -76,6 +76,13 @@ DevelopmentAdmissionResult DevelopmentAdmission::step(
     return DevelopmentAdmissionResult::Accepted;
 }
 
+bool DevelopmentAdmission::resultCurrent(
+    const DevelopmentLink &link, const Uuid &run, const Uuid &grant,
+    std::uint32_t stepId, std::uint64_t now) noexcept {
+    return clock(now) && current(link) && run == run_ && grant == grant_ &&
+           stepId == lastStep_;
+}
+
 void DevelopmentAdmission::disconnect(
     const companion::PeerTransportBinding &link) noexcept {
     if (active_ && link == owner_)

@@ -57,6 +57,8 @@ int main() {
           DevelopmentAdmissionResult::Busy);
     CHECK(owner.step(current, run, grant, 1, 100, 20) ==
           DevelopmentAdmissionResult::Accepted);
+    CHECK(owner.resultCurrent(current, run, grant, 1, 20));
+    CHECK(!owner.resultCurrent(current, run, grant, 2, 20));
     CHECK(owner.step(current, run, grant, 1, 100, 21) ==
           DevelopmentAdmissionResult::Replay);
     DevelopmentAdmission staleLifecycle(device(), 123);
@@ -153,10 +155,19 @@ int main() {
     CHECK(reply[3] == 0x82 && reply[64] == 0 && reply[65] == 4 &&
           reply[48 + 6] == 0x40 && reply[48 + 8] == 0x80 && reply[63] == 32);
     CHECK(wireAdmission.active());
+    DevelopmentRawStepRequest raw;
+    raw.device = device(); raw.boot = 123;
+    raw.run = uuid(31); raw.grant = uuid(32);
+    raw.message = 3; raw.step = 1; raw.timeoutMs = 100;
+    CHECK(control.admitRawStep(raw, current, 12) == DevelopmentAdmissionResult::Accepted);
+    CHECK(control.rawResultCurrent(raw, current, 12));
+    CHECK(!control.rawResultCurrent(raw, broken, 12));
+    CHECK(control.admitRawStep(raw, current, 12) == DevelopmentAdmissionResult::Replay);
     const auto cancel = makeFrame(ControlCommand::Cancel, 3, uuid(31), uuid(32), 0, false);
     CHECK(control.process(cancel.data(), cancel.size(), current, {}, 13,
                           reply.data(), reply.size()));
     CHECK(reply[3] == 0x83 && reply[64] == 0 && !wireAdmission.active());
+    CHECK(!control.rawResultCurrent(raw, current, 13));
     CHECK(control.process(request.data(), request.size(), current, uuid(33), 14,
                           reply.data(), reply.size()));
     CHECK(reply[64] == 4 && !wireAdmission.active()); // consumed run cannot recur

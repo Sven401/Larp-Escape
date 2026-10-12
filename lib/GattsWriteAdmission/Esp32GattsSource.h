@@ -12,6 +12,7 @@
 #include "../ClosedBleStackOwner/DiagnosticGattsDefinition.h"
 #if defined(LARP_DIAGNOSTIC_TEST_FIRMWARE)
 #include "CompanionIntegration/DiagnosticDevelopmentControl.h"
+#include "CompanionIntegration/DiagnosticRawExpanderProbe.h"
 #endif
 #include <freertos/task.h>
 namespace larp {
@@ -65,9 +66,21 @@ class Esp32GattsSource : public IGattsResponseContext,
     bool postDiagnosticClosedSetup(const diagnostic::DiagnosticClosedHandles &) noexcept;
     bool diagnosticClosedSetupInstalled(const diagnostic::DiagnosticClosedHandles &) const noexcept;
 #if defined(LARP_DIAGNOSTIC_TEST_FIRMWARE)
+    struct DevelopmentRawWork {
+        diagnostic::DevelopmentRawStepRequest request;
+        PeerTransportBinding original;
+        std::uint32_t token = 0, receivedAtMs = 0;
+    };
+    struct DevelopmentRawResult {
+        DevelopmentRawWork work;
+        diagnostic::RawExpanderObservation observation;
+        std::uint32_t startedAtMs = 0, endedAtMs = 0;
+    };
     // Immutable public identity for the development-only encrypted read.
     bool configureDevelopmentInfo(const Identity &, const BootIdentity &) noexcept;
     bool configureDevelopmentControl(diagnostic::DevelopmentControl &) noexcept;
+    bool takeDevelopmentRawWork(DevelopmentRawWork &) noexcept;
+    bool postDevelopmentRawResult(const DevelopmentRawResult &) noexcept;
 #endif
     GattsLifecycleOutcome connectionNow(std::uint8_t interface, const std::uint8_t *address,
                                         std::uint16_t packedConnection, bool connected) noexcept;
@@ -143,8 +156,17 @@ class Esp32GattsSource : public IGattsResponseContext,
     diagnostic::DevelopmentControl *developmentControl_ = nullptr;
     bool developmentSubscribed_ = false;
     std::uint16_t developmentRepliesUsed_ = 0;
+    struct DevelopmentRawPending {
+        DevelopmentRawWork work;
+        diagnostic::RawExpanderObservation observation;
+        std::uint32_t startedAtMs = 0, endedAtMs = 0;
+        std::uint8_t state = 0; // 0 free, 1 ready, 2 worker, 3 posted, 4 ACK reservation
+    } developmentRaw_;
+    std::uint32_t developmentRawToken_ = 0;
+    std::uint8_t developmentRawRepliesUsed_ = 0;
     bool readDevelopmentLinkNow(const PeerTransportBinding &,
                                 diagnostic::DevelopmentLink &) const noexcept;
+    static void sendDevelopmentRawResult(void *) noexcept;
 #endif
     struct RolePending {
         PeerRegistryRoleJob value;

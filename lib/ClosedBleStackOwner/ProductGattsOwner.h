@@ -66,6 +66,10 @@ class ProductGattsOwner {
     bool originalLink(larp::companion::PeerTransportBinding &) const noexcept;
 #if defined(LARP_DIAGNOSTIC_TEST_FIRMWARE)
     bool configureDevelopmentControl(larp::diagnostic::DevelopmentControl &) noexcept;
+    bool takeDevelopmentRawWork(
+        larp::companion::Esp32GattsSource::DevelopmentRawWork &) noexcept;
+    bool postDevelopmentRawResult(
+        const larp::companion::Esp32GattsSource::DevelopmentRawResult &) noexcept;
 #endif
 
   private:

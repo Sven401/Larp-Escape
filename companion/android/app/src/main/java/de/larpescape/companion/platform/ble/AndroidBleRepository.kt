@@ -196,7 +196,9 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
     }
     private fun reportDiagnostic(shell: AndroidDiagnosticGattShellV1) {
         if (diagnostic === shell)
-            mutable.value = mutable.value.copy(diagnosticAvailability = diagnosticAvailability(shell.link.phase, shell.link.failure, shell.blockStatus))
+            mutable.value = mutable.value.copy(
+                diagnosticAvailability = diagnosticAvailability(shell.link.phase, shell.link.failure, shell.blockStatus),
+                developmentRawReply = shell.developmentRawReply)
     }
     override fun requestDevelopmentGrant() = guarded {
         val shell = diagnostic ?: return@guarded
@@ -204,6 +206,11 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
             reportDiagnostic(shell)
             return@guarded
         }
+        reportDiagnostic(shell)
+    }
+    override fun requestDevelopmentRawObservation() = guarded {
+        val shell = diagnostic ?: return@guarded
+        shell.requestDevelopmentRawObservation()
         reportDiagnostic(shell)
     }
     private fun guarded(action: () -> Unit) {
@@ -492,7 +499,8 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
         try { old?.close() } catch (_: SecurityException) { }
         mutable.value = mutable.value.copy(connected = false, status = null, configuredStatus = null,
             freshness = StatusFreshness.DISCONNECTED, lab = false, message = "Getrennt",
-            diagnosticAvailability = DiagnosticAvailabilityV1.DISCONNECTED)
+            diagnosticAvailability = DiagnosticAvailabilityV1.DISCONNECTED,
+            developmentRawReply = null)
     }
     private fun clearSession() {
         stopScan(); disconnect(); handler.removeCallbacksAndMessages(null)

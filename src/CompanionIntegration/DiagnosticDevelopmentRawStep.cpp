@@ -26,7 +26,7 @@ bool valid(const DevelopmentRawStepReply &reply) noexcept {
         reply.endedDeviceMs > MaximumDeviceMs ||
         reply.observation.physicalChannelQualified ||
         reply.observation.address != 0x20 || reply.observation.reg != 0x13 ||
-        reply.observation.bit != 6)
+        reply.observation.bitIndex != 6)
         return false;
     if (reply.outcome == DevelopmentRawStepOutcome::Rejected)
         return !reply.startedDeviceMs && !reply.endedDeviceMs &&
@@ -127,7 +127,7 @@ bool DevelopmentRawStepWire::decodeReply(
     reply.rejection = static_cast<DevelopmentRawStepRejection>(bytes[102]);
     reply.observation.address = 0x20;
     reply.observation.reg = 0x13;
-    reply.observation.bit = 6;
+    reply.observation.bitIndex = 6;
     reply.observation.status = static_cast<RawRegisterStatus>(bytes[97]);
     reply.observation.rawByte = bytes[98];
     reply.observation.rawHigh = bytes[99] != 0;

@@ -54,6 +54,29 @@ class DiagnosticGattEvidenceBoundaryV1Test {
         assertTrue(received.last().detail.contains("physical_unverified"))
     }
 
+    @Test fun developmentRawResultIsJournaledAsUnqualifiedRegisterEvidence() {
+        val received = mutableListOf<DiagnosticConnectionEventV1>()
+        val gate = DiagnosticGattEvidenceBoundaryV1(7, "A8:42:E3:CD:4B:18") {
+            received.add(it); true
+        }
+        val request = DiagnosticDevelopmentRawStepRequestV1(3, device, boot, run, grant, 1)
+        val bytes = ByteArray(DiagnosticDevelopmentRawStepV1.REPLY_BYTES)
+        DiagnosticDevelopmentRawStepV1.encode(request).copyInto(bytes)
+        bytes[80] = 1; bytes[88] = 2; bytes[98] = 0x40; bytes[99] = 1
+        val reply = DiagnosticDevelopmentRawStepV1.correlate(bytes, request)
+        assertFalse(gate.developmentRawFinal(6, DiagnosticDevelopmentControlCodecV1.reply, request, reply))
+        assertFalse(gate.developmentRawFinal(7, route.stepReply, request, reply))
+        assertFalse(gate.developmentRawFinal(7, DiagnosticDevelopmentControlCodecV1.reply,
+            request.copy(stepId = 2), reply))
+        assertTrue(gate.developmentRawFinal(7, DiagnosticDevelopmentControlCodecV1.reply,
+            request, reply))
+        assertFalse(gate.developmentRawFinal(7, DiagnosticDevelopmentControlCodecV1.reply,
+            request, reply))
+        assertEquals(DiagnosticConnectionEventV1.Kind.STEP_REPLY, received.single().kind)
+        assertTrue(received.single().detail.contains("physical_channel_unqualified"))
+        assertTrue(received.single().detail.contains("rawByte=64"))
+    }
+
     private fun controlReply(request: DiagnosticControlRequestV1): DiagnosticControlReplyV1 {
         val bytes = ByteArray(DiagnosticControlV1.REPLY_BYTES)
         val encoded = DiagnosticControlV1.encode(request)

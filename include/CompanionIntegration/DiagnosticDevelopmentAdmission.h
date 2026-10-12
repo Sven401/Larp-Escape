@@ -32,6 +32,9 @@ class DevelopmentAdmission {
     DevelopmentAdmissionResult step(const DevelopmentLink &, const Uuid &run,
                                     const Uuid &grant, std::uint32_t stepId,
                                     std::uint32_t timeoutMs, std::uint64_t now) noexcept;
+    bool resultCurrent(const DevelopmentLink &, const Uuid &run,
+                       const Uuid &grant, std::uint32_t stepId,
+                       std::uint64_t now) noexcept;
     void disconnect(const companion::PeerTransportBinding &) noexcept;
     DevelopmentAdmissionResult cancel(const DevelopmentLink &, const Uuid &run,
                                       const Uuid &grant, std::uint64_t now) noexcept;

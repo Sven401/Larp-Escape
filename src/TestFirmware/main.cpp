@@ -6,6 +6,8 @@
 #include "ProductGattsOwner.h"
 #include "CompanionIntegration/DiagnosticDevelopmentAdmission.h"
 #include "CompanionIntegration/DiagnosticDevelopmentControl.h"
+#include "CompanionIntegration/DiagnosticRawExpanderProbe.h"
+#include "RawExpanderWire.h"
 
 #if !defined(LARP_DIAGNOSTIC_TEST_FIRMWARE) || !defined(LARP_PRODUCT_GATTS_CLOSED)
 #error "This entry point requires the isolated diagnostic test-firmware build"
@@ -53,6 +55,34 @@ void setup() {
 }
 
 void loop() {
+    larp::companion::Esp32GattsSource::DevelopmentRawWork work;
+    if (gatts.takeDevelopmentRawWork(work)) {
+        static bool busAttempted = false, busReady = false;
+        if (!busAttempted) {
+            busAttempted = true;
+            busReady = Wire.begin();
+            if (busReady)
+                Wire.setTimeOut(25);
+        }
+        larp::companion::Esp32GattsSource::DevelopmentRawResult result;
+        result.work = work;
+        result.startedAtMs = millis();
+        if (busReady) {
+            static RawExpanderWireReader reader(Wire);
+            static larp::diagnostic::RawExpanderProbe probe(reader);
+            result.observation = probe.sample();
+        } else {
+            result.observation.address = 0x20;
+            result.observation.reg = 0x13;
+            result.observation.bitIndex = 6;
+            result.observation.status =
+                larp::diagnostic::RawRegisterStatus::RegisterSelectFailed;
+            result.observation.busCode = 0xfe; // I2C controller did not start.
+        }
+        result.endedAtMs = millis();
+        if (!gatts.postDevelopmentRawResult(result))
+            Serial.println("TEST_RAW_RESULT delivery_unavailable");
+    }
     static unsigned long lastReport = 0;
     const auto now = millis();
     if (now - lastReport >= 10000UL) {

@@ -26,7 +26,7 @@ int main() {
     auto high = probe.sample();
     assert(reader.calls == 1 && reader.address == 0x20 && reader.reg == 0x13);
     assert(high.readable() && high.rawHigh && high.rawByte == 0x40);
-    assert(high.bit == 6 && !high.physicalChannelQualified);
+    assert(high.bitIndex == 6 && !high.physicalChannelQualified);
 
     reader.next = {RawRegisterStatus::Valid, 0xbf, 0};
     auto low = probe.sample();

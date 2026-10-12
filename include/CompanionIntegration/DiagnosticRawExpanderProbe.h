@@ -37,10 +37,10 @@ struct RawExpanderObservation {
                           std::uint8_t observedBit, RawRegisterStatus observedStatus,
                           std::uint8_t bytes, std::uint8_t code, bool high,
                           bool qualified) noexcept
-        : address(observedAddress), reg(observedRegister), bit(observedBit),
+        : address(observedAddress), reg(observedRegister), bitIndex(observedBit),
           status(observedStatus), rawByte(bytes), busCode(code), rawHigh(high),
           physicalChannelQualified(qualified) {}
-    std::uint8_t address = 0, reg = 0, bit = 0;
+    std::uint8_t address = 0, reg = 0, bitIndex = 0;
     RawRegisterStatus status = RawRegisterStatus::ReadFailed;
     std::uint8_t rawByte = 0, busCode = 0;
     bool rawHigh = false;

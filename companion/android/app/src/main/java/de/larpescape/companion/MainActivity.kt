@@ -270,6 +270,21 @@ class MainActivity : ComponentActivity() {
                                         Text("Entwicklungszulassung für 30 Sekunden anfragen")
                                     }
                                 }
+                                if (state.diagnosticAvailability ==
+                                    de.larpescape.companion.data.device.DiagnosticAvailabilityV1.DEVELOPMENT_GRANT_CONFIRMED) {
+                                    Button(onClick = model::requestDevelopmentRawObservation,
+                                        modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                                        Text("I²C-Rohregister einmal lesen · unqualifiziert")
+                                    }
+                                }
+                                state.developmentRawReply?.let { raw ->
+                                    Text("Erkundungsmessung Schritt ${raw.request.stepId}: ${raw.outcome}; " +
+                                        "I²C ${raw.i2cStatus}; Byte ${raw.rawByte?.let { "0x%02X".format(it) } ?: "unbekannt"}; " +
+                                        "Bit 6 ${raw.rawHigh?.let { if (it) "HIGH" else "LOW" } ?: "unbekannt"}; " +
+                                        "Buscode ${raw.busCode}; Ablehnung ${raw.rejection}.")
+                                    Text("Adresse 0x20, Register 0x13. Die Zuordnung zu einem Taster ist nicht bestätigt.",
+                                        style = MaterialTheme.typography.bodySmall)
+                                }
                                 Text("Diese Anzeige bestätigt keine Gerätefreigabe oder Hardwarefunktion.", style = MaterialTheme.typography.bodySmall)
                             }
                         }

@@ -109,6 +109,24 @@ internal class DiagnosticGattEvidenceBoundaryV1(
         return true
     }
 
+    fun developmentRawFinal(observedGeneration: Int, characteristic: UUID,
+                            request: DiagnosticDevelopmentRawStepRequestV1,
+                            reply: DiagnosticDevelopmentRawStepReplyV1): Boolean {
+        if (observedGeneration != generation ||
+            characteristic != DiagnosticDevelopmentControlCodecV1.reply ||
+            reply.request != request || reply.physicalChannelQualified)
+            return false
+        val key = "development-raw:${request.message}"
+        if (key in terminal) return false
+        if (!emit(DiagnosticConnectionEventV1.Kind.STEP_REPLY, request.message,
+                "step=${request.stepId};outcome=${reply.outcome};i2c=${reply.i2cStatus};" +
+                    "rawByte=${reply.rawByte ?: "unknown"};rawHigh=${reply.rawHigh ?: "unknown"};" +
+                    "busCode=${reply.busCode};rejection=${reply.rejection};" +
+                    "register=0x20/0x13/bit6;physical_channel_unqualified")) return false
+        terminal.add(key)
+        return true
+    }
+
     fun stepFinal(observedGeneration: Int, characteristic: UUID,
                   captured: DiagnosticControlOriginV1, current: DiagnosticControlOriginV1?,
                   request: DiagnosticStepRequestV1, reply: DiagnosticStepReplyV1): Boolean {

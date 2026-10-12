@@ -44,6 +44,9 @@ class DeviceViewModel(private val repository: DeviceRepository) : ViewModel() {
     fun requestDevelopmentGrant() {
         if (foreground && permissionGranted) repository.requestDevelopmentGrant()
     }
+    fun requestDevelopmentRawObservation() {
+        if (foreground && permissionGranted) repository.requestDevelopmentRawObservation()
+    }
     fun pairingReportBytes(): ByteArray? = repository.pairingReportBytes()
     fun pendingPairingReportBytes(): ByteArray? = repository.pendingPairingReportBytes()
     fun pairingExportCompleted() = repository.pairingExportCompleted()
