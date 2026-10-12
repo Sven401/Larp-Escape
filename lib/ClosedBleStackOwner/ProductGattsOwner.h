@@ -64,6 +64,9 @@ class ProductGattsOwner {
     }
     // Current original BTU birth only. False also covers stale/disconnected.
     bool originalLink(larp::companion::PeerTransportBinding &) const noexcept;
+#if defined(LARP_DIAGNOSTIC_TEST_FIRMWARE)
+    bool configureDevelopmentControl(larp::diagnostic::DevelopmentControl &) noexcept;
+#endif
 
   private:
     class Clock : public larp::companion::IProfileImportClock {

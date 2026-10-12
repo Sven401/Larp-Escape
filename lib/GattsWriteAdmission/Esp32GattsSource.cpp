@@ -1,9 +1,21 @@
 #include "Esp32GattsSource.h"
 #include <cstring>
 #include <new>
+#if defined(LARP_DIAGNOSTIC_TEST_FIRMWARE)
+#include <esp_gap_ble_api.h>
+#include <esp_system.h>
+#include "CompanionIntegration/DiagnosticDevelopmentControl.h"
+#endif
 namespace larp {
 namespace companion {
 namespace {
+#if defined(LARP_DIAGNOSTIC_TEST_FIRMWARE)
+constexpr std::size_t DevelopmentReplySlots = 256;
+// The public notify API can retain the byte pointer after returning. A slot
+// is never reused in this boot; exhaustion rejects new control writes.
+std::uint8_t developmentReplies[DevelopmentReplySlots]
+                               [diagnostic::TransportLimits::ReplyBytes] = {};
+#endif
 Esp32GattsSource *selected = nullptr;
 std::uint16_t application = 0;
 sdk446::Callbacks originalCallbacks = {};
@@ -738,7 +750,8 @@ bool Esp32GattsSource::postDiagnosticClosedSetup(
         value.service, value.controlWrite, value.controlReply, value.controlCccd,
         value.stepWrite, value.stepReply, value.stepCccd
 #if defined(LARP_DIAGNOSTIC_TEST_FIRMWARE)
-        , value.developmentInfo
+        , value.developmentInfo, value.developmentWrite, value.developmentReply,
+        value.developmentCccd
 #endif
     };
     for (const auto attribute : attributes)
@@ -813,7 +826,10 @@ bool Esp32GattsSource::diagnosticClosedSetupInstalled(
                            diagnostic_.value.stepReply == value.stepReply &&
                            diagnostic_.value.stepCccd == value.stepCccd
 #if defined(LARP_DIAGNOSTIC_TEST_FIRMWARE)
-                           && diagnostic_.value.developmentInfo == value.developmentInfo
+                           && diagnostic_.value.developmentInfo == value.developmentInfo &&
+                           diagnostic_.value.developmentWrite == value.developmentWrite &&
+                           diagnostic_.value.developmentReply == value.developmentReply &&
+                           diagnostic_.value.developmentCccd == value.developmentCccd
 #endif
                            ;
     portEXIT_CRITICAL(&mutex_);
@@ -829,6 +845,61 @@ bool Esp32GattsSource::configureDevelopmentInfo(const Identity &device,
     developmentInfoConfigured_ = true;
     return true;
 }
+bool Esp32GattsSource::configureDevelopmentControl(
+    diagnostic::DevelopmentControl &control) noexcept {
+    if (registered_ || developmentControl_)
+        return false;
+    developmentControl_ = &control;
+    return true;
+}
+bool Esp32GattsSource::readDevelopmentLinkNow(
+    const PeerTransportBinding &original,
+    diagnostic::DevelopmentLink &destination) const noexcept {
+    if (!sourceTask() || !developmentInfoConfigured_ || !developmentControl_ ||
+        !original.valid() || !active_ || !(original.connection == connection_) ||
+        original.connection.handle != live_.connection ||
+        original.address != live_.peerAddress || smpForwarding_)
+        return false;
+    auto address = original.address;
+    PeerTransportBinding after;
+    const auto current = [&]() noexcept {
+        return active_ && address == original.address &&
+               transportNow(after) && after == original;
+    };
+    std::array<std::uint8_t, 6> observedAddress = {};
+    std::uint8_t interface = 0, transport = 0, state = 0, keyBytes = 0;
+    if (!current() ||
+        !GATT_GetConnectionInfor(original.connection.handle, &interface,
+                                 observedAddress.data(), &transport) ||
+        interface != original.interface || transport != 2 ||
+        observedAddress != address || !current() ||
+        BTM_BleSecurityProcedureIsRunning(address.data()) || !current() ||
+        !BTM_GetLeSecurityState(address.data(), &state, &keyBytes) ||
+        (state & 1) == 0 || keyBytes < 7 || !current())
+        return false;
+    // The BLE SDK returns its bond database immediately. Refuse an overfull
+    // list instead of mistaking a truncated enumeration for an absent bond.
+    constexpr int MaximumBondEntries = 8;
+    const int stored = esp_ble_get_bond_device_num();
+    if (stored <= 0 || stored > MaximumBondEntries || !current())
+        return false;
+    // BTU's callback stack is small; this one actor owns the persistent copy.
+    static esp_ble_bond_dev_t bonds[MaximumBondEntries] = {};
+    int count = MaximumBondEntries;
+    if (esp_ble_get_bond_device_list(&count, bonds) != ESP_OK ||
+        count <= 0 || count > MaximumBondEntries || !current())
+        return false;
+    bool bonded = false;
+    for (int index = 0; index < count; ++index)
+        bonded = bonded || std::memcmp(bonds[index].bd_addr, address.data(),
+                                       address.size()) == 0;
+    if (!bonded || BTM_BleSecurityProcedureIsRunning(address.data()) || !current())
+        return false;
+    destination.original = original;
+    destination.encrypted = true;
+    destination.bonded = true;
+    return true;
+}
 #endif
 GattsLifecycleOutcome Esp32GattsSource::connectionNow(std::uint8_t interface,
                                                       const std::uint8_t *address,
@@ -841,6 +912,11 @@ GattsLifecycleOutcome Esp32GattsSource::connectionNow(std::uint8_t interface,
         std::memcpy(event.peerAddress.data(), address, event.peerAddress.size());
     if (!sourceTask() || interface != interface_ || (packed & 0xff) != interface)
         return GattsLifecycleOutcome::Invalid;
+#if defined(LARP_DIAGNOSTIC_TEST_FIRMWARE)
+    PeerTransportBinding ending;
+    if (developmentControl_ && transportNow(ending))
+        developmentControl_->disconnect(ending);
+#endif
     reconcileProofGrantCloseNow();
     portENTER_CRITICAL(&mutex_);
     peerProofOpen_ = false;
@@ -850,6 +926,9 @@ GattsLifecycleOutcome Esp32GattsSource::connectionNow(std::uint8_t interface,
     diagnosticProbeBirth_ = {};
     controlProbeSubscribed_ = false;
     stepProbeSubscribed_ = false;
+#if defined(LARP_DIAGNOSTIC_TEST_FIRMWARE)
+    developmentSubscribed_ = false;
+#endif
     const bool lifetimeAvailable = lifecycle_ != UINT32_MAX;
     if (lifetimeAvailable)
         ++lifecycle_;
@@ -1212,6 +1291,129 @@ bool Esp32GattsSource::requestNow(std::uint16_t packed, std::uint32_t transactio
         if (installed)
             diagnostic = diagnostic_.value;
         portEXIT_CRITICAL(&mutex_);
+#if defined(LARP_DIAGNOSTIC_TEST_FIRMWARE)
+        if (installed && (event.attribute == diagnostic.developmentWrite ||
+                          event.attribute == diagnostic.developmentCccd)) {
+            if (!sourceTask() || !event.needResponse)
+                return true;
+            GattsSourceRegistration registration;
+            PeerTransportBinding original;
+            const bool bound = readRegistration(registration) &&
+                               registration == diagnostic.original && active_ &&
+                               packed == live_.connection &&
+                               (packed & 0xff) == registration.interface &&
+                               transportNow(original) &&
+                               original.registration == registration.token &&
+                               original.interface == registration.interface &&
+                               original.connection == connection_ &&
+                               original.address == live_.peerAddress;
+            diagnostic::DevelopmentLink secure;
+            if (!bound || !readDevelopmentLinkNow(original, secure)) {
+                if (bound && developmentControl_)
+                    developmentControl_->disconnect(original);
+                (void)GATTS_SendRsp(packed, transaction, ESP_GATT_INSUF_AUTHORIZATION,
+                                    nullptr);
+                return true;
+            }
+            if (event.attribute == diagnostic.developmentCccd) {
+                const bool subscribe = !event.prepared && !event.offset &&
+                    event.count == 2 && borrowed->write.value &&
+                    borrowed->write.value[0] == 1 && borrowed->write.value[1] == 0;
+                const bool unsubscribe = !event.prepared && !event.offset &&
+                    event.count == 2 && borrowed->write.value &&
+                    borrowed->write.value[0] == 0 && borrowed->write.value[1] == 0;
+                if (!subscribe && !unsubscribe) {
+                    (void)GATTS_SendRsp(packed, transaction, ESP_GATT_INVALID_PDU, nullptr);
+                    return true;
+                }
+                const auto sent = GATTS_SendRsp(packed, transaction, ESP_GATT_OK, nullptr);
+                if (sent != 0)
+                    return true;
+                PeerTransportBinding after;
+                if (!transportNow(after) || !(after == original))
+                    return true;
+                if (!(diagnosticProbeBirth_ == original)) {
+                    diagnosticProbeBirth_ = original;
+                    controlProbeSubscribed_ = false;
+                    stepProbeSubscribed_ = false;
+                    developmentSubscribed_ = false;
+                }
+                const bool previously = developmentSubscribed_;
+                developmentSubscribed_ = subscribe;
+                if (unsubscribe)
+                    developmentControl_->disconnect(original);
+                if (subscribe && !previously) {
+                    static std::uint8_t probe[5] = {'D', 'G', 1, 0x50, 3};
+                    (void)esp_ble_gatts_send_indicate(
+                        original.interface, static_cast<std::uint16_t>(packed >> 8),
+                        diagnostic.developmentReply, sizeof(probe), probe, false);
+                }
+                return true;
+            }
+            std::uint16_t mtu = 0;
+            if (event.prepared || event.offset ||
+                event.count != diagnostic::TransportLimits::RequestBytes ||
+                !borrowed->write.value) {
+                (void)GATTS_SendRsp(packed, transaction, ESP_GATT_INVALID_ATTR_LEN,
+                                    nullptr);
+                return true;
+            }
+            if (!developmentControl_ || !developmentSubscribed_ ||
+                !(diagnosticProbeBirth_ == original) ||
+                !readDiagnosticOriginalMtu(original, mtu) ||
+                mtu < diagnostic::TransportLimits::ReplyBytes + 3) {
+                (void)GATTS_SendRsp(packed, transaction, ESP_GATT_INSUF_AUTHORIZATION,
+                                    nullptr);
+                return true;
+            }
+            if (developmentRepliesUsed_ >= DevelopmentReplySlots) {
+                (void)GATTS_SendRsp(packed, transaction, ESP_GATT_NO_RESOURCES, nullptr);
+                return true;
+            }
+            diagnostic::Uuid grant;
+            esp_fill_random(grant.bytes.data(), grant.bytes.size());
+            grant.bytes[6] = (grant.bytes[6] & 0x0f) | 0x40;
+            grant.bytes[8] = (grant.bytes[8] & 0x3f) | 0x80;
+            auto *reply = developmentReplies[developmentRepliesUsed_];
+            const bool processed = developmentControl_->process(
+                borrowed->write.value, event.count, secure, grant,
+                clock_.nowMilliseconds(), reply,
+                diagnostic::TransportLimits::ReplyBytes);
+            if (!processed) {
+                (void)GATTS_SendRsp(packed, transaction, ESP_GATT_INVALID_PDU, nullptr);
+                return true;
+            }
+            diagnostic::DevelopmentLink after;
+            if (!readDevelopmentLinkNow(original, after) ||
+                !(after.original == original) ||
+                !(diagnosticProbeBirth_ == original) || !developmentSubscribed_) {
+                developmentControl_->disconnect(original);
+                (void)GATTS_SendRsp(packed, transaction, ESP_GATT_INSUF_AUTHORIZATION,
+                                    nullptr);
+                return true;
+            }
+            const auto ack = GATTS_SendRsp(packed, transaction, ESP_GATT_OK, nullptr);
+            if (ack != 0) {
+                developmentControl_->disconnect(original);
+                return true;
+            }
+            // ATT acceptance is distinct from the correlated notification.
+            // Reserve the slot even if the public SDK cannot queue delivery.
+            ++developmentRepliesUsed_;
+            if (!readDevelopmentLinkNow(original, after) ||
+                !(after.original == original) || !developmentSubscribed_ ||
+                !(diagnosticProbeBirth_ == original)) {
+                developmentControl_->disconnect(original);
+                return true;
+            }
+            if (esp_ble_gatts_send_indicate(
+                    original.interface, static_cast<std::uint16_t>(packed >> 8),
+                    diagnostic.developmentReply,
+                    diagnostic::TransportLimits::ReplyBytes, reply, false) != ESP_OK)
+                developmentControl_->disconnect(original);
+            return true;
+        }
+#endif
         if (installed && diagnostic.protectedWrite(event.attribute)) {
             GattsSourceRegistration original;
             PeerTransportBinding current;

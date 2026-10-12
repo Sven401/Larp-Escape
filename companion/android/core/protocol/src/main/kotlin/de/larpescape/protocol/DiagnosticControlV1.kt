@@ -26,8 +26,9 @@ class DiagnosticControlReplyV1 internal constructor(
     val outcome: DiagnosticControlOutcomeV1,
     val issuedDeviceMs: Long,
     val expiresDeviceMs: Long,
+    val owner: Int,
 ) {
-    val synthetic: Boolean get() = true
+    val synthetic: Boolean get() = owner == 3
     val controlOnly: Boolean get() = true
     val maxGrantMs: Int get() = 60000
 }
@@ -90,7 +91,7 @@ object DiagnosticControlV1 {
         return DiagnosticControlRequestV1(command(bytes[3].toInt() and 255), read(bytes, 4, 4).toLong(), hex(bytes, 8, 16),
             read(bytes, 24, 8).toString(16).uppercase().padStart(16, '0'), uuid(bytes, 32), uuid(bytes, 48), ttl.toInt(), bytes[68] == 1.toByte()).also(::validate)
     }
-    fun reply(bytes: ByteArray): DiagnosticControlReplyV1 {
+    fun reply(bytes: ByteArray, expectedOwner: Int = 3): DiagnosticControlReplyV1 {
         header(bytes, REPLY_BYTES)
         val kind = bytes[3].toInt() and 255
         require(kind in 0x81..0x83)
@@ -100,7 +101,8 @@ object DiagnosticControlV1 {
         require(message != 0L && device(deviceId) && boot(bootId))
         val runId = uuid(bytes, 32); val grantId = uuid(bytes, 48)
         val outcome = DiagnosticControlOutcomeV1.entries.getOrNull(bytes[64].toInt() and 255) ?: throw IllegalArgumentException("Unknown DG outcome")
-        require(bytes[65] == 3.toByte() && bytes[66] == 1.toByte() && bytes[67] == 0.toByte()) { "Unsupported DG capability flags/schema" }
+        require(expectedOwner in setOf(3, 4) && bytes[65] == expectedOwner.toByte() &&
+            bytes[66] == 1.toByte() && bytes[67] == 0.toByte()) { "Unsupported DG capability flags/schema" }
         require(read(bytes, 84, 4) == 60000uL)
         val issued = read(bytes, 68, 8); val expires = read(bytes, 76, 8)
         require(issued <= MAX_TIME.toULong() && expires <= MAX_TIME.toULong())
@@ -113,11 +115,13 @@ object DiagnosticControlV1 {
             }
             DiagnosticControlCommandV1.CANCEL -> require(runId != null && grantId != null && issued == 0uL && expires == 0uL)
         }
-        return DiagnosticControlReplyV1(cmd, message, deviceId, bootId, runId, grantId, outcome, issued.toLong(), expires.toLong())
+        return DiagnosticControlReplyV1(cmd, message, deviceId, bootId, runId, grantId,
+            outcome, issued.toLong(), expires.toLong(), expectedOwner)
     }
-    fun correlate(bytes: ByteArray, original: DiagnosticControlRequestV1): DiagnosticControlReplyV1 {
+    fun correlate(bytes: ByteArray, original: DiagnosticControlRequestV1,
+                  expectedOwner: Int = 3): DiagnosticControlReplyV1 {
         validate(original)
-        val reply = reply(bytes)
+        val reply = reply(bytes, expectedOwner)
         require(reply.command == original.command && reply.message == original.message && reply.deviceId == original.deviceId &&
             reply.bootId == original.bootId && reply.runId == original.runId) { "DG response correlation mismatch" }
         when (original.command) {

@@ -374,7 +374,8 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
                     if (evidenceReady) {
                         val shell = AndroidDiagnosticGattShellV1(connection, token, targetAddress = id,
                             evidenceSink = { event -> runCatching { diagnosticEvidence.append(event) }
-                                .onFailure { Log.e("LarpEscape", "Diagnostic evidence write failed", it) }.getOrDefault(false) })
+                                .onFailure { Log.e("LarpEscape", "Diagnostic evidence write failed", it) }.getOrDefault(false) },
+                            statusChanged = { diagnostic?.let(::reportDiagnostic) })
                         diagnostic = shell
                         val started = shell.discover()
                         reportDiagnostic(shell)
@@ -417,7 +418,8 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
             }
             override fun onDescriptorWrite(connection: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) = dispatch(connection) {
                 if (descriptor.characteristic?.uuid == de.larpescape.protocol.DiagnosticGattFirmwareV1.route.controlReply ||
-                    descriptor.characteristic?.uuid == de.larpescape.protocol.DiagnosticGattFirmwareV1.route.stepReply) {
+                    descriptor.characteristic?.uuid == de.larpescape.protocol.DiagnosticGattFirmwareV1.route.stepReply ||
+                    descriptor.characteristic?.uuid == de.larpescape.protocol.DiagnosticDevelopmentControlCodecV1.reply) {
                     diagnostic?.onDescriptorWrite(descriptor, status == BluetoothGatt.GATT_SUCCESS)
                     diagnostic?.readDevelopmentInfoIfReady()
                     Log.i("LarpEscape", "DIAGNOSTIC_GATT ${diagnostic?.blockStatus}")
@@ -465,6 +467,7 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
             }
             override fun onCharacteristicWrite(connection: BluetoothGatt, characteristic: BluetoothGattCharacteristic, status: Int) = dispatch(connection) {
                 diagnostic?.onCharacteristicWrite(characteristic, status == BluetoothGatt.GATT_SUCCESS)
+                diagnostic?.let(::reportDiagnostic)
             }
         }
         gatt = device.connectGatt(context, false, callback, BluetoothDevice.TRANSPORT_LE)

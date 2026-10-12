@@ -13,7 +13,7 @@ enum class DiagnosticGattsPhase : std::uint8_t {
     Idle, Creating, ControlWrite, ControlReply, ControlCccd, StepWrite,
     StepReply, StepCccd,
 #if defined(LARP_DIAGNOSTIC_TEST_FIRMWARE)
-    DevelopmentInfo,
+    DevelopmentInfo, DevelopmentWrite, DevelopmentReply, DevelopmentCccd,
 #endif
     Installing, Starting, Ready, Failed
 };

@@ -31,6 +31,12 @@ bool ProductGattsOwner::originalLink(PeerTransportBinding &destination) const no
            registryState() == RegistryState::StoredRegistryInstalledClosed &&
            source_.readOriginalTransport(destination);
 }
+#if defined(LARP_DIAGNOSTIC_TEST_FIRMWARE)
+bool ProductGattsOwner::configureDevelopmentControl(
+    larp::diagnostic::DevelopmentControl &control) noexcept {
+    return state_ == State::NotStarted && source_.configureDevelopmentControl(control);
+}
+#endif
 void ProductGattsOwner::recordSecurityEvent(const SecurityEvent &event) noexcept {
     securityEventCount_.fetch_add(1, std::memory_order_relaxed);
     if (!securityEvents_ || xQueueSend(securityEvents_, &event, 0) != pdTRUE)

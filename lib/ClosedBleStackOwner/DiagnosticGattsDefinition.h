@@ -8,7 +8,7 @@ namespace diagnostic {
 // BLE/ESP little-endian UUID bytes, distinct from the existing game service.
 struct DiagnosticGattsDefinition {
 #if defined(LARP_DIAGNOSTIC_TEST_FIRMWARE)
-    static const std::uint16_t Handles = 13; // plus development-info declaration/value
+    static const std::uint16_t Handles = 18; // info and separate development write/reply/CCCD
 #else
     static const std::uint16_t Handles = 11; // service, four declaration/value pairs, two CCCDs
 #endif
@@ -24,6 +24,8 @@ struct DiagnosticGattsDefinition {
     static std::array<std::uint8_t, 16> stepReply() noexcept { return uuid(0x14); }
 #if defined(LARP_DIAGNOSTIC_TEST_FIRMWARE)
     static std::array<std::uint8_t, 16> developmentInfo() noexcept { return uuid(0x15); }
+    static std::array<std::uint8_t, 16> developmentWrite() noexcept { return uuid(0x16); }
+    static std::array<std::uint8_t, 16> developmentReply() noexcept { return uuid(0x17); }
 #endif
 };
 
@@ -33,6 +35,7 @@ struct DiagnosticClosedHandles {
                   controlCccd = 0, stepWrite = 0, stepReply = 0, stepCccd = 0;
 #if defined(LARP_DIAGNOSTIC_TEST_FIRMWARE)
     std::uint16_t developmentInfo = 0;
+    std::uint16_t developmentWrite = 0, developmentReply = 0, developmentCccd = 0;
 #endif
     bool complete() const noexcept {
         return original.token && original.interface != 0xff && service &&
@@ -40,8 +43,10 @@ struct DiagnosticClosedHandles {
                controlReply < controlCccd && controlCccd < stepWrite &&
                stepWrite < stepReply && stepReply < stepCccd &&
 #if defined(LARP_DIAGNOSTIC_TEST_FIRMWARE)
-               stepCccd < developmentInfo &&
-               static_cast<std::uint32_t>(developmentInfo) <
+               stepCccd < developmentInfo && developmentInfo < developmentWrite &&
+               developmentWrite < developmentReply &&
+               developmentReply < developmentCccd &&
+               static_cast<std::uint32_t>(developmentCccd) <
 #else
                static_cast<std::uint32_t>(stepCccd) <
 #endif

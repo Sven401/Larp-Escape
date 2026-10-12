@@ -54,6 +54,20 @@ bool addDevelopmentInfo(std::uint16_t service) noexcept {
     return esp_ble_gatts_add_char(service, &uuid, ESP_GATT_PERM_READ_ENCRYPTED,
                                   ESP_GATT_CHAR_PROP_BIT_READ, &value, &control) == ESP_OK;
 }
+bool addDevelopmentCharacteristic(std::uint16_t service,
+                                  const std::array<std::uint8_t, 16> &bytes,
+                                  bool request) noexcept {
+    auto uuid = sdkUuid(bytes);
+    esp_attr_value_t value = {};
+    value.attr_max_len = 128;
+    esp_attr_control_t control = {};
+    control.auto_rsp = ESP_GATT_RSP_BY_APP;
+    return esp_ble_gatts_add_char(service, &uuid,
+                                  request ? ESP_GATT_PERM_WRITE_ENCRYPTED : 0,
+                                  request ? ESP_GATT_CHAR_PROP_BIT_WRITE
+                                          : ESP_GATT_CHAR_PROP_BIT_NOTIFY,
+                                  &value, &control) == ESP_OK;
+}
 #endif
 } // namespace
 bool DiagnosticGattsService::begin() noexcept {
@@ -180,6 +194,14 @@ bool DiagnosticGattsService::postNext() noexcept {
 #if defined(LARP_DIAGNOSTIC_TEST_FIRMWARE)
     case DiagnosticGattsPhase::DevelopmentInfo:
         return addDevelopmentInfo(handles_.service);
+    case DiagnosticGattsPhase::DevelopmentWrite:
+        return addDevelopmentCharacteristic(handles_.service,
+                                            DiagnosticGattsDefinition::developmentWrite(), true);
+    case DiagnosticGattsPhase::DevelopmentReply:
+        return addDevelopmentCharacteristic(handles_.service,
+                                            DiagnosticGattsDefinition::developmentReply(), false);
+    case DiagnosticGattsPhase::DevelopmentCccd:
+        return addCccd(handles_.service);
 #endif
     default:
         return false;
@@ -274,6 +296,21 @@ void DiagnosticGattsService::service(bool gameServiceReady) noexcept {
                 destination = &handles_.developmentInfo; previous = handles_.stepCccd;
                 expected = event.kind == DiagnosticGattsEventKind::Characteristic &&
                            event.uuid128 && event.uuid == DiagnosticGattsDefinition::developmentInfo();
+                phase_ = DiagnosticGattsPhase::DevelopmentWrite; break;
+            case DiagnosticGattsPhase::DevelopmentWrite:
+                destination = &handles_.developmentWrite; previous = handles_.developmentInfo;
+                expected = event.kind == DiagnosticGattsEventKind::Characteristic &&
+                           event.uuid128 && event.uuid == DiagnosticGattsDefinition::developmentWrite();
+                phase_ = DiagnosticGattsPhase::DevelopmentReply; break;
+            case DiagnosticGattsPhase::DevelopmentReply:
+                destination = &handles_.developmentReply; previous = handles_.developmentWrite;
+                expected = event.kind == DiagnosticGattsEventKind::Characteristic &&
+                           event.uuid128 && event.uuid == DiagnosticGattsDefinition::developmentReply();
+                phase_ = DiagnosticGattsPhase::DevelopmentCccd; break;
+            case DiagnosticGattsPhase::DevelopmentCccd:
+                destination = &handles_.developmentCccd; previous = handles_.developmentReply;
+                expected = event.kind == DiagnosticGattsEventKind::Descriptor &&
+                           event.uuid16 == ESP_GATT_UUID_CHAR_CLIENT_CONFIG;
 #endif
                 phase_ = DiagnosticGattsPhase::Installing; break;
             default: break;

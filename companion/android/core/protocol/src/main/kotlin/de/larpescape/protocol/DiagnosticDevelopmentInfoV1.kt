@@ -24,3 +24,13 @@ object DiagnosticDevelopmentInfoCodecV1 {
         return DiagnosticDevelopmentInfoV1(deviceId, bootId)
     }
 }
+
+/** Separate control endpoint of the development image; never a product GM role. */
+object DiagnosticDevelopmentControlCodecV1 {
+    val write: UUID = UUID.fromString("407e6a1d-1cc2-43fd-856b-4aff85a20016")
+    val reply: UUID = UUID.fromString("407e6a1d-1cc2-43fd-856b-4aff85a20017")
+    val probe: ByteArray = byteArrayOf('D'.code.toByte(), 'G'.code.toByte(), 1, 0x50, 3)
+
+    fun correlate(bytes: ByteArray, request: DiagnosticControlRequestV1): DiagnosticControlReplyV1 =
+        DiagnosticControlV1.correlate(bytes, request, expectedOwner = 4)
+}

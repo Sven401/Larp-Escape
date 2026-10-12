@@ -25,7 +25,8 @@ internal class DiagnosticGattEvidenceBoundaryV1(
     }
 
     fun cccdWriteAck(observedGeneration: Int, characteristic: UUID): Boolean {
-        if (observedGeneration != generation || characteristic !in setOf(route.controlReply, route.stepReply)) return false
+        if (observedGeneration != generation || characteristic !in setOf(route.controlReply, route.stepReply,
+                DiagnosticDevelopmentControlCodecV1.reply)) return false
         val key = "cccd:$characteristic"
         if (key in acknowledged) return false
         if (!emit(DiagnosticConnectionEventV1.Kind.CCCD_WRITE_ACK, null,
@@ -35,7 +36,8 @@ internal class DiagnosticGattEvidenceBoundaryV1(
     }
 
     fun transportProbe(observedGeneration: Int, characteristic: UUID): Boolean {
-        if (observedGeneration != generation || characteristic !in setOf(route.controlReply, route.stepReply)) return false
+        if (observedGeneration != generation || characteristic !in setOf(route.controlReply, route.stepReply,
+                DiagnosticDevelopmentControlCodecV1.reply)) return false
         val key = "probe:$characteristic"
         if (key in acknowledged) return false
         if (!emit(DiagnosticConnectionEventV1.Kind.TRANSPORT_PROBE, null,
@@ -64,7 +66,8 @@ internal class DiagnosticGattEvidenceBoundaryV1(
     }
 
     fun writeAck(observedGeneration: Int, characteristic: UUID, message: Long): Boolean {
-        if (observedGeneration != generation || characteristic !in setOf(route.controlRequest, route.stepRequest)) return false
+        if (observedGeneration != generation || characteristic !in setOf(route.controlRequest, route.stepRequest,
+                DiagnosticDevelopmentControlCodecV1.write)) return false
         val key = "$characteristic:$message"
         if (key in acknowledged) return false
         if (!emit(DiagnosticConnectionEventV1.Kind.WRITE_ACK, message, "ATT_WRITE_ACK_ONLY")) return false
@@ -88,6 +91,24 @@ internal class DiagnosticGattEvidenceBoundaryV1(
         return true
     }
 
+    fun developmentControlFinal(observedGeneration: Int, characteristic: UUID,
+                                info: DiagnosticDevelopmentInfoV1,
+                                request: DiagnosticControlRequestV1,
+                                reply: DiagnosticControlReplyV1): Boolean {
+        if (observedGeneration != generation ||
+            characteristic != DiagnosticDevelopmentControlCodecV1.reply ||
+            reply.owner != 4 || reply.command != request.command ||
+            reply.message != request.message || reply.deviceId != info.deviceId ||
+            reply.bootId != info.bootId || reply.runId != request.runId)
+            return false
+        val key = "development-control:${request.message}"
+        if (key in terminal) return false
+        if (!emit(DiagnosticConnectionEventV1.Kind.CONTROL_REPLY, request.message,
+                "outcome=${reply.outcome};command=${reply.command};development_owner;wire_correlated;physical_unverified")) return false
+        terminal.add(key)
+        return true
+    }
+
     fun stepFinal(observedGeneration: Int, characteristic: UUID,
                   captured: DiagnosticControlOriginV1, current: DiagnosticControlOriginV1?,
                   request: DiagnosticStepRequestV1, reply: DiagnosticStepReplyV1): Boolean {
@@ -103,7 +124,7 @@ internal class DiagnosticGattEvidenceBoundaryV1(
 
     fun transportError(observedGeneration: Int, operation: String, message: Long?, reason: String,
                        pendingPhase: DiagnosticGattPhaseV1? = null): Boolean {
-        if (observedGeneration != generation || operation !in setOf("setup", "control", "step", "link") ||
+        if (observedGeneration != generation || operation !in setOf("setup", "control", "step", "link", "development") ||
             reason.length !in 1..100) return false
         val key = "error:$operation:$message"
         if (key in terminal) return false

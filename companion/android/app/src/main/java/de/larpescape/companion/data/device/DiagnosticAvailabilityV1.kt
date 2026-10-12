@@ -35,6 +35,13 @@ enum class DiagnosticAvailabilityV1(val detail: String) {
     DEVELOPMENT_INFO_PENDING("Test-Firmware erkannt; Geräte- und Bootkennung werden auf dieser Verbindung gelesen."),
     DEVELOPMENT_INFO_FAILED("Test-Firmware-Kennung konnte nicht bestätigt werden. Geräteaktionen bleiben gesperrt."),
     DEVELOPMENT_IMAGE_IDENTIFIED("Test-Firmware und Bootkennung auf dieser Verbindung gelesen. Geräteaktionen sind noch nicht freigegeben."),
+    DEVELOPMENT_CONTROL_MISSING("Test-Firmware erkannt, aber der getrennte Entwicklungs-Control-Kanal fehlt."),
+    DEVELOPMENT_SUBSCRIPTION_PENDING("Test-Firmware erkannt; Entwicklungsantworten werden abonniert."),
+    DEVELOPMENT_PROBE_PENDING("Entwicklungsabo bestätigt; Gerätebenachrichtigung steht noch aus."),
+    DEVELOPMENT_CAPABILITY_PENDING("Entwicklungsauftrag gesendet; bestätigte Geräteantwort steht aus."),
+    DEVELOPMENT_CONTROL_CONFIRMED("Entwicklungs-Control-Antwort vom Gerät empfangen. Baugruppenaktionen sind noch nicht angeschlossen."),
+    DEVELOPMENT_CONTROL_REJECTED("Entwicklungs-Control-Auftrag wurde vom Gerät abgelehnt."),
+    DEVELOPMENT_CONTROL_FAILED("Der Entwicklungs-Control-Kanal konnte nicht bestätigt werden."),
     OTHER_BLOCK("Die Diagnoseverbindung ist gesperrt. Erneut verbinden und den Status prüfen."),
 }
 
@@ -53,6 +60,13 @@ fun diagnosticAvailability(
         "DEVELOPMENT_INFO_PENDING" -> DiagnosticAvailabilityV1.DEVELOPMENT_INFO_PENDING
         "DEVELOPMENT_INFO_FAILED" -> DiagnosticAvailabilityV1.DEVELOPMENT_INFO_FAILED
         "DEVELOPMENT_IMAGE_IDENTIFIED" -> DiagnosticAvailabilityV1.DEVELOPMENT_IMAGE_IDENTIFIED
+        "DEVELOPMENT_CONTROL_MISSING" -> DiagnosticAvailabilityV1.DEVELOPMENT_CONTROL_MISSING
+        "DEVELOPMENT_SUBSCRIPTION_PENDING" -> DiagnosticAvailabilityV1.DEVELOPMENT_SUBSCRIPTION_PENDING
+        "DEVELOPMENT_PROBE_PENDING" -> DiagnosticAvailabilityV1.DEVELOPMENT_PROBE_PENDING
+        "DEVELOPMENT_CAPABILITY_PENDING" -> DiagnosticAvailabilityV1.DEVELOPMENT_CAPABILITY_PENDING
+        "DEVELOPMENT_CONTROL_CONFIRMED" -> DiagnosticAvailabilityV1.DEVELOPMENT_CONTROL_CONFIRMED
+        "DEVELOPMENT_CONTROL_REJECTED" -> DiagnosticAvailabilityV1.DEVELOPMENT_CONTROL_REJECTED
+        "DEVELOPMENT_CONTROL_FAILED" -> DiagnosticAvailabilityV1.DEVELOPMENT_CONTROL_FAILED
         "ROLE_ISSUER_MISSING" -> DiagnosticAvailabilityV1.ROLE_MISSING
         "ROLE_GENERATION_MISMATCH" -> DiagnosticAvailabilityV1.ROLE_CHANGED
         else -> DiagnosticAvailabilityV1.TRANSPORT_ONLY

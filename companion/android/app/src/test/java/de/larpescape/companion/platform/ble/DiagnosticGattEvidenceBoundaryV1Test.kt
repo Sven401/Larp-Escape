@@ -26,6 +26,34 @@ class DiagnosticGattEvidenceBoundaryV1Test {
         assertTrue(received.single().detail.contains("physical_unverified"))
     }
 
+    @Test fun developmentControlEvidenceRequiresItsOwnOwnerAndCurrentImage() {
+        val received = mutableListOf<DiagnosticConnectionEventV1>()
+        val gate = DiagnosticGattEvidenceBoundaryV1(7, "A8:42:E3:CD:4B:18") { received.add(it); true }
+        val request = DiagnosticControlRequestV1(DiagnosticControlCommandV1.CAPABILITY, 1, device, boot)
+        val bytes = ByteArray(DiagnosticControlV1.REPLY_BYTES)
+        DiagnosticControlV1.encode(request).copyInto(bytes, 0, 0, 64)
+        bytes[3] = 0x81.toByte(); bytes[64] = 0; bytes[65] = 4; bytes[66] = 1
+        bytes[84] = 0x60; bytes[85] = 0xEA.toByte()
+        val reply = DiagnosticDevelopmentControlCodecV1.correlate(bytes, request)
+        val info = DiagnosticDevelopmentInfoV1(device, boot)
+        assertFalse(gate.developmentControlFinal(6, DiagnosticDevelopmentControlCodecV1.reply, info, request, reply))
+        assertFalse(gate.developmentControlFinal(7, route.controlReply, info, request, reply))
+        assertFalse(gate.developmentControlFinal(7, DiagnosticDevelopmentControlCodecV1.reply,
+            info.copy(bootId = "0000000000000002"), request, reply))
+        assertFalse(gate.developmentControlFinal(7, DiagnosticDevelopmentControlCodecV1.reply,
+            info, request.copy(message = 2), reply))
+        assertTrue(gate.cccdWriteAck(7, DiagnosticDevelopmentControlCodecV1.reply))
+        assertTrue(gate.transportProbe(7, DiagnosticDevelopmentControlCodecV1.reply))
+        assertTrue(gate.writeAck(7, DiagnosticDevelopmentControlCodecV1.write, request.message))
+        assertTrue(gate.developmentControlFinal(7, DiagnosticDevelopmentControlCodecV1.reply,
+            info, request, reply))
+        assertFalse(gate.developmentControlFinal(7, DiagnosticDevelopmentControlCodecV1.reply,
+            info, request, reply))
+        assertEquals(DiagnosticConnectionEventV1.Kind.CONTROL_REPLY, received.last().kind)
+        assertTrue(received.last().detail.contains("development_owner"))
+        assertTrue(received.last().detail.contains("physical_unverified"))
+    }
+
     private fun controlReply(request: DiagnosticControlRequestV1): DiagnosticControlReplyV1 {
         val bytes = ByteArray(DiagnosticControlV1.REPLY_BYTES)
         val encoded = DiagnosticControlV1.encode(request)

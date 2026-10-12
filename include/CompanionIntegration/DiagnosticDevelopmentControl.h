@@ -19,6 +19,9 @@ class DevelopmentControl {
                  const DevelopmentLink &link, const Uuid &deviceGrant,
                  std::uint64_t now, std::uint8_t *reply,
                  std::size_t capacity) noexcept;
+    void disconnect(const companion::PeerTransportBinding &link) noexcept {
+        admission_.disconnect(link);
+    }
 
   private:
     DevelopmentAdmission &admission_;

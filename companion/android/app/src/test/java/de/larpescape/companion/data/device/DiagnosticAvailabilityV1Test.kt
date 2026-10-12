@@ -40,6 +40,8 @@ class DiagnosticAvailabilityV1Test {
             diagnosticAvailability(DiagnosticGattPhaseV1.TRANSPORT_READY, DiagnosticGattFailureV1.NONE, "DEVELOPMENT_IMAGE_IDENTIFIED"))
         assertEquals(DiagnosticAvailabilityV1.DEVELOPMENT_INFO_FAILED,
             diagnosticAvailability(DiagnosticGattPhaseV1.TRANSPORT_READY, DiagnosticGattFailureV1.NONE, "DEVELOPMENT_INFO_FAILED"))
+        assertEquals(DiagnosticAvailabilityV1.DEVELOPMENT_CONTROL_CONFIRMED,
+            diagnosticAvailability(DiagnosticGattPhaseV1.TRANSPORT_READY, DiagnosticGattFailureV1.NONE, "DEVELOPMENT_CONTROL_CONFIRMED"))
         assertEquals(DiagnosticAvailabilityV1.DISCONNECTED, DeviceUiState().diagnosticAvailability)
     }
 }

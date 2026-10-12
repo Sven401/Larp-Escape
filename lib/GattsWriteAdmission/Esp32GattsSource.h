@@ -10,6 +10,9 @@
 #include "SdkGattSourceAbi.h"
 #include "SdkPeerSecurityAbi.h"
 #include "../ClosedBleStackOwner/DiagnosticGattsDefinition.h"
+#if defined(LARP_DIAGNOSTIC_TEST_FIRMWARE)
+#include "CompanionIntegration/DiagnosticDevelopmentControl.h"
+#endif
 #include <freertos/task.h>
 namespace larp {
 namespace companion {
@@ -64,6 +67,7 @@ class Esp32GattsSource : public IGattsResponseContext,
 #if defined(LARP_DIAGNOSTIC_TEST_FIRMWARE)
     // Immutable public identity for the development-only encrypted read.
     bool configureDevelopmentInfo(const Identity &, const BootIdentity &) noexcept;
+    bool configureDevelopmentControl(diagnostic::DevelopmentControl &) noexcept;
 #endif
     GattsLifecycleOutcome connectionNow(std::uint8_t interface, const std::uint8_t *address,
                                         std::uint16_t packedConnection, bool connected) noexcept;
@@ -136,6 +140,11 @@ class Esp32GattsSource : public IGattsResponseContext,
     Identity developmentDevice_;
     BootIdentity developmentBoot_;
     bool developmentInfoConfigured_ = false;
+    diagnostic::DevelopmentControl *developmentControl_ = nullptr;
+    bool developmentSubscribed_ = false;
+    std::uint16_t developmentRepliesUsed_ = 0;
+    bool readDevelopmentLinkNow(const PeerTransportBinding &,
+                                diagnostic::DevelopmentLink &) const noexcept;
 #endif
     struct RolePending {
         PeerRegistryRoleJob value;

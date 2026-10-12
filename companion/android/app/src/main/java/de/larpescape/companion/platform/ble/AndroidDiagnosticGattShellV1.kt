@@ -19,6 +19,7 @@ internal class AndroidDiagnosticGattShellV1(
     private val originalAuthority: () -> DiagnosticControlOriginV1? = { null },
     targetAddress: String,
     evidenceSink: (DiagnosticConnectionEventV1) -> Boolean,
+    private val statusChanged: () -> Unit = {},
 ) {
     val link = DiagnosticGattLinkV1(generation)
     private val handler = Handler(Looper.getMainLooper())
@@ -29,6 +30,16 @@ internal class AndroidDiagnosticGattShellV1(
     private var controlReply: BluetoothGattCharacteristic? = null
     private var stepReply: BluetoothGattCharacteristic? = null
     private var developmentInfoCharacteristic: BluetoothGattCharacteristic? = null
+    private var developmentWrite: BluetoothGattCharacteristic? = null
+    private var developmentReply: BluetoothGattCharacteristic? = null
+    private var developmentSubscriptionAck = false
+    private var developmentProbeSeen = false
+    private var developmentTransportFailed = false
+    private var developmentRequest: DiagnosticControlRequestV1? = null
+    private var developmentRequestAtMs = 0L
+    private var developmentWriteConfirmed = false
+    private var developmentEarlyReply: ByteArray? = null
+    private var developmentCapability: DiagnosticControlReplyV1? = null
     private var developmentInfoReadState = DevelopmentInfoReadState.ABSENT
     var developmentInfo: DiagnosticDevelopmentInfoV1? = null
         private set
@@ -53,7 +64,16 @@ internal class AndroidDiagnosticGattShellV1(
             developmentInfoReadState == DevelopmentInfoReadState.DISCOVERED ||
                 developmentInfoReadState == DevelopmentInfoReadState.PENDING -> "DEVELOPMENT_INFO_PENDING"
             developmentInfoReadState == DevelopmentInfoReadState.FAILED -> "DEVELOPMENT_INFO_FAILED"
-            developmentInfo != null -> "DEVELOPMENT_IMAGE_IDENTIFIED"
+            developmentInfo != null -> when {
+                developmentWrite == null || developmentReply == null -> "DEVELOPMENT_CONTROL_MISSING"
+                developmentTransportFailed -> "DEVELOPMENT_CONTROL_FAILED"
+                !developmentSubscriptionAck -> "DEVELOPMENT_SUBSCRIPTION_PENDING"
+                !developmentProbeSeen -> "DEVELOPMENT_PROBE_PENDING"
+                developmentRequest != null -> "DEVELOPMENT_CAPABILITY_PENDING"
+                developmentCapability?.outcome == DiagnosticControlOutcomeV1.ACCEPTED -> "DEVELOPMENT_CONTROL_CONFIRMED"
+                developmentCapability != null -> "DEVELOPMENT_CONTROL_REJECTED"
+                else -> "DEVELOPMENT_CONTROL_READY"
+            }
             origin == null -> "ROLE_ISSUER_MISSING"
             origin.localGattGeneration != generation.toLong() -> "ROLE_GENERATION_MISMATCH"
             pendingControl != null -> "CONTROL_${pendingControl?.state}"
@@ -65,7 +85,8 @@ internal class AndroidDiagnosticGattShellV1(
     fun discover(): Boolean {
         val service = gatt.getService(route.service)
         val expected = setOf(route.controlRequest, route.controlReply, route.stepRequest, route.stepReply,
-            DiagnosticDevelopmentInfoCodecV1.characteristic)
+            DiagnosticDevelopmentInfoCodecV1.characteristic,
+            DiagnosticDevelopmentControlCodecV1.write, DiagnosticDevelopmentControlCodecV1.reply)
         if (service != null && expected.any { id -> service.characteristics.count { it.uuid == id } > 1 }) {
             link.failed(DiagnosticGattFailureV1.AMBIGUOUS_CHARACTERISTIC)
             evidence.transportError(generation, "setup", null, link.failure.name)
@@ -84,6 +105,11 @@ internal class AndroidDiagnosticGattShellV1(
         controlReply = characteristics[route.controlReply]
         stepReply = characteristics[route.stepReply]
         developmentInfoCharacteristic = characteristics[DiagnosticDevelopmentInfoCodecV1.characteristic]
+        developmentWrite = characteristics[DiagnosticDevelopmentControlCodecV1.write]
+            ?.takeIf { it.properties and BluetoothGattCharacteristic.PROPERTY_WRITE != 0 }
+        developmentReply = characteristics[DiagnosticDevelopmentControlCodecV1.reply]
+            ?.takeIf { it.properties and BluetoothGattCharacteristic.PROPERTY_NOTIFY != 0 &&
+                it.getDescriptor(CCCD) != null }
         developmentInfoReadState = when {
             developmentInfoCharacteristic == null -> DevelopmentInfoReadState.ABSENT
             developmentInfoCharacteristic!!.properties and BluetoothGattCharacteristic.PROPERTY_READ == 0 -> DevelopmentInfoReadState.FAILED
@@ -125,6 +151,8 @@ internal class AndroidDiagnosticGattShellV1(
         if (decoded != null && evidence.developmentInfo(generation, characteristic.uuid, decoded)) {
             developmentInfo = decoded
             developmentInfoReadState = DevelopmentInfoReadState.CONFIRMED
+            if (developmentWrite == null || !subscribeDevelopment())
+                developmentTransportFailed = true
         } else developmentInfoReadState = DevelopmentInfoReadState.FAILED
         return true
     }
@@ -140,10 +168,29 @@ internal class AndroidDiagnosticGattShellV1(
         return true
     }
 
+    private fun subscribeDevelopment(): Boolean {
+        val answer = developmentReply ?: return false
+        val descriptor = answer.getDescriptor(CCCD) ?: return false
+        return gatt.setCharacteristicNotification(answer, true) &&
+            gatt.writeDescriptor(descriptor, BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE) ==
+                BluetoothStatusCodes.SUCCESS
+    }
+
     fun onDescriptorWrite(descriptor: BluetoothGattDescriptor, success: Boolean): Boolean {
         if (descriptor.uuid != CCCD) return false
         val characteristic = descriptor.characteristic ?: return false
         if (characteristic.service?.uuid != route.service) return false
+        if (characteristic === developmentReply) {
+            if (developmentInfo == null || developmentSubscriptionAck) return false
+            if (!success || !evidence.cccdWriteAck(generation, characteristic.uuid)) {
+                developmentTransportFailed = true
+                evidence.transportError(generation, "development", null, "CCCD_WRITE_FAILED")
+                return false
+            }
+            developmentSubscriptionAck = true
+            startDevelopmentCapabilityIfReady()
+            return true
+        }
         val expected = when (link.phase) {
             DiagnosticGattPhaseV1.CONTROL_CCCD_PENDING -> route.controlReply
             DiagnosticGattPhaseV1.STEP_CCCD_PENDING -> route.stepReply
@@ -165,6 +212,64 @@ internal class AndroidDiagnosticGattShellV1(
             return false
         }
         return link.phase == DiagnosticGattPhaseV1.CCCD_WRITES_ACKNOWLEDGED || link.phase == DiagnosticGattPhaseV1.TRANSPORT_READY
+    }
+
+    private fun startDevelopmentCapabilityIfReady() {
+        val info = developmentInfo ?: return
+        val endpoint = developmentWrite ?: return
+        if (link.phase != DiagnosticGattPhaseV1.TRANSPORT_READY ||
+            developmentTransportFailed || !developmentSubscriptionAck ||
+            !developmentProbeSeen || developmentRequest != null ||
+            developmentCapability != null) return
+        val request = DiagnosticControlRequestV1(DiagnosticControlCommandV1.CAPABILITY,
+            1, info.deviceId, info.bootId)
+        val payload = DiagnosticControlV1.encode(request)
+        if (payload.size > link.effectiveAttValueBytes) {
+            developmentTransportFailed = true
+            evidence.transportError(generation, "development", request.message, "MTU_TOO_SMALL")
+            return
+        }
+        val started = SystemClock.elapsedRealtime()
+        developmentRequest = request
+        developmentRequestAtMs = started
+        developmentWriteConfirmed = false
+        if (gatt.writeCharacteristic(endpoint, payload, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT) !=
+            BluetoothStatusCodes.SUCCESS) {
+            developmentRequest = null
+            developmentTransportFailed = true
+            evidence.transportError(generation, "development", request.message, "WRITE_START_FAILED")
+            return
+        }
+        handler.postDelayed({
+            if (developmentRequest === request) {
+                developmentRequest = null
+                developmentEarlyReply = null
+                developmentTransportFailed = true
+                evidence.transportError(generation, "development", request.message, "REPLY_TIMEOUT")
+                statusChanged()
+            }
+        }, DiagnosticControlV1.QUEUE_MS)
+    }
+
+    private fun receiveDevelopmentReply(bytes: ByteArray, nowMs: Long) {
+        val request = developmentRequest ?: return
+        val info = developmentInfo ?: return
+        if (!developmentWriteConfirmed) {
+            developmentEarlyReply = bytes.copyOf()
+            return
+        }
+        if (nowMs < developmentRequestAtMs ||
+            nowMs - developmentRequestAtMs >= DiagnosticControlV1.QUEUE_MS) return
+        val answer = runCatching { DiagnosticDevelopmentControlCodecV1.correlate(bytes, request) }
+            .getOrNull() ?: return
+        if (!evidence.developmentControlFinal(generation,
+                DiagnosticDevelopmentControlCodecV1.reply, info, request, answer)) {
+            developmentTransportFailed = true
+            return
+        }
+        developmentCapability = answer
+        developmentRequest = null
+        developmentEarlyReply = null
     }
 
     /** No call site currently supplies originalAuthority; consequently no live diagnostic write is possible. */
@@ -237,6 +342,21 @@ internal class AndroidDiagnosticGattShellV1(
 
     fun onCharacteristicWrite(characteristic: BluetoothGattCharacteristic, success: Boolean) {
         if (characteristic.service?.uuid != route.service) return
+        if (characteristic === developmentWrite) {
+            val request = developmentRequest ?: return
+            if (success) {
+                developmentWriteConfirmed = true
+                if (!evidence.writeAck(generation, characteristic.uuid, request.message))
+                    developmentTransportFailed = true
+                developmentEarlyReply?.let { receiveDevelopmentReply(it, SystemClock.elapsedRealtime()) }
+            } else {
+                evidence.transportError(generation, "development", request.message, "ATT_WRITE_FAILED")
+                developmentRequest = null
+                developmentEarlyReply = null
+                developmentTransportFailed = true
+            }
+            return
+        }
         when (characteristic.uuid) {
             route.controlRequest -> if (pendingControl != null) {
                 if (success) {
@@ -261,6 +381,19 @@ internal class AndroidDiagnosticGattShellV1(
 
     fun onNotification(characteristic: BluetoothGattCharacteristic, value: ByteArray, nowMs: Long = SystemClock.elapsedRealtime()) {
         if (characteristic.service?.uuid != route.service) return
+        if (characteristic === developmentReply) {
+            if (value.contentEquals(DiagnosticDevelopmentControlCodecV1.probe)) {
+                if (developmentInfo != null && !developmentProbeSeen &&
+                    evidence.transportProbe(generation, characteristic.uuid)) {
+                    developmentProbeSeen = true
+                    startDevelopmentCapabilityIfReady()
+                }
+            } else if (value.size == DiagnosticControlV1.REPLY_BYTES &&
+                developmentSubscriptionAck && developmentProbeSeen &&
+                link.phase == DiagnosticGattPhaseV1.TRANSPORT_READY)
+                receiveDevelopmentReply(value.copyOf(), nowMs)
+            return
+        }
         if (link.canObserveProbe(generation, characteristic.uuid, value)) {
             if (!evidence.transportProbe(generation, characteristic.uuid)) {
                 link.failed(DiagnosticGattFailureV1.PROBE_EVIDENCE_FAILED)
@@ -319,6 +452,10 @@ internal class AndroidDiagnosticGattShellV1(
         pendingControl = null; controlRequest = null; pendingControlOrigin = null; pendingStep = null; pendingStepOrigin = null; pendingStepRequest = null
         grant = null; grantOrigin = null; grantHostDeadlineMs = 0
         developmentInfo = null; developmentInfoReadState = DevelopmentInfoReadState.ABSENT
+        developmentRequest?.let { evidence.transportError(generation, "development", it.message, "DISCONNECTED") }
+        developmentRequest = null; developmentEarlyReply = null; developmentCapability = null
+        developmentSubscriptionAck = false; developmentProbeSeen = false
+        developmentTransportFailed = true
         link.failed(DiagnosticGattFailureV1.DISCONNECTED)
     }
 

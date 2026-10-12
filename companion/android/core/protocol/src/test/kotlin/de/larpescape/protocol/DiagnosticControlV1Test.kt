@@ -137,4 +137,15 @@ class DiagnosticControlV1Test {
         assertEquals(0L, result.issuedDeviceMs); assertEquals(0L, result.expiresDeviceMs)
         assertEquals(cancel.grantId, result.grantId)
     }
+    @Test fun developmentOwnerIsExplicitAndCannotEnterTheProductDecoder() {
+        val dev = answer().apply { this[65] = 4 }
+        rejects { DiagnosticControlV1.correlate(dev, original()) }
+        val reply = DiagnosticDevelopmentControlCodecV1.correlate(dev, original())
+        assertEquals(4, reply.owner)
+        assertFalse(reply.synthetic)
+        assertTrue(reply.controlOnly)
+        rejects { DiagnosticDevelopmentControlCodecV1.correlate(answer(), original()) }
+        assertEquals("407e6a1d-1cc2-43fd-856b-4aff85a20016", DiagnosticDevelopmentControlCodecV1.write.toString())
+        assertEquals("407e6a1d-1cc2-43fd-856b-4aff85a20017", DiagnosticDevelopmentControlCodecV1.reply.toString())
+    }
 }
