@@ -18,6 +18,9 @@ std::uint8_t developmentReplies[DevelopmentReplySlots]
 constexpr std::size_t DevelopmentRawReplySlots = 64;
 std::uint8_t developmentRawReplies[DevelopmentRawReplySlots]
                                   [diagnostic::DevelopmentRawStepWire::ReplyBytes] = {};
+constexpr std::size_t DevelopmentLedReplySlots = 64;
+std::uint8_t developmentLedReplies[DevelopmentLedReplySlots]
+                                  [diagnostic::DevelopmentLedStepWire::ReplyBytes] = {};
 #endif
 Esp32GattsSource *selected = nullptr;
 std::uint16_t application = 0;
@@ -1442,6 +1445,73 @@ bool Esp32GattsSource::requestNow(std::uint16_t packed, std::uint32_t transactio
                         original.interface, static_cast<std::uint16_t>(packed >> 8),
                         diagnostic.developmentReply, sizeof(probe), probe, false);
                 }
+                return true;
+            }
+            if (!event.prepared && !event.offset &&
+                event.count == diagnostic::DevelopmentLedStepWire::RequestBytes &&
+                borrowed->write.value && borrowed->write.value[0] == 'D' &&
+                borrowed->write.value[1] == 'G' &&
+                borrowed->write.value[2] == 1 && borrowed->write.value[3] == 7) {
+                diagnostic::DevelopmentLedStepRequest request;
+                if (!diagnostic::DevelopmentLedStepWire::decodeRequest(
+                        borrowed->write.value, event.count, request)) {
+                    (void)GATTS_SendRsp(packed, transaction, ESP_GATT_INVALID_PDU, nullptr);
+                    return true;
+                }
+                std::uint16_t stepMtu = 0;
+                if (!developmentControl_ || !developmentSubscribed_ ||
+                    !(diagnosticProbeBirth_ == original) ||
+                    !readDiagnosticOriginalMtu(original, stepMtu) ||
+                    stepMtu < diagnostic::DevelopmentLedStepWire::ReplyBytes + 3) {
+                    (void)GATTS_SendRsp(packed, transaction,
+                                        ESP_GATT_INSUF_AUTHORIZATION, nullptr);
+                    return true;
+                }
+                bool rawVacant = false;
+                portENTER_CRITICAL(&mutex_);
+                rawVacant = developmentRaw_.state == 0;
+                portEXIT_CRITICAL(&mutex_);
+                if (!rawVacant || developmentLedRepliesUsed_ >= DevelopmentLedReplySlots) {
+                    (void)GATTS_SendRsp(packed, transaction, ESP_GATT_NO_RESOURCES, nullptr);
+                    return true;
+                }
+                const auto receivedAt = clock_.nowMilliseconds();
+                if (developmentControl_->admitLedStep(request, secure, receivedAt) !=
+                    diagnostic::DevelopmentAdmissionResult::Accepted) {
+                    (void)GATTS_SendRsp(packed, transaction,
+                                        ESP_GATT_INSUF_AUTHORIZATION, nullptr);
+                    return true;
+                }
+                diagnostic::DevelopmentLink after;
+                if (!readDevelopmentLinkNow(original, after) ||
+                    !(after.original == original) || !developmentSubscribed_ ||
+                    !developmentControl_->ledResultCurrent(request, after,
+                                                            clock_.nowMilliseconds())) {
+                    developmentControl_->disconnect(original);
+                    (void)GATTS_SendRsp(packed, transaction,
+                                        ESP_GATT_INSUF_AUTHORIZATION, nullptr);
+                    return true;
+                }
+                if (GATTS_SendRsp(packed, transaction, ESP_GATT_OK, nullptr) != 0)
+                    return true;
+                if (!readDevelopmentLinkNow(original, after) ||
+                    !(after.original == original) || !developmentSubscribed_ ||
+                    !developmentControl_->ledResultCurrent(request, after,
+                                                            clock_.nowMilliseconds())) {
+                    developmentControl_->disconnect(original);
+                    return true;
+                }
+                diagnostic::DevelopmentLedStepReply answer;
+                answer.request = request;
+                answer.rejection = diagnostic::DevelopmentLedStepRejection::HardwareUnqualified;
+                auto *bytes = developmentLedReplies[developmentLedRepliesUsed_++];
+                if (!diagnostic::DevelopmentLedStepWire::encodeReply(
+                        answer, bytes, diagnostic::DevelopmentLedStepWire::ReplyBytes) ||
+                    esp_ble_gatts_send_indicate(
+                        original.interface, static_cast<std::uint16_t>(packed >> 8),
+                        diagnostic.developmentReply,
+                        diagnostic::DevelopmentLedStepWire::ReplyBytes, bytes, false) != ESP_OK)
+                    developmentControl_->disconnect(original);
                 return true;
             }
             if (!event.prepared && !event.offset &&

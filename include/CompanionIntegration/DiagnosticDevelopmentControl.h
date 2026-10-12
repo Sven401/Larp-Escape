@@ -3,6 +3,7 @@
 #include "CompanionIntegration/DiagnosticDevelopmentAdmission.h"
 #include "CompanionIntegration/DiagnosticTransport.h"
 #include "CompanionIntegration/DiagnosticDevelopmentRawStep.h"
+#include "CompanionIntegration/DiagnosticDevelopmentLedStep.h"
 
 #if defined(LARP_DIAGNOSTIC_TEST_FIRMWARE)
 namespace larp {
@@ -32,6 +33,20 @@ class DevelopmentControl {
                                request.timeoutMs, now);
     }
     bool rawResultCurrent(const DevelopmentRawStepRequest &request,
+                          const DevelopmentLink &link, std::uint64_t now) noexcept {
+        return request.device == device_ && request.boot == boot_ &&
+               admission_.resultCurrent(link, request.run, request.grant,
+                                        request.step, now);
+    }
+    DevelopmentAdmissionResult admitLedStep(
+        const DevelopmentLedStepRequest &request, const DevelopmentLink &link,
+        std::uint64_t now) noexcept {
+        if (!(request.device == device_) || request.boot != boot_)
+            return DevelopmentAdmissionResult::Invalid;
+        return admission_.step(link, request.run, request.grant, request.step,
+                               request.timeoutMs, now);
+    }
+    bool ledResultCurrent(const DevelopmentLedStepRequest &request,
                           const DevelopmentLink &link, std::uint64_t now) noexcept {
         return request.device == device_ && request.boot == boot_ &&
                admission_.resultCurrent(link, request.run, request.grant,

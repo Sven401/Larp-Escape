@@ -164,6 +164,7 @@ class Esp32GattsSource : public IGattsResponseContext,
     } developmentRaw_;
     std::uint32_t developmentRawToken_ = 0;
     std::uint8_t developmentRawRepliesUsed_ = 0;
+    std::uint8_t developmentLedRepliesUsed_ = 0;
     bool readDevelopmentLinkNow(const PeerTransportBinding &,
                                 diagnostic::DevelopmentLink &) const noexcept;
     static void sendDevelopmentRawResult(void *) noexcept;

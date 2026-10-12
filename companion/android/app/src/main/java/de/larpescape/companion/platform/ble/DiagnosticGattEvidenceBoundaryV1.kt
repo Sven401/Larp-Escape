@@ -127,6 +127,25 @@ internal class DiagnosticGattEvidenceBoundaryV1(
         return true
     }
 
+    fun developmentLedFinal(observedGeneration: Int, characteristic: UUID,
+                            request: DiagnosticDevelopmentLedStepRequestV1,
+                            reply: DiagnosticDevelopmentLedStepReplyV1): Boolean {
+        if (observedGeneration != generation ||
+            characteristic != DiagnosticDevelopmentControlCodecV1.reply ||
+            reply.request != request || reply.physicalOutputConfirmed)
+            return false
+        val key = "development-led:${request.message}"
+        if (key in terminal) return false
+        if (!emit(DiagnosticConnectionEventV1.Kind.STEP_REPLY, request.message,
+                "step=${request.stepId};outcome=${reply.outcome};rejection=${reply.rejection};" +
+                    "index=${request.index};rgb=${request.red},${request.green},${request.blue};" +
+                    "brightness=${request.brightness};durationMs=${request.durationMs};" +
+                    "renderCalls=${reply.renderCalls};blackSubmitted=${reply.blackSubmitted};" +
+                    "timerFired=${reply.timerFired};physical_unverified")) return false
+        terminal.add(key)
+        return true
+    }
+
     fun stepFinal(observedGeneration: Int, characteristic: UUID,
                   captured: DiagnosticControlOriginV1, current: DiagnosticControlOriginV1?,
                   request: DiagnosticStepRequestV1, reply: DiagnosticStepReplyV1): Boolean {

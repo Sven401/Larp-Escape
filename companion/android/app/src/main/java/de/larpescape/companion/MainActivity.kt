@@ -295,6 +295,18 @@ class MainActivity : ComponentActivity() {
                                         modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
                                         Text("I²C-Rohregister einmal lesen · unqualifiziert")
                                     }
+                                    OutlinedButton(onClick = model::requestDevelopmentLedPreflight,
+                                        modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                                        Text("LED-Hardwareblocker vom Gerät abfragen · kein Licht")
+                                    }
+                                }
+                                state.developmentLedReply?.let { led ->
+                                    Text("LED-Schritt ${led.request.stepId}: ${led.outcome}; Gerätegrund ${led.rejection}; " +
+                                        "Treiberaufrufe ${led.renderCalls}; Software-Schwarz ${led.blackSubmitted}; " +
+                                        "Aus-Timer ${led.timerFired}.")
+                                    Text("Die Test-Firmware gibt bis zur Hardwarevorprüfung keinen LED-Reiz aus. " +
+                                        "Ein Schwarz-Aufruf würde keine physische Abschaltung beweisen.",
+                                        style = MaterialTheme.typography.bodySmall)
                                 }
                                 state.developmentRawReply?.let { raw ->
                                     Text("Erkundungsmessung Schritt ${raw.request.stepId}: ${raw.outcome}; " +

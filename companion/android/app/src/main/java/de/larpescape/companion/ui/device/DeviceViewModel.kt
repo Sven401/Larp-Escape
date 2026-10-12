@@ -47,6 +47,9 @@ class DeviceViewModel(private val repository: DeviceRepository) : ViewModel() {
     fun requestDevelopmentRawObservation() {
         if (foreground && permissionGranted) repository.requestDevelopmentRawObservation()
     }
+    fun requestDevelopmentLedPreflight() {
+        if (foreground && permissionGranted) repository.requestDevelopmentLedPreflight()
+    }
     fun recordDevelopmentRawUserObservation(observation: String) {
         if (foreground) repository.recordDevelopmentRawUserObservation(observation)
     }
