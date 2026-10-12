@@ -17,6 +17,7 @@ import de.larpescape.companion.BuildConfig
 import de.larpescape.companion.data.device.*
 import de.larpescape.companion.data.diagnostic_observation.DiagnosticConnectionEvidenceJournalV1
 import de.larpescape.companion.data.diagnostic_observation.DevelopmentRawObservationJournalV1
+import de.larpescape.companion.data.diagnostic_observation.DevelopmentLedObservationJournalV1
 import de.larpescape.protocol.FrameAssembler
 import de.larpescape.protocol.ConfiguredStatusDecoder
 import de.larpescape.protocol.ConfiguredStatusTracker
@@ -37,12 +38,16 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
     private val pairingJournal = PairingObservationJournalV1(context.filesDir)
     private val diagnosticEvidence = DiagnosticConnectionEvidenceJournalV1(File(context.filesDir, "diagnostic-connection-v1"))
     private val rawObservations = DevelopmentRawObservationJournalV1(File(context.filesDir, "development-raw-v1"))
+    private val ledObservations = DevelopmentLedObservationJournalV1(File(context.filesDir, "development-led-v1"))
     init {
         runCatching { diagnosticEvidence.loadRecovered() }
             .onFailure { Log.w("LarpEscape", "Stored diagnostic connection evidence could not be read", it) }
         runCatching { rawObservations.load().observations.lastOrNull() }
             .onSuccess { if (it != null) mutable.value = mutable.value.copy(developmentRawRecord = it) }
             .onFailure { Log.w("LarpEscape", "Stored raw observation report could not be read", it) }
+        runCatching { ledObservations.load().observations.lastOrNull() }
+            .onSuccess { if (it != null) mutable.value = mutable.value.copy(developmentLedRecord = it) }
+            .onFailure { Log.w("LarpEscape", "Stored LED observation report could not be read", it) }
         runCatching { pairingJournal.loadRecovered(Instant.now().toString()) }
             .onSuccess { if (it != null) mutable.value = mutable.value.copy(pairingReport = it,
                 message = "Gespeicherter Kopplungsbericht geladen · Verbindung erneut prüfen") }
@@ -181,11 +186,18 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
     }
     override fun connectionEvidenceExportBytes(): ByteArray? = diagnosticEvidence.exportHistoryBytes()
     override fun developmentRawObservationExportBytes(): ByteArray? = rawObservations.exportBytes()
+    override fun developmentLedObservationExportBytes(): ByteArray? = ledObservations.exportBytes()
     override fun recordDevelopmentRawUserObservation(observation: String) {
         val current = mutable.value.developmentRawRecord ?: return
         runCatching { rawObservations.observe(current.key, observation) }
             .onSuccess { mutable.value = mutable.value.copy(developmentRawRecord = it) }
             .onFailure { report("Nutzerbeobachtung nicht gespeichert: ${it.message}") }
+    }
+    override fun recordDevelopmentLedUserObservation(observation: String) {
+        val current = mutable.value.developmentLedRecord ?: return
+        runCatching { ledObservations.observe(current.key, observation) }
+            .onSuccess { mutable.value = mutable.value.copy(developmentLedRecord = it) }
+            .onFailure { report("LED-Nutzerbeobachtung nicht gespeichert: ${it.message}") }
     }
     override fun requestBond() = guarded {
         val address = selectedAddress ?: error("Zuerst einen ESP verbinden")
@@ -212,11 +224,16 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
             val recorded = if (reply != null) runCatching { rawObservations.record(reply) }
                 .onFailure { report("Geräteantwort nicht im Prüfbericht gespeichert: ${it.message}") }.getOrNull()
                 else null
+            val ledReply = shell.developmentLedReply
+            val ledRecorded = if (ledReply != null) runCatching { ledObservations.record(ledReply) }
+                .onFailure { report("LED-Geräteantwort nicht im Prüfbericht gespeichert: ${it.message}") }.getOrNull()
+                else null
             mutable.value = mutable.value.copy(
                 diagnosticAvailability = diagnosticAvailability(shell.link.phase, shell.link.failure, shell.blockStatus),
                 developmentRawReply = reply,
-                developmentLedReply = shell.developmentLedReply,
-                developmentRawRecord = recorded ?: mutable.value.developmentRawRecord)
+                developmentLedReply = ledReply,
+                developmentRawRecord = recorded ?: mutable.value.developmentRawRecord,
+                developmentLedRecord = ledRecorded ?: mutable.value.developmentLedRecord)
         }
     }
     override fun requestDevelopmentGrant() = guarded {

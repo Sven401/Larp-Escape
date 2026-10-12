@@ -56,6 +56,7 @@ class MainActivity : ComponentActivity() {
     private var pairingExportNotice by mutableStateOf<String?>(null)
     private var connectionExportNotice by mutableStateOf<String?>(null)
     private var rawExportNotice by mutableStateOf<String?>(null)
+    private var ledExportNotice by mutableStateOf<String?>(null)
     private val exportRawObservation = registerForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
         val snapshot = if (uri != null) runCatching { model.developmentRawObservationExportBytes() } else null
         val bytes = snapshot?.getOrNull()
@@ -71,6 +72,24 @@ class MainActivity : ComponentActivity() {
                     }
                     rawExportNotice = "Erkundungsbeleg exportiert. Die physische Zuordnung bleibt ungeprüft."
                 } catch (error: Exception) { rawExportNotice = "Export fehlgeschlagen: ${error.message}" }
+            }
+        }
+    }
+    private val exportLedObservation = registerForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
+        val snapshot = if (uri != null) runCatching { model.developmentLedObservationExportBytes() } else null
+        val bytes = snapshot?.getOrNull()
+        when {
+            uri == null -> ledExportNotice = "Dateiauswahl abgebrochen. LED-Prüfbeleg bleibt in der App."
+            snapshot?.isFailure == true -> ledExportNotice = "Gespeicherter LED-Prüfbeleg ist nicht lesbar."
+            bytes == null -> ledExportNotice = "Kein gespeicherter LED-Schritt vorhanden."
+            else -> lifecycleScope.launch {
+                try {
+                    withContext(Dispatchers.IO) {
+                        contentResolver.openOutputStream(uri, "wt")?.use { it.write(bytes) }
+                            ?: error("Datei konnte nicht geschrieben werden")
+                    }
+                    ledExportNotice = "LED-Vorprüfbeleg exportiert. Die Hardware bleibt unqualifiziert."
+                } catch (error: Exception) { ledExportNotice = "LED-Export fehlgeschlagen: ${error.message}" }
             }
         }
     }
@@ -308,6 +327,26 @@ class MainActivity : ComponentActivity() {
                                         "Ein Schwarz-Aufruf würde keine physische Abschaltung beweisen.",
                                         style = MaterialTheme.typography.bodySmall)
                                 }
+                                state.developmentLedRecord?.let { record ->
+                                    Text("Gespeicherter LED-Schritt ${record.stepId} · Antwort ${record.outcome} · " +
+                                        "Nutzerbeobachtung ${record.userObservation ?: "offen"}.")
+                                    if (record.userObservation == null) {
+                                        Text("Hast du während dieses gesperrten Schritts Licht gesehen? Die Auswahl qualifiziert die Verdrahtung nicht.")
+                                        OutlinedButton(onClick = { model.recordDevelopmentLedUserObservation("NO_LIGHT_SEEN") },
+                                            modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Kein Licht gesehen") }
+                                        OutlinedButton(onClick = { model.recordDevelopmentLedUserObservation("UNEXPECTED_LIGHT_SEEN") },
+                                            modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Unerwartet Licht gesehen") }
+                                        OutlinedButton(onClick = { model.recordDevelopmentLedUserObservation("UNCLEAR") },
+                                            modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Beobachtung unklar") }
+                                    }
+                                }
+                                OutlinedButton(onClick = {
+                                    ledExportNotice = null
+                                    if (runCatching { model.developmentLedObservationExportBytes() }.getOrNull() != null)
+                                        exportLedObservation.launch("led-vorpruefung-v1.json")
+                                    else ledExportNotice = "Noch kein gespeicherter LED-Schritt vorhanden."
+                                }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("LED-Vorprüfbeleg exportieren") }
+                                ledExportNotice?.let { Text(it) }
                                 state.developmentRawReply?.let { raw ->
                                     Text("Erkundungsmessung Schritt ${raw.request.stepId}: ${raw.outcome}; " +
                                         "I²C ${raw.i2cStatus}; Byte ${raw.rawByte?.let { "0x%02X".format(it) } ?: "unbekannt"}; " +
