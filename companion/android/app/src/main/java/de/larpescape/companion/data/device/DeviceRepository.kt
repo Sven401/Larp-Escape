@@ -28,6 +28,7 @@ interface DeviceRepository {
     fun disconnect()
     fun startPairingReport() {}
     fun requestBond() {}
+    fun requestDevelopmentGrant() {}
     fun pairingReportBytes(): ByteArray? = null
     fun pendingPairingReportBytes(): ByteArray? = null
     fun pairingExportCompleted() {}

@@ -42,6 +42,12 @@ class DiagnosticAvailabilityV1Test {
             diagnosticAvailability(DiagnosticGattPhaseV1.TRANSPORT_READY, DiagnosticGattFailureV1.NONE, "DEVELOPMENT_INFO_FAILED"))
         assertEquals(DiagnosticAvailabilityV1.DEVELOPMENT_CONTROL_CONFIRMED,
             diagnosticAvailability(DiagnosticGattPhaseV1.TRANSPORT_READY, DiagnosticGattFailureV1.NONE, "DEVELOPMENT_CONTROL_CONFIRMED"))
+        assertEquals(DiagnosticAvailabilityV1.DEVELOPMENT_GRANT_PENDING,
+            diagnosticAvailability(DiagnosticGattPhaseV1.TRANSPORT_READY, DiagnosticGattFailureV1.NONE, "DEVELOPMENT_GRANT_PENDING"))
+        assertEquals(DiagnosticAvailabilityV1.DEVELOPMENT_GRANT_CONFIRMED,
+            diagnosticAvailability(DiagnosticGattPhaseV1.TRANSPORT_READY, DiagnosticGattFailureV1.NONE, "DEVELOPMENT_GRANT_CONFIRMED"))
+        assertEquals(DiagnosticAvailabilityV1.DEVELOPMENT_GRANT_EXPIRED,
+            diagnosticAvailability(DiagnosticGattPhaseV1.TRANSPORT_READY, DiagnosticGattFailureV1.NONE, "DEVELOPMENT_GRANT_EXPIRED"))
         assertEquals(DiagnosticAvailabilityV1.DISCONNECTED, DeviceUiState().diagnosticAvailability)
     }
 }

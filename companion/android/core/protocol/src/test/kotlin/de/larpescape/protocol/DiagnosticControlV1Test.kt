@@ -148,4 +148,14 @@ class DiagnosticControlV1Test {
         assertEquals("407e6a1d-1cc2-43fd-856b-4aff85a20016", DiagnosticDevelopmentControlCodecV1.write.toString())
         assertEquals("407e6a1d-1cc2-43fd-856b-4aff85a20017", DiagnosticDevelopmentControlCodecV1.reply.toString())
     }
+    @Test fun developmentGrantRequiresTheOriginalRunAndTtl() {
+        val grant = answer().apply { this[65] = 4 }
+        val correlated = DiagnosticDevelopmentControlCodecV1.correlate(grant, original())
+        assertEquals(DiagnosticControlCommandV1.GRANT, correlated.command)
+        assertEquals(DiagnosticControlOutcomeV1.ACCEPTED, correlated.outcome)
+        assertEquals(original().runId, correlated.runId)
+        assertNotNull(correlated.grantId)
+        rejects { DiagnosticDevelopmentControlCodecV1.correlate(grant, original().copy(ttlMs = 30000)) }
+        rejects { DiagnosticDevelopmentControlCodecV1.correlate(grant, original().copy(runId = "ffffffff-ffff-4fff-8fff-ffffffffffff")) }
+    }
 }

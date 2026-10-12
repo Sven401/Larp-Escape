@@ -198,6 +198,14 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
         if (diagnostic === shell)
             mutable.value = mutable.value.copy(diagnosticAvailability = diagnosticAvailability(shell.link.phase, shell.link.failure, shell.blockStatus))
     }
+    override fun requestDevelopmentGrant() = guarded {
+        val shell = diagnostic ?: return@guarded
+        if (!shell.requestDevelopmentGrant()) {
+            reportDiagnostic(shell)
+            return@guarded
+        }
+        reportDiagnostic(shell)
+    }
     private fun guarded(action: () -> Unit) {
         if (!permitted()) { permissionsChanged(false); return }
         try { action() }

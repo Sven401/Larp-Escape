@@ -41,6 +41,9 @@ class DeviceViewModel(private val repository: DeviceRepository) : ViewModel() {
     fun disconnect() = repository.disconnect()
     fun startPairingReport() = repository.startPairingReport()
     fun requestBond() = repository.requestBond()
+    fun requestDevelopmentGrant() {
+        if (foreground && permissionGranted) repository.requestDevelopmentGrant()
+    }
     fun pairingReportBytes(): ByteArray? = repository.pairingReportBytes()
     fun pendingPairingReportBytes(): ByteArray? = repository.pendingPairingReportBytes()
     fun pairingExportCompleted() = repository.pairingExportCompleted()

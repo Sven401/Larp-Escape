@@ -263,6 +263,13 @@ class MainActivity : ComponentActivity() {
                             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                                 Text("Reale BLE-Diagnoseverfügbarkeit", style = MaterialTheme.typography.titleMedium)
                                 Text(state.diagnosticAvailability.detail)
+                                if (state.diagnosticAvailability ==
+                                    de.larpescape.companion.data.device.DiagnosticAvailabilityV1.DEVELOPMENT_CONTROL_CONFIRMED) {
+                                    Button(onClick = model::requestDevelopmentGrant,
+                                        modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                                        Text("Entwicklungszulassung für 30 Sekunden anfragen")
+                                    }
+                                }
                                 Text("Diese Anzeige bestätigt keine Gerätefreigabe oder Hardwarefunktion.", style = MaterialTheme.typography.bodySmall)
                             }
                         }

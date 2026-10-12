@@ -40,6 +40,10 @@ enum class DiagnosticAvailabilityV1(val detail: String) {
     DEVELOPMENT_PROBE_PENDING("Entwicklungsabo bestätigt; Gerätebenachrichtigung steht noch aus."),
     DEVELOPMENT_CAPABILITY_PENDING("Entwicklungsauftrag gesendet; bestätigte Geräteantwort steht aus."),
     DEVELOPMENT_CONTROL_CONFIRMED("Entwicklungs-Control-Antwort vom Gerät empfangen. Baugruppenaktionen sind noch nicht angeschlossen."),
+    DEVELOPMENT_GRANT_PENDING("Zeitlich begrenzte Entwicklungszulassung angefragt; Geräteantwort steht aus."),
+    DEVELOPMENT_GRANT_CONFIRMED("Gerät hat die Entwicklungszulassung für höchstens 30 Sekunden bestätigt. Baugruppenaktionen sind noch nicht angeschlossen."),
+    DEVELOPMENT_GRANT_REJECTED("Gerät hat die Entwicklungszulassung abgelehnt. Keine Baugruppenaktion freigegeben."),
+    DEVELOPMENT_GRANT_EXPIRED("Die Entwicklungszulassung ist abgelaufen. Keine Baugruppenaktion freigegeben."),
     DEVELOPMENT_CONTROL_REJECTED("Entwicklungs-Control-Auftrag wurde vom Gerät abgelehnt."),
     DEVELOPMENT_CONTROL_FAILED("Der Entwicklungs-Control-Kanal konnte nicht bestätigt werden."),
     OTHER_BLOCK("Die Diagnoseverbindung ist gesperrt. Erneut verbinden und den Status prüfen."),
@@ -65,6 +69,10 @@ fun diagnosticAvailability(
         "DEVELOPMENT_PROBE_PENDING" -> DiagnosticAvailabilityV1.DEVELOPMENT_PROBE_PENDING
         "DEVELOPMENT_CAPABILITY_PENDING" -> DiagnosticAvailabilityV1.DEVELOPMENT_CAPABILITY_PENDING
         "DEVELOPMENT_CONTROL_CONFIRMED" -> DiagnosticAvailabilityV1.DEVELOPMENT_CONTROL_CONFIRMED
+        "DEVELOPMENT_GRANT_PENDING" -> DiagnosticAvailabilityV1.DEVELOPMENT_GRANT_PENDING
+        "DEVELOPMENT_GRANT_CONFIRMED" -> DiagnosticAvailabilityV1.DEVELOPMENT_GRANT_CONFIRMED
+        "DEVELOPMENT_GRANT_REJECTED" -> DiagnosticAvailabilityV1.DEVELOPMENT_GRANT_REJECTED
+        "DEVELOPMENT_GRANT_EXPIRED" -> DiagnosticAvailabilityV1.DEVELOPMENT_GRANT_EXPIRED
         "DEVELOPMENT_CONTROL_REJECTED" -> DiagnosticAvailabilityV1.DEVELOPMENT_CONTROL_REJECTED
         "DEVELOPMENT_CONTROL_FAILED" -> DiagnosticAvailabilityV1.DEVELOPMENT_CONTROL_FAILED
         "ROLE_ISSUER_MISSING" -> DiagnosticAvailabilityV1.ROLE_MISSING

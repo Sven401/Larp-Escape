@@ -10,6 +10,7 @@ import android.os.Looper
 import android.os.SystemClock
 import de.larpescape.companion.data.diagnostic_observation.DiagnosticConnectionEventV1
 import de.larpescape.protocol.*
+import java.util.UUID
 
 /** Bound to exactly one BluetoothGatt instance and repository generation. No role issuer is wired yet. */
 @SuppressLint("MissingPermission")
@@ -40,6 +41,8 @@ internal class AndroidDiagnosticGattShellV1(
     private var developmentWriteConfirmed = false
     private var developmentEarlyReply: ByteArray? = null
     private var developmentCapability: DiagnosticControlReplyV1? = null
+    private var developmentGrant: DiagnosticControlReplyV1? = null
+    private var developmentGrantDeadlineMs = 0L
     private var developmentInfoReadState = DevelopmentInfoReadState.ABSENT
     var developmentInfo: DiagnosticDevelopmentInfoV1? = null
         private set
@@ -69,7 +72,12 @@ internal class AndroidDiagnosticGattShellV1(
                 developmentTransportFailed -> "DEVELOPMENT_CONTROL_FAILED"
                 !developmentSubscriptionAck -> "DEVELOPMENT_SUBSCRIPTION_PENDING"
                 !developmentProbeSeen -> "DEVELOPMENT_PROBE_PENDING"
+                developmentRequest?.command == DiagnosticControlCommandV1.GRANT -> "DEVELOPMENT_GRANT_PENDING"
                 developmentRequest != null -> "DEVELOPMENT_CAPABILITY_PENDING"
+                developmentGrant?.outcome == DiagnosticControlOutcomeV1.ACCEPTED &&
+                    SystemClock.elapsedRealtime() < developmentGrantDeadlineMs -> "DEVELOPMENT_GRANT_CONFIRMED"
+                developmentGrant?.outcome == DiagnosticControlOutcomeV1.ACCEPTED -> "DEVELOPMENT_GRANT_EXPIRED"
+                developmentGrant != null -> "DEVELOPMENT_GRANT_REJECTED"
                 developmentCapability?.outcome == DiagnosticControlOutcomeV1.ACCEPTED -> "DEVELOPMENT_CONTROL_CONFIRMED"
                 developmentCapability != null -> "DEVELOPMENT_CONTROL_REJECTED"
                 else -> "DEVELOPMENT_CONTROL_READY"
@@ -216,18 +224,36 @@ internal class AndroidDiagnosticGattShellV1(
 
     private fun startDevelopmentCapabilityIfReady() {
         val info = developmentInfo ?: return
-        val endpoint = developmentWrite ?: return
+        if (developmentWrite == null) return
         if (link.phase != DiagnosticGattPhaseV1.TRANSPORT_READY ||
             developmentTransportFailed || !developmentSubscriptionAck ||
             !developmentProbeSeen || developmentRequest != null ||
             developmentCapability != null) return
         val request = DiagnosticControlRequestV1(DiagnosticControlCommandV1.CAPABILITY,
             1, info.deviceId, info.bootId)
+        startDevelopmentRequest(request)
+    }
+
+    /** A user action only asks the development image for a short control grant. */
+    fun requestDevelopmentGrant(): Boolean {
+        val info = developmentInfo ?: return false
+        if (link.phase != DiagnosticGattPhaseV1.TRANSPORT_READY || developmentTransportFailed ||
+            !developmentSubscriptionAck || !developmentProbeSeen || developmentRequest != null ||
+            developmentCapability?.outcome != DiagnosticControlOutcomeV1.ACCEPTED ||
+            developmentGrant != null) return false
+        val request = DiagnosticControlRequestV1(DiagnosticControlCommandV1.GRANT,
+            2, info.deviceId, info.bootId, runId = UUID.randomUUID().toString(),
+            ttlMs = 30000, explicitConsent = true)
+        return startDevelopmentRequest(request)
+    }
+
+    private fun startDevelopmentRequest(request: DiagnosticControlRequestV1): Boolean {
+        val endpoint = developmentWrite ?: return false
         val payload = DiagnosticControlV1.encode(request)
         if (payload.size > link.effectiveAttValueBytes) {
             developmentTransportFailed = true
             evidence.transportError(generation, "development", request.message, "MTU_TOO_SMALL")
-            return
+            return false
         }
         val started = SystemClock.elapsedRealtime()
         developmentRequest = request
@@ -238,7 +264,7 @@ internal class AndroidDiagnosticGattShellV1(
             developmentRequest = null
             developmentTransportFailed = true
             evidence.transportError(generation, "development", request.message, "WRITE_START_FAILED")
-            return
+            return false
         }
         handler.postDelayed({
             if (developmentRequest === request) {
@@ -249,6 +275,7 @@ internal class AndroidDiagnosticGattShellV1(
                 statusChanged()
             }
         }, DiagnosticControlV1.QUEUE_MS)
+        return true
     }
 
     private fun receiveDevelopmentReply(bytes: ByteArray, nowMs: Long) {
@@ -267,7 +294,16 @@ internal class AndroidDiagnosticGattShellV1(
             developmentTransportFailed = true
             return
         }
-        developmentCapability = answer
+        if (request.command == DiagnosticControlCommandV1.CAPABILITY)
+            developmentCapability = answer
+        else if (request.command == DiagnosticControlCommandV1.GRANT) {
+            developmentGrant = answer
+            if (answer.outcome == DiagnosticControlOutcomeV1.ACCEPTED) {
+                developmentGrantDeadlineMs = developmentRequestAtMs + request.ttlMs
+                handler.postDelayed({ if (developmentGrant === answer) statusChanged() },
+                    (developmentGrantDeadlineMs - SystemClock.elapsedRealtime()).coerceAtLeast(0))
+            }
+        }
         developmentRequest = null
         developmentEarlyReply = null
     }
@@ -454,6 +490,7 @@ internal class AndroidDiagnosticGattShellV1(
         developmentInfo = null; developmentInfoReadState = DevelopmentInfoReadState.ABSENT
         developmentRequest?.let { evidence.transportError(generation, "development", it.message, "DISCONNECTED") }
         developmentRequest = null; developmentEarlyReply = null; developmentCapability = null
+        developmentGrant = null; developmentGrantDeadlineMs = 0L
         developmentSubscriptionAck = false; developmentProbeSeen = false
         developmentTransportFailed = true
         link.failed(DiagnosticGattFailureV1.DISCONNECTED)
