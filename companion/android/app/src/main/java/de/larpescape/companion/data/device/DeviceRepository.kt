@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.StateFlow
 import de.larpescape.protocol.ConfiguredStatus
 import de.larpescape.protocol.StatusFreshness
 import de.larpescape.protocol.DiagnosticDevelopmentRawStepReplyV1
+import de.larpescape.companion.data.diagnostic_observation.DevelopmentRawObservationV1
 
 enum class BleScanModeV1(val reportValue: String) {
     PRODUCT("product"), UNVERIFIED_DIAGNOSTIC("unverified_diagnostic")
@@ -21,6 +22,7 @@ data class DeviceUiState(
     val permissionMissing: Boolean = false,
     val diagnosticAvailability: DiagnosticAvailabilityV1 = DiagnosticAvailabilityV1.DISCONNECTED,
     val developmentRawReply: DiagnosticDevelopmentRawStepReplyV1? = null,
+    val developmentRawRecord: DevelopmentRawObservationV1? = null,
     val pairingReport: PairingObservationReportV1? = null,
 )
 interface DeviceRepository {
@@ -32,6 +34,8 @@ interface DeviceRepository {
     fun requestBond() {}
     fun requestDevelopmentGrant() {}
     fun requestDevelopmentRawObservation() {}
+    fun recordDevelopmentRawUserObservation(observation: String) {}
+    fun developmentRawObservationExportBytes(): ByteArray? = null
     fun pairingReportBytes(): ByteArray? = null
     fun pendingPairingReportBytes(): ByteArray? = null
     fun pairingExportCompleted() {}

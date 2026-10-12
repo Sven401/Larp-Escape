@@ -55,6 +55,25 @@ class MainActivity : ComponentActivity() {
     private var pairingExportBytes: ByteArray? = null
     private var pairingExportNotice by mutableStateOf<String?>(null)
     private var connectionExportNotice by mutableStateOf<String?>(null)
+    private var rawExportNotice by mutableStateOf<String?>(null)
+    private val exportRawObservation = registerForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
+        val snapshot = if (uri != null) runCatching { model.developmentRawObservationExportBytes() } else null
+        val bytes = snapshot?.getOrNull()
+        when {
+            uri == null -> rawExportNotice = "Dateiauswahl abgebrochen. Prüfbeleg bleibt in der App."
+            snapshot?.isFailure == true -> rawExportNotice = "Gespeicherter Prüfbeleg ist nicht lesbar."
+            bytes == null -> rawExportNotice = "Kein gespeicherter Rohschritt vorhanden."
+            else -> lifecycleScope.launch {
+                try {
+                    withContext(Dispatchers.IO) {
+                        contentResolver.openOutputStream(uri, "wt")?.use { it.write(bytes) }
+                            ?: error("Datei konnte nicht geschrieben werden")
+                    }
+                    rawExportNotice = "Erkundungsbeleg exportiert. Die physische Zuordnung bleibt ungeprüft."
+                } catch (error: Exception) { rawExportNotice = "Export fehlgeschlagen: ${error.message}" }
+            }
+        }
+    }
     private val exportConnection = registerForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
         // Read after the document picker returns: the link may have closed while it was open.
         val snapshot = if (uri != null) runCatching { model.connectionEvidenceExportBytes() } else null
@@ -285,6 +304,25 @@ class MainActivity : ComponentActivity() {
                                     Text("Adresse 0x20, Register 0x13. Die Zuordnung zu einem Taster ist nicht bestätigt.",
                                         style = MaterialTheme.typography.bodySmall)
                                 }
+                                state.developmentRawRecord?.let { record ->
+                                    Text("Gespeicherter Rohschritt ${record.stepId} · Antwort ${record.outcome} · Nutzerbeobachtung ${record.userObservation ?: "offen"}.")
+                                    if (record.userObservation == null) {
+                                        Text("Was hast du bei diesem Schritt selbst beobachtet? Die Auswahl bestätigt keine elektrische Zuordnung.")
+                                        OutlinedButton(onClick = { model.recordDevelopmentRawUserObservation("CHANGE_SEEN") },
+                                            modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Änderung beobachtet") }
+                                        OutlinedButton(onClick = { model.recordDevelopmentRawUserObservation("NO_CHANGE_SEEN") },
+                                            modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Keine Änderung beobachtet") }
+                                        OutlinedButton(onClick = { model.recordDevelopmentRawUserObservation("UNCLEAR") },
+                                            modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Beobachtung unklar") }
+                                    }
+                                }
+                                OutlinedButton(onClick = {
+                                    rawExportNotice = null
+                                    if (runCatching { model.developmentRawObservationExportBytes() }.getOrNull() != null)
+                                        exportRawObservation.launch("rohdaten-erkundung-v1.json")
+                                    else rawExportNotice = "Noch kein gespeicherter Rohschritt vorhanden."
+                                }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Erkundungsbeleg exportieren") }
+                                rawExportNotice?.let { Text(it) }
                                 Text("Diese Anzeige bestätigt keine Gerätefreigabe oder Hardwarefunktion.", style = MaterialTheme.typography.bodySmall)
                             }
                         }

@@ -16,6 +16,7 @@ import android.util.Log
 import de.larpescape.companion.BuildConfig
 import de.larpescape.companion.data.device.*
 import de.larpescape.companion.data.diagnostic_observation.DiagnosticConnectionEvidenceJournalV1
+import de.larpescape.companion.data.diagnostic_observation.DevelopmentRawObservationJournalV1
 import de.larpescape.protocol.FrameAssembler
 import de.larpescape.protocol.ConfiguredStatusDecoder
 import de.larpescape.protocol.ConfiguredStatusTracker
@@ -35,9 +36,13 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
     override val state = mutable.asStateFlow()
     private val pairingJournal = PairingObservationJournalV1(context.filesDir)
     private val diagnosticEvidence = DiagnosticConnectionEvidenceJournalV1(File(context.filesDir, "diagnostic-connection-v1"))
+    private val rawObservations = DevelopmentRawObservationJournalV1(File(context.filesDir, "development-raw-v1"))
     init {
         runCatching { diagnosticEvidence.loadRecovered() }
             .onFailure { Log.w("LarpEscape", "Stored diagnostic connection evidence could not be read", it) }
+        runCatching { rawObservations.load().observations.lastOrNull() }
+            .onSuccess { if (it != null) mutable.value = mutable.value.copy(developmentRawRecord = it) }
+            .onFailure { Log.w("LarpEscape", "Stored raw observation report could not be read", it) }
         runCatching { pairingJournal.loadRecovered(Instant.now().toString()) }
             .onSuccess { if (it != null) mutable.value = mutable.value.copy(pairingReport = it,
                 message = "Gespeicherter Kopplungsbericht geladen · Verbindung erneut prüfen") }
@@ -175,6 +180,13 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
             .onFailure { report("Export abgeschlossen; Exportkopie konnte nicht gelöscht werden: ${it.message}") }
     }
     override fun connectionEvidenceExportBytes(): ByteArray? = diagnosticEvidence.exportHistoryBytes()
+    override fun developmentRawObservationExportBytes(): ByteArray? = rawObservations.exportBytes()
+    override fun recordDevelopmentRawUserObservation(observation: String) {
+        val current = mutable.value.developmentRawRecord ?: return
+        runCatching { rawObservations.observe(current.key, observation) }
+            .onSuccess { mutable.value = mutable.value.copy(developmentRawRecord = it) }
+            .onFailure { report("Nutzerbeobachtung nicht gespeichert: ${it.message}") }
+    }
     override fun requestBond() = guarded {
         val address = selectedAddress ?: error("Zuerst einen ESP verbinden")
         check(gatt != null && mutable.value.connected) { "Aktive Verbindung fehlt" }
@@ -195,10 +207,16 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
         report(if (started) "Android-Kopplung angefragt; auf OS-Ergebnis warten" else "Android konnte Kopplung nicht starten")
     }
     private fun reportDiagnostic(shell: AndroidDiagnosticGattShellV1) {
-        if (diagnostic === shell)
+        if (diagnostic === shell) {
+            val reply = shell.developmentRawReply
+            val recorded = if (reply != null) runCatching { rawObservations.record(reply) }
+                .onFailure { report("Geräteantwort nicht im Prüfbericht gespeichert: ${it.message}") }.getOrNull()
+                else null
             mutable.value = mutable.value.copy(
                 diagnosticAvailability = diagnosticAvailability(shell.link.phase, shell.link.failure, shell.blockStatus),
-                developmentRawReply = shell.developmentRawReply)
+                developmentRawReply = reply,
+                developmentRawRecord = recorded ?: mutable.value.developmentRawRecord)
+        }
     }
     override fun requestDevelopmentGrant() = guarded {
         val shell = diagnostic ?: return@guarded

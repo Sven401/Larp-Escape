@@ -1,6 +1,6 @@
 # Wiederverwendungskatalog für die separate Diagnose-Test-Firmware
 
-Stand: 12. Oktober 2026. Produktbasis: `plan/nutzergefuehrte-hardwarediagnose-startintegration` bei `e652c3a`; dieser Katalog beschreibt Quellen und geprüfte Grenzen, keine Abnahme der Test-Firmware. Zielimage: eigenes USB-geladenes Entwicklungsimage ohne Spiellauf. Der App-geführte Nutzerlauf bleibt offen.
+Stand: 12. Oktober 2026. Quellenbasis für die Bestandsaufnahme: `plan/nutzergefuehrte-hardwarediagnose-startintegration` bei `e652c3a`; aktueller Umsetzungsstand siehe unten. Dieser Katalog beschreibt Quellen und geprüfte Grenzen, keine Abnahme der Test-Firmware. Zielimage: eigenes USB-geladenes Entwicklungsimage ohne Spiellauf. Der App-geführte Nutzerlauf bleibt offen.
 
 | Bereich | Bereits vorhandene Quelle / Beleg | Wiederverwendung im Testimage | Grenze und nächster Anschluss |
 | --- | --- | --- | --- |
@@ -88,3 +88,24 @@ Nach dem ausdrücklich angefragten und vom Gerät bestätigten Entwicklungs-Gran
 Die App trennt ATT-Schreibbestätigung, korrelierte Rohantwort, I²C-Gültigkeit und die physisch ungeklärte Kanalidentität. Das persistente BLE-Journal kann die Rohantwort mit Schrittkennung exportieren; es ist noch kein nutzergeführter Baugruppenbericht. Eine Nutzerbeobachtung, geführte Druck-/Loslassfolge, echte Originalbox-Kopplung und elektrische Zuordnung fehlen. Ein gültiges Registerbyte darf daher weder als „Wake 2 bestanden“ noch als bestätigte Pinbelegung erscheinen. Auch eine mit ATT-Fehler abgewiesene Anfrage benötigt noch einen genaueren geräteseitigen Ablehnungsgrund im App-Bericht.
 
 Hostprüfung: `python scripts/check_diagnostic_development_admission.py` bestand mit 55 Checks, `check_diagnostic_development_raw_step.py` mit sechs Fällen und `check_diagnostic_raw_expander_probe.py` mit fünf Fällen. Android `:core:protocol:test`, `:app:testDebugUnitTest` und `:app:assembleDebug` bestanden offline. Das getrennte ESP32-Image baute mit gepinnten SDK-Binaries: ELF-Flash 1.174.937 / 2.621.440 Byte, RAM 85.408 / 532.480 Byte, `firmware.bin` SHA-256 `691878BC359C588697C6C96DB0F333FF8CCBE9A852EC827B93B877D977C7C6D6`. Debug-APK SHA-256 `F123B690D98FA1CA322108747680AB32BFFB12DF86C2603F20DD3E81014F56B3`. Dies sind Build- und Hostbelege, keine App-/Hardwarelauf-Abnahme. Zusätzliche Pakete waren nicht nötig; lokal werden PlatformIO, JDK 17 und Android SDK verwendet, wobei `JAVA_HOME` und `ANDROID_HOME` für den Android-Aufruf gesetzt sein müssen.
+
+### Gespeicherter Erkundungsbeleg in der App
+
+Die reale ESP-Ansicht speichert eine korrelierte Rohantwort jetzt in einem eigenen atomaren JSON-Journal. Der Nutzer kann zum letzten Schritt „Änderung“, „Keine“ oder „Unklar“ erfassen und den gespeicherten Verlauf nach App-Neustart exportieren. Antwort und Nutzerbeobachtung bleiben getrennte Felder; `physicalResult` bleibt `UNVERIFIED`. Das Journal kann weder eine BLE-Sitzung noch einen Grant wiederherstellen. Der Vergleich zwischen Ruhe, Druck und Loslassen sowie eine bestätigte physische Kanalbezeichnung fehlen weiterhin. Android-Kompilierung und zwei gezielte Journaltests bestanden am 12.10.2026; eine Originalbox-Prüfung fand nicht statt.
+
+## Priorität und Aufwand für die vollständige Einzelprüfung
+
+Aufwand ist eine relative Schätzung für Firmware **und den jeweils nötigen schmalen App-Anschluss**, ohne Nutzerlauf oder ungeklärte Hardwareänderung: S = wenige kleine Adapter-/Vertragsschritte, M = mehrere gekoppelte Schritte, L = eigenständiger Prüfpfad mit mehreren Geräten oder Schutzgrenzen. Die Reihenfolge folgt dem aktiven KI-Plan `plans/nutzergefuehrte-hardwarediagnose.md` (Pakete 1–5). Innerhalb eines Pakets geht ein beobachtbarer, sicher begrenzter Schritt vor seiner Komfortoberfläche.
+
+| Rang | Arbeit und Wiederverwendung | Paket | Aufwand | Nächster prüfbarer Beleg |
+| --- | --- | --- | --- | --- |
+| P0 | BLE-Entwicklungsweg und Rohschritt fertig abgleichen; `ClosedBleStackOwner`, `ProductGattsOwner`, App-Shell und eigener Export sind vorhanden. Fehlende elektrische Qualifikation nicht durch ein gültiges Rohbyte ersetzen. | 1 | M | Nutzergeführte Ruhe-/Druck-/Loslassfolge mit drei korrelierten Antworten und exportierbarer offener Zuordnung; echte BLE-Probe nur nach Rückwegprüfung. |
+| P0 | Begrenzte LED-Einzelaktion mit unabhängigem Abschalttimer und App-Beobachtung; `LedFx`, Park-Deadline und serieller Sweep dienen als Vorlage. | 1 | M | Ein Index, begrenzte Farbe/Helligkeit/Dauer, Treiber- und Timerstatus, sichtbares Ergebnis als Nutzerangabe; Auszustand getrennt. |
+| P1 | LED-Gruppen, Effekte, Parameter und Stop sowie Audio-Track, Stop und BUSY; bestehende LED-/DFMini-Treiber und Audiokatalog nutzen. | 2 | L | Pro Aktion bestätigte Parameter und Geräte-/Fehlerstatus, Nutzerbeobachtung; kein erfundenes SD-Inventar. |
+| P1 | Vier Wake-Kanäle und 9×9-Matrix roh mit Flanken, Scanfehler und Orientierung; MCP-/Matrixadapter nutzen. | 3 | L | Rohkoordinaten und Ereignisse pro Druck/Loslassen, markierte GPB7-Konflikte und 81-Punkt-Auswertung ohne behauptete Pinfreigabe. |
+| P2 | Android schreibt → PN532 liest; PN532-Frame- und Capability-Prüfungen wiederverwenden. | 4 | M | Unabhängige Byte-Rücklesung mit Tagtyp/Kapazität und Tagverluststatus. |
+| P2 | PN532 schreibt → Android liest; begrenzter Schreibbereich und bewusste Bestätigung. | 4 | L | Korrelierter Schreibauftrag, Entfernen/Neuauflegen und unabhängiger Bytevergleich; unbekannten Ausgang nicht automatisch wiederholen. |
+| P2 | ESP-NOW-Sendeweg plus dauerhaft auslesbarer Empfängerbeleg; Funkadapter und seriellen Testframe nutzen. | 5 | L | Lauf-/Paketkennung und Empfängerprotokoll für kurze und Einsatzentfernung. |
+| P1 quer | Freie Einzelkonsolen, geführter Gesamtlauf, Unterbrechung/Fortsetzung, Fehler- und Nutzerbeobachtung sowie Import/Export konsolidieren. Vorhandene App-Simulation liefert nur UI-/Berichtsvorlagen. | 1–5, Abschluss 5 | L | Jede Baugruppe im gleichen echten Gerätevertrag prüfbar; Gesamtbericht mit Herkunft, offenen Befunden und Prüfsummen. |
+
+**Planabgleich:** Der aktuelle Code deckt den BLE-Start und einen unqualifizierten Rohschritt aus Paket 1 ab. Der neue Erkundungsbeleg schließt noch keinen qualifizierten Wake-Test und keinen LED-Schritt ab. Pakete 2–5 bleiben offen. Eine weitere Java-Installation ist nicht nötig; bei Android-Aufrufen `JAVA_HOME` und `ANDROID_HOME` setzen. Der normale Produkt-Gegenbuild bleibt vom FastLED-Entpackfehler im langen OneDrive-Pfad abhängig; das ist ein Buildumgebungsproblem und keine Begründung für andere Baugruppenprioritäten.
