@@ -1,0 +1,39 @@
+diff --git a/extension/extension.json b/extension/extension.json
+index 1e59cde..df4fd3a 100644
+--- a/extension/extension.json
++++ b/extension/extension.json
+@@ -3,7 +3,7 @@
+   "uuid": "easyedamcpbridge202605240001abcd",
+   "displayName": "EasyEDA MCP Bridge",
+   "description": "Independent local WebSocket bridge that lets an MCP server inspect and assist the active EasyEDA Pro project.",
+-  "version": "0.1.0",
++  "version": "0.1.1",
+   "publisher": "vlabsoft",
+   "engines": {
+     "eda": "^2.3.0"
+diff --git a/extension/src/bridgeConfig.ts b/extension/src/bridgeConfig.ts
+index 9e9ac8a..9e34e22 100644
+--- a/extension/src/bridgeConfig.ts
++++ b/extension/src/bridgeConfig.ts
+@@ -10,7 +10,7 @@ type BridgeConfigOverride = Partial<ExtensionBridgeConfig>;
+ 
+ const defaultBridgeConfig: ExtensionBridgeConfig = {
+   host: "127.0.0.1",
+-  port: 8765,
++  port: 18765,
+   openTimeoutMs: 2_500,
+   heartbeatIntervalMs: 15_000,
+   reconnectDelayMs: [0, 1_000, 2_500, 5_000]
+diff --git a/extension/src/index.test.ts b/extension/src/index.test.ts
+index 851d454..68779ee 100644
+--- a/extension/src/index.test.ts
++++ b/extension/src/index.test.ts
+@@ -236,7 +236,7 @@ describe("EasyEDA extension bridge handlers", () => {
+     expect(dialogMessages.at(-1)).toMatchObject({
+       title: "EasyEDA MCP Bridge Diagnostics"
+     });
+-    expect(dialogMessages.at(-1)?.message).toContain("Bridge URI: ws://127.0.0.1:8765");
++    expect(dialogMessages.at(-1)?.message).toContain("Bridge URI: ws://127.0.0.1:18765");
+     expect(dialogMessages.at(-1)?.message).toContain("Connection phase:");
+     expect(dialogMessages.at(-1)?.message).toContain("Document: Power Supply.Schematic");
+   });

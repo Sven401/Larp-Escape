@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" role="img" aria-label="Editierbare PCB-Platzierungsskizze ESP32 DevKitC und MCP23017, ohne Leiterbahnen">
+  <style>text{font-family:Arial,sans-serif;fill:#13303b} .board{fill:#d7efdc;stroke:#237349;stroke-width:5} .part{fill:#fff;stroke:#22535d;stroke-width:3} .head{fill:#e5edf4;stroke:#44637a;stroke-width:3} .note{font-size:20px} .title{font-size:30px;font-weight:bold} .label{font-size:23px;font-weight:bold}</style>
+  <rect class="board" x="30" y="80" width="1140" height="600" rx="20"/>
+  <text class="title" x="38" y="45">POC-HW/0.1-draft – Platzierungsskizze, KEIN PCB-CAD / kein Maßstab</text>
+  <rect class="part" x="75" y="180" width="430" height="350" rx="12"/>
+  <text class="label" x="120" y="245">X1 ESP32-DevKitC V4</text>
+  <text class="note" x="120" y="280">WROOM-32E; USB zur Außenkante</text>
+  <rect class="head" x="54" y="180" width="25" height="350"/>
+  <text class="note" x="85" y="565">S1: DevKit J2, 19 Pins</text>
+  <rect class="head" x="500" y="180" width="25" height="350"/>
+  <text class="note" x="300" y="600">S2: DevKit J3, 19 Pins</text>
+  <rect class="part" x="650" y="230" width="195" height="205" rx="8"/>
+  <text class="label" x="678" y="300">U1 MCP23017</text>
+  <text class="note" x="680" y="333">SPDIP-28</text>
+  <text class="note" x="680" y="364">C1 dicht an 9/10</text>
+  <rect class="head" x="900" y="150" width="35" height="260"/>
+  <text class="note" x="948" y="230">J3 GPA0–7</text>
+  <rect class="head" x="1040" y="150" width="35" height="260"/>
+  <text class="note" x="940" y="445">J4 GPB0–7</text>
+  <rect class="head" x="660" y="495" width="220" height="35"/>
+  <text class="note" x="660" y="560">J5 INT / J6 ESP-GPIO</text>
+  <rect class="part" x="900" y="510" width="60" height="45"/>
+  <rect class="part" x="980" y="510" width="60" height="45"/>
+  <rect class="part" x="1060" y="510" width="60" height="45"/>
+  <text class="note" x="865" y="600">SW1 EN · SW2 BOOT · SW3 MCP RESET</text>
+  <text class="note" x="75" y="645">Vor CAD: DevKit-Maße, Antennenfreiraum, USB-Überstand, Footprints und Steckerlage prüfen.</text>
+</svg>

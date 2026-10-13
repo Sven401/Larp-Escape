@@ -1,0 +1,252 @@
+{
+  "group": "hardware",
+  "captures": [
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "Hardware/BOM_Esp-Breakout-V2_2026-10-10.csv",
+      "path": "main-root\\files\\Hardware\\BOM_Esp-Breakout-V2_2026-10-10.csv",
+      "sha256": "2d6292179cfc36f5482caa9c7e74384bcc6a65ba47f3dba3256e9c775e101411",
+      "bytes": 3024,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "Hardware/BOM_Esp32-Breakout_2026-10-10.csv",
+      "path": "main-root\\files\\Hardware\\BOM_Esp32-Breakout_2026-10-10.csv",
+      "sha256": "f7caf1b2b9a502106a003348cd62f9664110a23f0b532788ea23609310dfdd42",
+      "bytes": 3040,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "Hardware/Erfassungsbogen_Originalbox_Verdrahtung.docx",
+      "path": "main-root\\files\\Hardware\\Erfassungsbogen_Originalbox_Verdrahtung.docx",
+      "sha256": "486b6da9f487847431238b5f5092c25de9bbfc74eba8da16d483db993664d2c0",
+      "bytes": 424432,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "Hardware/Erfassungsbogen_Originalbox_Verdrahtung_mit_Lageskizze.docx",
+      "path": "main-root\\files\\Hardware\\Erfassungsbogen_Originalbox_Verdrahtung_mit_Lageskizze.docx",
+      "sha256": "57f89d7c598eb1c31230f2736f545c257d10443349ade107703e45e7642b0708",
+      "bytes": 410331,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "Hardware/Originalbox_Lageskizze_Messpunkte.png",
+      "path": "main-root\\files\\Hardware\\Originalbox_Lageskizze_Messpunkte.png",
+      "sha256": "1c8491cca81210ee9b48a7bbafd43e85abdbef8ae9b34bbfb756837885c7e863",
+      "bytes": 457274,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "Hardware/Originalbox_Lageskizze_Messpunkte.svg",
+      "path": "main-root\\files\\Hardware\\Originalbox_Lageskizze_Messpunkte.svg",
+      "sha256": "b4144ee0e2d23bfddfe9e58b084d302dc03d8bb147bd877ab9da9337a0086286",
+      "bytes": 6695,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "Hardware/POC-EasyEDA-ESP32-MCP23017/README.md",
+      "path": "main-root\\files\\Hardware\\POC-EasyEDA-ESP32-MCP23017\\README.md",
+      "sha256": "01170ec95260c54aa1beab1b93fd9ab392f70aa043b3591f2bfaef34927747c2",
+      "bytes": 9671,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "Hardware/POC-EasyEDA-ESP32-MCP23017/netzliste.csv",
+      "path": "main-root\\files\\Hardware\\POC-EasyEDA-ESP32-MCP23017\\netzliste.csv",
+      "sha256": "feb77252a94c4236f3511abf0cc73e0ed64aa83043271731a9bd83ba8137b29d",
+      "bytes": 1260,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "Hardware/POC-EasyEDA-ESP32-MCP23017/pcb-platzierung.svg",
+      "path": "main-root\\files\\Hardware\\POC-EasyEDA-ESP32-MCP23017\\pcb-platzierung.svg",
+      "sha256": "ce34d23fcd5c33095858c061d34675f0ced3431b1b203c1ea3af436a9f66da12",
+      "bytes": 2157,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "Hardware/POC-EasyEDA-ESP32-MCP23017/poc-r0.kicad_pcb",
+      "path": "main-root\\files\\Hardware\\POC-EasyEDA-ESP32-MCP23017\\poc-r0.kicad_pcb",
+      "sha256": "4d7d6021718461ba0933e808bfb0253996d3c25659d7a83831e94ddd5d25a8cf",
+      "bytes": 25757,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "Hardware/POC-EasyEDA-ESP32-MCP23017/pruefe_quellen.py",
+      "path": "main-root\\files\\Hardware\\POC-EasyEDA-ESP32-MCP23017\\pruefe_quellen.py",
+      "sha256": "cdd676ba526b1b3de4e53517a52afacf4c95186186a2bfead91dd507557e4bda",
+      "bytes": 2856,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "Hardware/POC-EasyEDA-ESP32-MCP23017/schaltbild.svg",
+      "path": "main-root\\files\\Hardware\\POC-EasyEDA-ESP32-MCP23017\\schaltbild.svg",
+      "sha256": "cd312b908553f77be839bcef675fff539749bb6997681bbc0de75c634da22583",
+      "bytes": 3520,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "Hardware/POC-EasyEDA-ESP32-MCP23017/stueckliste.csv",
+      "path": "main-root\\files\\Hardware\\POC-EasyEDA-ESP32-MCP23017\\stueckliste.csv",
+      "sha256": "7ebad5d37021674a2f71eb1bb8a4cd98a13eaf0d4fe13746f1bde066356136aa",
+      "bytes": 1080,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "Hardware/SCH_Esp32-Breakout_2026-10-10.json",
+      "path": "main-root\\files\\Hardware\\SCH_Esp32-Breakout_2026-10-10.json",
+      "sha256": "6438234c76b455c6910777e1bae82de1f5031ca5967a659261cf0349354e06cb",
+      "bytes": 75337,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "Hardware/SCH_Gpio-Expander_2026-10-10 (1).json",
+      "path": "main-root\\files\\Hardware\\SCH_Gpio-Expander_2026-10-10 (1).json",
+      "sha256": "946e9df479d5286c5cf358e86e515687d6df86c2dffb0a13f6e2389269b0802e",
+      "bytes": 76006,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "Hardware/SCH_Gpio-Expander_2026-10-10.json",
+      "path": "main-root\\files\\Hardware\\SCH_Gpio-Expander_2026-10-10.json",
+      "sha256": "946e9df479d5286c5cf358e86e515687d6df86c2dffb0a13f6e2389269b0802e",
+      "bytes": 76006,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "Hardware/Schematic_Esp-Breakout-V2_2026-10-10 (1).png",
+      "path": "main-root\\files\\Hardware\\Schematic_Esp-Breakout-V2_2026-10-10 (1).png",
+      "sha256": "c2e789f34d03539b3a22f06ead7df53c40565d8d8ec541922f82566aefae2876",
+      "bytes": 110948,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "Hardware/Schematic_Esp-Breakout-V2_2026-10-10.pdf",
+      "path": "main-root\\files\\Hardware\\Schematic_Esp-Breakout-V2_2026-10-10.pdf",
+      "sha256": "829d00304d1be2dcaf060ff94bad37820ba1b4d87a0e824e46d15e8744c5f288",
+      "bytes": 59240,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "Hardware/Schematic_Esp-Breakout-V2_2026-10-10.png",
+      "path": "main-root\\files\\Hardware\\Schematic_Esp-Breakout-V2_2026-10-10.png",
+      "sha256": "c2e789f34d03539b3a22f06ead7df53c40565d8d8ec541922f82566aefae2876",
+      "bytes": 110948,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "Hardware/Schematic_Esp-Breakout-V2_2026-10-10.svg",
+      "path": "main-root\\files\\Hardware\\Schematic_Esp-Breakout-V2_2026-10-10.svg",
+      "sha256": "ca93cd9a221d4cb464df7e0beee7801a00a361a40db6a7a466332df0d67360c6",
+      "bytes": 139936,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "Hardware/Schematic_Esp32-Breakout_2026-10-10.svg",
+      "path": "main-root\\files\\Hardware\\Schematic_Esp32-Breakout_2026-10-10.svg",
+      "sha256": "0cd2811f46fee0f75fb2d6fed32c9e0d55e4a8df69d0373720f72d1691475627",
+      "bytes": 228669,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "Hardware/Schematic_Gpio-Expander_2026-10-10.svg",
+      "path": "main-root\\files\\Hardware\\Schematic_Gpio-Expander_2026-10-10.svg",
+      "sha256": "1352fe0270f3324d9bf9a1636ddd05d2012edea924031a606897a89539c5ea46",
+      "bytes": 209658,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "Hardware/Sheet_1_2026-10-10 (1).schdoc",
+      "path": "main-root\\files\\Hardware\\Sheet_1_2026-10-10 (1).schdoc",
+      "sha256": "384597fd814c08e5b551c12e783300b7d9018217ab8d397510d7950d9b9a24aa",
+      "bytes": 116928,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "Hardware/Sheet_1_2026-10-10 (1).svg",
+      "path": "main-root\\files\\Hardware\\Sheet_1_2026-10-10 (1).svg",
+      "sha256": "b0c4abc2608e71731c2b9e1a5bdbc204a38a2c855eea81fca543f2d3d1f36b46",
+      "bytes": 131879,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "Hardware/Sheet_1_2026-10-10.schdoc",
+      "path": "main-root\\files\\Hardware\\Sheet_1_2026-10-10.schdoc",
+      "sha256": "249924d55aa85eca3948a9ab6fc47b2c6cc623ef6646695cb54f3740d78a7cee",
+      "bytes": 151441,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "Hardware/Sheet_1_2026-10-10.svg",
+      "path": "main-root\\files\\Hardware\\Sheet_1_2026-10-10.svg",
+      "sha256": "920ba978fc13bf7f05816caf4056f01826a5e0c9d8f2c16b5fd67f1cb4785836",
+      "bytes": 144857,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "external-repository-patch",
+      "source_head": "dcf6704eb2b484ab3bbc0f8c73f71b0d58e87b00",
+      "path": "easyeda_mcp\\tracked.patch",
+      "sha256": "e4937642293362ed726f4294c13a652998ce33fc70b45ed03adbe68e1dbdf47b",
+      "bytes": 1674,
+      "source_paths": [
+        "extension/extension.json",
+        "extension/src/bridgeConfig.ts",
+        "extension/src/index.test.ts"
+      ],
+      "source_id": "easyeda_mcp"
+    }
+  ]
+}

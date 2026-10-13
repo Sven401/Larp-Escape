@@ -1,0 +1,13 @@
+Referenz;Anzahl;Wert/Typ;Bauform;Funktion;Beschaffung/Prüfpunkt
+X1;1;ESP32-DevKitC V4 mit ESP32-WROOM-32E;Baugruppe 2x19 2.54mm;ESP32 USB Stromversorgung;konkrete Modul- und Steckerbestückung vor Footprint prüfen
+U1;1;MCP23017-E/SP;SPDIP-28 300mil;I2C GPIO Expander;exakte Package-/Pinvariante prüfen
+S1 S2;2;Buchsenleiste 1x19 2.54mm;THT;X1 Aufnahme;Abstand und Orientierung offen
+J3 J4;2;Stiftleiste 1x8 2.54mm;THT;GPA und GPB;Steckertyp offen
+J5;1;Stiftleiste 1x4 2.54mm;THT;INTA INTB Versorgung;Steckertyp offen
+J6;1;Stiftleiste 1x6 2.54mm;THT;ESP GPIOs Versorgung;Steckertyp offen
+JP1;1;Stiftleiste 1x2 mit Shunt;THT;MCP A0 Adresswahl;Shunt nur spannungslos
+R1 R2;2;4.7k 1%;0805;I2C Pull-ups;Buskapazität und vorhandene Pull-ups vor Bestückung prüfen
+R3 R4 R5 R6;4;10k 1%;0805;RESET A0 EN BOOT Bias;DevKit Schaltung auf doppelte Bias prüfen
+C1;1;100nF X7R >=6.3V;0805;U1 Entkopplung;nah an U1/9 und U1/10
+C2;1;10uF X7R >=6.3V;1206;lokaler 3.3V Puffer;Derating prüfen
+SW1 SW2 SW3;3;Taster NO momentary;THT oder SMD offen;EN BOOT MCP_RESET;Footprint vor PCB festlegen

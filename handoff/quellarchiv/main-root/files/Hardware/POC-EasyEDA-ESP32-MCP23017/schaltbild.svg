@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 970" role="img" aria-label="Editierbares Funktionsschaltbild ESP32 DevKitC und MCP23017">
+  <style>text{font-family:Arial,sans-serif;fill:#172f3a} .t{font-size:29px;font-weight:bold} .h{font-size:23px;font-weight:bold} .n{font-size:19px} .s{font-size:16px} .part{fill:#f5f9fc;stroke:#24516b;stroke-width:3} .net{stroke:#17653b;stroke-width:3;fill:none} .bus{stroke:#2b609b;stroke-width:4;fill:none} .warn{fill:#fff4dc;stroke:#b77716;stroke-width:2}</style>
+  <text class="t" x="35" y="46">POC-HW/0.1-draft – Funktionsschaltbild; Netzliste ist maßgeblich</text>
+  <text class="n" x="35" y="77">Vektoransicht, kein importierter EasyEDA-Schaltplan und keine elektrische Regelprüfung</text>
+  <rect class="part" x="70" y="180" width="355" height="470" rx="10"/>
+  <text class="h" x="95" y="220">X1 ESP32-DevKitC V4</text>
+  <text class="n" x="95" y="250">WROOM-32E, USB-Versorgung</text>
+  <text class="n" x="95" y="325">J2/1  +3V3</text>
+  <text class="n" x="95" y="370">J3/6  GPIO21 SDA</text>
+  <text class="n" x="95" y="415">J3/3  GPIO22 SCL</text>
+  <text class="n" x="95" y="460">J2/2  EN  → SW1</text>
+  <text class="n" x="95" y="505">J3/14 GPIO0 → SW2</text>
+  <text class="n" x="95" y="550">J3/2,8,9,11 → J6</text>
+  <text class="n" x="95" y="600">J2/14,J3/1,7 GND</text>
+  <rect class="part" x="740" y="180" width="385" height="470" rx="10"/>
+  <text class="h" x="770" y="220">U1 MCP23017-E/SP</text>
+  <text class="n" x="770" y="270">9 VDD = +3V3 · 10 VSS = GND</text>
+  <text class="n" x="770" y="330">13 SDA · 12 SCL</text>
+  <text class="n" x="770" y="390">18 RESET → R3 / SW3</text>
+  <text class="n" x="770" y="450">15 A0 → R4 / JP1</text>
+  <text class="n" x="770" y="485">16 A1, 17 A2 → GND</text>
+  <text class="n" x="770" y="540">21–28 GPA0…7 → J3</text>
+  <text class="n" x="770" y="575">1–8 GPB0…7 → J4</text>
+  <text class="n" x="770" y="610">20 INTA, 19 INTB → J5</text>
+  <path class="net" d="M425 310 H560 V260 H740"/><text class="n" x="525" y="245">+3V3 · C1 100 nF · C2 10 µF</text>
+  <path class="bus" d="M425 355 H740"/><text class="n" x="515" y="345">SDA · R1 4,7 kΩ↑</text>
+  <path class="bus" d="M425 400 H740"/><text class="n" x="515" y="435">SCL · R2 4,7 kΩ↑</text>
+  <path class="net" d="M425 595 H660 V650 H740"/><text class="n" x="545" y="675">GND gemeinsam</text>
+  <rect class="part" x="1170" y="240" width="265" height="305" rx="10"/>
+  <text class="h" x="1195" y="280">Breakout</text>
+  <text class="n" x="1195" y="335">J3: GPA0…7</text>
+  <text class="n" x="1195" y="385">J4: GPB0…7</text>
+  <text class="n" x="1195" y="435">J5: INTA, INTB</text>
+  <text class="n" x="1195" y="485">J6: vier ESP GPIO</text>
+  <path class="bus" d="M1125 545 H1170"/>
+  <rect class="part" x="70" y="725" width="1030" height="155" rx="10"/>
+  <text class="h" x="95" y="762">Taster und Adresswahl</text>
+  <text class="n" x="95" y="803">SW1 EN→GND + R5 10 kΩ↑ · SW2 GPIO0→GND + R6 10 kΩ↑ · SW3 MCP RESET→GND + R3 10 kΩ↑</text>
+  <text class="n" x="95" y="843">R4 10 kΩ A0→GND · JP1 A0→3V3: offen 0x20, Shunt 0x21; A1=A2=GND</text>
+  <rect class="warn" x="1130" y="725" width="320" height="155" rx="10"/>
+  <text class="h" x="1150" y="762">Offen vor CAD</text>
+  <text class="s" x="1150" y="802">DevKit-Mechanik / Footprint</text>
+  <text class="s" x="1150" y="830">Pull-ups / 3V3-Stromreserve</text>
+  <text class="s" x="1150" y="858">ERC, PCB-Routing und DRC</text>
+</svg>

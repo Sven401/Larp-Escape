@@ -1,0 +1,32 @@
+Netz;Anschlüsse;Bemerkung
++3V3;X1.J2/1 U1/9 R1/1 R2/1 R3/1 R5/1 R6/1 C1/1 C2/1 JP1/2 J5/3 J6/5;vom DevKit USB-abgeleitet
+GND;X1.J2/14 X1.J3/1 X1.J3/7 U1/10 U1/16 U1/17 R4/2 C1/2 C2/2 SW1/2 SW2/2 SW3/2 J5/4 J6/6;gemeinsamer Rückleiter
+SDA;X1.J3/6 U1/13 R1/2;GPIO21
+SCL;X1.J3/3 U1/12 R2/2;GPIO22
+EN;X1.J2/2 R5/2 SW1/1;ESP Reset aktiv LOW
+BOOT;X1.J3/14 R6/2 SW2/1;GPIO0 aktiv LOW
+MCP_RESET;U1/18 R3/2 SW3/1;MCP Reset aktiv LOW
+MCP_A0;U1/15 R4/1 JP1/1;0x20 offen 0x21 Shunt
+GPA0;U1/21 J3/1;3.3V Logik
+GPA1;U1/22 J3/2;3.3V Logik
+GPA2;U1/23 J3/3;3.3V Logik
+GPA3;U1/24 J3/4;3.3V Logik
+GPA4;U1/25 J3/5;3.3V Logik
+GPA5;U1/26 J3/6;3.3V Logik
+GPA6;U1/27 J3/7;3.3V Logik
+GPA7;U1/28 J3/8;MCP23017 nur Ausgang einplanen
+GPB0;U1/1 J4/1;3.3V Logik
+GPB1;U1/2 J4/2;3.3V Logik
+GPB2;U1/3 J4/3;3.3V Logik
+GPB3;U1/4 J4/4;3.3V Logik
+GPB4;U1/5 J4/5;3.3V Logik
+GPB5;U1/6 J4/6;3.3V Logik
+GPB6;U1/7 J4/7;3.3V Logik
+GPB7;U1/8 J4/8;MCP23017 nur Ausgang einplanen
+INTA;U1/20 J5/1;kein Pull-up keine ESP-Verbindung
+INTB;U1/19 J5/2;kein Pull-up keine ESP-Verbindung
+ESP_GPIO23;X1.J3/2 J6/1;POC Breakout
+ESP_GPIO19;X1.J3/8 J6/2;POC Breakout
+ESP_GPIO18;X1.J3/9 J6/3;POC Breakout
+ESP_GPIO17;X1.J3/11 J6/4;nur WROOM bestücktes DevKit
+NC;U1/11 U1/14 X1.J2/19;MCP NC und DevKit 5V bewusst offen
