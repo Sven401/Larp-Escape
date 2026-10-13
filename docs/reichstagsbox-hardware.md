@@ -48,7 +48,7 @@ As-built-Nachweise, einen versionierten Hardwarevertrag und anschließend die
 nutzergeführte physische Prüfung; Hosttests oder Busantworten reichen dafür
 nicht aus.
 
-## BLOCKER: keine aktuelle Upload- oder Restore-Freigabe
+## Historischer Upload-Blocker vor dem Geräteschritt vom 13. Oktober 2026
 
 Der frühere Ablauf in Produktcommit `5d3779e` gehört zur Produktbasis
 `7f2a3e4` auf `codex/reichstagsbox-hardware`. Seine damalige COM3-Zuordnung,
@@ -77,6 +77,30 @@ künftigen Geräteänderung ist in einem gesondert freigegebenen Geräteschritt:
    einem Schreibvorgang sind Schreib-Hashes und der erwartete Startzustand zu
    belegen.
 
-Diese Prüfung wurde in diesem Dokumentationsschritt nicht am Gerät ausgeführt.
-Bis das aktuelle Faktenblatt und der geprüfte chipgebundene Rückweg vorliegen,
-bleibt jede Firmwareänderung an der Originalbox fail-closed gesperrt.
+Diese Prüfung wurde im damaligen Dokumentationsschritt nicht am Gerät ausgeführt.
+Der nachfolgende Abschnitt protokolliert den inzwischen freigegebenen,
+chipgebundenen Upload. Ein Restore ist weiterhin nicht freigegeben.
+
+### Test-Firmware-Upload am 13. Oktober 2026
+
+COM3 identifizierte unmittelbar vor dem Schreiben den ESP32-D0WD-V3 mit MAC
+`a8:42:e3:cd:4b:18` und 4 MiB Flash. Eine neue Vollsicherung des vor dem
+Upload geladenen Stands liegt außerhalb des Produkt-Repositories unter
+`C:/Users/seide/AppData/Local/LarpEscape/ESP32-Backups/COM3-20261013-PreTestFirmware/`.
+Sie umfasst 4.194.304 Byte mit SHA-256
+`A27CE2E30CF43857AF80FDE9F4F99D986A5C021E02637632AA0469A0E6B5E3D2`.
+Das dortige `pre-upload-facts.json` hält Chipbindung, Partitionen, Schreibbereich
+und Prüfergebnisse fest. Die vorhandene Partitionstabelle stimmte bytegenau
+mit der Zielkonfiguration überein; das Factory-App-Fenster beginnt bei
+`0x10000` und hat 2.621.440 Byte.
+
+Testimage aus Produktcommit `4907cf7b20763f7c72021c052f38b3e2e31e90fa`:
+1.599.696 Byte, SHA-256
+`E3F7A51CE42A43264986BF08C1AB790D434DCB1E6676E7FF6FE2AA3BA0BD2D57`.
+Nach ausdrücklicher Nutzerfreigabe wurde ausschließlich dieses Abbild ab
+`0x10000` geschrieben. Das Werkzeug bestätigte den Schreib-Hash; eine
+separate Flash-Verifikation meldete `verify OK (digest matched)`. Der serielle
+Start zeigte `LARP_DIAGNOSTIC_TEST_FIRMWARE`, bereite Identität und BLE,
+bereiten LED-Abschalttimer und Treiber mit 5 V/100 mA FastLED-Schätzbudget
+sowie einen konfigurierten Wake-2-Eingang. Der nutzergeführte App-Lauf und
+seine physische Beobachtung bleiben offen. Kein Restore wurde ausgeführt.
