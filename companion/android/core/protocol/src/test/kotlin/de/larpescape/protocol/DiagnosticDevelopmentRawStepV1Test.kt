@@ -41,7 +41,9 @@ class DiagnosticDevelopmentRawStepV1Test {
         val valid = bytes(replyHex)
         rejects { DiagnosticDevelopmentRawStepV1.correlate(valid, request.copy(stepId = 2)) }
         rejects { DiagnosticDevelopmentRawStepV1.correlate(valid.copyOf(103), request) }
-        rejects { DiagnosticDevelopmentRawStepV1.correlate(valid.copyOf().apply { this[101] = 1 }, request) }
+        assertTrue(DiagnosticDevelopmentRawStepV1.correlate(
+            valid.copyOf().apply { this[101] = 1 }, request).physicalChannelQualified)
+        rejects { DiagnosticDevelopmentRawStepV1.correlate(valid.copyOf().apply { this[101] = 2 }, request) }
         rejects { DiagnosticDevelopmentRawStepV1.correlate(valid.copyOf().apply { this[99] = 0 }, request) }
         val failed = valid.copyOf().apply {
             this[96] = 1; this[97] = 1; this[98] = 0; this[99] = 0; this[100] = 2

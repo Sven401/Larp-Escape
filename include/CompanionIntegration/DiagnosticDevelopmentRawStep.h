@@ -9,8 +9,8 @@
 namespace larp {
 namespace diagnostic {
 
-// Development-image-only fixed-width BLE contract. The request selects one
-// exploratory register read, not a physically qualified Wake channel.
+// Development-image-only fixed-width BLE contract for the historical Wake-2
+// source. Qualification requires configured input mode plus a guided sequence.
 struct DevelopmentRawStepRequest {
     std::uint32_t message = 0, step = 0, timeoutMs = 0;
     companion::Identity device;

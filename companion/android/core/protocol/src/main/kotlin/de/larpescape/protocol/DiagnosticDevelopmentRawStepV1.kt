@@ -1,6 +1,6 @@
 package de.larpescape.protocol
 
-/** Exploratory I²C register observation; the physical button identity is unqualified. */
+/** Fixed Wake-2 source read; the device reports whether its historic input mode was verified. */
 data class DiagnosticDevelopmentRawStepRequestV1(
     val message: Long, val deviceId: String, val bootId: String,
     val runId: String, val grantId: String, val stepId: Long,
@@ -20,9 +20,8 @@ data class DiagnosticDevelopmentRawStepReplyV1(
     val rejection: DiagnosticDevelopmentRawStepRejectionV1,
     val i2cStatus: DiagnosticDevelopmentRawI2cStatusV1,
     val rawByte: Int?, val rawHigh: Boolean?, val busCode: Int,
-) {
-    val physicalChannelQualified: Boolean get() = false
-}
+    val physicalChannelQualified: Boolean = false,
+)
 
 object DiagnosticDevelopmentRawStepV1 {
     const val REQUEST_BYTES = 80
@@ -63,9 +62,7 @@ object DiagnosticDevelopmentRawStepV1 {
         DiagnosticDevelopmentRawStepReplyV1 {
         require(bytes.size == REPLY_BYTES && bytes.copyOfRange(0, REQUEST_BYTES)
             .contentEquals(encode(original))) { "Development raw-step correlation mismatch" }
-        require(bytes[101] == 0.toByte() && bytes[103] == 0.toByte()) {
-            "Physical qualification is unsupported"
-        }
+        require((bytes[101].toInt() and 255) <= 1 && bytes[103] == 0.toByte())
         val outcome = DiagnosticDevelopmentRawStepOutcomeV1.entries
             .getOrNull(bytes[96].toInt() and 255) ?: throw IllegalArgumentException("Unknown raw-step outcome")
         val status = DiagnosticDevelopmentRawI2cStatusV1.entries
@@ -82,18 +79,19 @@ object DiagnosticDevelopmentRawStepV1 {
             require(started == 0uL && ended == 0uL &&
                 rejection != DiagnosticDevelopmentRawStepRejectionV1.NONE &&
                 status == DiagnosticDevelopmentRawI2cStatusV1.READ_FAILED &&
-                raw == 0 && high == 0 && busCode == 0)
+                raw == 0 && high == 0 && busCode == 0 && bytes[101] == 0.toByte())
         } else {
             require(rejection == DiagnosticDevelopmentRawStepRejectionV1.NONE)
             require(started <= ended && ended - started < original.timeoutMs.toULong())
             if (outcome == DiagnosticDevelopmentRawStepOutcomeV1.REGISTER_OBSERVED)
                 require(status == DiagnosticDevelopmentRawI2cStatusV1.VALID && busCode == 0 &&
                     (high == 1) == ((raw and 0x40) != 0))
-            else require(status != DiagnosticDevelopmentRawI2cStatusV1.VALID && raw == 0 && high == 0)
+            else require(status != DiagnosticDevelopmentRawI2cStatusV1.VALID && raw == 0 && high == 0 &&
+                bytes[101] == 0.toByte())
         }
         return DiagnosticDevelopmentRawStepReplyV1(original, started.toLong(), ended.toLong(),
             outcome, rejection, status, raw.takeIf { outcome == DiagnosticDevelopmentRawStepOutcomeV1.REGISTER_OBSERVED },
             (high == 1).takeIf { outcome == DiagnosticDevelopmentRawStepOutcomeV1.REGISTER_OBSERVED },
-            busCode)
+            busCode, bytes[101] == 1.toByte())
     }
 }

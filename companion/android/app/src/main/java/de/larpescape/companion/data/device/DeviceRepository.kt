@@ -27,6 +27,7 @@ data class DeviceUiState(
     val developmentLedReply: DiagnosticDevelopmentLedStepReplyV1? = null,
     val developmentRawRecord: DevelopmentRawObservationV1? = null,
     val wake2CandidateSignal: String = "NOT_TESTED",
+    val wake2PhysicalResult: String = "UNVERIFIED",
     val developmentLedRecord: DevelopmentLedObservationV1? = null,
     val pairingReport: PairingObservationReportV1? = null,
 )

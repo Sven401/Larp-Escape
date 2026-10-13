@@ -305,18 +305,18 @@ class MainActivity : ComponentActivity() {
                                     de.larpescape.companion.data.device.DiagnosticAvailabilityV1.DEVELOPMENT_CONTROL_CONFIRMED) {
                                     Button(onClick = model::requestDevelopmentGrant,
                                         modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
-                                        Text("Entwicklungszulassung für 30 Sekunden anfragen")
+                                        Text("Entwicklungszulassung für 60 Sekunden anfragen")
                                     }
                                 }
                                 if (state.diagnosticAvailability ==
                                     de.larpescape.companion.data.device.DiagnosticAvailabilityV1.DEVELOPMENT_GRANT_CONFIRMED) {
                                     Button(onClick = { model.requestDevelopmentRawObservation() },
                                         modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
-                                        Text("I²C-Rohregister einmal lesen · unqualifiziert")
+                                        Text("Wake 2 · Eingangspegel einmal lesen")
                                     }
-                                    Text("Wake-2-Kandidat: Nacheinander in Ruhe, während des Drückens und nach dem Loslassen messen. " +
-                                        "Jede Messung benötigt eine eigene Geräteantwort innerhalb derselben Zulassung. " +
-                                        "Die reale Leitungszuordnung bleibt ungeprüft.")
+                                    Text("Wake 2: Nacheinander in Ruhe, während des Drückens und nach dem Loslassen messen. " +
+                                        "Nach Schritt 2 und 3 jeweils die eigene Beobachtung eintragen, bevor du fortfährst. " +
+                                        "Alle drei Geräteantworten müssen aus derselben Zulassung stammen.")
                                     OutlinedButton(onClick = { model.requestDevelopmentRawObservation("REST") },
                                         modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("1 · In Ruhe messen") }
                                     OutlinedButton(onClick = { model.requestDevelopmentRawObservation("PRESSED") },
@@ -357,17 +357,27 @@ class MainActivity : ComponentActivity() {
                                 }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("LED-Vorprüfbeleg exportieren") }
                                 ledExportNotice?.let { Text(it) }
                                 state.developmentRawReply?.let { raw ->
-                                    Text("Erkundungsmessung Schritt ${raw.request.stepId}: ${raw.outcome}; " +
+                                    Text("Wake-2-Messung Schritt ${raw.request.stepId}: ${raw.outcome}; " +
                                         "I²C ${raw.i2cStatus}; Byte ${raw.rawByte?.let { "0x%02X".format(it) } ?: "unbekannt"}; " +
                                         "Bit 6 ${raw.rawHigh?.let { if (it) "HIGH" else "LOW" } ?: "unbekannt"}; " +
                                         "Buscode ${raw.busCode}; Ablehnung ${raw.rejection}.")
-                                    Text("Adresse 0x20, Register 0x13. Die Zuordnung zu einem Taster ist nicht bestätigt.",
+                                    Text("Wake 2 laut geprüftem Spielstand: MCP1, Adresse 0x20, GPB6. " +
+                                        "Eingangskonfiguration vom Gerät bestätigt: " +
+                                        if (raw.physicalChannelQualified) "ja" else "nein",
                                         style = MaterialTheme.typography.bodySmall)
                                 }
                                 state.developmentRawRecord?.let { record ->
                                     Text("Gespeicherter Rohschritt ${record.stepId} · Antwort ${record.outcome} · Nutzerbeobachtung ${record.userObservation ?: "offen"}.")
                                     if (record.userObservation == null) {
-                                        Text("Was hast du bei diesem Schritt selbst beobachtet? Die Auswahl bestätigt keine elektrische Zuordnung.")
+                                        val phase = when (record.captureStage) {
+                                            "REST" -> "die Ruhephase"
+                                            "PRESSED" -> "das Drücken"
+                                            "RELEASED" -> "das Loslassen"
+                                            else -> "diese Messung"
+                                        }
+                                        Text("Hast du die Wake-2-Taste wie für $phase beschrieben " +
+                                            "betätigt und die angezeigte Pegeländerung gesehen? " +
+                                            "Trage Schritt 2 und 3 vor der jeweils nächsten Messung ein.")
                                         OutlinedButton(onClick = { model.recordDevelopmentRawUserObservation("CHANGE_SEEN") },
                                             modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Änderung beobachtet") }
                                         OutlinedButton(onClick = { model.recordDevelopmentRawUserObservation("NO_CHANGE_SEEN") },
@@ -382,16 +392,24 @@ class MainActivity : ComponentActivity() {
                                     "READ_FAILED" -> "Mindestens eine Geräteablesung ist fehlgeschlagen."
                                     else -> "Drei gültige, aufeinanderfolgende Messungen stehen noch aus."
                                 }
-                                Text("Wake-2-Kandidat: $rawSignalDetail Die elektrische Zuordnung bleibt " +
-                                    "unbestätigt; dies ist kein bestandener Wake-2-Hardwaretest.")
+                                val wake2ResultText = when (state.wake2PhysicalResult) {
+                                    "PASSED" -> "bestanden"
+                                    "FAILED" -> "fehlgeschlagen"
+                                    "UNCLEAR" -> "unklar"
+                                    else -> "noch nicht geprüft"
+                                }
+                                Text("Wake 2: $rawSignalDetail Ergebnis: $wake2ResultText. " +
+                                    "Bestanden erfordert drei zugeordnete Geräteantworten und bestätigte " +
+                                    "Nutzerbeobachtungen beim Drücken und Loslassen.")
                                 OutlinedButton(onClick = {
                                     rawExportNotice = null
                                     if (runCatching { model.developmentRawObservationExportBytes() }.getOrNull() != null)
-                                        exportRawObservation.launch("rohdaten-erkundung-v1.json")
+                                        exportRawObservation.launch("wake2-einzelpruefung-v1.json")
                                     else rawExportNotice = "Noch kein gespeicherter Rohschritt vorhanden."
-                                }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Erkundungsbeleg exportieren") }
+                                }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Wake-2-Prüfbericht exportieren") }
                                 rawExportNotice?.let { Text(it) }
-                                Text("Diese Anzeige bestätigt keine Gerätefreigabe oder Hardwarefunktion.", style = MaterialTheme.typography.bodySmall)
+                                Text("Die Anzeige bewertet nur den dokumentierten Wake-2-Einzellauf; " +
+                                    "andere Baugruppen bleiben offen.", style = MaterialTheme.typography.bodySmall)
                             }
                         }
                         Card(Modifier.fillMaxWidth()) {

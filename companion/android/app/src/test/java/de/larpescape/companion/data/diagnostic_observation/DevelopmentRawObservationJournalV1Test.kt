@@ -41,6 +41,45 @@ class DevelopmentRawObservationJournalV1Test {
         } finally { directory.deleteRecursively() }
     }
 
+    @Test fun configuredWake2AndObservedPressReleaseYieldExportableResult() {
+        val directory = Files.createTempDirectory("wake2-qualified").toFile()
+        try {
+            val journal = DevelopmentRawObservationJournalV1(directory)
+            journal.record(reply(1).copy(physicalChannelQualified = true), "REST")
+            val pressed = journal.record(reply(2, false).copy(physicalChannelQualified = true), "PRESSED")
+            journal.observe(pressed.key, "CHANGE_SEEN")
+            val released = journal.record(reply(3).copy(physicalChannelQualified = true), "RELEASED")
+            assertEquals("UNVERIFIED", journal.load().physicalResult)
+            journal.observe(released.key, "CHANGE_SEEN")
+            val result = DevelopmentRawObservationJournalV1(directory).load()
+            assertEquals("PASSED", result.physicalResult)
+            assertEquals("RAW_PRESS_RELEASE_OBSERVED", result.wake2CandidateSignal)
+            val exported = Gson().fromJson(String(journal.exportBytes()!!),
+                DevelopmentRawObservationReportV1::class.java)
+            assertEquals("PASSED", exported.physicalResult)
+            assertTrue(exported.observations.all { it.physicalChannelQualified })
+        } finally { directory.deleteRecursively() }
+    }
+
+    @Test fun unqualifiedOrContradictoryEvidenceCannotPassWake2() {
+        val directory = Files.createTempDirectory("wake2-contradiction").toFile()
+        try {
+            val journal = DevelopmentRawObservationJournalV1(directory)
+            journal.record(reply(1).copy(physicalChannelQualified = true), "REST")
+            val pressed = journal.record(reply(2, false).copy(physicalChannelQualified = true), "PRESSED")
+            journal.observe(pressed.key, "NO_CHANGE_SEEN")
+            val released = journal.record(reply(3).copy(physicalChannelQualified = true), "RELEASED")
+            journal.observe(released.key, "CHANGE_SEEN")
+            assertEquals("UNCLEAR", journal.load().physicalResult)
+            journal.record(reply(4).copy(physicalChannelQualified = true), "REST")
+            val next = journal.record(reply(5, false), "PRESSED")
+            journal.observe(next.key, "CHANGE_SEEN")
+            val last = journal.record(reply(6).copy(physicalChannelQualified = true), "RELEASED")
+            journal.observe(last.key, "CHANGE_SEEN")
+            assertEquals("UNVERIFIED", journal.load().physicalResult)
+        } finally { directory.deleteRecursively() }
+    }
+
     @Test fun unchangedOrFailedSamplesCannotPassTheSignalComparison() {
         val directory = Files.createTempDirectory("wake-candidate-fail").toFile()
         try {

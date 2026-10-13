@@ -24,7 +24,6 @@ bool valid(const DevelopmentRawStepRequest &request) noexcept {
 bool valid(const DevelopmentRawStepReply &reply) noexcept {
     if (!valid(reply.request) || reply.startedDeviceMs > MaximumDeviceMs ||
         reply.endedDeviceMs > MaximumDeviceMs ||
-        reply.observation.physicalChannelQualified ||
         reply.observation.address != 0x20 || reply.observation.reg != 0x13 ||
         reply.observation.bitIndex != 6)
         return false;
@@ -33,6 +32,7 @@ bool valid(const DevelopmentRawStepReply &reply) noexcept {
                reply.rejection != DevelopmentRawStepRejection::None &&
                static_cast<unsigned>(reply.rejection) <= 7 &&
                reply.observation.status == RawRegisterStatus::ReadFailed &&
+               !reply.observation.physicalChannelQualified &&
                !reply.observation.rawByte && !reply.observation.rawHigh &&
                !reply.observation.busCode;
     if (reply.startedDeviceMs > reply.endedDeviceMs ||
@@ -45,6 +45,7 @@ bool valid(const DevelopmentRawStepReply &reply) noexcept {
                reply.observation.rawHigh ==
                    ((reply.observation.rawByte & 0x40) != 0);
     return reply.outcome == DevelopmentRawStepOutcome::I2cFailed &&
+           !reply.observation.physicalChannelQualified &&
            !reply.observation.readable() && !reply.observation.rawByte &&
            !reply.observation.rawHigh;
 }
@@ -106,7 +107,7 @@ bool DevelopmentRawStepWire::encodeReply(
     frame[98] = reply.observation.rawByte;
     frame[99] = reply.observation.rawHigh ? 1 : 0;
     frame[100] = reply.observation.busCode;
-    // Byte 101 remains zero: physical channel not qualified.
+    frame[101] = reply.observation.physicalChannelQualified ? 1 : 0;
     frame[102] = static_cast<std::uint8_t>(reply.rejection);
     std::memcpy(bytes, frame, sizeof(frame));
     return true;
@@ -116,7 +117,7 @@ bool DevelopmentRawStepWire::decodeReply(
     const std::uint8_t *bytes, std::size_t count,
     DevelopmentRawStepReply &destination) noexcept {
     if (!bytes || count != ReplyBytes || bytes[96] > 2 || bytes[97] > 3 ||
-        bytes[99] > 1 || bytes[101] || bytes[102] > 7 || bytes[103])
+        bytes[99] > 1 || bytes[101] > 1 || bytes[102] > 7 || bytes[103])
         return false;
     DevelopmentRawStepReply reply;
     if (!decodeRequest(bytes, RequestBytes, reply.request))
@@ -132,6 +133,7 @@ bool DevelopmentRawStepWire::decodeReply(
     reply.observation.rawByte = bytes[98];
     reply.observation.rawHigh = bytes[99] != 0;
     reply.observation.busCode = bytes[100];
+    reply.observation.physicalChannelQualified = bytes[101] != 0;
     if (!valid(reply)) return false;
     destination = reply;
     return true;

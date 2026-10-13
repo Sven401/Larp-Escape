@@ -263,7 +263,7 @@ internal class AndroidDiagnosticGattShellV1(
             developmentGrant != null) return false
         val request = DiagnosticControlRequestV1(DiagnosticControlCommandV1.GRANT,
             2, info.deviceId, info.bootId, runId = UUID.randomUUID().toString(),
-            ttlMs = 30000, explicitConsent = true)
+            ttlMs = 60000, explicitConsent = true)
         return startDevelopmentRequest(request)
     }
 

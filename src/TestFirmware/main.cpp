@@ -26,6 +26,39 @@ static std::aligned_storage<sizeof(larp::diagnostic::DevelopmentControl),
                             alignof(larp::diagnostic::DevelopmentControl)>::type controlStorage;
 DevelopmentLedDeadline ledDeadline;
 bool ledDeadlineStarted = false;
+bool wake2InputReady = false;
+
+// The proven game image configured MCP1/GPB6 as INPUT_PULLUP. Keep every
+// other expander pin untouched in this isolated image and read the mode back.
+static bool readMcpRegister(std::uint8_t reg, std::uint8_t &value) {
+    Wire.beginTransmission(0x20);
+    Wire.write(reg);
+    if (Wire.endTransmission(false) != 0 || Wire.requestFrom(0x20, 1) != 1)
+        return false;
+    value = static_cast<std::uint8_t>(Wire.read());
+    return true;
+}
+
+static bool writeMcpRegister(std::uint8_t reg, std::uint8_t value) {
+    Wire.beginTransmission(0x20);
+    Wire.write(reg);
+    Wire.write(value);
+    return Wire.endTransmission() == 0;
+}
+
+static bool configureWake2Input() {
+    std::uint8_t iocon = 0, mirroredIocon = 0, direction = 0, pullups = 0;
+    if (!readMcpRegister(0x0a, iocon) ||
+        !readMcpRegister(0x0b, mirroredIocon) ||
+        iocon != mirroredIocon || (iocon & 0x80) ||
+        !readMcpRegister(0x01, direction) || !readMcpRegister(0x0d, pullups))
+        return false;
+    if (!writeMcpRegister(0x01, direction | 0x40) ||
+        !writeMcpRegister(0x0d, pullups | 0x40))
+        return false;
+    return readMcpRegister(0x01, direction) && (direction & 0x40) &&
+           readMcpRegister(0x0d, pullups) && (pullups & 0x40);
+}
 
 void setup() {
     Serial.begin(115200);
@@ -57,32 +90,33 @@ void setup() {
                   static_cast<unsigned>(state));
     ledDeadlineStarted = ledDeadline.begin();
     Serial.printf("TEST_LED deadline_ready=%u output=closed\n", ledDeadlineStarted);
+    if (Wire.begin()) {
+        Wire.setTimeOut(25);
+        wake2InputReady = configureWake2Input();
+    }
+    Serial.printf("TEST_WAKE2 input_pullup_ready=%u address=0x20 pin=GPB6\n",
+                  wake2InputReady);
 }
 
 void loop() {
     larp::companion::Esp32GattsSource::DevelopmentRawWork work;
     if (gatts.takeDevelopmentRawWork(work)) {
-        static bool busAttempted = false, busReady = false;
-        if (!busAttempted) {
-            busAttempted = true;
-            busReady = Wire.begin();
-            if (busReady)
-                Wire.setTimeOut(25);
-        }
         larp::companion::Esp32GattsSource::DevelopmentRawResult result;
         result.work = work;
         result.startedAtMs = millis();
-        if (busReady) {
+        if (wake2InputReady) {
             static RawExpanderWireReader reader(Wire);
             static larp::diagnostic::RawExpanderProbe probe(reader);
             result.observation = probe.sample();
+            result.observation.physicalChannelQualified =
+                result.observation.readable();
         } else {
             result.observation.address = 0x20;
             result.observation.reg = 0x13;
             result.observation.bitIndex = 6;
             result.observation.status =
                 larp::diagnostic::RawRegisterStatus::RegisterSelectFailed;
-            result.observation.busCode = 0xfe; // I2C controller did not start.
+            result.observation.busCode = 0xfe; // Input mode could not be verified.
         }
         result.endedAtMs = millis();
         if (!gatts.postDevelopmentRawResult(result))

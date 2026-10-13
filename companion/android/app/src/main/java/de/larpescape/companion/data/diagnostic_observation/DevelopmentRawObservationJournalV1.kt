@@ -9,7 +9,7 @@ import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 import java.time.Instant
 
-/** Exploratory observations only. Neither a register value nor a user report qualifies a wire. */
+/** Device evidence and separate user observation for the historical Wake-2 source. */
 data class DevelopmentRawObservationV1(
     val key: String,
     val recordedUtc: String,
@@ -51,7 +51,8 @@ class DevelopmentRawObservationJournalV1(private val directory: File) {
         require(json["schema"]?.asString == "development_raw_observation_v1")
         val report = gson.fromJson(json, DevelopmentRawObservationReportV1::class.java)
         validate(report)
-        return report.copy(wake2CandidateSignal = candidateSignal(report.observations))
+        return report.copy(wake2CandidateSignal = candidateSignal(report.observations),
+            physicalResult = qualifiedResult(report.observations))
     }
 
     @Synchronized
@@ -65,10 +66,11 @@ class DevelopmentRawObservationJournalV1(private val directory: File) {
         val item = DevelopmentRawObservationV1(key, Instant.now().toString(), request.deviceId,
             request.bootId, request.runId, request.stepId, request.message, reply.outcome.name,
             reply.i2cStatus.name, reply.rawByte, reply.rawHigh, reply.busCode, reply.rejection.name,
-            captureStage = stage)
+            captureStage = stage, physicalChannelQualified = reply.physicalChannelQualified)
         val observations = previous.observations + item
         write(previous.copy(observations = observations,
-            wake2CandidateSignal = candidateSignal(observations)))
+            wake2CandidateSignal = candidateSignal(observations),
+            physicalResult = qualifiedResult(observations)))
         return item
     }
 
@@ -81,7 +83,9 @@ class DevelopmentRawObservationJournalV1(private val directory: File) {
         val existing = previous.observations[index]
         require(existing.userObservation == null) { "Observation already recorded" }
         val item = existing.copy(userObservation = observation, userObservedUtc = Instant.now().toString())
-        write(previous.copy(observations = previous.observations.toMutableList().also { it[index] = item }))
+        val observations = previous.observations.toMutableList().also { it[index] = item }
+        write(previous.copy(observations = observations,
+            physicalResult = qualifiedResult(observations)))
         return item
     }
 
@@ -94,7 +98,8 @@ class DevelopmentRawObservationJournalV1(private val directory: File) {
     }
 
     private fun validate(report: DevelopmentRawObservationReportV1) {
-        require(report.schema == "development_raw_observation_v1" && report.physicalResult == "UNVERIFIED" &&
+        require(report.schema == "development_raw_observation_v1" &&
+            report.physicalResult == qualifiedResult(report.observations) &&
             report.observations.size <= MAX_OBSERVATIONS &&
             (report.wake2CandidateSignal == null ||
                 report.wake2CandidateSignal == candidateSignal(report.observations)))
@@ -102,9 +107,13 @@ class DevelopmentRawObservationJournalV1(private val directory: File) {
         report.observations.forEach { item ->
             require(item.key == "${item.deviceId}:${item.bootId}:${item.runId}:${item.stepId}:${item.message}" &&
                 item.recordedUtc.length in 1..80 && item.stepId in 1..0xffff_ffffL &&
-                item.message in 1..0xffff_ffffL && !item.physicalChannelQualified &&
+                item.message in 1..0xffff_ffffL &&
                 (item.captureStage == null || item.captureStage in CAPTURE_STAGES) &&
                 (item.rawByte == null || item.rawByte in 0..255) && item.busCode in 0..255 &&
+                (!item.physicalChannelQualified ||
+                    item.outcome == "REGISTER_OBSERVED" && item.i2cStatus == "VALID" &&
+                    item.rawByte != null && item.rawHigh != null && item.busCode == 0 &&
+                    item.rawHigh == ((item.rawByte and 0x40) != 0)) &&
                 (item.userObservation == null && item.userObservedUtc == null ||
                     item.userObservation in OBSERVATIONS && item.userObservedUtc?.length in 1..80))
         }
@@ -128,7 +137,7 @@ class DevelopmentRawObservationJournalV1(private val directory: File) {
         val OBSERVATIONS = setOf("CHANGE_SEEN", "NO_CHANGE_SEEN", "UNCLEAR")
         val CAPTURE_STAGES = setOf("REST", "PRESSED", "RELEASED")
 
-        /** Signal evidence only; never qualifies the physical Wake-2 wiring. */
+        /** Signal comparison is independent of the historical channel mapping. */
         fun candidateSignal(items: List<DevelopmentRawObservationV1>): String {
             val triple = items.filter { it.captureStage != null }.takeLast(3)
             if (triple.map { it.captureStage } != listOf("REST", "PRESSED", "RELEASED"))
@@ -145,6 +154,24 @@ class DevelopmentRawObservationJournalV1(private val directory: File) {
             return if (triple[0].rawHigh != triple[1].rawHigh &&
                 triple[0].rawHigh == triple[2].rawHigh) "RAW_PRESS_RELEASE_OBSERVED"
                 else "RAW_PATTERN_NOT_OBSERVED"
+        }
+
+        /** A pass needs matching device evidence and explicit observations at both actions. */
+        fun qualifiedResult(items: List<DevelopmentRawObservationV1>): String {
+            val triple = items.filter { it.captureStage != null }.takeLast(3)
+            if (candidateSignal(items) == "NOT_TESTED") return "UNVERIFIED"
+            if (triple.any { !it.physicalChannelQualified }) return "UNVERIFIED"
+            if (candidateSignal(items) == "READ_FAILED") return "UNCLEAR"
+            val pressed = triple[1].userObservation
+            val released = triple[2].userObservation
+            if (pressed == null || released == null) return "UNVERIFIED"
+            if (pressed == "UNCLEAR" || released == "UNCLEAR") return "UNCLEAR"
+            val pattern = candidateSignal(items)
+            if (pattern == "RAW_PRESS_RELEASE_OBSERVED" &&
+                pressed == "CHANGE_SEEN" && released == "CHANGE_SEEN") return "PASSED"
+            if (pattern == "RAW_PATTERN_NOT_OBSERVED" &&
+                pressed == "NO_CHANGE_SEEN" && released == "NO_CHANGE_SEEN") return "FAILED"
+            return "UNCLEAR"
         }
     }
 }

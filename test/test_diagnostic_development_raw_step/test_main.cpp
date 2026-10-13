@@ -80,6 +80,9 @@ int main() {
     reply[99] = 0;
     assert(!DevelopmentRawStepWire::decodeReply(reply.data(), reply.size(), received));
     reply[99] = 1; reply[101] = 1;
+    assert(DevelopmentRawStepWire::decodeReply(reply.data(), reply.size(), received));
+    assert(received.observation.physicalChannelQualified);
+    reply[101] = 2;
     assert(!DevelopmentRawStepWire::decodeReply(reply.data(), reply.size(), received));
     reply[101] = 0; reply[88] = 0x4c; reply[89] = 0x04; // 1100 = timeout boundary.
     assert(!DevelopmentRawStepWire::decodeReply(reply.data(), reply.size(), received));

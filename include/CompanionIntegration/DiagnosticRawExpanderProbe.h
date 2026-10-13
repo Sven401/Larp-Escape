@@ -5,8 +5,9 @@
 namespace larp {
 namespace diagnostic {
 
-// A register read is an electrical observation of an I2C transaction. It is
-// never evidence that a named button is wired to the selected bit.
+// A register read is an electrical observation. The qualification flag is
+// supplied by the test image only after its Wake-2 input mode was read back;
+// a single level still cannot prove a press/release action.
 enum class RawRegisterStatus : std::uint8_t {
     Valid = 0,
     RegisterSelectFailed = 1,
@@ -48,9 +49,9 @@ struct RawExpanderObservation {
     bool readable() const noexcept { return status == RawRegisterStatus::Valid; }
 };
 
-// The first exploratory source is address 0x20, register 0x13, bit 6. It is
-// GPB6 only if the actual chip is an MCP23017 in BANK=0 mode. No pin mode or
-// output latch is changed. A successful read does not qualify Wake 2.
+// Fixed Wake-2 source from the historically tested game image: MCP1 at 0x20,
+// GPB6 in BANK=0 (GPIOB register 0x13). This reader never changes pin modes;
+// the test-image entry point configures and verifies INPUT_PULLUP separately.
 class RawExpanderProbe {
   public:
     explicit RawExpanderProbe(IRawRegisterReader &reader) noexcept : reader_(reader) {}

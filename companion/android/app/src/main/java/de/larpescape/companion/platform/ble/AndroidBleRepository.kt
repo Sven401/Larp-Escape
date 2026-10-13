@@ -45,7 +45,8 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
         runCatching { rawObservations.load() }
             .onSuccess { mutable.value = mutable.value.copy(
                 developmentRawRecord = it.observations.lastOrNull(),
-                wake2CandidateSignal = it.wake2CandidateSignal ?: "NOT_TESTED") }
+                wake2CandidateSignal = it.wake2CandidateSignal ?: "NOT_TESTED",
+                wake2PhysicalResult = it.physicalResult) }
             .onFailure { Log.w("LarpEscape", "Stored raw observation report could not be read", it) }
         runCatching { ledObservations.load().observations.lastOrNull() }
             .onSuccess { if (it != null) mutable.value = mutable.value.copy(developmentLedRecord = it) }
@@ -193,7 +194,8 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
     override fun recordDevelopmentRawUserObservation(observation: String) {
         val current = mutable.value.developmentRawRecord ?: return
         runCatching { rawObservations.observe(current.key, observation) }
-            .onSuccess { mutable.value = mutable.value.copy(developmentRawRecord = it) }
+            .onSuccess { mutable.value = mutable.value.copy(developmentRawRecord = it,
+                wake2PhysicalResult = rawObservations.load().physicalResult) }
             .onFailure { report("Nutzerbeobachtung nicht gespeichert: ${it.message}") }
     }
     override fun recordDevelopmentLedUserObservation(observation: String) {
@@ -243,6 +245,10 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
                     (runCatching { rawObservations.load().wake2CandidateSignal }.getOrNull()
                         ?: mutable.value.wake2CandidateSignal)
                     else mutable.value.wake2CandidateSignal,
+                wake2PhysicalResult = if (recorded != null)
+                    (runCatching { rawObservations.load().physicalResult }.getOrNull()
+                        ?: mutable.value.wake2PhysicalResult)
+                    else mutable.value.wake2PhysicalResult,
                 developmentLedRecord = ledRecorded ?: mutable.value.developmentLedRecord)
         }
     }
@@ -256,6 +262,12 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
     }
     override fun requestDevelopmentRawObservation(stage: String?) = guarded {
         require(stage == null || stage in DevelopmentRawObservationJournalV1.CAPTURE_STAGES)
+        val previous = mutable.value.developmentRawRecord
+        if (stage == "RELEASED" && previous?.captureStage == "PRESSED" &&
+            previous.userObservation == null) {
+            report("Bitte zuerst die eigene Beobachtung beim gedrückten Wake-2-Taster eintragen")
+            return@guarded
+        }
         val shell = diagnostic ?: return@guarded
         if (shell.requestDevelopmentRawObservation()) pendingRawCaptureStage = stage
         reportDiagnostic(shell)
