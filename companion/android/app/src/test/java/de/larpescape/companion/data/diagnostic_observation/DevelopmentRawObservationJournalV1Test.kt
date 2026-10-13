@@ -11,12 +11,66 @@ import org.junit.Test
 import java.nio.file.Files
 
 class DevelopmentRawObservationJournalV1Test {
-    private fun reply(message: Long) = DiagnosticDevelopmentRawStepReplyV1(
+    private fun reply(message: Long, high: Boolean = true,
+                      status: DiagnosticDevelopmentRawI2cStatusV1 = DiagnosticDevelopmentRawI2cStatusV1.VALID) =
+        DiagnosticDevelopmentRawStepReplyV1(
         DiagnosticDevelopmentRawStepRequestV1(message, "A".repeat(32), "1234567890ABCDEF",
             "12345678-1234-4123-8123-123456789abc", "12345678-1234-4123-8123-123456789abd", message),
-        100, 101, DiagnosticDevelopmentRawStepOutcomeV1.REGISTER_OBSERVED,
-        DiagnosticDevelopmentRawStepRejectionV1.NONE, DiagnosticDevelopmentRawI2cStatusV1.VALID,
-        0x40, true, 0)
+        100, 101, if (status == DiagnosticDevelopmentRawI2cStatusV1.VALID)
+            DiagnosticDevelopmentRawStepOutcomeV1.REGISTER_OBSERVED else
+            DiagnosticDevelopmentRawStepOutcomeV1.I2C_FAILED,
+        DiagnosticDevelopmentRawStepRejectionV1.NONE, status,
+        if (status == DiagnosticDevelopmentRawI2cStatusV1.VALID) (if (high) 0x40 else 0) else null,
+        if (status == DiagnosticDevelopmentRawI2cStatusV1.VALID) high else null, 0)
+
+    @Test fun threeCorrelatedSamplesYieldOnlyAnUnqualifiedSignalResult() {
+        val directory = Files.createTempDirectory("wake-candidate").toFile()
+        try {
+            val journal = DevelopmentRawObservationJournalV1(directory)
+            journal.record(reply(1), "REST")
+            journal.record(reply(2, false), "PRESSED")
+            assertEquals("NOT_TESTED", journal.load().wake2CandidateSignal)
+            journal.record(reply(3), "RELEASED")
+            val result = DevelopmentRawObservationJournalV1(directory).load()
+            assertEquals("RAW_PRESS_RELEASE_OBSERVED", result.wake2CandidateSignal)
+            assertEquals("UNVERIFIED", result.physicalResult)
+            assertTrue(result.observations.none { it.physicalChannelQualified })
+            val exported = Gson().fromJson(String(journal.exportBytes()!!),
+                DevelopmentRawObservationReportV1::class.java)
+            assertEquals(result.wake2CandidateSignal, exported.wake2CandidateSignal)
+        } finally { directory.deleteRecursively() }
+    }
+
+    @Test fun unchangedOrFailedSamplesCannotPassTheSignalComparison() {
+        val directory = Files.createTempDirectory("wake-candidate-fail").toFile()
+        try {
+            val journal = DevelopmentRawObservationJournalV1(directory)
+            journal.record(reply(1), "REST")
+            journal.record(reply(2), "PRESSED")
+            journal.record(reply(3), "RELEASED")
+            assertEquals("RAW_PATTERN_NOT_OBSERVED", journal.load().wake2CandidateSignal)
+            journal.record(reply(4), "REST")
+            journal.record(reply(5, false, DiagnosticDevelopmentRawI2cStatusV1.SHORT_READ), "PRESSED")
+            journal.record(reply(6), "RELEASED")
+            assertEquals("READ_FAILED", journal.load().wake2CandidateSignal)
+        } finally { directory.deleteRecursively() }
+    }
+
+    @Test fun samplesFromDifferentRunsCannotFormAnEvaluableSequence() {
+        val directory = Files.createTempDirectory("wake-candidate-birth").toFile()
+        try {
+            val journal = DevelopmentRawObservationJournalV1(directory)
+            journal.record(reply(1), "REST")
+            journal.record(reply(2, false), "PRESSED")
+            val differentRun = reply(3).let {
+                it.copy(request = it.request.copy(
+                    runId = "22345678-1234-4123-8123-123456789abc"))
+            }
+            journal.record(differentRun, "RELEASED")
+            assertEquals("NOT_TESTED", journal.load().wake2CandidateSignal)
+            assertEquals("UNVERIFIED", journal.load().physicalResult)
+        } finally { directory.deleteRecursively() }
+    }
 
     @Test fun coldStartKeepsDeviceReplyAndOneUserObservationWithoutGrant() {
         val directory = Files.createTempDirectory("development-raw-observation").toFile()

@@ -27,10 +27,14 @@ class DiagnosticControlReplyV1 internal constructor(
     val issuedDeviceMs: Long,
     val expiresDeviceMs: Long,
     val owner: Int,
+    val developmentCapabilities: Int,
 ) {
     val synthetic: Boolean get() = owner == 3
     val controlOnly: Boolean get() = true
     val maxGrantMs: Int get() = 60000
+    val rawObservationAvailable: Boolean get() = owner == 4 && (developmentCapabilities and 1) != 0
+    val ledPreflightAvailable: Boolean get() = owner == 4 && (developmentCapabilities and 2) != 0
+    val ledOutputAvailable: Boolean get() = false
 }
 
 /** Pinned to firmware 3209275. Exact frames only: no implicit fragmentation or GameCommand reuse. */
@@ -101,8 +105,12 @@ object DiagnosticControlV1 {
         require(message != 0L && device(deviceId) && boot(bootId))
         val runId = uuid(bytes, 32); val grantId = uuid(bytes, 48)
         val outcome = DiagnosticControlOutcomeV1.entries.getOrNull(bytes[64].toInt() and 255) ?: throw IllegalArgumentException("Unknown DG outcome")
+        val capabilities = bytes[67].toInt() and 255
         require(expectedOwner in setOf(3, 4) && bytes[65] == expectedOwner.toByte() &&
-            bytes[66] == 1.toByte() && bytes[67] == 0.toByte()) { "Unsupported DG capability flags/schema" }
+            bytes[66] == 1.toByte() &&
+            (if (expectedOwner == 3) capabilities == 0 else (capabilities and 0xfc) == 0)) {
+            "Unsupported DG capability flags/schema"
+        }
         require(read(bytes, 84, 4) == 60000uL)
         val issued = read(bytes, 68, 8); val expires = read(bytes, 76, 8)
         require(issued <= MAX_TIME.toULong() && expires <= MAX_TIME.toULong())
@@ -116,7 +124,7 @@ object DiagnosticControlV1 {
             DiagnosticControlCommandV1.CANCEL -> require(runId != null && grantId != null && issued == 0uL && expires == 0uL)
         }
         return DiagnosticControlReplyV1(cmd, message, deviceId, bootId, runId, grantId,
-            outcome, issued.toLong(), expires.toLong(), expectedOwner)
+            outcome, issued.toLong(), expires.toLong(), expectedOwner, capabilities)
     }
     fun correlate(bytes: ByteArray, original: DiagnosticControlRequestV1,
                   expectedOwner: Int = 3): DiagnosticControlReplyV1 {

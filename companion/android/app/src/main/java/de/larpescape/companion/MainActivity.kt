@@ -310,10 +310,19 @@ class MainActivity : ComponentActivity() {
                                 }
                                 if (state.diagnosticAvailability ==
                                     de.larpescape.companion.data.device.DiagnosticAvailabilityV1.DEVELOPMENT_GRANT_CONFIRMED) {
-                                    Button(onClick = model::requestDevelopmentRawObservation,
+                                    Button(onClick = { model.requestDevelopmentRawObservation() },
                                         modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
                                         Text("I²C-Rohregister einmal lesen · unqualifiziert")
                                     }
+                                    Text("Wake-2-Kandidat: Nacheinander in Ruhe, während des Drückens und nach dem Loslassen messen. " +
+                                        "Jede Messung benötigt eine eigene Geräteantwort innerhalb derselben Zulassung. " +
+                                        "Die reale Leitungszuordnung bleibt ungeprüft.")
+                                    OutlinedButton(onClick = { model.requestDevelopmentRawObservation("REST") },
+                                        modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("1 · In Ruhe messen") }
+                                    OutlinedButton(onClick = { model.requestDevelopmentRawObservation("PRESSED") },
+                                        modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("2 · Taste gedrückt halten und messen") }
+                                    OutlinedButton(onClick = { model.requestDevelopmentRawObservation("RELEASED") },
+                                        modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("3 · Loslassen und messen") }
                                     OutlinedButton(onClick = model::requestDevelopmentLedPreflight,
                                         modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
                                         Text("LED-Hardwareblocker vom Gerät abfragen · kein Licht")
@@ -367,6 +376,14 @@ class MainActivity : ComponentActivity() {
                                             modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Beobachtung unklar") }
                                     }
                                 }
+                                val rawSignalDetail = when (state.wake2CandidateSignal) {
+                                    "RAW_PRESS_RELEASE_OBSERVED" -> "Pegel wechselte beim Drücken und kehrte nach dem Loslassen zurück."
+                                    "RAW_PATTERN_NOT_OBSERVED" -> "Die drei Pegel bilden kein eindeutiges Druck-/Loslassmuster."
+                                    "READ_FAILED" -> "Mindestens eine Geräteablesung ist fehlgeschlagen."
+                                    else -> "Drei gültige, aufeinanderfolgende Messungen stehen noch aus."
+                                }
+                                Text("Wake-2-Kandidat: $rawSignalDetail Die elektrische Zuordnung bleibt " +
+                                    "unbestätigt; dies ist kein bestandener Wake-2-Hardwaretest.")
                                 OutlinedButton(onClick = {
                                     rawExportNotice = null
                                     if (runCatching { model.developmentRawObservationExportBytes() }.getOrNull() != null)

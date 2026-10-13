@@ -24,6 +24,7 @@ data class DevelopmentRawObservationV1(
     val rawHigh: Boolean?,
     val busCode: Int,
     val rejection: String,
+    val captureStage: String? = null,
     val userObservation: String? = null,
     val userObservedUtc: String? = null,
     val physicalChannelQualified: Boolean = false,
@@ -33,6 +34,7 @@ data class DevelopmentRawObservationReportV1(
     val schema: String = "development_raw_observation_v1",
     val observations: List<DevelopmentRawObservationV1> = emptyList(),
     val physicalResult: String = "UNVERIFIED",
+    val wake2CandidateSignal: String? = "NOT_TESTED",
     val exportedUtc: String? = null,
 )
 
@@ -47,11 +49,14 @@ class DevelopmentRawObservationJournalV1(private val directory: File) {
         require(file.length() in 1..MAX_BYTES.toLong()) { "Raw observation report too large" }
         val json = JsonParser.parseString(file.readText(Charsets.UTF_8)).asJsonObject
         require(json["schema"]?.asString == "development_raw_observation_v1")
-        return gson.fromJson(json, DevelopmentRawObservationReportV1::class.java).also(::validate)
+        val report = gson.fromJson(json, DevelopmentRawObservationReportV1::class.java)
+        validate(report)
+        return report.copy(wake2CandidateSignal = candidateSignal(report.observations))
     }
 
     @Synchronized
-    fun record(reply: DiagnosticDevelopmentRawStepReplyV1): DevelopmentRawObservationV1 {
+    fun record(reply: DiagnosticDevelopmentRawStepReplyV1, stage: String? = null): DevelopmentRawObservationV1 {
+        require(stage == null || stage in CAPTURE_STAGES)
         val request = reply.request
         val key = "${request.deviceId}:${request.bootId}:${request.runId}:${request.stepId}:${request.message}"
         val previous = load()
@@ -59,8 +64,11 @@ class DevelopmentRawObservationJournalV1(private val directory: File) {
         check(previous.observations.size < MAX_OBSERVATIONS) { "Raw observation report capacity reached" }
         val item = DevelopmentRawObservationV1(key, Instant.now().toString(), request.deviceId,
             request.bootId, request.runId, request.stepId, request.message, reply.outcome.name,
-            reply.i2cStatus.name, reply.rawByte, reply.rawHigh, reply.busCode, reply.rejection.name)
-        write(previous.copy(observations = previous.observations + item))
+            reply.i2cStatus.name, reply.rawByte, reply.rawHigh, reply.busCode, reply.rejection.name,
+            captureStage = stage)
+        val observations = previous.observations + item
+        write(previous.copy(observations = observations,
+            wake2CandidateSignal = candidateSignal(observations)))
         return item
     }
 
@@ -87,12 +95,15 @@ class DevelopmentRawObservationJournalV1(private val directory: File) {
 
     private fun validate(report: DevelopmentRawObservationReportV1) {
         require(report.schema == "development_raw_observation_v1" && report.physicalResult == "UNVERIFIED" &&
-            report.observations.size <= MAX_OBSERVATIONS)
+            report.observations.size <= MAX_OBSERVATIONS &&
+            (report.wake2CandidateSignal == null ||
+                report.wake2CandidateSignal == candidateSignal(report.observations)))
         require(report.observations.map { it.key }.distinct().size == report.observations.size)
         report.observations.forEach { item ->
             require(item.key == "${item.deviceId}:${item.bootId}:${item.runId}:${item.stepId}:${item.message}" &&
                 item.recordedUtc.length in 1..80 && item.stepId in 1..0xffff_ffffL &&
                 item.message in 1..0xffff_ffffL && !item.physicalChannelQualified &&
+                (item.captureStage == null || item.captureStage in CAPTURE_STAGES) &&
                 (item.rawByte == null || item.rawByte in 0..255) && item.busCode in 0..255 &&
                 (item.userObservation == null && item.userObservedUtc == null ||
                     item.userObservation in OBSERVATIONS && item.userObservedUtc?.length in 1..80))
@@ -115,5 +126,25 @@ class DevelopmentRawObservationJournalV1(private val directory: File) {
         const val MAX_OBSERVATIONS = 128
         const val MAX_BYTES = 131072
         val OBSERVATIONS = setOf("CHANGE_SEEN", "NO_CHANGE_SEEN", "UNCLEAR")
+        val CAPTURE_STAGES = setOf("REST", "PRESSED", "RELEASED")
+
+        /** Signal evidence only; never qualifies the physical Wake-2 wiring. */
+        fun candidateSignal(items: List<DevelopmentRawObservationV1>): String {
+            val triple = items.filter { it.captureStage != null }.takeLast(3)
+            if (triple.map { it.captureStage } != listOf("REST", "PRESSED", "RELEASED"))
+                return "NOT_TESTED"
+            if (triple.map { it.deviceId }.distinct().size != 1 ||
+                triple.map { it.bootId }.distinct().size != 1 ||
+                triple.map { it.runId }.distinct().size != 1 ||
+                triple[1].stepId != triple[0].stepId + 1 ||
+                triple[2].stepId != triple[1].stepId + 1)
+                return "NOT_TESTED"
+            if (triple.any { it.outcome != "REGISTER_OBSERVED" ||
+                    it.i2cStatus != "VALID" || it.rawHigh == null })
+                return "READ_FAILED"
+            return if (triple[0].rawHigh != triple[1].rawHigh &&
+                triple[0].rawHigh == triple[2].rawHigh) "RAW_PRESS_RELEASE_OBSERVED"
+                else "RAW_PATTERN_NOT_OBSERVED"
+        }
     }
 }

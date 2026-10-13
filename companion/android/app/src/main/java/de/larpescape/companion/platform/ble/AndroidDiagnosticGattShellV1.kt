@@ -278,6 +278,7 @@ internal class AndroidDiagnosticGattShellV1(
             !developmentSubscriptionAck || !developmentProbeSeen ||
             developmentRequest != null || developmentRawRequest != null || developmentLedRequest != null ||
             grant.outcome != DiagnosticControlOutcomeV1.ACCEPTED ||
+            developmentCapability?.rawObservationAvailable != true ||
             now + 1000 >= developmentGrantDeadlineMs ||
             developmentStep >= 0xffff_ffffL || developmentStepMessage >= 0xffff_ffffL)
             return false
@@ -287,6 +288,7 @@ internal class AndroidDiagnosticGattShellV1(
             ++developmentStep)
         val payload = DiagnosticDevelopmentRawStepV1.encode(request)
         if (payload.size > link.effectiveAttValueBytes) return false
+        developmentRawReply = null
         developmentRawRequest = request
         developmentRawAtMs = now
         developmentRawWriteConfirmed = false
@@ -340,6 +342,7 @@ internal class AndroidDiagnosticGattShellV1(
             !developmentSubscriptionAck || !developmentProbeSeen ||
             developmentRequest != null || developmentRawRequest != null || developmentLedRequest != null ||
             grant.outcome != DiagnosticControlOutcomeV1.ACCEPTED ||
+            developmentCapability?.ledPreflightAvailable != true ||
             now + 1000 >= developmentGrantDeadlineMs ||
             developmentStep >= 0xffff_ffffL || developmentStepMessage >= 0xffff_ffffL)
             return false

@@ -26,6 +26,7 @@ data class DeviceUiState(
     val developmentRawReply: DiagnosticDevelopmentRawStepReplyV1? = null,
     val developmentLedReply: DiagnosticDevelopmentLedStepReplyV1? = null,
     val developmentRawRecord: DevelopmentRawObservationV1? = null,
+    val wake2CandidateSignal: String = "NOT_TESTED",
     val developmentLedRecord: DevelopmentLedObservationV1? = null,
     val pairingReport: PairingObservationReportV1? = null,
 )
@@ -37,7 +38,7 @@ interface DeviceRepository {
     fun startPairingReport() {}
     fun requestBond() {}
     fun requestDevelopmentGrant() {}
-    fun requestDevelopmentRawObservation() {}
+    fun requestDevelopmentRawObservation(stage: String? = null) {}
     fun requestDevelopmentLedPreflight() {}
     fun recordDevelopmentRawUserObservation(observation: String) {}
     fun recordDevelopmentLedUserObservation(observation: String) {}

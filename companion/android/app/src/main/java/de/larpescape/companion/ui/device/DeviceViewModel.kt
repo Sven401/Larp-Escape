@@ -44,8 +44,8 @@ class DeviceViewModel(private val repository: DeviceRepository) : ViewModel() {
     fun requestDevelopmentGrant() {
         if (foreground && permissionGranted) repository.requestDevelopmentGrant()
     }
-    fun requestDevelopmentRawObservation() {
-        if (foreground && permissionGranted) repository.requestDevelopmentRawObservation()
+    fun requestDevelopmentRawObservation(stage: String? = null) {
+        if (foreground && permissionGranted) repository.requestDevelopmentRawObservation(stage)
     }
     fun requestDevelopmentLedPreflight() {
         if (foreground && permissionGranted) repository.requestDevelopmentLedPreflight()

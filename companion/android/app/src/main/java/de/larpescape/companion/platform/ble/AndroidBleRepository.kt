@@ -42,8 +42,10 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
     init {
         runCatching { diagnosticEvidence.loadRecovered() }
             .onFailure { Log.w("LarpEscape", "Stored diagnostic connection evidence could not be read", it) }
-        runCatching { rawObservations.load().observations.lastOrNull() }
-            .onSuccess { if (it != null) mutable.value = mutable.value.copy(developmentRawRecord = it) }
+        runCatching { rawObservations.load() }
+            .onSuccess { mutable.value = mutable.value.copy(
+                developmentRawRecord = it.observations.lastOrNull(),
+                wake2CandidateSignal = it.wake2CandidateSignal ?: "NOT_TESTED") }
             .onFailure { Log.w("LarpEscape", "Stored raw observation report could not be read", it) }
         runCatching { ledObservations.load().observations.lastOrNull() }
             .onSuccess { if (it != null) mutable.value = mutable.value.copy(developmentLedRecord = it) }
@@ -60,6 +62,7 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
     private var scanCallback: ScanCallback? = null
     private var gatt: BluetoothGatt? = null
     private var diagnostic: AndroidDiagnosticGattShellV1? = null
+    private var pendingRawCaptureStage: String? = null
     private var generation = 0
     private var selectedAddress: String? = null
     private var pendingBondAddress: String? = null
@@ -221,9 +224,12 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
     private fun reportDiagnostic(shell: AndroidDiagnosticGattShellV1) {
         if (diagnostic === shell) {
             val reply = shell.developmentRawReply
-            val recorded = if (reply != null) runCatching { rawObservations.record(reply) }
+            val recorded = if (reply != null) runCatching {
+                rawObservations.record(reply, pendingRawCaptureStage)
+            }
                 .onFailure { report("Geräteantwort nicht im Prüfbericht gespeichert: ${it.message}") }.getOrNull()
                 else null
+            if (recorded != null) pendingRawCaptureStage = null
             val ledReply = shell.developmentLedReply
             val ledRecorded = if (ledReply != null) runCatching { ledObservations.record(ledReply) }
                 .onFailure { report("LED-Geräteantwort nicht im Prüfbericht gespeichert: ${it.message}") }.getOrNull()
@@ -233,6 +239,10 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
                 developmentRawReply = reply,
                 developmentLedReply = ledReply,
                 developmentRawRecord = recorded ?: mutable.value.developmentRawRecord,
+                wake2CandidateSignal = if (recorded != null)
+                    (runCatching { rawObservations.load().wake2CandidateSignal }.getOrNull()
+                        ?: mutable.value.wake2CandidateSignal)
+                    else mutable.value.wake2CandidateSignal,
                 developmentLedRecord = ledRecorded ?: mutable.value.developmentLedRecord)
         }
     }
@@ -244,9 +254,10 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
         }
         reportDiagnostic(shell)
     }
-    override fun requestDevelopmentRawObservation() = guarded {
+    override fun requestDevelopmentRawObservation(stage: String?) = guarded {
+        require(stage == null || stage in DevelopmentRawObservationJournalV1.CAPTURE_STAGES)
         val shell = diagnostic ?: return@guarded
-        shell.requestDevelopmentRawObservation()
+        if (shell.requestDevelopmentRawObservation()) pendingRawCaptureStage = stage
         reportDiagnostic(shell)
     }
     override fun requestDevelopmentLedPreflight() = guarded {
@@ -532,7 +543,8 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
     }
     override fun disconnect() {
         if (gatt != null) observePairing("ANDROID_APP_OR_GATT", "connection_closed", "local_session_ended")
-        ++generation; diagnostic?.close(); diagnostic = null; frames.clear(); receivedStatus = false
+        ++generation; diagnostic?.close(); diagnostic = null; pendingRawCaptureStage = null
+        frames.clear(); receivedStatus = false
         statuses.disconnect(); expiry?.let { handler.removeCallbacks(it) }; expiry = null
         val old = gatt; gatt = null
         selectedAddress = null

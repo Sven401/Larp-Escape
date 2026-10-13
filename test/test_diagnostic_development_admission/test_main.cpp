@@ -144,7 +144,8 @@ int main() {
     const auto capability = makeFrame(ControlCommand::Capabilities, 1, {}, {}, 0, false);
     CHECK(control.process(capability.data(), capability.size(), current, {}, 10,
                           reply.data(), reply.size()));
-    CHECK(reply[3] == 0x81 && reply[64] == 0 && reply[65] == 4 && reply[66] == 1);
+    CHECK(reply[3] == 0x81 && reply[64] == 0 && reply[65] == 4 &&
+          reply[66] == 1 && reply[67] == 0x03);
     const auto request = makeFrame(ControlCommand::Grant, 2, uuid(31), {}, 1000, true);
     broken = current; broken.bonded = false;
     CHECK(control.process(request.data(), request.size(), broken, uuid(32), 11,
