@@ -1624,7 +1624,7 @@
         },
         {
           "path": ".tools/easyeda_mcp/",
-          "reason": "not a regular source file"
+          "reason": "external Git repository; project changes preserved as patch on hardware archive branch"
         },
         {
           "path": ".tools/node-v22.14.0-win-x64/CHANGELOG.md",
@@ -1700,7 +1700,7 @@
         },
         {
           "path": "experiments/gm-companion/",
-          "reason": "not a regular source file"
+          "reason": "clean external Git repository at 73df05a80127dc88eaba68a1701bf7beecb505c9; origin and commit recorded on experiments archive branch"
         }
       ]
     },
