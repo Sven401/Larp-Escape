@@ -14,6 +14,11 @@ concurrency:
 
 env:
   PYTHONUTF8: "1"
+  QUALITY_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+
+defaults:
+  run:
+    shell: pwsh
 
 jobs:
   hardware-independent:
@@ -27,22 +32,76 @@ jobs:
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.11"
+      - name: Record tested sources
+        run: python scripts/quality_evidence.py init
       - name: Install PlatformIO Core matching the local baseline
-        run: python -m pip install --disable-pip-version-check platformio==6.2.0
+        run: python scripts/quality_evidence.py run --name install-platformio -- python -m pip install --disable-pip-version-check platformio==6.2.0
+      - name: Record PlatformIO version
+        run: python scripts/quality_evidence.py run --name platformio-version -- python -m platformio --version
+      - name: Test the CI evidence and source preparation helpers
+        run: python scripts/quality_evidence.py run --name ci-helpers -- python -m unittest discover -s scripts/tests -v
       - name: Check the architecture guard fixtures
-        run: python scripts/check_architecture.py --self-test
+        run: python scripts/quality_evidence.py run --name architecture-fixtures -- python scripts/check_architecture.py --self-test
       - name: Check direct dependencies of pure layers
-        run: python scripts/check_architecture.py
-      - name: Run every host test suite
-        run: python -m platformio test -e host-regression -v
+        run: python scripts/quality_evidence.py run --name architecture -- python scripts/check_architecture.py
+      - name: Run host regression suites
+        run: python scripts/quality_evidence.py run --name host-regression -- python -m platformio test -e host-regression -v
+      - name: Run configured-control host suites
+        run: python scripts/quality_evidence.py run --name host-configured-control -- python -m platformio test -e host-configured-control -v
       - name: Build the hardware-free profile authoring tool
-        run: python -m platformio run -e profile-tools
+        run: python scripts/quality_evidence.py run --name profile-tools -- python -m platformio run -e profile-tools
       - name: Install the pinned C++ formatter
-        run: python -m pip install --disable-pip-version-check clang-format==19.1.7
+        run: python scripts/quality_evidence.py run --name install-formatter -- python -m pip install --disable-pip-version-check clang-format==19.1.7
       - name: Compile independent C++11 headers with warnings as errors
-        run: python scripts/check_headers.py
+        run: python scripts/quality_evidence.py run --name headers -- python scripts/check_headers.py
       - name: Check the reviewed C++ formatting baseline
-        run: python scripts/check_format.py
+        run: python scripts/quality_evidence.py run --name format -- python scripts/check_format.py
+      - name: Summarize executed checks
+        if: always()
+        env:
+          QUALITY_JOB_STATUS: ${{ job.status }}
+        run: python scripts/quality_evidence.py finish
+      - name: Preserve evidence even on failure
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: quality-hardware-independent-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/larp-quality-hardware-independent/
+          if-no-files-found: error
+
+  native-crypto:
+    name: Native peer cryptography
+    runs-on: windows-2022
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.11"
+      - name: Record tested sources
+        run: python scripts/quality_evidence.py init
+      - name: Install PlatformIO Core matching the local baseline
+        run: python scripts/quality_evidence.py run --name install-platformio -- python -m pip install --disable-pip-version-check platformio==6.2.0
+      - name: Record PlatformIO version
+        run: python scripts/quality_evidence.py run --name platformio-version -- python -m platformio --version
+      - name: Prepare and audit the pinned official Mbed TLS source
+        run: python scripts/quality_evidence.py run --name mbedtls-source -- python scripts/prepare_peer_mbedtls.py --destination "$env:RUNNER_TEMP/larp-mbedtls" --github-env "$env:GITHUB_ENV"
+      - name: Run the actual native cryptography suites
+        run: python scripts/quality_evidence.py run --name host-peer-proof -- python -m platformio test -e host-peer-proof -v
+      - name: Summarize executed checks
+        if: always()
+        env:
+          QUALITY_JOB_STATUS: ${{ job.status }}
+        run: python scripts/quality_evidence.py finish
+      - name: Preserve evidence even on failure
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: quality-native-crypto-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/larp-quality-native-crypto/
+          if-no-files-found: error
 
   esp32-build:
     name: ESP32 firmware build
@@ -55,7 +114,83 @@ jobs:
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.11"
+      - name: Record tested sources
+        run: python scripts/quality_evidence.py init
       - name: Install PlatformIO Core matching the local baseline
-        run: python -m pip install --disable-pip-version-check platformio==6.2.0
-      - name: Build game firmware and both isolated diagnostic profiles
-        run: python -m platformio run -e az-delivery-devkit-v4 -e esp32-runtime-probe -e esp32-profile-runtime-probe -j 2
+        run: python scripts/quality_evidence.py run --name install-platformio -- python -m pip install --disable-pip-version-check platformio==6.2.0
+      - name: Record PlatformIO version
+        run: python scripts/quality_evidence.py run --name platformio-version -- python -m platformio --version
+      - name: Build game firmware and isolated runtime and ABI probes
+        run: python scripts/quality_evidence.py run --name esp32-builds -- python -m platformio run -e az-delivery-devkit-v4 -e esp32-runtime-probe -e esp32-profile-runtime-probe -e esp32-gatts-abi-probe -j 2
+      - name: Summarize executed checks
+        if: always()
+        env:
+          QUALITY_JOB_STATUS: ${{ job.status }}
+        run: python scripts/quality_evidence.py finish
+      - name: Preserve evidence even on failure
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: quality-esp32-build-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/larp-quality-esp32-build/
+          if-no-files-found: error
+
+  android-checks:
+    name: Android tests, debug build and lint
+    runs-on: windows-2022
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.11"
+      - name: Record tested sources
+        run: python scripts/quality_evidence.py init
+      - name: Select JDK 17 and verify Android SDK inputs
+        run: |
+          if (-not $env:JAVA_HOME_17_X64 -or -not (Test-Path -LiteralPath "$env:JAVA_HOME_17_X64/bin/java.exe")) {
+            throw "The Windows runner does not provide JDK 17"
+          }
+          if (-not $env:ANDROID_HOME) { throw "ANDROID_HOME is missing" }
+          foreach ($required in @("platforms/android-35/android.jar", "build-tools/35.0.0/aapt2.exe")) {
+            if (-not (Test-Path -LiteralPath (Join-Path $env:ANDROID_HOME $required))) {
+              throw "Missing Android SDK input: $required"
+            }
+          }
+          "JAVA_HOME=$env:JAVA_HOME_17_X64" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          "$env:JAVA_HOME_17_X64/bin" | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
+      - name: Record Java version
+        run: python scripts/quality_evidence.py run --name java-version -- java -version
+      - name: Record Gradle and SDK versions
+        run: |
+          python scripts/quality_evidence.py run --name gradle-version --cwd companion/android -- cmd /d /c gradlew.bat --version --no-daemon --console=plain
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Get-Content -LiteralPath "$env:ANDROID_HOME/platforms/android-35/source.properties", "$env:ANDROID_HOME/build-tools/35.0.0/source.properties" | Tee-Object -FilePath "$env:RUNNER_TEMP/larp-quality-android-checks/android-sdk.log"
+      - name: Run protocol and app tests, build debug APK and run lint
+        run: python scripts/quality_evidence.py run --name android-checks --cwd companion/android -- cmd /d /c gradlew.bat :core:protocol:test :app:testDebugUnitTest :app:assembleDebug :app:lintDebug --no-daemon --console=plain --stacktrace --continue
+      - name: Summarize executed checks
+        if: always()
+        env:
+          QUALITY_JOB_STATUS: ${{ job.status }}
+        run: python scripts/quality_evidence.py finish
+      - name: Preserve evidence even on failure
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: quality-android-checks-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/larp-quality-android-checks/
+          if-no-files-found: error
+      - name: Preserve Android test and lint reports even on failure
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: android-reports-${{ github.run_attempt }}
+          path: |
+            companion/android/core/protocol/build/test-results/
+            companion/android/core/protocol/build/reports/tests/
+            companion/android/app/build/test-results/
+            companion/android/app/build/reports/tests/
+            companion/android/app/build/reports/lint-results-debug.*
+          if-no-files-found: warn

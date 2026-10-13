@@ -2,26 +2,32 @@
 
 ESP32-Steuerung des Reichstag-Spiels: Rollenkarten, Kristallmatrix, Audio, LEDs und ESP-NOW-Aktivierung.
 
-**Übergabe an das neue Team:** [Einstieg, Quellenkarte und offene Prüfungen](handoff/README.md).
-Dieser Branch führt die geprüften Grundlagen ab `a40365d` zusammen. Unfertige und
-verworfene Arbeiten sind über die dort bezeichneten lokalen Archiv-Branches
-erreichbar.
+**Entwicklungsbasis:** `plan/projektuebergabe-kuratierter-stand` im
+[Repository Sven401/Larp-Escape](https://github.com/Sven401/Larp-Escape).
+Die verbindliche Entwicklungsplanung steht in
+[Issue #25](https://github.com/Sven401/Larp-Escape/issues/25); die reproduzierbare
+Prüfgrundlage B0 wird in [Issue #38](https://github.com/Sven401/Larp-Escape/issues/38)
+geführt. Änderungen werden auf eigenen Branches als Pull Requests gegen die
+kuratierte Basis vorbereitet. Eine Integration nach `main` bleibt ein eigener Schritt.
+
+Die [technische Übergabe](handoff/README.md) beschreibt die zusammengeführten
+Grundlagen ab `a40365d` und offene Produkt-/Hardwareprüfungen. Ergänzung vom
+14. Oktober 2026: Die sechs dort bezeichneten Archivbranches sind inzwischen
+auf GitHub veröffentlicht. Sie sind Quellenlager; unfertige und verworfene
+Entwürfe werden vor einer Wiederaufnahme einzeln bewertet.
 
 ## Entwicklung ohne Hardware
 
-PlatformIO Core **6.2.0**, Python **3.11**. Plattformen und Bibliotheken sind in `platformio.ini` festgelegt. Der Host verwendet Windows und C++11. Ein ESP32 wird für diese Schritte nicht benötigt:
+Die [Prüfanleitung](docs/quality.md) führt die vier Quality-Jobs, feste
+Werkzeugversionen und lokale Aufrufe für C++-Hosttests, echte Hostkryptografie,
+ESP32-Builds sowie Android-Tests/Build/Lint zusammen. PlatformIO Core **6.2.0**
+und Python **3.11** bilden die Firmware-Prüfbasis; Plattformen und Bibliotheken
+sind in `platformio.ini` festgelegt. Der Host verwendet Windows und C++11.
 
-```powershell
-python scripts/check_architecture.py --self-test
-python scripts/check_architecture.py
-pio test -e host-regression
-pio run -e az-delivery-devkit-v4 -e esp32-runtime-probe
-python scripts/check_headers.py
-python -m pip install clang-format==19.1.7
-python scripts/check_format.py
-```
-
-Hosttests und Firmware-Build sind getrennte Nachweise. Der Build bestätigt weder Verdrahtung noch Timing am Gerät. Die CI führt diese Prüfungen aus; eine entfernte CI-Ausführung erfordert einen Push.
+Die CI läuft bei Push, Pull Request oder manuellem Start. Ergebnisse sind dem
+geprüften Commit im jeweiligen Lauf zuzuordnen. Hosttests, Firmware-Build und
+Android-Build sind getrennte Nachweise; sie bestätigen weder Verdrahtung noch
+Funk, Timing oder Bedienbarkeit am realen Gerät.
 
 ## Module
 
