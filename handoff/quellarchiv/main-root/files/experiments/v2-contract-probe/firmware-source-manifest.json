@@ -1,0 +1,583 @@
+{
+  "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+  "source_worktree": "firmware-peer-ingress",
+  "status": "exact file snapshots; source worktree has unrelated uncommitted auth work",
+  "files": [
+    {
+      "path": "include/README",
+      "sha256": "d1995176b3585fd998d0094d692fe9daf37b9dd6b3ef5dcd3b44914bf154dd9a"
+    },
+    {
+      "path": "include/Companion/AuthorityState.h",
+      "sha256": "dc889dfc2eef0a7cdb60a58bd135134d92462d953992b762977c2d1c76ae3525"
+    },
+    {
+      "path": "include/Companion/CommandFrame.h",
+      "sha256": "65112d36d5a2e492b7fbb964cb523fbacb5c9e53c39bba433a007051c35e761c"
+    },
+    {
+      "path": "include/Companion/CommandFrameQueue.h",
+      "sha256": "e0f3a3cd6a8abf9f569fd5bdd23e11e3464aaf50794e464a1b5b218f4985a24a"
+    },
+    {
+      "path": "include/Companion/CommandIngress.h",
+      "sha256": "d02a79ccf0c8dedde0bd8f8050cdd1271548a5d029752649185edd2841058f2f"
+    },
+    {
+      "path": "include/Companion/CommandReceipt.h",
+      "sha256": "a6bc8fb7b902cc365e1e59e304df1da111f50cfb6222f510aafddd813b9abfe1"
+    },
+    {
+      "path": "include/Companion/CommandStream.h",
+      "sha256": "2211e2e4f95a3e85f7a715c778335c709a3b6fc4988d8317d7760c5a645ee416"
+    },
+    {
+      "path": "include/Companion/ConfiguredProtocol.h",
+      "sha256": "27ab0573792ff00d51d716474923296732f3578e211153842097f03191598dd1"
+    },
+    {
+      "path": "include/Companion/DeviceIdentityStore.h",
+      "sha256": "23df510291ce041f74d1056587f7c0e60b65ee28546ade5486019c1de73ab297"
+    },
+    {
+      "path": "include/Companion/GameCommandReader.h",
+      "sha256": "c2a1548f408385ed850655e9282a738ce39579a54dfc60f5bd44a2e8c8a00f3d"
+    },
+    {
+      "path": "include/Companion/Identity.h",
+      "sha256": "f64b893b55b9951d195c175858ee0134254492d415191677399fd22656674054"
+    },
+    {
+      "path": "include/Companion/IdentityAccess.h",
+      "sha256": "e06390a300cd6d8fa82f7efed50f2796df8bf39be132985938477cf68b414aee"
+    },
+    {
+      "path": "include/Companion/PeerAuthResult.h",
+      "sha256": "d793e4eec70c3dbd8fc9821a7c81390e5a6e8a9c005f8265dc32a5bf930dc6c6"
+    },
+    {
+      "path": "include/Companion/PeerChallengeIssue.h",
+      "sha256": "ccd0d6b98761f653eba5c9b2f44abd82e0560d21b94929df118b6a86061733d0"
+    },
+    {
+      "path": "include/Companion/PeerChallengeRead.h",
+      "sha256": "ada182b22a8ca509a2e9062270f02fe505553256de11aeb7ce3a40331ee43178"
+    },
+    {
+      "path": "include/Companion/PeerLinkSecurity.h",
+      "sha256": "38d28c98bed74ad0c45ed42ab36265c09da1211ffa294d9c7331b2861e443338"
+    },
+    {
+      "path": "include/Companion/PeerProof.h",
+      "sha256": "d9565124660296629c31be8c58679fed5bd6b0abc953abfc4e1ba363db3949a0"
+    },
+    {
+      "path": "include/Companion/PeerProofFrame.h",
+      "sha256": "a546f412e98db28f0d7b9b0e1c8a544728a3f6b3d7444473d580c4766908b653"
+    },
+    {
+      "path": "include/Companion/PeerProofGrant.h",
+      "sha256": "d1c5dbc253ebdc4b1dfbe02d54035a4e3a4027ccd67b32f1bb4dd9bf1e321388"
+    },
+    {
+      "path": "include/Companion/PeerProofReceiver.h",
+      "sha256": "042119a4c9d15569cf6fa7c9c8a3f11ccaa97a1f1342b46a805274117b81b254"
+    },
+    {
+      "path": "include/Companion/PeerRegistry.h",
+      "sha256": "9d062f9b1186c95f53c7fc6ad5d927cbc5056630b8e2212f906161b666d32d02"
+    },
+    {
+      "path": "include/Companion/PeerRegistryActor.h",
+      "sha256": "2b298c2906064e40a03b4ff68695825850c0758d5f4f00fba34a98c1efe7afab"
+    },
+    {
+      "path": "include/Companion/PeerRegistryRuntime.h",
+      "sha256": "6fb66975007b6b2318c56287ffa5c49543ff4f0082893237ce5ddf2a416c5c7c"
+    },
+    {
+      "path": "include/Companion/ProfileCapabilities.h",
+      "sha256": "91a977c00898f5e4e6d30132fc0dd9e6264c3b035794f2f796c56f17f0385b57"
+    },
+    {
+      "path": "include/Companion/ProfileControlFrames.h",
+      "sha256": "2016bd79413bce895d68b05ae446ad2690b85171f9c12c4ff5cb02886700fd78"
+    },
+    {
+      "path": "include/Companion/ProfileFileStaging.h",
+      "sha256": "5dfbe69e56cc413499557a815c361043be338b7e52349f055a9076854104fde5"
+    },
+    {
+      "path": "include/Companion/ProfileFrameQueue.h",
+      "sha256": "2f371bca2a2680754d5839cce189aad9c44f853ae2bd1183c1bc8982c2c783ce"
+    },
+    {
+      "path": "include/Companion/ProfileFrames.h",
+      "sha256": "da69daed8932696c6e5a54c593c3e2df2092173bc0e33c17aee94de751cbe48a"
+    },
+    {
+      "path": "include/Companion/ProfileResponseQueue.h",
+      "sha256": "24eb8c1d00fe7fa4a8038ac73113888e8e9d9a69f1981e4ba3abc5b4c7b7ca3e"
+    },
+    {
+      "path": "include/Companion/ProfileResponseSender.h",
+      "sha256": "a8a17e6443fefa42c65745cf8f1b5ab9d8482396f1f8049c9a4ea01e531e6dc1"
+    },
+    {
+      "path": "include/Companion/ProfileSourceEnvelope.h",
+      "sha256": "f8aeda42867eeb5f233d8131906067291bf43dc8c1427e492e05e89048f0b511"
+    },
+    {
+      "path": "include/Companion/ProfileStaging.h",
+      "sha256": "9db122618b61dac64a455edba36c517fb989be5d5ec483b6127472a4e35249cb"
+    },
+    {
+      "path": "include/Companion/ReplyFrame.h",
+      "sha256": "38ad8c8c30e5918340866d615c2bddce6f4264b797c1db2b7383d088f0bdbf49"
+    },
+    {
+      "path": "include/Companion/ReplyFrameSender.h",
+      "sha256": "2a808310bae463c4c9c81e175cd8d7ee6e303be7e4b411cffd3edec8c8024b63"
+    },
+    {
+      "path": "include/Companion/StatusFrame.h",
+      "sha256": "1eb4eb2e8ca4f7af19a1161f1f5983df5e0215d91badfd15b92ad85188407869"
+    },
+    {
+      "path": "include/Companion/StatusFrameSender.h",
+      "sha256": "42fa8a955c9f7582369c67a60c8d914b2ba8bf213ec9c34cea5008e86619652a"
+    },
+    {
+      "path": "include/Companion/StatusProtocol.h",
+      "sha256": "9f7fe065aefa4ad46bdbe112889d4dba80cb7337cd791133a5eb902070fb0f6d"
+    },
+    {
+      "path": "include/CompanionIntegration/ApplicationProfileStaging.h",
+      "sha256": "0d37285f893f0405321de5bb9300282b6d0aa3c52d39117e06d76b3e68b011be"
+    },
+    {
+      "path": "include/CompanionIntegration/GameControl.h",
+      "sha256": "f5355f571272609397b8ad50b6bd67c95c6fa3697a60deee56de987805e50eee"
+    },
+    {
+      "path": "include/CompanionIntegration/ProfileApply.h",
+      "sha256": "4b19918af3ab01cf99e0e86ba86c9435ec4a381918a6c04ef9c29eab31afdc2a"
+    },
+    {
+      "path": "include/CompanionIntegration/ProfileImport.h",
+      "sha256": "d4633e2fa64d20b380a8a006e1b6e11ab44256e0f59fde0806d700ecb95b2ddd"
+    },
+    {
+      "path": "include/CompanionIntegration/ProfileTransferControl.h",
+      "sha256": "9e657c7498081a48ac324817b9d906a807b377309d377c0674e1faf63db73236"
+    },
+    {
+      "path": "include/DeviceRuntime/Broker.h",
+      "sha256": "6622be4a4270754a26e489665c3710f0591eb497e24733b1115cf0f9b2524e9b"
+    },
+    {
+      "path": "include/DeviceRuntime/Channel.h",
+      "sha256": "cb25d6eb53fbbd3ccb8c5c36800635f08db44141817694f856518303d768bd66"
+    },
+    {
+      "path": "include/DeviceRuntime/Lifecycle.h",
+      "sha256": "ac0292f9cefab0ba133ad6c6140cb4245ca4661d84311e3ab3d9b0ffe1ca7a55"
+    },
+    {
+      "path": "include/DeviceRuntime/OwnerConfiguration.h",
+      "sha256": "d51c86cfad47ea2e61895aec32648a7919fb7c101bc212365d4b056e54c2b59b"
+    },
+    {
+      "path": "include/DeviceRuntime/Plan.h",
+      "sha256": "07ddcec5fbcb9de8eec83b16eb0b0bf256231dcaf5ef82c3d672a8a9cafb4cd4"
+    },
+    {
+      "path": "include/DeviceRuntime/ProfileApplication.h",
+      "sha256": "92e480d417d46c50371434440894d044ee0d394eb2b2b3a72697ac19ad5f06d5"
+    },
+    {
+      "path": "include/DeviceRuntime/ProfileController.h",
+      "sha256": "47bf750f09684be50687a9f2ee41faa343abd6a24bb795b14fe43b96b941f325"
+    },
+    {
+      "path": "include/DeviceRuntime/ProfileJournal.h",
+      "sha256": "504b88227849d92fcf9b930d09e50a2e8bf97fe8362f0525f23a646f03d3fb51"
+    },
+    {
+      "path": "include/DeviceRuntime/Runtime.h",
+      "sha256": "c570b26ba63abdc423fa027c860c11da29dc2983fcd4862f65dc4fa703ae83d5"
+    },
+    {
+      "path": "include/GameApplication/GameSnapshot.h",
+      "sha256": "cda4408c419be7f7110ce0341f9f290e8ddb8a7e86412f3569f06fbd219f4f43"
+    },
+    {
+      "path": "include/GameApplication/IGameSnapshotSink.h",
+      "sha256": "bc671a2dde4ff659a346da1425be12d6804a01be2249c4f2d4a551d6b09dd2b6"
+    },
+    {
+      "path": "include/GameConfiguration/Profile.h",
+      "sha256": "dcf97a18bcefed8472eeb889214681e4095b13e72a0e0663204ff5925f3a53a0"
+    },
+    {
+      "path": "include/GameConfiguration/ProfileReader.h",
+      "sha256": "4f2fba7a7a154b39eeae633ed3342cb313d52e59976194333f43bf7a67f1ba09"
+    },
+    {
+      "path": "include/GameConfiguration/ProfileVocabulary.h",
+      "sha256": "db98e6a8185aacbe8c94ab12be1c5bf5e88c37bb4bc00ac3bfb65604e19237a5"
+    },
+    {
+      "path": "include/GameConfiguration/ProfileWriter.h",
+      "sha256": "6055ca236b101a1cce6a038f71f16313da0334926ad78ad394a4304fb49bc940"
+    },
+    {
+      "path": "include/GameDomain/GameDefinitions.h",
+      "sha256": "afb1f6876180e37aba93104d895ee7b23d8bbcac19e82b92b78febb034822a80"
+    },
+    {
+      "path": "include/GameDomain/GameProgress.h",
+      "sha256": "dff67b9501872ec02ba4a34086b55912fa5750eb590f57383ea642a78bb0eb38"
+    },
+    {
+      "path": "include/GameDomain/GridPosition.h",
+      "sha256": "b83bbb8d2893eeb8eb420c1c12caae34005756ba06e1e0c74af389c8da81d626"
+    },
+    {
+      "path": "include/GameDomain/KeystoneMonitor.h",
+      "sha256": "0b671dad9baf34fcdeadc22dd2b306236429d640150602656bbc64bc9fb35800"
+    },
+    {
+      "path": "include/GameDomain/KeystoneTransition.h",
+      "sha256": "382269349d6f0cecd2684caa478cac2b1ac5adeabb01ff5f1c356fdf44b5c717"
+    },
+    {
+      "path": "include/GameDomain/KnownRoleHistory.h",
+      "sha256": "ca112342de42224bb04acd82d3d33c2988f8a0b69994edfb871b2bb033341b68"
+    },
+    {
+      "path": "include/GameDomain/PuzzleProgress.h",
+      "sha256": "14609e829b11a65fb714520a195fcf7081a5e087685d32a8d6eab303062570f5"
+    },
+    {
+      "path": "include/GameDomain/TransitionWait.h",
+      "sha256": "a0c658ef53c9fbeacc712bfce389e93351b662b825ad68189bf5e948ae9731dd"
+    },
+    {
+      "path": "include/GameExecution/Engine.h",
+      "sha256": "f34db0eb6315df5ec389f84acbb3ac428aa3812260339f66377cae0cc8933b10"
+    },
+    {
+      "path": "include/GameExecution/Session.h",
+      "sha256": "354aba3d540bba61e64dcaf4357999b8a2bf37f5aa3c67d69c998264a9099824"
+    },
+    {
+      "path": "include/GamePorts/CrystalInputBatch.h",
+      "sha256": "639ac8141652eab1722331dcbb0a8248d70ee7798b2f4ef5867b3a04db7a2ccd"
+    },
+    {
+      "path": "include/GamePorts/IAudioPlayer.h",
+      "sha256": "1b3593bc4bde461c25125eebcf3ffeb18e5fb0632ad8d812df4e857cc859002e"
+    },
+    {
+      "path": "include/GamePorts/ICardReader.h",
+      "sha256": "2bf516b93d20ee425c219cd75b20a30f68373e4574f550b7686b9640e48dd83d"
+    },
+    {
+      "path": "include/GamePorts/IClock.h",
+      "sha256": "802ed43def8d8c60e1016df761a969bef532c2326f34e076e5ba170ee916c35c"
+    },
+    {
+      "path": "include/GamePorts/ICommunicator.h",
+      "sha256": "af22641beb9eb94cee404f3128359eaf559ca22d37e3e7dccb7fc03dc90f225f"
+    },
+    {
+      "path": "include/GamePorts/ICrystalInput.h",
+      "sha256": "e7f0051b828420705d36c7dcc3dea8c771541366b1732e84c8324b260b509858"
+    },
+    {
+      "path": "include/GamePorts/IGameDiagnostics.h",
+      "sha256": "258374491edc8e40be7a5e7ed6177e2b752ccd963786a48209ece10bf6453d48"
+    },
+    {
+      "path": "include/GamePorts/ILightEffects.h",
+      "sha256": "8e9efb8b8178e5f91e3f933e8a58866b80f2d26b824edaa75976302c7f71733f"
+    },
+    {
+      "path": "include/GamePorts/IRuntimeService.h",
+      "sha256": "26c59912d96956c589dd9bb4fe94c2bad63c79e24674631fd64b7486d44ed7a4"
+    },
+    {
+      "path": "include/GamePorts/IWakeInput.h",
+      "sha256": "47bf3fb033fafb75720027414fff5f9d9d26f32a453aa84d77204e597c7308f1"
+    },
+    {
+      "path": "include/GameRuntime/BrightnessStepSchedule.h",
+      "sha256": "227eb1a8e1546dad6b30e090b40d305bdb4b4c230d6764809144b93f4094baba"
+    },
+    {
+      "path": "include/GameRuntime/CardUidCopy.h",
+      "sha256": "9ea71be45411a7ce4eac82c53842e22fad108276f2ec0644de8c00496832f0c8"
+    },
+    {
+      "path": "include/GameRuntime/LedIndex.h",
+      "sha256": "7c7e0ea264b61ea1cb04cd77a13b19a5e7314ba3d2566716ce0f58997bb2140a"
+    },
+    {
+      "path": "include/GameRuntime/MatrixConfiguration.h",
+      "sha256": "5add0952a472c081b946b315aa40ea4af22c71a15b206f9438fb47b0ff99878e"
+    },
+    {
+      "path": "include/GameRuntime/Pn532PassiveFrame.h",
+      "sha256": "2379f4466a83508b57a095db6060c5b6861eead666ae028b427b2434dedd3563"
+    },
+    {
+      "path": "include/GameRuntime/WakePulseSchedule.h",
+      "sha256": "7baa1dd782aad86a0700f2ac7ed37c9157f7c8b08137755d09343447eb8b2ad2"
+    },
+    {
+      "path": "src/GameConfiguration/ProfileReader.cpp",
+      "sha256": "993d2c41b3810aad812a3e44e380a991879759a92abebc05fb5866fea5634dd9"
+    },
+    {
+      "path": "src/GameConfiguration/ProfileValidation.cpp",
+      "sha256": "07bc1487a521248ff8e2671677f7f13c3fcd61f98175af9a6bbf62b727c66351"
+    },
+    {
+      "path": "src/GameConfiguration/ProfileWriter.cpp",
+      "sha256": "237e4c022f9cf7edc27ace1db14b4f337687532702e4c8089768ba108114d940"
+    },
+    {
+      "path": "src/GameConfiguration/StandardProfile.cpp",
+      "sha256": "a294c4d20ed5014d8b99eabd3d151d57a228e9aa399006e4a364d5d8056f00fd"
+    },
+    {
+      "path": "src/GameDomain/GameDefinitions.cpp",
+      "sha256": "223ba728479b91971b081bc584188ae6afd8633f5d99022fd4ef745987b12dcb"
+    },
+    {
+      "path": "src/GameDomain/GameProgress.cpp",
+      "sha256": "4ead4dcfd7c9aaecc612926a4e6ef124797707c9203be8d423efca0406a6b8ab"
+    },
+    {
+      "path": "src/GameDomain/KeystoneMonitor.cpp",
+      "sha256": "cc43e8da6baf07e783f6729bd05c742858770f4832728c79d314f671c765eab9"
+    },
+    {
+      "path": "src/GameDomain/KeystoneTransition.cpp",
+      "sha256": "0c16eb5810a130271990e2e239e2bcd592bed1abfb78eba72dab8ff2a9ab9d12"
+    },
+    {
+      "path": "src/GameDomain/PuzzleProgress.cpp",
+      "sha256": "dd3d5fbaf088a2c051978c3a4e09c93bc09d14e27b49f68368befe975cb01ad0"
+    },
+    {
+      "path": "src/GameExecution/Engine.cpp",
+      "sha256": "4208788d55b83bbf29574ddf5aca11057692020e318b6542b5fb991f8ef2cdbb"
+    },
+    {
+      "path": "src/GameExecution/Session.cpp",
+      "sha256": "88dfe636d761d4d3aae6774f422e1b154391611e4375a00751b22d7c0c1556b2"
+    },
+    {
+      "path": "src/DeviceRuntime/Broker.cpp",
+      "sha256": "684c3d3b7dc7a8b9f7ed9d317d022a0392bfb41e1214dfe5e544a9cd935cf508"
+    },
+    {
+      "path": "src/DeviceRuntime/Lifecycle.cpp",
+      "sha256": "6d5f2d5df5fe7410560fe488408f8845f05631671f7538fbf5546693e565ac97"
+    },
+    {
+      "path": "src/DeviceRuntime/OwnerConfiguration.cpp",
+      "sha256": "2e73e3f46ca647e0e025af0403b0893a8f663470ce2fe982c936b41596c67213"
+    },
+    {
+      "path": "src/DeviceRuntime/Plan.cpp",
+      "sha256": "064ecf73944075591c8eadb10d527427c57a5f24fdb3c4d74717b0a8afde37da"
+    },
+    {
+      "path": "src/DeviceRuntime/ProfileApplication.cpp",
+      "sha256": "7413cca640d5798c2817f69f56c84294abe4b69a3f2abee273783599562a30c7"
+    },
+    {
+      "path": "src/DeviceRuntime/ProfileController.cpp",
+      "sha256": "c8a88c322a0dbebe57fed8023b0aac48e39e15663d4d8b53aa429d29a87631e9"
+    },
+    {
+      "path": "src/DeviceRuntime/ProfileJournal.cpp",
+      "sha256": "fdd862a425cb4bdbee50e34950750e9459f715611599b33996c0a58f56a838a4"
+    },
+    {
+      "path": "src/DeviceRuntime/Runtime.cpp",
+      "sha256": "1d8fd1a562d8970abb2cdadf6a9b6ad33367c3ebc6130e48749b95c73628108d"
+    },
+    {
+      "path": "src/Companion/AuthorityState.cpp",
+      "sha256": "1563380187e280170ec2f1a404de0074af6b88291b69428df2a9700a962c7e3d"
+    },
+    {
+      "path": "src/Companion/CommandFrame.cpp",
+      "sha256": "30eaa5503a38a148a517092a6aad94ada566bf2b1d8ec4ef146cdd40c53f8fa8"
+    },
+    {
+      "path": "src/Companion/CommandFrameQueue.cpp",
+      "sha256": "866081528ccf388b394f5414fb77648e6eac21fbaca9902934566cd686dd1eb5"
+    },
+    {
+      "path": "src/Companion/CommandReceipt.cpp",
+      "sha256": "a416880a8bf0843bd014787c0a7930e4ce9e2c4413553e718e96f8215a8af4ed"
+    },
+    {
+      "path": "src/Companion/CommandStream.cpp",
+      "sha256": "7cd3a5648098aed855ac8ccbd3f2116774f971fc07fc445ada0748ce2c705b72"
+    },
+    {
+      "path": "src/Companion/ConfiguredProtocol.cpp",
+      "sha256": "03fddd1ef0760b2a5efd464cdb9dde917d1048028d2d0c2e34d854015336b574"
+    },
+    {
+      "path": "src/Companion/DeviceIdentityStore.cpp",
+      "sha256": "527a85defde38e4bc8bfe71b4e38df9bdddfc740d005530079dbba09388eca22"
+    },
+    {
+      "path": "src/Companion/GameCommandReader.cpp",
+      "sha256": "6af369c68c0833b958ade4b4450e033a53ff9b0e6e7e0bb3e00537fc115ef6e0"
+    },
+    {
+      "path": "src/Companion/Identity.cpp",
+      "sha256": "8fe682c16aabe02a7e8524df902551603aed533d0a15af0bdaaa0c3c2e0cc3de"
+    },
+    {
+      "path": "src/Companion/IdentityAccess.cpp",
+      "sha256": "a7fe86a83e22eb4393071801ca6a90af0d9ea5cbe762d7bafe76fc59a63e7535"
+    },
+    {
+      "path": "src/Companion/PeerAuthResult.cpp",
+      "sha256": "4553476ed19729c53ac8abace7c42a3ee6fa3d2360a820b05283d6acf3d752ff"
+    },
+    {
+      "path": "src/Companion/PeerChallengeIssue.cpp",
+      "sha256": "7cbee5be7bc0724f39dbfdfe5da40e1d4ce3296d761ef53b95e5e937143fa0d5"
+    },
+    {
+      "path": "src/Companion/PeerLinkSecurity.cpp",
+      "sha256": "31b74f4d4c8364fe3a7b8e6ae8048b0b44a83d5bb20a6f45245ab541f89ad1b6"
+    },
+    {
+      "path": "src/Companion/PeerProof.cpp",
+      "sha256": "03fc3eca8267a8582cda30ee6091cc31bf9403c4c9991560b06b6bffbb4e8513"
+    },
+    {
+      "path": "src/Companion/PeerProofGrant.cpp",
+      "sha256": "94baac419c0da07623648fbe8c44dd49e27d24ff540d784d01995f45b5346908"
+    },
+    {
+      "path": "src/Companion/PeerProofReceiver.cpp",
+      "sha256": "a039b97ae9b33d49447409f28ba3aba787ea8adff67502d303fcbb2b6fce6ec0"
+    },
+    {
+      "path": "src/Companion/PeerRegistryActor.cpp",
+      "sha256": "6351555912ced8719c5b778826231675920a1dcedc6385f85562edc53453b382"
+    },
+    {
+      "path": "src/Companion/PeerRegistryCodec.cpp",
+      "sha256": "2e8194c838f1f875c63c7466768bebca054055a59f7e8913b1af176c9f6a6977"
+    },
+    {
+      "path": "src/Companion/PeerRegistryOwner.cpp",
+      "sha256": "82efb0189316e6dd8d88230ab8305fafcf5936dce8f1a6357a80f39d611a1ad4"
+    },
+    {
+      "path": "src/Companion/PeerRegistryRuntime.cpp",
+      "sha256": "1eaad17a4b21c2dd283124d5c44000075447f2af16bcd6be9b34fbbc32577ee6"
+    },
+    {
+      "path": "src/Companion/ProfileControlFrames.cpp",
+      "sha256": "3c890b5f6f42cec73c610449fcb462f384aa143b620a6374c65c1ca406f74710"
+    },
+    {
+      "path": "src/Companion/ProfileFileStaging.cpp",
+      "sha256": "98fbca2865ca7214f9237e502af6831b94d7349fbd4df036e94c5d8725a09e65"
+    },
+    {
+      "path": "src/Companion/ProfileFrameQueue.cpp",
+      "sha256": "0be9fd1bb5fabbf3e69d1ea8a9877e68a5dad142fb7b99b353c72328933ddecb"
+    },
+    {
+      "path": "src/Companion/ProfileFrames.cpp",
+      "sha256": "20dd670609518212352cb0419ba0be2d8060958ef32c8ac5f776f32387b5989c"
+    },
+    {
+      "path": "src/Companion/ProfileResponseQueue.cpp",
+      "sha256": "4d270cede1b7f22ffd6a6760a939cc0c015fb83423f6eeb47fac730910ac30c8"
+    },
+    {
+      "path": "src/Companion/ProfileResponseSender.cpp",
+      "sha256": "61ff97dfcc0c0e7fae971edab9ea909cb2a2cf904a88720ebbab73b01b3375e4"
+    },
+    {
+      "path": "src/Companion/ProfileSourceEnvelope.cpp",
+      "sha256": "281f5ff2a7faa4c51378eb5a7ed1b39ad9dd5ce33c109a6daa8e116843d9f8ab"
+    },
+    {
+      "path": "src/Companion/ProfileStaging.cpp",
+      "sha256": "ffe7702376d0928ff7cb44f0e7442a478723b98fd0dc3ceecba43dc54db5c1af"
+    },
+    {
+      "path": "src/Companion/ReplyFrameSender.cpp",
+      "sha256": "0293a27034c04243f47b35dd4cd3366179ac4b3592c1ba95b581f45eaeda19e5"
+    },
+    {
+      "path": "src/Companion/StatusFrameSender.cpp",
+      "sha256": "2e565178cae932bb2092e8a6928220f611a598cdfc696f56528d8eb839518482"
+    },
+    {
+      "path": "src/Companion/StatusProtocol.cpp",
+      "sha256": "b5370dc1abfb0a6ca84b2af5f9995de82f6551ddddefc093425c68c7287b540c"
+    },
+    {
+      "path": "src/CompanionIntegration/ApplicationProfileStaging.cpp",
+      "sha256": "86367209ed2f0457969f33d499e8b061dcba2393f41137d1218c9bce8bfcd56b"
+    },
+    {
+      "path": "src/CompanionIntegration/GameControl.cpp",
+      "sha256": "7a9ed096dc0bfe15695ecf25af69ffb9c2b39906dc03344671b4440b154270df"
+    },
+    {
+      "path": "src/CompanionIntegration/ProfileApply.cpp",
+      "sha256": "5e0782e31ad4088b23f2b635be3623d9ee600d2d3f586463930e7d6c70819eeb"
+    },
+    {
+      "path": "src/CompanionIntegration/ProfileImport.cpp",
+      "sha256": "0b1db6c3eabcb532d016d84a99e76a8fa1e2584923b1044a11483ed3135a7781"
+    },
+    {
+      "path": "src/CompanionIntegration/ProfileTransferControl.cpp",
+      "sha256": "e9be6cabdcc0d3e8781d2543ce1bd810578200a9d0e0fb24cf5bbdab6ed5a439"
+    },
+    {
+      "path": "lib/FreeRtosGameControlChannel/FreeRtosGameControlChannel.cpp",
+      "sha256": "fba3b1db14e28757ea8d48a96e7ea1748d0dbe0dd92aea383e8374671adefbc8"
+    },
+    {
+      "path": "lib/FreeRtosGameControlChannel/FreeRtosGameControlChannel.h",
+      "sha256": "3a44ad5e054ad7b796c54a8626223f4b18cd6eafc6dbe4c0ff22061c1c775ffd"
+    },
+    {
+      "path": "lib/FreeRtosCommandFrameQueue/FreeRtosCommandFrameQueue.cpp",
+      "sha256": "cec7e993a69aa9181e8cba81369bf61f518dac8c2a09e06fd90a90ef52849bda"
+    },
+    {
+      "path": "lib/FreeRtosCommandFrameQueue/FreeRtosCommandFrameQueue.h",
+      "sha256": "971760be2fea8dc4fb032e51eaa2d8277163311fa6ff35bcbf2e17b9e74e2620"
+    },
+    {
+      "path": "test/test_configured_control/FakeOwners.h",
+      "sha256": "0ed44c625a584f68c4f6026c1b3651a2ff0dea5d33c134b7ad5f97beb1b4814c"
+    },
+    {
+      "path": "test/test_configured_control/MemoryJournalStore.h",
+      "sha256": "2cc49db992ce53db6cb19a12e7f963cd524871416b1edd273d4de5b4c9144a8f"
+    }
+  ]
+}
