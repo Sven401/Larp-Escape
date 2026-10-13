@@ -1,0 +1,105 @@
+diff --git a/companion/android/README.md b/companion/android/README.md
+index 5914862..4161914 100644
+--- a/companion/android/README.md
++++ b/companion/android/README.md
+@@ -20,8 +20,15 @@ Die vorhandene Companion-App und ihre Daten behalten ihre eigene Kennung.
+ Für eine erste Vorschauinstallation `adb install` ohne `-r` verwenden;
+ die Startaktivität lautet
+ `de.larpescape.companion.diagnosticpreview/de.larpescape.companion.MainActivity`.
+-Die Vorschau öffnet direkt den geführten Diagnose-Pilotplan. Wake- und LED-Antworten sind
+-synthetisch; diese Vorschau bestätigt keine Pinbelegung oder Hardwarefunktion.
++Die Vorschau öffnet eine Diagnose-Baugruppenliste. Die LED-Einzelprüfung erlaubt
++einen lokalen Entwurf für Index, RGB, Helligkeit und Dauer sowie ausdrücklich
++simulierte Endantworten und eigene Beobachtungen. Dieser Einzelentwurf bleibt
++beim Wechsel zwischen den Vorschauseiten erhalten, wird aber noch nicht in das
++Diagnosejournal oder den Export geschrieben. Andere Baugruppen zeigen ihren
++geplanten Prüfumfang und den konkreten Sperrgrund. Unter „Geführter Lauf“ liegt
++der bisherige Wake-1→LED-0-Pilot; nur dessen Simulationsjournal lässt sich unter
++„Berichte“ exportieren. Wake- und LED-Antworten sind synthetisch; diese Vorschau
++bestätigt keine Pinbelegung oder Hardwarefunktion.
+ 
+ ### Geführter Pilotplan
+ 
+diff --git a/companion/android/app/src/main/java/de/larpescape/companion/MainActivity.kt b/companion/android/app/src/main/java/de/larpescape/companion/MainActivity.kt
+index 8306a29..7973a00 100644
+--- a/companion/android/app/src/main/java/de/larpescape/companion/MainActivity.kt
++++ b/companion/android/app/src/main/java/de/larpescape/companion/MainActivity.kt
+@@ -164,7 +164,7 @@ class MainActivity : ComponentActivity() {
+                     if (BuildConfig.APPLICATION_ID.endsWith(".diagnosticpreview")) {
+                         val diagnosticState by diagnosticModel.state.collectAsStateWithLifecycle()
+                         Column(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing).imePadding().padding(16.dp)) {
+-                            DiagnosticScreen(diagnosticState, diagnosticModel, exportFile = { if (diagnosticModel.beginExport()) exportDiagnostic.launch("diagnose-simulation-v1.json") })
++                            DiagnosticWorkbenchScreen(diagnosticState, diagnosticModel, exportFile = { if (diagnosticModel.beginExport()) exportDiagnostic.launch("diagnose-simulation-v1.json") })
+                         }
+                     } else {
+                     Column(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing).verticalScroll(rememberScrollState()).padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+@@ -179,7 +179,7 @@ class MainActivity : ComponentActivity() {
+                         }
+                         if (diagnosticScreen) {
+                             val diagnosticState by diagnosticModel.state.collectAsStateWithLifecycle()
+-                            DiagnosticScreen(diagnosticState, diagnosticModel, exportFile = { if (diagnosticModel.beginExport()) exportDiagnostic.launch("diagnose-simulation-v1.json") })
++                            DiagnosticWorkbenchScreen(diagnosticState, diagnosticModel, exportFile = { if (diagnosticModel.beginExport()) exportDiagnostic.launch("diagnose-simulation-v1.json") })
+                         } else if (scenarioScreen) {
+                             val scenarioState by scenarioModel.state.collectAsStateWithLifecycle()
+                             ScenarioScreen(scenarioState, scenarioModel,
+diff --git a/companion/android/app/src/main/java/de/larpescape/companion/ui/diagnostic/DiagnosticScreen.kt b/companion/android/app/src/main/java/de/larpescape/companion/ui/diagnostic/DiagnosticScreen.kt
+index 3e5bc8f..3c156bf 100644
+--- a/companion/android/app/src/main/java/de/larpescape/companion/ui/diagnostic/DiagnosticScreen.kt
++++ b/companion/android/app/src/main/java/de/larpescape/companion/ui/diagnostic/DiagnosticScreen.kt
+@@ -32,7 +32,7 @@ private fun observationLabel(value: String) = when (value) {
+ }
+ 
+ @Composable
+-fun DiagnosticScreen(state: DiagnosticUiState, model: DiagnosticViewModel, exportFile: () -> Unit) {
++fun DiagnosticScreen(state: DiagnosticUiState, model: DiagnosticViewModel, exportFile: () -> Unit, modifier: Modifier = Modifier) {
+     val document = state.document
+     val index = state.planIndex
+     val step = state.planStep()
+@@ -49,10 +49,10 @@ fun DiagnosticScreen(state: DiagnosticUiState, model: DiagnosticViewModel, expor
+     val skipped = step?.get("state")?.asString == "not_tested"
+     val editing = step != null && !pending && !skipped && !state.finalized && !state.canAdvance()
+ 
+-    Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+-        Text("Larp Diagnose Vorschau", style = MaterialTheme.typography.titleLarge)
+-        Text(if (document == null) "Pilotplan · Wake 1 → LED 0" else if (index < 2) "Schritt ${index + 1} von 2 · ${pilotTitles[index]}" else "Pilotplan beendet · 2 von 2", style = MaterialTheme.typography.titleMedium)
+-        if (document != null) Text(pilotOperations.indices.joinToString("\n") { position ->
++    Column(modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
++        Text("WAKE 1 → LED 0", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
++        Text(if (document == null) "Pilotlauf vorbereiten" else if (index < 2) "Schritt ${index + 1} von 2 · ${pilotTitles[index]}" else "Pilotlauf abgeschlossen", style = MaterialTheme.typography.titleLarge)
++        if (document != null) Text(pilotOperations.indices.joinToString("  ·  ") { position ->
+             val savedStep = state.planStep(position)
+             val status = when {
+                 savedStep == null -> "Noch offen"
+@@ -61,7 +61,7 @@ fun DiagnosticScreen(state: DiagnosticUiState, model: DiagnosticViewModel, expor
+                 savedStep.getAsJsonObject("observation")["recordedUtc"].isJsonNull -> "Beobachtung offen"
+                 else -> verdictLabel(savedStep["verdict"].asString)
+             }
+-            "${position + 1}. ${if (position == 0) "Wake 1" else "LED 0"} · $status"
++            "${if (position == 0) "Wake 1" else "LED 0"}: $status"
+         }, style = MaterialTheme.typography.bodyMedium)
+         if (state.running) Text(if (pending) "Auftrag läuft · noch ${(state.stepRemainingMs + 999) / 1000} von 10 s" else "Simulationslauf · noch ${(state.runRemainingMs + 999) / 1000} s")
+         if (document != null && !state.running) OutlinedButton(onClick = model::newRun, enabled = !state.hasDraft(), modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Neuen Pilotlauf starten") }
+@@ -69,16 +69,20 @@ fun DiagnosticScreen(state: DiagnosticUiState, model: DiagnosticViewModel, expor
+         val scroll = rememberScrollState()
+         LaunchedEffect(document?.get("runId")?.asString, index, pending, saved) { scroll.scrollTo(0) }
+         Column(Modifier.weight(1f).verticalScroll(scroll), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+-            Text("Simulation ohne Box. Fake-Endantwort und deine Beobachtung bleiben getrennt.")
++            Text("Fake-Endantwort und eigene Beobachtung werden getrennt erfasst.")
+             if (document == null) {
+                 Text("1. Wake 1: Drücken und Loslassen simulieren\n2. LED 0: Rot und anschließend aus simulieren\nDanach den Bericht exportieren.")
+                 Text("„Pilotplan starten“ bereitet den Lauf vor. Jeder Auftrag beginnt anschließend mit seinem eigenen Startknopf.")
+             } else if (index < 2) {
+                 if (state.legacyLocked) Text("Altjournal gesperrt: Ob dieser Lauf bereits exportiert wurde, ist nicht nachweisbar. Gespeicherte Einstufungen bleiben sichtbar; Änderungen sind gesperrt.")
+-                else if (!state.running) Text("Lauf beendet · gespeicherte Ergebnisse ansehen und exportieren. Kein erneutes Senden.")
++                else if (!state.running) Text("Gespeicherter Lauf · kein automatischer Neustart.")
+                 if (step == null) {
+                     Text("Noch nicht geprüft. Der Auftrag beginnt erst mit „Schritt starten“.")
+-                    Text(if (index == 0) "Soll: Eingang 1 einmal aktiv und wieder inaktiv; kein weiterer Eingang." else "Soll: nur LED 0 rot, danach aus. Keine Versorgung gemessen.")
++                    if (index == 0) Text("Soll: Eingang 1 einmal aktiv und wieder inaktiv; kein weiterer Eingang.")
++                    else {
++                        LedActionSummary(0, 255, 0, 0, 25, 3)
++                        Text("Soll: nur LED 0 rot, danach aus. Keine Versorgung gemessen.")
++                    }
+                     OutlinedButton(onClick = { skipConfirmation = true }, enabled = state.running && !state.pending && !state.hasDraft(), modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Schritt überspringen · nicht geprüft") }
+                     if (!state.running) Text("Dieser Schritt wurde nicht begonnen. Für neue Aufträge ist ein neuer Pilotlauf nötig.")
+                 } else {

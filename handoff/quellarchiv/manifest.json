@@ -1,0 +1,36 @@
+{
+  "group": "diagnose",
+  "captures": [
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": ".codex-remote-attachments/01a12ad5-042d-7572-a31c-a88a09e280b2/8aa2599e-862e-4374-824b-01da15a9ea1c/1-ble-kopplungsbeobachtung-v1.json",
+      "path": "files/bc8648ec3a13c2f1181f0719.json",
+      "sha256": "a5c289951674bf229a71d53479c79f5aaae7138738213ad25c3642a924a11b9f",
+      "bytes": 804,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "tracked-patch",
+      "source_head": "625a503ef2f5009a6335a483b02c474e94d742d1",
+      "path": ".diagnose-android-guided-worktree/tracked.patch",
+      "sha256": "6e62f9ae8fe414fc33e8676b1da66370fabae97ebc80fbdc5e3f3f4b7350e75d",
+      "bytes": 9204,
+      "source_paths": [
+        "companion/android/README.md",
+        "companion/android/app/src/main/java/de/larpescape/companion/MainActivity.kt",
+        "companion/android/app/src/main/java/de/larpescape/companion/ui/diagnostic/DiagnosticScreen.kt"
+      ],
+      "source_id": ".diagnose-android-guided-worktree"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "625a503ef2f5009a6335a483b02c474e94d742d1",
+      "source_path": "companion/android/app/src/main/java/de/larpescape/companion/ui/diagnostic/DiagnosticWorkbenchScreen.kt",
+      "path": "files/ac48b8be664957db40b4fcd7.kt",
+      "sha256": "89d5bcf699c6b30ef7f91ca725ebf5ff97f28b24ecd5e4082f236fde59998bfa",
+      "bytes": 14445,
+      "source_id": ".diagnose-android-guided-worktree"
+    }
+  ]
+}
