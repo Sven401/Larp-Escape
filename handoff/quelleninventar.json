@@ -1,0 +1,2437 @@
+{
+  "basis": "a40365d715b2055ee23f767fa53b55ac25243437",
+  "hinweis": "Die Pfade sind relativ zum jeweiligen ursprünglichen Worktree. Neue fachliche Dateien und Patches liegen auf dem zugewiesenen Archiv-Branch unter handoff/quellarchiv/. Erzeugte Dateien und verschachtelte Worktrees sind unten begründet ausgeschlossen.",
+  "branches": [
+    {
+      "quelle": "backup/android-companion-before-split",
+      "head": "51aefccb70528470190db0a0b4ab8220248bb5cc",
+      "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+    },
+    {
+      "quelle": "codex/firmware-peer-ingress",
+      "head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+    },
+    {
+      "quelle": "codex/reichstagsbox-diagnostics",
+      "head": "db52d7aa318a96e24e97e6b62194df644b9758e2",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv"
+    },
+    {
+      "quelle": "codex/reichstagsbox-hardware",
+      "head": "5d3779eb99516bcf6c73ae519d7da36e480636dc",
+      "ziel": "plan/projektuebergabe-hardwarequellen-archiv"
+    },
+    {
+      "quelle": "codex/svensbranch-regression",
+      "head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "ziel": "plan/projektuebergabe-kuratierter-stand"
+    },
+    {
+      "quelle": "main",
+      "head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "ziel": "plan/projektuebergabe-kuratierter-stand"
+    },
+    {
+      "quelle": "plan/android-companion-a0-a2",
+      "head": "3c9992aa7aeeb34826731d971c87a0b69450e732",
+      "ziel": "plan/projektuebergabe-kuratierter-stand"
+    },
+    {
+      "quelle": "plan/android-companion-a3-vertragskern",
+      "head": "6383c5906b8fb63748cf4b8de6e9182802b83fa4",
+      "ziel": "plan/projektuebergabe-kuratierter-stand"
+    },
+    {
+      "quelle": "plan/companion-firmware-e1-e4-basis",
+      "head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "ziel": "plan/projektuebergabe-kuratierter-stand"
+    },
+    {
+      "quelle": "plan/esp-firmware-f0-basis",
+      "head": "e973818edde56be4f4907a024f9c4f347802a3cc",
+      "ziel": "plan/projektuebergabe-kuratierter-stand"
+    },
+    {
+      "quelle": "plan/esp-firmware-f1-bond-wiederverbindung",
+      "head": "f1dcca86c1691c6104c465aaeeeefb9efb5d2e82",
+      "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+    },
+    {
+      "quelle": "plan/esp-firmware-f1-sdk-herkunft",
+      "head": "d1d3b4ec16357b3c89abc2fbf06034d5f86f9b52",
+      "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+    },
+    {
+      "quelle": "plan/esp-firmware-f1-smp-modusursprung",
+      "head": "d5b840f23580dd761a8f087b34d6269f93315c2c",
+      "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+    },
+    {
+      "quelle": "plan/hardware-revision-quelleninventar",
+      "head": "e4af436167c253cb674db1c0038bdef99031535b",
+      "ziel": "plan/projektuebergabe-kuratierter-stand"
+    },
+    {
+      "quelle": "plan/hardware-revision-schnittstellenabgleich",
+      "head": "2204d5447236601ed339b6068edb2a830f34743b",
+      "ziel": "plan/projektuebergabe-kuratierter-stand"
+    },
+    {
+      "quelle": "plan/led-steuerung-originalbox-bedienpfad",
+      "head": "f40ab8f7f6a6c3963d35391b71dbabeca11507dd",
+      "ziel": "plan/projektuebergabe-led-entwurf-archiv"
+    },
+    {
+      "quelle": "plan/nutzergefuehrte-hardwarediagnose-android-control",
+      "head": "7e5acb56ebf49b2c3a83a631063fa302b1aa8da0",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv"
+    },
+    {
+      "quelle": "plan/nutzergefuehrte-hardwarediagnose-android-ereignisgrenze",
+      "head": "74da720ecb1c415939553b0657785382bb2fef22",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv"
+    },
+    {
+      "quelle": "plan/nutzergefuehrte-hardwarediagnose-android-fake",
+      "head": "45d3e79ca3e6a52c2219d8385b0ba18dd03a1b69",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv"
+    },
+    {
+      "quelle": "plan/nutzergefuehrte-hardwarediagnose-android-guided",
+      "head": "625a503ef2f5009a6335a483b02c474e94d742d1",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv"
+    },
+    {
+      "quelle": "plan/nutzergefuehrte-hardwarediagnose-android-kopplungsbericht",
+      "head": "08e1f613128a82fbb56659d18a8e99f54f93e0bb",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv"
+    },
+    {
+      "quelle": "plan/nutzergefuehrte-hardwarediagnose-android-preview",
+      "head": "5305c501c7c1eabecc10066d05e42f0fa690edd4",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv"
+    },
+    {
+      "quelle": "plan/nutzergefuehrte-hardwarediagnose-android-step",
+      "head": "94a9a726feeaa641f3649c69a0bc85b355a89987",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv"
+    },
+    {
+      "quelle": "plan/nutzergefuehrte-hardwarediagnose-android-transport",
+      "head": "268f00807310f200bdd9551c6fcac7e27df7e1f6",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv"
+    },
+    {
+      "quelle": "plan/nutzergefuehrte-hardwarediagnose-android-verfuegbarkeit",
+      "head": "e7af1812f142033ae0677e881edc248651253103",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv"
+    },
+    {
+      "quelle": "plan/nutzergefuehrte-hardwarediagnose-besitz-gate",
+      "head": "59729500a276519e218a2c0d825849162e6e58bc",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv"
+    },
+    {
+      "quelle": "plan/nutzergefuehrte-hardwarediagnose-ble-auth-start",
+      "head": "94c21532590a47f7618cea953d7168be417964a0",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv"
+    },
+    {
+      "quelle": "plan/nutzergefuehrte-hardwarediagnose-ble-kopplung",
+      "head": "640719907f4afd5ff75ddb30a934377f5614a826",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv"
+    },
+    {
+      "quelle": "plan/nutzergefuehrte-hardwarediagnose-ble-owner",
+      "head": "c3a7e3a013c412c00b16f6168f46f30701ac560b",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv"
+    },
+    {
+      "quelle": "plan/nutzergefuehrte-hardwarediagnose-ble-startfix-rueckweg",
+      "head": "0ffec7699c257f94dddc31fa124eb151f22b3daa",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv"
+    },
+    {
+      "quelle": "plan/nutzergefuehrte-hardwarediagnose-ble-telemetrie-rueckweg",
+      "head": "b1e458cfe4806274f7fce7e69bef8259e542fb54",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv"
+    },
+    {
+      "quelle": "plan/nutzergefuehrte-hardwarediagnose-firmware-fake",
+      "head": "ecec6c353ec7686ab684e2d2a30543c91776849c",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv"
+    },
+    {
+      "quelle": "plan/nutzergefuehrte-hardwarediagnose-gatt-registrar",
+      "head": "c8da9c29baf402b0b517cbaf0f7ad19739a1331f",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv"
+    },
+    {
+      "quelle": "plan/nutzergefuehrte-hardwarediagnose-gatt-transport",
+      "head": "c57951a5e0d10c7c9c16b4b93d74881e31577044",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv"
+    },
+    {
+      "quelle": "plan/nutzergefuehrte-hardwarediagnose-rueckweg",
+      "head": "78672c1f0fa86eccf3f0d348c03ec4d1e3d1547b",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv"
+    },
+    {
+      "quelle": "plan/nutzergefuehrte-hardwarediagnose-schrittransport",
+      "head": "04c145f6775b98761a8b7b018020566f9f3fa70b",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv"
+    },
+    {
+      "quelle": "plan/nutzergefuehrte-hardwarediagnose-startintegration",
+      "head": "e652c3a5229d0c85c167182f80ad68f2538a49df",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv"
+    },
+    {
+      "quelle": "plan/nutzergefuehrte-hardwarediagnose-testfirmware-basis",
+      "head": "f40ab8f7f6a6c3963d35391b71dbabeca11507dd",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv"
+    },
+    {
+      "quelle": "plan/nutzergefuehrte-hardwarediagnose-transport",
+      "head": "3209275136f96d3a6a0013c485e70d692e428cf4",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv"
+    },
+    {
+      "quelle": "plan/nutzergefuehrte-hardwarediagnose-vertrag",
+      "head": "3ef678167c21d34f88aadebdcb1c2d1d94cc7b30",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv"
+    },
+    {
+      "quelle": "plan/nutzergefuehrte-hardwarediagnose-wirezeitgrenzen",
+      "head": "b5a8c430fcf5cf37731c18ba3ac261fce3cc13f7",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv"
+    }
+  ],
+  "worktrees": [
+    {
+      "id": "main-root",
+      "head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "branch": "refs/heads/main",
+      "ziel": "mehrere Archive nach Pfad",
+      "geaendert": [
+        ".gitignore",
+        ".vscode/extensions.json"
+      ],
+      "geaendert_ziel": "plan/projektuebergabe-experimente-archiv",
+      "neue_dateien": [
+        {
+          "pfad": ".codex-remote-attachments/01a12ad5-042d-7572-a31c-a88a09e280b2/8aa2599e-862e-4374-824b-01da15a9ea1c/1-ble-kopplungsbeobachtung-v1.json",
+          "ziel": "plan/projektuebergabe-diagnose-historie-archiv"
+        },
+        {
+          "pfad": "Hardware/BOM_Esp-Breakout-V2_2026-10-10.csv",
+          "ziel": "plan/projektuebergabe-hardwarequellen-archiv"
+        },
+        {
+          "pfad": "Hardware/BOM_Esp32-Breakout_2026-10-10.csv",
+          "ziel": "plan/projektuebergabe-hardwarequellen-archiv"
+        },
+        {
+          "pfad": "Hardware/Erfassungsbogen_Originalbox_Verdrahtung.docx",
+          "ziel": "plan/projektuebergabe-hardwarequellen-archiv"
+        },
+        {
+          "pfad": "Hardware/Erfassungsbogen_Originalbox_Verdrahtung_mit_Lageskizze.docx",
+          "ziel": "plan/projektuebergabe-hardwarequellen-archiv"
+        },
+        {
+          "pfad": "Hardware/Originalbox_Lageskizze_Messpunkte.png",
+          "ziel": "plan/projektuebergabe-hardwarequellen-archiv"
+        },
+        {
+          "pfad": "Hardware/Originalbox_Lageskizze_Messpunkte.svg",
+          "ziel": "plan/projektuebergabe-hardwarequellen-archiv"
+        },
+        {
+          "pfad": "Hardware/POC-EasyEDA-ESP32-MCP23017/README.md",
+          "ziel": "plan/projektuebergabe-hardwarequellen-archiv"
+        },
+        {
+          "pfad": "Hardware/POC-EasyEDA-ESP32-MCP23017/netzliste.csv",
+          "ziel": "plan/projektuebergabe-hardwarequellen-archiv"
+        },
+        {
+          "pfad": "Hardware/POC-EasyEDA-ESP32-MCP23017/pcb-platzierung.svg",
+          "ziel": "plan/projektuebergabe-hardwarequellen-archiv"
+        },
+        {
+          "pfad": "Hardware/POC-EasyEDA-ESP32-MCP23017/poc-r0.kicad_pcb",
+          "ziel": "plan/projektuebergabe-hardwarequellen-archiv"
+        },
+        {
+          "pfad": "Hardware/POC-EasyEDA-ESP32-MCP23017/pruefe_quellen.py",
+          "ziel": "plan/projektuebergabe-hardwarequellen-archiv"
+        },
+        {
+          "pfad": "Hardware/POC-EasyEDA-ESP32-MCP23017/schaltbild.svg",
+          "ziel": "plan/projektuebergabe-hardwarequellen-archiv"
+        },
+        {
+          "pfad": "Hardware/POC-EasyEDA-ESP32-MCP23017/stueckliste.csv",
+          "ziel": "plan/projektuebergabe-hardwarequellen-archiv"
+        },
+        {
+          "pfad": "Hardware/SCH_Esp32-Breakout_2026-10-10.json",
+          "ziel": "plan/projektuebergabe-hardwarequellen-archiv"
+        },
+        {
+          "pfad": "Hardware/SCH_Gpio-Expander_2026-10-10 (1).json",
+          "ziel": "plan/projektuebergabe-hardwarequellen-archiv"
+        },
+        {
+          "pfad": "Hardware/SCH_Gpio-Expander_2026-10-10.json",
+          "ziel": "plan/projektuebergabe-hardwarequellen-archiv"
+        },
+        {
+          "pfad": "Hardware/Schematic_Esp-Breakout-V2_2026-10-10 (1).png",
+          "ziel": "plan/projektuebergabe-hardwarequellen-archiv"
+        },
+        {
+          "pfad": "Hardware/Schematic_Esp-Breakout-V2_2026-10-10.pdf",
+          "ziel": "plan/projektuebergabe-hardwarequellen-archiv"
+        },
+        {
+          "pfad": "Hardware/Schematic_Esp-Breakout-V2_2026-10-10.png",
+          "ziel": "plan/projektuebergabe-hardwarequellen-archiv"
+        },
+        {
+          "pfad": "Hardware/Schematic_Esp-Breakout-V2_2026-10-10.svg",
+          "ziel": "plan/projektuebergabe-hardwarequellen-archiv"
+        },
+        {
+          "pfad": "Hardware/Schematic_Esp32-Breakout_2026-10-10.svg",
+          "ziel": "plan/projektuebergabe-hardwarequellen-archiv"
+        },
+        {
+          "pfad": "Hardware/Schematic_Gpio-Expander_2026-10-10.svg",
+          "ziel": "plan/projektuebergabe-hardwarequellen-archiv"
+        },
+        {
+          "pfad": "Hardware/Sheet_1_2026-10-10 (1).schdoc",
+          "ziel": "plan/projektuebergabe-hardwarequellen-archiv"
+        },
+        {
+          "pfad": "Hardware/Sheet_1_2026-10-10 (1).svg",
+          "ziel": "plan/projektuebergabe-hardwarequellen-archiv"
+        },
+        {
+          "pfad": "Hardware/Sheet_1_2026-10-10.schdoc",
+          "ziel": "plan/projektuebergabe-hardwarequellen-archiv"
+        },
+        {
+          "pfad": "Hardware/Sheet_1_2026-10-10.svg",
+          "ziel": "plan/projektuebergabe-hardwarequellen-archiv"
+        },
+        {
+          "pfad": "companion/OPEN-DEPENDENCIES.md",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/README.md",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/android/.gitignore",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/android/README.md",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/android/app/build.gradle.kts",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/android/app/src/main/AndroidManifest.xml",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/android/app/src/main/java/de/larpescape/companion/MainActivity.kt",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/android/app/src/main/java/de/larpescape/companion/data/device/DeviceRepository.kt",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/android/app/src/main/java/de/larpescape/companion/data/scenario/ScenarioDraftRepository.kt",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/android/app/src/main/java/de/larpescape/companion/platform/ble/AndroidBleRepository.kt",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/android/app/src/main/java/de/larpescape/companion/platform/nfc/AndroidNfc.kt",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/android/app/src/main/java/de/larpescape/companion/ui/device/DeviceViewModel.kt",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/android/app/src/main/java/de/larpescape/companion/ui/nfc/NfcScreen.kt",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/android/app/src/main/java/de/larpescape/companion/ui/nfc/NfcViewModel.kt",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/android/app/src/main/java/de/larpescape/companion/ui/scenario/ScenarioScreen.kt",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/android/app/src/main/java/de/larpescape/companion/ui/scenario/ScenarioViewModel.kt",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/android/app/src/test/java/de/larpescape/companion/ui/device/DeviceViewModelTest.kt",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/android/app/src/test/java/de/larpescape/companion/ui/nfc/NfcViewModelTest.kt",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/android/build.gradle.kts",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/android/core/protocol/build.gradle.kts",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/android/core/protocol/src/main/kotlin/de/larpescape/protocol/ConfiguredStatus.kt",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/android/core/protocol/src/main/kotlin/de/larpescape/protocol/FrameAssembler.kt",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/android/core/protocol/src/main/kotlin/de/larpescape/protocol/NfcTagData.kt",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/android/core/protocol/src/main/kotlin/de/larpescape/protocol/PeerAuthV1.kt",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/android/core/protocol/src/main/kotlin/de/larpescape/protocol/ScenarioDraft.kt",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/android/core/protocol/src/test/kotlin/de/larpescape/protocol/ConfiguredStatusTest.kt",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/android/core/protocol/src/test/kotlin/de/larpescape/protocol/FrameAssemblerTest.kt",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/android/core/protocol/src/test/kotlin/de/larpescape/protocol/NfcTagDataTest.kt",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/android/core/protocol/src/test/kotlin/de/larpescape/protocol/PeerAuthV1Test.kt",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/android/core/protocol/src/test/kotlin/de/larpescape/protocol/ScenarioDraftTest.kt",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/android/core/protocol/src/test/resources/firmware-peer-auth-observation.json",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/android/core/protocol/src/test/resources/vite-scenario-v1.json",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/android/gradle.properties",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/android/gradle/libs.versions.toml",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/android/gradle/wrapper/gradle-wrapper.jar",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/android/gradle/wrapper/gradle-wrapper.properties",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/android/gradlew",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/android/gradlew.bat",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/android/settings.gradle.kts",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/android/tools/capture_esp.py",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/android/tools/phone_check.py",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/app/.local/evidence-a2-vite/vite-szenario-entwurf.json",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/app/.npmrc",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/app/README.md",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/app/index.html",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/app/package.json",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/app/pnpm-lock.yaml",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/app/pnpm-workspace.yaml",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/app/src/contract.js",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/app/src/domain.js",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/app/src/editorDraft.mjs",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/app/src/firmwareV2Reply.mjs",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/app/src/firmwareV2Status.mjs",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/app/src/mockDevice.js",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/app/src/presentation.js",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/app/src/readingPreview.mjs",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/app/src/screenModel.js",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/app/test/app-slice.test.js",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/app/test/browser-mock.test.mjs",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/app/test/editor-draft.test.mjs",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/app/test/firmware-v2-reply.test.mjs",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/app/test/firmware-v2-status.test.mjs",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/app/test/mock-session.test.mjs",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/app/test/react-render.test.mjs",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/app/test/reading-preview.test.mjs",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/app/web/EditorView.jsx",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/app/web/FirmwareStatusView.jsx",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/app/web/ReadingPreviewView.jsx",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/app/web/components/ui/alert.jsx",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/app/web/components/ui/badge.jsx",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/app/web/components/ui/button.jsx",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/app/web/components/ui/card.jsx",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/app/web/domain.mjs",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/app/web/draftStorage.mjs",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/app/web/lib/utils.js",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/app/web/main.jsx",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/app/web/mockDevice.mjs",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/app/web/mockSession.mjs",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/app/web/presentation.mjs",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/app/web/styles.css",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/contract/README.md",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/contract/firmware-v2/SNAPSHOT.md",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/contract/firmware-v2/fixtures/README.md",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/contract/firmware-v2/fixtures/command-stale-state.json",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/contract/firmware-v2/fixtures/command-start.json",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/contract/firmware-v2/fixtures/reply-conflict.json",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/contract/firmware-v2/fixtures/reply-duplicate.json",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/contract/firmware-v2/fixtures/reply-executed.json",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/contract/firmware-v2/fixtures/reply-stale-state.json",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/contract/firmware-v2/fixtures/status-ready.json",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/contract/firmware-v2/fixtures/status-running.json",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/contract/firmware-v2/schemas/game-command-v2.schema.json",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/contract/firmware-v2/schemas/game-reply-v2.schema.json",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/contract/firmware-v2/schemas/status-v2.schema.json",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/contract/nfc-v1/README.md",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/contract/scripts/validate-contract.js",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/contract/scripts/verify-firmware-v2-snapshot.mjs",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/contract/v0/device-status.paused.json",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/contract/v0/device-status.readonly.json",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/contract/v0/device-status.ready.json",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/contract/v0/device-status.running.json",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/contract/v0/gm-command-pause.request.json",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/contract/v0/gm-command-reset.request.json",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/contract/v0/gm-command-resume.request.json",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/contract/v0/gm-command-select-state.request.json",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/contract/v0/gm-command-start.accepted.json",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/contract/v0/gm-command-start.duplicate.json",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/contract/v0/gm-command-start.rejected-conflict.json",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "companion/contract/v0/gm-command-start.request.json",
+          "ziel": "plan/projektuebergabe-android-entwuerfe-archiv"
+        },
+        {
+          "pfad": "experiments/esp-ble-diagnostic/.gitignore",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/esp-ble-diagnostic/README.md",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/esp-ble-diagnostic/include/DiagnosticProtocol.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/esp-ble-diagnostic/platformio.ini",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/esp-ble-diagnostic/src/host.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/esp-ble-diagnostic/src/main.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/handy-esp-diagnostic/.gitignore",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/handy-esp-diagnostic/HandyEspDiagnostic.csproj",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/handy-esp-diagnostic/MainActivity.cs",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/handy-esp-diagnostic/Properties/AndroidManifest.xml",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/handy-esp-diagnostic/README.md",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/handy-esp-diagnostic/V2Session.cs",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/.gitignore",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/README.md",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware-source-manifest.json",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/Companion/AuthorityState.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/Companion/CommandFrame.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/Companion/CommandFrameQueue.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/Companion/CommandIngress.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/Companion/CommandReceipt.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/Companion/CommandStream.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/Companion/ConfiguredProtocol.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/Companion/DeviceIdentityStore.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/Companion/GameCommandReader.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/Companion/Identity.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/Companion/IdentityAccess.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/Companion/PeerAuthResult.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/Companion/PeerChallengeIssue.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/Companion/PeerChallengeRead.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/Companion/PeerLinkSecurity.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/Companion/PeerProof.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/Companion/PeerProofFrame.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/Companion/PeerProofGrant.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/Companion/PeerProofReceiver.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/Companion/PeerRegistry.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/Companion/PeerRegistryActor.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/Companion/PeerRegistryRuntime.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/Companion/ProfileCapabilities.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/Companion/ProfileControlFrames.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/Companion/ProfileFileStaging.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/Companion/ProfileFrameQueue.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/Companion/ProfileFrames.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/Companion/ProfileResponseQueue.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/Companion/ProfileResponseSender.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/Companion/ProfileSourceEnvelope.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/Companion/ProfileStaging.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/Companion/ReplyFrame.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/Companion/ReplyFrameSender.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/Companion/StatusFrame.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/Companion/StatusFrameSender.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/Companion/StatusProtocol.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/CompanionIntegration/ApplicationProfileStaging.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/CompanionIntegration/GameControl.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/CompanionIntegration/ProfileApply.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/CompanionIntegration/ProfileImport.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/CompanionIntegration/ProfileTransferControl.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/DeviceRuntime/Broker.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/DeviceRuntime/Channel.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/DeviceRuntime/Lifecycle.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/DeviceRuntime/OwnerConfiguration.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/DeviceRuntime/Plan.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/DeviceRuntime/ProfileApplication.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/DeviceRuntime/ProfileController.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/DeviceRuntime/ProfileJournal.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/DeviceRuntime/Runtime.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/GameApplication/GameSnapshot.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/GameApplication/IGameSnapshotSink.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/GameConfiguration/Profile.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/GameConfiguration/ProfileReader.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/GameConfiguration/ProfileVocabulary.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/GameConfiguration/ProfileWriter.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/GameDomain/GameDefinitions.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/GameDomain/GameProgress.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/GameDomain/GridPosition.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/GameDomain/KeystoneMonitor.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/GameDomain/KeystoneTransition.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/GameDomain/KnownRoleHistory.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/GameDomain/PuzzleProgress.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/GameDomain/TransitionWait.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/GameExecution/Engine.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/GameExecution/Session.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/GamePorts/CrystalInputBatch.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/GamePorts/IAudioPlayer.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/GamePorts/ICardReader.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/GamePorts/IClock.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/GamePorts/ICommunicator.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/GamePorts/ICrystalInput.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/GamePorts/IGameDiagnostics.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/GamePorts/ILightEffects.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/GamePorts/IRuntimeService.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/GamePorts/IWakeInput.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/GameRuntime/BrightnessStepSchedule.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/GameRuntime/CardUidCopy.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/GameRuntime/LedIndex.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/GameRuntime/MatrixConfiguration.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/GameRuntime/Pn532PassiveFrame.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/GameRuntime/WakePulseSchedule.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/include/README",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/lib/FreeRtosCommandFrameQueue/FreeRtosCommandFrameQueue.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/lib/FreeRtosCommandFrameQueue/FreeRtosCommandFrameQueue.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/lib/FreeRtosGameControlChannel/FreeRtosGameControlChannel.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/lib/FreeRtosGameControlChannel/FreeRtosGameControlChannel.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/Companion/AuthorityState.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/Companion/CommandFrame.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/Companion/CommandFrameQueue.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/Companion/CommandReceipt.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/Companion/CommandStream.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/Companion/ConfiguredProtocol.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/Companion/DeviceIdentityStore.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/Companion/GameCommandReader.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/Companion/Identity.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/Companion/IdentityAccess.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/Companion/PeerAuthResult.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/Companion/PeerChallengeIssue.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/Companion/PeerLinkSecurity.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/Companion/PeerProof.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/Companion/PeerProofGrant.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/Companion/PeerProofReceiver.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/Companion/PeerRegistryActor.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/Companion/PeerRegistryCodec.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/Companion/PeerRegistryOwner.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/Companion/PeerRegistryRuntime.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/Companion/ProfileControlFrames.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/Companion/ProfileFileStaging.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/Companion/ProfileFrameQueue.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/Companion/ProfileFrames.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/Companion/ProfileResponseQueue.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/Companion/ProfileResponseSender.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/Companion/ProfileSourceEnvelope.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/Companion/ProfileStaging.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/Companion/ReplyFrameSender.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/Companion/StatusFrameSender.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/Companion/StatusProtocol.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/CompanionIntegration/ApplicationProfileStaging.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/CompanionIntegration/GameControl.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/CompanionIntegration/ProfileApply.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/CompanionIntegration/ProfileImport.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/CompanionIntegration/ProfileTransferControl.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/DeviceRuntime/Broker.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/DeviceRuntime/Lifecycle.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/DeviceRuntime/OwnerConfiguration.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/DeviceRuntime/Plan.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/DeviceRuntime/ProfileApplication.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/DeviceRuntime/ProfileController.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/DeviceRuntime/ProfileJournal.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/DeviceRuntime/Runtime.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/GameConfiguration/ProfileReader.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/GameConfiguration/ProfileValidation.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/GameConfiguration/ProfileWriter.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/GameConfiguration/StandardProfile.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/GameDomain/GameDefinitions.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/GameDomain/GameProgress.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/GameDomain/KeystoneMonitor.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/GameDomain/KeystoneTransition.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/GameDomain/PuzzleProgress.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/GameExecution/Engine.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/firmware/src/GameExecution/Session.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/host.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/host_stubs/bootloader_random.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/host_stubs/esp_err.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/host_stubs/esp_gatts_api.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/host_stubs/esp_littlefs.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/host_stubs/esp_random.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/host_stubs/freertos/FreeRTOS.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/host_stubs/freertos/queue.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/host_stubs/freertos/semphr.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/host_stubs/freertos/task.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/host_stubs/nvs.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/host_stubs/nvs_flash.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/include/ContractLab.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/include/FakeOwners.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/include/MemoryJournalStore.h",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/main.cpp",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/platformio.ini",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/tools/hardware_check.py",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        },
+        {
+          "pfad": "experiments/v2-contract-probe/tools/verify_evidence.py",
+          "ziel": "plan/projektuebergabe-experimente-archiv"
+        }
+      ],
+      "ausgeschlossen": [
+        {
+          "path": ".android-remote-ready-worktree/",
+          "reason": "registered nested worktree; inventoried separately"
+        },
+        {
+          "path": ".desktop-ble-probe-78efdda03e534f818feee6cc51aa3ea1/obj/Debug/net10.0-windows10.0.19041.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.cs",
+          "reason": "generated build or cache file"
+        },
+        {
+          "path": ".desktop-ble-probe-78efdda03e534f818feee6cc51aa3ea1/obj/Debug/net10.0-windows10.0.19041.0/Probe.AssemblyInfo.cs",
+          "reason": "generated build or cache file"
+        },
+        {
+          "path": ".desktop-ble-probe-78efdda03e534f818feee6cc51aa3ea1/obj/Debug/net10.0-windows10.0.19041.0/Probe.AssemblyInfoInputs.cache",
+          "reason": "generated build or cache file"
+        },
+        {
+          "path": ".desktop-ble-probe-78efdda03e534f818feee6cc51aa3ea1/obj/Debug/net10.0-windows10.0.19041.0/Probe.GeneratedMSBuildEditorConfig.editorconfig",
+          "reason": "generated build or cache file"
+        },
+        {
+          "path": ".desktop-ble-probe-78efdda03e534f818feee6cc51aa3ea1/obj/Debug/net10.0-windows10.0.19041.0/Probe.GlobalUsings.g.cs",
+          "reason": "generated build or cache file"
+        },
+        {
+          "path": ".diagnose-android-availability-worktree/",
+          "reason": "registered nested worktree; inventoried separately"
+        },
+        {
+          "path": ".diagnose-android-ble-transport-worktree/",
+          "reason": "registered nested worktree; inventoried separately"
+        },
+        {
+          "path": ".diagnose-android-control-worktree/",
+          "reason": "registered nested worktree; inventoried separately"
+        },
+        {
+          "path": ".diagnose-android-event-journal-worktree/",
+          "reason": "registered nested worktree; inventoried separately"
+        },
+        {
+          "path": ".diagnose-android-fake-worktree/",
+          "reason": "registered nested worktree; inventoried separately"
+        },
+        {
+          "path": ".diagnose-android-guided-worktree/",
+          "reason": "registered nested worktree; inventoried separately"
+        },
+        {
+          "path": ".diagnose-android-pairing-report-worktree/",
+          "reason": "registered nested worktree; inventoried separately"
+        },
+        {
+          "path": ".diagnose-android-preview-worktree/",
+          "reason": "registered nested worktree; inventoried separately"
+        },
+        {
+          "path": ".diagnose-android-step-worktree/",
+          "reason": "registered nested worktree; inventoried separately"
+        },
+        {
+          "path": ".diagnose-ble-auth-start-worktree/",
+          "reason": "registered nested worktree; inventoried separately"
+        },
+        {
+          "path": ".diagnose-ble-owner-worktree/",
+          "reason": "registered nested worktree; inventoried separately"
+        },
+        {
+          "path": ".diagnose-ble-pairing-worktree/",
+          "reason": "registered nested worktree; inventoried separately"
+        },
+        {
+          "path": ".diagnose-ble-startfix-rollback-worktree/",
+          "reason": "registered nested worktree; inventoried separately"
+        },
+        {
+          "path": ".diagnose-ble-telemetry-rollback-worktree/",
+          "reason": "registered nested worktree; inventoried separately"
+        },
+        {
+          "path": ".diagnose-contract-worktree/",
+          "reason": "registered nested worktree; inventoried separately"
+        },
+        {
+          "path": ".diagnose-device-gate-worktree/",
+          "reason": "registered nested worktree; inventoried separately"
+        },
+        {
+          "path": ".diagnose-firmware-fake-worktree/",
+          "reason": "registered nested worktree; inventoried separately"
+        },
+        {
+          "path": ".diagnose-gatt-registrar-worktree/",
+          "reason": "registered nested worktree; inventoried separately"
+        },
+        {
+          "path": ".diagnose-gatt-transport-worktree/",
+          "reason": "registered nested worktree; inventoried separately"
+        },
+        {
+          "path": ".diagnose-pairing-rollback-worktree/",
+          "reason": "registered nested worktree; inventoried separately"
+        },
+        {
+          "path": ".diagnose-startintegration-worktree/",
+          "reason": "registered nested worktree; inventoried separately"
+        },
+        {
+          "path": ".diagnose-step-transport-worktree/",
+          "reason": "registered nested worktree; inventoried separately"
+        },
+        {
+          "path": ".diagnose-testfirmware-basis-worktree/",
+          "reason": "registered nested worktree; inventoried separately"
+        },
+        {
+          "path": ".diagnose-transport-worktree/",
+          "reason": "registered nested worktree; inventoried separately"
+        },
+        {
+          "path": ".diagnose-wire-time-worktree/",
+          "reason": "registered nested worktree; inventoried separately"
+        },
+        {
+          "path": ".firmware-f1-plan-worktree/",
+          "reason": "registered nested worktree; inventoried separately"
+        },
+        {
+          "path": ".firmware-f1-sdk-worktree/",
+          "reason": "registered nested worktree; inventoried separately"
+        },
+        {
+          "path": ".firmware-f1-smp-worktree/",
+          "reason": "registered nested worktree; inventoried separately"
+        },
+        {
+          "path": ".hardware-diagnostic-worktree/",
+          "reason": "registered nested worktree; inventoried separately"
+        },
+        {
+          "path": ".hardware-interface-worktree/",
+          "reason": "registered nested worktree; inventoried separately"
+        },
+        {
+          "path": ".hardware-sources-worktree/",
+          "reason": "registered nested worktree; inventoried separately"
+        },
+        {
+          "path": ".led-control-worktree/",
+          "reason": "registered nested worktree; inventoried separately"
+        },
+        {
+          "path": ".tools/easyeda_mcp/",
+          "reason": "not a regular source file"
+        },
+        {
+          "path": ".tools/node-v22.14.0-win-x64/CHANGELOG.md",
+          "reason": "generated build or cache file"
+        },
+        {
+          "path": ".tools/node-v22.14.0-win-x64/LICENSE",
+          "reason": "generated build or cache file"
+        },
+        {
+          "path": ".tools/node-v22.14.0-win-x64/README.md",
+          "reason": "generated build or cache file"
+        },
+        {
+          "path": ".tools/node-v22.14.0-win-x64/corepack",
+          "reason": "generated build or cache file"
+        },
+        {
+          "path": ".tools/node-v22.14.0-win-x64/corepack.cmd",
+          "reason": "generated build or cache file"
+        },
+        {
+          "path": ".tools/node-v22.14.0-win-x64/install_tools.bat",
+          "reason": "generated build or cache file"
+        },
+        {
+          "path": ".tools/node-v22.14.0-win-x64/node.exe",
+          "reason": "generated build or cache file"
+        },
+        {
+          "path": ".tools/node-v22.14.0-win-x64/nodevars.bat",
+          "reason": "generated build or cache file"
+        },
+        {
+          "path": ".tools/node-v22.14.0-win-x64/npm",
+          "reason": "generated build or cache file"
+        },
+        {
+          "path": ".tools/node-v22.14.0-win-x64/npm.cmd",
+          "reason": "generated build or cache file"
+        },
+        {
+          "path": ".tools/node-v22.14.0-win-x64/npm.ps1",
+          "reason": "generated build or cache file"
+        },
+        {
+          "path": ".tools/node-v22.14.0-win-x64/npx",
+          "reason": "generated build or cache file"
+        },
+        {
+          "path": ".tools/node-v22.14.0-win-x64/npx.cmd",
+          "reason": "generated build or cache file"
+        },
+        {
+          "path": ".tools/node-v22.14.0-win-x64/npx.ps1",
+          "reason": "generated build or cache file"
+        },
+        {
+          "path": "companion/MauiCompanion/.vs/MauiCompanion/v17/.wsuo",
+          "reason": "generated build or cache file"
+        },
+        {
+          "path": "companion/MauiCompanion/.vs/MauiCompanion/v17/DocumentLayout.json",
+          "reason": "generated build or cache file"
+        },
+        {
+          "path": "companion/MauiCompanion/.vs/VSWorkspaceState.json",
+          "reason": "generated build or cache file"
+        },
+        {
+          "path": "companion/MauiCompanion/.vs/slnx.sqlite",
+          "reason": "generated build or cache file"
+        },
+        {
+          "path": "experiments/gm-companion/",
+          "reason": "not a regular source file"
+        }
+      ]
+    },
+    {
+      "id": "esp-firmware-f0-remote-ready",
+      "head": "e973818edde56be4f4907a024f9c4f347802a3cc",
+      "branch": "refs/heads/plan/esp-firmware-f0-basis",
+      "ziel": "plan/projektuebergabe-kuratierter-stand",
+      "geaendert": [],
+      "geaendert_ziel": "plan/projektuebergabe-kuratierter-stand",
+      "neue_dateien": [],
+      "ausgeschlossen": []
+    },
+    {
+      "id": "f1-bond-reconnection",
+      "head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "branch": "detached",
+      "ziel": "plan/projektuebergabe-firmware-f1-archiv",
+      "geaendert": [
+        ".gitattributes",
+        "include/Companion/PeerChallengeRead.h",
+        "lib/GattsWriteAdmission/Esp32GattsService.cpp",
+        "lib/GattsWriteAdmission/Esp32GattsService.h",
+        "lib/GattsWriteAdmission/Esp32GattsSource.cpp",
+        "lib/GattsWriteAdmission/Esp32GattsSource.h",
+        "lib/GattsWriteAdmission/GattsServiceDefinition.h",
+        "lib/GattsWriteAdmission/SdkGattsService.cpp",
+        "lib/GattsWriteAdmission/SdkGattsService.h",
+        "platformio.ini",
+        "scripts/check_format.py",
+        "src/GattsAbiProbe/main.cpp",
+        "test/test_configured_control/host_stubs/esp_gatts_api.h",
+        "test/test_configured_control/test_main.cpp"
+      ],
+      "geaendert_ziel": "plan/projektuebergabe-firmware-f1-archiv",
+      "neue_dateien": [
+        {
+          "pfad": "docs/companion/fixtures/peer-auth/README.md",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "docs/companion/fixtures/peer-auth/observation.json",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "docs/companion/fixtures/peer-challenge-issue/README.md",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "docs/companion/fixtures/peer-challenge-issue/observation.json",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "docs/companion/peer-auth-result-v1.md",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "docs/companion/peer-challenge-issue-v1.md",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "include/Companion/PeerAuthResult.h",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "include/Companion/PeerChallengeIssue.h",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "lib/FreeRtosPeerAuthRuntime/FreeRtosPeerAuthRuntime.cpp",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "lib/FreeRtosPeerAuthRuntime/FreeRtosPeerAuthRuntime.h",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "lib/FreeRtosPeerChallengeIssueRuntime/FreeRtosPeerChallengeIssueRuntime.cpp",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "lib/FreeRtosPeerChallengeIssueRuntime/FreeRtosPeerChallengeIssueRuntime.h",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "lib/GattsWriteAdmission/Esp32GattsPeerAuth.cpp",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "scripts/check_f1_sdk_encryption.py",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "scripts/check_peer_auth.py",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "scripts/check_peer_challenge_issue.py",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "src/Companion/PeerAuthResult.cpp",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "src/Companion/PeerChallengeIssue.cpp",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "src/GattsAbiProbe/F1EncryptAbi.cpp",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "test/test_configured_control/PeerAuthCases.h",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "test/test_configured_control/PeerChallengeIssueCases.h",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        }
+      ],
+      "ausgeschlossen": []
+    },
+    {
+      "id": "firmware-f1-reencryption",
+      "head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "branch": "detached",
+      "ziel": "plan/projektuebergabe-firmware-f1-archiv",
+      "geaendert": [
+        ".gitattributes",
+        "docs/companion/fixtures/device-identity-store/metadata-v1.json",
+        "docs/companion/fixtures/device-identity-store/observation.json",
+        "docs/companion/fixtures/device-identity-store/record-v1.txt",
+        "include/Companion/PeerChallengeRead.h",
+        "lib/GattsWriteAdmission/Esp32GattsService.cpp",
+        "lib/GattsWriteAdmission/Esp32GattsService.h",
+        "lib/GattsWriteAdmission/Esp32GattsSource.cpp",
+        "lib/GattsWriteAdmission/Esp32GattsSource.h",
+        "lib/GattsWriteAdmission/GattsServiceDefinition.h",
+        "lib/GattsWriteAdmission/SdkGattsService.cpp",
+        "lib/GattsWriteAdmission/SdkGattsService.h",
+        "lib/GattsWriteAdmission/SdkPeerSecurityAbi.h",
+        "platformio.ini",
+        "scripts/check_format.py",
+        "src/GattsAbiProbe/main.cpp",
+        "test/test_configured_control/PeerLinkSecurityCases.h",
+        "test/test_configured_control/SdkPeerSecurityModel.h",
+        "test/test_configured_control/host_stubs/esp_gatts_api.h",
+        "test/test_configured_control/test_main.cpp"
+      ],
+      "geaendert_ziel": "plan/projektuebergabe-firmware-f1-archiv",
+      "neue_dateien": [
+        {
+          "pfad": "docs/companion/fixtures/peer-auth/README.md",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "docs/companion/fixtures/peer-auth/observation.json",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "docs/companion/fixtures/peer-challenge-issue/README.md",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "docs/companion/fixtures/peer-challenge-issue/observation.json",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "docs/companion/peer-auth-result-v1.md",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "docs/companion/peer-challenge-issue-v1.md",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "include/Companion/PeerAuthResult.h",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "include/Companion/PeerChallengeIssue.h",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "include/Companion/PeerHciBirthWitness.h",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "include/Companion/PeerReencryptionAttempt.h",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "lib/FreeRtosPeerAuthRuntime/FreeRtosPeerAuthRuntime.cpp",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "lib/FreeRtosPeerAuthRuntime/FreeRtosPeerAuthRuntime.h",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "lib/FreeRtosPeerChallengeIssueRuntime/FreeRtosPeerChallengeIssueRuntime.cpp",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "lib/FreeRtosPeerChallengeIssueRuntime/FreeRtosPeerChallengeIssueRuntime.h",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "lib/GattsWriteAdmission/Esp32GattsPeerAuth.cpp",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "scripts/check_f1_sdk_encryption.py",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "scripts/check_peer_auth.py",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "scripts/check_peer_challenge_issue.py",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "src/Companion/PeerAuthResult.cpp",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "src/Companion/PeerChallengeIssue.cpp",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "src/GattsAbiProbe/F1EncryptAbi.cpp",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "test/test_configured_control/PeerAuthCases.h",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "test/test_configured_control/PeerChallengeIssueCases.h",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "test/test_configured_control/PeerReencryptionAttemptCases.h",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        }
+      ],
+      "ausgeschlossen": []
+    },
+    {
+      "id": "firmware-independent-check",
+      "head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "branch": "detached",
+      "ziel": "plan/projektuebergabe-firmware-f1-archiv",
+      "geaendert": [
+        ".gitattributes",
+        "src/GameExecution/Session.cpp"
+      ],
+      "geaendert_ziel": "plan/projektuebergabe-firmware-f1-archiv",
+      "neue_dateien": [],
+      "ausgeschlossen": []
+    },
+    {
+      "id": "firmware-peer-ingress",
+      "head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "branch": "refs/heads/codex/firmware-peer-ingress",
+      "ziel": "plan/projektuebergabe-firmware-f1-archiv",
+      "geaendert": [
+        ".gitattributes",
+        "docs/companion/fixtures/device-identity-store/metadata-v1.json",
+        "docs/companion/fixtures/device-identity-store/observation.json",
+        "docs/companion/fixtures/device-identity-store/record-v1.txt",
+        "docs/companion/fixtures/peer-proof/test-vector-v1.json",
+        "docs/companion/fixtures/peer-proof/verification-observation.json",
+        "include/Companion/PeerChallengeRead.h",
+        "lib/GattsWriteAdmission/Esp32GattsService.cpp",
+        "lib/GattsWriteAdmission/Esp32GattsService.h",
+        "lib/GattsWriteAdmission/Esp32GattsSource.cpp",
+        "lib/GattsWriteAdmission/Esp32GattsSource.h",
+        "lib/GattsWriteAdmission/GattsServiceDefinition.h",
+        "lib/GattsWriteAdmission/SdkGattsService.cpp",
+        "lib/GattsWriteAdmission/SdkGattsService.h",
+        "scripts/check_format.py",
+        "src/GattsAbiProbe/main.cpp",
+        "test/test_configured_control/host_stubs/esp_gatts_api.h",
+        "test/test_configured_control/test_main.cpp"
+      ],
+      "geaendert_ziel": "plan/projektuebergabe-firmware-f1-archiv",
+      "neue_dateien": [
+        {
+          "pfad": "docs/companion/fixtures/peer-auth/README.md",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "docs/companion/fixtures/peer-auth/observation.json",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "docs/companion/fixtures/peer-challenge-issue/README.md",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "docs/companion/fixtures/peer-challenge-issue/observation.json",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "docs/companion/peer-auth-result-v1.md",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "docs/companion/peer-challenge-issue-v1.md",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "include/Companion/PeerAuthResult.h",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "include/Companion/PeerChallengeIssue.h",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "lib/FreeRtosPeerAuthRuntime/FreeRtosPeerAuthRuntime.cpp",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "lib/FreeRtosPeerAuthRuntime/FreeRtosPeerAuthRuntime.h",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "lib/FreeRtosPeerChallengeIssueRuntime/FreeRtosPeerChallengeIssueRuntime.cpp",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "lib/FreeRtosPeerChallengeIssueRuntime/FreeRtosPeerChallengeIssueRuntime.h",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "lib/GattsWriteAdmission/Esp32GattsPeerAuth.cpp",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "scripts/check_peer_auth.py",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "scripts/check_peer_challenge_issue.py",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "src/Companion/PeerAuthResult.cpp",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "src/Companion/PeerChallengeIssue.cpp",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "test/test_configured_control/PeerAuthCases.h",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        },
+        {
+          "pfad": "test/test_configured_control/PeerChallengeIssueCases.h",
+          "ziel": "plan/projektuebergabe-firmware-f1-archiv"
+        }
+      ],
+      "ausgeschlossen": []
+    },
+    {
+      "id": "reichstagsbox-hardware",
+      "head": "5d3779eb99516bcf6c73ae519d7da36e480636dc",
+      "branch": "refs/heads/codex/reichstagsbox-hardware",
+      "ziel": "plan/projektuebergabe-hardwarequellen-archiv",
+      "geaendert": [],
+      "geaendert_ziel": "plan/projektuebergabe-hardwarequellen-archiv",
+      "neue_dateien": [],
+      "ausgeschlossen": []
+    },
+    {
+      "id": ".android-remote-ready-worktree",
+      "head": "6383c5906b8fb63748cf4b8de6e9182802b83fa4",
+      "branch": "refs/heads/plan/android-companion-a3-vertragskern",
+      "ziel": "plan/projektuebergabe-kuratierter-stand",
+      "geaendert": [],
+      "geaendert_ziel": "plan/projektuebergabe-kuratierter-stand",
+      "neue_dateien": [],
+      "ausgeschlossen": []
+    },
+    {
+      "id": ".diagnose-android-availability-worktree",
+      "head": "e7af1812f142033ae0677e881edc248651253103",
+      "branch": "refs/heads/plan/nutzergefuehrte-hardwarediagnose-android-verfuegbarkeit",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "geaendert": [],
+      "geaendert_ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "neue_dateien": [],
+      "ausgeschlossen": []
+    },
+    {
+      "id": ".diagnose-android-ble-transport-worktree",
+      "head": "268f00807310f200bdd9551c6fcac7e27df7e1f6",
+      "branch": "refs/heads/plan/nutzergefuehrte-hardwarediagnose-android-transport",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "geaendert": [],
+      "geaendert_ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "neue_dateien": [],
+      "ausgeschlossen": []
+    },
+    {
+      "id": ".diagnose-android-control-worktree",
+      "head": "7e5acb56ebf49b2c3a83a631063fa302b1aa8da0",
+      "branch": "refs/heads/plan/nutzergefuehrte-hardwarediagnose-android-control",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "geaendert": [],
+      "geaendert_ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "neue_dateien": [],
+      "ausgeschlossen": []
+    },
+    {
+      "id": ".diagnose-android-event-journal-worktree",
+      "head": "74da720ecb1c415939553b0657785382bb2fef22",
+      "branch": "refs/heads/plan/nutzergefuehrte-hardwarediagnose-android-ereignisgrenze",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "geaendert": [],
+      "geaendert_ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "neue_dateien": [],
+      "ausgeschlossen": []
+    },
+    {
+      "id": ".diagnose-android-fake-worktree",
+      "head": "45d3e79ca3e6a52c2219d8385b0ba18dd03a1b69",
+      "branch": "refs/heads/plan/nutzergefuehrte-hardwarediagnose-android-fake",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "geaendert": [],
+      "geaendert_ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "neue_dateien": [],
+      "ausgeschlossen": []
+    },
+    {
+      "id": ".diagnose-android-guided-worktree",
+      "head": "625a503ef2f5009a6335a483b02c474e94d742d1",
+      "branch": "refs/heads/plan/nutzergefuehrte-hardwarediagnose-android-guided",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "geaendert": [
+        "companion/android/README.md",
+        "companion/android/app/src/main/java/de/larpescape/companion/MainActivity.kt",
+        "companion/android/app/src/main/java/de/larpescape/companion/ui/diagnostic/DiagnosticScreen.kt"
+      ],
+      "geaendert_ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "neue_dateien": [
+        {
+          "pfad": "companion/android/app/src/main/java/de/larpescape/companion/ui/diagnostic/DiagnosticWorkbenchScreen.kt",
+          "ziel": "plan/projektuebergabe-diagnose-historie-archiv"
+        }
+      ],
+      "ausgeschlossen": []
+    },
+    {
+      "id": ".diagnose-android-pairing-report-worktree",
+      "head": "08e1f613128a82fbb56659d18a8e99f54f93e0bb",
+      "branch": "refs/heads/plan/nutzergefuehrte-hardwarediagnose-android-kopplungsbericht",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "geaendert": [],
+      "geaendert_ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "neue_dateien": [],
+      "ausgeschlossen": []
+    },
+    {
+      "id": ".diagnose-android-preview-worktree",
+      "head": "5305c501c7c1eabecc10066d05e42f0fa690edd4",
+      "branch": "refs/heads/plan/nutzergefuehrte-hardwarediagnose-android-preview",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "geaendert": [],
+      "geaendert_ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "neue_dateien": [],
+      "ausgeschlossen": []
+    },
+    {
+      "id": ".diagnose-android-step-worktree",
+      "head": "94a9a726feeaa641f3649c69a0bc85b355a89987",
+      "branch": "refs/heads/plan/nutzergefuehrte-hardwarediagnose-android-step",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "geaendert": [],
+      "geaendert_ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "neue_dateien": [],
+      "ausgeschlossen": []
+    },
+    {
+      "id": ".diagnose-ble-auth-start-worktree",
+      "head": "94c21532590a47f7618cea953d7168be417964a0",
+      "branch": "refs/heads/plan/nutzergefuehrte-hardwarediagnose-ble-auth-start",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "geaendert": [],
+      "geaendert_ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "neue_dateien": [],
+      "ausgeschlossen": []
+    },
+    {
+      "id": ".diagnose-ble-owner-worktree",
+      "head": "c3a7e3a013c412c00b16f6168f46f30701ac560b",
+      "branch": "refs/heads/plan/nutzergefuehrte-hardwarediagnose-ble-owner",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "geaendert": [],
+      "geaendert_ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "neue_dateien": [],
+      "ausgeschlossen": []
+    },
+    {
+      "id": ".diagnose-ble-pairing-worktree",
+      "head": "640719907f4afd5ff75ddb30a934377f5614a826",
+      "branch": "refs/heads/plan/nutzergefuehrte-hardwarediagnose-ble-kopplung",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "geaendert": [],
+      "geaendert_ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "neue_dateien": [],
+      "ausgeschlossen": []
+    },
+    {
+      "id": ".diagnose-ble-startfix-rollback-worktree",
+      "head": "0ffec7699c257f94dddc31fa124eb151f22b3daa",
+      "branch": "refs/heads/plan/nutzergefuehrte-hardwarediagnose-ble-startfix-rueckweg",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "geaendert": [],
+      "geaendert_ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "neue_dateien": [],
+      "ausgeschlossen": []
+    },
+    {
+      "id": ".diagnose-ble-telemetry-rollback-worktree",
+      "head": "b1e458cfe4806274f7fce7e69bef8259e542fb54",
+      "branch": "refs/heads/plan/nutzergefuehrte-hardwarediagnose-ble-telemetrie-rueckweg",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "geaendert": [],
+      "geaendert_ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "neue_dateien": [],
+      "ausgeschlossen": []
+    },
+    {
+      "id": ".diagnose-contract-worktree",
+      "head": "3ef678167c21d34f88aadebdcb1c2d1d94cc7b30",
+      "branch": "refs/heads/plan/nutzergefuehrte-hardwarediagnose-vertrag",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "geaendert": [],
+      "geaendert_ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "neue_dateien": [],
+      "ausgeschlossen": []
+    },
+    {
+      "id": ".diagnose-device-gate-worktree",
+      "head": "59729500a276519e218a2c0d825849162e6e58bc",
+      "branch": "refs/heads/plan/nutzergefuehrte-hardwarediagnose-besitz-gate",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "geaendert": [],
+      "geaendert_ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "neue_dateien": [],
+      "ausgeschlossen": []
+    },
+    {
+      "id": ".diagnose-firmware-fake-worktree",
+      "head": "ecec6c353ec7686ab684e2d2a30543c91776849c",
+      "branch": "refs/heads/plan/nutzergefuehrte-hardwarediagnose-firmware-fake",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "geaendert": [],
+      "geaendert_ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "neue_dateien": [],
+      "ausgeschlossen": []
+    },
+    {
+      "id": ".diagnose-gatt-registrar-worktree",
+      "head": "c8da9c29baf402b0b517cbaf0f7ad19739a1331f",
+      "branch": "refs/heads/plan/nutzergefuehrte-hardwarediagnose-gatt-registrar",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "geaendert": [],
+      "geaendert_ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "neue_dateien": [],
+      "ausgeschlossen": []
+    },
+    {
+      "id": ".diagnose-gatt-transport-worktree",
+      "head": "c57951a5e0d10c7c9c16b4b93d74881e31577044",
+      "branch": "refs/heads/plan/nutzergefuehrte-hardwarediagnose-gatt-transport",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "geaendert": [],
+      "geaendert_ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "neue_dateien": [],
+      "ausgeschlossen": []
+    },
+    {
+      "id": ".diagnose-pairing-rollback-worktree",
+      "head": "78672c1f0fa86eccf3f0d348c03ec4d1e3d1547b",
+      "branch": "refs/heads/plan/nutzergefuehrte-hardwarediagnose-rueckweg",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "geaendert": [],
+      "geaendert_ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "neue_dateien": [],
+      "ausgeschlossen": []
+    },
+    {
+      "id": ".diagnose-startintegration-worktree",
+      "head": "e652c3a5229d0c85c167182f80ad68f2538a49df",
+      "branch": "refs/heads/plan/nutzergefuehrte-hardwarediagnose-startintegration",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "geaendert": [],
+      "geaendert_ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "neue_dateien": [],
+      "ausgeschlossen": []
+    },
+    {
+      "id": ".diagnose-step-transport-worktree",
+      "head": "04c145f6775b98761a8b7b018020566f9f3fa70b",
+      "branch": "refs/heads/plan/nutzergefuehrte-hardwarediagnose-schrittransport",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "geaendert": [],
+      "geaendert_ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "neue_dateien": [],
+      "ausgeschlossen": []
+    },
+    {
+      "id": ".diagnose-testfirmware-basis-worktree",
+      "head": "f40ab8f7f6a6c3963d35391b71dbabeca11507dd",
+      "branch": "refs/heads/plan/nutzergefuehrte-hardwarediagnose-testfirmware-basis",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "geaendert": [],
+      "geaendert_ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "neue_dateien": [],
+      "ausgeschlossen": []
+    },
+    {
+      "id": ".diagnose-transport-worktree",
+      "head": "3209275136f96d3a6a0013c485e70d692e428cf4",
+      "branch": "refs/heads/plan/nutzergefuehrte-hardwarediagnose-transport",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "geaendert": [],
+      "geaendert_ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "neue_dateien": [],
+      "ausgeschlossen": []
+    },
+    {
+      "id": ".diagnose-wire-time-worktree",
+      "head": "b5a8c430fcf5cf37731c18ba3ac261fce3cc13f7",
+      "branch": "refs/heads/plan/nutzergefuehrte-hardwarediagnose-wirezeitgrenzen",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "geaendert": [],
+      "geaendert_ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "neue_dateien": [],
+      "ausgeschlossen": []
+    },
+    {
+      "id": ".firmware-f1-plan-worktree",
+      "head": "f1dcca86c1691c6104c465aaeeeefb9efb5d2e82",
+      "branch": "refs/heads/plan/esp-firmware-f1-bond-wiederverbindung",
+      "ziel": "plan/projektuebergabe-firmware-f1-archiv",
+      "geaendert": [],
+      "geaendert_ziel": "plan/projektuebergabe-firmware-f1-archiv",
+      "neue_dateien": [],
+      "ausgeschlossen": []
+    },
+    {
+      "id": ".firmware-f1-sdk-worktree",
+      "head": "d1d3b4ec16357b3c89abc2fbf06034d5f86f9b52",
+      "branch": "refs/heads/plan/esp-firmware-f1-sdk-herkunft",
+      "ziel": "plan/projektuebergabe-firmware-f1-archiv",
+      "geaendert": [],
+      "geaendert_ziel": "plan/projektuebergabe-firmware-f1-archiv",
+      "neue_dateien": [],
+      "ausgeschlossen": []
+    },
+    {
+      "id": ".firmware-f1-smp-worktree",
+      "head": "d5b840f23580dd761a8f087b34d6269f93315c2c",
+      "branch": "refs/heads/plan/esp-firmware-f1-smp-modusursprung",
+      "ziel": "plan/projektuebergabe-firmware-f1-archiv",
+      "geaendert": [],
+      "geaendert_ziel": "plan/projektuebergabe-firmware-f1-archiv",
+      "neue_dateien": [],
+      "ausgeschlossen": []
+    },
+    {
+      "id": ".hardware-diagnostic-worktree",
+      "head": "db52d7aa318a96e24e97e6b62194df644b9758e2",
+      "branch": "refs/heads/codex/reichstagsbox-diagnostics",
+      "ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "geaendert": [],
+      "geaendert_ziel": "plan/projektuebergabe-diagnose-historie-archiv",
+      "neue_dateien": [],
+      "ausgeschlossen": []
+    },
+    {
+      "id": ".hardware-interface-worktree",
+      "head": "2204d5447236601ed339b6068edb2a830f34743b",
+      "branch": "refs/heads/plan/hardware-revision-schnittstellenabgleich",
+      "ziel": "plan/projektuebergabe-kuratierter-stand",
+      "geaendert": [],
+      "geaendert_ziel": "plan/projektuebergabe-kuratierter-stand",
+      "neue_dateien": [],
+      "ausgeschlossen": []
+    },
+    {
+      "id": ".hardware-sources-worktree",
+      "head": "e4af436167c253cb674db1c0038bdef99031535b",
+      "branch": "refs/heads/plan/hardware-revision-quelleninventar",
+      "ziel": "plan/projektuebergabe-kuratierter-stand",
+      "geaendert": [],
+      "geaendert_ziel": "plan/projektuebergabe-kuratierter-stand",
+      "neue_dateien": [],
+      "ausgeschlossen": []
+    },
+    {
+      "id": ".led-control-worktree",
+      "head": "f40ab8f7f6a6c3963d35391b71dbabeca11507dd",
+      "branch": "refs/heads/plan/led-steuerung-originalbox-bedienpfad",
+      "ziel": "plan/projektuebergabe-led-entwurf-archiv",
+      "geaendert": [],
+      "geaendert_ziel": "plan/projektuebergabe-led-entwurf-archiv",
+      "neue_dateien": [
+        {
+          "pfad": "include/CompanionIntegration/LedControlV1.h",
+          "ziel": "plan/projektuebergabe-led-entwurf-archiv"
+        },
+        {
+          "pfad": "src/CompanionIntegration/LedControlV1.cpp",
+          "ziel": "plan/projektuebergabe-led-entwurf-archiv"
+        },
+        {
+          "pfad": "test/test_led_control_core/test_main.cpp",
+          "ziel": "plan/projektuebergabe-led-entwurf-archiv"
+        }
+      ],
+      "ausgeschlossen": []
+    }
+  ]
+}

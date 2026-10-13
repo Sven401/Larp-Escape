@@ -2,6 +2,11 @@
 
 ESP32-Steuerung des Reichstag-Spiels: Rollenkarten, Kristallmatrix, Audio, LEDs und ESP-NOW-Aktivierung.
 
+**Übergabe an das neue Team:** [Einstieg, Quellenkarte und offene Prüfungen](handoff/README.md).
+Dieser Branch führt die geprüften Grundlagen ab `a40365d` zusammen. Unfertige und
+verworfene Arbeiten sind über die dort bezeichneten lokalen Archiv-Branches
+erreichbar.
+
 ## Entwicklung ohne Hardware
 
 PlatformIO Core **6.2.0**, Python **3.11**. Plattformen und Bibliotheken sind in `platformio.ini` festgelegt. Der Host verwendet Windows und C++11. Ein ESP32 wird für diese Schritte nicht benötigt:
@@ -50,9 +55,14 @@ Die Spiellogik braucht weder Arduino noch Hardware-Stubs. Die alte Regression pr
 - [Companion-Status v1](docs/companion/status-v1.md)
 - [Statusschema](docs/companion/status-v1.schema.json)
 
-Die spätere Android-App ist als zusätzliche Bedien- und Statusoberfläche vorgesehen. Der gegenwärtige Stand enthält das Statusprotokoll und eine synchronisierte Statusmailbox. Eine Android-App, ein HTTP-Endpunkt, WLAN-Einrichtung und Fernsteuerbefehle sind weitere Arbeitspakete.
+Unter `companion/android/` liegt eine Kotlin-/Compose-Entwicklungsbasis mit
+lesender BLE-Verbindungsprüfung und A3-Hostvertrag. Sie ist noch keine
+freigegebene Spielleitungs-App. HTTP-Endpunkt, WLAN-Einrichtung und produktive
+Fernsteuerbefehle sind offen.
 
-Der kanonische Projektplan und die Sitzungsübergabe liegen im getrennten Werkbank-Repository. Firmware und Projektgedächtnis werden separat versioniert.
+Die technische Übergabe in `handoff/` ist ohne Zugriff auf frühere interne
+Projektwerkzeuge lesbar. Sie nennt die erhaltenen Commitstände, Prüfungen und
+offenen Arbeiten.
 
 ## Qualitätsumfang
 
