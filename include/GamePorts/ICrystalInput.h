@@ -2,18 +2,15 @@
 
 #include "GameDomain/GridPosition.h"
 
-#include <vector>
+#include "GamePorts/CrystalInputBatch.h"
 
-namespace larp
-{
-namespace ports
-{
-class ICrystalInput
-{
-public:
+namespace larp {
+namespace ports {
+class ICrystalInput {
+  public:
     virtual ~ICrystalInput() {}
 
-    virtual std::vector<domain::GridPosition> readPressedPositions() = 0;
+    virtual CrystalInputBatch readPressedPositions() = 0;
 };
 } // namespace ports
 } // namespace larp

@@ -4,13 +4,10 @@
 
 #include <cstdint>
 
-namespace larp
-{
-namespace ports
-{
-class ICardReader
-{
-public:
+namespace larp {
+namespace ports {
+class ICardReader {
+  public:
     virtual ~ICardReader() {}
 
     virtual domain::CardUid readCard(std::uint16_t timeoutMilliseconds) = 0;

@@ -1,0 +1,208 @@
+# Queued host owners: four bounded micro-ticks per supplied time.
+# Synthetic devices; Session computes conditions/progress from these inputs.
+start 0
+wakes 4 15
+settle 0 4
+settle 1 4
+
+# Round 1: profile role ID 1
+crystals 4
+card 1 1
+settle 1001 4
+settle 1002 4
+crystals 4 1:0 1:7 4:4
+settle 1102 4
+settle 1103 4
+settle 1203 4
+settle 1303 4
+finish 5
+settle 1304 4
+settle 1305 4
+finish 5
+settle 1306 4
+settle 1307 4
+finish 5
+settle 1807 4
+settle 1808 4
+finish 5
+settle 2308 4
+settle 2309 4
+snapshot
+card 1 0
+settle 3309 4
+settle 4309 4
+settle 5309 4
+settle 6309 4
+settle 7309 4
+settle 8309 4
+settle 9309 4
+settle 10309 4
+settle 11309 4
+settle 12309 4
+
+# Round 2: profile role ID 2
+crystals 4
+card 1 2
+settle 13309 4
+settle 13310 4
+crystals 4 2:1 6:1 3:5
+settle 13410 4
+settle 13411 4
+settle 13511 4
+settle 13611 4
+finish 5
+settle 13612 4
+settle 13613 4
+finish 5
+settle 13614 4
+settle 13615 4
+finish 5
+settle 14115 4
+settle 14116 4
+finish 5
+settle 14616 4
+settle 14617 4
+snapshot
+card 1 0
+settle 15617 4
+settle 16617 4
+settle 17617 4
+settle 18617 4
+settle 19617 4
+settle 20617 4
+settle 21617 4
+settle 22617 4
+settle 23617 4
+settle 24617 4
+
+# Round 3: profile role ID 3
+crystals 4
+card 1 3
+settle 25617 4
+settle 25618 4
+crystals 4 2:2 9:1 9:7
+settle 25718 4
+settle 25719 4
+settle 25819 4
+settle 25919 4
+finish 5
+settle 25920 4
+settle 25921 4
+finish 5
+settle 25922 4
+settle 25923 4
+finish 5
+settle 26423 4
+settle 26424 4
+finish 5
+settle 26924 4
+settle 26925 4
+snapshot
+card 1 0
+settle 27925 4
+settle 28925 4
+settle 29925 4
+settle 30925 4
+settle 31925 4
+settle 32925 4
+settle 33925 4
+settle 34925 4
+settle 35925 4
+settle 36925 4
+
+# Round 4: profile role ID 4
+crystals 4
+card 1 4
+settle 37925 4
+settle 37926 4
+crystals 4 5:7 2:4 2:5
+settle 38026 4
+settle 38027 4
+settle 38127 4
+settle 38227 4
+finish 5
+settle 38228 4
+settle 38229 4
+finish 5
+settle 38230 4
+settle 38231 4
+finish 5
+settle 38731 4
+settle 38732 4
+finish 5
+settle 39232 4
+settle 39233 4
+snapshot
+card 1 0
+settle 40233 4
+settle 41233 4
+settle 42233 4
+settle 43233 4
+settle 44233 4
+settle 45233 4
+settle 46233 4
+settle 47233 4
+settle 48233 4
+settle 49233 4
+
+# Round 5: profile role ID 5
+crystals 4
+card 1 5
+settle 50233 4
+settle 50234 4
+crystals 4 9:3 7:6 3:6
+settle 50334 4
+settle 50335 4
+settle 50435 4
+settle 50535 4
+finish 5
+settle 50536 4
+settle 50537 4
+finish 5
+settle 50538 4
+settle 50539 4
+finish 5
+settle 51039 4
+settle 51040 4
+finish 5
+settle 51540 4
+settle 51541 4
+snapshot
+card 1 0
+settle 52541 4
+settle 53541 4
+settle 54541 4
+settle 55541 4
+settle 56541 4
+settle 57541 4
+settle 58541 4
+settle 59541 4
+settle 60541 4
+settle 61541 4
+
+# Round 6: profile role ID 6
+crystals 4
+card 1 6
+settle 62541 4
+settle 62542 4
+crystals 4 9:5 2:6 8:4
+settle 62642 4
+settle 62643 4
+settle 62743 4
+settle 62843 4
+finish 5
+settle 62844 4
+settle 62845 4
+finish 5
+settle 62846 4
+settle 62847 4
+finish 5
+settle 63347 4
+settle 63348 4
+finish 5
+settle 63848 4
+settle 63849 4
+finish 5
+settle 64349 4
+settle 64350 4
+snapshot

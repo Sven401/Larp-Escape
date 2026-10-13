@@ -1,47 +1,36 @@
 #include "GameDomain/KeystoneMonitor.h"
 
-namespace larp
-{
-namespace domain
-{
-KeystoneMonitor::KeystoneMonitor() : consecutiveMisses_(0), errorActive_(false)
-{
-}
+namespace larp {
+namespace domain {
+KeystoneMonitor::KeystoneMonitor() : consecutiveMisses_(0), errorActive_(false) {}
 
-void KeystoneMonitor::observe(bool matchesCurrentKeystone)
-{
-    if (matchesCurrentKeystone)
-    {
+void KeystoneMonitor::observe(bool matchesCurrentKeystone) {
+    if (matchesCurrentKeystone) {
         consecutiveMisses_ = 0;
         errorActive_ = false;
         return;
     }
 
     ++consecutiveMisses_;
-    if (consecutiveMisses_ >= ErrorThreshold)
-    {
+    if (consecutiveMisses_ >= ErrorThreshold) {
         errorActive_ = true;
         consecutiveMisses_ = 0;
     }
 }
 
-bool KeystoneMonitor::hasError() const
-{
+bool KeystoneMonitor::hasError() const {
     return errorActive_;
 }
 
-void KeystoneMonitor::resetMisses()
-{
+void KeystoneMonitor::resetMisses() {
     consecutiveMisses_ = 0;
 }
 
-void KeystoneMonitor::clearError()
-{
+void KeystoneMonitor::clearError() {
     errorActive_ = false;
 }
 
-void KeystoneMonitor::reset()
-{
+void KeystoneMonitor::reset() {
     consecutiveMisses_ = 0;
     errorActive_ = false;
 }

@@ -1,0 +1,207 @@
+# Synthetic devices; Session computes conditions/progress from these inputs.
+start 0
+wakes 4 15
+tick 0
+tick 1
+
+# Round 1: profile role ID 1
+crystals 4
+card 1 1
+tick 1001
+tick 1002
+crystals 4 1:0 1:7 4:4
+tick 1102
+tick 1103
+tick 1203
+tick 1303
+finish 5
+tick 1304
+tick 1305
+finish 5
+tick 1306
+tick 1307
+finish 5
+tick 1807
+tick 1808
+finish 5
+tick 2308
+tick 2309
+snapshot
+card 1 0
+tick 3309
+tick 4309
+tick 5309
+tick 6309
+tick 7309
+tick 8309
+tick 9309
+tick 10309
+tick 11309
+tick 12309
+
+# Round 2: profile role ID 2
+crystals 4
+card 1 2
+tick 13309
+tick 13310
+crystals 4 2:1 6:1 3:5
+tick 13410
+tick 13411
+tick 13511
+tick 13611
+finish 5
+tick 13612
+tick 13613
+finish 5
+tick 13614
+tick 13615
+finish 5
+tick 14115
+tick 14116
+finish 5
+tick 14616
+tick 14617
+snapshot
+card 1 0
+tick 15617
+tick 16617
+tick 17617
+tick 18617
+tick 19617
+tick 20617
+tick 21617
+tick 22617
+tick 23617
+tick 24617
+
+# Round 3: profile role ID 3
+crystals 4
+card 1 3
+tick 25617
+tick 25618
+crystals 4 2:2 9:1 9:7
+tick 25718
+tick 25719
+tick 25819
+tick 25919
+finish 5
+tick 25920
+tick 25921
+finish 5
+tick 25922
+tick 25923
+finish 5
+tick 26423
+tick 26424
+finish 5
+tick 26924
+tick 26925
+snapshot
+card 1 0
+tick 27925
+tick 28925
+tick 29925
+tick 30925
+tick 31925
+tick 32925
+tick 33925
+tick 34925
+tick 35925
+tick 36925
+
+# Round 4: profile role ID 4
+crystals 4
+card 1 4
+tick 37925
+tick 37926
+crystals 4 5:7 2:4 2:5
+tick 38026
+tick 38027
+tick 38127
+tick 38227
+finish 5
+tick 38228
+tick 38229
+finish 5
+tick 38230
+tick 38231
+finish 5
+tick 38731
+tick 38732
+finish 5
+tick 39232
+tick 39233
+snapshot
+card 1 0
+tick 40233
+tick 41233
+tick 42233
+tick 43233
+tick 44233
+tick 45233
+tick 46233
+tick 47233
+tick 48233
+tick 49233
+
+# Round 5: profile role ID 5
+crystals 4
+card 1 5
+tick 50233
+tick 50234
+crystals 4 9:3 7:6 3:6
+tick 50334
+tick 50335
+tick 50435
+tick 50535
+finish 5
+tick 50536
+tick 50537
+finish 5
+tick 50538
+tick 50539
+finish 5
+tick 51039
+tick 51040
+finish 5
+tick 51540
+tick 51541
+snapshot
+card 1 0
+tick 52541
+tick 53541
+tick 54541
+tick 55541
+tick 56541
+tick 57541
+tick 58541
+tick 59541
+tick 60541
+tick 61541
+
+# Round 6: profile role ID 6
+crystals 4
+card 1 6
+tick 62541
+tick 62542
+crystals 4 9:5 2:6 8:4
+tick 62642
+tick 62643
+tick 62743
+tick 62843
+finish 5
+tick 62844
+tick 62845
+finish 5
+tick 62846
+tick 62847
+finish 5
+tick 63347
+tick 63348
+finish 5
+tick 63848
+tick 63849
+finish 5
+tick 64349
+tick 64350
+snapshot

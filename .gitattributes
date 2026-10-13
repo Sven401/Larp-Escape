@@ -1,0 +1,23 @@
+docs/companion/fixtures/profile-source/hint-v1.json text eol=lf
+docs/companion/fixtures/profile-source/envelope-v1.txt text eol=lf
+docs/companion/fixtures/profile-source/frames-20-v1.txt text eol=lf
+docs/companion/fixtures/profile-source/frames-128-v1.txt text eol=lf
+
+docs/companion/fixtures/peer-registry/key-only.hex text eol=lf
+docs/companion/fixtures/peer-registry/game-master.hex text eol=lf
+docs/companion/fixtures/peer-registry/revoked.hex text eol=lf
+docs/companion/fixtures/peer-registry/observation.json text eol=lf
+docs/companion/fixtures/peer-registry/actor-observation.json text eol=lf
+
+docs/companion/fixtures/peer-security/*.json text eol=lf
+
+docs/companion/fixtures/peer-grant/*.json text eol=lf
+
+docs/companion/fixtures/peer-challenge-read/*.json text eol=lf
+
+docs/companion/fixtures/device-identity-store/*.txt text eol=lf
+docs/companion/fixtures/device-identity-store/*.json text eol=lf
+docs/companion/fixtures/peer-challenge-issue/*.json text eol=lf
+docs/companion/fixtures/peer-auth/*.json text eol=lf
+
+docs/companion/fixtures/peer-proof/*.json text eol=lf

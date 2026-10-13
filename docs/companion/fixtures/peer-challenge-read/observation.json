@@ -1,0 +1,21 @@
+{
+  "scope": "actual_crypto_original_sdk_read_model_v1",
+  "mtuModel": 23,
+  "queueMilliseconds": 1000,
+  "proofMilliseconds": 30000,
+  "sdkReadCallbackType": 1,
+  "attribute": 68,
+  "reads": [
+    {"packedConnection": 257, "transaction": 1, "offset": 0, "sdkBytes": 108, "remainingHex": "4c4152502d504545522d503235362d3101090100010000000000000000000000000000027856341201efcdab04030201020000000101010001000000020000000000000000000000000000030102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20"},
+    {"packedConnection": 257, "transaction": 2, "offset": 22, "sdkBytes": 86, "remainingHex": "00000000000000000000000000027856341201efcdab04030201020000000101010001000000020000000000000000000000000000030102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20"},
+    {"packedConnection": 257, "transaction": 3, "offset": 44, "sdkBytes": 64, "remainingHex": "04030201020000000101010001000000020000000000000000000000000000030102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20"},
+    {"packedConnection": 257, "transaction": 4, "offset": 66, "sdkBytes": 42, "remainingHex": "000000000000000000030102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20"},
+    {"packedConnection": 257, "transaction": 5, "offset": 88, "sdkBytes": 20, "remainingHex": "0d0e0f101112131415161718191a1b1c1d1e1f20"}
+  ],
+  "nonceCalls": 1,
+  "actualSignatureVerified": true,
+  "actorAckGameMaster": true,
+  "actorAckPrincipal": 7,
+  "peerDelivered": false,
+  "rfMeasured": false
+}

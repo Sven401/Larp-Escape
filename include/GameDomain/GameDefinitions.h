@@ -5,15 +5,12 @@
 
 #include "GameDomain/GridPosition.h"
 
-namespace larp
-{
-namespace domain
-{
+namespace larp {
+namespace domain {
 using CardUid = std::array<std::uint8_t, 7>;
 using AudioTrack = std::uint16_t;
 
-enum class RoleId : std::uint8_t
-{
+enum class RoleId : std::uint8_t {
     Puppenspielerin,
     Krieger,
     Narr,
@@ -22,23 +19,16 @@ enum class RoleId : std::uint8_t
     Wissende
 };
 
-enum class CrystalCategory : std::uint8_t
-{
-    Animal,
-    Item,
-    Color
-};
+enum class CrystalCategory : std::uint8_t { Animal, Item, Color };
 
-struct CrystalDefinition
-{
+struct CrystalDefinition {
     const char *symbol;
     CrystalCategory category;
     GridPosition position;
     AudioTrack audioTrack;
 };
 
-struct RoleDefinition
-{
+struct RoleDefinition {
     RoleId id;
     CardUid uid;
     const char *name;

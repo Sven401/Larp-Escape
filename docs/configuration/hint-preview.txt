@@ -1,0 +1,14 @@
+# Graph preview only: sampled values, no device or puzzle execution.
+start 0
+set all_wake_active 4 1
+set role_accepted 1 0
+set audio_busy 5 0
+set incorrect_crystal 4 0
+set keystone_error 1 0
+tick 0
+tick 1
+tick 30001
+tick 30002
+tick 35002
+tick 35003
+snapshot

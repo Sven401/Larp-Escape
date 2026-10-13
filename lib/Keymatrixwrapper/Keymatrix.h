@@ -4,6 +4,7 @@
 
 #include "GamePorts/ICrystalInput.h"
 #include "GamePorts/IWakeInput.h"
+#include "GameRuntime/MatrixConfiguration.h"
 
 #include <array>
 #include <map>
@@ -13,29 +14,37 @@
 #include "GameDomain/GridPosition.h"
 #include "MCPHandler.h"
 
-class KeyMatrix : public larp::ports::ICrystalInput, public larp::ports::IWakeInput
-{
-public:
-    KeyMatrix(std::vector<MCPHandler> &handlers,
-              const std::map<int, std::pair<int, MCP_Pins>> &rowMap,
+class KeyMatrix : public larp::ports::ICrystalInput, public larp::ports::IWakeInput {
+  public:
+    using HandlerReferences =
+        std::array<MCPHandler *, larp::runtime::MatrixConfiguration::HandlerCount>;
+    // Borrows the device handlers and mapping sources. The application keeps
+    // them alive; begin validates and snapshots the maps before touching I2C.
+    KeyMatrix(HandlerReferences handlers, const std::map<int, std::pair<int, MCP_Pins>> &rowMap,
               const std::map<larp::domain::GridColumn, std::pair<int, MCP_Pins>> &colMap);
+    KeyMatrix(const KeyMatrix &) = delete;
+    KeyMatrix &operator=(const KeyMatrix &) = delete;
+    KeyMatrix(KeyMatrix &&) = delete;
+    KeyMatrix &operator=(KeyMatrix &&) = delete;
 
     void printMatrixState();
     bool printMatrixChanges();
+    // Missing coordinates and failed initialization are inactive (HIGH).
     bool getKeyState(const larp::domain::GridPosition &position);
     void debug(const larp::domain::GridPosition &position);
-    void begin();
-    std::vector<larp::domain::GridPosition> readPressedPositions() override;
+    bool begin();
+    larp::ports::CrystalInputBatch readPressedPositions() override;
     std::array<bool, 4> readWakeSignals() override;
 
-private:
-    std::vector<MCPHandler> &handlers;
+  private:
+    const larp::runtime::MatrixLine *findRow(int coordinate) const;
+    const larp::runtime::MatrixLine *findColumn(larp::domain::GridColumn coordinate) const;
+    const HandlerReferences handlers;
     const std::map<int, std::pair<int, MCP_Pins>> &rowMapping;
     const std::map<larp::domain::GridColumn, std::pair<int, MCP_Pins>> &colMapping;
-    std::vector<int> rows;
-    std::vector<larp::domain::GridColumn> columns;
-    bool once;
-    static std::map<larp::domain::GridPosition, bool> lastState;
+    larp::runtime::MatrixConfiguration configuration;
+    std::array<bool, larp::runtime::MatrixConfiguration::MaximumCells> lastState;
+    bool initialized;
 };
 
 #endif // KEYMATRIX_H

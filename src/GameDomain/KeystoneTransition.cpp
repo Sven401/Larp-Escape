@@ -1,26 +1,20 @@
 #include "GameDomain/KeystoneTransition.h"
 
-namespace larp
-{
-namespace domain
-{
+namespace larp {
+namespace domain {
 KeystoneTransition classifyKeystoneTransition(const CardUid &candidate,
-                                               const CardUid &previousKeystone,
-                                               bool candidateIsKnownRole)
-{
+                                              const CardUid &previousKeystone,
+                                              bool candidateIsKnownRole) {
     const CardUid emptyUid = {};
-    if (candidate == emptyUid)
-    {
+    if (candidate == emptyUid) {
         return KeystoneTransition::EmptyRead;
     }
 
-    if (candidate == previousKeystone)
-    {
+    if (candidate == previousKeystone) {
         return KeystoneTransition::RepeatedPreviousKeystone;
     }
 
-    if (previousKeystone == emptyUid)
-    {
+    if (previousKeystone == emptyUid) {
         return candidateIsKnownRole ? KeystoneTransition::RoleAccepted
                                     : KeystoneTransition::UnknownRole;
     }
@@ -28,8 +22,7 @@ KeystoneTransition classifyKeystoneTransition(const CardUid &candidate,
     return KeystoneTransition::BoardNotCleared;
 }
 
-bool hasEnoughEmptyKeystoneReads(std::uint8_t consecutiveEmptyReads)
-{
+bool hasEnoughEmptyKeystoneReads(std::uint8_t consecutiveEmptyReads) {
     return consecutiveEmptyReads >= 5;
 }
 } // namespace domain

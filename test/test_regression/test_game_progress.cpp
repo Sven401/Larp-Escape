@@ -33,7 +33,8 @@ void test_round_reset_clears_only_round_progress_and_retry_streak()
                              activeKeystone.size());
     TEST_ASSERT_EQUAL_MEMORY(previousKeystone.data(), progress.lastKeyStone.data(),
                              previousKeystone.size());
-    TEST_ASSERT_TRUE(progress.correctCrystal);
+    // Reset discards the pending transition signal while retaining the profile.
+    TEST_ASSERT_FALSE(progress.correctCrystal);
     TEST_ASSERT_TRUE(progress.currentRoleDefinition == &role);
     TEST_ASSERT_EQUAL_INT(1, static_cast<int>(progress.seenKeyStones.size()));
     TEST_ASSERT_EQUAL_INT(0, static_cast<int>(progress.puzzleProgress.count()));
@@ -82,7 +83,8 @@ void test_game_reset_clears_rounds_keystones_seen_tags_and_errors()
     TEST_ASSERT_FALSE(progress.incorrectCrystal);
     TEST_ASSERT_EQUAL_INT(0, progress.retryCount);
     TEST_ASSERT_FALSE(progress.keystoneMonitor.hasError());
-    TEST_ASSERT_TRUE(progress.correctCrystal);
+    // Reset discards the pending transition signal while retaining the profile.
+    TEST_ASSERT_FALSE(progress.correctCrystal);
     TEST_ASSERT_TRUE(progress.currentRoleDefinition == &role);
 }
 

@@ -1,48 +1,50 @@
 #ifndef _STATE_H
 #define _STATE_H
 
-#include <LinkedList.h>
 #include <functional>
+#include <memory>
+#include <vector>
 
-// Ensure that the Transition structure is not ambiguous
-namespace myMachine
-{
+namespace MyMachine {
+class StateMachine;
+}
 
-  /*
-   * Transition is a structure that holds the address of
-   * a function that evaluates whether or not to transition
-   * from the current state and the number of the state to transition to
-   */
-  struct Transition
-  {
+namespace myMachine {
+
+struct Transition {
     std::function<bool()> conditionFunction;
     int stateNumber;
-  };
+};
 
-  /*
-   * State represents a state in the state machine.
-   * It consists mainly of the address of the function
-   * that contains the state logic and a collection of transitions
-   * to other states.
-   */
-  class State
-  {
+// The machine owns its states; each state owns its transition callbacks.
+// A default-constructed standalone state has no valid machine targets.
+class State {
   public:
     State();
     ~State();
+    State(const State &) = delete;
+    State &operator=(const State &) = delete;
+    State(State &&) = delete;
+    State &operator=(State &&) = delete;
 
-    void addTransition(std::function<bool()> conditionFunction, State *s);
-    void addTransition(std::function<bool()> conditionFunction, int stateNumber);
+    bool addTransition(std::function<bool()> conditionFunction, State *state);
+    bool addTransition(std::function<bool()> conditionFunction, int stateNumber);
     int evalTransitions();
     int execute();
-    int setTransition(int index, int stateNumber); // Can now dynamically set the transition
-    int index;
-
-    // that represents the state logic
+    // Returns -1 for an invalid transition position or target without changing it.
+    int setTransition(int transitionIndex, int stateNumber);
+    const int index;
     std::function<void()> stateLogic;
-    LinkedList<Transition *> *transitions;
-  }; // namespace StateMachine
 
+  private:
+    friend class MyMachine::StateMachine;
+    State(int stateIndex, MyMachine::StateMachine *machine);
+    bool hasTarget(int stateNumber) const;
+
+    MyMachine::StateMachine *const owner;
+    std::vector<std::unique_ptr<Transition>> transitions;
 };
+
+} // namespace myMachine
 
 #endif // _STATE_H

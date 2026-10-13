@@ -1,0 +1,211 @@
+#include "IdentityRecord.h"
+#include "PeerRegistryRecord.h"
+// Host-side profile export/inspection. This is not an embedded entry point.
+#include "Activation.h"
+#include "CommandFrames.h"
+#include "Companion/Identity.h"
+#include "Companion/ProfileCapabilities.h"
+#include "GameConfiguration/ProfileReader.h"
+#include "GameConfiguration/ProfileWriter.h"
+#include "Play.h"
+#include "Preview.h"
+#include "ProfileControl.h"
+#include "ProfileEnvelope.h"
+#include "ProfileReceive.h"
+#include <cstdio>
+#include <cstring>
+#include <memory>
+
+namespace {
+class FileWriter : public larp::configuration::IProfileWriter {
+  public:
+    explicit FileWriter(std::FILE *file) : file_(file) {}
+    bool write(const char *bytes, std::size_t count) override {
+        return std::fwrite(bytes, 1, count, file_) == count;
+    }
+
+  private:
+    std::FILE *file_;
+};
+class FileReader : public larp::configuration::IProfileReader {
+  public:
+    explicit FileReader(std::FILE *file) : file_(file) {}
+    larp::configuration::ReadStatus readByte(std::uint8_t &byte) override {
+        const int value = std::fgetc(file_);
+        if (value == EOF)
+            return std::ferror(file_) ? larp::configuration::ReadStatus::Failure
+                                      : larp::configuration::ReadStatus::End;
+        byte = static_cast<std::uint8_t>(value);
+        return larp::configuration::ReadStatus::Byte;
+    }
+
+  private:
+    std::FILE *file_;
+};
+} // namespace
+int main(int argc, char **argv) {
+    if (argc == 3 && std::strcmp(argv[1], "--file-owner-probe") == 0)
+        return runApplicationFileProbe(argv[2]);
+    if (argc == 5 && std::strcmp(argv[1], "--profile-control") == 0)
+        return runProfileControl(argv[2], argv[3], argv[4]);
+    if (argc == 3 && std::strcmp(argv[1], "--device-identity") == 0) {
+        larp::companion::Identity device;
+        if (!larp::companion::decodeIdentityHex(argv[2], std::strlen(argv[2]), device))
+            return 2;
+        char bytes[larp::companion::maxDeviceIdentityJsonBytes];
+        std::size_t written = 0;
+        if (larp::companion::encodeDeviceIdentity(device, bytes, sizeof(bytes), written) !=
+            larp::companion::ConfiguredEncodeResult::Success)
+            return 1;
+        return std::fwrite(bytes, 1, written, stdout) == written &&
+                       std::fputc('\n', stdout) != EOF && std::fflush(stdout) == 0
+                   ? 0
+                   : 1;
+    }
+    if (argc == 2 && std::strcmp(argv[1], "--capabilities") == 0) {
+        char bytes[larp::companion::maxProfileCapabilitiesJsonBytes];
+        std::size_t written = 0;
+        if (larp::companion::encodeProfileCapabilities(bytes, sizeof(bytes), written) !=
+            larp::companion::ConfiguredEncodeResult::Success)
+            return 1;
+        return std::fwrite(bytes, 1, written, stdout) == written &&
+                       std::fputc('\n', stdout) != EOF && std::fflush(stdout) == 0
+                   ? 0
+                   : 1;
+    }
+    if (argc == 3 && std::strcmp(argv[1], "--inspect-device-identity-record") == 0)
+        return runDeviceIdentityRecord(argv[2]);
+    if (argc == 3 && std::strcmp(argv[1], "--inspect-peer-registry-record") == 0)
+        return runPeerRegistryRecord(argv[2]);
+    if (argc == 3 && std::strcmp(argv[1], "--frame-command") == 0)
+        return runCommandFrames(argv[2]);
+    if (argc == 3 && std::strcmp(argv[1], "--receive-profile") == 0)
+        return runProfileReceive(argv[2]);
+    if ((argc == 5 || argc == 6) && std::strcmp(argv[1], "--frame-profile") == 0)
+        return runProfileFrames(argv[2], argv[3], argv[4], argc == 6 ? argv[5] : "20");
+    if (argc == 5 && std::strcmp(argv[1], "--profile-envelope") == 0)
+        return runProfileEnvelope(argv[2], argv[3], argv[4]);
+    using namespace larp::configuration;
+    bool summary = false;
+    bool example = false;
+    const char *inputPath = nullptr;
+    const char *previewPath = nullptr;
+    const char *activationPath = nullptr;
+    const char *exportActivePath = nullptr;
+    const char *journalDirectory = nullptr;
+    bool restoreOnly = false;
+    bool playable = false, queued = false;
+    for (int index = 1; index < argc; ++index) {
+        if (std::strcmp(argv[index], "--summary") == 0 && !summary)
+            summary = true;
+        else if (std::strcmp(argv[index], "--example") == 0 && !example && inputPath == nullptr)
+            example = true;
+        else if (std::strcmp(argv[index], "--import") == 0 && inputPath == nullptr && !example &&
+                 index + 1 < argc)
+            inputPath = argv[++index];
+        else if (std::strcmp(argv[index], "--active-export") == 0 && exportActivePath == nullptr &&
+                 index + 1 < argc)
+            exportActivePath = argv[++index];
+        else if ((std::strcmp(argv[index], "--journal") == 0 ||
+                  std::strcmp(argv[index], "--restore-journal") == 0) &&
+                 journalDirectory == nullptr && index + 1 < argc) {
+            restoreOnly = std::strcmp(argv[index], "--restore-journal") == 0;
+            journalDirectory = argv[++index];
+        } else if (std::strcmp(argv[index], "--activate") == 0 && activationPath == nullptr &&
+                   index + 1 < argc)
+            activationPath = argv[++index];
+        else if ((std::strcmp(argv[index], "--preview") == 0 ||
+                  std::strcmp(argv[index], "--play") == 0 ||
+                  std::strcmp(argv[index], "--play-queued") == 0) &&
+                 previewPath == nullptr && index + 1 < argc) {
+            queued = std::strcmp(argv[index], "--play-queued") == 0;
+            playable = queued || std::strcmp(argv[index], "--play") == 0;
+            previewPath = argv[++index];
+        } else {
+            std::fputs("Usage: profile-tools --device-identity HEX32 | --capabilities | "
+                       "--frame-command FILE | --profile-envelope FILE DRAFT_REV CONFIG_REV | "
+                       "--frame-profile FILE DRAFT_REV CONFIG_REV [VALUE_BYTES] | "
+                       "--receive-profile FRAMES | --file-owner-probe JOURNAL_DIR | "
+                       "[--summary | "
+                       "--preview SCRIPT "
+                       "| --play SCRIPT | "
+                       "--play-queued SCRIPT | --activate FILE] "
+                       "[--example | --import FILE] [--active-export FILE] [--journal DIR] | "
+                       "--restore-journal DIR [--active-export FILE]\n",
+                       stderr);
+            return 2;
+        }
+    }
+    if ((summary && (previewPath || activationPath)) || (previewPath && activationPath)) {
+        std::fputs("Summary, preview/play and activation are exclusive\n", stderr);
+        return 2;
+    }
+    if ((restoreOnly && (activationPath || summary || previewPath || inputPath || example)) ||
+        (journalDirectory && !restoreOnly && !activationPath) ||
+        (exportActivePath && !activationPath && !restoreOnly)) {
+        std::fputs("Journal requires activation; restore mode is exclusive\n", stderr);
+        return 2;
+    }
+    if (activationPath || restoreOnly)
+        return runActivation(inputPath, example, activationPath, exportActivePath, journalDirectory,
+                             restoreOnly);
+    std::unique_ptr<Profile> profile(new Profile());
+    if (inputPath != nullptr) {
+        std::FILE *input = std::fopen(inputPath, "rb");
+        if (input == nullptr) {
+            std::perror("Cannot open profile");
+            return 1;
+        }
+        // Host allocation; embedded callers provide their own two storage slots.
+        std::unique_ptr<Profile> scratch(new Profile());
+        FileReader reader(input);
+        const ImportResult result = readProfile(reader, *scratch, *profile);
+        const bool closeOk = std::fclose(input) == 0;
+        if (!result) {
+            std::fprintf(
+                stderr,
+                "Profile import rejected: error=%s offset=%lu section=%u object=%u field=%s "
+                "validation=%u detail=%u\n",
+                importErrorName(result.error), static_cast<unsigned long>(result.offset),
+                static_cast<unsigned>(result.section), result.object, result.field,
+                static_cast<unsigned>(result.validation.error), result.validation.detail);
+            return 1;
+        }
+        if (!closeOk)
+            return 1;
+    } else if (!(example ? makeHintExampleProfile(*profile) : makeStandardProfile(*profile))) {
+        const ValidationResult result = validateProfile(*profile);
+        std::fprintf(stderr,
+                     "Profile construction rejected: error=%u section=%u object=%u detail=%u\n",
+                     static_cast<unsigned>(result.error), static_cast<unsigned>(result.section),
+                     result.object, result.detail);
+        return 1;
+    }
+    if (previewPath != nullptr) {
+        std::FILE *input = std::fopen(previewPath, "rb");
+        if (input == nullptr) {
+            std::perror("Cannot open preview script");
+            return 1;
+        }
+        const int status =
+            playable ? runPlay(*profile, input, queued) : runPreview(*profile, input);
+        return std::fclose(input) == 0 ? status : 1;
+    }
+    if (summary) {
+        std::printf("{\"profileBytes\":%lu,\"components\":%lu,\"roles\":%lu,\"states\":%lu,"
+                    "\"transitions\":%lu,\"conditions\":%lu,\"actions\":%lu,\"effects\":%lu}\n",
+                    static_cast<unsigned long>(sizeof(Profile)),
+                    static_cast<unsigned long>(profile->components.size()),
+                    static_cast<unsigned long>(profile->roles.size()),
+                    static_cast<unsigned long>(profile->states.size()),
+                    static_cast<unsigned long>(profile->transitions.size()),
+                    static_cast<unsigned long>(profile->conditions.size()),
+                    static_cast<unsigned long>(profile->actions.size()),
+                    static_cast<unsigned long>(profile->effects.size()));
+        return std::fflush(stdout) == 0 ? 0 : 1;
+    }
+    FileWriter writer(stdout);
+    if (!writeProfile(*profile, writer) || std::fflush(stdout) != 0)
+        return 1;
+    return 0;
+}

@@ -1,19 +1,22 @@
 #include "Config.h"
-#include "NFCReader.h"
-#include "MCPHandler.h"
-#include "Gamestate.h"
-#include "Keymatrix.h"
-#include <vector>
-#include "FastLED.h"
-#include "twinklefox.h"
-#include "DFMinniHandler.h"
-#include "ArduinoClock.h"
-#include "GameLightEffects.h"
-#include "ripple.h"
-#include "burst.h"
-#include <esp_now.h>
-#include <WiFi.h>
+#include <array>
+#include <cstdint>
 
+#include "ArduinoClock.h"
+#include "CompanionStatusStore.h"
+#include "DFMinniHandler.h"
+#include "EspNowCommunicator.h"
+#include "EspNowRuntime.h"
+#include "FastLED.h"
+#include "GameLightEffects.h"
+#include "Keymatrix.h"
+#include "LarpEscapeApp.h"
+#include "MCPHandler.h"
+#include "NFCReader.h"
+#include "SerialGameDiagnostics.h"
+#include "burst.h"
+#include "ripple.h"
+#include "twinklefox.h"
 
 #define LED_TYPE WS2811
 #define COLOR_ORDER GRB
@@ -23,137 +26,100 @@
 #define NUM_LEDS 23
 CRGBArray<NUM_LEDS> leds;
 
-uint8_t receiverMAC[6] = {0xB0, 0xA7, 0x32, 0xF1, 0x86, 0x54};
-
+const std::array<std::uint8_t, 6> receiverMAC = {{0xB0, 0xA7, 0x32, 0xF1, 0x86, 0x54}};
 using fl::MyTwinkleFox;
 MyTwinkleFox twinkleFox(NUM_LEDS);
-Burst burst (30,leds, NUM_LEDS);
-Ripple ripples[4] = {
-    Ripple(NUM_LEDS*1/4, leds, 30, NUM_LEDS),
-    Ripple(NUM_LEDS*2/4, leds, 30, NUM_LEDS),
-    Ripple(NUM_LEDS*3/4, leds, 30, NUM_LEDS),
-    Ripple(NUM_LEDS*4/4, leds, 30, NUM_LEDS)
-};
+Burst burst(30, leds, NUM_LEDS);
+Ripple ripples[4] = {Ripple(5, leds, 30, NUM_LEDS), Ripple(11, leds, 30, NUM_LEDS),
+                     Ripple(17, leds, 30, NUM_LEDS), Ripple(22, leds, 30, NUM_LEDS)};
 
-
-
-// Objects
+// Hardware adapters and services have process lifetime. setup initializes them;
+// only app.update owns game ticks, audio service and communication status.
 Adafruit_PN532 nfc(PN532_SCK, PN532_MISO, PN532_MOSI, PN532_SS);
 NFCReader nfcReader(nfc);
 Adafruit_MCP23X17 mcp1;
 Adafruit_MCP23X17 mcp2;
 MCPHandler mcpHandler1(mcp1, mcpConfigs[0], "MCP1");
 MCPHandler mcpHandler2(mcp2, mcpConfigs[1], "MCP2");
-std::vector<MCPHandler> handlers = {mcpHandler1, mcpHandler2};
+std::array<MCPHandler *, 2> handlers = {{&mcpHandler1, &mcpHandler2}};
 KeyMatrix keymatrix(handlers, ROWMAP, COLMAP);
 HardwareSerial mySoftwareSerial(1);
 DFPlayerMini_Fast myMP3;
 DFMinniHandler dfmHandler(mySoftwareSerial, myMP3, DFBUSY, DFWAKEUP);
 ArduinoClock gameClock;
-GameLightEffects gameLightEffects(twinkleFox, burst, ripples, gameClock);
-ReichstagGame game(nfcReader, keymatrix, keymatrix, dfmHandler, gameClock, gameLightEffects);
+GameLightEffects gameLightEffects(twinkleFox, burst, ripples, gameClock, leds, NUM_LEDS);
+EspNowCommunicator communicator(receiverMAC);
+EspNowRuntime communicationRuntime(receiverMAC);
+SerialGameDiagnostics gameDiagnostics;
+CompanionStatusStore companionStatus;
+ReichstagGame game(nfcReader, keymatrix, keymatrix, dfmHandler, gameClock, gameLightEffects,
+                   communicator, &gameDiagnostics);
+larp::application::LarpEscapeApp app(game, dfmHandler, communicationRuntime, companionStatus);
 
+std::uint32_t maximumMainLoopDurationMicroseconds = 0U;
+std::uint32_t lastRuntimeReportMilliseconds = 0U;
 
-// Callback for message delivery status
-void onSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
-    Serial.print("Delivery Status: ");
-    Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Success" : "Fail");
-}
-
-void ledTask(void *pvParameters) {
-    const TickType_t delay = pdMS_TO_TICKS(33); // ~30 FPS (33ms per frame)
-    
-    while (true) {
-        twinkleFox.draw(fl::Fx::DrawContext(millis(), leds)); 
-        burst.draw();
-        ripples[0].draw();
-        ripples[1].draw();
-        ripples[2].draw();
-        ripples[3].draw();
-        FastLED.show();
-        vTaskDelay(delay);
-    }
-}
-
-void wakeUpTask(void *pvParameters) {
-    pinMode(DFWAKEUP, OUTPUT);
-
-    while (true) {
-        int onTime = random(200, 500);   // Random ON time between 100ms and 300ms
-        int offTime = random(100, 400); // Random OFF time between 1.3s and 2.5s
-
-        digitalWrite(DFWAKEUP, HIGH);
-        vTaskDelay(pdMS_TO_TICKS(onTime));
-
-        digitalWrite(DFWAKEUP, LOW);
-        vTaskDelay(pdMS_TO_TICKS(offTime));
-    }
-}
-
-
-
-void setup()
-{
+void setup() {
     Serial.begin(115200);
     Wire.begin();
-    Serial.print("Beginning");
-    keymatrix.begin();
-    nfcReader.begin();
+    Serial.println("Beginning");
+    if (!keymatrix.begin()) {
+        Serial.println("Failed to initialize key matrix");
+        ESP.restart();
+        return;
+    }
+    if (!nfcReader.begin()) {
+        Serial.println("Failed to initialize NFC reader");
+        ESP.restart();
+        return;
+    }
     dfmHandler.begin();
-    Serial.print("nfc should be ready");
     FastLED.setMaxPowerInVoltsAndMilliamps(VOLTS, MAX_MA);
-    FastLED.addLeds<LED_TYPE, DATA_PIN, COLOR_ORDER>(leds, NUM_LEDS)
-        .setCorrection(TypicalLEDStrip);
-
+    FastLED.addLeds<LED_TYPE, DATA_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
     keymatrix.printMatrixState();
     twinkleFox.currentPalette = MutedAllColors_p;
     twinkleFox.setTwinkleDensity(1);
     twinkleFox.setTwinkleSpeed(1);
     FastLED.setBrightness(100);
-        // Create the LED update task on Core 1
-        xTaskCreatePinnedToCore(
-            ledTask,       // Function to run
-            "LED Task",    // Task name
-            2048,          // Stack size (2KB should be enough)
-            nullptr,       // Task parameters
-            1,             // Priority (1 = low priority)
-            nullptr,// Task handle
-            1              // Run on Core 1
-        );
-        xTaskCreatePinnedToCore(
-            wakeUpTask,      
-            "Blink Task",   
-            1024,          
-            nullptr,       
-            1,             
-            nullptr,       
-            1              
-        );
-    pinMode(DFWAKEUP, OUTPUT);
-    digitalWrite(DFWAKEUP, HIGH);
-    
-    WiFi.mode(WIFI_STA);
-    WiFi.disconnect();
-
-    if (esp_now_init() != ESP_OK) {
-        Serial.println("ESP-NOW Init Failed");
+    if (!companionStatus.begin() || !communicationRuntime.begin() || !gameLightEffects.begin()) {
+        Serial.println("Failed to initialize runtime services");
         ESP.restart();
+        return;
     }
-
-    esp_now_register_send_cb(onSent);
-
-    esp_now_peer_info_t peerInfo = {};
-    memcpy(peerInfo.peer_addr, receiverMAC, 6);
-    peerInfo.channel = 0;  
-    peerInfo.encrypt = false;  
-
-    if (esp_now_add_peer(&peerInfo) != ESP_OK) {
-        Serial.println("Failed to add peer");
-        ESP.restart();
-    }
+    companionStatus.publish(game.snapshot());
+    Serial.println("Runtime ready");
 }
 
-void loop()
-{
-    game.machine.run();    
+void loop() {
+    const std::uint32_t loopStarted = micros();
+    app.update();
+    const std::uint32_t now = millis();
+    if ((now - lastRuntimeReportMilliseconds) >= 10000U) {
+        lastRuntimeReportMilliseconds = now;
+        Serial.print("Runtime max loop us: ");
+        Serial.println(maximumMainLoopDurationMicroseconds);
+        Serial.print("LED min free stack bytes: ");
+        Serial.println(gameLightEffects.minimumStackFreeBytes());
+        Serial.print("LED max observed queue depth: ");
+        Serial.println(gameLightEffects.maximumQueueDepth());
+        Serial.print("LED max render us: ");
+        Serial.println(gameLightEffects.maximumRenderDurationMicroseconds());
+        Serial.print("LED missed frame deadlines: ");
+        Serial.println(gameLightEffects.frameDeadlineMissCount());
+        Serial.print("ESP-NOW max observed queue depth: ");
+        Serial.println(communicationRuntime.maximumObservedQueueDepth());
+        Serial.print("LED command drops: ");
+        Serial.println(gameLightEffects.droppedCommandCount());
+        Serial.print("ESP-NOW status drops: ");
+        Serial.println(communicationRuntime.droppedStatusCount());
+        Serial.print("ESP-NOW delivery success/fail: ");
+        Serial.print(communicationRuntime.successfulDeliveryCount());
+        Serial.print('/');
+        Serial.println(communicationRuntime.failedDeliveryCount());
+    }
+    // Include the diagnostic report in this measurement. Its duration is visible
+    // in the next report, because this iteration has not ended while printing.
+    const std::uint32_t loopDuration = micros() - loopStarted;
+    if (loopDuration > maximumMainLoopDurationMicroseconds)
+        maximumMainLoopDurationMicroseconds = loopDuration;
 }

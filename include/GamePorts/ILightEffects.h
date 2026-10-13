@@ -5,19 +5,15 @@
 
 #include <cstdint>
 
-namespace larp
-{
-namespace ports
-{
-struct RgbColor
-{
+namespace larp {
+namespace ports {
+struct RgbColor {
     std::uint8_t red;
     std::uint8_t green;
     std::uint8_t blue;
 };
 
-enum class BrightnessRamp : std::uint8_t
-{
+enum class BrightnessRamp : std::uint8_t {
     Idle,
     WaitingForCrystals,
     FirstCrystalPlaced,
@@ -27,9 +23,8 @@ enum class BrightnessRamp : std::uint8_t
     Count
 };
 
-class ILightEffects
-{
-public:
+class ILightEffects {
+  public:
     virtual ~ILightEffects() {}
 
     virtual void setTwinkleDensity(std::uint8_t density) = 0;

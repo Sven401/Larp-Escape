@@ -1,0 +1,628 @@
+#!/usr/bin/env python3
+"""Validate firmware-generated v2 fixtures against canonical schemas.
+
+Use jsonschema==4.23.0 in a project-independent environment. Native tests
+separately compare bytes and exercise semantics; schemas do not authenticate.
+"""
+from pathlib import Path
+import json
+import sys
+
+sys.dont_write_bytecode = True
+from check_profile_control import check_profile_control, check_profile_response_queue, check_gatts_profile, check_esp_staging, check_followup_proof
+
+from check_device_identity_store import check_device_identity_store
+from check_application_file_owner import check_application_file_owner
+from check_gatts_response_queue import check_gatts_response_queue
+from check_identity_retirement import check_identity_retirement
+from check_gatts_lifecycle import check_gatts_lifecycle
+from check_gatts_source import check_gatts_source
+from check_gatts_service import check_gatts_service
+
+def decode_document_frames(lines: list[str], expected_kind: int, maximum: int) -> bytes:
+    """Independent bounded assembly; no identity/authorization/delivery proof."""
+    import re
+    import struct
+    output = bytearray()
+    message = total = 0
+    if not lines:
+        raise ValueError("empty document frame sequence")
+    for index, line in enumerate(lines):
+        if not re.fullmatch(r"[0-9A-F]{18,256}", line) or len(line) % 2:
+            raise ValueError(f"invalid hex/outer length at frame {index}")
+        value = bytes.fromhex(line)
+        version, kind, identity, length, offset = struct.unpack("<BBHHH", value[:8])
+        count = len(value) - 8
+        if version != 1 or kind != expected_kind or not identity or not 1 <= length <= maximum:
+            raise ValueError(f"unsupported/invalid document header at frame {index}")
+        if count > 120 or offset >= length or count > length - offset:
+            raise ValueError(f"invalid payload range at frame {index}")
+        if not message:
+            message, total = identity, length
+        if identity != message or length != total or offset != len(output):
+            raise ValueError(f"mixed, duplicated or out-of-order frame {index}")
+        output.extend(value[8:])
+    if len(output) != total:
+        raise ValueError("incomplete framed document")
+    return bytes(output)
+
+
+
+def decode_reply_frames(lines: list[str]) -> bytes:
+    return decode_document_frames(lines, 2, 511)
+
+
+def decode_status_frames(lines: list[str]) -> bytes:
+    return decode_document_frames(lines, 4, 6143)
+
+
+def check_status_frames(base: Path) -> tuple[int, int, int]:
+    """Actual native mailbox/encoder/sender fixtures; sizes are not RF rates."""
+    frame_count = document_bytes = rejected = 0
+    for name, frame_name, maximum_value in (
+        ("status-ready", "status-ready-frames-v1", 20),
+        ("status-running", "status-running128-frames-v1", 128),
+    ):
+        lines = (base / "fixtures" / (frame_name + ".txt")).read_text(encoding="utf-8").splitlines()
+        expected = (base / "fixtures" / "v2" / (name + ".json")).read_bytes().rstrip(bytes((13, 10)))
+        actual = decode_status_frames(lines)
+        if actual != expected:
+            raise ValueError("status frames differ from actual firmware snapshot: " + name)
+        if any(len(line) // 2 > maximum_value for line in lines):
+            raise ValueError("status fixture exceeds chosen outer value size")
+        if len(lines) != (len(expected) + maximum_value - 9) // (maximum_value - 8):
+            raise ValueError("status fixture fragment count differs from bound")
+        negatives = [[], lines[:-1], [lines[0], *lines],
+                     [lines[1], lines[0], *lines[2:]],
+                     [*lines, lines[-1]], ["GG", *lines[1:]],
+                     [lines[0] + "FF" * 121, *lines[1:]]]
+        for offset, value in ((0, 2), (1, 1), (1, 2), (1, 3), (2, 0), (4, 0), (6, 1)):
+            changed = bytearray.fromhex(lines[0])
+            changed[offset] = value
+            if offset in (2, 4):
+                changed[offset + 1] = 0
+            negatives.append([changed.hex().upper(), *lines[1:]])
+        changed = bytearray.fromhex(lines[0])
+        changed[4:6] = (6144).to_bytes(2, "little")
+        negatives.append([changed.hex().upper(), *lines[1:]])
+        changed = bytearray.fromhex(lines[1])
+        changed[2:4] = (2).to_bytes(2, "little")
+        negatives.append([lines[0], changed.hex().upper(), *lines[2:]])
+        changed = bytearray.fromhex(lines[1])
+        changed[4:6] = (len(expected) + 1).to_bytes(2, "little")
+        negatives.append([lines[0], changed.hex().upper(), *lines[2:]])
+        for bad in negatives:
+            try:
+                decode_status_frames(bad)
+            except ValueError:
+                rejected += 1
+                continue
+            raise ValueError("status counterpart accepted malformed fixture: " + name)
+        frame_count += len(lines)
+        document_bytes += len(actual)
+    return frame_count, document_bytes, rejected
+
+
+def check_gatts_admission(base: Path, command_validator) -> tuple[int, int, int]:
+    """Independent peer-side frame assembly and actual Host observation check.
+
+    Observation is not an ATT wire response or measured radio delivery.
+    """
+    fixture = base / "fixtures" / "gatts"
+    lines = (fixture / "command-frames-v1.txt").read_text(encoding="utf-8").splitlines()
+    expected = (fixture / "command-start-v2.json").read_bytes().rstrip(bytes((13, 10)))
+    actual = decode_document_frames(lines, 1, 1024)
+    if actual != expected or any(len(line) // 2 > 20 for line in lines):
+        raise ValueError("GATTS input differs from real native application fixture")
+    command = json.loads(actual)
+    command_validator.validate(command)
+    if command["kind"] != "start" or command["lease"] != 2:
+        raise ValueError("GATTS fixture does not use the actual newly admitted game lease")
+    observed = json.loads((fixture / "admission-observation.json").read_text(encoding="utf-8"))
+    if observed != {
+        "scope": "host_observation", "frameCopies": len(lines), "responseCopies": len(lines),
+        "beforeOwnerService": {"running": False, "nextRequest": 1},
+        "afterOwnerService": {"running": True, "outcome": "executed", "request": command["request"]},
+        "peerDeliveryMeasured": False, "rfInitialized": False,
+    }:
+        raise ValueError("GATTS observation scope/application execution differs")
+    negatives = [[], lines[:-1], [lines[0], *lines], [lines[1], lines[0], *lines[2:]],
+                 [*lines, lines[-1]], ["GG", *lines[1:]], [lines[0] + "FF" * 121, *lines[1:]]]
+    for index, value in ((0, 2), (1, 2), (1, 3), (1, 4), (2, 0), (4, 0), (6, 1)):
+        changed = bytearray.fromhex(lines[0])
+        changed[index] = value
+        if index in (2, 4):
+            changed[index + 1] = 0
+        negatives.append([changed.hex().upper(), *lines[1:]])
+    changed = bytearray.fromhex(lines[0])
+    changed[4:6] = (1025).to_bytes(2, "little")
+    negatives.append([changed.hex().upper(), *lines[1:]])
+    for bad in negatives:
+        try:
+            decode_document_frames(bad, 1, 1024)
+        except ValueError:
+            continue
+        raise ValueError("GATTS counterpart accepted malformed command sequence")
+    return len(lines), len(actual), len(negatives)
+
+
+def check_profile_source(base: Path, profile_validator) -> tuple[int, int]:
+    import re
+    import struct
+    import zlib
+    fixture = base / "fixtures" / "profile-source"
+    document = (fixture / "hint-v1.json").read_bytes()
+    line = (fixture / "envelope-v1.txt").read_text(encoding="utf-8").strip()
+
+    def decode(value: str, data: bytes):
+        if not re.fullmatch(r"[0-9A-F]{40}", value):
+            raise ValueError("profile source envelope must contain exactly20bytes")
+        version, kind, transfer, count, crc, draft, configuration = struct.unpack("<BBHIIII", bytes.fromhex(value))
+        if version != 1 or kind != 5 or not transfer or not 1 <= count <= 131072 or draft == 0xffffffff or not configuration:
+            raise ValueError("invalid profile source envelope")
+        if count != len(data) or crc != zlib.crc32(data):
+            raise ValueError("profile source length/CRC differs from exact input bytes")
+        return transfer, draft, configuration
+
+    transfer, draft, configuration = decode(line, document)
+    if (transfer, draft, configuration) != (1, 2, 1):
+        raise ValueError("profile source fixture revisions differ from actual application")
+    profile_validator.validate(json.loads(document))
+    negatives = [(line[:-2], document), (line + "00", document), (line.lower(), document),
+                 (line, document[:-1]), (line, document + b" ")]
+    for index, value in ((0, 2), (1, 1), (2, 0), (4, 0), (8, 0), (12, 0xff), (16, 0)):
+        changed = bytearray.fromhex(line)
+        changed[index] = value
+        if index == 2:
+            changed[3] = 0
+        if index in (4, 16):
+            changed[index:index + 4] = bytes(4)
+        if index == 12:
+            changed[12:16] = bytes((255,)) * 4
+        negatives.append((changed.hex().upper(), document))
+    changed = bytearray.fromhex(line)
+    changed[4:8] = (131073).to_bytes(4, "little")
+    negatives.append((changed.hex().upper(), document))
+    for bad, data in negatives:
+        try:
+            decode(bad, data)
+        except ValueError:
+            continue
+        raise ValueError("profile source counterpart accepted invalid envelope/source")
+    return len(document), len(negatives)
+
+
+def decode_profile_frames(lines: list[str], maximum: int = 128) -> bytes:
+    """Complete-only counterpart, independently parses LE framing and raw CRC."""
+    import re
+    import struct
+    import zlib
+    if not 20 <= maximum <= 128 or len(lines) < 2 or not re.fullmatch(r"[0-9A-F]{40}", lines[0]):
+        raise ValueError("missing/invalid profile metadata or value budget")
+    version, kind, transfer, total, crc, draft, configuration = struct.unpack("<BBHIIII", bytes.fromhex(lines[0]))
+    if version != 1 or kind != 5 or not transfer or not 1 <= total <= 131072 or draft == 0xffffffff or not configuration:
+        raise ValueError("invalid profile metadata")
+    output = bytearray()
+    for line in lines[1:]:
+        if not re.fullmatch(r"(?:[0-9A-F]{2}){9,128}", line):
+            raise ValueError("malformed profile data value")
+        value = bytes.fromhex(line)
+        version, kind, identifier, offset = struct.unpack("<BBHI", value[:8])
+        if version != 1 or kind != 6 or identifier != transfer or offset != len(output) or len(value) > maximum:
+            raise ValueError("wrong profile kind/transfer/order/budget")
+        if len(output) + len(value) - 8 > total:
+            raise ValueError("profile data exceeds original length")
+        output.extend(value[8:])
+    if len(output) != total or zlib.crc32(output) != crc:
+        raise ValueError("incomplete/corrupt profile source")
+    return bytes(output)
+
+
+def check_profile_frames(base: Path, profile_validator) -> tuple[int, int]:
+    fixture = base / "fixtures" / "profile-source"
+    original = (fixture / "hint-v1.json").read_bytes()
+    count = 0
+    lines = []
+    for maximum, expected in ((20, 1685), (128, 169)):
+        lines = (fixture / f"frames-{maximum}-v1.txt").read_text(encoding="utf-8").splitlines()
+        if len(lines) != expected + 1 or decode_profile_frames(lines, maximum) != original:
+            raise ValueError("profile golden frames differ from exact source/count")
+        profile_validator.validate(json.loads(decode_profile_frames(lines, maximum)))
+        count += expected
+    negatives = [[], lines[:1], lines[1:], lines[:-1], lines + [lines[-1]],
+                 lines[:2] + [lines[1]] + lines[2:], [lines[0], lines[2], lines[1]] + lines[3:],
+                 [lines[0], lines[1][:-1]] + lines[2:], [lines[0], lines[1].lower()] + lines[2:],
+                 [lines[0], ""] + lines[1:], [lines[0] + "00"] + lines[1:]]
+    for byte, value in ((0, 2), (1, 5), (2, 2), (4, 1), (6, 2)):
+        changed = bytearray.fromhex(lines[1])
+        changed[byte] = value
+        negatives.append([lines[0], changed.hex().upper()] + lines[2:])
+    changed = bytearray.fromhex(lines[-1]); changed[-1] ^= 1
+    negatives.append(lines[:-1] + [changed.hex().upper()])
+    negatives.append([lines[0], lines[1] + "00"] + lines[2:])
+    changed = bytearray.fromhex(lines[0]); changed[4:8] = (131073).to_bytes(4, "little")
+    negatives.append([changed.hex().upper()] + lines[1:])
+    for bad in negatives:
+        try:
+            decode_profile_frames(bad)
+        except ValueError:
+            continue
+        raise ValueError("profile counterpart accepted invalid frame sequence")
+    try:
+        decode_profile_frames(lines, 20)
+    except ValueError:
+        pass
+    else:
+        raise ValueError("profile counterpart accepted values beyond peer budget")
+    return count, len(negatives) + 1
+
+
+def check_profile_apply(base: Path, status_validator) -> int:
+    fixture = base / "fixtures" / "profile-source"
+    observed = json.loads((fixture / "apply-observation.json").read_text(encoding="utf-8"))
+    expected = {
+        "scope": "host_profile_apply", "transfer": 1, "importedDraftRevision": 3,
+        "queued": {"phase": "applying", "configurationRevision": 1, "storedGeneration": 1, "running": False},
+        "confirmed": {"phase": "ready", "configurationRevision": 2, "profileRevision": 4,
+                      "storedGeneration": 2, "storedMatchesActive": True, "running": False},
+        "storageScope": "host_model", "deviceAcceptanceMeasured": False,
+    }
+    def accept_observation(value):
+        if value != expected:
+            raise ValueError("profile apply observation does not distinguish queue/confirmed Host model")
+    accept_observation(observed)
+    confirmed = json.loads((fixture / "applied-status-v2.json").read_text(encoding="utf-8"))
+    uncertain = json.loads((fixture / "uncertain-status-v2.json").read_text(encoding="utf-8"))
+    for status, phase, generation, matches in ((confirmed, "ready", 2, True), (uncertain, "fault", 1, False)):
+        status_validator.validate(status)
+        app = status["application"]
+        if (app["phase"], app["configurationRevision"], app["profileRevision"],
+            app["storedGeneration"], app["storedMatchesActive"], status["game"]["running"]) != (phase, 2, 4, generation, matches, False):
+            raise ValueError("profile apply current wire status differs from actual Application result")
+    from copy import deepcopy
+    negatives = []
+    for key, value in (("scope", "radio_profile_apply"), ("storageScope", "device"), ("deviceAcceptanceMeasured", True)):
+        changed = deepcopy(expected); changed[key] = value; negatives.append(changed)
+    for section, key, value in (("queued", "phase", "ready"), ("queued", "running", True),
+                                ("queued", "configurationRevision", 2), ("confirmed", "storedMatchesActive", False),
+                                ("confirmed", "storedGeneration", 1), ("confirmed", "profileRevision", 1)):
+        changed = deepcopy(expected); changed[section][key] = value; negatives.append(changed)
+    for bad in negatives:
+        try:
+            accept_observation(bad)
+        except ValueError:
+            continue
+        raise ValueError("profile apply counterpart accepted an incorrect observation")
+    return len(negatives)
+
+
+def check_profile_staging(base: Path, status_validator) -> int:
+    fixture = base / "fixtures" / "profile-source"
+    expected = {"scope": "host_profile_staging", "bytes": 20220, "dataFrames": 169,
+                "temporarySource": "actual_host_file", "configurationRevision": 2,
+                "storedGeneration": 2, "storedMatchesActive": True, "running": False,
+                "storageScope": "host_journal_model", "radioMeasured": False}
+    def accept(value):
+        if value != expected:
+            raise ValueError("staged source observation differs from actual file/Application/model")
+    accept(json.loads((fixture / "staging-observation.json").read_text(encoding="utf-8")))
+    status = json.loads((fixture / "staging-status-v2.json").read_text(encoding="utf-8"))
+    status_validator.validate(status)
+    app = status["application"]
+    if (app["phase"], app["configurationRevision"], app["storedGeneration"], app["storedMatchesActive"], status["game"]["running"]) != ("ready", 2, 2, True, False):
+        raise ValueError("staged source current status differs from actual confirmation")
+    negatives = []
+    for key, value in (("temporarySource", "radio"), ("radioMeasured", True), ("storageScope", "device"),
+                       ("storedGeneration", 1), ("running", True), ("bytes", 20219), ("storedMatchesActive", False)):
+        changed = dict(expected); changed[key] = value; negatives.append(changed)
+    for bad in negatives:
+        try:
+            accept(bad)
+        except ValueError:
+            continue
+        raise ValueError("staged source counterpart accepted an incorrect observation")
+    return len(negatives)
+
+
+def check_profile_queue(base: Path, status_validator) -> int:
+    fixture = base / "fixtures" / "profile-source"
+    expected = {"scope": "host_profile_queue", "dataFrames": 169, "depth": 4, "valueBytes": 128,
+                "originalReceivedAt": 17, "queuedIsComplete": False, "configurationRevision": 2,
+                "storedGeneration": 2, "storedMatchesActive": True, "running": False, "radioMeasured": False}
+    def accept(value):
+        if value != expected:
+            raise ValueError("profile queue observation lost original time/budget/confirmation scope")
+    accept(json.loads((fixture / "queue-observation.json").read_text(encoding="utf-8")))
+    status = json.loads((fixture / "queue-status-v2.json").read_text(encoding="utf-8"))
+    status_validator.validate(status)
+    app=status["application"]
+    if (app["configurationRevision"],app["storedGeneration"],app["storedMatchesActive"],status["game"]["running"]) != (2,2,True,False):
+        raise ValueError("profile queue current status differs from confirmed actual Application")
+    negatives=[]
+    for key,value in (("depth",5),("valueBytes",129),("originalReceivedAt",20),("queuedIsComplete",True),
+                      ("storedGeneration",1),("running",True),("radioMeasured",True)):
+        changed=dict(expected);changed[key]=value;negatives.append(changed)
+    for bad in negatives:
+        try:
+            accept(bad)
+        except ValueError:
+            continue
+        raise ValueError("profile queue counterpart accepted an incorrect observation")
+    return len(negatives)
+
+
+def check_reply_frames(base: Path) -> tuple[int, int]:
+    lines = (base / "fixtures" / "reply-frames-v1.txt").read_text(encoding="utf-8").splitlines()
+    expected = (base / "fixtures" / "v2" / "reply-executed.json").read_bytes().rstrip(bytes((13, 10)))
+    actual = decode_reply_frames(lines)
+    if actual != expected:
+        raise ValueError("reply frames do not reconstruct the actual firmware receipt")
+    # Tool failures must be explicit; none of these are complete client documents.
+    negatives = [[], lines[:-1], [lines[0], *lines], [lines[1], lines[0], *lines[2:]]]
+    for offset, byte in ((0, 2), (1, 1), (2, 0), (4, 0), (6, 1)):
+        changed = bytearray.fromhex(lines[0])
+        changed[offset] = byte
+        if offset in (2, 4):
+            changed[offset + 1] = 0
+        negatives.append([changed.hex().upper(), *lines[1:]])
+    negatives.extend([["GG", *lines[1:]], [lines[0] + "FF" * 121, *lines[1:]]])
+    for bad in negatives:
+        try:
+            decode_reply_frames(bad)
+        except ValueError:
+            continue
+        raise ValueError("reply counterpart accepted a malformed fixture mutation")
+    return len(lines), len(actual)
+
+
+def decode_command_receipt(line: str) -> tuple[int, ...]:
+    import re
+    import struct
+    if not re.fullmatch(r"[0-9A-F]{36}", line):
+        raise ValueError("invalid processing receipt hex/length")
+    values = struct.unpack("<BBBBHHHHHHH", bytes.fromhex(line))
+    version, kind, code, reserved, source, length, offset, count, active, total, received = values
+    if version != 1 or kind != 3 or reserved or not 1 <= code <= 13:
+        raise ValueError("invalid processing receipt header")
+    if not source or not 1 <= length <= 1024 or not 1 <= count <= 120:
+        raise ValueError("invalid processing receipt source")
+    if offset >= length or count > length - offset:
+        raise ValueError("invalid processing receipt source range")
+    if (not active and (total or received)) or (active and (not 1 <= total <= 1024 or received > total)):
+        raise ValueError("invalid processing receipt stream")
+    same = active == source and total == length
+    if code in (1, 2) and not (same and 0 < received < total):
+        raise ValueError("invalid partial receipt")
+    if code in (3, 4, 5, 13) and not (same and received == total):
+        raise ValueError("invalid complete receipt")
+    if code == 9 and (not active or active == source):
+        raise ValueError("invalid busy receipt")
+    if code == 11 and active != source:
+        raise ValueError("invalid conflict receipt")
+    if code == 10 and active and not same:
+        raise ValueError("invalid out-of-order receipt")
+    return values
+
+
+def check_command_receipts(base: Path) -> tuple[int, int]:
+    import struct
+    lines = (base / "fixtures" / "command-receipts-v1.txt").read_text(encoding="utf-8").splitlines()
+    commands = (base / "fixtures" / "command-frames-v1.txt").read_text(encoding="utf-8").splitlines()
+    if len(lines) != len(commands) or not lines:
+        raise ValueError("receipt/command fixture count mismatch")
+    for index, (line, command) in enumerate(zip(lines, commands)):
+        values = decode_command_receipt(line)
+        raw = bytes.fromhex(command)
+        version, kind, source, length, offset = struct.unpack("<BBHHH", raw[:8])
+        count = len(raw) - 8
+        expected_code = 3 if offset + count == length else 1
+        if version != 1 or kind != 1 or values[2] != expected_code:
+            raise ValueError("receipt outcome/command kind mismatch")
+        if values[4:] != (source, length, offset, count, source, length, offset + count):
+            raise ValueError(f"receipt source/progress mismatch at {index}")
+    negatives = ["", lines[0][:-2], lines[0] + "00", "GG" + lines[0][2:]]
+    for byte, number in ((0, 2), (1, 2), (2, 0), (2, 14), (3, 1),
+                         (4, 0), (6, 0), (10, 0), (14, 0), (16, 255)):
+        changed = bytearray.fromhex(lines[0])
+        changed[byte] = number
+        if byte in (4, 6, 10, 14, 16):
+            changed[byte + 1] = 255 if byte == 16 else 0
+        negatives.append(changed.hex().upper())
+    complete = bytearray.fromhex(lines[-1])
+    complete[16] -= 1
+    negatives.append(complete.hex().upper())
+    for bad in negatives:
+        try:
+            decode_command_receipt(bad)
+        except ValueError:
+            continue
+        raise ValueError("receipt counterpart accepted malformed mutation")
+    return len(lines), len(negatives)
+
+
+def main() -> int:
+    try:
+        from jsonschema import Draft202012Validator
+    except ImportError:
+        print("Requires jsonschema==4.23.0 in this Python environment.", file=sys.stderr)
+        return 2
+    root = Path(__file__).resolve().parents[1]
+    base = root / "docs" / "companion"
+    names = {
+        "status-ready": "status-v2.schema.json",
+        "status-running": "status-v2.schema.json",
+        "command-start": "game-command-v2.schema.json",
+        "command-stale-state": "game-command-v2.schema.json",
+        "reply-executed": "game-reply-v2.schema.json",
+        "reply-duplicate": "game-reply-v2.schema.json",
+        "reply-conflict": "game-reply-v2.schema.json",
+        "reply-stale-state": "game-reply-v2.schema.json",
+    }
+    expected = {name + ".json" for name in names}
+    actual = {path.name for path in (base / "fixtures" / "v2").glob("*.json")}
+    if expected != actual:
+        print(f"Fixture set mismatch: missing={sorted(expected-actual)}, extra={sorted(actual-expected)}", file=sys.stderr)
+        return 1
+    validators = {}
+    for name, schema_name in names.items():
+        if schema_name not in validators:
+            schema = json.loads((base / schema_name).read_text(encoding="utf-8"))
+            Draft202012Validator.check_schema(schema)
+            validators[schema_name] = Draft202012Validator(schema)
+        value = json.loads((base / "fixtures" / "v2" / (name + ".json")).read_text(encoding="utf-8"))
+        errors = sorted(validators[schema_name].iter_errors(value), key=lambda error: str(error.path))
+        if errors:
+            for error in errors:
+                print(f"{name}: {list(error.path)}: {error.message}", file=sys.stderr)
+            return 1
+    capabilities = json.loads((base / "fixtures" / "profile-capabilities-v1.json").read_text(encoding="utf-8"))
+    schema = json.loads((base / "profile-capabilities-v1.schema.json").read_text(encoding="utf-8"))
+    Draft202012Validator.check_schema(schema)
+    errors = list(Draft202012Validator(schema).iter_errors(capabilities))
+    if errors:
+        for error in errors:
+            print(f"profile-capabilities-v1: {list(error.path)}: {error.message}", file=sys.stderr)
+        return 1
+    identity = json.loads((base / "fixtures" / "device-identity-v1.json").read_text(encoding="utf-8"))
+    identity_schema = json.loads((base / "device-identity-v1.schema.json").read_text(encoding="utf-8"))
+    Draft202012Validator.check_schema(identity_schema)
+    identity_validator = Draft202012Validator(identity_schema)
+    identity_validator.validate(identity)
+    identity_negatives = [dict(identity, deviceId="0" * 32), dict(identity, deviceId=identity["deviceId"].lower()),
+                          dict(identity, requiresVerifiedConnection=False),
+                          dict(identity, requiresGameMasterAssignment=False),
+                          dict(identity, scope="authenticated_identity"), dict(identity, role="game_master"),
+                          dict(identity, deviceId="01"), dict(identity, deviceId=identity["deviceId"] + "\n")]
+    missing = dict(identity)
+    del missing["requiresGameMasterAssignment"]
+    identity_negatives.append(missing)
+    if any(identity_validator.is_valid(bad) for bad in identity_negatives):
+        print("Public identity counterpart accepted an invalid fixture", file=sys.stderr)
+        return 1
+    profile = json.loads((root / "docs" / "configuration" / "profile-v1.schema.json").read_text(encoding="utf-8"))
+    from generate_profile_schema import generate
+    Draft202012Validator.check_schema(profile)
+    if profile != generate(root):
+        print("Generated profile schema differs from canonical source generator", file=sys.stderr)
+        return 1
+    definitions, properties = profile["$defs"], profile["properties"]
+    expectations = {
+        "boards": [properties["board"]["const"]],
+        "componentKinds": definitions["component"]["properties"]["kind"]["enum"],
+        "crystalCategories": definitions["crystal"]["properties"]["category"]["enum"],
+        "fields": definitions["condition"]["oneOf"][0]["properties"]["field"]["enum"],
+        "comparisons": definitions["condition"]["oneOf"][0]["properties"]["comparison"]["enum"],
+        "actionKinds": definitions["action"]["properties"]["kind"]["enum"],
+        "effectKinds": definitions["effect"]["properties"]["kind"]["enum"],
+        "gameCommands": validators["game-command-v2.schema.json"].schema["properties"]["kind"]["enum"],
+    }
+    kinds = []
+    for branch in definitions["condition"]["oneOf"]:
+        kind = branch["properties"]["kind"]
+        kinds.extend(kind.get("enum", [kind.get("const")]))
+    expectations["conditionKinds"] = kinds
+    for name, expected in expectations.items():
+        if set(capabilities[name]) != set(expected):
+            print(f"Capabilities/schema vocabulary mismatch: {name}", file=sys.stderr)
+            return 1
+    expected_limits = {name: properties[name]["maxItems"] for name in
+                       ("components", "states", "transitions", "conditions", "actions", "effects", "roles")}
+    expected_limits.update({
+        "crystalsPerRole": definitions["role"]["properties"]["crystals"]["maxItems"],
+        "stateActions": definitions["state"]["properties"]["entry"]["maxItems"],
+        "transitionActions": definitions["transition"]["properties"]["actions"]["maxItems"],
+        "matrixLines": definitions["component"]["properties"]["rows"]["maxItems"],
+        "wakeInputs": definitions["component"]["properties"]["wakeInputs"]["maxItems"],
+        "nameUtf8Bytes": properties["name"]["x-maxUtf8Bytes"],
+        "paletteEntries": definitions["effect"]["properties"]["palette"]["maxItems"],
+        "roleUidBytes": definitions["role"]["properties"]["uid"]["maxItems"],
+        "componentPinSlots": definitions["component"]["properties"]["pins"]["maxItems"],
+        "expanderPinModes": definitions["component"]["properties"]["startupModes"]["maxItems"],
+        "peerAddressBytes": definitions["component"]["properties"]["peer"]["maxItems"],
+        # Semantic limits are annotations, not bounds on inactive/irrelevant fields.
+        "leds": profile["x-maxEnabledLeds"],
+        "conditionDepth": profile["x-maxConditionDepth"],
+        "profileDocumentBytes": profile["x-maxDocumentBytes"],
+        "profileContainerDepth": profile["x-maxContainerDepth"],
+    })
+    for name, expected in expected_limits.items():
+        if capabilities["limits"][name] != expected:
+            print(f"Capabilities/schema limit mismatch: {name}", file=sys.stderr)
+            return 1
+    if capabilities["profileSchemaVersion"] != properties["schemaVersion"]["const"]:
+        print("Capabilities/profile schema version mismatch", file=sys.stderr)
+        return 1
+    try:
+        frame_count, reply_bytes = check_reply_frames(base)
+        receipt_count, receipt_negatives = check_command_receipts(base)
+        status_count, status_bytes, status_negatives = check_status_frames(base)
+        gatts_count, gatts_bytes, gatts_negatives = check_gatts_admission(base, validators["game-command-v2.schema.json"])
+        profile_source_bytes, profile_source_negatives = check_profile_source(base, Draft202012Validator(profile))
+        profile_frame_count, profile_frame_negatives = check_profile_frames(base, Draft202012Validator(profile))
+        profile_apply_negatives = check_profile_apply(base, validators["status-v2.schema.json"])
+        profile_staging_negatives = check_profile_staging(base, validators["status-v2.schema.json"])
+        profile_queue_negatives = check_profile_queue(base, validators["status-v2.schema.json"])
+        profile_control_negatives = check_profile_control(base, validators["status-v2.schema.json"])
+        profile_response_queue_negatives = check_profile_response_queue(base)
+        gatts_profile_negatives = check_gatts_profile(base)
+        esp_staging_negatives = check_esp_staging(base)
+        followup_proof_negatives = check_followup_proof(base)
+        application_file_negatives = check_application_file_owner(base)
+        gatts_response_negatives = check_gatts_response_queue(base)
+        identity_retirement_negatives = check_identity_retirement(base, validators["status-v2.schema.json"])
+        source_negatives = check_gatts_source(base)
+        service_negatives = check_gatts_service(base)
+        lifecycle_negatives = check_gatts_lifecycle(base, validators["status-v2.schema.json"])
+        identity_record_negatives, identity_store_negatives = check_device_identity_store(base, Draft202012Validator(identity_schema))
+    except ValueError as error:
+        print(f"Frame counterpart: {error}", file=sys.stderr)
+        return 1
+    print(f"{len(names)} v2 fixtures + profile capabilities validate; vocabularies and {len(expected_limits)} limits agree.")
+    print(f"Reply counterpart reconstructs {reply_bytes} exact bytes from {frame_count} frames; 11 malformed variants rejected.")
+    print(f"Receipt counterpart correlates {receipt_count} actual command fragments; {receipt_negatives} malformed variants rejected.")
+
+    print(f"Status counterpart reconstructs {status_bytes} exact bytes from {status_count} frames; {status_negatives} malformed variants rejected.")
+
+    print(f"GATTS counterpart reconstructs {gatts_bytes} exact command bytes from {gatts_count} frames; {gatts_negatives} malformed variants rejected. Host execution only.")
+
+    print(f"Profile source counterpart validates {profile_source_bytes} exact UTF8 bytes, independent CRC and20-byte envelope; {profile_source_negatives} malformed variants rejected. No auth proof.")
+
+    print(f"Profile frame counterpart reconstructs the exact source from {profile_frame_count} data values plus two metadata values; {profile_frame_negatives} malformed sequences rejected. Complete sources only.")
+
+    print(f"Profile apply counterpart distinguishes queued/confirmed/uncertain outcomes and validates two actual v2 statuses; {profile_apply_negatives} incorrect observations rejected. Host storage only.")
+
+    print(f"Profile staging counterpart checks actual temporary-file/model observation and current v2 status; {profile_staging_negatives} incorrect observations rejected. No radio or device durability.")
+
+    print(f"Profile queue counterpart preserves original timestamp and queue/completion distinction; {profile_queue_negatives} incorrect observations rejected, actual current v2 status validated.")
+
+    print(f"Profile controls correlate finish/queued/saved/abort/failed and current v2 status; {profile_control_negatives} malformed values rejected. Host journal only.")
+
+    print(f"Profile response queue counterpart keeps production time and confirmed model/wire correlation; {profile_response_queue_negatives} wrong observations rejected.")
+
+    print(f"Raw GATTS profile counterpart separates172 ATT copies from3 semantic stages; {gatts_profile_negatives} wrong observations rejected. No RF/peer delivery proof.")
+
+    print(f"ESP staging counterpart correlates actual fixed-path adapter/model and Saved; {esp_staging_negatives} wrong observations rejected. No physical flash claim.")
+
+    print(f"Followup proof counterpart requires ApplyRejected/NoReceipt on actual20-byte response; {followup_proof_negatives} stale correlations rejected.")
+
+    print(f"Service setup: {service_negatives} negative definitions/observations rejected; Host only")
+
+    print(f"Source SDK posting: {source_negatives} negative observations rejected; Host model only")
+
+    print(f"Callback lifecycle: {lifecycle_negatives} negative original/status correlations rejected; Host only")
+
+    print(f"Identity retirement: {identity_retirement_negatives} wrong observation/status correlations rejected; Host only")
+
+    print(f"GATTS response queue: {gatts_response_negatives} negative observations rejected; no RF measurement")
+
+    print(f"Application file ownership counterpart checks cleanup quarantine and zero running IO; {application_file_negatives} wrong observations rejected. Host model only.")
+
+    print(f"Public identity storage counterpart validates struct/zlib and metadata; {identity_record_negatives} malformed records and {identity_store_negatives} wrong model observations rejected. No authentication/physical durability proof.")
+
+    print(f"Public identity metadata validates; {len(identity_negatives)} malformed variants rejected. No authentication proof.")
+
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

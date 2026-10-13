@@ -2,13 +2,10 @@
 
 #include <cstdint>
 
-namespace larp
-{
-namespace ports
-{
-class IAudioPlayer
-{
-public:
+namespace larp {
+namespace ports {
+class IAudioPlayer {
+  public:
     virtual ~IAudioPlayer() {}
 
     virtual void playTrack(std::uint16_t trackNumber) = 0;
