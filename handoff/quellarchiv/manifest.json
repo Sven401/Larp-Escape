@@ -1,0 +1,986 @@
+{
+  "group": "android",
+  "captures": [
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/OPEN-DEPENDENCIES.md",
+      "path": "main-root\\files\\companion\\OPEN-DEPENDENCIES.md",
+      "sha256": "a7d9982e27adcbd179e5de49450c0b6dc7858da22bbb06d3ef74eeed1197560a",
+      "bytes": 5481,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/README.md",
+      "path": "main-root\\files\\companion\\README.md",
+      "sha256": "09904d85448e1d3540beaa60b8457a8b16871417cf89dd281c60f6911f3dd93c",
+      "bytes": 2799,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/android/.gitignore",
+      "path": "main-root\\files\\companion\\android\\.gitignore",
+      "sha256": "e7d4a4d6520c8cd8eaa48a1bb5001780ab6d56b09a090290c37967de7a8d0695",
+      "bytes": 51,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/android/README.md",
+      "path": "main-root\\files\\companion\\android\\README.md",
+      "sha256": "cb7b2cd42e391ddc3e81c9171d3d079454663b843e1373aa587795f8bc62f29b",
+      "bytes": 14828,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/android/app/build.gradle.kts",
+      "path": "main-root\\files\\companion\\android\\app\\build.gradle.kts",
+      "sha256": "430bebd33adb375c9b3662d1a6828e5bf3b42abb946c2a106a7fbf92fb94ab3f",
+      "bytes": 1140,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/android/app/src/main/AndroidManifest.xml",
+      "path": "main-root\\files\\companion\\android\\app\\src\\main\\AndroidManifest.xml",
+      "sha256": "ea866e3feaecdc6eef4017826bcfdbb9b634c7af98939201ba2a1a83f608cefa",
+      "bytes": 944,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/android/app/src/main/java/de/larpescape/companion/MainActivity.kt",
+      "path": "main-root\\files\\companion\\android\\app\\src\\main\\java\\de\\larpescape\\companion\\MainActivity.kt",
+      "sha256": "8924f8e7f5ca72ccbd44c675c72b2067328cc81a8e088d9691cb9b0ad67a7f39",
+      "bytes": 10930,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/android/app/src/main/java/de/larpescape/companion/data/device/DeviceRepository.kt",
+      "path": "main-root\\files\\companion\\android\\app\\src\\main\\java\\de\\larpescape\\companion\\data\\device\\DeviceRepository.kt",
+      "sha256": "e594668c5b055c392930f8da5e39564561bd29a4bc045711565c86487eaef3cb",
+      "bytes": 864,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/android/app/src/main/java/de/larpescape/companion/data/scenario/ScenarioDraftRepository.kt",
+      "path": "main-root\\files\\companion\\android\\app\\src\\main\\java\\de\\larpescape\\companion\\data\\scenario\\ScenarioDraftRepository.kt",
+      "sha256": "5979e84aecbd2a79320a082f4c18ceb8c8d4bc735217dccd5c3e280b0f6991a0",
+      "bytes": 1290,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/android/app/src/main/java/de/larpescape/companion/platform/ble/AndroidBleRepository.kt",
+      "path": "main-root\\files\\companion\\android\\app\\src\\main\\java\\de\\larpescape\\companion\\platform\\ble\\AndroidBleRepository.kt",
+      "sha256": "1ad2b424c59d9d0d2a2ec2e1c9e616bc8824e6beb0cc3d0b578915832111cc89",
+      "bytes": 15145,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/android/app/src/main/java/de/larpescape/companion/platform/nfc/AndroidNfc.kt",
+      "path": "main-root\\files\\companion\\android\\app\\src\\main\\java\\de\\larpescape\\companion\\platform\\nfc\\AndroidNfc.kt",
+      "sha256": "e11177d5af00ea254188e46e7d2312843135e60ddd2929577e133540d57c7012",
+      "bytes": 4652,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/android/app/src/main/java/de/larpescape/companion/ui/device/DeviceViewModel.kt",
+      "path": "main-root\\files\\companion\\android\\app\\src\\main\\java\\de\\larpescape\\companion\\ui\\device\\DeviceViewModel.kt",
+      "sha256": "cebd9ad26ebd9a95a87620256cfbf657944ceb811935d1945dced832c9705cd8",
+      "bytes": 1597,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/android/app/src/main/java/de/larpescape/companion/ui/nfc/NfcScreen.kt",
+      "path": "main-root\\files\\companion\\android\\app\\src\\main\\java\\de\\larpescape\\companion\\ui\\nfc\\NfcScreen.kt",
+      "sha256": "e149386d9bda6594f0d93dc25c9076cd3736c779f8b7675b9d95ee8cf77245b6",
+      "bytes": 4009,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/android/app/src/main/java/de/larpescape/companion/ui/nfc/NfcViewModel.kt",
+      "path": "main-root\\files\\companion\\android\\app\\src\\main\\java\\de\\larpescape\\companion\\ui\\nfc\\NfcViewModel.kt",
+      "sha256": "cdf47a1f246d4ca9c3330afa6379ddd74eb956e994af0691ea0925d55e29bba1",
+      "bytes": 11423,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/android/app/src/main/java/de/larpescape/companion/ui/scenario/ScenarioScreen.kt",
+      "path": "main-root\\files\\companion\\android\\app\\src\\main\\java\\de\\larpescape\\companion\\ui\\scenario\\ScenarioScreen.kt",
+      "sha256": "503c3ad57933b796f78cd5e0b678be7f3fa488e06e59bc5a6bec5f69baad0411",
+      "bytes": 5188,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/android/app/src/main/java/de/larpescape/companion/ui/scenario/ScenarioViewModel.kt",
+      "path": "main-root\\files\\companion\\android\\app\\src\\main\\java\\de\\larpescape\\companion\\ui\\scenario\\ScenarioViewModel.kt",
+      "sha256": "838e99e7d81bd8ac977e9271140957db78c1340c8db24d4b60eec78cb6eb98ab",
+      "bytes": 4668,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/android/app/src/test/java/de/larpescape/companion/ui/device/DeviceViewModelTest.kt",
+      "path": "main-root\\files\\companion\\android\\app\\src\\test\\java\\de\\larpescape\\companion\\ui\\device\\DeviceViewModelTest.kt",
+      "sha256": "68b2b65a44c2601080080921ef1fdcf0293651ef0e4012d0d3ea8fd388dbbff3",
+      "bytes": 4642,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/android/app/src/test/java/de/larpescape/companion/ui/nfc/NfcViewModelTest.kt",
+      "path": "main-root\\files\\companion\\android\\app\\src\\test\\java\\de\\larpescape\\companion\\ui\\nfc\\NfcViewModelTest.kt",
+      "sha256": "bc39d9932ff56edda8fc44e497ec7c238fbb70f80ed54b27b0710ad4373c85fb",
+      "bytes": 5940,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/android/build.gradle.kts",
+      "path": "main-root\\files\\companion\\android\\build.gradle.kts",
+      "sha256": "7f9af72ffbe23f74851cff100ba032cc77521c4106a0cfca02dca8d0f525837d",
+      "bytes": 217,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/android/core/protocol/build.gradle.kts",
+      "path": "main-root\\files\\companion\\android\\core\\protocol\\build.gradle.kts",
+      "sha256": "7763f93adb1c511e450f0b752e69195a332f01fc252c207f3b310e7b5f5a6a76",
+      "bytes": 462,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/android/core/protocol/src/main/kotlin/de/larpescape/protocol/ConfiguredStatus.kt",
+      "path": "main-root\\files\\companion\\android\\core\\protocol\\src\\main\\kotlin\\de\\larpescape\\protocol\\ConfiguredStatus.kt",
+      "sha256": "19b571a1e687cf5061dd9c84c4c3b018ccdbe508dfddf78684111f7994410369",
+      "bytes": 9067,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/android/core/protocol/src/main/kotlin/de/larpescape/protocol/FrameAssembler.kt",
+      "path": "main-root\\files\\companion\\android\\core\\protocol\\src\\main\\kotlin\\de\\larpescape\\protocol\\FrameAssembler.kt",
+      "sha256": "8cb629c08c6a6cb4f39ccba643955b1d3e93caf03149f0540d549fe681670239",
+      "bytes": 1805,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/android/core/protocol/src/main/kotlin/de/larpescape/protocol/NfcTagData.kt",
+      "path": "main-root\\files\\companion\\android\\core\\protocol\\src\\main\\kotlin\\de\\larpescape\\protocol\\NfcTagData.kt",
+      "sha256": "079df8959fd9e781eac3ec82143ef944e9ae2e9dc4f491d27755df045d0816db",
+      "bytes": 4424,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/android/core/protocol/src/main/kotlin/de/larpescape/protocol/PeerAuthV1.kt",
+      "path": "main-root\\files\\companion\\android\\core\\protocol\\src\\main\\kotlin\\de\\larpescape\\protocol\\PeerAuthV1.kt",
+      "sha256": "9544d142414f52fe2fd96b77615a35172167ff7137cf2e49242d3c86a14cbee0",
+      "bytes": 5916,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/android/core/protocol/src/main/kotlin/de/larpescape/protocol/ScenarioDraft.kt",
+      "path": "main-root\\files\\companion\\android\\core\\protocol\\src\\main\\kotlin\\de\\larpescape\\protocol\\ScenarioDraft.kt",
+      "sha256": "6c17d70190ec3fe8ef541bd6141785eca4921354d71c19e2c5196144534fa45c",
+      "bytes": 5258,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/android/core/protocol/src/test/kotlin/de/larpescape/protocol/ConfiguredStatusTest.kt",
+      "path": "main-root\\files\\companion\\android\\core\\protocol\\src\\test\\kotlin\\de\\larpescape\\protocol\\ConfiguredStatusTest.kt",
+      "sha256": "e8b74c024547727c86fdc3abb12412c5c59ae4715968b08c0dee838d61fb943d",
+      "bytes": 8242,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/android/core/protocol/src/test/kotlin/de/larpescape/protocol/FrameAssemblerTest.kt",
+      "path": "main-root\\files\\companion\\android\\core\\protocol\\src\\test\\kotlin\\de\\larpescape\\protocol\\FrameAssemblerTest.kt",
+      "sha256": "6c9f88a12d611a9911e68f8168e182163524722a65188ec5181a1c5db554a7ac",
+      "bytes": 2813,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/android/core/protocol/src/test/kotlin/de/larpescape/protocol/NfcTagDataTest.kt",
+      "path": "main-root\\files\\companion\\android\\core\\protocol\\src\\test\\kotlin\\de\\larpescape\\protocol\\NfcTagDataTest.kt",
+      "sha256": "320e28bc976cb606c56cab6bb7060386c96414e59c6a044dcd15a8f2f07cf8fe",
+      "bytes": 5257,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/android/core/protocol/src/test/kotlin/de/larpescape/protocol/PeerAuthV1Test.kt",
+      "path": "main-root\\files\\companion\\android\\core\\protocol\\src\\test\\kotlin\\de\\larpescape\\protocol\\PeerAuthV1Test.kt",
+      "sha256": "0ea9d57cc200cf50e5b8aba9b73fe614bac73f22c2b6351e9ce3c53f083dcda8",
+      "bytes": 5322,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/android/core/protocol/src/test/kotlin/de/larpescape/protocol/ScenarioDraftTest.kt",
+      "path": "main-root\\files\\companion\\android\\core\\protocol\\src\\test\\kotlin\\de\\larpescape\\protocol\\ScenarioDraftTest.kt",
+      "sha256": "9ea41852727af528dc7a31aca2668127f1923412b71320e6dd60945892b9ee8e",
+      "bytes": 2550,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/android/core/protocol/src/test/resources/firmware-peer-auth-observation.json",
+      "path": "main-root\\files\\companion\\android\\core\\protocol\\src\\test\\resources\\firmware-peer-auth-observation.json",
+      "sha256": "de088914451110b11309c05ee4f421c9742519451de6b370f8ae22d9572d73f7",
+      "bytes": 907,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/android/core/protocol/src/test/resources/vite-scenario-v1.json",
+      "path": "main-root\\files\\companion\\android\\core\\protocol\\src\\test\\resources\\vite-scenario-v1.json",
+      "sha256": "85d6b9c9aae050b7c808f47cd5ecd70b5091a8105e9088508e064fba498eac9f",
+      "bytes": 355,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/android/gradle.properties",
+      "path": "main-root\\files\\companion\\android\\gradle.properties",
+      "sha256": "a467f0619f397329e116da1ac68587d5ba35ad2097abb9b2a26212bdcbe7452d",
+      "bytes": 100,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/android/gradle/libs.versions.toml",
+      "path": "main-root\\files\\companion\\android\\gradle\\libs.versions.toml",
+      "sha256": "7d93645283ff294becd4bceaddea0db416b924c872c92ee973c00762178ff75f",
+      "bytes": 1040,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/android/gradle/wrapper/gradle-wrapper.jar",
+      "path": "main-root\\files\\companion\\android\\gradle\\wrapper\\gradle-wrapper.jar",
+      "sha256": "498495120a03b9a6ab5d155f5de3c8f0d986a449153702fb80fc80e134484f17",
+      "bytes": 43504,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/android/gradle/wrapper/gradle-wrapper.properties",
+      "path": "main-root\\files\\companion\\android\\gradle\\wrapper\\gradle-wrapper.properties",
+      "sha256": "3d91f0932da99885c41e9dc4e85c9f9a2d3bfef4f0ad87473014dc0827a94884",
+      "bytes": 250,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/android/gradlew",
+      "path": "main-root\\files\\companion\\android\\gradlew",
+      "sha256": "a3648413b47ef77af21d5ebc36c687c7d103aaef3e17f33de7d4f080a6f300a3",
+      "bytes": 8762,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/android/gradlew.bat",
+      "path": "main-root\\files\\companion\\android\\gradlew.bat",
+      "sha256": "57931b17dd228e5c24dac90e815d0bf82477e831a4618dfab4136f5446b42a9f",
+      "bytes": 2966,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/android/settings.gradle.kts",
+      "path": "main-root\\files\\companion\\android\\settings.gradle.kts",
+      "sha256": "b4474979292c9784c3302a09e2b3f54699c3ecc3ade28dd0a0499433267824ef",
+      "bytes": 297,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/android/tools/capture_esp.py",
+      "path": "main-root\\files\\companion\\android\\tools\\capture_esp.py",
+      "sha256": "e9134617eef33be11dfa4647f34ae087017a5a7e9d22fe2f6eac92e5c0d3c334",
+      "bytes": 874,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/android/tools/phone_check.py",
+      "path": "main-root\\files\\companion\\android\\tools\\phone_check.py",
+      "sha256": "ac044eb4019264e44665b2b45eb67ebf2cecebee4d13db6490c51bc14e632aa9",
+      "bytes": 3481,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/app/.local/evidence-a2-vite/vite-szenario-entwurf.json",
+      "path": "main-root\\files\\companion\\app\\.local\\evidence-a2-vite\\vite-szenario-entwurf.json",
+      "sha256": "85d6b9c9aae050b7c808f47cd5ecd70b5091a8105e9088508e064fba498eac9f",
+      "bytes": 355,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/app/.npmrc",
+      "path": "main-root\\files\\companion\\app\\.npmrc",
+      "sha256": "9e8dd43e7e78a84b541056c8199775fbd5c900ff17cd6ffdcffd44725eab180f",
+      "bytes": 46,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/app/README.md",
+      "path": "main-root\\files\\companion\\app\\README.md",
+      "sha256": "2671d6e00f9f8219cee94c48d4f16abe31100a5424556868ef2acf73029b42d1",
+      "bytes": 9074,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/app/index.html",
+      "path": "main-root\\files\\companion\\app\\index.html",
+      "sha256": "80671524db2e21bf57f145427812135b7fb0cd39a052c6445d6162f7c7a71db3",
+      "bytes": 309,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/app/package.json",
+      "path": "main-root\\files\\companion\\app\\package.json",
+      "sha256": "78800e5259679a961b057e9bced105c1665b4f132219c9ab99f299bb07f8d706",
+      "bytes": 884,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/app/pnpm-lock.yaml",
+      "path": "main-root\\files\\companion\\app\\pnpm-lock.yaml",
+      "sha256": "46be361f99a6c814a5296af8f47e940334a76c8c91c20e5c6d5d57743e88d953",
+      "bytes": 36299,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/app/pnpm-workspace.yaml",
+      "path": "main-root\\files\\companion\\app\\pnpm-workspace.yaml",
+      "sha256": "ac02d96368617c760f093cfe61fdec64b6244007ab3553e0d6621f706f54a353",
+      "bytes": 29,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/app/src/contract.js",
+      "path": "main-root\\files\\companion\\app\\src\\contract.js",
+      "sha256": "e112a5606bae518cf319261341589e18320050a8b08da9fc9651b3a31a1b043e",
+      "bytes": 3542,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/app/src/domain.js",
+      "path": "main-root\\files\\companion\\app\\src\\domain.js",
+      "sha256": "b50b025560db210f5a4e6fa5ea95b72dafc45899a79dca8c66b8f22e9d0ba1ed",
+      "bytes": 5724,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/app/src/editorDraft.mjs",
+      "path": "main-root\\files\\companion\\app\\src\\editorDraft.mjs",
+      "sha256": "7cb196accfb6df388f6a6cc4706988ad80a5fe70d7af9bdd8cfeaaf5b2700618",
+      "bytes": 4306,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/app/src/firmwareV2Reply.mjs",
+      "path": "main-root\\files\\companion\\app\\src\\firmwareV2Reply.mjs",
+      "sha256": "5c55fa34e57217d16e80fa84a546bb6102112836c6f0f6ce8aa2327c6c0fb779",
+      "bytes": 4204,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/app/src/firmwareV2Status.mjs",
+      "path": "main-root\\files\\companion\\app\\src\\firmwareV2Status.mjs",
+      "sha256": "d8abdc94bf9f52631fc0d2d3ce1c1dcf24ae8ecbb95b99afbbaa322d43ec8ec7",
+      "bytes": 4097,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/app/src/mockDevice.js",
+      "path": "main-root\\files\\companion\\app\\src\\mockDevice.js",
+      "sha256": "776c12f11da4bcbeb1d8d48eefefa5ace07fa45f8880810543f87ee70c2cc60f",
+      "bytes": 4278,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/app/src/presentation.js",
+      "path": "main-root\\files\\companion\\app\\src\\presentation.js",
+      "sha256": "377b43cdbc352443f3eead25b450388023e21b799f893f3f6a17b683c28919a3",
+      "bytes": 2149,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/app/src/readingPreview.mjs",
+      "path": "main-root\\files\\companion\\app\\src\\readingPreview.mjs",
+      "sha256": "c56b9238d5133d33be1cc54b85add1257d113f5379c2934ada216789db2fceff",
+      "bytes": 1205,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/app/src/screenModel.js",
+      "path": "main-root\\files\\companion\\app\\src\\screenModel.js",
+      "sha256": "52643bba05b8f096e2ec3642e0e544ab282ef82f935b70e862b52483d7408c74",
+      "bytes": 2350,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/app/test/app-slice.test.js",
+      "path": "main-root\\files\\companion\\app\\test\\app-slice.test.js",
+      "sha256": "79e373c4e98311a21ed359621fdfa9fe6232e57c2ac014075df6803d56d4bc60",
+      "bytes": 9906,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/app/test/browser-mock.test.mjs",
+      "path": "main-root\\files\\companion\\app\\test\\browser-mock.test.mjs",
+      "sha256": "c1bd8b37b5bec10a826ede11a58280a3282f664c9ff2298409de90fa68a0deb6",
+      "bytes": 8283,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/app/test/editor-draft.test.mjs",
+      "path": "main-root\\files\\companion\\app\\test\\editor-draft.test.mjs",
+      "sha256": "3248398f49c6b80870bfc480ba7fc94b7c5728f265c39030814e9b469b1b06a3",
+      "bytes": 3410,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/app/test/firmware-v2-reply.test.mjs",
+      "path": "main-root\\files\\companion\\app\\test\\firmware-v2-reply.test.mjs",
+      "sha256": "3e7539b4a246fa95ef03a6d7ead503d663daf4c285180ebecb20710bca0ee736",
+      "bytes": 2582,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/app/test/firmware-v2-status.test.mjs",
+      "path": "main-root\\files\\companion\\app\\test\\firmware-v2-status.test.mjs",
+      "sha256": "03c3039de993e813ab97b9e7820aa5aaa119242b982e983f804b8402e1bb9649",
+      "bytes": 2953,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/app/test/mock-session.test.mjs",
+      "path": "main-root\\files\\companion\\app\\test\\mock-session.test.mjs",
+      "sha256": "624c8cab481576bb2f69b7b44748b42652f1859916b1447b33a0af9fb2a8cea0",
+      "bytes": 6264,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/app/test/react-render.test.mjs",
+      "path": "main-root\\files\\companion\\app\\test\\react-render.test.mjs",
+      "sha256": "8aa8553f74a2c662a5f60920bb8982356d125a96df8dc07926e228250224e60e",
+      "bytes": 4802,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/app/test/reading-preview.test.mjs",
+      "path": "main-root\\files\\companion\\app\\test\\reading-preview.test.mjs",
+      "sha256": "3955281ecab7607702583a32e7e646b1698ff3823cda29bf7072d21d27567ac4",
+      "bytes": 1868,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/app/web/EditorView.jsx",
+      "path": "main-root\\files\\companion\\app\\web\\EditorView.jsx",
+      "sha256": "e7b8ace69dfc3d387cf1bb5cf446779df85692761554d886fbd7f92b84da3513",
+      "bytes": 6914,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/app/web/FirmwareStatusView.jsx",
+      "path": "main-root\\files\\companion\\app\\web\\FirmwareStatusView.jsx",
+      "sha256": "066c903c222a289f295c8124115c831fd8cb89766cb1ee4ef4a3d8ca91c5fb93",
+      "bytes": 7892,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/app/web/ReadingPreviewView.jsx",
+      "path": "main-root\\files\\companion\\app\\web\\ReadingPreviewView.jsx",
+      "sha256": "d3dd6cdb08ace579a0402d1f0af352e6b39ac80638cc69c9e2dfb479f52ddd7c",
+      "bytes": 2917,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/app/web/components/ui/alert.jsx",
+      "path": "main-root\\files\\companion\\app\\web\\components\\ui\\alert.jsx",
+      "sha256": "5fdd1c966c7ca860ac5747d34082dddfbcb740ffa472c784cbff17bc5ac04ee0",
+      "bytes": 1143,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/app/web/components/ui/badge.jsx",
+      "path": "main-root\\files\\companion\\app\\web\\components\\ui\\badge.jsx",
+      "sha256": "8159e1a0b3fc11311ae184a9b130543fee5b5b34dd057c7241aa70f846982d9d",
+      "bytes": 812,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/app/web/components/ui/button.jsx",
+      "path": "main-root\\files\\companion\\app\\web\\components\\ui\\button.jsx",
+      "sha256": "d77c3f961dfb195e5611e0c1d6ac7b96dddaedc7c263354a831a0713408f9679",
+      "bytes": 1460,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/app/web/components/ui/card.jsx",
+      "path": "main-root\\files\\companion\\app\\web\\components\\ui\\card.jsx",
+      "sha256": "1a8f666f8f98d959ea2f564ba95cdd845877b04bf6a0d5911839bae8572c3396",
+      "bytes": 1192,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/app/web/domain.mjs",
+      "path": "main-root\\files\\companion\\app\\web\\domain.mjs",
+      "sha256": "1d81fdb7c24df08e522c3a7d0bc4bcad096f710d8e5184538488cd49182c4281",
+      "bytes": 2744,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/app/web/draftStorage.mjs",
+      "path": "main-root\\files\\companion\\app\\web\\draftStorage.mjs",
+      "sha256": "1b159d26a165cea247d8b0834968bb90915ec4bdaa34aab12e4d6e4847127ed6",
+      "bytes": 443,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/app/web/lib/utils.js",
+      "path": "main-root\\files\\companion\\app\\web\\lib\\utils.js",
+      "sha256": "eda3beb73fdfba01f4aacb1b6c1913b02238bc20254793bc9c6ef3c0dc5e72ea",
+      "bytes": 138,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/app/web/main.jsx",
+      "path": "main-root\\files\\companion\\app\\web\\main.jsx",
+      "sha256": "8fa655a7d5f565832832523351a91fda114f55fe89a92c4b185994d58c27a2ae",
+      "bytes": 11907,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/app/web/mockDevice.mjs",
+      "path": "main-root\\files\\companion\\app\\web\\mockDevice.mjs",
+      "sha256": "a4cbcf55d37d62dd63b4a8d580a01aadd8867c476d01d0c7d541382c820e1706",
+      "bytes": 3474,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/app/web/mockSession.mjs",
+      "path": "main-root\\files\\companion\\app\\web\\mockSession.mjs",
+      "sha256": "63acf2f9024a7bfca9b154d2ff72a7c606eb083fde5585f9560c690fe0826e64",
+      "bytes": 4696,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/app/web/presentation.mjs",
+      "path": "main-root\\files\\companion\\app\\web\\presentation.mjs",
+      "sha256": "a551dc7c59d9bed2837444743924c34018619a19b808c251067a016b5b743018",
+      "bytes": 1666,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/app/web/styles.css",
+      "path": "main-root\\files\\companion\\app\\web\\styles.css",
+      "sha256": "11b3b9e6d46216b30003980173344765b2b2a5f1123f0484fd220309f05c06c4",
+      "bytes": 12734,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/contract/README.md",
+      "path": "main-root\\files\\companion\\contract\\README.md",
+      "sha256": "3461c392331d6cba0acdc1188ed5c5fbcc834070e68b286aab7ee571a2978d31",
+      "bytes": 1800,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/contract/firmware-v2/SNAPSHOT.md",
+      "path": "main-root\\files\\companion\\contract\\firmware-v2\\SNAPSHOT.md",
+      "sha256": "112a6b46482238c94f0d92c06761bd686676b532dee19b5eae54bbe55f4934e0",
+      "bytes": 2429,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/contract/firmware-v2/fixtures/README.md",
+      "path": "main-root\\files\\companion\\contract\\firmware-v2\\fixtures\\README.md",
+      "sha256": "ae464cd47508cff0d2be239677aee4184beba06e767d301a2d88cc992edcd9b6",
+      "bytes": 2557,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/contract/firmware-v2/fixtures/command-stale-state.json",
+      "path": "main-root\\files\\companion\\contract\\firmware-v2\\fixtures\\command-stale-state.json",
+      "sha256": "196c9bde9619d465eaa7996b640ae61f16c6011eb0322b036cba83a2f479bae1",
+      "bytes": 154,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/contract/firmware-v2/fixtures/command-start.json",
+      "path": "main-root\\files\\companion\\contract\\firmware-v2\\fixtures\\command-start.json",
+      "sha256": "a92cd55ad68816cb467dfba34d64eee288269db34959a3de1cdb6a897ac5fb9f",
+      "bytes": 154,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/contract/firmware-v2/fixtures/reply-conflict.json",
+      "path": "main-root\\files\\companion\\contract\\firmware-v2\\fixtures\\reply-conflict.json",
+      "sha256": "9d3ebd02b1a4596a8c41a5e5b721a7217097b243f41e3ecdb0c648c879b6b0cc",
+      "bytes": 214,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/contract/firmware-v2/fixtures/reply-duplicate.json",
+      "path": "main-root\\files\\companion\\contract\\firmware-v2\\fixtures\\reply-duplicate.json",
+      "sha256": "fecbcef0743df546227cd21bac32775f29451f197a07c8b33df420c2ce9fa253",
+      "bytes": 206,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/contract/firmware-v2/fixtures/reply-executed.json",
+      "path": "main-root\\files\\companion\\contract\\firmware-v2\\fixtures\\reply-executed.json",
+      "sha256": "a1fed9ac2ec24b1c96aa7c5027571eb5589f38922269a4bf1db95740286c8098",
+      "bytes": 207,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/contract/firmware-v2/fixtures/reply-stale-state.json",
+      "path": "main-root\\files\\companion\\contract\\firmware-v2\\fixtures\\reply-stale-state.json",
+      "sha256": "139cda5df6334a04186ff89b8b09801592d19b93ffcbecf09c0a5902ee41e76a",
+      "bytes": 208,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/contract/firmware-v2/fixtures/status-ready.json",
+      "path": "main-root\\files\\companion\\contract\\firmware-v2\\fixtures\\status-ready.json",
+      "sha256": "eb14ec710adf2d7922b6f986f20378994965e30a446f9bc5670d65e4f9c680bc",
+      "bytes": 1717,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/contract/firmware-v2/fixtures/status-running.json",
+      "path": "main-root\\files\\companion\\contract\\firmware-v2\\fixtures\\status-running.json",
+      "sha256": "ab6d2440db9336c58222654aec2397e8edefb77599625b44667b7f6e34e08aff",
+      "bytes": 1684,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/contract/firmware-v2/schemas/game-command-v2.schema.json",
+      "path": "main-root\\files\\companion\\contract\\firmware-v2\\schemas\\game-command-v2.schema.json",
+      "sha256": "3e3a987ba473672cca00d1034d248a0fd7d7631fa0395b3195483c91b33cf197",
+      "bytes": 2054,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/contract/firmware-v2/schemas/game-reply-v2.schema.json",
+      "path": "main-root\\files\\companion\\contract\\firmware-v2\\schemas\\game-reply-v2.schema.json",
+      "sha256": "87bc5536a700e26af5e83bf696714b57a9c531a64d3190a1d506348f46eac5d0",
+      "bytes": 1554,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/contract/firmware-v2/schemas/status-v2.schema.json",
+      "path": "main-root\\files\\companion\\contract\\firmware-v2\\schemas\\status-v2.schema.json",
+      "sha256": "a70208fd7bf8b95cec8278b0df9960210d6eabe18ddccfaf3a381bc11bd19366",
+      "bytes": 6494,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/contract/nfc-v1/README.md",
+      "path": "main-root\\files\\companion\\contract\\nfc-v1\\README.md",
+      "sha256": "f97771fd2ae516dd41ec4f3f624b358389b34ee03be21b7461244ab152816d1a",
+      "bytes": 2306,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/contract/scripts/validate-contract.js",
+      "path": "main-root\\files\\companion\\contract\\scripts\\validate-contract.js",
+      "sha256": "9ad28237e15069e8edae0f36b7c390104c86a47a4c4bfc6781721153d2187c7f",
+      "bytes": 6305,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/contract/scripts/verify-firmware-v2-snapshot.mjs",
+      "path": "main-root\\files\\companion\\contract\\scripts\\verify-firmware-v2-snapshot.mjs",
+      "sha256": "33b5adb9a58ff18107f7024634125fa81317131098f458fe6c9cb476ddae5a55",
+      "bytes": 1191,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/contract/v0/device-status.paused.json",
+      "path": "main-root\\files\\companion\\contract\\v0\\device-status.paused.json",
+      "sha256": "c2a53ea2d2cbb9263689af42e7d4aa35088256a9f4f0f7946590eb45af078c3f",
+      "bytes": 771,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/contract/v0/device-status.readonly.json",
+      "path": "main-root\\files\\companion\\contract\\v0\\device-status.readonly.json",
+      "sha256": "b92d0db79a6e078489b5841237cb86a11607972c22dfd4c9cb681155d48a2e69",
+      "bytes": 763,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/contract/v0/device-status.ready.json",
+      "path": "main-root\\files\\companion\\contract\\v0\\device-status.ready.json",
+      "sha256": "9c2905ba47c59f4b3c36f1758ad3afd740c10524fd80632d1c4315eba5490d10",
+      "bytes": 762,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/contract/v0/device-status.running.json",
+      "path": "main-root\\files\\companion\\contract\\v0\\device-status.running.json",
+      "sha256": "b5c35c6d47766bd9c3abebf1b534491dd411686420a42d01fa4905b4f7723f9e",
+      "bytes": 769,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/contract/v0/gm-command-pause.request.json",
+      "path": "main-root\\files\\companion\\contract\\v0\\gm-command-pause.request.json",
+      "sha256": "012ed521e4320b415ff1ca8090e1e910130db5dd546c9a30df8b92ce3cc95b83",
+      "bytes": 242,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/contract/v0/gm-command-reset.request.json",
+      "path": "main-root\\files\\companion\\contract\\v0\\gm-command-reset.request.json",
+      "sha256": "d411c151510d77cd949198c62515e69a7a79c90350b0bb6e348fa36fb6f2dd57",
+      "bytes": 242,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/contract/v0/gm-command-resume.request.json",
+      "path": "main-root\\files\\companion\\contract\\v0\\gm-command-resume.request.json",
+      "sha256": "b468b7945f9c90736227529be48254d43d9f499955ffcbc976cdf6e662c6c151",
+      "bytes": 243,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/contract/v0/gm-command-select-state.request.json",
+      "path": "main-root\\files\\companion\\contract\\v0\\gm-command-select-state.request.json",
+      "sha256": "e7b0206c7239d5efd8f9335b21e50ea8a5d226faeeaf39e5baa68dfde3ba8a82",
+      "bytes": 274,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/contract/v0/gm-command-start.accepted.json",
+      "path": "main-root\\files\\companion\\contract\\v0\\gm-command-start.accepted.json",
+      "sha256": "0b906d46bafdb893a30b9de1ff31b3eeeeef9f2aefaae0cb439a5f2d5f7d0d35",
+      "bytes": 231,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/contract/v0/gm-command-start.duplicate.json",
+      "path": "main-root\\files\\companion\\contract\\v0\\gm-command-start.duplicate.json",
+      "sha256": "1082631628c7d3e33087f37f5d319a47610297a35c5e45b5ed05c9fa500a6181",
+      "bytes": 242,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/contract/v0/gm-command-start.rejected-conflict.json",
+      "path": "main-root\\files\\companion\\contract\\v0\\gm-command-start.rejected-conflict.json",
+      "sha256": "739287a498e43a02a26d997a62eb4ee1c9fb1a5a27d5880041179950a2d09974",
+      "bytes": 275,
+      "source_id": "main-root"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "source_path": "companion/contract/v0/gm-command-start.request.json",
+      "path": "main-root\\files\\companion\\contract\\v0\\gm-command-start.request.json",
+      "sha256": "c03b9e0e69e47084bf3202ea8f71cf0f01670ea0d6a63447f704f303ab39aefe",
+      "bytes": 242,
+      "source_id": "main-root"
+    }
+  ]
+}

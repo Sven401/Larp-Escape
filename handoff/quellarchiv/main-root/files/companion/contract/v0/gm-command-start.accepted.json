@@ -1,0 +1,10 @@
+{
+  "protocolVersion": 0,
+  "messageType": "gm-command-result",
+  "bootId": "boot-20261006-0001",
+  "requestId": "app-session-b-0001",
+  "status": "accepted",
+  "runtimeGeneration": 3,
+  "configRevision": 6,
+  "detail": "queued"
+}

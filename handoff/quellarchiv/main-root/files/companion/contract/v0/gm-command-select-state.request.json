@@ -1,0 +1,12 @@
+{
+  "protocolVersion": 0,
+  "messageType": "gm-command-request",
+  "bootId": "boot-20261006-0001",
+  "requestId": "app-session-b-0006",
+  "expectedRuntimeGeneration": 4,
+  "expectedConfigRevision": 6,
+  "command": {
+    "type": "select-state",
+    "stateId": "finale"
+  }
+}

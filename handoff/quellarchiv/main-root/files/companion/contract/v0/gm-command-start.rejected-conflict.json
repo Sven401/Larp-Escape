@@ -1,0 +1,11 @@
+{
+  "protocolVersion": 0,
+  "messageType": "gm-command-result",
+  "bootId": "boot-20261006-0001",
+  "requestId": "app-session-b-0002",
+  "status": "rejected",
+  "reason": "conflict",
+  "runtimeGeneration": 4,
+  "configRevision": 7,
+  "detail": "expected revision is stale"
+}

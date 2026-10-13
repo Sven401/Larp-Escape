@@ -1,0 +1,11 @@
+{
+  "protocolVersion": 0,
+  "messageType": "gm-command-request",
+  "bootId": "boot-20261006-0001",
+  "requestId": "app-session-b-0004",
+  "expectedRuntimeGeneration": 5,
+  "expectedConfigRevision": 6,
+  "command": {
+    "type": "resume"
+  }
+}

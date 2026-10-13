@@ -1,0 +1,22 @@
+{
+  "name": "larp-escape-companion-app-slice",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "test": "node ../contract/scripts/validate-contract.js && node ../contract/scripts/verify-firmware-v2-snapshot.mjs && node test/app-slice.test.js && node test/browser-mock.test.mjs && node test/mock-session.test.mjs && node test/react-render.test.mjs && node test/editor-draft.test.mjs && node test/reading-preview.test.mjs && node test/firmware-v2-status.test.mjs && node test/firmware-v2-reply.test.mjs"
+  },
+  "dependencies": {
+    "@radix-ui/react-slot": "^1.1.0",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.468.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tailwind-merge": "^2.5.2"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.1",
+    "vite": "^5.4.0"
+  }
+}

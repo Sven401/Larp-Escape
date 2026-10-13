@@ -1,0 +1,35 @@
+{
+  "protocolVersion": 0,
+  "messageType": "device-status",
+  "bootId": "boot-20261006-0001",
+  "deviceId": "larp-escape-devkit-v4-01",
+  "profile": {
+    "activeProfileId": "standard",
+    "documentRevision": 6,
+    "storageGeneration": 2,
+    "storedMatchesActive": true
+  },
+  "runtime": {
+    "phase": "paused",
+    "operation": "paused",
+    "running": false,
+    "runtimeGeneration": 5,
+    "configRevision": 6,
+    "stateId": "intro",
+    "stateName": "Intro"
+  },
+  "access": {
+    "observer": true,
+    "gameMaster": true,
+    "setup": false
+  },
+  "health": {
+    "lastError": null,
+    "warnings": []
+  },
+  "capabilities": {
+    "commands": ["start", "pause", "resume", "reset", "select-state"],
+    "transports": ["mock"],
+    "profileTransfer": false
+  }
+}

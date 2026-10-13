@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "id": "vite-transfer-2026-10-10",
+  "title": "Vite-Transferprobe",
+  "scenes": [
+    {
+      "id": "vite-scene-2",
+      "title": "Eingang",
+      "goal": "Tor finden",
+      "clue": "Blauer Kristall"
+    },
+    {
+      "id": "vite-scene-1",
+      "title": "Finale",
+      "goal": "Tor öffnen",
+      "clue": "Drei Runen"
+    }
+  ]
+}
