@@ -944,6 +944,111 @@ void Esp32GattsSource::sendDevelopmentRawResult(void *context) noexcept {
             diagnostic::DevelopmentRawStepWire::ReplyBytes, bytes, false) != ESP_OK)
         source->developmentControl_->disconnect(original);
 }
+bool Esp32GattsSource::takeDevelopmentLedWork(
+    DevelopmentLedWork &destination) noexcept {
+    bool ready = false;
+    portENTER_CRITICAL(&mutex_);
+    if (developmentLed_.state == 1) {
+        destination = developmentLed_.work;
+        developmentLed_.state = 2;
+        ready = true;
+    }
+    portEXIT_CRITICAL(&mutex_);
+    return ready;
+}
+bool Esp32GattsSource::developmentLedWorkCurrent(
+    const DevelopmentLedWork &work) noexcept {
+    if (!work.token) return false;
+    bool current = false;
+    portENTER_CRITICAL(&mutex_);
+    current = developmentLed_.state == 2 &&
+        developmentLed_.work.token == work.token &&
+        developmentLed_.work.original == work.original &&
+        developmentLed_.work.receivedAtMs == work.receivedAtMs;
+    portEXIT_CRITICAL(&mutex_);
+    const auto elapsed = static_cast<std::uint32_t>(clock_.nowMilliseconds() -
+                                                    work.receivedAtMs);
+    return current && elapsed < work.request.timeoutMs;
+}
+bool Esp32GattsSource::postDevelopmentLedResult(
+    const DevelopmentLedResult &result) noexcept {
+    bool accepted = false;
+    portENTER_CRITICAL(&mutex_);
+    if (developmentLed_.state == 2 && result.work.token &&
+        result.work.token == developmentLed_.work.token &&
+        result.work.original == developmentLed_.work.original) {
+        developmentLed_.startedAtMs = result.startedAtMs;
+        developmentLed_.endedAtMs = result.endedAtMs;
+        developmentLed_.renderCalls = result.renderCalls;
+        developmentLed_.blackSubmitted = result.blackSubmitted;
+        developmentLed_.timerFired = result.timerFired;
+        developmentLed_.softwareFault = result.softwareFault;
+        developmentLed_.state = 3;
+        accepted = true;
+    }
+    portEXIT_CRITICAL(&mutex_);
+    if (!accepted) return false;
+    if (sdkThread_ && sdkThread_ == btu_thread &&
+        osi_thread_post(static_cast<osi_thread *>(sdkThread_),
+                        &sendDevelopmentLedResult, this, 0, 0))
+        return true;
+    portENTER_CRITICAL(&mutex_);
+    if (developmentLed_.state == 3 &&
+        developmentLed_.work.token == result.work.token)
+        developmentLed_.state = 0;
+    portEXIT_CRITICAL(&mutex_);
+    return false;
+}
+void Esp32GattsSource::sendDevelopmentLedResult(void *context) noexcept {
+    auto *source = static_cast<Esp32GattsSource *>(context);
+    if (!source) return;
+    DevelopmentLedPending pending;
+    portENTER_CRITICAL(&source->mutex_);
+    const bool ready = source->developmentLed_.state == 3;
+    if (ready) {
+        pending = source->developmentLed_;
+        source->developmentLed_.state = 0;
+    }
+    portEXIT_CRITICAL(&source->mutex_);
+    if (!ready || !source->sourceTask() || !source->developmentControl_ ||
+        !pending.work.token || pending.startedAtMs < pending.work.receivedAtMs ||
+        pending.endedAtMs < pending.startedAtMs ||
+        pending.endedAtMs - pending.work.receivedAtMs >=
+            pending.work.request.timeoutMs ||
+        source->developmentLedRepliesUsed_ >= DevelopmentLedReplySlots)
+        return;
+    const auto &original = pending.work.original;
+    diagnostic::DevelopmentLink secure;
+    std::uint16_t mtu = 0;
+    if (!source->developmentSubscribed_ ||
+        !(source->diagnosticProbeBirth_ == original) ||
+        !source->readDevelopmentLinkNow(original, secure) ||
+        !source->readDiagnosticOriginalMtu(original, mtu) ||
+        mtu < diagnostic::DevelopmentLedStepWire::ReplyBytes + 3 ||
+        !source->developmentControl_->ledResultCurrent(
+            pending.work.request, secure, source->clock_.nowMilliseconds()))
+        return;
+    diagnostic::DevelopmentLedStepReply answer;
+    answer.request = pending.work.request;
+    answer.startedDeviceMs = pending.startedAtMs;
+    answer.endedDeviceMs = pending.endedAtMs;
+    answer.renderCalls = pending.renderCalls;
+    answer.blackSubmitted = pending.blackSubmitted;
+    answer.timerFired = pending.timerFired;
+    answer.outcome = pending.softwareFault
+        ? diagnostic::DevelopmentLedStepOutcome::SoftwareFault
+        : diagnostic::DevelopmentLedStepOutcome::BlackSubmitted;
+    auto *bytes = developmentLedReplies[source->developmentLedRepliesUsed_++];
+    if (!diagnostic::DevelopmentLedStepWire::encodeReply(
+            answer, bytes, diagnostic::DevelopmentLedStepWire::ReplyBytes))
+        return;
+    if (esp_ble_gatts_send_indicate(
+            original.interface,
+            static_cast<std::uint16_t>(original.connection.handle >> 8),
+            source->diagnostic_.value.developmentReply,
+            diagnostic::DevelopmentLedStepWire::ReplyBytes, bytes, false) != ESP_OK)
+        source->developmentControl_->disconnect(original);
+}
 bool Esp32GattsSource::readDevelopmentLinkNow(
     const PeerTransportBinding &original,
     diagnostic::DevelopmentLink &destination) const noexcept {
@@ -1021,6 +1126,7 @@ GattsLifecycleOutcome Esp32GattsSource::connectionNow(std::uint8_t interface,
 #if defined(LARP_DIAGNOSTIC_TEST_FIRMWARE)
     developmentSubscribed_ = false;
     developmentRaw_.state = 0;
+    developmentLed_.state = 0;
 #endif
     const bool lifetimeAvailable = lifecycle_ != UINT32_MAX;
     if (lifetimeAvailable)
@@ -1436,6 +1542,7 @@ bool Esp32GattsSource::requestNow(std::uint16_t packed, std::uint32_t transactio
                 if (unsubscribe) {
                     portENTER_CRITICAL(&mutex_);
                     developmentRaw_.state = 0;
+                    developmentLed_.state = 0;
                     portEXIT_CRITICAL(&mutex_);
                     developmentControl_->disconnect(original);
                 }
@@ -1467,11 +1574,12 @@ bool Esp32GattsSource::requestNow(std::uint16_t packed, std::uint32_t transactio
                                         ESP_GATT_INSUF_AUTHORIZATION, nullptr);
                     return true;
                 }
-                bool rawVacant = false;
+                bool vacant = false;
                 portENTER_CRITICAL(&mutex_);
-                rawVacant = developmentRaw_.state == 0;
+                vacant = developmentRaw_.state == 0 && developmentLed_.state == 0;
                 portEXIT_CRITICAL(&mutex_);
-                if (!rawVacant || developmentLedRepliesUsed_ >= DevelopmentLedReplySlots) {
+                if (!vacant || developmentLedToken_ == UINT32_MAX ||
+                    developmentLedRepliesUsed_ >= DevelopmentLedReplySlots) {
                     (void)GATTS_SendRsp(packed, transaction, ESP_GATT_NO_RESOURCES, nullptr);
                     return true;
                 }
@@ -1492,26 +1600,31 @@ bool Esp32GattsSource::requestNow(std::uint16_t packed, std::uint32_t transactio
                                         ESP_GATT_INSUF_AUTHORIZATION, nullptr);
                     return true;
                 }
-                if (GATTS_SendRsp(packed, transaction, ESP_GATT_OK, nullptr) != 0)
-                    return true;
-                if (!readDevelopmentLinkNow(original, after) ||
+                const auto token = ++developmentLedToken_;
+                portENTER_CRITICAL(&mutex_);
+                developmentLed_.work.request = request;
+                developmentLed_.work.original = original;
+                developmentLed_.work.token = token;
+                developmentLed_.work.receivedAtMs = receivedAt;
+                developmentLed_.state = 4; // Reserved until ATT ACK.
+                portEXIT_CRITICAL(&mutex_);
+                const auto ack = GATTS_SendRsp(packed, transaction, ESP_GATT_OK, nullptr);
+                if (ack != 0 || !readDevelopmentLinkNow(original, after) ||
                     !(after.original == original) || !developmentSubscribed_ ||
                     !developmentControl_->ledResultCurrent(request, after,
                                                             clock_.nowMilliseconds())) {
+                    portENTER_CRITICAL(&mutex_);
+                    if (developmentLed_.state == 4 &&
+                        developmentLed_.work.token == token)
+                        developmentLed_.state = 0;
+                    portEXIT_CRITICAL(&mutex_);
                     developmentControl_->disconnect(original);
                     return true;
                 }
-                diagnostic::DevelopmentLedStepReply answer;
-                answer.request = request;
-                answer.rejection = diagnostic::DevelopmentLedStepRejection::HardwareUnqualified;
-                auto *bytes = developmentLedReplies[developmentLedRepliesUsed_++];
-                if (!diagnostic::DevelopmentLedStepWire::encodeReply(
-                        answer, bytes, diagnostic::DevelopmentLedStepWire::ReplyBytes) ||
-                    esp_ble_gatts_send_indicate(
-                        original.interface, static_cast<std::uint16_t>(packed >> 8),
-                        diagnostic.developmentReply,
-                        diagnostic::DevelopmentLedStepWire::ReplyBytes, bytes, false) != ESP_OK)
-                    developmentControl_->disconnect(original);
+                portENTER_CRITICAL(&mutex_);
+                if (developmentLed_.state == 4 && developmentLed_.work.token == token)
+                    developmentLed_.state = 1;
+                portEXIT_CRITICAL(&mutex_);
                 return true;
             }
             if (!event.prepared && !event.offset &&
@@ -1534,7 +1647,7 @@ bool Esp32GattsSource::requestNow(std::uint16_t packed, std::uint32_t transactio
                 }
                 bool vacant = false;
                 portENTER_CRITICAL(&mutex_);
-                vacant = developmentRaw_.state == 0;
+                vacant = developmentRaw_.state == 0 && developmentLed_.state == 0;
                 portEXIT_CRITICAL(&mutex_);
                 if (!vacant || developmentRawToken_ == UINT32_MAX ||
                     developmentRawRepliesUsed_ >= DevelopmentRawReplySlots) {

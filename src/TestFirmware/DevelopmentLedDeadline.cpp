@@ -21,8 +21,12 @@ bool DevelopmentLedDeadline::arm(std::uint32_t ticket,
                                  DevelopmentLedBlackPort &port) noexcept {
     if (!timer_ || !offTask_) return false;
     portENTER_CRITICAL(&mutex_);
-    const bool accepted = core_.arm(ticket, static_cast<std::uint64_t>(esp_timer_get_time()));
-    if (accepted) port_ = &port;
+    const auto now = static_cast<std::uint64_t>(esp_timer_get_time());
+    const bool accepted = core_.arm(ticket, now);
+    if (accepted) {
+        port_ = &port;
+        armedAtUs_ = now;
+    }
     portEXIT_CRITICAL(&mutex_);
     if (!accepted) return false;
     if (esp_timer_start_once(timer_, larp::diagnostic::DevelopmentLedDeadlineCore::TimerUs) != ESP_OK) {
@@ -52,6 +56,17 @@ bool DevelopmentLedDeadline::ready() noexcept {
 bool DevelopmentLedDeadline::failed() noexcept {
     portENTER_CRITICAL(&mutex_);
     const bool value = core_.faulted();
+    portEXIT_CRITICAL(&mutex_);
+    return value;
+}
+
+bool DevelopmentLedDeadline::colorAllowed(std::uint32_t ticket) noexcept {
+    portENTER_CRITICAL(&mutex_);
+    const auto now = static_cast<std::uint64_t>(esp_timer_get_time());
+    const bool value = ticket && core_.activeTicket() == ticket &&
+        !core_.faulted() && !core_.needsBlack() &&
+        !core_.blackSubmittedFor(ticket) && now >= armedAtUs_ &&
+        now - armedAtUs_ < 300000U;
     portEXIT_CRITICAL(&mutex_);
     return value;
 }

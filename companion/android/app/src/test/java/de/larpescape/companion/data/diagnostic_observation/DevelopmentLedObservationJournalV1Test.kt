@@ -10,6 +10,27 @@ import org.junit.Test
 import java.nio.file.Files
 
 class DevelopmentLedObservationJournalV1Test {
+    @Test fun boundedLightReplyKeepsVisibleObservationSeparateFromElectricalQualification() {
+        val directory = Files.createTempDirectory("development-led-light-v1").toFile()
+        try {
+            val request = DiagnosticDevelopmentLedStepRequestV1(
+                8, "5A" + "00".repeat(15), "0000000000000064",
+                "00000000-0000-4000-8000-000000000001",
+                "00000000-0000-4000-8000-000000000002", 3)
+            val reply = DiagnosticDevelopmentLedStepReplyV1(request, 10, 420,
+                DiagnosticDevelopmentLedStepOutcomeV1.BLACK_SUBMITTED,
+                DiagnosticDevelopmentLedStepRejectionV1.NONE, 2, true, true)
+            val journal = DevelopmentLedObservationJournalV1(directory)
+            val saved = journal.record(reply)
+            journal.observe(saved.key, "LIGHT_SEEN")
+            val report = DevelopmentLedObservationJournalV1(directory).load()
+            assertEquals("LIGHT_SEEN", report.observations.single().userObservation)
+            assertEquals("BLACK_SUBMITTED", report.observations.single().outcome)
+            assertEquals("UNVERIFIED", report.physicalResult)
+            assertFalse(report.observations.single().physicalOutputConfirmed)
+        } finally { directory.deleteRecursively() }
+    }
+
     @Test fun blockedReplyAndUserObservationSurviveRestartAndExportWithoutQualification() {
         val directory = Files.createTempDirectory("development-led-observation-v1").toFile()
         try {

@@ -331,7 +331,7 @@ internal class AndroidDiagnosticGattShellV1(
         developmentRawEarlyReply = null
     }
 
-    /** Requests a device-confirmed hardware blocker; no LED driver is enabled in this image. */
+    /** Requests one bounded LED pulse; the reply attests software calls, not visible light. */
     fun requestDevelopmentLedPreflight(): Boolean {
         val info = developmentInfo ?: return false
         val grant = developmentGrant ?: return false

@@ -76,11 +76,25 @@ class Esp32GattsSource : public IGattsResponseContext,
         diagnostic::RawExpanderObservation observation;
         std::uint32_t startedAtMs = 0, endedAtMs = 0;
     };
+    struct DevelopmentLedWork {
+        diagnostic::DevelopmentLedStepRequest request;
+        PeerTransportBinding original;
+        std::uint32_t token = 0, receivedAtMs = 0;
+    };
+    struct DevelopmentLedResult {
+        DevelopmentLedWork work;
+        std::uint32_t startedAtMs = 0, endedAtMs = 0;
+        std::uint8_t renderCalls = 0;
+        bool blackSubmitted = false, timerFired = false, softwareFault = true;
+    };
     // Immutable public identity for the development-only encrypted read.
     bool configureDevelopmentInfo(const Identity &, const BootIdentity &) noexcept;
     bool configureDevelopmentControl(diagnostic::DevelopmentControl &) noexcept;
     bool takeDevelopmentRawWork(DevelopmentRawWork &) noexcept;
     bool postDevelopmentRawResult(const DevelopmentRawResult &) noexcept;
+    bool takeDevelopmentLedWork(DevelopmentLedWork &) noexcept;
+    bool developmentLedWorkCurrent(const DevelopmentLedWork &) noexcept;
+    bool postDevelopmentLedResult(const DevelopmentLedResult &) noexcept;
 #endif
     GattsLifecycleOutcome connectionNow(std::uint8_t interface, const std::uint8_t *address,
                                         std::uint16_t packedConnection, bool connected) noexcept;
@@ -163,11 +177,20 @@ class Esp32GattsSource : public IGattsResponseContext,
         std::uint8_t state = 0; // 0 free, 1 ready, 2 worker, 3 posted, 4 ACK reservation
     } developmentRaw_;
     std::uint32_t developmentRawToken_ = 0;
+    struct DevelopmentLedPending {
+        DevelopmentLedWork work;
+        std::uint32_t startedAtMs = 0, endedAtMs = 0;
+        std::uint8_t renderCalls = 0;
+        bool blackSubmitted = false, timerFired = false, softwareFault = true;
+        std::uint8_t state = 0; // 0 free, 1 ready, 2 worker, 3 posted, 4 ACK reservation
+    } developmentLed_;
+    std::uint32_t developmentLedToken_ = 0;
     std::uint8_t developmentRawRepliesUsed_ = 0;
     std::uint8_t developmentLedRepliesUsed_ = 0;
     bool readDevelopmentLinkNow(const PeerTransportBinding &,
                                 diagnostic::DevelopmentLink &) const noexcept;
     static void sendDevelopmentRawResult(void *) noexcept;
+    static void sendDevelopmentLedResult(void *) noexcept;
 #endif
     struct RolePending {
         PeerRegistryRoleJob value;

@@ -44,6 +44,18 @@ bool ProductGattsOwner::postDevelopmentRawResult(
     const larp::companion::Esp32GattsSource::DevelopmentRawResult &result) noexcept {
     return source_.postDevelopmentRawResult(result);
 }
+bool ProductGattsOwner::takeDevelopmentLedWork(
+    larp::companion::Esp32GattsSource::DevelopmentLedWork &destination) noexcept {
+    return source_.takeDevelopmentLedWork(destination);
+}
+bool ProductGattsOwner::developmentLedWorkCurrent(
+    const larp::companion::Esp32GattsSource::DevelopmentLedWork &work) noexcept {
+    return source_.developmentLedWorkCurrent(work);
+}
+bool ProductGattsOwner::postDevelopmentLedResult(
+    const larp::companion::Esp32GattsSource::DevelopmentLedResult &result) noexcept {
+    return source_.postDevelopmentLedResult(result);
+}
 #endif
 void ProductGattsOwner::recordSecurityEvent(const SecurityEvent &event) noexcept {
     securityEventCount_.fetch_add(1, std::memory_order_relaxed);

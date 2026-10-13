@@ -9,6 +9,7 @@
 #include "CompanionIntegration/DiagnosticRawExpanderProbe.h"
 #include "RawExpanderWire.h"
 #include "DevelopmentLedDeadline.h"
+#include "DevelopmentLedOutput.h"
 
 #if !defined(LARP_DIAGNOSTIC_TEST_FIRMWARE) || !defined(LARP_PRODUCT_GATTS_CLOSED)
 #error "This entry point requires the isolated diagnostic test-firmware build"
@@ -25,8 +26,11 @@ static larp::diagnostic::DevelopmentAdmission *admission = nullptr;
 static std::aligned_storage<sizeof(larp::diagnostic::DevelopmentControl),
                             alignof(larp::diagnostic::DevelopmentControl)>::type controlStorage;
 DevelopmentLedDeadline ledDeadline;
+DevelopmentLedOutput ledOutput;
 bool ledDeadlineStarted = false;
+bool ledOutputReady = false;
 bool wake2InputReady = false;
+std::uint32_t lastLedTicket = 0;
 
 // The proven game image configured MCP1/GPB6 as INPUT_PULLUP. Keep every
 // other expander pin untouched in this isolated image and read the mode back.
@@ -89,7 +93,12 @@ void setup() {
     Serial.printf("TEST_BLE startup=%u product_writes=closed development_control=configured\n",
                   static_cast<unsigned>(state));
     ledDeadlineStarted = ledDeadline.begin();
-    Serial.printf("TEST_LED deadline_ready=%u output=closed\n", ledDeadlineStarted);
+    // FastLED's 5 V / 100 mA model is an estimated brightness budget, not a
+    // measured current limiter. The first light frame still needs a live
+    // deadline; initial driver setup makes no light submission.
+    ledOutputReady = ledDeadlineStarted && ledOutput.begin();
+    Serial.printf("TEST_LED deadline_ready=%u driver_ready=%u budget=5V/100mA output=bounded\n",
+                  ledDeadlineStarted, ledOutputReady);
     if (Wire.begin()) {
         Wire.setTimeOut(25);
         wake2InputReady = configureWake2Input();
@@ -122,16 +131,60 @@ void loop() {
         if (!gatts.postDevelopmentRawResult(result))
             Serial.println("TEST_RAW_RESULT delivery_unavailable");
     }
+    larp::companion::Esp32GattsSource::DevelopmentLedWork ledWork;
+    if (gatts.takeDevelopmentLedWork(ledWork)) {
+        larp::companion::Esp32GattsSource::DevelopmentLedResult result;
+        result.work = ledWork;
+        result.startedAtMs = millis();
+        bool colorSubmitted = false;
+        std::uint32_t ticket = 0;
+        if (ledOutputReady && ledDeadline.ready() && lastLedTicket != UINT32_MAX &&
+            gatts.developmentLedWorkCurrent(ledWork)) {
+            ticket = ++lastLedTicket;
+            ledOutput.prepare(ticket);
+            if (ledDeadline.arm(ticket, ledOutput)) {
+                colorSubmitted = ledOutput.showSingle(ticket, ledWork.request,
+                                                      ledDeadline);
+                if (colorSubmitted) {
+                    const auto shownAt = ledOutput.colorSubmittedAtMs();
+                    while (static_cast<std::uint32_t>(millis() - shownAt) <
+                           ledWork.request.durationMs &&
+                           !ledDeadline.blackSubmittedFor(ticket) &&
+                           !ledDeadline.failed())
+                        delay(1);
+                }
+                // The off task is independent of this loop. An early stop
+                // requests black, but success waits for the 400 ms timer too.
+                ledDeadline.stop(ticket);
+                while (!ledDeadline.ready() && !ledDeadline.failed() &&
+                       static_cast<std::uint32_t>(millis() - result.startedAtMs) < 525U)
+                    delay(1);
+            }
+        }
+        result.endedAtMs = millis();
+        result.renderCalls = ticket ? ledOutput.renderCalls() : 0;
+        result.blackSubmitted = ticket && ledDeadline.blackSubmittedFor(ticket);
+        result.timerFired = ticket && ledDeadline.ready();
+        const bool litLongEnough = colorSubmitted && result.blackSubmitted &&
+            static_cast<std::uint32_t>(ledOutput.blackSubmittedAtMs() -
+                                       ledOutput.colorSubmittedAtMs()) >=
+                ledWork.request.durationMs;
+        result.softwareFault = !(litLongEnough && result.renderCalls == 2 &&
+                                 result.blackSubmitted && result.timerFired &&
+                                 !ledDeadline.failed());
+        if (!gatts.postDevelopmentLedResult(result))
+            Serial.println("TEST_LED_RESULT delivery_unavailable");
+    }
     static unsigned long lastReport = 0;
     const auto now = millis();
     if (now - lastReport >= 10000UL) {
         lastReport = now;
         Serial.printf("TEST_STATUS ble_service=%u diagnostic_service=%u registry=%u "
-                      "advertising=%u led_deadline=%u led_fault=%u game=disabled component_actions=closed\n",
+                      "advertising=%u led_deadline=%u led_driver=%u led_fault=%u game=disabled component_actions=bounded\n",
                       gatts.serviceReady(), gatts.diagnosticServiceReady(),
                       static_cast<unsigned>(gatts.registryState()),
                       static_cast<unsigned>(gatts.advertisingState()),
-                      ledDeadlineStarted, ledDeadline.failed());
+                      ledDeadlineStarted, ledOutputReady, ledDeadline.failed());
         if (admission)
             Serial.printf("TEST_ADMISSION boot=%08lX%08lX path=development-control\n",
                           static_cast<unsigned long>(admission->boot() >> 32),

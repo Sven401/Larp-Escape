@@ -21,6 +21,7 @@ class DevelopmentLedDeadline {
     bool stop(std::uint32_t ticket) noexcept;
     bool ready() noexcept;
     bool failed() noexcept;
+    bool colorAllowed(std::uint32_t ticket) noexcept;
     bool blackSubmittedFor(std::uint32_t ticket) noexcept;
     bool missedFor(std::uint32_t ticket) noexcept;
 
@@ -32,4 +33,5 @@ class DevelopmentLedDeadline {
     esp_timer_handle_t timer_ = nullptr;
     TaskHandle_t offTask_ = nullptr;
     DevelopmentLedBlackPort *port_ = nullptr;
+    std::uint64_t armedAtUs_ = 0;
 };

@@ -122,6 +122,6 @@ class DevelopmentLedObservationJournalV1(private val directory: File) {
     companion object {
         const val MAX_OBSERVATIONS = 128
         const val MAX_BYTES = 131072
-        val OBSERVATIONS = setOf("NO_LIGHT_SEEN", "UNEXPECTED_LIGHT_SEEN", "UNCLEAR")
+        val OBSERVATIONS = setOf("LIGHT_SEEN", "NO_LIGHT_SEEN", "UNEXPECTED_LIGHT_SEEN", "UNCLEAR")
     }
 }

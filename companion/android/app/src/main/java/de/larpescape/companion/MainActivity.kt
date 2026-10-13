@@ -325,26 +325,27 @@ class MainActivity : ComponentActivity() {
                                         modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("3 · Loslassen und messen") }
                                     OutlinedButton(onClick = model::requestDevelopmentLedPreflight,
                                         modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
-                                        Text("LED-Hardwareblocker vom Gerät abfragen · kein Licht")
+                                        Text("LED 0 kurz rot einschalten · 5 V / 100 mA Softwaregrenze")
                                     }
                                 }
                                 state.developmentLedReply?.let { led ->
                                     Text("LED-Schritt ${led.request.stepId}: ${led.outcome}; Gerätegrund ${led.rejection}; " +
                                         "Treiberaufrufe ${led.renderCalls}; Software-Schwarz ${led.blackSubmitted}; " +
                                         "Aus-Timer ${led.timerFired}.")
-                                    Text("Die Test-Firmware gibt bis zur Hardwarevorprüfung keinen LED-Reiz aus. " +
-                                        "Ein Schwarz-Aufruf würde keine physische Abschaltung beweisen.",
+                                    Text("Die Geräteantwort bestätigt nur Treiberaufrufe und Aus-Timer. " +
+                                        "Ob die LED sichtbar aufleuchtet und wieder ausgeht, bitte selbst beobachten.",
                                         style = MaterialTheme.typography.bodySmall)
                                 }
                                 state.developmentLedRecord?.let { record ->
                                     Text("Gespeicherter LED-Schritt ${record.stepId} · Antwort ${record.outcome} · " +
                                         "Nutzerbeobachtung ${record.userObservation ?: "offen"}.")
                                     if (record.userObservation == null) {
-                                        Text("Hast du während dieses gesperrten Schritts Licht gesehen? Die Auswahl qualifiziert die Verdrahtung nicht.")
+                                        Text("Hast du LED 0 kurz rot aufleuchten und danach ausgehen sehen? " +
+                                            "Die Beobachtung ist keine elektrische Strommessung.")
+                                        OutlinedButton(onClick = { model.recordDevelopmentLedUserObservation("LIGHT_SEEN") },
+                                            modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Kurz rot gesehen, danach aus") }
                                         OutlinedButton(onClick = { model.recordDevelopmentLedUserObservation("NO_LIGHT_SEEN") },
                                             modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Kein Licht gesehen") }
-                                        OutlinedButton(onClick = { model.recordDevelopmentLedUserObservation("UNEXPECTED_LIGHT_SEEN") },
-                                            modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Unerwartet Licht gesehen") }
                                         OutlinedButton(onClick = { model.recordDevelopmentLedUserObservation("UNCLEAR") },
                                             modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Beobachtung unklar") }
                                     }
@@ -352,9 +353,9 @@ class MainActivity : ComponentActivity() {
                                 OutlinedButton(onClick = {
                                     ledExportNotice = null
                                     if (runCatching { model.developmentLedObservationExportBytes() }.getOrNull() != null)
-                                        exportLedObservation.launch("led-vorpruefung-v1.json")
+                                        exportLedObservation.launch("led-einzelpruefung-v1.json")
                                     else ledExportNotice = "Noch kein gespeicherter LED-Schritt vorhanden."
-                                }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("LED-Vorprüfbeleg exportieren") }
+                                }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("LED-Prüfbericht exportieren") }
                                 ledExportNotice?.let { Text(it) }
                                 state.developmentRawReply?.let { raw ->
                                     Text("Wake-2-Messung Schritt ${raw.request.stepId}: ${raw.outcome}; " +

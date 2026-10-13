@@ -57,7 +57,7 @@ bool DevelopmentControl::process(
     value[64] = outcome(result);
     value[65] = 4; // Distinct development owner; never the synthetic/product owner.
     value[66] = 1; // Logical diagnostic schema.
-    value[67] = 0x03; // Wake-2 source read and LED blocker; no LED output.
+    value[67] = 0x03; // Wake-2 source read and bounded LED single step.
     if (request.command == ControlCommand::Grant &&
         result == DevelopmentAdmissionResult::Accepted) {
         write(value + 68, now, 8);

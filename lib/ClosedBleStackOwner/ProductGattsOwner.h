@@ -70,6 +70,12 @@ class ProductGattsOwner {
         larp::companion::Esp32GattsSource::DevelopmentRawWork &) noexcept;
     bool postDevelopmentRawResult(
         const larp::companion::Esp32GattsSource::DevelopmentRawResult &) noexcept;
+    bool takeDevelopmentLedWork(
+        larp::companion::Esp32GattsSource::DevelopmentLedWork &) noexcept;
+    bool developmentLedWorkCurrent(
+        const larp::companion::Esp32GattsSource::DevelopmentLedWork &) noexcept;
+    bool postDevelopmentLedResult(
+        const larp::companion::Esp32GattsSource::DevelopmentLedResult &) noexcept;
 #endif
 
   private:
