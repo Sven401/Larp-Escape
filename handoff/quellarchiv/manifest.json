@@ -1,0 +1,675 @@
+{
+  "group": "firmware-f1",
+  "captures": [
+    {
+      "kind": "tracked-patch",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "path": "f1-bond-reconnection\\tracked.patch",
+      "sha256": "d5959ed01ddc2b4f7d41ecbfd3d803f50f6b7f3ccd42eff472fa3d8cbb55b971",
+      "bytes": 44245,
+      "source_paths": [
+        ".gitattributes",
+        "include/Companion/PeerChallengeRead.h",
+        "lib/GattsWriteAdmission/Esp32GattsService.cpp",
+        "lib/GattsWriteAdmission/Esp32GattsService.h",
+        "lib/GattsWriteAdmission/Esp32GattsSource.cpp",
+        "lib/GattsWriteAdmission/Esp32GattsSource.h",
+        "lib/GattsWriteAdmission/GattsServiceDefinition.h",
+        "lib/GattsWriteAdmission/SdkGattsService.cpp",
+        "lib/GattsWriteAdmission/SdkGattsService.h",
+        "platformio.ini",
+        "scripts/check_format.py",
+        "src/GattsAbiProbe/main.cpp",
+        "test/test_configured_control/host_stubs/esp_gatts_api.h",
+        "test/test_configured_control/test_main.cpp"
+      ],
+      "source_id": "f1-bond-reconnection"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "docs/companion/fixtures/peer-auth/README.md",
+      "path": "f1-bond-reconnection\\files\\docs\\companion\\fixtures\\peer-auth\\README.md",
+      "sha256": "230535e81dc4a292ebf8a8030f585c0ed123a8654c980050eb1c39067d10eb5e",
+      "bytes": 1383,
+      "source_id": "f1-bond-reconnection"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "docs/companion/fixtures/peer-auth/observation.json",
+      "path": "f1-bond-reconnection\\files\\docs\\companion\\fixtures\\peer-auth\\observation.json",
+      "sha256": "de088914451110b11309c05ee4f421c9742519451de6b370f8ae22d9572d73f7",
+      "bytes": 907,
+      "source_id": "f1-bond-reconnection"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "docs/companion/fixtures/peer-challenge-issue/README.md",
+      "path": "f1-bond-reconnection\\files\\docs\\companion\\fixtures\\peer-challenge-issue\\README.md",
+      "sha256": "4cc29b2577b1dbfb8c2ef47c13b06c05736cde202520a7fbb1002c66600dd114",
+      "bytes": 1268,
+      "source_id": "f1-bond-reconnection"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "docs/companion/fixtures/peer-challenge-issue/observation.json",
+      "path": "f1-bond-reconnection\\files\\docs\\companion\\fixtures\\peer-challenge-issue\\observation.json",
+      "sha256": "53f6bed4c59ca28440395e29843746a55fa3ba778cf1a13658ed880a972c8170",
+      "bytes": 526,
+      "source_id": "f1-bond-reconnection"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "docs/companion/peer-auth-result-v1.md",
+      "path": "f1-bond-reconnection\\files\\docs\\companion\\peer-auth-result-v1.md",
+      "sha256": "4227997fa646349aa3a480b2d314c2c1edbbd4eb578d47fe0d650ce455e43a82",
+      "bytes": 5812,
+      "source_id": "f1-bond-reconnection"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "docs/companion/peer-challenge-issue-v1.md",
+      "path": "f1-bond-reconnection\\files\\docs\\companion\\peer-challenge-issue-v1.md",
+      "sha256": "d50628fc5750a4741663cf44ed27705e61ca81efa1cab2b5ef4bca29c8f64337",
+      "bytes": 4804,
+      "source_id": "f1-bond-reconnection"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "include/Companion/PeerAuthResult.h",
+      "path": "f1-bond-reconnection\\files\\include\\Companion\\PeerAuthResult.h",
+      "sha256": "d793e4eec70c3dbd8fc9821a7c81390e5a6e8a9c005f8265dc32a5bf930dc6c6",
+      "bytes": 1789,
+      "source_id": "f1-bond-reconnection"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "include/Companion/PeerChallengeIssue.h",
+      "path": "f1-bond-reconnection\\files\\include\\Companion\\PeerChallengeIssue.h",
+      "sha256": "ccd0d6b98761f653eba5c9b2f44abd82e0560d21b94929df118b6a86061733d0",
+      "bytes": 1001,
+      "source_id": "f1-bond-reconnection"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "lib/FreeRtosPeerAuthRuntime/FreeRtosPeerAuthRuntime.cpp",
+      "path": "f1-bond-reconnection\\files\\lib\\FreeRtosPeerAuthRuntime\\FreeRtosPeerAuthRuntime.cpp",
+      "sha256": "ce09e9e6a6f16c77d78579a7bd7dfe7d38c7c9e460f13cac3e752d651c5f50f9",
+      "bytes": 7340,
+      "source_id": "f1-bond-reconnection"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "lib/FreeRtosPeerAuthRuntime/FreeRtosPeerAuthRuntime.h",
+      "path": "f1-bond-reconnection\\files\\lib\\FreeRtosPeerAuthRuntime\\FreeRtosPeerAuthRuntime.h",
+      "sha256": "67cc9dabc54df6f9de6c783ac74b39f1a53a9bc1ab99c927871a9c4e043c38b5",
+      "bytes": 2342,
+      "source_id": "f1-bond-reconnection"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "lib/FreeRtosPeerChallengeIssueRuntime/FreeRtosPeerChallengeIssueRuntime.cpp",
+      "path": "f1-bond-reconnection\\files\\lib\\FreeRtosPeerChallengeIssueRuntime\\FreeRtosPeerChallengeIssueRuntime.cpp",
+      "sha256": "d4a4740060ecc7be00a08109e5fab3d411eb765e67f2e611fe58115c2ba85fcf",
+      "bytes": 2454,
+      "source_id": "f1-bond-reconnection"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "lib/FreeRtosPeerChallengeIssueRuntime/FreeRtosPeerChallengeIssueRuntime.h",
+      "path": "f1-bond-reconnection\\files\\lib\\FreeRtosPeerChallengeIssueRuntime\\FreeRtosPeerChallengeIssueRuntime.h",
+      "sha256": "60da326a3e2b5367e005cf0ed31a7b7d45c8cb01f347229374b376ee0bf7f485",
+      "bytes": 2078,
+      "source_id": "f1-bond-reconnection"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "lib/GattsWriteAdmission/Esp32GattsPeerAuth.cpp",
+      "path": "f1-bond-reconnection\\files\\lib\\GattsWriteAdmission\\Esp32GattsPeerAuth.cpp",
+      "sha256": "658b95cdcf8bd5c952313819a4b0bdb864e2f57f7cdea8a4a05ee4b2f913b9ac",
+      "bytes": 5980,
+      "source_id": "f1-bond-reconnection"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "scripts/check_f1_sdk_encryption.py",
+      "path": "f1-bond-reconnection\\files\\scripts\\check_f1_sdk_encryption.py",
+      "sha256": "71c531baaa2a54b9072dad2bdca2a5c42ba6b9973659af2ec3b1058682301beb",
+      "bytes": 5125,
+      "source_id": "f1-bond-reconnection"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "scripts/check_peer_auth.py",
+      "path": "f1-bond-reconnection\\files\\scripts\\check_peer_auth.py",
+      "sha256": "4383f0457f2b80eb8cdfb19a78cf81cc7dcf9bb8f0d2fbf4df17544343af72c9",
+      "bytes": 7211,
+      "source_id": "f1-bond-reconnection"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "scripts/check_peer_challenge_issue.py",
+      "path": "f1-bond-reconnection\\files\\scripts\\check_peer_challenge_issue.py",
+      "sha256": "49747710bf5b577a64f1e203b70fc5ad2f7c645287d5b9e3d80195babff46a0c",
+      "bytes": 3278,
+      "source_id": "f1-bond-reconnection"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "src/Companion/PeerAuthResult.cpp",
+      "path": "f1-bond-reconnection\\files\\src\\Companion\\PeerAuthResult.cpp",
+      "sha256": "4553476ed19729c53ac8abace7c42a3ee6fa3d2360a820b05283d6acf3d752ff",
+      "bytes": 2964,
+      "source_id": "f1-bond-reconnection"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "src/Companion/PeerChallengeIssue.cpp",
+      "path": "f1-bond-reconnection\\files\\src\\Companion\\PeerChallengeIssue.cpp",
+      "sha256": "7cbee5be7bc0724f39dbfdfe5da40e1d4ce3296d761ef53b95e5e937143fa0d5",
+      "bytes": 1058,
+      "source_id": "f1-bond-reconnection"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "src/GattsAbiProbe/F1EncryptAbi.cpp",
+      "path": "f1-bond-reconnection\\files\\src\\GattsAbiProbe\\F1EncryptAbi.cpp",
+      "sha256": "014eaeb2a6993e24ab415b02b2f8fbabf78c6c500e4462bdadb3407215c5fe6b",
+      "bytes": 493,
+      "source_id": "f1-bond-reconnection"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "test/test_configured_control/PeerAuthCases.h",
+      "path": "f1-bond-reconnection\\files\\test\\test_configured_control\\PeerAuthCases.h",
+      "sha256": "236c79dff4b3d3fb880475be1db29ad14b81092de570616ee2c6309c1b0dcd5d",
+      "bytes": 27046,
+      "source_id": "f1-bond-reconnection"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "test/test_configured_control/PeerChallengeIssueCases.h",
+      "path": "f1-bond-reconnection\\files\\test\\test_configured_control\\PeerChallengeIssueCases.h",
+      "sha256": "57fbe214b9a478ce43643fe6dc191482f291026932709dfb443eb3894c2022fc",
+      "bytes": 18399,
+      "source_id": "f1-bond-reconnection"
+    },
+    {
+      "kind": "tracked-patch",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "path": "firmware-f1-reencryption\\tracked.patch",
+      "sha256": "6356dfbce2abb6d77c47a1e4419ee46bcf41940cbeb6f41001bab3d8ab5dfba8",
+      "bytes": 54866,
+      "source_paths": [
+        ".gitattributes",
+        "docs/companion/fixtures/device-identity-store/metadata-v1.json",
+        "docs/companion/fixtures/device-identity-store/observation.json",
+        "docs/companion/fixtures/device-identity-store/record-v1.txt",
+        "include/Companion/PeerChallengeRead.h",
+        "lib/GattsWriteAdmission/Esp32GattsService.cpp",
+        "lib/GattsWriteAdmission/Esp32GattsService.h",
+        "lib/GattsWriteAdmission/Esp32GattsSource.cpp",
+        "lib/GattsWriteAdmission/Esp32GattsSource.h",
+        "lib/GattsWriteAdmission/GattsServiceDefinition.h",
+        "lib/GattsWriteAdmission/SdkGattsService.cpp",
+        "lib/GattsWriteAdmission/SdkGattsService.h",
+        "lib/GattsWriteAdmission/SdkPeerSecurityAbi.h",
+        "platformio.ini",
+        "scripts/check_format.py",
+        "src/GattsAbiProbe/main.cpp",
+        "test/test_configured_control/PeerLinkSecurityCases.h",
+        "test/test_configured_control/SdkPeerSecurityModel.h",
+        "test/test_configured_control/host_stubs/esp_gatts_api.h",
+        "test/test_configured_control/test_main.cpp"
+      ],
+      "source_id": "firmware-f1-reencryption"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "docs/companion/fixtures/peer-auth/README.md",
+      "path": "firmware-f1-reencryption\\files\\docs\\companion\\fixtures\\peer-auth\\README.md",
+      "sha256": "230535e81dc4a292ebf8a8030f585c0ed123a8654c980050eb1c39067d10eb5e",
+      "bytes": 1383,
+      "source_id": "firmware-f1-reencryption"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "docs/companion/fixtures/peer-auth/observation.json",
+      "path": "firmware-f1-reencryption\\files\\docs\\companion\\fixtures\\peer-auth\\observation.json",
+      "sha256": "de088914451110b11309c05ee4f421c9742519451de6b370f8ae22d9572d73f7",
+      "bytes": 907,
+      "source_id": "firmware-f1-reencryption"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "docs/companion/fixtures/peer-challenge-issue/README.md",
+      "path": "firmware-f1-reencryption\\files\\docs\\companion\\fixtures\\peer-challenge-issue\\README.md",
+      "sha256": "4cc29b2577b1dbfb8c2ef47c13b06c05736cde202520a7fbb1002c66600dd114",
+      "bytes": 1268,
+      "source_id": "firmware-f1-reencryption"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "docs/companion/fixtures/peer-challenge-issue/observation.json",
+      "path": "firmware-f1-reencryption\\files\\docs\\companion\\fixtures\\peer-challenge-issue\\observation.json",
+      "sha256": "53f6bed4c59ca28440395e29843746a55fa3ba778cf1a13658ed880a972c8170",
+      "bytes": 526,
+      "source_id": "firmware-f1-reencryption"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "docs/companion/peer-auth-result-v1.md",
+      "path": "firmware-f1-reencryption\\files\\docs\\companion\\peer-auth-result-v1.md",
+      "sha256": "4227997fa646349aa3a480b2d314c2c1edbbd4eb578d47fe0d650ce455e43a82",
+      "bytes": 5812,
+      "source_id": "firmware-f1-reencryption"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "docs/companion/peer-challenge-issue-v1.md",
+      "path": "firmware-f1-reencryption\\files\\docs\\companion\\peer-challenge-issue-v1.md",
+      "sha256": "d50628fc5750a4741663cf44ed27705e61ca81efa1cab2b5ef4bca29c8f64337",
+      "bytes": 4804,
+      "source_id": "firmware-f1-reencryption"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "include/Companion/PeerAuthResult.h",
+      "path": "firmware-f1-reencryption\\files\\include\\Companion\\PeerAuthResult.h",
+      "sha256": "d793e4eec70c3dbd8fc9821a7c81390e5a6e8a9c005f8265dc32a5bf930dc6c6",
+      "bytes": 1789,
+      "source_id": "firmware-f1-reencryption"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "include/Companion/PeerChallengeIssue.h",
+      "path": "firmware-f1-reencryption\\files\\include\\Companion\\PeerChallengeIssue.h",
+      "sha256": "ccd0d6b98761f653eba5c9b2f44abd82e0560d21b94929df118b6a86061733d0",
+      "bytes": 1001,
+      "source_id": "firmware-f1-reencryption"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "include/Companion/PeerHciBirthWitness.h",
+      "path": "firmware-f1-reencryption\\files\\include\\Companion\\PeerHciBirthWitness.h",
+      "sha256": "f2682506f7788e22a0fed95f5c214df6b17d8909df0ca2475db5da2b82f30bb4",
+      "bytes": 1236,
+      "source_id": "firmware-f1-reencryption"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "include/Companion/PeerReencryptionAttempt.h",
+      "path": "firmware-f1-reencryption\\files\\include\\Companion\\PeerReencryptionAttempt.h",
+      "sha256": "e8aef40ea6d4345cd1f5e1bee50e97e65a4f4efd028660d03619d685d2600a30",
+      "bytes": 3080,
+      "source_id": "firmware-f1-reencryption"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "lib/FreeRtosPeerAuthRuntime/FreeRtosPeerAuthRuntime.cpp",
+      "path": "firmware-f1-reencryption\\files\\lib\\FreeRtosPeerAuthRuntime\\FreeRtosPeerAuthRuntime.cpp",
+      "sha256": "ce09e9e6a6f16c77d78579a7bd7dfe7d38c7c9e460f13cac3e752d651c5f50f9",
+      "bytes": 7340,
+      "source_id": "firmware-f1-reencryption"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "lib/FreeRtosPeerAuthRuntime/FreeRtosPeerAuthRuntime.h",
+      "path": "firmware-f1-reencryption\\files\\lib\\FreeRtosPeerAuthRuntime\\FreeRtosPeerAuthRuntime.h",
+      "sha256": "67cc9dabc54df6f9de6c783ac74b39f1a53a9bc1ab99c927871a9c4e043c38b5",
+      "bytes": 2342,
+      "source_id": "firmware-f1-reencryption"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "lib/FreeRtosPeerChallengeIssueRuntime/FreeRtosPeerChallengeIssueRuntime.cpp",
+      "path": "firmware-f1-reencryption\\files\\lib\\FreeRtosPeerChallengeIssueRuntime\\FreeRtosPeerChallengeIssueRuntime.cpp",
+      "sha256": "d4a4740060ecc7be00a08109e5fab3d411eb765e67f2e611fe58115c2ba85fcf",
+      "bytes": 2454,
+      "source_id": "firmware-f1-reencryption"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "lib/FreeRtosPeerChallengeIssueRuntime/FreeRtosPeerChallengeIssueRuntime.h",
+      "path": "firmware-f1-reencryption\\files\\lib\\FreeRtosPeerChallengeIssueRuntime\\FreeRtosPeerChallengeIssueRuntime.h",
+      "sha256": "60da326a3e2b5367e005cf0ed31a7b7d45c8cb01f347229374b376ee0bf7f485",
+      "bytes": 2078,
+      "source_id": "firmware-f1-reencryption"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "lib/GattsWriteAdmission/Esp32GattsPeerAuth.cpp",
+      "path": "firmware-f1-reencryption\\files\\lib\\GattsWriteAdmission\\Esp32GattsPeerAuth.cpp",
+      "sha256": "658b95cdcf8bd5c952313819a4b0bdb864e2f57f7cdea8a4a05ee4b2f913b9ac",
+      "bytes": 5980,
+      "source_id": "firmware-f1-reencryption"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "scripts/check_f1_sdk_encryption.py",
+      "path": "firmware-f1-reencryption\\files\\scripts\\check_f1_sdk_encryption.py",
+      "sha256": "71c531baaa2a54b9072dad2bdca2a5c42ba6b9973659af2ec3b1058682301beb",
+      "bytes": 5125,
+      "source_id": "firmware-f1-reencryption"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "scripts/check_peer_auth.py",
+      "path": "firmware-f1-reencryption\\files\\scripts\\check_peer_auth.py",
+      "sha256": "4383f0457f2b80eb8cdfb19a78cf81cc7dcf9bb8f0d2fbf4df17544343af72c9",
+      "bytes": 7211,
+      "source_id": "firmware-f1-reencryption"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "scripts/check_peer_challenge_issue.py",
+      "path": "firmware-f1-reencryption\\files\\scripts\\check_peer_challenge_issue.py",
+      "sha256": "49747710bf5b577a64f1e203b70fc5ad2f7c645287d5b9e3d80195babff46a0c",
+      "bytes": 3278,
+      "source_id": "firmware-f1-reencryption"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "src/Companion/PeerAuthResult.cpp",
+      "path": "firmware-f1-reencryption\\files\\src\\Companion\\PeerAuthResult.cpp",
+      "sha256": "4553476ed19729c53ac8abace7c42a3ee6fa3d2360a820b05283d6acf3d752ff",
+      "bytes": 2964,
+      "source_id": "firmware-f1-reencryption"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "src/Companion/PeerChallengeIssue.cpp",
+      "path": "firmware-f1-reencryption\\files\\src\\Companion\\PeerChallengeIssue.cpp",
+      "sha256": "7cbee5be7bc0724f39dbfdfe5da40e1d4ce3296d761ef53b95e5e937143fa0d5",
+      "bytes": 1058,
+      "source_id": "firmware-f1-reencryption"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "src/GattsAbiProbe/F1EncryptAbi.cpp",
+      "path": "firmware-f1-reencryption\\files\\src\\GattsAbiProbe\\F1EncryptAbi.cpp",
+      "sha256": "a6fb113d876528b8af1b639488fddf89b8f533d93a0102bc1edd181736981f80",
+      "bytes": 635,
+      "source_id": "firmware-f1-reencryption"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "test/test_configured_control/PeerAuthCases.h",
+      "path": "firmware-f1-reencryption\\files\\test\\test_configured_control\\PeerAuthCases.h",
+      "sha256": "236c79dff4b3d3fb880475be1db29ad14b81092de570616ee2c6309c1b0dcd5d",
+      "bytes": 27046,
+      "source_id": "firmware-f1-reencryption"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "test/test_configured_control/PeerChallengeIssueCases.h",
+      "path": "firmware-f1-reencryption\\files\\test\\test_configured_control\\PeerChallengeIssueCases.h",
+      "sha256": "57fbe214b9a478ce43643fe6dc191482f291026932709dfb443eb3894c2022fc",
+      "bytes": 18399,
+      "source_id": "firmware-f1-reencryption"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "test/test_configured_control/PeerReencryptionAttemptCases.h",
+      "path": "firmware-f1-reencryption\\files\\test\\test_configured_control\\PeerReencryptionAttemptCases.h",
+      "sha256": "faeaa01a2da495aff93ee671fe854c343c034d7cd35e78acdabb2ad24cbaec35",
+      "bytes": 4614,
+      "source_id": "firmware-f1-reencryption"
+    },
+    {
+      "kind": "tracked-patch",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "path": "firmware-independent-check\\tracked.patch",
+      "sha256": "93b8e5b49fc7a6ac755ac4390dbe4de9766a12c7ac3d59dd823e8db9a6dc61ae",
+      "bytes": 1279,
+      "source_paths": [
+        ".gitattributes",
+        "src/GameExecution/Session.cpp"
+      ],
+      "source_id": "firmware-independent-check"
+    },
+    {
+      "kind": "tracked-patch",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "path": "firmware-peer-ingress\\tracked.patch",
+      "sha256": "bcabb3e3ceb089c9bcfeff53858b48ab1cd02e7bd5ce89c360ac451c70a98141",
+      "bytes": 43454,
+      "source_paths": [
+        ".gitattributes",
+        "docs/companion/fixtures/device-identity-store/metadata-v1.json",
+        "docs/companion/fixtures/device-identity-store/observation.json",
+        "docs/companion/fixtures/device-identity-store/record-v1.txt",
+        "docs/companion/fixtures/peer-proof/test-vector-v1.json",
+        "docs/companion/fixtures/peer-proof/verification-observation.json",
+        "include/Companion/PeerChallengeRead.h",
+        "lib/GattsWriteAdmission/Esp32GattsService.cpp",
+        "lib/GattsWriteAdmission/Esp32GattsService.h",
+        "lib/GattsWriteAdmission/Esp32GattsSource.cpp",
+        "lib/GattsWriteAdmission/Esp32GattsSource.h",
+        "lib/GattsWriteAdmission/GattsServiceDefinition.h",
+        "lib/GattsWriteAdmission/SdkGattsService.cpp",
+        "lib/GattsWriteAdmission/SdkGattsService.h",
+        "scripts/check_format.py",
+        "src/GattsAbiProbe/main.cpp",
+        "test/test_configured_control/host_stubs/esp_gatts_api.h",
+        "test/test_configured_control/test_main.cpp"
+      ],
+      "source_id": "firmware-peer-ingress"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "docs/companion/fixtures/peer-auth/README.md",
+      "path": "firmware-peer-ingress\\files\\docs\\companion\\fixtures\\peer-auth\\README.md",
+      "sha256": "230535e81dc4a292ebf8a8030f585c0ed123a8654c980050eb1c39067d10eb5e",
+      "bytes": 1383,
+      "source_id": "firmware-peer-ingress"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "docs/companion/fixtures/peer-auth/observation.json",
+      "path": "firmware-peer-ingress\\files\\docs\\companion\\fixtures\\peer-auth\\observation.json",
+      "sha256": "de088914451110b11309c05ee4f421c9742519451de6b370f8ae22d9572d73f7",
+      "bytes": 907,
+      "source_id": "firmware-peer-ingress"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "docs/companion/fixtures/peer-challenge-issue/README.md",
+      "path": "firmware-peer-ingress\\files\\docs\\companion\\fixtures\\peer-challenge-issue\\README.md",
+      "sha256": "4cc29b2577b1dbfb8c2ef47c13b06c05736cde202520a7fbb1002c66600dd114",
+      "bytes": 1268,
+      "source_id": "firmware-peer-ingress"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "docs/companion/fixtures/peer-challenge-issue/observation.json",
+      "path": "firmware-peer-ingress\\files\\docs\\companion\\fixtures\\peer-challenge-issue\\observation.json",
+      "sha256": "53f6bed4c59ca28440395e29843746a55fa3ba778cf1a13658ed880a972c8170",
+      "bytes": 526,
+      "source_id": "firmware-peer-ingress"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "docs/companion/peer-auth-result-v1.md",
+      "path": "firmware-peer-ingress\\files\\docs\\companion\\peer-auth-result-v1.md",
+      "sha256": "4227997fa646349aa3a480b2d314c2c1edbbd4eb578d47fe0d650ce455e43a82",
+      "bytes": 5812,
+      "source_id": "firmware-peer-ingress"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "docs/companion/peer-challenge-issue-v1.md",
+      "path": "firmware-peer-ingress\\files\\docs\\companion\\peer-challenge-issue-v1.md",
+      "sha256": "d50628fc5750a4741663cf44ed27705e61ca81efa1cab2b5ef4bca29c8f64337",
+      "bytes": 4804,
+      "source_id": "firmware-peer-ingress"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "include/Companion/PeerAuthResult.h",
+      "path": "firmware-peer-ingress\\files\\include\\Companion\\PeerAuthResult.h",
+      "sha256": "d793e4eec70c3dbd8fc9821a7c81390e5a6e8a9c005f8265dc32a5bf930dc6c6",
+      "bytes": 1789,
+      "source_id": "firmware-peer-ingress"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "include/Companion/PeerChallengeIssue.h",
+      "path": "firmware-peer-ingress\\files\\include\\Companion\\PeerChallengeIssue.h",
+      "sha256": "ccd0d6b98761f653eba5c9b2f44abd82e0560d21b94929df118b6a86061733d0",
+      "bytes": 1001,
+      "source_id": "firmware-peer-ingress"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "lib/FreeRtosPeerAuthRuntime/FreeRtosPeerAuthRuntime.cpp",
+      "path": "firmware-peer-ingress\\files\\lib\\FreeRtosPeerAuthRuntime\\FreeRtosPeerAuthRuntime.cpp",
+      "sha256": "ce09e9e6a6f16c77d78579a7bd7dfe7d38c7c9e460f13cac3e752d651c5f50f9",
+      "bytes": 7340,
+      "source_id": "firmware-peer-ingress"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "lib/FreeRtosPeerAuthRuntime/FreeRtosPeerAuthRuntime.h",
+      "path": "firmware-peer-ingress\\files\\lib\\FreeRtosPeerAuthRuntime\\FreeRtosPeerAuthRuntime.h",
+      "sha256": "67cc9dabc54df6f9de6c783ac74b39f1a53a9bc1ab99c927871a9c4e043c38b5",
+      "bytes": 2342,
+      "source_id": "firmware-peer-ingress"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "lib/FreeRtosPeerChallengeIssueRuntime/FreeRtosPeerChallengeIssueRuntime.cpp",
+      "path": "firmware-peer-ingress\\files\\lib\\FreeRtosPeerChallengeIssueRuntime\\FreeRtosPeerChallengeIssueRuntime.cpp",
+      "sha256": "d4a4740060ecc7be00a08109e5fab3d411eb765e67f2e611fe58115c2ba85fcf",
+      "bytes": 2454,
+      "source_id": "firmware-peer-ingress"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "lib/FreeRtosPeerChallengeIssueRuntime/FreeRtosPeerChallengeIssueRuntime.h",
+      "path": "firmware-peer-ingress\\files\\lib\\FreeRtosPeerChallengeIssueRuntime\\FreeRtosPeerChallengeIssueRuntime.h",
+      "sha256": "60da326a3e2b5367e005cf0ed31a7b7d45c8cb01f347229374b376ee0bf7f485",
+      "bytes": 2078,
+      "source_id": "firmware-peer-ingress"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "lib/GattsWriteAdmission/Esp32GattsPeerAuth.cpp",
+      "path": "firmware-peer-ingress\\files\\lib\\GattsWriteAdmission\\Esp32GattsPeerAuth.cpp",
+      "sha256": "658b95cdcf8bd5c952313819a4b0bdb864e2f57f7cdea8a4a05ee4b2f913b9ac",
+      "bytes": 5980,
+      "source_id": "firmware-peer-ingress"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "scripts/check_peer_auth.py",
+      "path": "firmware-peer-ingress\\files\\scripts\\check_peer_auth.py",
+      "sha256": "4383f0457f2b80eb8cdfb19a78cf81cc7dcf9bb8f0d2fbf4df17544343af72c9",
+      "bytes": 7211,
+      "source_id": "firmware-peer-ingress"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "scripts/check_peer_challenge_issue.py",
+      "path": "firmware-peer-ingress\\files\\scripts\\check_peer_challenge_issue.py",
+      "sha256": "49747710bf5b577a64f1e203b70fc5ad2f7c645287d5b9e3d80195babff46a0c",
+      "bytes": 3278,
+      "source_id": "firmware-peer-ingress"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "src/Companion/PeerAuthResult.cpp",
+      "path": "firmware-peer-ingress\\files\\src\\Companion\\PeerAuthResult.cpp",
+      "sha256": "4553476ed19729c53ac8abace7c42a3ee6fa3d2360a820b05283d6acf3d752ff",
+      "bytes": 2964,
+      "source_id": "firmware-peer-ingress"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "src/Companion/PeerChallengeIssue.cpp",
+      "path": "firmware-peer-ingress\\files\\src\\Companion\\PeerChallengeIssue.cpp",
+      "sha256": "7cbee5be7bc0724f39dbfdfe5da40e1d4ce3296d761ef53b95e5e937143fa0d5",
+      "bytes": 1058,
+      "source_id": "firmware-peer-ingress"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "test/test_configured_control/PeerAuthCases.h",
+      "path": "firmware-peer-ingress\\files\\test\\test_configured_control\\PeerAuthCases.h",
+      "sha256": "236c79dff4b3d3fb880475be1db29ad14b81092de570616ee2c6309c1b0dcd5d",
+      "bytes": 27046,
+      "source_id": "firmware-peer-ingress"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "7f2a3e44223cc045aea46f78b3c124ede615573c",
+      "source_path": "test/test_configured_control/PeerChallengeIssueCases.h",
+      "path": "firmware-peer-ingress\\files\\test\\test_configured_control\\PeerChallengeIssueCases.h",
+      "sha256": "57fbe214b9a478ce43643fe6dc191482f291026932709dfb443eb3894c2022fc",
+      "bytes": 18399,
+      "source_id": "firmware-peer-ingress"
+    }
+  ]
+}

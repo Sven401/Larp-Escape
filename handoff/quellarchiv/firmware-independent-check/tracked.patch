@@ -1,0 +1,31 @@
+diff --git a/.gitattributes b/.gitattributes
+index 79a009a..1364e6a 100644
+--- a/.gitattributes
++++ b/.gitattributes
+@@ -14,3 +14,5 @@ docs/companion/fixtures/peer-security/*.json text eol=lf
+ docs/companion/fixtures/peer-grant/*.json text eol=lf
+ 
+ docs/companion/fixtures/peer-challenge-read/*.json text eol=lf
++
++docs/companion/fixtures/device-identity-store/* text eol=lf
+diff --git a/src/GameExecution/Session.cpp b/src/GameExecution/Session.cpp
+index d065966..5555fe6 100644
+--- a/src/GameExecution/Session.cpp
++++ b/src/GameExecution/Session.cpp
+@@ -156,9 +156,15 @@ bool Session::pendingAudio() const {
+     return false;
+ }
+ bool Session::read(Field field, ComponentId component, std::uint32_t &value) noexcept {
++    if (profile_ == nullptr)
++        return false;
+     const std::uint8_t index = componentIndex(component);
+-    if (component.value != 0 && (index == Missing || !deviceStates_[index].status.available))
++    if (field <= Field::AllWakeActive) {
++        if (component.value == 0 || index == Missing || !deviceStates_[index].status.available)
++            return false;
++    } else if (component.value != 0) {
+         return false;
++    }
+     switch (field) {
+     case Field::AudioBusy:
+         value = deviceStates_[index].sample.audioBusy ? 1 : 0;

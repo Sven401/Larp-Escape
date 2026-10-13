@@ -1,0 +1,13 @@
+{
+  "scope": "original_sdk_issue_model_v1",
+  "issueHex": "010b02000000000000000000000000000003",
+  "challengeHex": "4c4152502d504545522d503235362d3101090100010000000000000000000000000000027856341201efcdab04030201020000000101010001000000020000000000000000000000000000030102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20",
+  "readTransaction": 2,
+  "readConnection": 257,
+  "readAttribute": 68,
+  "readStatus": 0,
+  "nonceCalls": 1,
+  "actorAckPrincipal": 7,
+  "actorAckGameMaster": true,
+  "rfMeasured": false
+}

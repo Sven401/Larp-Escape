@@ -1,0 +1,822 @@
+diff --git a/.gitattributes b/.gitattributes
+index 79a009a..a5674ea 100644
+--- a/.gitattributes
++++ b/.gitattributes
+@@ -14,3 +14,10 @@ docs/companion/fixtures/peer-security/*.json text eol=lf
+ docs/companion/fixtures/peer-grant/*.json text eol=lf
+ 
+ docs/companion/fixtures/peer-challenge-read/*.json text eol=lf
++
++docs/companion/fixtures/device-identity-store/*.txt text eol=lf
++docs/companion/fixtures/device-identity-store/*.json text eol=lf
++docs/companion/fixtures/peer-challenge-issue/*.json text eol=lf
++docs/companion/fixtures/peer-auth/*.json text eol=lf
++
++docs/companion/fixtures/peer-proof/*.json text eol=lf
+diff --git a/include/Companion/PeerChallengeRead.h b/include/Companion/PeerChallengeRead.h
+index 5ebe387..8f6904c 100644
+--- a/include/Companion/PeerChallengeRead.h
++++ b/include/Companion/PeerChallengeRead.h
+@@ -26,6 +26,8 @@ struct PeerChallengeReadReply {
+     // ATT Ok=0, InvalidOffset=7 or InsufficientAuthorization=8 only.
+     std::uint8_t status = 8;
+ };
++class IPeerChallengeIssueIngress;
++class IPeerAuthIngress;
+ class IPeerChallengeReadIngress {
+   public:
+     virtual ~IPeerChallengeReadIngress() = default;
+@@ -37,8 +39,11 @@ struct PeerChallengeReadSetup {
+     BootIdentity boot;
+     const IPeerProofContext *context = nullptr;
+     IPeerChallengeReadIngress *ingress = nullptr;
++    IPeerChallengeIssueIngress *issue = nullptr;
++    IPeerAuthIngress *auth = nullptr;
+     bool operator==(const PeerChallengeReadSetup &other) const noexcept {
+-        return boot == other.boot && context == other.context && ingress == other.ingress;
++        return boot == other.boot && context == other.context && ingress == other.ingress &&
++               issue == other.issue && auth == other.auth;
+     }
+ };
+ } // namespace companion
+diff --git a/lib/GattsWriteAdmission/Esp32GattsService.cpp b/lib/GattsWriteAdmission/Esp32GattsService.cpp
+index 40664ce..33c0141 100644
+--- a/lib/GattsWriteAdmission/Esp32GattsService.cpp
++++ b/lib/GattsWriteAdmission/Esp32GattsService.cpp
+@@ -1,6 +1,12 @@
+ #include "Esp32GattsService.h"
+ namespace larp {
+ namespace companion {
++std::uint16_t Esp32GattsService::handles() const noexcept {
++    return challenge_.auth      ? GattsServiceDefinition::AuthHandles
++           : challenge_.issue   ? GattsServiceDefinition::IssueHandles
++           : challenge_.ingress ? GattsServiceDefinition::ChallengeHandles
++                                : GattsServiceDefinition::Handles;
++}
+ void Esp32GattsService::phase(GattsServicePhase next) noexcept {
+     phase_ = next;
+     portENTER_CRITICAL(&mutex_);
+@@ -17,8 +23,10 @@ bool Esp32GattsService::begin() noexcept {
+     worker_ = task;
+     startedAt_ = clock_.nowMilliseconds();
+     queue_ = xQueueCreateStatic(Depth, sizeof(Copied), storage_, &control_);
+-    if (!queue_ || (challenge_.ingress && (!challenge_.context || !challenge_.boot.valid())) ||
+-        (!challenge_.ingress && (challenge_.context || challenge_.boot.valid()))) {
++    if ((challenge_.auth && !challenge_.issue) || !queue_ ||
++        (challenge_.ingress && (!challenge_.context || !challenge_.boot.valid())) ||
++        (!challenge_.ingress &&
++         (challenge_.context || challenge_.boot.valid() || challenge_.issue))) {
+         phase(GattsServicePhase::Failed);
+         return false;
+     }
+@@ -114,17 +122,14 @@ void Esp32GattsService::service() noexcept {
+             setup_.original = value.original;
+             phase(GattsServicePhase::Creating);
+             accepted = posted = true;
+-            if (!driver_.create(value.original.interface, challenge_.ingress != nullptr))
++            if (!driver_.create(value.original.interface, challenge_.ingress != nullptr,
++                                challenge_.issue != nullptr, challenge_.auth != nullptr))
+                 phase(GattsServicePhase::Failed);
+         } else if (event.success && phase_ == GattsServicePhase::Creating &&
+                    event.kind == GattsServiceEventKind::Created && event.uuid128 &&
+                    event.uuid == GattsServiceDefinition::service() && event.primary &&
+                    !event.instance && event.service &&
+-                   static_cast<std::uint32_t>(event.service) +
+-                           (challenge_.ingress ? GattsServiceDefinition::ChallengeHandles
+-                                               : GattsServiceDefinition::Handles) -
+-                           1 <=
+-                       UINT16_MAX) {
++                   static_cast<std::uint32_t>(event.service) + handles() - 1 <= UINT16_MAX) {
+             setup_.service = event.service;
+             phase(GattsServicePhase::Command);
+             accepted = posted = true;
+@@ -134,11 +139,7 @@ void Esp32GattsService::service() noexcept {
+                    event.kind == GattsServiceEventKind::Attribute && event.uuid128 &&
+                    event.uuid == GattsServiceDefinition::command() &&
+                    event.service == setup_.service && event.attribute > setup_.service &&
+-                   event.attribute <= setup_.service +
+-                                          (challenge_.ingress
+-                                               ? GattsServiceDefinition::ChallengeHandles
+-                                               : GattsServiceDefinition::Handles) -
+-                                          1) {
++                   event.attribute <= setup_.service + handles() - 1) {
+             setup_.command = event.attribute;
+             phase(GattsServicePhase::Profile);
+             accepted = posted = true;
+@@ -148,11 +149,7 @@ void Esp32GattsService::service() noexcept {
+                    event.kind == GattsServiceEventKind::Attribute && event.uuid128 &&
+                    event.uuid == GattsServiceDefinition::profile() &&
+                    event.service == setup_.service && event.attribute > setup_.command &&
+-                   event.attribute <= setup_.service +
+-                                          (challenge_.ingress
+-                                               ? GattsServiceDefinition::ChallengeHandles
+-                                               : GattsServiceDefinition::Handles) -
+-                                          1) {
++                   event.attribute <= setup_.service + handles() - 1) {
+             setup_.profile = event.attribute;
+             accepted = posted = true;
+             if (challenge_.ingress) {
+@@ -169,12 +166,57 @@ void Esp32GattsService::service() noexcept {
+                    event.kind == GattsServiceEventKind::Attribute && event.uuid128 &&
+                    event.uuid == GattsServiceDefinition::challenge() &&
+                    event.service == setup_.service && event.attribute > setup_.profile &&
+-                   event.attribute <=
+-                       setup_.service + GattsServiceDefinition::ChallengeHandles - 1) {
++                   event.attribute <= setup_.service + handles() - 1) {
+             setup_.challenge = event.attribute;
++            accepted = posted = true;
++            if (challenge_.issue) {
++                phase(GattsServicePhase::Issue);
++                if (!driver_.addIssue(setup_.service))
++                    phase(GattsServicePhase::Failed);
++            } else {
++                setup_.receivedAt = value.receivedAt;
++                phase(GattsServicePhase::Installing);
++                if (source_.postEndpointSetup(setup_, responses_, challenge_) !=
++                    GattsEndpointSetupPost::Posted)
++                    phase(GattsServicePhase::Failed);
++            }
++        } else if (event.success && phase_ == GattsServicePhase::Issue &&
++                   event.kind == GattsServiceEventKind::Attribute && event.uuid128 &&
++                   event.uuid == GattsServiceDefinition::issue() &&
++                   event.service == setup_.service && event.attribute > setup_.challenge &&
++                   event.attribute <= setup_.service + handles() - 1) {
++            setup_.issue = event.attribute;
++            accepted = posted = true;
++            if (challenge_.auth) {
++                phase(GattsServicePhase::Proof);
++                if (!driver_.addProof(setup_.service))
++                    phase(GattsServicePhase::Failed);
++            } else {
++                setup_.receivedAt = value.receivedAt;
++                phase(GattsServicePhase::Installing);
++                if (source_.postEndpointSetup(setup_, responses_, challenge_) !=
++                    GattsEndpointSetupPost::Posted)
++                    phase(GattsServicePhase::Failed);
++            }
++        } else if (event.success && phase_ == GattsServicePhase::Proof &&
++                   event.kind == GattsServiceEventKind::Attribute && event.uuid128 &&
++                   event.uuid == GattsServiceDefinition::proof() &&
++                   event.service == setup_.service && event.attribute > setup_.issue &&
++                   event.attribute <= setup_.service + handles() - 1) {
++            setup_.proof = event.attribute;
++            accepted = posted = true;
++            phase(GattsServicePhase::Result);
++            if (!driver_.addResult(setup_.service))
++                phase(GattsServicePhase::Failed);
++        } else if (event.success && phase_ == GattsServicePhase::Result &&
++                   event.kind == GattsServiceEventKind::Attribute && event.uuid128 &&
++                   event.uuid == GattsServiceDefinition::result() &&
++                   event.service == setup_.service && event.attribute > setup_.proof &&
++                   event.attribute <= setup_.service + handles() - 1) {
++            setup_.result = event.attribute;
+             setup_.receivedAt = value.receivedAt;
+-            phase(GattsServicePhase::Installing);
+             accepted = posted = true;
++            phase(GattsServicePhase::Installing);
+             if (source_.postEndpointSetup(setup_, responses_, challenge_) !=
+                 GattsEndpointSetupPost::Posted)
+                 phase(GattsServicePhase::Failed);
+diff --git a/lib/GattsWriteAdmission/Esp32GattsService.h b/lib/GattsWriteAdmission/Esp32GattsService.h
+index 9d2eec3..d110701 100644
+--- a/lib/GattsWriteAdmission/Esp32GattsService.h
++++ b/lib/GattsWriteAdmission/Esp32GattsService.h
+@@ -12,7 +12,10 @@ enum class GattsServicePhase : std::uint8_t {
+     Starting,
+     Ready,
+     Failed,
+-    Challenge
++    Challenge,
++    Issue,
++    Proof,
++    Result
+ };
+ enum class GattsServiceCopy : std::uint8_t { Copied, Ignored, Unavailable, Overflow };
+ struct GattsServiceSnapshot {
+@@ -62,6 +65,7 @@ class Esp32GattsService {
+     std::uint32_t startedAt_ = 0;
+     bool broken_ = false, busy_ = false, havePrevious_ = false;
+     GattsServicePhase phase_ = GattsServicePhase::Idle;
++    std::uint16_t handles() const noexcept;
+     void phase(GattsServicePhase) noexcept;
+     bool current(const Copied &) const noexcept;
+ };
+diff --git a/lib/GattsWriteAdmission/Esp32GattsSource.cpp b/lib/GattsWriteAdmission/Esp32GattsSource.cpp
+index 12f91ea..69999a6 100644
+--- a/lib/GattsWriteAdmission/Esp32GattsSource.cpp
++++ b/lib/GattsWriteAdmission/Esp32GattsSource.cpp
+@@ -22,6 +22,7 @@ std::uint32_t registrationCounter = 0;
+ std::uint32_t peerRolePostCounter = 0;
+ std::uint32_t proofGrantPostCounter = 0;
+ std::uint32_t challengeReadPostCounter = 0;
++std::uint32_t peerAuthReadPostCounter = 0;
+ portMUX_TYPE registrationMutex = portMUX_INITIALIZER_UNLOCKED;
+ void connectionCallback(std::uint8_t interface, std::uint8_t *address, std::uint16_t packed,
+                         bool connected, std::uint16_t reason, std::uint8_t transport) {
+@@ -338,15 +339,24 @@ Esp32GattsSource::postEndpointSetup(const GattsEndpointSetup &caller,
+     setupPosting_ = true;
+     GattsSourceRegistration current;
+     const auto end = static_cast<std::uint32_t>(value.service) +
+-                     (value.challenge ? GattsServiceDefinition::ChallengeHandles
+-                                      : GattsServiceDefinition::Handles) -
++                     (value.proof       ? GattsServiceDefinition::AuthHandles
++                      : value.issue     ? GattsServiceDefinition::IssueHandles
++                      : value.challenge ? GattsServiceDefinition::ChallengeHandles
++                                        : GattsServiceDefinition::Handles) -
+                      1;
+     if (!readRegistration(current) || !(current == value.original) || !value.service ||
+         value.command <= value.service || value.profile <= value.command || value.profile > end ||
+         (value.challenge &&
+          (value.challenge <= value.profile || value.challenge > end || !challenge.boot.valid() ||
+           !challenge.context || !challenge.ingress)) ||
+-        (!value.challenge && (challenge.boot.valid() || challenge.context || challenge.ingress)) ||
++        (!value.challenge &&
++         (challenge.boot.valid() || challenge.context || challenge.ingress || challenge.issue)) ||
++        (value.issue && (!value.challenge || value.issue <= value.challenge || value.issue > end ||
++                         !challenge.issue)) ||
++        (!value.issue && challenge.issue) ||
++        ((value.proof || value.result || challenge.auth) &&
++         (!value.issue || !value.proof || !value.result || !challenge.auth ||
++          value.proof <= value.issue || value.result <= value.proof || value.result > end)) ||
+         end > UINT16_MAX ||
+         clock_.nowMilliseconds() - value.receivedAt >=
+             GattsServiceDefinition::EndpointDeadlineMilliseconds) {
+@@ -420,6 +430,12 @@ void Esp32GattsSource::installEndpoints(void *context) noexcept {
+         installed = challenge.context && challenge.ingress &&
+                     source.configurePeerProofGrantNow(challenge.boot, *challenge.context) &&
+                     source.configureChallengeReadNow(value.challenge, *challenge.ingress);
++    if (installed && value.issue)
++        installed =
++            challenge.issue && source.configureChallengeIssueNow(value.issue, *challenge.issue);
++    if (installed && value.proof)
++        installed = challenge.auth &&
++                    source.configurePeerAuthNow(value.proof, value.result, *challenge.auth);
+     portENTER_CRITICAL(&source.mutex_);
+     source.setup_.state = installed ? 3 : 4;
+     portEXIT_CRITICAL(&source.mutex_);
+@@ -884,7 +900,8 @@ bool Esp32GattsSource::requestNow(std::uint16_t packed, std::uint32_t transactio
+         if (!borrowed)
+             return challengeAttribute_ != 0;
+         const auto read = borrowed->read;
+-        if (!challengeAttribute_ || read.handle != challengeAttribute_)
++        const bool resultRead = resultAttribute_ && read.handle == resultAttribute_;
++        if ((!challengeAttribute_ || read.handle != challengeAttribute_) && !resultRead)
+             return false;
+         PeerChallengeReadRequest value;
+         value.attribute = read.handle;
+@@ -905,7 +922,10 @@ bool Esp32GattsSource::requestNow(std::uint16_t packed, std::uint32_t transactio
+         value.lifecycle = transport.lifecycle;
+         value.address = transport.address;
+         value.receivedAt = clock_.nowMilliseconds();
+-        if (challengeReadProducerNow(value))
++        if (resultRead) {
++            if (authIngress_ && peerAuthReadProducerNow(value))
++                (void)authIngress_->copyResultRead(value);
++        } else if (challengeReadProducerNow(value))
+             (void)challengeIngress_->copyRead(value);
+         return true;
+     }
+@@ -941,6 +961,54 @@ bool Esp32GattsSource::requestNow(std::uint16_t packed, std::uint32_t transactio
+     if (type == 3)
+         event.attribute = command_;
+     event.peerAddress = live_.peerAddress;
++    if (issueAttribute_ && event.attribute == issueAttribute_) {
++        if (type != 2 || event.needResponse || event.prepared || event.offset ||
++            event.count != PeerChallengeIssueLimits::Bytes || !event.bytes || !issueIngress_)
++            return true;
++        PeerTransportBinding transport;
++        if (!transportNow(transport))
++            return true;
++        PeerChallengeIssueRequest value;
++        value.scope.original.device = transport.device;
++        value.scope.original.boot = proofBoot_;
++        value.scope.original.connection = transport.connection;
++        value.scope.original.registration = transport.registration;
++        value.scope.original.interface = transport.interface;
++        value.scope.lifecycle = transport.lifecycle;
++        value.scope.address = transport.address;
++        value.scope.attribute = event.attribute;
++        value.scope.transaction = transaction;
++        std::memcpy(value.bytes.data(), bytes, value.bytes.size());
++        value.scope.receivedAt = clock_.nowMilliseconds();
++        if (challengeIssueProducerNow(value))
++            (void)issueIngress_->copyIssue(value);
++        return true;
++    }
++    if (proofAttribute_ && event.attribute == proofAttribute_) {
++        if (type != 2 || event.needResponse || event.prepared || event.offset || !event.bytes ||
++            event.count <= CommandFrameLimits::Header || event.count > CommandFrameLimits::Frame ||
++            !authIngress_)
++            return true;
++        PeerTransportBinding transport;
++        if (!transportNow(transport))
++            return true;
++        PeerProofWriteRequest v;
++        v.scope.original.device = transport.device;
++        v.scope.original.boot = proofBoot_;
++        v.scope.original.connection = transport.connection;
++        v.scope.original.registration = transport.registration;
++        v.scope.original.interface = transport.interface;
++        v.scope.lifecycle = transport.lifecycle;
++        v.scope.address = transport.address;
++        v.scope.attribute = event.attribute;
++        v.scope.transaction = transaction;
++        v.count = event.count;
++        std::memcpy(v.bytes.data(), bytes, v.count);
++        v.scope.receivedAt = clock_.nowMilliseconds();
++        if (peerProofWriteProducerNow(v))
++            (void)authIngress_->copyProof(v);
++        return true;
++    }
+     const auto now = clock_.nowMilliseconds(); // After owned scalars and bounded bytes.
+     if (event.attribute == profile_)
+         admitOriginalGattsProfileWrite(event, *owner_, channel_, profiles_, *responses_, now);
+@@ -959,6 +1027,39 @@ bool Esp32GattsSource::configureChallengeReadNow(std::uint16_t attribute,
+     portEXIT_CRITICAL(&mutex_);
+     return true;
+ }
++bool Esp32GattsSource::configureChallengeIssueNow(std::uint16_t attribute,
++                                                  IPeerChallengeIssueIngress &ingress) noexcept {
++    if (!sourceTask() || !owner_ || sawConnection_ || !grantConfigured_ || !challengeAttribute_ ||
++        issueAttribute_ || !attribute || attribute == command_ || attribute == profile_ ||
++        attribute == challengeAttribute_)
++        return false;
++    portENTER_CRITICAL(&mutex_);
++    issueAttribute_ = attribute;
++    issueIngress_ = &ingress;
++    portEXIT_CRITICAL(&mutex_);
++    return true;
++}
++bool Esp32GattsSource::challengeIssueCurrent(
++    const PeerChallengeIssueRequest &caller) const noexcept {
++    const auto value = caller;
++    portENTER_CRITICAL(&mutex_);
++    const bool scope = issueAttribute_ && value.scope.attribute == issueAttribute_ && issueIngress_;
++    const auto challenge = challengeAttribute_;
++    portEXIT_CRITICAL(&mutex_);
++    auto readScope = value.scope;
++    readScope.attribute = challenge;
++    return scope && !value.scope.offset && !value.scope.isLong && challengeReadCurrent(readScope);
++}
++bool Esp32GattsSource::challengeIssueProducerNow(
++    const PeerChallengeIssueRequest &caller) const noexcept {
++    const auto value = caller;
++    auto readScope = value.scope;
++    portENTER_CRITICAL(&mutex_);
++    readScope.attribute = challengeAttribute_;
++    portEXIT_CRITICAL(&mutex_);
++    return challengeIssueCurrent(value) && challengeReadProducerNow(readScope) &&
++           challengeIssueCurrent(value);
++}
+ bool Esp32GattsSource::challengeReadCurrent(const PeerChallengeReadRequest &caller) const noexcept {
+     const auto value = caller;
+     portENTER_CRITICAL(&mutex_);
+@@ -1093,6 +1194,86 @@ void Esp32GattsSource::sendChallengeReply(void *context) noexcept {
+     source->challengePending_.state = 0;
+     portEXIT_CRITICAL(&source->mutex_);
+ }
++bool Esp32GattsSource::postPeerAuthReply(const PeerAuthReadReply &caller) noexcept {
++    const auto v = caller;
++    if (!authIngress_ || !authIngress_->workerNow() || xTaskGetCurrentTaskHandle() == sourceTask_ ||
++        authPosting_)
++        return false;
++    authPosting_ = true;
++    if (!validAuthReply(v)) {
++        authPosting_ = false;
++        return false;
++    }
++    portENTER_CRITICAL(&mutex_);
++    const bool busy = authPending_.state != 0;
++    portEXIT_CRITICAL(&mutex_);
++    if (busy) {
++        authPosting_ = false;
++        return false;
++    }
++    portENTER_CRITICAL(&registrationMutex);
++    const auto token = peerAuthReadPostCounter == UINT32_MAX ? 0 : ++peerAuthReadPostCounter;
++    portEXIT_CRITICAL(&registrationMutex);
++    if (!token) {
++        authPosting_ = false;
++        return false;
++    }
++    portENTER_CRITICAL(&mutex_);
++    authPending_.value = v;
++    authPending_.token = token;
++    authPending_.state = 1;
++    portEXIT_CRITICAL(&mutex_);
++    const bool posted =
++        validAuthReply(v) && sdkThread_ == btu_thread &&
++        osi_thread_post(static_cast<osi_thread *>(sdkThread_), &sendAuthReply,
++                        reinterpret_cast<void *>(static_cast<std::uintptr_t>(token)), 0, 0);
++    if (!posted) {
++        portENTER_CRITICAL(&mutex_);
++        authPending_.state = 0;
++        portEXIT_CRITICAL(&mutex_);
++    }
++    authPosting_ = false;
++    return posted;
++}
++void Esp32GattsSource::sendAuthReply(void *context) noexcept {
++    auto *source = selected;
++    if (!source)
++        return;
++    const auto token = static_cast<std::uint32_t>(reinterpret_cast<std::uintptr_t>(context));
++    portENTER_CRITICAL(&source->mutex_);
++    const bool pending =
++        token && token == source->authPending_.token && source->authPending_.state == 1;
++    if (pending)
++        source->authPending_.state = 2;
++    const auto v = source->authPending_.value;
++    portEXIT_CRITICAL(&source->mutex_);
++    if (!pending)
++        return;
++    OriginalPeerSecurity security;
++    if (source->sourceTask() && source->peerAuthReadProducerNow(v.request) &&
++        source->validAuthReply(v) &&
++        (v.status != 0 || source->readOriginalPeerSecurityNow(v.request.original, security)) &&
++        source->peerAuthReadProducerNow(v.request) && source->validAuthReply(v)) {
++        sdk446::Response response = {};
++        response.value.connection = v.request.original.connection.handle;
++        response.value.handle = v.request.attribute;
++        response.value.offset = v.request.offset;
++        if (!v.status) {
++            std::array<std::uint8_t, 32> bytes;
++            if (encodePeerAuthResult(v.result, bytes)) {
++                response.value.length = bytes.size() - v.request.offset;
++                if (response.value.length)
++                    std::memcpy(response.value.value, bytes.data() + v.request.offset,
++                                response.value.length);
++            }
++        }
++        (void)GATTS_SendRsp(v.request.original.connection.handle, v.request.transaction, v.status,
++                            &response);
++    }
++    portENTER_CRITICAL(&source->mutex_);
++    source->authPending_.state = 0;
++    portEXIT_CRITICAL(&source->mutex_);
++}
+ bool Esp32GattsSource::originalLive(const GattsWriteBinding &caller) const noexcept {
+     const auto original = caller;
+     portENTER_CRITICAL(&mutex_);
+diff --git a/lib/GattsWriteAdmission/Esp32GattsSource.h b/lib/GattsWriteAdmission/Esp32GattsSource.h
+index 5834b53..1cf3e49 100644
+--- a/lib/GattsWriteAdmission/Esp32GattsSource.h
++++ b/lib/GattsWriteAdmission/Esp32GattsSource.h
+@@ -1,5 +1,6 @@
+ #pragma once
+-#include "Companion/PeerChallengeRead.h"
++#include "Companion/PeerAuthResult.h"
++#include "Companion/PeerChallengeIssue.h"
+ #include "Companion/PeerLinkSecurity.h"
+ #include "Companion/PeerProof.h"
+ #include "Companion/PeerProofGrant.h"
+@@ -75,10 +76,19 @@ class Esp32GattsSource : public IGattsResponseContext,
+     bool requestNow(std::uint16_t packedConnection, std::uint32_t transaction, std::uint8_t type,
+                     const sdk446::Request *) noexcept;
+     bool configureChallengeReadNow(std::uint16_t, IPeerChallengeReadIngress &) noexcept;
++    bool configureChallengeIssueNow(std::uint16_t, IPeerChallengeIssueIngress &) noexcept;
++    bool challengeIssueCurrent(const PeerChallengeIssueRequest &) const noexcept;
++    bool challengeIssueProducerNow(const PeerChallengeIssueRequest &) const noexcept;
+     bool challengeReadCurrent(const PeerChallengeReadRequest &) const noexcept;
+     bool challengeReadProducerNow(const PeerChallengeReadRequest &) const noexcept;
+     bool postChallengeReadReply(const PeerChallengeReadReply &) noexcept;
+-    bool originalLive(const GattsWriteBinding &) const noexcept override;
++    bool configurePeerAuthNow(std::uint16_t, std::uint16_t, IPeerAuthIngress &) noexcept;
++    bool peerProofWriteCurrent(const PeerProofWriteRequest &) const noexcept;
++    bool peerProofWriteProducerNow(const PeerProofWriteRequest &) const noexcept;
++    bool peerAuthReadCurrent(const PeerChallengeReadRequest &) const noexcept;
++    bool peerAuthReadProducerNow(const PeerChallengeReadRequest &) const noexcept;
++    bool postPeerAuthReply(const PeerAuthReadReply &) noexcept;
++    bool originalLive(const GattsWriteBinding &caller) const noexcept override;
+     std::uint32_t nowMilliseconds() const noexcept override {
+         return clock_.nowMilliseconds();
+     }
+@@ -116,8 +126,23 @@ class Esp32GattsSource : public IGattsResponseContext,
+     std::uint16_t challengeAttribute_ = 0;
+     IPeerChallengeReadIngress *challengeIngress_ = nullptr;
+     bool challengePosting_ = false;
++    std::uint16_t issueAttribute_ = 0;
++    IPeerChallengeIssueIngress *issueIngress_ = nullptr;
+     bool validChallengeReply(const PeerChallengeReadReply &) const noexcept;
+     static void sendChallengeReply(void *) noexcept;
++    struct AuthPending {
++        PeerAuthReadReply value;
++        std::uint32_t token = 0;
++        std::uint8_t state = 0;
++    } authPending_;
++    std::uint16_t proofAttribute_ = 0, resultAttribute_ = 0;
++    IPeerAuthIngress *authIngress_ = nullptr;
++    bool authPosting_ = false;
++    bool validAuthReply(const PeerAuthReadReply &) const noexcept;
++    bool authAckCurrent(const PeerAuthReadReply &) const noexcept;
++    bool authScopeCurrent(const PeerChallengeReadRequest &, bool) const noexcept;
++    bool authProducerNow(const PeerChallengeReadRequest &, bool) const noexcept;
++    static void sendAuthReply(void *) noexcept;
+     BootIdentity proofBoot_;
+     const IPeerProofContext *proofContext_ = nullptr;
+     TaskHandle_t proofWorker_ = nullptr;
+diff --git a/lib/GattsWriteAdmission/GattsServiceDefinition.h b/lib/GattsWriteAdmission/GattsServiceDefinition.h
+index dc3a250..d5f46ad 100644
+--- a/lib/GattsWriteAdmission/GattsServiceDefinition.h
++++ b/lib/GattsWriteAdmission/GattsServiceDefinition.h
+@@ -4,7 +4,8 @@
+ namespace larp {
+ namespace companion {
+ struct GattsServiceDefinition {
+-    static const std::uint16_t Application = 0x4c45, Handles = 5, ChallengeHandles = 7;
++    static const std::uint16_t Application = 0x4c45, Handles = 5, ChallengeHandles = 7,
++                               IssueHandles = 9, AuthHandles = 13;
+     static const std::uint32_t SetupDeadlineMilliseconds = 30000;
+     static const std::uint32_t EndpointDeadlineMilliseconds = 5000;
+     // Canonical UUIDs are stored in BLE/ESP's little-endian 128-bit order.
+@@ -25,6 +26,21 @@ struct GattsServiceDefinition {
+         value[0] = 5;
+         return value;
+     }
++    static std::array<std::uint8_t, 16> issue() noexcept {
++        auto value = service();
++        value[0] = 6;
++        return value;
++    }
++    static std::array<std::uint8_t, 16> proof() noexcept {
++        auto v = service();
++        v[0] = 7;
++        return v;
++    }
++    static std::array<std::uint8_t, 16> result() noexcept {
++        auto v = service();
++        v[0] = 8;
++        return v;
++    }
+ };
+ struct GattsSourceRegistration {
+     std::uint32_t token = 0;
+@@ -36,11 +52,13 @@ struct GattsSourceRegistration {
+ struct GattsEndpointSetup {
+     GattsSourceRegistration original;
+     std::uint32_t receivedAt = 0;
+-    std::uint16_t service = 0, command = 0, profile = 0, challenge = 0;
++    std::uint16_t service = 0, command = 0, profile = 0, challenge = 0, issue = 0, proof = 0,
++                  result = 0;
+     bool operator==(const GattsEndpointSetup &other) const noexcept {
+         return original == other.original && receivedAt == other.receivedAt &&
+                service == other.service && command == other.command && profile == other.profile &&
+-               challenge == other.challenge;
++               challenge == other.challenge && issue == other.issue && proof == other.proof &&
++               result == other.result;
+     }
+ };
+ enum class GattsEndpointSetupState : std::uint8_t { Unavailable, Pending, Installed, Rejected };
+diff --git a/lib/GattsWriteAdmission/SdkGattsService.cpp b/lib/GattsWriteAdmission/SdkGattsService.cpp
+index 3615fb3..9038d5b 100644
+--- a/lib/GattsWriteAdmission/SdkGattsService.cpp
++++ b/lib/GattsWriteAdmission/SdkGattsService.cpp
+@@ -1,4 +1,6 @@
+ #include "SdkGattsService.h"
++#include "Companion/PeerAuthResult.h"
++#include "Companion/PeerChallengeIssue.h"
+ namespace larp {
+ namespace companion {
+ namespace {
+@@ -8,27 +10,37 @@ esp_bt_uuid_t sdkUuid(const std::array<std::uint8_t, 16> &value) {
+     std::memcpy(uuid.uuid.uuid128, value.data(), value.size());
+     return uuid;
+ }
+-bool add(std::uint16_t service, const std::array<std::uint8_t, 16> &value, bool read = false) {
++bool add(std::uint16_t service, const std::array<std::uint8_t, 16> &value, bool read = false,
++         bool issue = false, bool proof = false, bool result = false) {
+     auto uuid = sdkUuid(value);
+     esp_attr_value_t initial = {};
+-    initial.attr_max_len = 128;
++    initial.attr_max_len = issue    ? PeerChallengeIssueLimits::Bytes
++                           : result ? PeerAuthLimits::Bytes
++                                    : 128;
+     esp_attr_control_t control = {};
+     control.auto_rsp = ESP_GATT_RSP_BY_APP;
+     // SDK encryption/MITM permission is not a verified peer/GM grant.
+     return esp_ble_gatts_add_char(service, &uuid,
+                                   read ? ESP_GATT_PERM_READ_ENC_MITM : ESP_GATT_PERM_WRITE_ENC_MITM,
+-                                  read ? ESP_GATT_CHAR_PROP_BIT_READ : ESP_GATT_CHAR_PROP_BIT_WRITE,
++                                  read               ? ESP_GATT_CHAR_PROP_BIT_READ
++                                  : (issue || proof) ? ESP_GATT_CHAR_PROP_BIT_WRITE_NR
++                                                     : ESP_GATT_CHAR_PROP_BIT_WRITE,
+                                   &initial, &control) == ESP_OK;
+ }
+ } // namespace
+-bool SdkGattsServiceDriver::create(std::uint8_t interface, bool challenge) noexcept {
++bool SdkGattsServiceDriver::create(std::uint8_t interface, bool challenge, bool issue,
++                                   bool auth) noexcept {
++    if ((issue && !challenge) || (auth && !issue))
++        return false;
+     esp_gatt_srvc_id_t service = {};
+     service.id.uuid = sdkUuid(GattsServiceDefinition::service());
+     service.id.inst_id = 0;
+     service.is_primary = true;
+     return esp_ble_gatts_create_service(interface, &service,
+-                                        challenge ? GattsServiceDefinition::ChallengeHandles
+-                                                  : GattsServiceDefinition::Handles) == ESP_OK;
++                                        auth        ? GattsServiceDefinition::AuthHandles
++                                        : issue     ? GattsServiceDefinition::IssueHandles
++                                        : challenge ? GattsServiceDefinition::ChallengeHandles
++                                                    : GattsServiceDefinition::Handles) == ESP_OK;
+ }
+ bool SdkGattsServiceDriver::addCommand(std::uint16_t service) noexcept {
+     return add(service, GattsServiceDefinition::command());
+@@ -39,6 +51,15 @@ bool SdkGattsServiceDriver::addProfile(std::uint16_t service) noexcept {
+ bool SdkGattsServiceDriver::addChallenge(std::uint16_t service) noexcept {
+     return add(service, GattsServiceDefinition::challenge(), true);
+ }
++bool SdkGattsServiceDriver::addIssue(std::uint16_t service) noexcept {
++    return add(service, GattsServiceDefinition::issue(), false, true);
++}
++bool SdkGattsServiceDriver::addProof(std::uint16_t service) noexcept {
++    return add(service, GattsServiceDefinition::proof(), false, false, true);
++}
++bool SdkGattsServiceDriver::addResult(std::uint16_t service) noexcept {
++    return add(service, GattsServiceDefinition::result(), true, false, false, true);
++}
+ bool SdkGattsServiceDriver::start(std::uint16_t service) noexcept {
+     return esp_ble_gatts_start_service(service) == ESP_OK;
+ }
+diff --git a/lib/GattsWriteAdmission/SdkGattsService.h b/lib/GattsWriteAdmission/SdkGattsService.h
+index 8a672ee..171257d 100644
+--- a/lib/GattsWriteAdmission/SdkGattsService.h
++++ b/lib/GattsWriteAdmission/SdkGattsService.h
+@@ -47,10 +47,14 @@ inline GattsServiceEvent fromSdkGattsService(esp_gatts_cb_event_t kind, esp_gatt
+ }
+ class SdkGattsServiceDriver {
+   public:
+-    bool create(std::uint8_t interface, bool challenge = false) noexcept;
++    bool create(std::uint8_t interface, bool challenge = false, bool issue = false,
++                bool auth = false) noexcept;
+     bool addCommand(std::uint16_t service) noexcept;
+     bool addProfile(std::uint16_t service) noexcept;
+     bool addChallenge(std::uint16_t service) noexcept;
++    bool addIssue(std::uint16_t service) noexcept;
++    bool addProof(std::uint16_t service) noexcept;
++    bool addResult(std::uint16_t service) noexcept;
+     bool start(std::uint16_t service) noexcept;
+ };
+ } // namespace companion
+diff --git a/platformio.ini b/platformio.ini
+index 43c25bd..6da4d0a 100644
+--- a/platformio.ini
++++ b/platformio.ini
+@@ -82,7 +82,7 @@ platform = espressif32@6.6.0
+ board = az-delivery-devkit-v4
+ framework = arduino
+ monitor_speed = 115200
+-build_flags = -std=gnu++11 -I include -Wall -Wextra -Wl,--wrap=GATT_Register -Wl,--undefined=__wrap_GATT_Register -Wl,--wrap=SMP_Register -Wl,--undefined=__wrap_SMP_Register
++build_flags = -std=gnu++11 -I include -Wall -Wextra -Wl,--wrap=GATT_Register -Wl,--undefined=__wrap_GATT_Register -Wl,--wrap=SMP_Register -Wl,--undefined=__wrap_SMP_Register -Wl,--wrap=btm_sec_encrypt_change -Wl,--undefined=__wrap_btm_sec_encrypt_change
+ build_src_flags = -Werror
+ build_src_filter = -<*> +<GattsAbiProbe/> +<Companion/> +<GameDomain/>
+ test_ignore = test_*
+diff --git a/scripts/check_format.py b/scripts/check_format.py
+index ebbd7eb..79cfcb3 100644
+--- a/scripts/check_format.py
++++ b/scripts/check_format.py
+@@ -57,6 +57,9 @@ ADAPTER_FILES = (
+     "lib/GattsWriteAdmission/SdkPeerSecurityAbi.h",
+     "lib/GattsWriteAdmission/Esp32GattsSource.h",
+     "lib/GattsWriteAdmission/Esp32GattsSource.cpp",
++    "lib/GattsWriteAdmission/Esp32GattsPeerAuth.cpp",
++    "lib/FreeRtosPeerAuthRuntime/FreeRtosPeerAuthRuntime.h",
++    "lib/FreeRtosPeerAuthRuntime/FreeRtosPeerAuthRuntime.cpp",
+     "lib/GattsWriteAdmission/GattsServiceDefinition.h",
+     "lib/GattsWriteAdmission/GattsServiceEvent.h",
+     "lib/GattsWriteAdmission/SdkGattsService.h",
+@@ -73,6 +76,8 @@ ADAPTER_FILES = (
+     "lib/FreeRtosProfileFrameQueue/FreeRtosProfileFrameQueue.cpp",
+     "lib/FreeRtosCommandFrameQueue/FreeRtosCommandFrameQueue.h",
+     "lib/FreeRtosCommandFrameQueue/FreeRtosCommandFrameQueue.cpp",
++    "lib/FreeRtosPeerChallengeIssueRuntime/FreeRtosPeerChallengeIssueRuntime.h",
++    "lib/FreeRtosPeerChallengeIssueRuntime/FreeRtosPeerChallengeIssueRuntime.cpp",
+     "lib/FreeRtosPeerChallengeReadRuntime/FreeRtosPeerChallengeReadRuntime.h",
+     "lib/FreeRtosPeerChallengeReadRuntime/FreeRtosPeerChallengeReadRuntime.cpp",
+     "lib/FreeRtosPeerProofQueue/FreeRtosPeerProofQueue.h",
+diff --git a/src/GattsAbiProbe/main.cpp b/src/GattsAbiProbe/main.cpp
+index eecff54..aee5ce8 100644
+--- a/src/GattsAbiProbe/main.cpp
++++ b/src/GattsAbiProbe/main.cpp
+@@ -13,6 +13,8 @@
+ #include <FreeRtosCommandFrameQueue.h>
+ #include <FreeRtosGameControlChannel.h>
+ #include <FreeRtosGattsResponseQueue.h>
++#include <FreeRtosPeerAuthRuntime.h>
++#include <FreeRtosPeerChallengeIssueRuntime.h>
+ #include <FreeRtosPeerChallengeReadRuntime.h>
+ #include <FreeRtosPeerProofGrantRuntime.h>
+ #include <FreeRtosPeerProofQueue.h>
+@@ -94,12 +96,18 @@ PeerProofReceiver peerProofReceiver(peerProofOwner);
+ FreeRtosPeerProofQueue peerProofQueue(unopenedPeerContext, profileClock);
+ FreeRtosPeerChallengeReadRuntime challengeReader(sourcePort, peerProofOwner, unopenedProofGrant,
+                                                  profileClock);
++FreeRtosPeerChallengeIssueRuntime challengeIssuer(sourcePort, peerProofOwner, unopenedProofGrant,
++                                                  unopenedActorRegistry, profileClock);
++FreeRtosPeerAuthRuntime peerAuth(sourcePort, peerProofOwner, peerProofReceiver, unopenedProofGrant,
++                                 profileClock);
+ SdkGattsServiceDriver serviceDriver;
+ PeerChallengeReadSetup unopenedChallengeSetup() {
+     PeerChallengeReadSetup setup;
+     setup.boot.high = 1; // Synthetic immutable boot, no identity or authority.
+     setup.context = &unopenedPeerContext;
+     setup.ingress = &challengeReader;
++    setup.issue = &challengeIssuer;
++    setup.auth = &peerAuth;
+     return setup;
+ }
+ Esp32GattsService sourceService(sourcePort, sourceResponses, profileClock, serviceDriver,
+@@ -126,6 +134,11 @@ void setup() {
+             PeerProofGrantState::Unavailable ||
+         unopenedProofGrant.service(unopenedGrantAck) != PeerProofGrantState::Unavailable)
+         return; // Closed actual worker/handoff path; no crypto, SDK post or radio.
++    if (challengeIssuer.beginWorker() ||
++        challengeIssuer.service().dispatch != PeerChallengeIssueDispatch::Unavailable)
++        return; // Closed issue path links without starting radio/tasks.
++    if (peerAuth.beginWorker() || peerAuth.service() != PeerAuthDispatch::Unavailable)
++        return;
+     unopenedProofGrant.cancel();
+     Serial.printf("peer_proof_grant_abi: initialized=false source_posted=false worker=%u job=%u\n",
+                   unsigned(sizeof(unopenedProofGrant)), unsigned(sizeof(PeerProofGrantJob)));
+diff --git a/test/test_configured_control/host_stubs/esp_gatts_api.h b/test/test_configured_control/host_stubs/esp_gatts_api.h
+index bf3e168..701ec1e 100644
+--- a/test/test_configured_control/host_stubs/esp_gatts_api.h
++++ b/test/test_configured_control/host_stubs/esp_gatts_api.h
+@@ -10,7 +10,7 @@ constexpr int ESP_GATT_OK = 0;
+ constexpr std::uint16_t ESP_UUID_LEN_128 = 16, ESP_GATT_PERM_WRITE_ENC_MITM = 64,
+                         ESP_GATT_PERM_READ_ENC_MITM = 4;
+ constexpr std::uint8_t ESP_GATT_CHAR_PROP_BIT_READ = 2, ESP_GATT_CHAR_PROP_BIT_WRITE = 8,
+-                       ESP_GATT_RSP_BY_APP = 0;
++                       ESP_GATT_CHAR_PROP_BIT_WRITE_NR = 4, ESP_GATT_RSP_BY_APP = 0;
+ struct esp_bt_uuid_t {
+     std::uint16_t len;
+     union {
+diff --git a/test/test_configured_control/test_main.cpp b/test/test_configured_control/test_main.cpp
+index 8981eb1..fb8798c 100644
+--- a/test/test_configured_control/test_main.cpp
++++ b/test/test_configured_control/test_main.cpp
+@@ -37,12 +37,15 @@
+ // Compile the actual adapter against the deterministic RTOS model.
+ #include "../../lib/FreeRtosCommandFrameQueue/FreeRtosCommandFrameQueue.cpp"
+ #include "../../lib/FreeRtosGameControlChannel/FreeRtosGameControlChannel.cpp"
++#include "../../lib/FreeRtosPeerAuthRuntime/FreeRtosPeerAuthRuntime.cpp"
++#include "../../lib/FreeRtosPeerChallengeIssueRuntime/FreeRtosPeerChallengeIssueRuntime.cpp"
+ #include "../../lib/FreeRtosPeerChallengeReadRuntime/FreeRtosPeerChallengeReadRuntime.cpp"
+ #include "../../lib/FreeRtosPeerProofGrantRuntime/FreeRtosPeerProofGrantRuntime.cpp"
+ #include "../../lib/FreeRtosPeerProofQueue/FreeRtosPeerProofQueue.cpp"
+ #include "../../lib/FreeRtosPeerRegistryRuntime/FreeRtosPeerRegistryRuntime.cpp"
+ #include "../../lib/FreeRtosProfileFrameQueue/FreeRtosProfileFrameQueue.cpp"
+ #include "../../lib/FreeRtosProfileResponseQueue/FreeRtosProfileResponseQueue.cpp"
++#include "../../lib/GattsWriteAdmission/Esp32GattsPeerAuth.cpp"
+ #include "../../lib/GattsWriteAdmission/Esp32GattsService.cpp"
+ #include "../../lib/GattsWriteAdmission/Esp32GattsSource.cpp"
+ #include "../../lib/GattsWriteAdmission/FreeRtosGattsConnection.cpp"
+@@ -983,7 +986,7 @@ void test_profile_capability_fixture_matches_firmware_encoder() {
+ #include "GattsServiceCases.h"
+ #include "GattsSourceCases.h"
+ #include "IdentityRetirementCases.h"
+-#include "PeerChallengeReadCases.h"
++#include "PeerAuthCases.h"
+ #include "PeerLinkSecurityCases.h"
+ #include "PeerProofCases.h"
+ #include "PeerProofGrantCases.h"
+@@ -1512,6 +1515,39 @@ int main() {
+     RUN_TEST(test_challenge_read_requires_the_same_existing_crypto_worker_before_any_owner_getter);
+ #if defined(LARP_REAL_PEER_CRYPTO)
+     RUN_TEST(test_challenge_read_actual_crypto_from_original_sdk_blob_snapshot_to_grant_ack);
++#endif
++    RUN_TEST(test_issue_codec_exact_selector_no_credentials_and_failed_destination_preserved);
++    RUN_TEST(test_issue_actual_sdk_copy_worker_registry_and_read_without_gm);
++    RUN_TEST(test_issue_invalid_write_modes_sizes_context_and_missing_peer_never_call_crypto);
++    RUN_TEST(test_issue_four_static_copies_one_current_operation_and_no_duplicate_nonce_refresh);
++    RUN_TEST(test_issue_wrong_worker_and_wrong_sdk_actor_cannot_consume_or_rebind);
++    RUN_TEST(test_issue_expiry_wrap_and_reconnect_drop_old_work_without_adopting_fresh_link);
++    RUN_TEST(test_issue_sdk_borrow_and_original_scope_frozen_before_external_clock);
++    RUN_TEST(test_issue_registry_revoke_entropy_failure_and_expired_challenge_do_not_retry);
++    RUN_TEST(test_issue_optional_service_installs_nine_original_handles_before_start);
++    RUN_TEST(test_issue_setup_rejects_incomplete_bundle_wrong_handle_order_and_late_configuration);
++#if defined(LARP_REAL_PEER_CRYPTO)
++    RUN_TEST(test_issue_actual_crypto_original_sdk_write_to_read_and_existing_proof_grant);
++#endif
++    RUN_TEST(test_auth_codec_exact_states_correlations_and_failed_destination);
++    RUN_TEST(test_auth_sdk_fragments_pending_ack_and_correlated_granted_result);
++    RUN_TEST(test_auth_result_blob_pins_receiving_snapshot_across_grant_and_new_read_gets_latest);
++    RUN_TEST(test_auth_result_missing_bad_offsets_pin_expiry_and_absolute_challenge_deadline);
++    RUN_TEST(test_auth_signature_rejection_is_visible_without_grant_or_nonce_retry);
++    RUN_TEST(test_auth_invalid_write_modes_frames_foreign_task_and_first_bad_worker_binding);
++    RUN_TEST(test_auth_four_proof_copies_and_reads_full_and_one_item_per_service);
++    RUN_TEST(test_auth_proof_and_read_age_wrap_and_reconnect_never_rebind_old_work);
++    RUN_TEST(test_auth_sdk_borrows_frozen_before_clock_and_clock_reconnect_drops_original);
++    RUN_TEST(test_auth_post_failure_busy_slot_and_old_callback_cannot_send_new_reply);
++    RUN_TEST(test_auth_positive_reply_rechecks_sdk_security_credential_and_original_connection);
++    RUN_TEST(test_auth_duplicate_terminal_proof_never_reposts_grant_and_expiry_does_not_revoke);
++    RUN_TEST(test_auth_authority_retirement_at_every_reply_clock_observation_drops_old_success);
++    RUN_TEST(test_auth_non_gm_ack_has_authenticated_result_without_principal);
++    RUN_TEST(test_auth_forged_positive_job_ack_principal_and_scope_never_post);
++    RUN_TEST(test_auth_service_thirteen_handles_and_complete_source_ack_before_start);
++    RUN_TEST(test_auth_setup_wrong_handles_incomplete_bundle_and_late_configuration_fail_closed);
++#if defined(LARP_REAL_PEER_CRYPTO)
++    RUN_TEST(test_auth_actual_crypto_sdk_issue_reads_proof_writes_ack_and_result_blobs);
+ #endif
+     return UNITY_END();
+ }
