@@ -2,6 +2,10 @@
 
 ## Einstieg und Stand
 
+Seit dem 14. Oktober 2026 gilt der [Maintainer-Einstieg](MAINTAINER.md) für die
+weitere Betreuung: Arbeitsbasis, Mandat, Prüfwege und offene Abhängigkeiten.
+Die folgende technische Übergabe bewahrt den Stand vom 13. Oktober 2026.
+
 Dieser Branch `plan/projektuebergabe-kuratierter-stand` beginnt bei
 `a40365d715b2055ee23f767fa53b55ac25243437` (Merge von PR 24 auf
 `SvensBranch`). Er integriert die Firmware-Grundlagen E1–E4/F0 aus
@@ -65,7 +69,9 @@ Grenzen stehen in [PRUEFSTAND.md](PRUEFSTAND.md).
 
 [quelleninventar.json](quelleninventar.json) erfasst die 40 vorgefundenen
 Produkt-Worktrees, alle 41 vorherigen lokalen Branchspitzen, offene
-Dateien und begründete Ausschlüsse. Von diesem Branch zweigen lokal ab:
+Dateien und begründete Ausschlüsse. Von diesem Branch zweigen folgende
+Archivbranches ab; ihre Veröffentlichung auf GitHub wurde am 14. Oktober 2026
+über die Branchliste geprüft:
 
 | Branch | Inhalt |
 | --- | --- |
@@ -86,9 +92,11 @@ Verschachtelte Worktrees werden über ihre eigenen Einträge erfasst;
 erzeugbare Caches und Buildprodukte wurden nicht kopiert.
 
 Die Übergabe ist eigenständig. Ein separates früheres KI-Repository wird
-für Verständnis, Build und Bewertung nicht benötigt. Alle neuen Branches
-sind ausschließlich lokal vorhanden; ihre spätere Übertragung ist ein
-eigener Schritt.
+für Verständnis, Build und Bewertung nicht benötigt. Der kuratierte Branch
+und die sechs oben genannten Archivbranches sind auf GitHub veröffentlicht.
+Ihre Existenz im Remote bedeutet keine fachliche Freigabe der archivierten
+Entwürfe. In einem nur auf den kuratierten Branch begrenzten Klon müssen
+benötigte Archivbranches gezielt zusätzlich geholt werden.
 
 ## Offene Entscheidungen und Grenzen
 
