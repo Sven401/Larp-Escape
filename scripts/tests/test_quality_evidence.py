@@ -16,7 +16,7 @@ class QualityEvidenceTests(unittest.TestCase):
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory(prefix="quality-evidence-test-")
         self.addCleanup(self.temporary.cleanup)
-        self.root = Path(self.temporary.name)
+        self.root = Path(self.temporary.name).resolve()
         self.repository = self.root / "repository"
         self.repository.mkdir()
         self.output = self.root / "evidence"
