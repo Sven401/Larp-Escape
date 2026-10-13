@@ -1,9 +1,16 @@
-# Larp-Escape: verbindliche Android-App
+# Larp-Escape: bisherige Android-Implementierung
+
+**Diagnose-App gestoppt, 13. Oktober 2026:** Die bisherige Diagnoseoberfläche,
+ihr Simulationspilot und ihre Abläufe sind vom Nutzer als gescheitert verworfen.
+Die folgenden Bau- und Quellhinweise dokumentieren den historischen Stand,
+keine nutzbare Baugruppenprobe und keinen Auftrag zur Fortsetzung dieses
+Designs. Entscheidung und Post-Mortem stehen im getrennten KI-Repository unter
+`beitraege/01a135f5-cdec-7f92-8b01-59c997627198/diagnose-app-postmortem-2026-10-13.md`.
 
 Kotlin, Jetpack Compose und Material 3. Eigenständige App mit Paketname
 `de.larpescape.companion`, Mindestversion Android 13/API33. Bestehende
 Webprototypen und der .NET-Diagnoseclient bleiben separate Referenzen.
-Dies ist die Entwicklungsbasis der Projekt-App; die erste Version ist ein
+Dieser historische Stand war als Entwicklungsbasis der Projekt-App gedacht; die erste Version ist ein
 lesender Verbindungsprüfstand, noch keine freigegebene Spielleitungs-App.
 
 `app` enthält UI/ViewModel, DeviceRepository und Android-BLE. `core:protocol`

@@ -1,5 +1,12 @@
 # Wiederverwendungskatalog für die separate Diagnose-Test-Firmware
 
+**Gestoppt, 13. Oktober 2026:** Die bisherige Diagnose-App und ihre
+paketweise Umsetzungsfolge sind auf Nutzerentscheidung gescheitert und
+verworfen. Die folgenden Bewertungen sind historische technische Quellbelege,
+keine aktuelle Paketpriorität, App-Abnahme oder Aufforderung zu weiteren
+Nutzerläufen mit dieser App. Post-Mortem im getrennten KI-Repository:
+`beitraege/01a135f5-cdec-7f92-8b01-59c997627198/diagnose-app-postmortem-2026-10-13.md`.
+
 Stand: 12. Oktober 2026. Quellenbasis für die Bestandsaufnahme: `plan/nutzergefuehrte-hardwarediagnose-startintegration` bei `e652c3a`; aktueller Umsetzungsstand siehe unten. Dieser Katalog beschreibt Quellen und geprüfte Grenzen, keine Abnahme der Test-Firmware. Zielimage: eigenes USB-geladenes Entwicklungsimage ohne Spiellauf. Der App-geführte Nutzerlauf bleibt offen.
 
 | Bereich | Bereits vorhandene Quelle / Beleg | Wiederverwendung im Testimage | Grenze und nächster Anschluss |
