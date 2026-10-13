@@ -1,0 +1,32 @@
+{
+  "group": "led",
+  "captures": [
+    {
+      "kind": "untracked-file",
+      "source_head": "f40ab8f7f6a6c3963d35391b71dbabeca11507dd",
+      "source_path": "include/CompanionIntegration/LedControlV1.h",
+      "path": ".led-control-worktree/files/include/CompanionIntegration/LedControlV1.h",
+      "sha256": "5b15ac23af754ec3c722d4cd93e4d74e5ce7eea67c03445160791099022042e9",
+      "bytes": 2150,
+      "source_id": ".led-control-worktree"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "f40ab8f7f6a6c3963d35391b71dbabeca11507dd",
+      "source_path": "src/CompanionIntegration/LedControlV1.cpp",
+      "path": ".led-control-worktree/files/src/CompanionIntegration/LedControlV1.cpp",
+      "sha256": "dba5851e5c13bfaf80fba013aa43057ada4fe278fc38b42cf66ce3310b35b113",
+      "bytes": 3386,
+      "source_id": ".led-control-worktree"
+    },
+    {
+      "kind": "untracked-file",
+      "source_head": "f40ab8f7f6a6c3963d35391b71dbabeca11507dd",
+      "source_path": "test/test_led_control_core/test_main.cpp",
+      "path": ".led-control-worktree/files/test/test_led_control_core/test_main.cpp",
+      "sha256": "50b89d8c2e1651f5a08e98caf495387689ecfd5071b3b713f3e516fb92d69d48",
+      "bytes": 1989,
+      "source_id": ".led-control-worktree"
+    }
+  ]
+}
