@@ -1,0 +1,5038 @@
+{
+  "schema": "larp-escape-geometric-source-audit/1",
+  "source_commit": "e4af436167c253cb674db1c0038bdef99031535b",
+  "limitations": [
+    "Geometric source extraction; no native CAD import, ERC or DRC",
+    "No PCB source, cable harness or physical measurements",
+    "Equal labels joined only inside one JSON drawing; no cross-drawing net joining"
+  ],
+  "files": {
+    "BOM_Esp-Breakout-V2_2026-10-10.csv": {
+      "bytes": 3024,
+      "sha256": "2d6292179cfc36f5482caa9c7e74384bcc6a65ba47f3dba3256e9c775e101411",
+      "bom": [
+        {
+          "ID": "1",
+          "Name": "ZX-XH2.54-3PZZ",
+          "Designator": "CN2",
+          "Footprint": "CONN-TH_3P-P2.54_2501S-3P",
+          "Quantity": "1",
+          "Manufacturer Part": "ZX-XH2.54-3PZZ",
+          "Manufacturer": "Megastar(\u5146\u661f)",
+          "Supplier": "LCSC",
+          "Supplier Part": "C7429633",
+          "Price": "0.012",
+          "Pins": "3",
+          "Contributor": "lcsc",
+          "JLCPCB Part Class": "Extended Part",
+          "link": ""
+        },
+        {
+          "ID": "2",
+          "Name": "TERMINAL SCREW 5.08 2P",
+          "Designator": "DAC_R_L1,SPK_1_2",
+          "Footprint": "TERMINAL SCREW 5.08 2P",
+          "Quantity": "2",
+          "Manufacturer Part": "Screw terminal 2p",
+          "Manufacturer": "",
+          "Supplier": "",
+          "Supplier Part": "",
+          "Price": "",
+          "Pins": "2",
+          "Contributor": "reino.forward",
+          "JLCPCB Part Class": "",
+          "link": ""
+        },
+        {
+          "ID": "3",
+          "Name": "ZX-XH2.54-4PZZ",
+          "Designator": "GPIOEXPANDER,MOTORPWM,MOTORPWM2",
+          "Footprint": "CONN-TH_4P-P2.50_4PIN",
+          "Quantity": "3",
+          "Manufacturer Part": "ZX-XH2.54-4PZZ",
+          "Manufacturer": "Megastar(\u5146\u661f)",
+          "Supplier": "LCSC",
+          "Supplier Part": "C7429634",
+          "Price": "0.012",
+          "Pins": "4",
+          "Contributor": "lcsc",
+          "JLCPCB Part Class": "Extended Part",
+          "link": ""
+        },
+        {
+          "ID": "4",
+          "Name": "WS2881",
+          "Designator": "LED-G4",
+          "Footprint": "TERMINAL SCREW 5.08 3P",
+          "Quantity": "1",
+          "Manufacturer Part": "Screw terminal 3p",
+          "Manufacturer": "",
+          "Supplier": "",
+          "Supplier Part": "",
+          "Price": "",
+          "Pins": "3",
+          "Contributor": "reino.forward",
+          "JLCPCB Part Class": "",
+          "link": ""
+        },
+        {
+          "ID": "5",
+          "Name": "HDR-F-2.54_1x4",
+          "Designator": "OLED",
+          "Footprint": "HDR-F-2.54_1X4",
+          "Quantity": "1",
+          "Manufacturer Part": "",
+          "Manufacturer": "",
+          "Supplier": "LCSC",
+          "Supplier Part": "C225501",
+          "Price": "0.098",
+          "Pins": "4",
+          "Contributor": "LCEDA_Lib",
+          "JLCPCB Part Class": "",
+          "link": ""
+        },
+        {
+          "ID": "6",
+          "Name": "4.3",
+          "Designator": "R3",
+          "Footprint": "RES-TH_BD4.5-L11.5-P15.50-D0.7",
+          "Quantity": "1",
+          "Manufacturer Part": "MFR01SJ043JA10",
+          "Manufacturer": "UniOhm",
+          "Supplier": "LCSC",
+          "Supplier Part": "C70757",
+          "Price": "0.016",
+          "Pins": "2",
+          "Contributor": "",
+          "JLCPCB Part Class": "Extended Part",
+          "link": ""
+        },
+        {
+          "ID": "7",
+          "Name": "HDR-IDC-2.54-2X4P",
+          "Designator": "RFID",
+          "Footprint": "IDC-TH_8P-P2.54-V-R2-C4-S2.54",
+          "Quantity": "1",
+          "Manufacturer Part": "2.54-2*4P\u7b80\u725b",
+          "Manufacturer": "BOOMELE(\u535a\u7a46\u7cbe\u5bc6)",
+          "Supplier": "LCSC",
+          "Supplier Part": "C9135",
+          "Price": "0.094",
+          "Pins": "8",
+          "Contributor": "",
+          "JLCPCB Part Class": "Extended Part",
+          "link": ""
+        },
+        {
+          "ID": "8",
+          "Name": "DFPlayer Mini Minimal Design",
+          "Designator": "U1",
+          "Footprint": "DF PLAYER MINI MINIMAL DESIGN",
+          "Quantity": "1",
+          "Manufacturer Part": "DFPlayer Mini SKU DFR0299",
+          "Manufacturer": "DFRobot",
+          "Supplier": "DFRobot",
+          "Supplier Part": "SKU DFR0299",
+          "Price": "",
+          "Pins": "16",
+          "Contributor": "Greal",
+          "JLCPCB Part Class": "",
+          "link": "https://wiki.dfrobot.com/DFPlayer_Mini_SKU_DFR0299"
+        },
+        {
+          "ID": "9",
+          "Name": "ESP32-WROOM-32 A-z Delivery",
+          "Designator": "U3",
+          "Footprint": "AZ-DELIVERY NODEMCU ESP32 DEV KIT",
+          "Quantity": "1",
+          "Manufacturer Part": "A-Z Delivery",
+          "Manufacturer": "",
+          "Supplier": "Amazon",
+          "Supplier Part": "",
+          "Price": "",
+          "Pins": "38",
+          "Contributor": "Neivydas Misiukonis",
+          "JLCPCB Part Class": "",
+          "link": "https://www.az-delivery.uk/products/esp32-developmentboard?variant=6119648460827"
+        }
+      ]
+    },
+    "BOM_Esp32-Breakout_2026-10-10.csv": {
+      "bytes": 3040,
+      "sha256": "f7caf1b2b9a502106a003348cd62f9664110a23f0b532788ea23609310dfdd42",
+      "bom": [
+        {
+          "ID": "1",
+          "Name": "TERMINAL SCREW 5.08 2P",
+          "Designator": "3,3V1,3,3V2,3,3V3,3,3V4,5VIN,DAC_R_L,SPK_1_2",
+          "Footprint": "TERMINAL SCREW 5.08 2P",
+          "Quantity": "7",
+          "Manufacturer Part": "Screw terminal 2p",
+          "Manufacturer": "",
+          "Supplier": "",
+          "Supplier Part": "",
+          "Price": "",
+          "Pins": "2",
+          "Contributor": "reino.forward",
+          "JLCPCB Part Class": "",
+          "link": ""
+        },
+        {
+          "ID": "2",
+          "Name": "PM254V-11-03-H85",
+          "Designator": "5>3,3V1,5>3,3V2,5>3,3V3,5>3,3V4",
+          "Footprint": "HDR-TH_3P-P2.54-V-F",
+          "Quantity": "4",
+          "Manufacturer Part": "PM254V-11-03-H85",
+          "Manufacturer": "XFCN",
+          "Supplier": "LCSC",
+          "Supplier Part": "C541850",
+          "Price": "0.066",
+          "Pins": "3",
+          "Contributor": "LCSC",
+          "JLCPCB Part Class": "Extended Part",
+          "link": ""
+        },
+        {
+          "ID": "3",
+          "Name": "2EDGRC-5.08-05P-14-100A(H)",
+          "Designator": "G0,G2,G5,G21",
+          "Footprint": "CONN-TH_2EDGRC-5.08-05P-14-100A-H",
+          "Quantity": "4",
+          "Manufacturer Part": "2EDGRC-5.08-05P-14-100A(H)",
+          "Manufacturer": "DEGSON",
+          "Supplier": "LCSC",
+          "Supplier Part": "C669317",
+          "Price": "0.171",
+          "Pins": "5",
+          "Contributor": "LCSC",
+          "JLCPCB Part Class": "Extended Part",
+          "link": ""
+        },
+        {
+          "ID": "4",
+          "Name": "XY2500V-C-5.08-3P",
+          "Designator": "G1,G3,G12,G13,G14,G15,G25,G26,G27,G32,G33,G34-UP,G35-UP",
+          "Footprint": "CONN-TH_XY2500V-C-5.08-3P",
+          "Quantity": "13",
+          "Manufacturer Part": "XY2500V-C-5.08-3P",
+          "Manufacturer": "--",
+          "Supplier": "LCSC",
+          "Supplier Part": "C505771",
+          "Price": "0.092",
+          "Pins": "3",
+          "Contributor": "LCSC",
+          "JLCPCB Part Class": "Extended Part",
+          "link": ""
+        },
+        {
+          "ID": "5",
+          "Name": "WS2881",
+          "Designator": "LED-G4",
+          "Footprint": "TERMINAL SCREW 5.08 3P",
+          "Quantity": "1",
+          "Manufacturer Part": "Screw terminal 3p",
+          "Manufacturer": "",
+          "Supplier": "",
+          "Supplier Part": "",
+          "Price": "",
+          "Pins": "3",
+          "Contributor": "reino.forward",
+          "JLCPCB Part Class": "",
+          "link": ""
+        },
+        {
+          "ID": "6",
+          "Name": "4.3",
+          "Designator": "R1,R2,R3",
+          "Footprint": "RES-TH_BD4.5-L11.5-P15.50-D0.7",
+          "Quantity": "3",
+          "Manufacturer Part": "MFR01SJ043JA10",
+          "Manufacturer": "UniOhm",
+          "Supplier": "LCSC",
+          "Supplier Part": "C70757",
+          "Price": "0.016",
+          "Pins": "2",
+          "Contributor": "",
+          "JLCPCB Part Class": "Extended Part",
+          "link": ""
+        },
+        {
+          "ID": "7",
+          "Name": "DFPlayer Mini Minimal Design",
+          "Designator": "U1",
+          "Footprint": "DF PLAYER MINI MINIMAL DESIGN",
+          "Quantity": "1",
+          "Manufacturer Part": "DFPlayer Mini SKU DFR0299",
+          "Manufacturer": "DFRobot",
+          "Supplier": "DFRobot",
+          "Supplier Part": "SKU DFR0299",
+          "Price": "",
+          "Pins": "16",
+          "Contributor": "Greal",
+          "JLCPCB Part Class": "",
+          "link": "https://wiki.dfrobot.com/DFPlayer_Mini_SKU_DFR0299"
+        },
+        {
+          "ID": "8",
+          "Name": "ESP32-WROOM-32 A-z Delivery",
+          "Designator": "U3",
+          "Footprint": "AZ-DELIVERY NODEMCU ESP32 DEV KIT",
+          "Quantity": "1",
+          "Manufacturer Part": "A-Z Delivery",
+          "Manufacturer": "",
+          "Supplier": "Amazon",
+          "Supplier Part": "",
+          "Price": "",
+          "Pins": "38",
+          "Contributor": "Neivydas Misiukonis",
+          "JLCPCB Part Class": "",
+          "link": "https://www.az-delivery.uk/products/esp32-developmentboard?variant=6119648460827"
+        }
+      ]
+    },
+    "SCH_Esp32-Breakout_2026-10-10.json": {
+      "bytes": 75337,
+      "sha256": "6438234c76b455c6910777e1bae82de1f5031ca5967a659261cf0349354e06cb",
+      "title": "Esp32 Breakout",
+      "editor_version": "6.5.54",
+      "shape_counts": {
+        "LIB": 35,
+        "W": 87,
+        "O": 16,
+        "F": 13,
+        "J": 56
+      },
+      "components": [
+        {
+          "ref": "U3",
+          "name": "ESP32-WROOM-32 A-z Delivery",
+          "id": "gge19371f5072bc926e",
+          "pins": 38
+        },
+        {
+          "ref": "U1",
+          "name": "DFPlayer Mini Minimal Design",
+          "id": "gge50400854691696fe",
+          "pins": 16
+        },
+        {
+          "ref": "5VIN",
+          "name": "TERMINAL SCREW 5.08 2P",
+          "id": "gged014cc23ec3f6cdb",
+          "pins": 2
+        },
+        {
+          "ref": "LED-G4",
+          "name": "WS2881",
+          "id": "gge6accb66a63bb5ae0",
+          "pins": 3
+        },
+        {
+          "ref": "G21",
+          "name": "2EDGRC-5.08-05P-14-100A(H)",
+          "id": "gge40d205da1e10da1a",
+          "pins": 5
+        },
+        {
+          "ref": "G5",
+          "name": "2EDGRC-5.08-05P-14-100A(H)",
+          "id": "gge3cc768516bc788ef",
+          "pins": 5
+        },
+        {
+          "ref": "G2",
+          "name": "2EDGRC-5.08-05P-14-100A(H)",
+          "id": "gge0303cab39861171e",
+          "pins": 5
+        },
+        {
+          "ref": "G0",
+          "name": "2EDGRC-5.08-05P-14-100A(H)",
+          "id": "gge97e9412f3a24a38b",
+          "pins": 5
+        },
+        {
+          "ref": "3,3V1",
+          "name": "TERMINAL SCREW 5.08 2P",
+          "id": "gged3f499b3c3666f79",
+          "pins": 2
+        },
+        {
+          "ref": "3,3V2",
+          "name": "TERMINAL SCREW 5.08 2P",
+          "id": "gge13418dff52a2d757",
+          "pins": 2
+        },
+        {
+          "ref": "3,3V3",
+          "name": "TERMINAL SCREW 5.08 2P",
+          "id": "gge2963a53800b7edbc",
+          "pins": 2
+        },
+        {
+          "ref": "3,3V4",
+          "name": "TERMINAL SCREW 5.08 2P",
+          "id": "ggedb8f8596ba2185f4",
+          "pins": 2
+        },
+        {
+          "ref": "DAC_R_L",
+          "name": "TERMINAL SCREW 5.08 2P",
+          "id": "gge6a6636145f1b10f8",
+          "pins": 2
+        },
+        {
+          "ref": "SPK_1_2",
+          "name": "TERMINAL SCREW 5.08 2P",
+          "id": "gge7340c19774ac6354",
+          "pins": 2
+        },
+        {
+          "ref": "G13",
+          "name": "XY2500V-C-5.08-3P",
+          "id": "gge71cfed0bb7170324",
+          "pins": 3
+        },
+        {
+          "ref": "G12",
+          "name": "XY2500V-C-5.08-3P",
+          "id": "gge423a563c9f6ad8d2",
+          "pins": 3
+        },
+        {
+          "ref": "G14",
+          "name": "XY2500V-C-5.08-3P",
+          "id": "ggef3fdae6ecb68d02c",
+          "pins": 3
+        },
+        {
+          "ref": "G27",
+          "name": "XY2500V-C-5.08-3P",
+          "id": "gge32a6151b0e61b0e1",
+          "pins": 3
+        },
+        {
+          "ref": "G26",
+          "name": "XY2500V-C-5.08-3P",
+          "id": "ggec84f5542b7d6a9e9",
+          "pins": 3
+        },
+        {
+          "ref": "G25",
+          "name": "XY2500V-C-5.08-3P",
+          "id": "gge8ebdf59dab0840f1",
+          "pins": 3
+        },
+        {
+          "ref": "G33",
+          "name": "XY2500V-C-5.08-3P",
+          "id": "ggea3bfaf6c22acec2d",
+          "pins": 3
+        },
+        {
+          "ref": "G32",
+          "name": "XY2500V-C-5.08-3P",
+          "id": "gge5616f4af52ea04e6",
+          "pins": 3
+        },
+        {
+          "ref": "G15",
+          "name": "XY2500V-C-5.08-3P",
+          "id": "gge343884c4125d2e10",
+          "pins": 3
+        },
+        {
+          "ref": "G3",
+          "name": "XY2500V-C-5.08-3P",
+          "id": "ggefd4bfc9813542be4",
+          "pins": 3
+        },
+        {
+          "ref": "G1",
+          "name": "XY2500V-C-5.08-3P",
+          "id": "gge71c204f01b7d418c",
+          "pins": 3
+        },
+        {
+          "ref": "R1",
+          "name": "4.3",
+          "id": "ggec4a938a044d0002c",
+          "pins": 2
+        },
+        {
+          "ref": "R2",
+          "name": "4.3",
+          "id": "gge56e2902d02ee9ddf",
+          "pins": 2
+        },
+        {
+          "ref": "G35-UP",
+          "name": "XY2500V-C-5.08-3P",
+          "id": "gged8fd899e9c1cfd29",
+          "pins": 3
+        },
+        {
+          "ref": "G34-UP",
+          "name": "XY2500V-C-5.08-3P",
+          "id": "ggede8634b264175966",
+          "pins": 3
+        },
+        {
+          "ref": "5>3,3V1",
+          "name": "PM254V-11-03-H85",
+          "id": "gge9f83cd5832038d22",
+          "pins": 3
+        },
+        {
+          "ref": "5>3,3V2",
+          "name": "PM254V-11-03-H85",
+          "id": "gge4b14f4b116f6e514",
+          "pins": 3
+        },
+        {
+          "ref": "5>3,3V3",
+          "name": "PM254V-11-03-H85",
+          "id": "ggeeafd84ac13127fd6",
+          "pins": 3
+        },
+        {
+          "ref": "5>3,3V4",
+          "name": "PM254V-11-03-H85",
+          "id": "ggef7090b74184bd713",
+          "pins": 3
+        },
+        {
+          "ref": "R3",
+          "name": "4.3",
+          "id": "gge59de2236fef36fcd",
+          "pins": 2
+        }
+      ],
+      "pin_count": 148,
+      "nets": [
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "34",
+              "name": "RX",
+              "position": [
+                210.0,
+                -480.0
+              ],
+              "id": "gge31585"
+            },
+            {
+              "ref": "G3",
+              "number": "2",
+              "name": "2",
+              "position": [
+                805.0,
+                -500.0
+              ],
+              "id": "gge39437"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "33",
+              "name": "21",
+              "position": [
+                210.0,
+                -500.0
+              ],
+              "id": "gge31592"
+            },
+            {
+              "ref": "G21",
+              "number": "1",
+              "name": "1",
+              "position": [
+                735.0,
+                -375.0
+              ],
+              "id": "gge38475"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "32",
+              "name": "GND",
+              "position": [
+                210.0,
+                -520.0
+              ],
+              "id": "gge31599"
+            },
+            {
+              "ref": "U3",
+              "number": "14",
+              "name": "GND",
+              "position": [
+                410.0,
+                -660.0
+              ],
+              "id": "gge31725"
+            },
+            {
+              "ref": "U3",
+              "number": "38",
+              "name": "GND",
+              "position": [
+                210.0,
+                -400.0
+              ],
+              "id": "gge31824"
+            },
+            {
+              "ref": "U1",
+              "number": "7",
+              "name": "GND",
+              "position": [
+                265.0,
+                -95.0
+              ],
+              "id": "gge32468"
+            },
+            {
+              "ref": "U1",
+              "number": "10",
+              "name": "GND",
+              "position": [
+                415.0,
+                -95.0
+              ],
+              "id": "gge32489"
+            },
+            {
+              "ref": "5VIN",
+              "number": "2",
+              "name": "GND",
+              "position": [
+                585.0,
+                -740.0
+              ],
+              "id": "gge32747"
+            },
+            {
+              "ref": "LED-G4",
+              "number": "3",
+              "name": "GND",
+              "position": [
+                635.0,
+                -580.0
+              ],
+              "id": "gge38367"
+            },
+            {
+              "ref": "3,3V1",
+              "number": "2",
+              "name": "GND",
+              "position": [
+                780.0,
+                -740.0
+              ],
+              "id": "gge38689"
+            },
+            {
+              "ref": "3,3V2",
+              "number": "2",
+              "name": "GND",
+              "position": [
+                865.0,
+                -745.0
+              ],
+              "id": "gge38843"
+            },
+            {
+              "ref": "3,3V3",
+              "number": "2",
+              "name": "GND",
+              "position": [
+                950.0,
+                -740.0
+              ],
+              "id": "gge38865"
+            },
+            {
+              "ref": "3,3V4",
+              "number": "2",
+              "name": "GND",
+              "position": [
+                1035.0,
+                -740.0
+              ],
+              "id": "gge38887"
+            },
+            {
+              "ref": "G13",
+              "number": "3",
+              "name": "3",
+              "position": [
+                730.0,
+                -610.0
+              ],
+              "id": "gge39041"
+            },
+            {
+              "ref": "G12",
+              "number": "3",
+              "name": "3",
+              "position": [
+                775.0,
+                -610.0
+              ],
+              "id": "gge39070"
+            },
+            {
+              "ref": "G14",
+              "number": "3",
+              "name": "3",
+              "position": [
+                870.0,
+                -610.0
+              ],
+              "id": "gge39128"
+            },
+            {
+              "ref": "G27",
+              "number": "3",
+              "name": "3",
+              "position": [
+                920.0,
+                -610.0
+              ],
+              "id": "gge39157"
+            },
+            {
+              "ref": "G26",
+              "number": "3",
+              "name": "3",
+              "position": [
+                965.0,
+                -610.0
+              ],
+              "id": "gge39186"
+            },
+            {
+              "ref": "G25",
+              "number": "3",
+              "name": "3",
+              "position": [
+                1010.0,
+                -610.0
+              ],
+              "id": "gge39215"
+            },
+            {
+              "ref": "G33",
+              "number": "3",
+              "name": "3",
+              "position": [
+                1055.0,
+                -610.0
+              ],
+              "id": "gge39244"
+            },
+            {
+              "ref": "G32",
+              "number": "3",
+              "name": "3",
+              "position": [
+                1100.0,
+                -610.0
+              ],
+              "id": "gge39273"
+            },
+            {
+              "ref": "G15",
+              "number": "3",
+              "name": "3",
+              "position": [
+                730.0,
+                -500.0
+              ],
+              "id": "gge39411"
+            },
+            {
+              "ref": "G3",
+              "number": "3",
+              "name": "3",
+              "position": [
+                795.0,
+                -500.0
+              ],
+              "id": "gge39444"
+            },
+            {
+              "ref": "G1",
+              "number": "3",
+              "name": "3",
+              "position": [
+                865.0,
+                -500.0
+              ],
+              "id": "gge39486"
+            },
+            {
+              "ref": "G35-UP",
+              "number": "3",
+              "name": "3",
+              "position": [
+                930.0,
+                -450.0
+              ],
+              "id": "gge39707"
+            },
+            {
+              "ref": "G34-UP",
+              "number": "3",
+              "name": "3",
+              "position": [
+                1060.0,
+                -450.0
+              ],
+              "id": "gge39740"
+            },
+            {
+              "ref": "5>3,3V1",
+              "number": "3",
+              "name": "3",
+              "position": [
+                770.0,
+                -675.0
+              ],
+              "id": "gge42401"
+            },
+            {
+              "ref": "5>3,3V2",
+              "number": "3",
+              "name": "3",
+              "position": [
+                855.0,
+                -675.0
+              ],
+              "id": "gge42430"
+            },
+            {
+              "ref": "5>3,3V3",
+              "number": "3",
+              "name": "3",
+              "position": [
+                940.0,
+                -675.0
+              ],
+              "id": "gge42459"
+            },
+            {
+              "ref": "5>3,3V4",
+              "number": "3",
+              "name": "3",
+              "position": [
+                1025.0,
+                -675.0
+              ],
+              "id": "gge42488"
+            },
+            {
+              "ref": "R3",
+              "number": "2",
+              "name": "2",
+              "position": [
+                225.0,
+                -240.0
+              ],
+              "id": "gge42548"
+            }
+          ],
+          "labels": [
+            "GND"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "31",
+              "name": "19",
+              "position": [
+                210.0,
+                -540.0
+              ],
+              "id": "gge31606"
+            },
+            {
+              "ref": "G21",
+              "number": "3",
+              "name": "3",
+              "position": [
+                755.0,
+                -375.0
+              ],
+              "id": "gge38489"
+            },
+            {
+              "ref": "G5",
+              "number": "3",
+              "name": "3",
+              "position": [
+                830.0,
+                -375.0
+              ],
+              "id": "gge38532"
+            },
+            {
+              "ref": "G2",
+              "number": "3",
+              "name": "3",
+              "position": [
+                910.0,
+                -375.0
+              ],
+              "id": "gge38575"
+            },
+            {
+              "ref": "G0",
+              "number": "3",
+              "name": "3",
+              "position": [
+                990.0,
+                -375.0
+              ],
+              "id": "gge38618"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "30",
+              "name": "18",
+              "position": [
+                210.0,
+                -560.0
+              ],
+              "id": "gge31613"
+            },
+            {
+              "ref": "G21",
+              "number": "2",
+              "name": "2",
+              "position": [
+                745.0,
+                -375.0
+              ],
+              "id": "gge38482"
+            },
+            {
+              "ref": "G5",
+              "number": "2",
+              "name": "2",
+              "position": [
+                820.0,
+                -375.0
+              ],
+              "id": "gge38525"
+            },
+            {
+              "ref": "G2",
+              "number": "2",
+              "name": "2",
+              "position": [
+                900.0,
+                -375.0
+              ],
+              "id": "gge38568"
+            },
+            {
+              "ref": "G0",
+              "number": "2",
+              "name": "2",
+              "position": [
+                980.0,
+                -375.0
+              ],
+              "id": "gge38611"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "29",
+              "name": "5",
+              "position": [
+                210.0,
+                -580.0
+              ],
+              "id": "gge31620"
+            },
+            {
+              "ref": "G5",
+              "number": "1",
+              "name": "1",
+              "position": [
+                810.0,
+                -375.0
+              ],
+              "id": "gge38518"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "28",
+              "name": "17",
+              "position": [
+                210.0,
+                -600.0
+              ],
+              "id": "gge31627"
+            },
+            {
+              "ref": "U1",
+              "number": "2",
+              "name": "RX",
+              "position": [
+                265.0,
+                -195.0
+              ],
+              "id": "gge32433"
+            },
+            {
+              "ref": "R3",
+              "number": "1",
+              "name": "1",
+              "position": [
+                225.0,
+                -200.0
+              ],
+              "id": "gge42555"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "27",
+              "name": "16",
+              "position": [
+                210.0,
+                -620.0
+              ],
+              "id": "gge31634"
+            },
+            {
+              "ref": "U1",
+              "number": "3",
+              "name": "TX",
+              "position": [
+                265.0,
+                -175.0
+              ],
+              "id": "gge32440"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "26",
+              "name": "4",
+              "position": [
+                210.0,
+                -640.0
+              ],
+              "id": "gge31641"
+            },
+            {
+              "ref": "LED-G4",
+              "number": "2",
+              "name": "DATA",
+              "position": [
+                635.0,
+                -600.0
+              ],
+              "id": "gge38352"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "25",
+              "name": "0",
+              "position": [
+                210.0,
+                -660.0
+              ],
+              "id": "gge31648"
+            },
+            {
+              "ref": "G0",
+              "number": "1",
+              "name": "1",
+              "position": [
+                970.0,
+                -375.0
+              ],
+              "id": "gge38604"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "24",
+              "name": "2",
+              "position": [
+                210.0,
+                -680.0
+              ],
+              "id": "gge31655"
+            },
+            {
+              "ref": "G2",
+              "number": "1",
+              "name": "1",
+              "position": [
+                890.0,
+                -375.0
+              ],
+              "id": "gge38561"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "23",
+              "name": "15",
+              "position": [
+                210.0,
+                -700.0
+              ],
+              "id": "gge31662"
+            },
+            {
+              "ref": "G15",
+              "number": "2",
+              "name": "2",
+              "position": [
+                740.0,
+                -500.0
+              ],
+              "id": "gge39404"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "22",
+              "name": "D1",
+              "position": [
+                210.0,
+                -720.0
+              ],
+              "id": "gge31669"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "21",
+              "name": "D0",
+              "position": [
+                210.0,
+                -740.0
+              ],
+              "id": "gge31676"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "20",
+              "name": "CLK",
+              "position": [
+                210.0,
+                -760.0
+              ],
+              "id": "gge31683"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "19",
+              "name": "V5",
+              "position": [
+                410.0,
+                -760.0
+              ],
+              "id": "gge31690"
+            },
+            {
+              "ref": "U1",
+              "number": "1",
+              "name": "VCC",
+              "position": [
+                265.0,
+                -215.0
+              ],
+              "id": "gge32426"
+            },
+            {
+              "ref": "5VIN",
+              "number": "1",
+              "name": "5 VIN",
+              "position": [
+                585.0,
+                -760.0
+              ],
+              "id": "gge32755"
+            },
+            {
+              "ref": "LED-G4",
+              "number": "1",
+              "name": "5 VIN",
+              "position": [
+                635.0,
+                -620.0
+              ],
+              "id": "gge38360"
+            },
+            {
+              "ref": "5>3,3V1",
+              "number": "1",
+              "name": "1",
+              "position": [
+                750.0,
+                -675.0
+              ],
+              "id": "gge42387"
+            },
+            {
+              "ref": "5>3,3V2",
+              "number": "1",
+              "name": "1",
+              "position": [
+                835.0,
+                -675.0
+              ],
+              "id": "gge42416"
+            },
+            {
+              "ref": "5>3,3V3",
+              "number": "1",
+              "name": "1",
+              "position": [
+                920.0,
+                -675.0
+              ],
+              "id": "gge42445"
+            },
+            {
+              "ref": "5>3,3V4",
+              "number": "1",
+              "name": "1",
+              "position": [
+                1005.0,
+                -675.0
+              ],
+              "id": "gge42474"
+            }
+          ],
+          "labels": [
+            "+5V"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "18",
+              "name": "CMD",
+              "position": [
+                410.0,
+                -740.0
+              ],
+              "id": "gge31697"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "17",
+              "name": "D3",
+              "position": [
+                410.0,
+                -720.0
+              ],
+              "id": "gge31704"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "16",
+              "name": "D2",
+              "position": [
+                410.0,
+                -700.0
+              ],
+              "id": "gge31711"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "15",
+              "name": "13",
+              "position": [
+                410.0,
+                -680.0
+              ],
+              "id": "gge31718"
+            },
+            {
+              "ref": "G13",
+              "number": "2",
+              "name": "2",
+              "position": [
+                720.0,
+                -610.0
+              ],
+              "id": "gge39034"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "13",
+              "name": "12",
+              "position": [
+                410.0,
+                -640.0
+              ],
+              "id": "gge31732"
+            },
+            {
+              "ref": "G12",
+              "number": "2",
+              "name": "2",
+              "position": [
+                765.0,
+                -610.0
+              ],
+              "id": "gge39063"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "12",
+              "name": "14",
+              "position": [
+                410.0,
+                -620.0
+              ],
+              "id": "gge31739"
+            },
+            {
+              "ref": "G14",
+              "number": "2",
+              "name": "2",
+              "position": [
+                860.0,
+                -610.0
+              ],
+              "id": "gge39121"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "11",
+              "name": "27",
+              "position": [
+                410.0,
+                -600.0
+              ],
+              "id": "gge31746"
+            },
+            {
+              "ref": "G27",
+              "number": "2",
+              "name": "2",
+              "position": [
+                910.0,
+                -610.0
+              ],
+              "id": "gge39150"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "10",
+              "name": "26",
+              "position": [
+                410.0,
+                -580.0
+              ],
+              "id": "gge31753"
+            },
+            {
+              "ref": "G26",
+              "number": "2",
+              "name": "2",
+              "position": [
+                955.0,
+                -610.0
+              ],
+              "id": "gge39179"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "9",
+              "name": "25",
+              "position": [
+                410.0,
+                -560.0
+              ],
+              "id": "gge31760"
+            },
+            {
+              "ref": "G25",
+              "number": "2",
+              "name": "2",
+              "position": [
+                1000.0,
+                -610.0
+              ],
+              "id": "gge39208"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "8",
+              "name": "33",
+              "position": [
+                410.0,
+                -540.0
+              ],
+              "id": "gge31767"
+            },
+            {
+              "ref": "G33",
+              "number": "2",
+              "name": "2",
+              "position": [
+                1045.0,
+                -610.0
+              ],
+              "id": "gge39237"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "7",
+              "name": "32",
+              "position": [
+                410.0,
+                -520.0
+              ],
+              "id": "gge31774"
+            },
+            {
+              "ref": "G32",
+              "number": "2",
+              "name": "2",
+              "position": [
+                1090.0,
+                -610.0
+              ],
+              "id": "gge39266"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "6",
+              "name": "35",
+              "position": [
+                410.0,
+                -500.0
+              ],
+              "id": "gge31781"
+            },
+            {
+              "ref": "R1",
+              "number": "1",
+              "name": "1",
+              "position": [
+                910.0,
+                -510.0
+              ],
+              "id": "gge39634"
+            },
+            {
+              "ref": "G35-UP",
+              "number": "2",
+              "name": "2",
+              "position": [
+                940.0,
+                -450.0
+              ],
+              "id": "gge39700"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "5",
+              "name": "34",
+              "position": [
+                410.0,
+                -480.0
+              ],
+              "id": "gge31788"
+            },
+            {
+              "ref": "R2",
+              "number": "1",
+              "name": "1",
+              "position": [
+                1040.0,
+                -480.0
+              ],
+              "id": "gge39655"
+            },
+            {
+              "ref": "G34-UP",
+              "number": "2",
+              "name": "2",
+              "position": [
+                1070.0,
+                -450.0
+              ],
+              "id": "gge39733"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "35",
+              "name": "TX",
+              "position": [
+                210.0,
+                -460.0
+              ],
+              "id": "gge31810"
+            },
+            {
+              "ref": "U3",
+              "number": "37",
+              "name": "23",
+              "position": [
+                210.0,
+                -420.0
+              ],
+              "id": "gge31831"
+            },
+            {
+              "ref": "G21",
+              "number": "4",
+              "name": "4",
+              "position": [
+                765.0,
+                -375.0
+              ],
+              "id": "gge38496"
+            },
+            {
+              "ref": "G5",
+              "number": "4",
+              "name": "4",
+              "position": [
+                840.0,
+                -375.0
+              ],
+              "id": "gge38539"
+            },
+            {
+              "ref": "G2",
+              "number": "4",
+              "name": "4",
+              "position": [
+                920.0,
+                -375.0
+              ],
+              "id": "gge38582"
+            },
+            {
+              "ref": "G0",
+              "number": "4",
+              "name": "4",
+              "position": [
+                1000.0,
+                -375.0
+              ],
+              "id": "gge38625"
+            },
+            {
+              "ref": "G1",
+              "number": "2",
+              "name": "2",
+              "position": [
+                875.0,
+                -500.0
+              ],
+              "id": "gge39479"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "36",
+              "name": "22",
+              "position": [
+                210.0,
+                -440.0
+              ],
+              "id": "gge31817"
+            },
+            {
+              "ref": "G21",
+              "number": "5",
+              "name": "5",
+              "position": [
+                775.0,
+                -375.0
+              ],
+              "id": "gge38503"
+            },
+            {
+              "ref": "G5",
+              "number": "5",
+              "name": "5",
+              "position": [
+                850.0,
+                -375.0
+              ],
+              "id": "gge38546"
+            },
+            {
+              "ref": "G2",
+              "number": "5",
+              "name": "5",
+              "position": [
+                930.0,
+                -375.0
+              ],
+              "id": "gge38589"
+            },
+            {
+              "ref": "G0",
+              "number": "5",
+              "name": "5",
+              "position": [
+                1010.0,
+                -375.0
+              ],
+              "id": "gge38632"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "1",
+              "name": "3V3",
+              "position": [
+                410.0,
+                -400.0
+              ],
+              "id": "gge31838"
+            },
+            {
+              "ref": "G13",
+              "number": "1",
+              "name": "1",
+              "position": [
+                710.0,
+                -610.0
+              ],
+              "id": "gge39027"
+            },
+            {
+              "ref": "G12",
+              "number": "1",
+              "name": "1",
+              "position": [
+                755.0,
+                -610.0
+              ],
+              "id": "gge39056"
+            },
+            {
+              "ref": "G14",
+              "number": "1",
+              "name": "1",
+              "position": [
+                850.0,
+                -610.0
+              ],
+              "id": "gge39114"
+            },
+            {
+              "ref": "G27",
+              "number": "1",
+              "name": "1",
+              "position": [
+                900.0,
+                -610.0
+              ],
+              "id": "gge39143"
+            },
+            {
+              "ref": "G26",
+              "number": "1",
+              "name": "1",
+              "position": [
+                945.0,
+                -610.0
+              ],
+              "id": "gge39172"
+            },
+            {
+              "ref": "G25",
+              "number": "1",
+              "name": "1",
+              "position": [
+                990.0,
+                -610.0
+              ],
+              "id": "gge39201"
+            },
+            {
+              "ref": "G33",
+              "number": "1",
+              "name": "1",
+              "position": [
+                1035.0,
+                -610.0
+              ],
+              "id": "gge39230"
+            },
+            {
+              "ref": "G32",
+              "number": "1",
+              "name": "1",
+              "position": [
+                1080.0,
+                -610.0
+              ],
+              "id": "gge39259"
+            },
+            {
+              "ref": "G15",
+              "number": "1",
+              "name": "1",
+              "position": [
+                750.0,
+                -500.0
+              ],
+              "id": "gge39397"
+            },
+            {
+              "ref": "G3",
+              "number": "1",
+              "name": "1",
+              "position": [
+                815.0,
+                -500.0
+              ],
+              "id": "gge39430"
+            },
+            {
+              "ref": "G1",
+              "number": "1",
+              "name": "1",
+              "position": [
+                885.0,
+                -500.0
+              ],
+              "id": "gge39472"
+            },
+            {
+              "ref": "R1",
+              "number": "2",
+              "name": "2",
+              "position": [
+                950.0,
+                -510.0
+              ],
+              "id": "gge39627"
+            },
+            {
+              "ref": "R2",
+              "number": "2",
+              "name": "2",
+              "position": [
+                1080.0,
+                -480.0
+              ],
+              "id": "gge39648"
+            },
+            {
+              "ref": "G35-UP",
+              "number": "1",
+              "name": "1",
+              "position": [
+                950.0,
+                -450.0
+              ],
+              "id": "gge39693"
+            },
+            {
+              "ref": "G34-UP",
+              "number": "1",
+              "name": "1",
+              "position": [
+                1080.0,
+                -450.0
+              ],
+              "id": "gge39726"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "2",
+              "name": "CN",
+              "position": [
+                410.0,
+                -420.0
+              ],
+              "id": "gge31845"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "3",
+              "name": "VP",
+              "position": [
+                410.0,
+                -440.0
+              ],
+              "id": "gge31852"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "4",
+              "name": "VN",
+              "position": [
+                410.0,
+                -460.0
+              ],
+              "id": "gge31859"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U1",
+              "number": "4",
+              "name": "DAC_R",
+              "position": [
+                265.0,
+                -155.0
+              ],
+              "id": "gge32447"
+            },
+            {
+              "ref": "DAC_R_L",
+              "number": "2",
+              "name": "DAC_R",
+              "position": [
+                205.0,
+                -155.0
+              ],
+              "id": "gge38980"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U1",
+              "number": "5",
+              "name": "DAC_L",
+              "position": [
+                265.0,
+                -135.0
+              ],
+              "id": "gge32454"
+            },
+            {
+              "ref": "DAC_R_L",
+              "number": "1",
+              "name": "DAC_L",
+              "position": [
+                205.0,
+                -135.0
+              ],
+              "id": "gge38988"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U1",
+              "number": "6",
+              "name": "SPK1",
+              "position": [
+                265.0,
+                -115.0
+              ],
+              "id": "gge32461"
+            },
+            {
+              "ref": "SPK_1_2",
+              "number": "2",
+              "name": "SPK1",
+              "position": [
+                205.0,
+                -95.0
+              ],
+              "id": "gge39002"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U1",
+              "number": "8",
+              "name": "SPK2",
+              "position": [
+                265.0,
+                -75.0
+              ],
+              "id": "gge32475"
+            },
+            {
+              "ref": "SPK_1_2",
+              "number": "1",
+              "name": "SPK2",
+              "position": [
+                205.0,
+                -75.0
+              ],
+              "id": "gge39010"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U1",
+              "number": "9",
+              "name": "IO_1",
+              "position": [
+                415.0,
+                -75.0
+              ],
+              "id": "gge32482"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U1",
+              "number": "11",
+              "name": "IO_2",
+              "position": [
+                415.0,
+                -115.0
+              ],
+              "id": "gge32496"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U1",
+              "number": "12",
+              "name": "ADKEY_1",
+              "position": [
+                415.0,
+                -135.0
+              ],
+              "id": "gge32503"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U1",
+              "number": "13",
+              "name": "ADKEY_2",
+              "position": [
+                415.0,
+                -155.0
+              ],
+              "id": "gge32510"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U1",
+              "number": "14",
+              "name": "USB+",
+              "position": [
+                415.0,
+                -175.0
+              ],
+              "id": "gge32517"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U1",
+              "number": "15",
+              "name": "USB-",
+              "position": [
+                415.0,
+                -195.0
+              ],
+              "id": "gge32524"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U1",
+              "number": "16",
+              "name": "BUSY",
+              "position": [
+                415.0,
+                -215.0
+              ],
+              "id": "gge32531"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "3,3V1",
+              "number": "1",
+              "name": "3,3 V",
+              "position": [
+                760.0,
+                -740.0
+              ],
+              "id": "gge38697"
+            },
+            {
+              "ref": "5>3,3V1",
+              "number": "2",
+              "name": "2",
+              "position": [
+                760.0,
+                -675.0
+              ],
+              "id": "gge42394"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "3,3V2",
+              "number": "1",
+              "name": "3,3 V",
+              "position": [
+                845.0,
+                -745.0
+              ],
+              "id": "gge38851"
+            },
+            {
+              "ref": "5>3,3V2",
+              "number": "2",
+              "name": "2",
+              "position": [
+                845.0,
+                -675.0
+              ],
+              "id": "gge42423"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "3,3V3",
+              "number": "1",
+              "name": "3,3 V",
+              "position": [
+                930.0,
+                -740.0
+              ],
+              "id": "gge38873"
+            },
+            {
+              "ref": "5>3,3V3",
+              "number": "2",
+              "name": "2",
+              "position": [
+                930.0,
+                -675.0
+              ],
+              "id": "gge42452"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "3,3V4",
+              "number": "1",
+              "name": "3,3 V",
+              "position": [
+                1015.0,
+                -740.0
+              ],
+              "id": "gge38895"
+            },
+            {
+              "ref": "5>3,3V4",
+              "number": "2",
+              "name": "2",
+              "position": [
+                1015.0,
+                -675.0
+              ],
+              "id": "gge42481"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [],
+          "labels": [
+            "GPIO 1, TX NOT as input"
+          ]
+        }
+      ]
+    },
+    "SCH_Gpio-Expander_2026-10-10 (1).json": {
+      "bytes": 76006,
+      "sha256": "946e9df479d5286c5cf358e86e515687d6df86c2dffb0a13f6e2389269b0802e",
+      "title": "Gpio-Expander",
+      "editor_version": "6.5.54",
+      "shape_counts": {
+        "LIB": 23,
+        "F": 91,
+        "R": 4,
+        "W": 93,
+        "O": 2,
+        "J": 2
+      },
+      "components": [
+        {
+          "ref": "A0",
+          "name": "A0",
+          "id": "gge0fa5051b2a395bb4",
+          "pins": 3
+        },
+        {
+          "ref": "U2",
+          "name": "PM254-2-10-Z-8.5",
+          "id": "gge49d426678f002fe2",
+          "pins": 20
+        },
+        {
+          "ref": "U3",
+          "name": "PM2.54-1*10",
+          "id": "gge0ed943ad91df397b",
+          "pins": 10
+        },
+        {
+          "ref": "A1",
+          "name": "A0",
+          "id": "gge694ffa1a5ca75e39",
+          "pins": 3
+        },
+        {
+          "ref": "A2",
+          "name": "A0",
+          "id": "gge8051e066988f2196",
+          "pins": 3
+        },
+        {
+          "ref": "A3",
+          "name": "A0",
+          "id": "gge78c8b5a2885ba719",
+          "pins": 3
+        },
+        {
+          "ref": "A4",
+          "name": "A0",
+          "id": "gge79e98ec1b64d4c70",
+          "pins": 3
+        },
+        {
+          "ref": "A5",
+          "name": "A0",
+          "id": "gge2ea5a16a6d5c7d7a",
+          "pins": 3
+        },
+        {
+          "ref": "A6",
+          "name": "A0",
+          "id": "ggef4b8384f560d20d9",
+          "pins": 3
+        },
+        {
+          "ref": "A7",
+          "name": "A0",
+          "id": "gge3eb331c519ec9a29",
+          "pins": 3
+        },
+        {
+          "ref": "B0",
+          "name": "A0",
+          "id": "gge460e978d9041d33b",
+          "pins": 3
+        },
+        {
+          "ref": "B1",
+          "name": "A0",
+          "id": "gge89a311175deba008",
+          "pins": 3
+        },
+        {
+          "ref": "B2",
+          "name": "A0",
+          "id": "gge168b1c92c151b246",
+          "pins": 3
+        },
+        {
+          "ref": "B3",
+          "name": "A0",
+          "id": "gge4960443e8b609f18",
+          "pins": 3
+        },
+        {
+          "ref": "B4",
+          "name": "A0",
+          "id": "gge0d4facef4a41e6b2",
+          "pins": 3
+        },
+        {
+          "ref": "B5",
+          "name": "A0",
+          "id": "ggeed103d8e6ba5e674",
+          "pins": 3
+        },
+        {
+          "ref": "B6",
+          "name": "A0",
+          "id": "gge919e9951292aa091",
+          "pins": 3
+        },
+        {
+          "ref": "B7",
+          "name": "A0",
+          "id": "gge4ba8dd1ed3a32547",
+          "pins": 3
+        },
+        {
+          "ref": "CN1",
+          "name": "ZX-XH2.54-4PZZ",
+          "id": "ggea9e72eb74096aa72",
+          "pins": 4
+        },
+        {
+          "ref": "CN3",
+          "name": "ZX-XH2.54-3PZZ",
+          "id": "gge169c0005013c873d",
+          "pins": 3
+        },
+        {
+          "ref": "CN2",
+          "name": "ZX-XH2.54-4PZZ",
+          "id": "gge8db214456e34357d",
+          "pins": 4
+        },
+        {
+          "ref": "SW1",
+          "name": "SMQS-03R-TP",
+          "id": "ggeed4b3e348ecb22df",
+          "pins": 6
+        }
+      ],
+      "pin_count": 95,
+      "nets": [
+        {
+          "pins": [
+            {
+              "ref": "A0",
+              "number": "1",
+              "name": "1",
+              "position": [
+                410.0,
+                -567.0
+              ],
+              "id": "gge247"
+            },
+            {
+              "ref": "U2",
+              "number": "1",
+              "name": "1",
+              "position": [
+                145.0,
+                -435.0
+              ],
+              "id": "gge2101"
+            },
+            {
+              "ref": "U3",
+              "number": "9",
+              "name": "9",
+              "position": [
+                155.0,
+                -160.0
+              ],
+              "id": "gge2998"
+            },
+            {
+              "ref": "A1",
+              "number": "1",
+              "name": "1",
+              "position": [
+                410.0,
+                -505.0
+              ],
+              "id": "gge4834"
+            },
+            {
+              "ref": "A2",
+              "number": "1",
+              "name": "1",
+              "position": [
+                410.0,
+                -440.0
+              ],
+              "id": "gge5002"
+            },
+            {
+              "ref": "A3",
+              "number": "1",
+              "name": "1",
+              "position": [
+                410.0,
+                -375.0
+              ],
+              "id": "gge5170"
+            },
+            {
+              "ref": "A4",
+              "number": "1",
+              "name": "1",
+              "position": [
+                515.0,
+                -565.0
+              ],
+              "id": "gge5338"
+            },
+            {
+              "ref": "A5",
+              "number": "1",
+              "name": "1",
+              "position": [
+                515.0,
+                -505.0
+              ],
+              "id": "gge5506"
+            },
+            {
+              "ref": "A6",
+              "number": "1",
+              "name": "1",
+              "position": [
+                515.0,
+                -440.0
+              ],
+              "id": "gge5674"
+            },
+            {
+              "ref": "A7",
+              "number": "1",
+              "name": "1",
+              "position": [
+                515.0,
+                -375.0
+              ],
+              "id": "gge5842"
+            },
+            {
+              "ref": "B0",
+              "number": "1",
+              "name": "1",
+              "position": [
+                615.0,
+                -565.0
+              ],
+              "id": "gge6010"
+            },
+            {
+              "ref": "B1",
+              "number": "1",
+              "name": "1",
+              "position": [
+                615.0,
+                -500.0
+              ],
+              "id": "gge6109"
+            },
+            {
+              "ref": "B2",
+              "number": "1",
+              "name": "1",
+              "position": [
+                615.0,
+                -435.0
+              ],
+              "id": "gge6277"
+            },
+            {
+              "ref": "B3",
+              "number": "1",
+              "name": "1",
+              "position": [
+                615.0,
+                -375.0
+              ],
+              "id": "gge6445"
+            },
+            {
+              "ref": "B4",
+              "number": "1",
+              "name": "1",
+              "position": [
+                710.0,
+                -565.0
+              ],
+              "id": "gge6613"
+            },
+            {
+              "ref": "B5",
+              "number": "1",
+              "name": "1",
+              "position": [
+                710.0,
+                -500.0
+              ],
+              "id": "gge6781"
+            },
+            {
+              "ref": "B6",
+              "number": "1",
+              "name": "1",
+              "position": [
+                710.0,
+                -435.0
+              ],
+              "id": "gge6949"
+            },
+            {
+              "ref": "B7",
+              "number": "1",
+              "name": "1",
+              "position": [
+                710.0,
+                -375.0
+              ],
+              "id": "gge7117"
+            },
+            {
+              "ref": "CN1",
+              "number": "1",
+              "name": "1",
+              "position": [
+                480.0,
+                -190.0
+              ],
+              "id": "gge7285"
+            },
+            {
+              "ref": "CN2",
+              "number": "1",
+              "name": "1",
+              "position": [
+                620.0,
+                -190.0
+              ],
+              "id": "gge8140"
+            }
+          ],
+          "labels": [
+            "GND"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "A0",
+              "number": "2",
+              "name": "2",
+              "position": [
+                410.0,
+                -557.0
+              ],
+              "id": "gge268"
+            },
+            {
+              "ref": "U2",
+              "number": "5",
+              "name": "5",
+              "position": [
+                145.0,
+                -415.0
+              ],
+              "id": "gge2185"
+            }
+          ],
+          "labels": [
+            "A0"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "A0",
+              "number": "3",
+              "name": "3",
+              "position": [
+                410.0,
+                -547.0
+              ],
+              "id": "gge289"
+            },
+            {
+              "ref": "U2",
+              "number": "2",
+              "name": "2",
+              "position": [
+                205.0,
+                -435.0
+              ],
+              "id": "gge2500"
+            },
+            {
+              "ref": "U3",
+              "number": "10",
+              "name": "10",
+              "position": [
+                155.0,
+                -150.0
+              ],
+              "id": "gge2977"
+            },
+            {
+              "ref": "A1",
+              "number": "3",
+              "name": "3",
+              "position": [
+                410.0,
+                -485.0
+              ],
+              "id": "gge4876"
+            },
+            {
+              "ref": "A2",
+              "number": "3",
+              "name": "3",
+              "position": [
+                410.0,
+                -420.0
+              ],
+              "id": "gge5044"
+            },
+            {
+              "ref": "A3",
+              "number": "3",
+              "name": "3",
+              "position": [
+                410.0,
+                -355.0
+              ],
+              "id": "gge5212"
+            },
+            {
+              "ref": "A4",
+              "number": "3",
+              "name": "3",
+              "position": [
+                515.0,
+                -545.0
+              ],
+              "id": "gge5380"
+            },
+            {
+              "ref": "A5",
+              "number": "3",
+              "name": "3",
+              "position": [
+                515.0,
+                -485.0
+              ],
+              "id": "gge5548"
+            },
+            {
+              "ref": "A6",
+              "number": "3",
+              "name": "3",
+              "position": [
+                515.0,
+                -420.0
+              ],
+              "id": "gge5716"
+            },
+            {
+              "ref": "A7",
+              "number": "3",
+              "name": "3",
+              "position": [
+                515.0,
+                -355.0
+              ],
+              "id": "gge5884"
+            },
+            {
+              "ref": "B0",
+              "number": "3",
+              "name": "3",
+              "position": [
+                615.0,
+                -545.0
+              ],
+              "id": "gge6052"
+            },
+            {
+              "ref": "B1",
+              "number": "3",
+              "name": "3",
+              "position": [
+                615.0,
+                -480.0
+              ],
+              "id": "gge6151"
+            },
+            {
+              "ref": "B2",
+              "number": "3",
+              "name": "3",
+              "position": [
+                615.0,
+                -415.0
+              ],
+              "id": "gge6319"
+            },
+            {
+              "ref": "B3",
+              "number": "3",
+              "name": "3",
+              "position": [
+                615.0,
+                -355.0
+              ],
+              "id": "gge6487"
+            },
+            {
+              "ref": "B4",
+              "number": "3",
+              "name": "3",
+              "position": [
+                710.0,
+                -545.0
+              ],
+              "id": "gge6655"
+            },
+            {
+              "ref": "B5",
+              "number": "3",
+              "name": "3",
+              "position": [
+                710.0,
+                -480.0
+              ],
+              "id": "gge6823"
+            },
+            {
+              "ref": "B6",
+              "number": "3",
+              "name": "3",
+              "position": [
+                710.0,
+                -415.0
+              ],
+              "id": "gge6991"
+            },
+            {
+              "ref": "B7",
+              "number": "3",
+              "name": "3",
+              "position": [
+                710.0,
+                -355.0
+              ],
+              "id": "gge7159"
+            },
+            {
+              "ref": "CN1",
+              "number": "2",
+              "name": "2",
+              "position": [
+                480.0,
+                -180.0
+              ],
+              "id": "gge7306"
+            },
+            {
+              "ref": "CN2",
+              "number": "2",
+              "name": "2",
+              "position": [
+                620.0,
+                -180.0
+              ],
+              "id": "gge8161"
+            },
+            {
+              "ref": "SW1",
+              "number": "3",
+              "name": "3",
+              "position": [
+                120.0,
+                -665.0
+              ],
+              "id": "gge8373"
+            },
+            {
+              "ref": "SW1",
+              "number": "2",
+              "name": "2",
+              "position": [
+                120.0,
+                -675.0
+              ],
+              "id": "gge8394"
+            },
+            {
+              "ref": "SW1",
+              "number": "1",
+              "name": "1",
+              "position": [
+                120.0,
+                -685.0
+              ],
+              "id": "gge8415"
+            }
+          ],
+          "labels": [
+            "VCC"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U2",
+              "number": "20",
+              "name": "20",
+              "position": [
+                205.0,
+                -345.0
+              ],
+              "id": "gge2122"
+            },
+            {
+              "ref": "B7",
+              "number": "2",
+              "name": "2",
+              "position": [
+                710.0,
+                -365.0
+              ],
+              "id": "gge7138"
+            }
+          ],
+          "labels": [
+            "B7"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U2",
+              "number": "3",
+              "name": "3",
+              "position": [
+                145.0,
+                -425.0
+              ],
+              "id": "gge2143"
+            },
+            {
+              "ref": "CN3",
+              "number": "2",
+              "name": "2",
+              "position": [
+                335.0,
+                -95.0
+              ],
+              "id": "gge7732"
+            }
+          ],
+          "labels": [
+            "ITA"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U2",
+              "number": "18",
+              "name": "18",
+              "position": [
+                205.0,
+                -355.0
+              ],
+              "id": "gge2164"
+            },
+            {
+              "ref": "B6",
+              "number": "2",
+              "name": "2",
+              "position": [
+                710.0,
+                -425.0
+              ],
+              "id": "gge6970"
+            }
+          ],
+          "labels": [
+            "B6"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U2",
+              "number": "16",
+              "name": "16",
+              "position": [
+                205.0,
+                -365.0
+              ],
+              "id": "gge2206"
+            },
+            {
+              "ref": "B5",
+              "number": "2",
+              "name": "2",
+              "position": [
+                710.0,
+                -490.0
+              ],
+              "id": "gge6802"
+            }
+          ],
+          "labels": [
+            "B5"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U2",
+              "number": "7",
+              "name": "7",
+              "position": [
+                145.0,
+                -405.0
+              ],
+              "id": "gge2227"
+            },
+            {
+              "ref": "A1",
+              "number": "2",
+              "name": "2",
+              "position": [
+                410.0,
+                -495.0
+              ],
+              "id": "gge4855"
+            }
+          ],
+          "labels": [
+            "A1"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U2",
+              "number": "14",
+              "name": "14",
+              "position": [
+                205.0,
+                -375.0
+              ],
+              "id": "gge2248"
+            },
+            {
+              "ref": "B4",
+              "number": "2",
+              "name": "2",
+              "position": [
+                710.0,
+                -555.0
+              ],
+              "id": "gge6634"
+            }
+          ],
+          "labels": [
+            "B4"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U2",
+              "number": "9",
+              "name": "9",
+              "position": [
+                145.0,
+                -395.0
+              ],
+              "id": "gge2269"
+            },
+            {
+              "ref": "A2",
+              "number": "2",
+              "name": "2",
+              "position": [
+                410.0,
+                -430.0
+              ],
+              "id": "gge5023"
+            }
+          ],
+          "labels": [
+            "A2"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U2",
+              "number": "12",
+              "name": "12",
+              "position": [
+                205.0,
+                -385.0
+              ],
+              "id": "gge2290"
+            },
+            {
+              "ref": "B3",
+              "number": "2",
+              "name": "2",
+              "position": [
+                615.0,
+                -365.0
+              ],
+              "id": "gge6466"
+            }
+          ],
+          "labels": [
+            "B3"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U2",
+              "number": "11",
+              "name": "11",
+              "position": [
+                145.0,
+                -385.0
+              ],
+              "id": "gge2311"
+            },
+            {
+              "ref": "A3",
+              "number": "2",
+              "name": "2",
+              "position": [
+                410.0,
+                -365.0
+              ],
+              "id": "gge5191"
+            }
+          ],
+          "labels": [
+            "A3"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U2",
+              "number": "10",
+              "name": "10",
+              "position": [
+                205.0,
+                -395.0
+              ],
+              "id": "gge2332"
+            },
+            {
+              "ref": "B2",
+              "number": "2",
+              "name": "2",
+              "position": [
+                615.0,
+                -425.0
+              ],
+              "id": "gge6298"
+            }
+          ],
+          "labels": [
+            "B2"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U2",
+              "number": "13",
+              "name": "13",
+              "position": [
+                145.0,
+                -375.0
+              ],
+              "id": "gge2353"
+            },
+            {
+              "ref": "A4",
+              "number": "2",
+              "name": "2",
+              "position": [
+                515.0,
+                -555.0
+              ],
+              "id": "gge5359"
+            }
+          ],
+          "labels": [
+            "A4"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U2",
+              "number": "8",
+              "name": "8",
+              "position": [
+                205.0,
+                -405.0
+              ],
+              "id": "gge2374"
+            },
+            {
+              "ref": "B1",
+              "number": "2",
+              "name": "2",
+              "position": [
+                615.0,
+                -490.0
+              ],
+              "id": "gge6130"
+            }
+          ],
+          "labels": [
+            "B1"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U2",
+              "number": "15",
+              "name": "15",
+              "position": [
+                145.0,
+                -365.0
+              ],
+              "id": "gge2395"
+            },
+            {
+              "ref": "A5",
+              "number": "2",
+              "name": "2",
+              "position": [
+                515.0,
+                -495.0
+              ],
+              "id": "gge5527"
+            }
+          ],
+          "labels": [
+            "A5"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U2",
+              "number": "6",
+              "name": "6",
+              "position": [
+                205.0,
+                -415.0
+              ],
+              "id": "gge2416"
+            },
+            {
+              "ref": "B0",
+              "number": "2",
+              "name": "2",
+              "position": [
+                615.0,
+                -555.0
+              ],
+              "id": "gge6031"
+            }
+          ],
+          "labels": [
+            "B0"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U2",
+              "number": "17",
+              "name": "17",
+              "position": [
+                145.0,
+                -355.0
+              ],
+              "id": "gge2437"
+            },
+            {
+              "ref": "A6",
+              "number": "2",
+              "name": "2",
+              "position": [
+                515.0,
+                -430.0
+              ],
+              "id": "gge5695"
+            }
+          ],
+          "labels": [
+            "A6"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U2",
+              "number": "4",
+              "name": "4",
+              "position": [
+                205.0,
+                -425.0
+              ],
+              "id": "gge2458"
+            },
+            {
+              "ref": "CN3",
+              "number": "1",
+              "name": "1",
+              "position": [
+                335.0,
+                -105.0
+              ],
+              "id": "gge7711"
+            }
+          ],
+          "labels": [
+            "ITB"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U2",
+              "number": "19",
+              "name": "19",
+              "position": [
+                145.0,
+                -345.0
+              ],
+              "id": "gge2479"
+            },
+            {
+              "ref": "A7",
+              "number": "2",
+              "name": "2",
+              "position": [
+                515.0,
+                -365.0
+              ],
+              "id": "gge5863"
+            }
+          ],
+          "labels": [
+            "A7"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "8",
+              "name": "8",
+              "position": [
+                155.0,
+                -170.0
+              ],
+              "id": "gge3019"
+            },
+            {
+              "ref": "CN1",
+              "number": "4",
+              "name": "4",
+              "position": [
+                480.0,
+                -160.0
+              ],
+              "id": "gge7348"
+            },
+            {
+              "ref": "CN2",
+              "number": "4",
+              "name": "4",
+              "position": [
+                620.0,
+                -160.0
+              ],
+              "id": "gge8203"
+            }
+          ],
+          "labels": [
+            "SCL/SCK"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "7",
+              "name": "7",
+              "position": [
+                155.0,
+                -180.0
+              ],
+              "id": "gge3040"
+            },
+            {
+              "ref": "CN1",
+              "number": "3",
+              "name": "3",
+              "position": [
+                480.0,
+                -170.0
+              ],
+              "id": "gge7327"
+            },
+            {
+              "ref": "CN2",
+              "number": "3",
+              "name": "3",
+              "position": [
+                620.0,
+                -170.0
+              ],
+              "id": "gge8182"
+            }
+          ],
+          "labels": [
+            "SDA/SI"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "6",
+              "name": "6",
+              "position": [
+                155.0,
+                -190.0
+              ],
+              "id": "gge3061"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "5",
+              "name": "5",
+              "position": [
+                155.0,
+                -200.0
+              ],
+              "id": "gge3082"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "4",
+              "name": "4",
+              "position": [
+                155.0,
+                -210.0
+              ],
+              "id": "gge3103"
+            },
+            {
+              "ref": "CN3",
+              "number": "3",
+              "name": "3",
+              "position": [
+                335.0,
+                -85.0
+              ],
+              "id": "gge7753"
+            }
+          ],
+          "labels": [
+            "RESET"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "3",
+              "name": "3",
+              "position": [
+                155.0,
+                -220.0
+              ],
+              "id": "gge3124"
+            },
+            {
+              "ref": "SW1",
+              "number": "4",
+              "name": "4",
+              "position": [
+                180.0,
+                -665.0
+              ],
+              "id": "gge8352"
+            }
+          ],
+          "labels": [
+            "Adr2"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "2",
+              "name": "2",
+              "position": [
+                155.0,
+                -230.0
+              ],
+              "id": "gge3145"
+            },
+            {
+              "ref": "SW1",
+              "number": "5",
+              "name": "5",
+              "position": [
+                180.0,
+                -675.0
+              ],
+              "id": "gge8331"
+            }
+          ],
+          "labels": [
+            "Adr1"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "1",
+              "name": "1",
+              "position": [
+                155.0,
+                -240.0
+              ],
+              "id": "gge3166"
+            },
+            {
+              "ref": "SW1",
+              "number": "6",
+              "name": "6",
+              "position": [
+                180.0,
+                -685.0
+              ],
+              "id": "gge8310"
+            }
+          ],
+          "labels": [
+            "Adr0"
+          ]
+        }
+      ]
+    },
+    "SCH_Gpio-Expander_2026-10-10.json": {
+      "bytes": 76006,
+      "sha256": "946e9df479d5286c5cf358e86e515687d6df86c2dffb0a13f6e2389269b0802e",
+      "title": "Gpio-Expander",
+      "editor_version": "6.5.54",
+      "shape_counts": {
+        "LIB": 23,
+        "F": 91,
+        "R": 4,
+        "W": 93,
+        "O": 2,
+        "J": 2
+      },
+      "components": [
+        {
+          "ref": "A0",
+          "name": "A0",
+          "id": "gge0fa5051b2a395bb4",
+          "pins": 3
+        },
+        {
+          "ref": "U2",
+          "name": "PM254-2-10-Z-8.5",
+          "id": "gge49d426678f002fe2",
+          "pins": 20
+        },
+        {
+          "ref": "U3",
+          "name": "PM2.54-1*10",
+          "id": "gge0ed943ad91df397b",
+          "pins": 10
+        },
+        {
+          "ref": "A1",
+          "name": "A0",
+          "id": "gge694ffa1a5ca75e39",
+          "pins": 3
+        },
+        {
+          "ref": "A2",
+          "name": "A0",
+          "id": "gge8051e066988f2196",
+          "pins": 3
+        },
+        {
+          "ref": "A3",
+          "name": "A0",
+          "id": "gge78c8b5a2885ba719",
+          "pins": 3
+        },
+        {
+          "ref": "A4",
+          "name": "A0",
+          "id": "gge79e98ec1b64d4c70",
+          "pins": 3
+        },
+        {
+          "ref": "A5",
+          "name": "A0",
+          "id": "gge2ea5a16a6d5c7d7a",
+          "pins": 3
+        },
+        {
+          "ref": "A6",
+          "name": "A0",
+          "id": "ggef4b8384f560d20d9",
+          "pins": 3
+        },
+        {
+          "ref": "A7",
+          "name": "A0",
+          "id": "gge3eb331c519ec9a29",
+          "pins": 3
+        },
+        {
+          "ref": "B0",
+          "name": "A0",
+          "id": "gge460e978d9041d33b",
+          "pins": 3
+        },
+        {
+          "ref": "B1",
+          "name": "A0",
+          "id": "gge89a311175deba008",
+          "pins": 3
+        },
+        {
+          "ref": "B2",
+          "name": "A0",
+          "id": "gge168b1c92c151b246",
+          "pins": 3
+        },
+        {
+          "ref": "B3",
+          "name": "A0",
+          "id": "gge4960443e8b609f18",
+          "pins": 3
+        },
+        {
+          "ref": "B4",
+          "name": "A0",
+          "id": "gge0d4facef4a41e6b2",
+          "pins": 3
+        },
+        {
+          "ref": "B5",
+          "name": "A0",
+          "id": "ggeed103d8e6ba5e674",
+          "pins": 3
+        },
+        {
+          "ref": "B6",
+          "name": "A0",
+          "id": "gge919e9951292aa091",
+          "pins": 3
+        },
+        {
+          "ref": "B7",
+          "name": "A0",
+          "id": "gge4ba8dd1ed3a32547",
+          "pins": 3
+        },
+        {
+          "ref": "CN1",
+          "name": "ZX-XH2.54-4PZZ",
+          "id": "ggea9e72eb74096aa72",
+          "pins": 4
+        },
+        {
+          "ref": "CN3",
+          "name": "ZX-XH2.54-3PZZ",
+          "id": "gge169c0005013c873d",
+          "pins": 3
+        },
+        {
+          "ref": "CN2",
+          "name": "ZX-XH2.54-4PZZ",
+          "id": "gge8db214456e34357d",
+          "pins": 4
+        },
+        {
+          "ref": "SW1",
+          "name": "SMQS-03R-TP",
+          "id": "ggeed4b3e348ecb22df",
+          "pins": 6
+        }
+      ],
+      "pin_count": 95,
+      "nets": [
+        {
+          "pins": [
+            {
+              "ref": "A0",
+              "number": "1",
+              "name": "1",
+              "position": [
+                410.0,
+                -567.0
+              ],
+              "id": "gge247"
+            },
+            {
+              "ref": "U2",
+              "number": "1",
+              "name": "1",
+              "position": [
+                145.0,
+                -435.0
+              ],
+              "id": "gge2101"
+            },
+            {
+              "ref": "U3",
+              "number": "9",
+              "name": "9",
+              "position": [
+                155.0,
+                -160.0
+              ],
+              "id": "gge2998"
+            },
+            {
+              "ref": "A1",
+              "number": "1",
+              "name": "1",
+              "position": [
+                410.0,
+                -505.0
+              ],
+              "id": "gge4834"
+            },
+            {
+              "ref": "A2",
+              "number": "1",
+              "name": "1",
+              "position": [
+                410.0,
+                -440.0
+              ],
+              "id": "gge5002"
+            },
+            {
+              "ref": "A3",
+              "number": "1",
+              "name": "1",
+              "position": [
+                410.0,
+                -375.0
+              ],
+              "id": "gge5170"
+            },
+            {
+              "ref": "A4",
+              "number": "1",
+              "name": "1",
+              "position": [
+                515.0,
+                -565.0
+              ],
+              "id": "gge5338"
+            },
+            {
+              "ref": "A5",
+              "number": "1",
+              "name": "1",
+              "position": [
+                515.0,
+                -505.0
+              ],
+              "id": "gge5506"
+            },
+            {
+              "ref": "A6",
+              "number": "1",
+              "name": "1",
+              "position": [
+                515.0,
+                -440.0
+              ],
+              "id": "gge5674"
+            },
+            {
+              "ref": "A7",
+              "number": "1",
+              "name": "1",
+              "position": [
+                515.0,
+                -375.0
+              ],
+              "id": "gge5842"
+            },
+            {
+              "ref": "B0",
+              "number": "1",
+              "name": "1",
+              "position": [
+                615.0,
+                -565.0
+              ],
+              "id": "gge6010"
+            },
+            {
+              "ref": "B1",
+              "number": "1",
+              "name": "1",
+              "position": [
+                615.0,
+                -500.0
+              ],
+              "id": "gge6109"
+            },
+            {
+              "ref": "B2",
+              "number": "1",
+              "name": "1",
+              "position": [
+                615.0,
+                -435.0
+              ],
+              "id": "gge6277"
+            },
+            {
+              "ref": "B3",
+              "number": "1",
+              "name": "1",
+              "position": [
+                615.0,
+                -375.0
+              ],
+              "id": "gge6445"
+            },
+            {
+              "ref": "B4",
+              "number": "1",
+              "name": "1",
+              "position": [
+                710.0,
+                -565.0
+              ],
+              "id": "gge6613"
+            },
+            {
+              "ref": "B5",
+              "number": "1",
+              "name": "1",
+              "position": [
+                710.0,
+                -500.0
+              ],
+              "id": "gge6781"
+            },
+            {
+              "ref": "B6",
+              "number": "1",
+              "name": "1",
+              "position": [
+                710.0,
+                -435.0
+              ],
+              "id": "gge6949"
+            },
+            {
+              "ref": "B7",
+              "number": "1",
+              "name": "1",
+              "position": [
+                710.0,
+                -375.0
+              ],
+              "id": "gge7117"
+            },
+            {
+              "ref": "CN1",
+              "number": "1",
+              "name": "1",
+              "position": [
+                480.0,
+                -190.0
+              ],
+              "id": "gge7285"
+            },
+            {
+              "ref": "CN2",
+              "number": "1",
+              "name": "1",
+              "position": [
+                620.0,
+                -190.0
+              ],
+              "id": "gge8140"
+            }
+          ],
+          "labels": [
+            "GND"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "A0",
+              "number": "2",
+              "name": "2",
+              "position": [
+                410.0,
+                -557.0
+              ],
+              "id": "gge268"
+            },
+            {
+              "ref": "U2",
+              "number": "5",
+              "name": "5",
+              "position": [
+                145.0,
+                -415.0
+              ],
+              "id": "gge2185"
+            }
+          ],
+          "labels": [
+            "A0"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "A0",
+              "number": "3",
+              "name": "3",
+              "position": [
+                410.0,
+                -547.0
+              ],
+              "id": "gge289"
+            },
+            {
+              "ref": "U2",
+              "number": "2",
+              "name": "2",
+              "position": [
+                205.0,
+                -435.0
+              ],
+              "id": "gge2500"
+            },
+            {
+              "ref": "U3",
+              "number": "10",
+              "name": "10",
+              "position": [
+                155.0,
+                -150.0
+              ],
+              "id": "gge2977"
+            },
+            {
+              "ref": "A1",
+              "number": "3",
+              "name": "3",
+              "position": [
+                410.0,
+                -485.0
+              ],
+              "id": "gge4876"
+            },
+            {
+              "ref": "A2",
+              "number": "3",
+              "name": "3",
+              "position": [
+                410.0,
+                -420.0
+              ],
+              "id": "gge5044"
+            },
+            {
+              "ref": "A3",
+              "number": "3",
+              "name": "3",
+              "position": [
+                410.0,
+                -355.0
+              ],
+              "id": "gge5212"
+            },
+            {
+              "ref": "A4",
+              "number": "3",
+              "name": "3",
+              "position": [
+                515.0,
+                -545.0
+              ],
+              "id": "gge5380"
+            },
+            {
+              "ref": "A5",
+              "number": "3",
+              "name": "3",
+              "position": [
+                515.0,
+                -485.0
+              ],
+              "id": "gge5548"
+            },
+            {
+              "ref": "A6",
+              "number": "3",
+              "name": "3",
+              "position": [
+                515.0,
+                -420.0
+              ],
+              "id": "gge5716"
+            },
+            {
+              "ref": "A7",
+              "number": "3",
+              "name": "3",
+              "position": [
+                515.0,
+                -355.0
+              ],
+              "id": "gge5884"
+            },
+            {
+              "ref": "B0",
+              "number": "3",
+              "name": "3",
+              "position": [
+                615.0,
+                -545.0
+              ],
+              "id": "gge6052"
+            },
+            {
+              "ref": "B1",
+              "number": "3",
+              "name": "3",
+              "position": [
+                615.0,
+                -480.0
+              ],
+              "id": "gge6151"
+            },
+            {
+              "ref": "B2",
+              "number": "3",
+              "name": "3",
+              "position": [
+                615.0,
+                -415.0
+              ],
+              "id": "gge6319"
+            },
+            {
+              "ref": "B3",
+              "number": "3",
+              "name": "3",
+              "position": [
+                615.0,
+                -355.0
+              ],
+              "id": "gge6487"
+            },
+            {
+              "ref": "B4",
+              "number": "3",
+              "name": "3",
+              "position": [
+                710.0,
+                -545.0
+              ],
+              "id": "gge6655"
+            },
+            {
+              "ref": "B5",
+              "number": "3",
+              "name": "3",
+              "position": [
+                710.0,
+                -480.0
+              ],
+              "id": "gge6823"
+            },
+            {
+              "ref": "B6",
+              "number": "3",
+              "name": "3",
+              "position": [
+                710.0,
+                -415.0
+              ],
+              "id": "gge6991"
+            },
+            {
+              "ref": "B7",
+              "number": "3",
+              "name": "3",
+              "position": [
+                710.0,
+                -355.0
+              ],
+              "id": "gge7159"
+            },
+            {
+              "ref": "CN1",
+              "number": "2",
+              "name": "2",
+              "position": [
+                480.0,
+                -180.0
+              ],
+              "id": "gge7306"
+            },
+            {
+              "ref": "CN2",
+              "number": "2",
+              "name": "2",
+              "position": [
+                620.0,
+                -180.0
+              ],
+              "id": "gge8161"
+            },
+            {
+              "ref": "SW1",
+              "number": "3",
+              "name": "3",
+              "position": [
+                120.0,
+                -665.0
+              ],
+              "id": "gge8373"
+            },
+            {
+              "ref": "SW1",
+              "number": "2",
+              "name": "2",
+              "position": [
+                120.0,
+                -675.0
+              ],
+              "id": "gge8394"
+            },
+            {
+              "ref": "SW1",
+              "number": "1",
+              "name": "1",
+              "position": [
+                120.0,
+                -685.0
+              ],
+              "id": "gge8415"
+            }
+          ],
+          "labels": [
+            "VCC"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U2",
+              "number": "20",
+              "name": "20",
+              "position": [
+                205.0,
+                -345.0
+              ],
+              "id": "gge2122"
+            },
+            {
+              "ref": "B7",
+              "number": "2",
+              "name": "2",
+              "position": [
+                710.0,
+                -365.0
+              ],
+              "id": "gge7138"
+            }
+          ],
+          "labels": [
+            "B7"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U2",
+              "number": "3",
+              "name": "3",
+              "position": [
+                145.0,
+                -425.0
+              ],
+              "id": "gge2143"
+            },
+            {
+              "ref": "CN3",
+              "number": "2",
+              "name": "2",
+              "position": [
+                335.0,
+                -95.0
+              ],
+              "id": "gge7732"
+            }
+          ],
+          "labels": [
+            "ITA"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U2",
+              "number": "18",
+              "name": "18",
+              "position": [
+                205.0,
+                -355.0
+              ],
+              "id": "gge2164"
+            },
+            {
+              "ref": "B6",
+              "number": "2",
+              "name": "2",
+              "position": [
+                710.0,
+                -425.0
+              ],
+              "id": "gge6970"
+            }
+          ],
+          "labels": [
+            "B6"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U2",
+              "number": "16",
+              "name": "16",
+              "position": [
+                205.0,
+                -365.0
+              ],
+              "id": "gge2206"
+            },
+            {
+              "ref": "B5",
+              "number": "2",
+              "name": "2",
+              "position": [
+                710.0,
+                -490.0
+              ],
+              "id": "gge6802"
+            }
+          ],
+          "labels": [
+            "B5"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U2",
+              "number": "7",
+              "name": "7",
+              "position": [
+                145.0,
+                -405.0
+              ],
+              "id": "gge2227"
+            },
+            {
+              "ref": "A1",
+              "number": "2",
+              "name": "2",
+              "position": [
+                410.0,
+                -495.0
+              ],
+              "id": "gge4855"
+            }
+          ],
+          "labels": [
+            "A1"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U2",
+              "number": "14",
+              "name": "14",
+              "position": [
+                205.0,
+                -375.0
+              ],
+              "id": "gge2248"
+            },
+            {
+              "ref": "B4",
+              "number": "2",
+              "name": "2",
+              "position": [
+                710.0,
+                -555.0
+              ],
+              "id": "gge6634"
+            }
+          ],
+          "labels": [
+            "B4"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U2",
+              "number": "9",
+              "name": "9",
+              "position": [
+                145.0,
+                -395.0
+              ],
+              "id": "gge2269"
+            },
+            {
+              "ref": "A2",
+              "number": "2",
+              "name": "2",
+              "position": [
+                410.0,
+                -430.0
+              ],
+              "id": "gge5023"
+            }
+          ],
+          "labels": [
+            "A2"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U2",
+              "number": "12",
+              "name": "12",
+              "position": [
+                205.0,
+                -385.0
+              ],
+              "id": "gge2290"
+            },
+            {
+              "ref": "B3",
+              "number": "2",
+              "name": "2",
+              "position": [
+                615.0,
+                -365.0
+              ],
+              "id": "gge6466"
+            }
+          ],
+          "labels": [
+            "B3"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U2",
+              "number": "11",
+              "name": "11",
+              "position": [
+                145.0,
+                -385.0
+              ],
+              "id": "gge2311"
+            },
+            {
+              "ref": "A3",
+              "number": "2",
+              "name": "2",
+              "position": [
+                410.0,
+                -365.0
+              ],
+              "id": "gge5191"
+            }
+          ],
+          "labels": [
+            "A3"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U2",
+              "number": "10",
+              "name": "10",
+              "position": [
+                205.0,
+                -395.0
+              ],
+              "id": "gge2332"
+            },
+            {
+              "ref": "B2",
+              "number": "2",
+              "name": "2",
+              "position": [
+                615.0,
+                -425.0
+              ],
+              "id": "gge6298"
+            }
+          ],
+          "labels": [
+            "B2"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U2",
+              "number": "13",
+              "name": "13",
+              "position": [
+                145.0,
+                -375.0
+              ],
+              "id": "gge2353"
+            },
+            {
+              "ref": "A4",
+              "number": "2",
+              "name": "2",
+              "position": [
+                515.0,
+                -555.0
+              ],
+              "id": "gge5359"
+            }
+          ],
+          "labels": [
+            "A4"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U2",
+              "number": "8",
+              "name": "8",
+              "position": [
+                205.0,
+                -405.0
+              ],
+              "id": "gge2374"
+            },
+            {
+              "ref": "B1",
+              "number": "2",
+              "name": "2",
+              "position": [
+                615.0,
+                -490.0
+              ],
+              "id": "gge6130"
+            }
+          ],
+          "labels": [
+            "B1"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U2",
+              "number": "15",
+              "name": "15",
+              "position": [
+                145.0,
+                -365.0
+              ],
+              "id": "gge2395"
+            },
+            {
+              "ref": "A5",
+              "number": "2",
+              "name": "2",
+              "position": [
+                515.0,
+                -495.0
+              ],
+              "id": "gge5527"
+            }
+          ],
+          "labels": [
+            "A5"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U2",
+              "number": "6",
+              "name": "6",
+              "position": [
+                205.0,
+                -415.0
+              ],
+              "id": "gge2416"
+            },
+            {
+              "ref": "B0",
+              "number": "2",
+              "name": "2",
+              "position": [
+                615.0,
+                -555.0
+              ],
+              "id": "gge6031"
+            }
+          ],
+          "labels": [
+            "B0"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U2",
+              "number": "17",
+              "name": "17",
+              "position": [
+                145.0,
+                -355.0
+              ],
+              "id": "gge2437"
+            },
+            {
+              "ref": "A6",
+              "number": "2",
+              "name": "2",
+              "position": [
+                515.0,
+                -430.0
+              ],
+              "id": "gge5695"
+            }
+          ],
+          "labels": [
+            "A6"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U2",
+              "number": "4",
+              "name": "4",
+              "position": [
+                205.0,
+                -425.0
+              ],
+              "id": "gge2458"
+            },
+            {
+              "ref": "CN3",
+              "number": "1",
+              "name": "1",
+              "position": [
+                335.0,
+                -105.0
+              ],
+              "id": "gge7711"
+            }
+          ],
+          "labels": [
+            "ITB"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U2",
+              "number": "19",
+              "name": "19",
+              "position": [
+                145.0,
+                -345.0
+              ],
+              "id": "gge2479"
+            },
+            {
+              "ref": "A7",
+              "number": "2",
+              "name": "2",
+              "position": [
+                515.0,
+                -365.0
+              ],
+              "id": "gge5863"
+            }
+          ],
+          "labels": [
+            "A7"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "8",
+              "name": "8",
+              "position": [
+                155.0,
+                -170.0
+              ],
+              "id": "gge3019"
+            },
+            {
+              "ref": "CN1",
+              "number": "4",
+              "name": "4",
+              "position": [
+                480.0,
+                -160.0
+              ],
+              "id": "gge7348"
+            },
+            {
+              "ref": "CN2",
+              "number": "4",
+              "name": "4",
+              "position": [
+                620.0,
+                -160.0
+              ],
+              "id": "gge8203"
+            }
+          ],
+          "labels": [
+            "SCL/SCK"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "7",
+              "name": "7",
+              "position": [
+                155.0,
+                -180.0
+              ],
+              "id": "gge3040"
+            },
+            {
+              "ref": "CN1",
+              "number": "3",
+              "name": "3",
+              "position": [
+                480.0,
+                -170.0
+              ],
+              "id": "gge7327"
+            },
+            {
+              "ref": "CN2",
+              "number": "3",
+              "name": "3",
+              "position": [
+                620.0,
+                -170.0
+              ],
+              "id": "gge8182"
+            }
+          ],
+          "labels": [
+            "SDA/SI"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "6",
+              "name": "6",
+              "position": [
+                155.0,
+                -190.0
+              ],
+              "id": "gge3061"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "5",
+              "name": "5",
+              "position": [
+                155.0,
+                -200.0
+              ],
+              "id": "gge3082"
+            }
+          ],
+          "labels": []
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "4",
+              "name": "4",
+              "position": [
+                155.0,
+                -210.0
+              ],
+              "id": "gge3103"
+            },
+            {
+              "ref": "CN3",
+              "number": "3",
+              "name": "3",
+              "position": [
+                335.0,
+                -85.0
+              ],
+              "id": "gge7753"
+            }
+          ],
+          "labels": [
+            "RESET"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "3",
+              "name": "3",
+              "position": [
+                155.0,
+                -220.0
+              ],
+              "id": "gge3124"
+            },
+            {
+              "ref": "SW1",
+              "number": "4",
+              "name": "4",
+              "position": [
+                180.0,
+                -665.0
+              ],
+              "id": "gge8352"
+            }
+          ],
+          "labels": [
+            "Adr2"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "2",
+              "name": "2",
+              "position": [
+                155.0,
+                -230.0
+              ],
+              "id": "gge3145"
+            },
+            {
+              "ref": "SW1",
+              "number": "5",
+              "name": "5",
+              "position": [
+                180.0,
+                -675.0
+              ],
+              "id": "gge8331"
+            }
+          ],
+          "labels": [
+            "Adr1"
+          ]
+        },
+        {
+          "pins": [
+            {
+              "ref": "U3",
+              "number": "1",
+              "name": "1",
+              "position": [
+                155.0,
+                -240.0
+              ],
+              "id": "gge3166"
+            },
+            {
+              "ref": "SW1",
+              "number": "6",
+              "name": "6",
+              "position": [
+                180.0,
+                -685.0
+              ],
+              "id": "gge8310"
+            }
+          ],
+          "labels": [
+            "Adr0"
+          ]
+        }
+      ]
+    },
+    "Schematic_Esp-Breakout-V2_2026-10-10.svg": {
+      "bytes": 139936,
+      "sha256": "ca93cd9a221d4cb464df7e0beee7801a00a361a40db6a7a466332df0d67360c6",
+      "xml_parse": "{http://www.w3.org/2000/svg}svg"
+    },
+    "Schematic_Esp32-Breakout_2026-10-10.svg": {
+      "bytes": 228669,
+      "sha256": "0cd2811f46fee0f75fb2d6fed32c9e0d55e4a8df69d0373720f72d1691475627",
+      "xml_parse": "{http://www.w3.org/2000/svg}svg"
+    },
+    "Schematic_Gpio-Expander_2026-10-10.svg": {
+      "bytes": 209658,
+      "sha256": "1352fe0270f3324d9bf9a1636ddd05d2012edea924031a606897a89539c5ea46",
+      "xml_parse": "{http://www.w3.org/2000/svg}svg"
+    },
+    "Sheet_1_2026-10-10 (1).schdoc": {
+      "bytes": 116928,
+      "sha256": "384597fd814c08e5b551c12e783300b7d9018217ab8d397510d7950d9b9a24aa",
+      "header": "Protel for Windows - Schematic Capture Ascii File Version 5.0",
+      "record_counts": {
+        "header": 3,
+        "31": 1,
+        "1": 22,
+        "41": 197,
+        "34": 22,
+        "10": 29,
+        "8": 22,
+        "2": 95,
+        "44": 22,
+        "45": 22,
+        "17": 41,
+        "18": 50,
+        "27": 93,
+        "22": 2,
+        "4": 1,
+        "6": 3,
+        "29": 2
+      },
+      "component_ids": [
+        "gge0fa5051b2a395bb4",
+        "gge49d426678f002fe2",
+        "gge0ed943ad91df397b",
+        "gge694ffa1a5ca75e39",
+        "gge8051e066988f2196",
+        "gge78c8b5a2885ba719",
+        "gge79e98ec1b64d4c70",
+        "gge2ea5a16a6d5c7d7a",
+        "ggef4b8384f560d20d9",
+        "gge3eb331c519ec9a29",
+        "gge460e978d9041d33b",
+        "gge89a311175deba008",
+        "gge168b1c92c151b246",
+        "gge4960443e8b609f18",
+        "gge0d4facef4a41e6b2",
+        "ggeed103d8e6ba5e674",
+        "gge919e9951292aa091",
+        "gge4ba8dd1ed3a32547",
+        "ggea9e72eb74096aa72",
+        "gge169c0005013c873d",
+        "gge8db214456e34357d",
+        "ggeed4b3e348ecb22df"
+      ],
+      "designators": [
+        "A0",
+        "U2",
+        "U3",
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "A7",
+        "B0",
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "B5",
+        "B6",
+        "B7",
+        "CN1",
+        "CN3",
+        "CN2",
+        "SW1"
+      ]
+    },
+    "Sheet_1_2026-10-10 (1).svg": {
+      "bytes": 131879,
+      "sha256": "b0c4abc2608e71731c2b9e1a5bdbc204a38a2c855eea81fca543f2d3d1f36b46",
+      "xml_parse": "{http://www.w3.org/2000/svg}svg"
+    },
+    "Sheet_1_2026-10-10.schdoc": {
+      "bytes": 151441,
+      "sha256": "249924d55aa85eca3948a9ab6fc47b2c6cc623ef6646695cb54f3740d78a7cee",
+      "header": "Protel for Windows - Schematic Capture Ascii File Version 5.0",
+      "record_counts": {
+        "header": 3,
+        "31": 1,
+        "1": 34,
+        "41": 289,
+        "34": 34,
+        "10": 39,
+        "2": 148,
+        "28": 1,
+        "8": 23,
+        "4": 3,
+        "6": 1,
+        "44": 34,
+        "45": 34,
+        "11": 1,
+        "27": 87,
+        "22": 16,
+        "17": 12,
+        "18": 1,
+        "29": 56
+      },
+      "component_ids": [
+        "gge19371f5072bc926e",
+        "gge50400854691696fe",
+        "gged014cc23ec3f6cdb",
+        "gge6accb66a63bb5ae0",
+        "gge40d205da1e10da1a",
+        "gge3cc768516bc788ef",
+        "gge0303cab39861171e",
+        "gge97e9412f3a24a38b",
+        "gged3f499b3c3666f79",
+        "gge13418dff52a2d757",
+        "gge2963a53800b7edbc",
+        "ggedb8f8596ba2185f4",
+        "gge6a6636145f1b10f8",
+        "gge7340c19774ac6354",
+        "gge71cfed0bb7170324",
+        "gge423a563c9f6ad8d2",
+        "ggef3fdae6ecb68d02c",
+        "gge32a6151b0e61b0e1",
+        "ggec84f5542b7d6a9e9",
+        "gge8ebdf59dab0840f1",
+        "ggea3bfaf6c22acec2d",
+        "gge5616f4af52ea04e6",
+        "gge343884c4125d2e10",
+        "ggefd4bfc9813542be4",
+        "gge71c204f01b7d418c",
+        "ggec4a938a044d0002c",
+        "gge56e2902d02ee9ddf",
+        "gged8fd899e9c1cfd29",
+        "ggede8634b264175966",
+        "gge9f83cd5832038d22",
+        "gge4b14f4b116f6e514",
+        "ggeeafd84ac13127fd6",
+        "ggef7090b74184bd713",
+        "gge59de2236fef36fcd"
+      ],
+      "designators": [
+        "U3",
+        "U1",
+        "5VIN",
+        "LED-G4",
+        "G21",
+        "G5",
+        "G2",
+        "G0",
+        "3,3V1",
+        "3,3V2",
+        "3,3V3",
+        "3,3V4",
+        "DAC_R_L",
+        "SPK_1_2",
+        "G13",
+        "G12",
+        "G14",
+        "G27",
+        "G26",
+        "G25",
+        "G33",
+        "G32",
+        "G15",
+        "G3",
+        "G1",
+        "R1",
+        "R2",
+        "G35-UP",
+        "G34-UP",
+        "5>3,3V1",
+        "5>3,3V2",
+        "5>3,3V3",
+        "5>3,3V4",
+        "R3"
+      ]
+    },
+    "Sheet_1_2026-10-10.svg": {
+      "bytes": 144857,
+      "sha256": "920ba978fc13bf7f05816caf4056f01826a5e0c9d8f2c16b5fd67f1cb4785836",
+      "xml_parse": "{http://www.w3.org/2000/svg}svg"
+    }
+  }
+}

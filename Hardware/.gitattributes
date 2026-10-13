@@ -1,0 +1,5 @@
+# Preserve imported CAD sources and exports byte-for-byte.
+* -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+*.pdf binary
+QUELLENINVENTAR.md text eol=lf
+.gitattributes text eol=lf
