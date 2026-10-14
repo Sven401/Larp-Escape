@@ -73,6 +73,14 @@ sind erfolgreich. Die Box blieb unverändert auf Wake; die App ist wieder
 authentifiziert verbunden. Der Bericht trennt den erfolgreichen Lauf von
 vorherigen Funkfehlern und durch Bildschirmdrehung verworfenen Aufträgen.
 
+## Ergänzende Owner-Entscheidung — 15. Oktober 2026
+
+Für neue LED-Arbeit gilt der [WLED-Code-Standard](../docs/led/wled-standard.md)
+mit Quellen und Abnahmekriterien. Die folgenden Architekturangaben bewahren
+weiterhin den bisherigen Implementierungsstand. Die eigene Android-/BLE-Strecke
+ist keine Voraussetzung des ersten WLED-LED-Ablaufs; die WLED-Integration und
+physische Abnahme sind noch offen.
+
 ## Architektur und Start
 
 Die Firmware liegt in `include/`, `src/` und `lib/`. Die Ausführung trennt

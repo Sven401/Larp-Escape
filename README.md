@@ -2,6 +2,8 @@
 
 ESP32-Steuerung des Reichstag-Spiels: Rollenkarten, Kristallmatrix, Audio, LEDs und ESP-NOW-Aktivierung.
 
+**LED-Code-Standard seit 15. Oktober 2026:** [WLED als verbindliche Grundlage, Quellen und Abnahme](docs/led/wled-standard.md). Die Migration des bestehenden LED-Codes ist noch offen.
+
 **Übergabe an das neue Team:** [Einstieg, Quellenkarte und offene Prüfungen](handoff/README.md).
 Dieser Branch führt die geprüften Grundlagen ab `a40365d` zusammen. Unfertige und
 verworfene Arbeiten sind über die dort bezeichneten lokalen Archiv-Branches
