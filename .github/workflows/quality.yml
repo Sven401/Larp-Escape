@@ -19,22 +19,38 @@ jobs:
   hardware-independent:
     name: Hardware-independent checks
     runs-on: windows-2022
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.11"
+      - name: Record source and prepare reports
+        run: |
+          git rev-parse HEAD
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          New-Item -ItemType Directory -Force "$env:RUNNER_TEMP/quality-reports"
+          python --version
       - name: Install PlatformIO Core matching the local baseline
         run: python -m pip install --disable-pip-version-check platformio==6.2.0
+      - name: Prepare and audit the pinned real Mbed TLS sources
+        run: python scripts/prepare_peer_mbedtls.py --directory "$env:RUNNER_TEMP/peer-mbedtls"
       - name: Check the architecture guard fixtures
         run: python scripts/check_architecture.py --self-test
       - name: Check direct dependencies of pure layers
         run: python scripts/check_architecture.py
-      - name: Run every host test suite
-        run: python -m platformio test -e host-regression -v
+      - name: Run regression host tests
+        run: python -m platformio test -e host-regression -v --junit-output-path "$env:RUNNER_TEMP/quality-reports/host-regression.xml"
+      - name: Run configured-control host tests
+        run: python -m platformio test -e host-configured-control -v --junit-output-path "$env:RUNNER_TEMP/quality-reports/host-configured-control.xml"
+      - name: Run host tests with real peer cryptography
+        env:
+          LARP_PEER_MBEDTLS_DIR: ${{ runner.temp }}/peer-mbedtls/source
+          LARP_PEER_MBEDTLS_ARCHIVE: ${{ runner.temp }}/peer-mbedtls/mbedtls-2.28.4.tar.gz
+        run: python -m platformio test -e host-peer-proof -v --junit-output-path "$env:RUNNER_TEMP/quality-reports/host-peer-proof.xml"
       - name: Build the hardware-free profile authoring tool
         run: python -m platformio run -e profile-tools
       - name: Install the pinned C++ formatter
@@ -43,19 +59,89 @@ jobs:
         run: python scripts/check_headers.py
       - name: Check the reviewed C++ formatting baseline
         run: python scripts/check_format.py
+      - name: Preserve host test reports
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: host-tests-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/quality-reports/*.xml
+          if-no-files-found: error
 
   esp32-build:
     name: ESP32 firmware build
+    runs-on: windows-2022
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.11"
+      - name: Record source and prepare reports
+        run: |
+          git rev-parse HEAD
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          New-Item -ItemType Directory -Force "$env:RUNNER_TEMP/quality-reports"
+          python --version
+      - name: Install PlatformIO Core matching the local baseline
+        run: python -m pip install --disable-pip-version-check platformio==6.2.0
+      - name: Build game firmware, runtime probes and pinned GATTS ABI probe
+        run: |
+          python -m platformio run -e az-delivery-devkit-v4 -e esp32-runtime-probe -e esp32-profile-runtime-probe -e esp32-gatts-abi-probe -j 2 2>&1 | Tee-Object -FilePath "$env:RUNNER_TEMP/quality-reports/firmware-build.log"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Prepare the pinned sources for negative guard checks
+        run: python scripts/prepare_peer_mbedtls.py --directory "$env:RUNNER_TEMP/peer-mbedtls"
+      - name: Reject modified native and SDK cryptography inputs
+        run: |
+          $pioPackages = (python -c "from platformio.project.config import ProjectConfig; print(ProjectConfig.get_instance().get('platformio', 'packages_dir'))").Trim()
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python scripts/check_peer_crypto_sources.py --root "$env:RUNNER_TEMP/peer-mbedtls/source" --archive "$env:RUNNER_TEMP/peer-mbedtls/mbedtls-2.28.4.tar.gz" --sdk "$pioPackages/framework-arduinoespressif32"
+      - name: Preserve firmware build and resource report
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: firmware-build-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/quality-reports/firmware-build.log
+          if-no-files-found: error
+
+  android:
+    name: Android checks
     runs-on: windows-2022
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
         with:
-          python-version: "3.11"
-      - name: Install PlatformIO Core matching the local baseline
-        run: python -m pip install --disable-pip-version-check platformio==6.2.0
-      - name: Build game firmware and both isolated diagnostic profiles
-        run: python -m platformio run -e az-delivery-devkit-v4 -e esp32-runtime-probe -e esp32-profile-runtime-probe -j 2
+          distribution: temurin
+          java-version: "21.0.8+9"
+      - name: Record source and Java version
+        run: |
+          git rev-parse HEAD
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          java -version
+      - name: Install the explicit Android SDK packages
+        run: |
+          $sdkManager = Join-Path $env:ANDROID_HOME "cmdline-tools/latest/bin/sdkmanager.bat"
+          if (-not (Test-Path -LiteralPath $sdkManager)) { throw "Android SDK manager is missing from the Windows runner" }
+          & $sdkManager "platforms;android-35" "build-tools;35.0.0"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Test, build and lint Android using the project wrapper
+        working-directory: companion/android
+        run: ./gradlew.bat :core:protocol:test :app:testDebugUnitTest :app:assembleDebug :app:lintDebug --no-daemon --console=plain
+      - name: Record the debug APK identity
+        run: Get-FileHash -Algorithm SHA256 -LiteralPath companion/android/app/build/outputs/apk/debug/app-debug.apk
+      - name: Preserve Android test and lint reports
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: android-reports-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            companion/android/core/protocol/build/test-results/**/*.xml
+            companion/android/app/build/test-results/**/*.xml
+            companion/android/app/build/reports/lint-results-debug.*
+          if-no-files-found: error
