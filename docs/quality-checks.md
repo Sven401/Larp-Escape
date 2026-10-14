@@ -21,7 +21,7 @@ wiederhergestellt. Der erste Lauf braucht Netzwerk.
 | C++-Formatprüfung | clang-format 19.1.7, bestehende Formatbaseline |
 | Mbed TLS | offizielles 2.28.4-Quellarchiv, URL und SHA-256 im [bestehenden Kryptografievertrag](companion/peer-proof-v1.md#reproduzierbare-belege); SHA-256 `504bd29af6e7f9f3de1f0f7b7e16c73987a4194338681acd72b82383a49d55d5` |
 | ESP32-ABI | espressif32 6.6.0; unveränderte SHA-256-Pins für `libbt.a` und `libmbedcrypto.a` in [pin_gatt_source_sdk.py](../scripts/pin_gatt_source_sdk.py) |
-| Android | CI: Temurin 21.0.8+9, SDK 35, Build Tools 35.0.0; Projektwrapper Gradle 8.9, Plugins/Bibliotheken in `companion/android/gradle/libs.versions.toml` |
+| Android | CI: Temurin 21.0.8+9.0.LTS, SDK 35, Build Tools 35.0.0; Projektwrapper Gradle 8.9, Plugins/Bibliotheken in `companion/android/gradle/libs.versions.toml` |
 | Gradle-Download | [offizielle SHA-256](https://services.gradle.org/distributions/gradle-8.9-bin.zip.sha256): `d725d707bfabd4dfdc958c624003b3c80accc03f7037b5122c4b1d0ef15cecab`; im Wrapper hinterlegt |
 | GitHub Actions | alle verwendeten Actions im Workflow auf vollständige Commit-SHAs gepinnt; Versionskommentare dienen der Zuordnung |
 
