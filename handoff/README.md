@@ -22,6 +22,14 @@ Referenzfall: LEDs starten, stoppen und bewusst erneut starten, mit
 korrelierter Geräteantwort und getrennter Nutzerbeobachtung. Dieser Ablauf
 ist hier weder implementiert noch physisch abgenommen.
 
+## Ergänzende Owner-Entscheidung — 15. Oktober 2026
+
+Für neue LED-Arbeit gilt der [WLED-Code-Standard](../docs/led/wled-standard.md)
+mit Quellen und Abnahmekriterien. Die folgenden Architekturangaben bewahren
+weiterhin den bisherigen Implementierungsstand. Die eigene Android-/BLE-Strecke
+ist keine Voraussetzung des ersten WLED-LED-Ablaufs; die WLED-Integration und
+physische Abnahme sind noch offen.
+
 ## Architektur und Start
 
 Die Firmware liegt in `include/`, `src/` und `lib/`. Die Ausführung trennt
