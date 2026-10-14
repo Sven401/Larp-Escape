@@ -96,6 +96,8 @@ Die editierbaren und exportierten Hardwareeingänge stehen unter `Hardware/`.
 ausdrücklich als vorläufig. Originalbox, CAD-Revision und Softwareannahmen
 sind nicht gleichzusetzen.
 
+Der vollständige [B0-Prüfweg](../docs/quality-checks.md) ergänzt die unten stehenden Einstiegsbefehle um echte Kryptografie, GATTS-ABI, Android-Lint und die zugehörigen CI-Belege.
+
 Zum Start ohne Hardware:
 
 ```powershell
