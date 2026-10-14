@@ -1,5 +1,13 @@
 # Technische Projektübergabe – 13. Oktober 2026
 
+## Ergänzung: WLED-LED-Produktfunktion, 15. Oktober 2026
+
+Der neue Produktzweig ergänzt die echte Android-App und einen geschützten
+BLE-Adapter auf WLED. Umfang, Quellen, USB-Einrichtung und noch offene
+Geräteabnahme stehen in [firmware/wled/README.md](../firmware/wled/README.md).
+Die Spielintegration bleibt getrennt. Die folgenden Abschnitte beschreiben
+den historischen Übergabestand vom 13. Oktober, nicht die neue LED-Abnahme.
+
 ## Einstieg und Stand
 
 Dieser Branch `plan/projektuebergabe-kuratierter-stand` beginnt bei

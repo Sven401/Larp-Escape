@@ -3,8 +3,9 @@
 Kotlin, Jetpack Compose und Material 3. Eigenständige App mit Paketname
 `de.larpescape.companion`, Mindestversion Android 13/API33. Bestehende
 Webprototypen und der .NET-Diagnoseclient bleiben separate Referenzen.
-Dies ist die Entwicklungsbasis der Projekt-App; die erste Version ist ein
-lesender Verbindungsprüfstand, noch keine freigegebene Spielleitungs-App.
+Die Projekt-App bedient den eigenen WLED-LED-Produktdienst mit Funkeln,
+Lichtimpuls und Ripple sowie Start/Stop. Der WLED-Zweig hat zunächst kein
+Spielmodul; seine LED-Berechtigung ist keine Legacy-Spielleiteranmeldung.
 
 `app` enthält UI/ViewModel, DeviceRepository und Android-BLE. `core:protocol`
 enthält den plattformunabhängigen, begrenzten FrameAssembler. Alle BLE-Rückrufe
@@ -55,19 +56,73 @@ Testlauf statt eines UP-TO-DATE-Ergebnisses:
 ## Debug-Labor und Release
 
 `BuildConfig.ALLOW_CONTRACT_LAB` ist in Debug `true`, in Release `false`.
-Debug darf den markierten Laborservice lesen. Release lehnt reine
-Laborgeräte bei der Dienstprüfung ab und verwendet auch bei gemeinsam
-angebotenen Diensten ausschließlich den kanonischen Produktservice.
+Debug darf den markierten Laborservice lesen. Der eigene WLED-Produktdienst
+hat Vorrang; ein vorhandener kanonischer Dienst hat Vorrang vor dem Labor.
+Release lehnt reine
+Laborgeräte bei der Dienstprüfung ab und wählt bei gemeinsam angebotenen
+Diensten WLED vor dem kanonischen Legacy-Produktservice, niemals das Labor.
 Werbenamen und UUIDs bleiben Auswahlhilfen; erst GATT bestätigt den Dienst.
 
 ```powershell
 ./gradlew.bat :app:assembleRelease :app:lintRelease
 ```
 
-Release ist derzeit unsigniert und noch nicht zur Bedienung freigegeben:
-Produktanmeldung, Produktstatus und Befehle fehlen. Der Build ist ein
-Prüfartefakt, kein Verteilungs- oder Veröffentlichungsauftrag.
+Release ist unsigniert. Der WLED-Produktdienst bietet einen eigenen eingerichteten
+LED-Zugang; die frühere Legacy-Spielanmeldung bleibt unverbunden. Der Build
+ist ein Prüfartefakt, kein Verteilungs- oder Veröffentlichungsauftrag.
 
+## WLED-LED-Produktbedienung
+
+Die ESP-Seite enthält die drei festen Varianten **Funkeln**, **Lichtimpuls**
+und **Ripple**. Auswahl allein sendet nichts; „Start“ ersetzt den laufenden
+Effekt durch die ausgewählte Variante. „Stop · LEDs aus“ sendet einen eigenen
+Ausschaltauftrag. Funkeln läuft bis Stop, Lichtimpuls und Ripple enden nach
+jeweils einem Durchlauf dunkel. Wiederholter Start ist bewusst möglich.
+Die Anzeige unterscheidet Auswahl, offenen Auftrag und bestätigten Boxzustand.
+Eine Ausführungsantwort ist kein Nachweis des sichtbaren Lichts.
+
+Die Box wird zuerst über den getrennten lokalen USB-Einrichtungsweg versehen.
+Danach in der echten App „Box-Zugang importieren“ wählen und die erzeugte
+JSON-Datei importieren: `schemaVersion:1`, `deviceId` mit 32 Hexzeichen,
+`secret` mit 64 Hexzeichen, optional `name` (1–64 Zeichen). Die App akzeptiert
+höchstens 2048 UTF-8-Bytes und keine zusätzlichen oder doppelten Felder. Der
+Import ersetzt bewusst den einen eingerichteten Box-Zugang auf diesem Handy
+und beendet eine bestehende Verbindung. Eine andere Box braucht einen eigenen
+Import. Werbename und Bluetoothadresse richten keinen Zugang ein.
+
+Der aktuelle Zugang liegt AES-256-GCM-verschlüsselt in `noBackupFilesDir`.
+Der Schlüssel zum Entschlüsseln bleibt im Android Keystore; `allowBackup=false`
+bleibt gesetzt. Der Importinhalt und das Geheimnis werden nicht geloggt.
+Verlust des Keystore-Schlüssels macht einen erneuten Import erforderlich.
+Die exportierte USB-Einrichtungsdatei selbst bleibt außerhalb dieses Speichers.
+
+Eigener Dienst: `6c790001-2f50-4d5a-a7f4-35a478c4b101`. Er unterscheidet sich
+vom Legacy-Spiel- und vom Vertragslaborservice. Zufällige Handy-, Boot- und
+Verbindungswerte binden den gegenseitigen HMAC-SHA256-Nachweis an diese Sitzung.
+Befehle und Antworten besitzen getrennte HMAC-Domänen. Die gemeinsamen
+[Firmware-Testvektoren](../../docs/led/fixtures/wire-v1.json) werden direkt von
+JVM-Tests gelesen; die dortigen öffentlichen Testschlüssel sind keine Einrichtung.
+
+Alle GATT-Werte sind höchstens 20 Byte groß; die App braucht keine MTU-Erhöhung.
+Sie sendet nur einen Auftrag gleichzeitig und wartet auf alle Write-ACKs **und**
+die passende authentisierte Geräteantwort. Ein Write-ACK allein zeigt keinen
+Erfolg. Veraltete Statussequenzen erneuern die lokale Frische nicht. Ein älteres,
+aber korrekt gebundenes Ergebnis kann noch seinen offenen Auftrag abschließen,
+ohne einen neueren Status zu überschreiben. Nach einer Sekunde ohne vollständigen
+neuen Status sind Befehle gesperrt, nach fünf Sekunden ohne Befehlsabschluss wird
+die Verbindung beendet. Es gibt keine automatische Wiederholung eines Starts.
+
+Der explizite Modus `LED_ONLY` wird als „Spielintegration folgt getrennt“ gezeigt
+und erlaubt den LED-Start. Für einen späteren Spielanschluss erlaubt allein
+`STOPPED` die manuelle Bedienung; `RUNNING`, `PAUSED` und `UNKNOWN` sperren
+Start und Stop. Die aktuelle
+WLED-Firmware behauptet keinen geprüften Zustand eines nicht vorhandenen Spiels.
+Appwechsel, Rechteentzug, Bluetooth-Aus und bewusste Trennung entwerten den
+Appzustand; die Box schaltet bei erkanntem Verbindungsverlust aus.
+
+Hosttests und Builds prüfen Protokoll, Bedienregeln und Kompilierbarkeit. Der
+WLED-Produktpfad wurde dadurch nicht auf Handy/Box physisch abgenommen; der
+frühere isolierte Rot-an/aus-Versuch war ein anderer Firmware- und Appstand.
 ## Handyprobe
 
 Bluetoothrechte werden erst nach „ESP suchen“ angefragt und vor BLE-Zugriffen
@@ -83,7 +138,7 @@ neue Suche. Ein Prozessneustart übernimmt keinen alten Gerätestatus. Rechtever
 und ausgeschaltetes Bluetooth entwerten die Sitzung ebenfalls; der geschützte
 Bluetooth-Systembroadcast wird nur während des Vordergrundbetriebs empfangen.
 
-Die sieben Fake-Repository-Fälle prüfen die ViewModel-Regeln separat:
+Die zehn Fake-Repository-Fälle prüfen Verbindungs- und LED-Bedienregeln separat:
 
 ```powershell
 ./gradlew.bat :app:testDebugUnitTest
@@ -229,7 +284,7 @@ ist in dieser Messung nicht dokumentiert. Geänderte Daten, Fehlerfälle,
 Mehrrecord-Erhalt und Dauerbetrieb bleiben separat zu prüfen; die Ursache
 früherer unklarer Schreibausgänge ist weiterhin offen.
 Lokale Messdateien: `.local/evidence-live/phone-log.txt` und `phone-ui.txt`.
-In dieser Sitzung wurde keine neue APK installiert; die installierte Fassung
+In der NFC-Sitzung vom 10.10.2026 wurde keine neue APK installiert; die installierte Fassung
 wurde nicht erneut per Hash zugeordnet. Erneute Build-/Testversuche scheiterten
 vor der Ausführung an der lokalen Gradle-Daemon-Verbindung.
 
@@ -241,7 +296,7 @@ Neue Prüfungen mit Nutzerhandlungen werden vom Nutzer in der Projekt-App
 geführt; ein abgeschlossener exportierter Bericht wird anschließend ausgewertet.
 
 Ein einzelner Handytest belegt keinen Dauerbetrieb, weitere Androidmodelle,
-Produktanmeldung oder physischen Spielgerätebetrieb. Spielleitungsfunktionen und Produktzugang folgen weiteren Vertikalen.
+Legacy-Spielanmeldung oder physischen Spielgerätebetrieb. Legacy-Spielleitungsfunktionen bleiben ein eigener Anschluss.
 Für diese einzelne Seite genügt Konstruktorinjektion.
 
 Grundlagen, geprüft am 10.10.2026:

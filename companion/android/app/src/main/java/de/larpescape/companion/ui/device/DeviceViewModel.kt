@@ -2,6 +2,7 @@ package de.larpescape.companion.ui.device
 
 import androidx.lifecycle.ViewModel
 import de.larpescape.companion.data.device.DeviceRepository
+import de.larpescape.companion.data.device.LedEffect
 
 class DeviceViewModel(private val repository: DeviceRepository) : ViewModel() {
     val state = repository.state
@@ -32,6 +33,10 @@ class DeviceViewModel(private val repository: DeviceRepository) : ViewModel() {
     }
     fun scan() { if (foreground && permissionGranted) repository.scan() }
     fun connect(id: String) { if (foreground && permissionGranted) repository.connect(id) }
+    fun selectLedEffect(effect: LedEffect) = repository.selectLedEffect(effect)
+    fun startLedEffect() { if (foreground && permissionGranted && state.value.leds.canStart) repository.startLedEffect() }
+    fun stopLeds() { if (foreground && permissionGranted && state.value.leds.canStop) repository.stopLeds() }
+    fun importLedAccess(bytes: ByteArray) = repository.importLedAccess(bytes)
     fun disconnect() = repository.disconnect()
     fun foregroundEnded() {
         foreground = false

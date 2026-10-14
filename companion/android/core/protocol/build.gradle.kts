@@ -6,3 +6,5 @@ dependencies {
     testImplementation(libs.junit)
 }
 tasks.test { systemProperty("firmwareFixtures", rootProject.file("../contract/firmware-v2/fixtures").absolutePath) }
+
+tasks.test { systemProperty("wledFixtures", rootProject.file("../../docs/led/fixtures").absolutePath) }

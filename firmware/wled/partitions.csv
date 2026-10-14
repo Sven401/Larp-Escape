@@ -1,0 +1,9 @@
+# Name, Type, SubType, Offset, Size, Flags
+# Keep default nvs FIRST: Arduino 2.0.14 auto-repair erases the first NVS partition.
+# larpkeys is separately initialized and must never be selected for auto-erase.
+nvs, data, nvs, 0x9000, 0x5000,
+otadata, data, ota, 0xe000, 0x2000,
+app0, app, ota_0, 0x10000, 0x300000,
+larpkeys, data, nvs, 0x310000, 0x6000,
+spiffs, data, spiffs, 0x316000, 0xda000,
+coredump, data, coredump, 0x3f0000, 0x10000,
