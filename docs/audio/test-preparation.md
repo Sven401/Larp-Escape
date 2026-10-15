@@ -14,6 +14,8 @@ Das Verfahren folgt den getrennten Geräte- und Nutzerbelegen der
 Quellbasis dieses Arbeitsstands ist `e00fe437` des dokumentierten
 NFC-Rundlaufs. Die Audio-Erweiterung muss mit ihrem eigenen endgültigen
 Commit und Artefakthashes im Installationsbericht bezeichnet werden.
+Der [Prüfbericht der Vorbereitung](preparation-results-2026-10-16.md)
+führt den gebauten Quellstand, frische Softwaretests und Artefakthashes.
 
 ## Vorbereiteter Bedienumfang
 
