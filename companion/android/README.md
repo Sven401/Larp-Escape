@@ -3,8 +3,8 @@
 Kotlin, Jetpack Compose und Material 3. Eigenständige App mit Paketname
 `de.larpescape.companion`, Mindestversion Android 13/API33. Bestehende
 Webprototypen und der .NET-Diagnoseclient bleiben separate Referenzen.
-Die Projekt-App bedient den eigenen WLED-LED-Produktdienst mit Funkeln,
-Lichtimpuls und Ripple sowie Start/Stop. Der WLED-Zweig hat zunächst kein
+Die Projekt-App bedient den eigenen LED-Produktdienst mit Funkeln,
+Lichtimpuls und Ripple sowie Start/Stop. Der LED-Zweig hat zunächst kein
 Spielmodul; seine LED-Berechtigung ist keine Legacy-Spielleiteranmeldung.
 
 `app` enthält UI/ViewModel, DeviceRepository und Android-BLE. `core:protocol`
@@ -23,7 +23,7 @@ SDK über `ANDROID_HOME` oder eine lokale, ignorierte `local.properties` angeben
 ```powershell
 $env:JAVA_HOME='C:/Program Files/Android/openjdk/jdk-21.0.8'
 $env:ANDROID_HOME='C:/Program Files (x86)/Android/android-sdk'
-./gradlew.bat :core:protocol:test :app:assembleDebug :app:lintDebug
+./gradlew.bat :core:protocol:test :app:testDebugUnitTest :app:assembleDebug :app:lintDebug
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 adb shell am start -n de.larpescape.companion/.MainActivity
 ```
@@ -56,22 +56,22 @@ Testlauf statt eines UP-TO-DATE-Ergebnisses:
 ## Debug-Labor und Release
 
 `BuildConfig.ALLOW_CONTRACT_LAB` ist in Debug `true`, in Release `false`.
-Debug darf den markierten Laborservice lesen. Der eigene WLED-Produktdienst
+Debug darf den markierten Laborservice lesen. Der eigene LED-Produktdienst
 hat Vorrang; ein vorhandener kanonischer Dienst hat Vorrang vor dem Labor.
 Release lehnt reine
 Laborgeräte bei der Dienstprüfung ab und wählt bei gemeinsam angebotenen
-Diensten WLED vor dem kanonischen Legacy-Produktservice, niemals das Labor.
+Diensten den eigenen LED-Dienst vor dem kanonischen Legacy-Produktservice, niemals das Labor.
 Werbenamen und UUIDs bleiben Auswahlhilfen; erst GATT bestätigt den Dienst.
 
 ```powershell
 ./gradlew.bat :app:assembleRelease :app:lintRelease
 ```
 
-Release ist unsigniert. Der WLED-Produktdienst bietet einen eigenen eingerichteten
+Release ist unsigniert. Der LED-Produktdienst bietet einen eigenen eingerichteten
 LED-Zugang; die frühere Legacy-Spielanmeldung bleibt unverbunden. Der Build
 ist ein Prüfartefakt, kein Verteilungs- oder Veröffentlichungsauftrag.
 
-## WLED-LED-Produktbedienung
+## LED-Produktbedienung
 
 Die ESP-Seite enthält die drei festen Varianten **Funkeln**, **Lichtimpuls**
 und **Ripple**. Auswahl allein sendet nichts; „Start“ ersetzt den laufenden
@@ -90,16 +90,22 @@ Import ersetzt bewusst den einen eingerichteten Box-Zugang auf diesem Handy
 und beendet eine bestehende Verbindung. Eine andere Box braucht einen eigenen
 Import. Werbename und Bluetoothadresse richten keinen Zugang ein.
 
-Der aktuelle Zugang liegt AES-256-GCM-verschlüsselt in `noBackupFilesDir`.
-Der Schlüssel zum Entschlüsseln bleibt im Android Keystore; `allowBackup=false`
+Der aktuelle Zugang liegt als `led-access-v1.bin` AES-256-GCM-verschlüsselt in
+`noBackupFilesDir`. Der Schlüssel zum Entschlüsseln bleibt unter dem eigenen Alias
+`larpescape-led-access-v1` im Android Keystore; `allowBackup=false`
 bleibt gesetzt. Der Importinhalt und das Geheimnis werden nicht geloggt.
 Verlust des Keystore-Schlüssels macht einen erneuten Import erforderlich.
 Die exportierte USB-Einrichtungsdatei selbst bleibt außerhalb dieses Speichers.
+Die Oberfläche zeigt eine neutrale LED-Boxkennung, keinen importierten Produktnamen.
+Bei einem Update von einer früheren Zugangsvariante wird der bestehende
+Geräteschlüssel erneut über USB exportiert und bewusst importiert. Es gibt keine
+automatische Übernahme alter privater Zugangsspeicher. Andere Appdaten bleiben
+bei einem regulären Update erhalten; ältere private Artefakte werden nicht gelöscht.
 
 Eigener Dienst: `6c790001-2f50-4d5a-a7f4-35a478c4b101`. Er unterscheidet sich
 vom Legacy-Spiel- und vom Vertragslaborservice. Zufällige Handy-, Boot- und
 Verbindungswerte binden den gegenseitigen HMAC-SHA256-Nachweis an diese Sitzung.
-Befehle und Antworten besitzen getrennte HMAC-Domänen. Die gemeinsamen
+Befehle und Antworten besitzen getrennte HMAC-Domänen unter `LARP-LED/1/`. Die gemeinsamen
 [Firmware-Testvektoren](../../docs/led/fixtures/wire-v1.json) werden direkt von
 JVM-Tests gelesen; die dortigen öffentlichen Testschlüssel sind keine Einrichtung.
 
@@ -116,13 +122,14 @@ Der explizite Modus `LED_ONLY` wird als „Spielintegration folgt getrennt“ ge
 und erlaubt den LED-Start. Für einen späteren Spielanschluss erlaubt allein
 `STOPPED` die manuelle Bedienung; `RUNNING`, `PAUSED` und `UNKNOWN` sperren
 Start und Stop. Die aktuelle
-WLED-Firmware behauptet keinen geprüften Zustand eines nicht vorhandenen Spiels.
+LED-Firmware behauptet keinen geprüften Zustand eines nicht vorhandenen Spiels.
 Appwechsel, Rechteentzug, Bluetooth-Aus und bewusste Trennung entwerten den
 Appzustand; die Box schaltet bei erkanntem Verbindungsverlust aus.
 
 Hosttests und Builds prüfen Protokoll, Bedienregeln und Kompilierbarkeit. Der
-WLED-Produktpfad wurde dadurch nicht auf Handy/Box physisch abgenommen; der
+LED-Produktpfad wurde dadurch nicht auf Handy/Box physisch abgenommen; der
 frühere isolierte Rot-an/aus-Versuch war ein anderer Firmware- und Appstand.
+
 ## Handyprobe
 
 Bluetoothrechte werden erst nach „ESP suchen“ angefragt und vor BLE-Zugriffen

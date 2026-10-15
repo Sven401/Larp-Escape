@@ -7,12 +7,14 @@ import java.nio.ByteBuffer
 import java.nio.charset.CodingErrorAction
 
 /** Trusted USB setup file, never discovered or accepted from BLE. */
-class WledAccess private constructor(private val device: ByteArray, private val secret: ByteArray, val name: String) {
+class LedAccess private constructor(private val device: ByteArray, private val secret: ByteArray, val name: String) {
     fun deviceId(): ByteArray = device.copyOf()
+    // The imported name is metadata, never product branding or identity proof.
+    val displayName: String get() = "LED-Box ${device.take(4).joinToString("") { "%02X".format(it) }}"
     internal fun secret(): ByteArray = secret.copyOf()
     companion object {
         const val MAX_BYTES = 2048
-        fun parse(bytes: ByteArray): WledAccess {
+        fun parse(bytes: ByteArray): LedAccess {
             require(bytes.size in 1..MAX_BYTES) { "Box-Zugangsdatei ist zu groß oder leer." }
             val text = try {
                 Charsets.UTF_8.newDecoder().onMalformedInput(CodingErrorAction.REPORT)
@@ -51,7 +53,7 @@ class WledAccess private constructor(private val device: ByteArray, private val 
                 require(reader.peek() == JsonToken.END_DOCUMENT) { "Zusätzliche Einrichtungsdaten." }
             }
             require(version && device != null && secret != null) { "Boxkennung oder Zugangsschlüssel fehlt." }
-            return WledAccess(device!!, secret!!, name ?: "Box ${device!!.take(4).joinToString("") { "%02X".format(it) }}")
+            return LedAccess(device!!, secret!!, name ?: "Box ${device!!.take(4).joinToString("") { "%02X".format(it) }}")
         }
         private fun hex(value: String, count: Int): ByteArray {
             require(value.length == count * 2 && value.all { it in '0'..'9' || it in 'a'..'f' || it in 'A'..'F' }) { "Ungültige Boxkennung oder Schlüssel." }

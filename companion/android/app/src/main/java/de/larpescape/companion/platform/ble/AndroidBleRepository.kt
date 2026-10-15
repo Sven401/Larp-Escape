@@ -15,8 +15,8 @@ import android.os.SystemClock
 import android.util.Log
 import de.larpescape.companion.BuildConfig
 import de.larpescape.companion.data.device.*
-import de.larpescape.protocol.WledAccess
-import de.larpescape.companion.platform.access.WledAccessStore
+import de.larpescape.protocol.LedAccess
+import de.larpescape.companion.platform.access.LedAccessStore
 import de.larpescape.protocol.FrameAssembler
 import de.larpescape.protocol.ConfiguredStatusDecoder
 import de.larpescape.protocol.ConfiguredStatusTracker
@@ -38,13 +38,13 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
     private var scanner: BluetoothLeScanner? = null
     private var scanCallback: ScanCallback? = null
     private var gatt: BluetoothGatt? = null
-    private var wled: WledBleSession? = null
-    private val accessStore = WledAccessStore(context)
-    private var access: WledAccess? = null
+    private var ledSession: LedBleSession? = null
+    private val accessStore = LedAccessStore(context)
+    private var access: LedAccess? = null
     init {
         try {
-            access = accessStore.read()?.let { bytes -> try { WledAccess.parse(bytes) } finally { bytes.fill(0) } }
-            mutable.value = mutable.value.copy(leds = mutable.value.leds.copy(accessLabel = access?.name))
+            access = accessStore.read()?.let { bytes -> try { LedAccess.parse(bytes) } finally { bytes.fill(0) } }
+            mutable.value = mutable.value.copy(leds = mutable.value.leds.copy(accessLabel = access?.displayName))
         } catch (_: Exception) {
             mutable.value = mutable.value.copy(leds = mutable.value.leds.copy(message = "Box-Zugang nicht lesbar · erneut importieren"))
         }
@@ -135,13 +135,14 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
                     val name = result.scanRecord?.deviceName ?: result.device.name ?: "Unbenannt"
                     val services = result.scanRecord?.serviceUuids.orEmpty().map { it.uuid }
                     val advertisesLab = labService in services
-                    if (!BuildConfig.ALLOW_CONTRACT_LAB && advertisesLab && canonical !in services && WledBleSession.SERVICE !in services) return@guarded
-                    if (!(BuildConfig.ALLOW_CONTRACT_LAB && advertisesLab) && canonical !in services && WledBleSession.SERVICE !in services && !name.contains("Larp", true) && !name.contains("ESP", true)) return@guarded
+                    if (!BuildConfig.ALLOW_CONTRACT_LAB && advertisesLab && canonical !in services && LedBleSession.SERVICE !in services) return@guarded
+                    if (!(BuildConfig.ALLOW_CONTRACT_LAB && advertisesLab) && canonical !in services && LedBleSession.SERVICE !in services && !name.contains("Larp", true) && !name.contains("ESP", true)) return@guarded
                     val id = result.device.address
                     if (devices.size >= 16 || devices.containsKey(id)) return@guarded
                     devices[id] = result.device
-                    mutable.value = mutable.value.copy(targets = mutable.value.targets + DeviceTarget(id, name))
-                    Log.i("LarpEscape", "SCAN_TARGET name=$name")
+                    val displayName = if (LedBleSession.SERVICE in services) "LED-Box" else name
+                    mutable.value = mutable.value.copy(targets = mutable.value.targets + DeviceTarget(id, displayName))
+                    Log.i("LarpEscape", "SCAN_TARGET name=$displayName")
                 }
             } }
             override fun onScanFailed(errorCode: Int) { handler.post {
@@ -165,7 +166,7 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
         val token = ++generation
         statuses.connect()
         mutable.value = mutable.value.copy(freshness = StatusFreshness.WAITING)
-        report("Verbinde mit ${device.name ?: "ESP"} …")
+        report("Verbinde mit ${mutable.value.targets.firstOrNull { it.id == id }?.name ?: "Box"} …")
         val callback = object : BluetoothGattCallback() {
             private fun dispatch(connection: BluetoothGatt, action: () -> Unit) { handler.post {
                 if (token == generation && connection === gatt) guarded(action)
@@ -179,21 +180,21 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
             }
             override fun onServicesDiscovered(connection: BluetoothGatt, status: Int) = dispatch(connection) {
                 check(status == BluetoothGatt.GATT_SUCCESS) { "Dienstsuche fehlgeschlagen" }
-                if (connection.getService(WledBleSession.SERVICE) != null) {
+                if (connection.getService(LedBleSession.SERVICE) != null) {
                     mutable.value = mutable.value.copy(connected = true, lab = false)
                     val credential = access
                     if (credential == null) {
-                        report("WLED-Box gefunden · zuerst den USB-eingerichteten Box-Zugang importieren")
+                        report("LED-Box gefunden · zuerst den USB-eingerichteten Box-Zugang importieren")
                         mutable.value = mutable.value.copy(leds = mutable.value.leds.copy(available = true, message = "Box-Zugang fehlt. Einrichtung importieren, danach neu verbinden."))
                     } else {
-                        report("WLED-Box verbunden · prüfe Box-Zugang …")
-                        wled = WledBleSession(connection, handler, credential,
+                        report("LED-Box verbunden · prüfe Box-Zugang …")
+                        ledSession = LedBleSession(connection, handler, credential,
                             update = { change ->
                                 val leds = change(mutable.value.leds)
-                                mutable.value = mutable.value.copy(leds = leds, message = if (leds.authenticated) "WLED-Box verbunden · Zugang bestätigt" else mutable.value.message)
+                                mutable.value = mutable.value.copy(leds = leds, message = if (leds.authenticated) "LED-Box verbunden · Zugang bestätigt" else mutable.value.message)
                             },
                             failed = { message -> disconnect(); report(message); mutable.value = mutable.value.copy(leds = mutable.value.leds.copy(message = message)) })
-                        wled!!.start()
+                        ledSession!!.start()
                     }
                     return@dispatch
                 }
@@ -218,10 +219,10 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
                 }
             }
             override fun onCharacteristicWrite(connection: BluetoothGatt, characteristic: BluetoothGattCharacteristic, status: Int) = dispatch(connection) {
-                wled?.characteristicWritten(characteristic, status)
+                ledSession?.characteristicWritten(characteristic, status)
             }
             override fun onDescriptorWrite(connection: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) = dispatch(connection) {
-                wled?.let { it.descriptorWritten(descriptor, status); return@dispatch }
+                ledSession?.let { it.descriptorWritten(descriptor, status); return@dispatch }
                 check(status == BluetoothGatt.GATT_SUCCESS) { "Abonnement fehlgeschlagen" }
                 report("ESP verbunden; warte auf vollständigen Status …")
                 handler.postDelayed({ if (token == generation && !receivedStatus) { disconnect(); report("Vollständiger Status fehlt nach 40 Sekunden") } }, 40000)
@@ -229,7 +230,7 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
             override fun onCharacteristicChanged(connection: BluetoothGatt, characteristic: BluetoothGattCharacteristic, value: ByteArray) {
                 val copy = value.copyOf()
                 dispatch(connection) {
-                    wled?.let { it.changed(characteristic, copy); return@dispatch }
+                    ledSession?.let { it.changed(characteristic, copy); return@dispatch }
                     if (characteristic.uuid != outputId) return@dispatch
                     val complete = frames.accept(copy, SystemClock.elapsedRealtime()) ?: return@dispatch
                     if (complete.first != 4) return@dispatch
@@ -259,18 +260,18 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
         handler.postDelayed({ if (token == generation && !mutable.value.connected) { disconnect(); report("Verbindung nach 20 Sekunden abgebrochen") } }, 20000)
     }
     override fun selectLedEffect(effect: LedEffect) { mutable.value = mutable.value.copy(leds = mutable.value.leds.copy(selected = effect)) }
-    override fun startLedEffect() = guarded { if (mutable.value.leds.canStart) wled?.command(mutable.value.leds.selected.wire) }
-    override fun stopLeds() = guarded { if (mutable.value.leds.canStop) wled?.command(0) }
+    override fun startLedEffect() = guarded { if (mutable.value.leds.canStart) ledSession?.command(mutable.value.leds.selected.wire) }
+    override fun stopLeds() = guarded { if (mutable.value.leds.canStop) ledSession?.command(0) }
     override fun importLedAccess(bytes: ByteArray) {
         try {
-            val selected = WledAccess.parse(bytes)
+            val selected = LedAccess.parse(bytes)
             accessStore.save(bytes)
             disconnect(); access = selected
-            mutable.value = mutable.value.copy(leds = mutable.value.leds.copy(accessLabel = selected.name, message = "Box-Zugang eingerichtet · Box suchen und verbinden"))
+            mutable.value = mutable.value.copy(leds = mutable.value.leds.copy(accessLabel = selected.displayName, message = "Box-Zugang eingerichtet · Box suchen und verbinden"))
         } catch (_: Exception) { mutable.value = mutable.value.copy(leds = mutable.value.leds.copy(message = "Einrichtung nicht übernommen. Gültige USB-Zugangsdatei der Box auswählen.")) }
     }
     override fun disconnect() {
-        wled?.close(); wled = null
+        ledSession?.close(); ledSession = null
         ++generation; frames.clear(); receivedStatus = false
         statuses.disconnect(); expiry?.let { handler.removeCallbacks(it) }; expiry = null
         val old = gatt; gatt = null

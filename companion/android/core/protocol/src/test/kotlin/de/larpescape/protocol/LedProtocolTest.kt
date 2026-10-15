@@ -7,13 +7,13 @@ import java.io.File
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
-class WledLedProtocolTest {
-    private val fixture = JsonParser.parseString(File(System.getProperty("wledFixtures"), "wire-v1.json").readText()).asJsonObject
+class LedProtocolTest {
+    private val fixture = JsonParser.parseString(File(System.getProperty("ledFixtures"), "wire-v1.json").readText()).asJsonObject
     private fun hex(value: String): ByteArray = value.chunked(2).map { it.toInt(16).toByte() }.toByteArray()
     private fun bytes(name: String) = hex(fixture[name].asString)
-    private fun access(extra: String = "") = WledAccess.parse(("{\"schemaVersion\":1,\"deviceId\":\"${fixture["device"].asString}\",\"secret\":\"${fixture["secret"].asString}\"$extra}").toByteArray())
-    private fun client() = WledLedProtocol(access(), bytes("client"))
-    private fun authenticated(): Pair<WledLedProtocol, WledLedStatus> {
+    private fun access(extra: String = "") = LedAccess.parse(("{\"schemaVersion\":1,\"deviceId\":\"${fixture["device"].asString}\",\"secret\":\"${fixture["secret"].asString}\"$extra}").toByteArray())
+    private fun client() = LedProtocol(access(), bytes("client"))
+    private fun authenticated(): Pair<LedProtocol, LedStatus> {
         val protocol = client(); protocol.proof(bytes("challenge")); return protocol to protocol.granted(bytes("granted"))
     }
     private fun rejects(action: () -> Unit) {
@@ -21,7 +21,7 @@ class WledLedProtocolTest {
     }
     private fun resign(data: ByteArray, offset: Int, domain: String): ByteArray {
         val mac = Mac.getInstance("HmacSHA256"); mac.init(SecretKeySpec(bytes("secret"), "HmacSHA256"))
-        mac.update("LARP-WLED-LED/1/$domain".toByteArray(Charsets.US_ASCII))
+        mac.update("LARP-LED/1/$domain".toByteArray(Charsets.US_ASCII))
         return data.copyOf(offset) + mac.doFinal(data.copyOf(offset))
     }
     @Test fun matchesIndependentFirmwareHandshakeCommandsAndReplies() {
@@ -71,14 +71,14 @@ class WledLedProtocolTest {
     }
     @Test fun writeAcknowledgementAndResultAreBothRequiredInEitherOrder() {
         val result = authenticated().first.result(bytes("result_start"))
-        val first = WledCommandTracker(); first.begin(1)
+        val first = LedCommandTracker(); first.begin(1)
         assertNull(first.wrote()); assertEquals(1L, first.request)
         assertEquals(result, first.received(result)); assertNull(first.request)
-        val second = WledCommandTracker(); second.begin(1)
+        val second = LedCommandTracker(); second.begin(1)
         assertNull(second.received(result)); assertEquals(1L, second.request)
         assertEquals(result, second.wrote()); assertNull(second.request)
         // A valid older result can finish this request even if a later status has arrived.
-        val third = WledCommandTracker(); third.begin(1)
+        val third = LedCommandTracker(); third.begin(1)
         rejects { third.received(result.copy(request = 2)) }
         assertEquals(1L, third.request)
         assertNull(third.received(result)); rejects { third.received(result) }
@@ -86,36 +86,44 @@ class WledLedProtocolTest {
     @Test fun framingIsBoundedAndNeverReassemblesACompletedTransferTwice() {
         for (count in 1..128) {
             val payload = ByteArray(count) { it.toByte() }
-            val frames = WledLedFrames.encode(payload, 1)
+            val frames = LedFrames.encode(payload, 1)
             assertTrue(frames.all { it.size in 9..20 })
-            val assembler = WledLedAssembler()
+            val assembler = LedFrameAssembler()
             frames.dropLast(1).forEach { assertNull(assembler.accept(it, 10)) }
             assertArrayEquals(payload, assembler.accept(frames.last(), 10))
             rejects { assembler.accept(frames.last(), 11) }
             if (frames.size > 1) rejects { assembler.accept(frames.first(), 12) }
         }
-        rejects { WledLedFrames.encode(ByteArray(129), 1) }
-        rejects { WledLedFrames.encode(byteArrayOf(1), 0) }
+        rejects { LedFrames.encode(ByteArray(129), 1) }
+        rejects { LedFrames.encode(byteArrayOf(1), 0) }
     }
     @Test fun rejectsMissingInterleavedOrExpiredFragmentsWithoutExtendingDeadline() {
-        val frames = WledLedFrames.encode(bytes("challenge"), 1)
-        val missing = WledLedAssembler(); missing.accept(frames.first(), 0)
+        val frames = LedFrames.encode(bytes("challenge"), 1)
+        val missing = LedFrameAssembler(); missing.accept(frames.first(), 0)
         rejects { missing.accept(frames[2], 1) }
-        val interleaved = WledLedAssembler(); interleaved.accept(frames.first(), 0)
-        rejects { interleaved.accept(WledLedFrames.encode(bytes("proof"), 2).first(), 1) }
-        val expired = WledLedAssembler(); expired.accept(frames.first(), 0)
+        val interleaved = LedFrameAssembler(); interleaved.accept(frames.first(), 0)
+        rejects { interleaved.accept(LedFrames.encode(bytes("proof"), 2).first(), 1) }
+        val expired = LedFrameAssembler(); expired.accept(frames.first(), 0)
         assertNull(expired.accept(frames.first(), 1999))
         assertTrue(expired.expired(2000))
         rejects { expired.accept(frames[1], 2000) }
+    }
+    @Test fun importedMetadataNeverChangesProductLabelOrCredential() {
+        val imported = access(",\"name\":\"Alter Produktname\"")
+        assertEquals("Alter Produktname", imported.name)
+        assertEquals("LED-Box ${fixture["device"].asString.take(8).uppercase()}", imported.displayName)
+        assertArrayEquals(bytes("device"), imported.deviceId())
+        assertArrayEquals(bytes("secret"), imported.secret())
+        assertEquals(imported.displayName, access().displayName)
     }
     @Test fun trustedSetupImportIsStrictAndBounded() {
         assertEquals("Testbox", access(",\"name\":\"Testbox\"").name)
         rejects { access(",\"schemaVersion\":1") }
         rejects { access(",\"extra\":true") }
         rejects { access(",\"name\":\"\"") }
-        rejects { WledAccess.parse(ByteArray(2049)) }
-        rejects { WledAccess.parse("{\"schemaVersion\":1}".toByteArray()) }
-        rejects { WledAccess.parse(byteArrayOf(0xff.toByte())) }
+        rejects { LedAccess.parse(ByteArray(2049)) }
+        rejects { LedAccess.parse("{\"schemaVersion\":1}".toByteArray()) }
+        rejects { LedAccess.parse(byteArrayOf(0xff.toByte())) }
         val device = access().deviceId(); device.fill(0)
         assertArrayEquals(bytes("device"), access().deviceId())
     }

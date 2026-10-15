@@ -1,8 +1,8 @@
-name: WLED product
+name: LED product
 
 on:
   push:
-    paths: ['firmware/wled/**', 'companion/android/**', 'docs/led/**', 'test/test_wled*/**', 'scripts/*wled*', '.github/workflows/wled-product.yml']
+    paths: ['firmware/led/**', 'companion/android/**', 'docs/led/**', 'test/test_led*/**', 'scripts/*led*', '.github/workflows/led-product.yml']
   pull_request:
   workflow_dispatch:
 
@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: wled-product-${{ github.ref }}
+  group: led-product-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -29,12 +29,11 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install --yes g++ libssl-dev
-      - run: python test/test_wled_ble_wire/run.py
-      - run: python firmware/wled/tests/run_output_tests.py
-      - run: python firmware/wled/tests/test_prepare_wled.py
+      - run: python test/test_led_ble_wire/run.py
+      - run: python firmware/led/tests/run_output_tests.py
 
   firmware:
-    name: WLED ESP32 product build
+    name: LED ESP32 product build
     runs-on: windows-2022
     timeout-minutes: 30
     env:
@@ -47,8 +46,7 @@ jobs:
         with:
           python-version: '3.11'
       - run: python -m pip install platformio==6.2.0
-      - run: python scripts/prepare_wled.py
-      - run: python -m platformio run -d .pio/wled-source-stable -e larp-wled-ble -j 2
+      - run: python -m platformio run -d firmware/led -e larp-led-product -j 2
 
   android:
     name: Android tests, lint and builds

@@ -26,7 +26,7 @@ def validated_access(line):
         if not isinstance(text, str) or not re.fullmatch(r"[0-9a-f]{%d}" % size, text) or not int(text, 16):
             return None
     return {"schemaVersion": 1, "deviceId": value["deviceId"],
-            "secret": value["secret"], "name": "Larp WLED"}
+            "secret": value["secret"], "name": "Larp LED"}
 
 
 def main():

@@ -4,8 +4,8 @@ import java.security.MessageDigest
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
-/** Separate WLED LED contract; this does not grant legacy game-master rights. */
-data class WledLedStatus(val revision: Long, val nextRequest: Long, val deviceMillis: Long,
+/** Independent LED control contract; this does not grant legacy game-master rights. */
+data class LedStatus(val revision: Long, val nextRequest: Long, val deviceMillis: Long,
     val statusSequence: Long, val effect: Int, val flags: Int, val mode: Int) {
     val ready get() = flags and 1 != 0
     val pending get() = flags and 2 != 0
@@ -15,9 +15,9 @@ data class WledLedStatus(val revision: Long, val nextRequest: Long, val deviceMi
     val canStart get() = ready && !pending && !fault && mode in 0..1
     val canStop get() = ready && !pending && !fault && mode in 0..1
 }
-data class WledLedResult(val request: Long, val outcome: Int, val status: WledLedStatus)
+data class LedResult(val request: Long, val outcome: Int, val status: LedStatus)
 
-class WledLedProtocol(access: WledAccess, private val clientNonce: ByteArray) {
+class LedProtocol(access: LedAccess, private val clientNonce: ByteArray) {
     private val secret = access.secret()
     private val device = access.deviceId()
     private var session: ByteArray? = null
@@ -36,37 +36,37 @@ class WledLedProtocol(access: WledAccess, private val clientNonce: ByteArray) {
         session = mac("session", context).copyOf(16)
         return byteArrayOf(1, 2) + mac("proof", context)
     }
-    fun granted(bytes: ByteArray): WledLedStatus {
+    fun granted(bytes: ByteArray): LedStatus {
         check(!granted)
         val status = status(bytes, 0x82)
         granted = true
         return status
     }
-    fun status(bytes: ByteArray): WledLedStatus { check(granted); return status(bytes, 0x84) }
-    private fun status(bytes: ByteArray, type: Int): WledLedStatus {
+    fun status(bytes: ByteArray): LedStatus { check(granted); return status(bytes, 0x84) }
+    private fun status(bytes: ByteArray, type: Int): LedStatus {
         header(bytes, type, 70); binding(bytes); verify("status", bytes, 38)
         require(bytes[37] == 0.toByte()) { "Unbekannter Boxstatus." }
         return values(u32(bytes, 18), u32(bytes, 22), u32(bytes, 26), u32(bytes, 30),
             byte(bytes, 34), byte(bytes, 35), byte(bytes, 36))
     }
-    fun command(status: WledLedStatus, effect: Int): ByteArray {
+    fun command(status: LedStatus, effect: Int): ByteArray {
         check(granted)
         require(effect in 0..3 && if (effect == 0) status.canStop else status.canStart) { "LED-Bedienung derzeit gesperrt." }
         val value = byteArrayOf(1, 3) + session!! + le(status.nextRequest) + le(status.revision) +
             le((status.deviceMillis + 3000) and U32) + byteArrayOf(if (effect == 0) 2 else 1, effect.toByte())
         return value + mac("command", value)
     }
-    fun result(bytes: ByteArray): WledLedResult {
+    fun result(bytes: ByteArray): LedResult {
         check(granted); header(bytes, 0x83, 74); binding(bytes); verify("result", bytes, 42)
         val request = u32(bytes, 18); val outcome = byte(bytes, 38)
         require(request != 0L && outcome in 0..11) { "Ungültige Befehlsantwort." }
-        return WledLedResult(request, outcome, values(u32(bytes, 26), u32(bytes, 22), u32(bytes, 30),
+        return LedResult(request, outcome, values(u32(bytes, 26), u32(bytes, 22), u32(bytes, 30),
             u32(bytes, 34), byte(bytes, 39), byte(bytes, 40), byte(bytes, 41)))
     }
-    private fun values(revision: Long, next: Long, millis: Long, sequence: Long, effect: Int, flags: Int, mode: Int): WledLedStatus {
+    private fun values(revision: Long, next: Long, millis: Long, sequence: Long, effect: Int, flags: Int, mode: Int): LedStatus {
         require(next != 0L && sequence != 0L && effect in 0..3 && flags in 0..31 && mode in 0..4 &&
             (effect == 0) == (flags and 4 != 0) && !(flags and 1 != 0 && flags and 16 != 0)) { "Widersprüchlicher Boxstatus." }
-        return WledLedStatus(revision, next, millis, sequence, effect, flags, mode)
+        return LedStatus(revision, next, millis, sequence, effect, flags, mode)
     }
     private fun binding(bytes: ByteArray) {
         require(session != null && MessageDigest.isEqual(session, bytes.copyOfRange(2, 18))) { "Antwort gehört zu einer anderen Verbindung." }
@@ -75,7 +75,7 @@ class WledLedProtocol(access: WledAccess, private val clientNonce: ByteArray) {
         require(MessageDigest.isEqual(mac(domain, bytes.copyOf(offset)), bytes.copyOfRange(offset, bytes.size))) { "Box-Antwort konnte nicht bestätigt werden." }
     }
     private fun mac(domain: String, bytes: ByteArray): ByteArray = Mac.getInstance("HmacSHA256").run {
-        init(SecretKeySpec(secret, "HmacSHA256")); update("LARP-WLED-LED/1/$domain".toByteArray(Charsets.US_ASCII)); doFinal(bytes)
+        init(SecretKeySpec(secret, "HmacSHA256")); update("LARP-LED/1/$domain".toByteArray(Charsets.US_ASCII)); doFinal(bytes)
     }
     fun close() { secret.fill(0); clientNonce.fill(0); session?.fill(0); session = null; granted = false }
     companion object {
@@ -90,7 +90,7 @@ class WledLedProtocol(access: WledAccess, private val clientNonce: ByteArray) {
 }
 
 /** All transport values fit the default ATT MTU; no long-write or MTU negotiation required. */
-object WledLedFrames {
+object LedFrames {
     fun encode(message: ByteArray, transfer: Int): List<ByteArray> {
         require(message.size in 1..128 && transfer in 1..65535)
         return (message.indices step 12).map { offset ->
@@ -100,7 +100,7 @@ object WledLedFrames {
         }
     }
 }
-class WledLedAssembler {
+class LedFrameAssembler {
     private var transfer = 0
     private var completedTransfer = 0
     private var started = 0L
@@ -129,17 +129,17 @@ class WledLedAssembler {
 }
 
 /** A GATT write ACK alone never completes a command. Result order is independent of status order. */
-class WledCommandTracker {
+class LedCommandTracker {
     var request: Long? = null; private set
     private var writeAcknowledged = false
-    private var reply: WledLedResult? = null
-    fun begin(value: Long) { check(request == null && value in 1..WledLedProtocol.U32); request = value; writeAcknowledged = false; reply = null }
-    fun wrote(): WledLedResult? { check(request != null); writeAcknowledged = true; return take() }
-    fun received(result: WledLedResult): WledLedResult? {
+    private var reply: LedResult? = null
+    fun begin(value: Long) { check(request == null && value in 1..LedProtocol.U32); request = value; writeAcknowledged = false; reply = null }
+    fun wrote(): LedResult? { check(request != null); writeAcknowledged = true; return take() }
+    fun received(result: LedResult): LedResult? {
         require(request == result.request) { "Befehlsantwort passt nicht zum offenen Auftrag." }
         check(reply == null) { "Doppelte Befehlsantwort." }; reply = result; return take()
     }
-    private fun take(): WledLedResult? {
+    private fun take(): LedResult? {
         if (!writeAcknowledged) return null
         return reply?.also { request = null; reply = null; writeAcknowledged = false }
     }

@@ -6,12 +6,12 @@
 namespace larp {
 namespace ledwire {
 namespace {
-const char *const ChallengeDomain = "LARP-WLED-LED/1/challenge";
-const char *const ProofDomain = "LARP-WLED-LED/1/proof";
-const char *const SessionDomain = "LARP-WLED-LED/1/session";
-const char *const CommandDomain = "LARP-WLED-LED/1/command";
-const char *const StatusDomain = "LARP-WLED-LED/1/status";
-const char *const ResultDomain = "LARP-WLED-LED/1/result";
+const char *const ChallengeDomain = "LARP-LED/1/challenge";
+const char *const ProofDomain = "LARP-LED/1/proof";
+const char *const SessionDomain = "LARP-LED/1/session";
+const char *const CommandDomain = "LARP-LED/1/command";
+const char *const StatusDomain = "LARP-LED/1/status";
+const char *const ResultDomain = "LARP-LED/1/result";
 bool nonzero(const std::uint8_t *p, std::size_t n) noexcept {
     std::uint8_t any = 0;
     for (std::size_t i = 0; i < n; ++i) any |= p[i];

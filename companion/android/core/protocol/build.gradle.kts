@@ -7,4 +7,4 @@ dependencies {
 }
 tasks.test { systemProperty("firmwareFixtures", rootProject.file("../contract/firmware-v2/fixtures").absolutePath) }
 
-tasks.test { systemProperty("wledFixtures", rootProject.file("../../docs/led/fixtures").absolutePath) }
+tasks.test { systemProperty("ledFixtures", rootProject.file("../../docs/led/fixtures").absolutePath) }

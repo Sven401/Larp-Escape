@@ -12,23 +12,23 @@ import java.util.UUID
 
 /** Owned by one foreground GATT generation, callbacks dispatched on the repository's main thread. */
 @SuppressLint("MissingPermission")
-internal class WledBleSession(
+internal class LedBleSession(
     private val connection: BluetoothGatt,
     private val handler: Handler,
-    access: WledAccess,
+    access: LedAccess,
     private val update: ((LedUiState) -> LedUiState) -> Unit,
     private val failed: (String) -> Unit,
 ) {
-    private val protocol = WledLedProtocol(access, ByteArray(16).also { SecureRandom().nextBytes(it) })
-    private val assembler = WledLedAssembler()
-    private val commands = WledCommandTracker()
+    private val protocol = LedProtocol(access, ByteArray(16).also { SecureRandom().nextBytes(it) })
+    private val assembler = LedFrameAssembler()
+    private val commands = LedCommandTracker()
     private var input: BluetoothGattCharacteristic? = null
     private var output: BluetoothGattCharacteristic? = null
     private var alive = true
     private var subscribed = false
     private var authenticated = false
     private var transfer = 0
-    private var snapshot: WledLedStatus? = null
+    private var snapshot: LedStatus? = null
     private var receivedAt = 0L
     private var operation = 0
     private var lastMessage = "Box-Anmeldung wird geprüft …"
@@ -40,7 +40,7 @@ internal class WledBleSession(
         try { block() } catch (error: Exception) { failed(error.message ?: "Box-Verbindung fehlgeschlagen.") }
     }
     fun start() = runSafely {
-        val service = connection.getService(SERVICE) ?: error("WLED-LED-Dienst fehlt.")
+        val service = connection.getService(SERVICE) ?: error("LED-Dienst fehlt.")
         input = service.getCharacteristic(COMMAND) ?: error("LED-Befehlseingang fehlt.")
         output = service.getCharacteristic(OUTPUT) ?: error("LED-Antwort fehlt.")
         check(input!!.properties and BluetoothGattCharacteristic.PROPERTY_WRITE != 0 &&
@@ -86,7 +86,7 @@ internal class WledBleSession(
             else -> error("Unbekannte LED-Nachricht.")
         }
     }
-    private fun accept(value: WledLedStatus) {
+    private fun accept(value: LedStatus) {
         if (snapshot != null && value.statusSequence <= snapshot!!.statusSequence) return
         snapshot = value; receivedAt = SystemClock.elapsedRealtime()
         val sequence = value.statusSequence
@@ -120,7 +120,7 @@ internal class WledBleSession(
         publish()
         handler.postDelayed({ if (alive && token == operation && commands.request != null) failed("LED-Ergebnis unbekannt · Verbindung beendet. Erneut verbinden und bewusst starten.") }, 5000)
     }
-    private fun completed(result: WledLedResult) {
+    private fun completed(result: LedResult) {
         lastMessage = when (result.outcome) {
             0 -> if (result.status.off) "Box bestätigt: LEDs aus" else "Box bestätigt: ${LedEffect.entries.single { it.wire == result.status.effect }.label} gestartet"
             1 -> "Box lehnt ab: Spiel ist nicht gestoppt"
@@ -135,7 +135,7 @@ internal class WledBleSession(
     }
     private fun send(message: ByteArray, complete: () -> Unit = {}) {
         check(transfer < 65535) { "Verbindung muss erneuert werden." }
-        outgoing.addLast(Transfer(WledLedFrames.encode(message, ++transfer), complete))
+        outgoing.addLast(Transfer(LedFrames.encode(message, ++transfer), complete))
         writeNext()
     }
     private fun writeNext() {

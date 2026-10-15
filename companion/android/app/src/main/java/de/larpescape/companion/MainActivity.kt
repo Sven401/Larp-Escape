@@ -22,7 +22,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.larpescape.companion.platform.ble.AndroidBleRepository
 import de.larpescape.companion.ui.device.DeviceViewModel
 import de.larpescape.companion.ui.device.LedControls
-import de.larpescape.protocol.WledAccess
+import de.larpescape.protocol.LedAccess
 import de.larpescape.protocol.StatusFreshness
 import de.larpescape.companion.platform.nfc.*
 import de.larpescape.companion.ui.nfc.*
@@ -58,7 +58,7 @@ class MainActivity : ComponentActivity() {
     private val importBoxAccess = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         if (uri != null) lifecycleScope.launch {
             val bytes = try {
-                withContext(Dispatchers.IO) { contentResolver.openInputStream(uri)?.use { it.readNBytes(WledAccess.MAX_BYTES + 1) } ?: ByteArray(0) }
+                withContext(Dispatchers.IO) { contentResolver.openInputStream(uri)?.use { it.readNBytes(LedAccess.MAX_BYTES + 1) } ?: ByteArray(0) }
             } catch (_: Exception) { ByteArray(0) }
             model.importLedAccess(bytes)
             bytes.fill(0)
@@ -178,7 +178,7 @@ class MainActivity : ComponentActivity() {
                         }
                         LedControls(state.leds, model::selectLedEffect, model::startLedEffect, model::stopLeds,
                             importAccess = { importBoxAccess.launch(arrayOf("application/json", "text/plain")) })
-                        Text("WLED-LED-Bedienung · Geräteantwort und sichtbare Wirkung getrennt", style = MaterialTheme.typography.bodySmall)
+                        Text("LED-Bedienung · Geräteantwort und sichtbare Wirkung getrennt", style = MaterialTheme.typography.bodySmall)
                         }
                     }
                 }

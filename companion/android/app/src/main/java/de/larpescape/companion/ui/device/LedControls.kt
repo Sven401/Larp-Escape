@@ -16,7 +16,7 @@ fun LedControls(state: LedUiState, select: (LedEffect) -> Unit, start: () -> Uni
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text("LEDs", style = MaterialTheme.typography.titleLarge)
             state.accessLabel?.let { Text("Eingerichtete Box: $it") }
-            if (state.ledOnly) Text("WLED-Lichtsteuerung · Spielintegration folgt getrennt")
+            if (state.ledOnly) Text("LED-Lichtsteuerung · Spielintegration folgt getrennt")
             Text(state.message)
             if (state.authenticated && state.current) {
                 Text("Box meldet: ${state.active?.label ?: "LEDs aus"}", style = MaterialTheme.typography.titleMedium)

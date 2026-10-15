@@ -1,4 +1,4 @@
-#include "../../firmware/wled/usermods/larp_ble/src/LedWire.h"
+#include "../../firmware/led/include/LedWire.h"
 #include <algorithm>
 #include <cstdio>
 #include <fstream>
@@ -105,7 +105,7 @@ static bool same(const Message &a, const Message &b) {
 }
 static void sign(Crypto &crypto, const Secret &key, const char *domain,
                  Message &m, std::size_t body) {
-    const std::string prefix = std::string("LARP-WLED-LED/1/") + domain;
+    const std::string prefix = std::string("LARP-LED/1/") + domain;
     std::vector<std::uint8_t> bytes(prefix.begin(), prefix.end());
     bytes.insert(bytes.end(), m.bytes.begin(), m.bytes.begin() + body);
     Secret mac = {};

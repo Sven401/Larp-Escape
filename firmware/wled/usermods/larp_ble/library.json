@@ -1,6 +1,0 @@
-{
-  "name": "larp_ble",
-  "version": "1.0.0",
-  "build": {"libArchive": false},
-  "dependencies": {}
-}

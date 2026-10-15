@@ -13,7 +13,7 @@ def generate():
     client = bytes(range(0x40, 0x50))
     context = device + boot + connection + client
     def tag(domain, body):
-        return hmac.new(secret, ("LARP-WLED-LED/1/" + domain).encode("ascii") + body, hashlib.sha256).digest()
+        return hmac.new(secret, ("LARP-LED/1/" + domain).encode("ascii") + body, hashlib.sha256).digest()
     session = tag("session", context)[:16]
     def signed(domain, body):
         return body + tag(domain, body)

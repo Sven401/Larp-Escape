@@ -1,10 +1,14 @@
 # Technische Projektübergabe – 13. Oktober 2026
 
-## Ergänzung: WLED-LED-Produktfunktion, 15. Oktober 2026
+## Ergänzung: eigenständige LED-Produktfunktion, 15. Oktober 2026
 
 Der neue Produktzweig ergänzt die echte Android-App und einen geschützten
-BLE-Adapter auf WLED. Umfang, Quellen, USB-Einrichtung und noch offene
-Geräteabnahme stehen in [firmware/wled/README.md](../firmware/wled/README.md).
+BLE-Zugang mit eigener Effektberechnung und SDK-RMT-Ausgabe. Umfang, Quellen,
+USB-Einrichtung und Geräteabnahme stehen in
+[firmware/led/README.md](../firmware/led/README.md).
+Die frühere Einbindung einer externen Beispielimplementierung war eine
+Fehlinterpretation und ist zurückgenommen; die Owner-Klarstellung steht in
+[PR #44](https://github.com/Sven401/Larp-Escape/pull/44).
 Die Spielintegration bleibt getrennt. Die folgenden Abschnitte beschreiben
 den historischen Übergabestand vom 13. Oktober, nicht die neue LED-Abnahme.
 

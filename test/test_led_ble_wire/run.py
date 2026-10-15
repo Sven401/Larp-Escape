@@ -28,13 +28,14 @@ def main():
         raise RuntimeError("Committed wire vectors differ from independent Python HMAC output")
     environment = dict(os.environ)
     environment["PATH"] = str(Path(compiler).resolve().parent) + os.pathsep + environment.get("PATH", "")
-    with tempfile.TemporaryDirectory(prefix="larp-wled-wire-") as directory:
+    with tempfile.TemporaryDirectory(prefix="larp-led-wire-") as directory:
         executable = Path(directory) / ("wire-test.exe" if os.name == "nt" else "wire-test")
         command = [compiler, "-std=c++11", "-Wall", "-Wextra", "-Wpedantic", "-Werror"]
         if os.name == "nt":
             command += ["-static"]
-        command += [str(ROOT / "test/test_wled_ble_wire/main.cpp"),
-                    str(ROOT / "firmware/wled/usermods/larp_ble/src/LedWire.cpp"),
+        command += ["-I", str(ROOT / "firmware/led/include"),
+                    str(ROOT / "test/test_led_ble_wire/main.cpp"),
+                    str(ROOT / "firmware/led/src/LedWire.cpp"),
                     "-lbcrypt" if os.name == "nt" else "-lcrypto", "-o", str(executable)]
         subprocess.run(command, cwd=ROOT, env=environment, check=True)
         subprocess.run([str(executable), str(ROOT / "docs/led/fixtures/wire-v1.json")],

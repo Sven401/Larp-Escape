@@ -1,6 +1,6 @@
-#include "wled.h"
+#include <Arduino.h>
 #include "LedWire.h"
-#include "WledLedOutput.h"
+#include "LedOutput.h"
 #include <BLEDevice.h>
 #include <BLEServer.h>
 #include <BLE2902.h>
@@ -11,11 +11,11 @@
 #include <freertos/queue.h>
 #include <cstring>
 
-// This product deliberately never calls WLED::setup/loop: those start network,
-// preset, button and serial control paths. Only the WLED renderer/bus runs here.
+// The Arduino loop owns the LED engine. Authenticated BLE is the only control
+// ingress; USB only exports the per-box access credential on explicit request.
 namespace {
 namespace wire = larp::ledwire;
-larp::led::WledLedOutput output;
+larp::led::LedOutput output;
 class Control final : public wire::IControl {
  public:
   wire::Snapshot snapshot() const noexcept override {
@@ -131,7 +131,7 @@ void gattEvent(esp_gatts_cb_event_t event, esp_gatt_if_t interface,
   if (xQueueSendToBack(received, &frame, 0) != pdTRUE) abortLink(current.epoch);
 }
 
-// Only the Arduino owner touches protocol state, credentials or WLED buffers.
+// Only the Arduino owner touches protocol state, credentials or LED buffers.
 uint32_t ownerEpoch = 0, lastStatus = 0, lastFrame = 0;
 wire::Message tx[4];
 uint8_t txHead = 0, txCount = 0;
@@ -173,7 +173,7 @@ void serviceBle() {
     }
   }
   Frame frame{};
-  // Bounded work leaves WLED and disconnect handling responsive under flooding.
+  // Bounded work leaves LED output and disconnect handling responsive under flooding.
   for (unsigned count = 0; count < 8 && xQueueReceive(received, &frame, 0) == pdTRUE; ++count) {
     current = linkSnapshot();
     if (!current.connected || current.abort || current.epoch != ownerEpoch) return;
@@ -263,7 +263,7 @@ void serviceUsb() {
           Serial.print("{\"schemaVersion\":1,\"deviceId\":\"");
           hexToSerial(credentials.device.data(), 16);
           Serial.print("\",\"secret\":\""); hexToSerial(credentials.secret.data(), 32);
-          Serial.println("\",\"name\":\"Larp WLED\"}");
+          Serial.println("\",\"name\":\"Larp LED\"}");
         } else Serial.println("LARP ERROR credentials unavailable");
       }
       used = 0; overflow = false;
@@ -280,7 +280,7 @@ void setup() {
   if (!outputInitialized) { Serial.println("LARP ERROR LED initialization"); return; }
   received = xQueueCreate(32, sizeof(Frame));
   if (!received) { Serial.println("LARP ERROR frame queue"); return; }
-  BLEDevice::init("Larp WLED"); // Active radio supplies entropy for hardware RNG.
+  BLEDevice::init("Larp LED"); // Active radio supplies entropy for hardware RNG.
   esp_fill_random(bootNonce.data(), bootNonce.size());
   provisioned = loadCredentials();
   if (!provisioned) { Serial.println("LARP ERROR credentials; USB recovery required"); return; }
@@ -295,7 +295,7 @@ void setup() {
   BLEDevice::getAdvertising()->setScanResponse(true);
   BLEDevice::startAdvertising();
   ready = true;
-  Serial.println("LARP WLED LED-only ready; USB provisioning on explicit request");
+  Serial.println("LARP LED-only ready; USB provisioning on explicit request");
 }
 void loop() {
   serviceUsb();
@@ -310,8 +310,6 @@ void loop() {
   }
   if (outputInitialized) {
     output.service();
-    // Fault recovery must still transmit black; only failed begin skips service.
-    if (!strip.isUpdating()) strip.service();
   }
   delay(1);
 }

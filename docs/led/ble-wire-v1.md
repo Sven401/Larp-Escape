@@ -1,7 +1,7 @@
-# WLED LED-Zugang über BLE, Version 1
+# Eigenständiger LED-Zugang über BLE, Version 1
 
 Status: implementierter begrenzter Produktvertrag, 15. Oktober 2026. Dieser Zugang
-steuert ausschließlich die WLED-LED-Funktion. Er übernimmt weder den optionalen
+steuert ausschließlich die eigene LED-Funktion. Er übernimmt weder den optionalen
 F1/P-256-Vertrag noch dessen Spielleiter-, Bond- oder Spielstatusversprechen.
 Die Einrichtung erfolgt nach ausdrücklicher Nutzerentscheidung einmal über einen
 vertrauenswürdigen USB-Weg mit einem zufälligen Schlüssel pro Box. Das öffentliche
@@ -63,7 +63,7 @@ Duplikate verlängern sie nicht. Nach einem Framingfehler trennt der Adapter den
 Link. Bei ausgeschöpfter Transfer-ID wird getrennt, nicht auf 1 umgebrochen.
 
 BLE-Callbacks kopieren nur begrenzte Werte und ursprüngliche Verbindungsgeneration
-in eine begrenzte Queue. Der alleinige WLED/Mainloop-Besitzer bearbeitet Framing,
+in eine begrenzte Queue. Der alleinige LED/Mainloop-Besitzer bearbeitet Framing,
 Session und LED-Anfragen. Veraltete Generationen werden vor der Verarbeitung
 verworfen. Ein ATT-Write-ACK bestätigt lediglich Transportaufnahme.
 
@@ -82,14 +82,14 @@ niemals ein C++-Structdump übertragen. Kontext:
 | Proof, 34 Bytes | 1 @0, Typ 2 @1, Tag @2 |
 
 Challenge-Tag:
-`HMAC(key, "LARP-WLED-LED/1/challenge" || erste 66 Challengebytes)`.
+`HMAC(key, "LARP-LED/1/challenge" || erste 66 Challengebytes)`.
 
 Android verlangt seine eingerichtete DeviceID und eigene ClientNonce, bevor es
 die Challenge-MAC prüft. Erst danach signiert es Proof:
-`HMAC(key, "LARP-WLED-LED/1/proof" || Kontext)`.
+`HMAC(key, "LARP-LED/1/proof" || Kontext)`.
 
 Session-ID: erste 16 Bytes von
-`HMAC(key, "LARP-WLED-LED/1/session" || Kontext)`.
+`HMAC(key, "LARP-LED/1/session" || Kontext)`.
 
 Die Box stellt nach genau passendem Proof einen authentisierten Granted-Status
 bereit. Der einmalige Nachweis muss innerhalb von 10000 ms seit Linköffnung
@@ -115,7 +115,7 @@ Granted (Typ 0x82) und laufender Status (Typ 0x84) haben beide 70 Bytes:
 | 35 | Statusbits |
 | 36 | Modus |
 | 37 | reserviert, 0 |
-| 38..69 | HMAC über Domain `LARP-WLED-LED/1/status` und erste 38 Bytes |
+| 38..69 | HMAC über Domain `LARP-LED/1/status` und erste 38 Bytes |
 
 Effekte: 0 Aus, 1 Funkeln, 2 Lichtimpuls/Burst, 3 Ripple. Statusbits:
 Bit 0 bereit, Bit 1 Änderung ausstehend, Bit 2 aus, Bit 3 Einmaleffekt beendet,
@@ -130,7 +130,7 @@ Aus-Bit. Bereit und Fehler gleichzeitig sind ungültig.
 | 3 | Spiel pausiert; Handbedienung gesperrt |
 | 4 | Spielstatus unbekannt; Handbedienung gesperrt |
 
-Die aktuelle WLED-Produktfunktion veröffentlicht **LED_ONLY**, keine fingierte
+Die aktuelle LED-Produktfunktion veröffentlicht **LED_ONLY**, keine fingierte
 Messung „Spiel gestoppt“. Eine spätere Spielintegration muss einen echten
 Laufstatus und den alleinigen LED-Besitzer anschließen; Standby/Idle des alten
 Spielcontrollers sind keine Belege für ein gestopptes Spiel.
@@ -154,7 +154,7 @@ Ein Command hat 64 Bytes:
 | 26..29 | expiresAt in Geräte-Millisekunden, LE32 |
 | 30 | Operation: 1 Start, 2 Stop |
 | 31 | Effekt: Start 1..3, Stop ausschließlich 0 |
-| 32..63 | HMAC über Domain `LARP-WLED-LED/1/command` und erste 32 Bytes |
+| 32..63 | HMAC über Domain `LARP-LED/1/command` und erste 32 Bytes |
 
 Die App verwendet `expiresAt = letzter authentisierter deviceMillis + 3000`
 modulo 2^32 und sendet nur bei lokal höchstens 1000 ms altem Status.
@@ -189,7 +189,7 @@ Ein Result hat 74 Bytes:
 | 34..37 | gemeinsame Statussequenz |
 | 38 | Ergebnis |
 | 39..41 | Effekt, Statusbits, Modus |
-| 42..73 | HMAC über Domain `LARP-WLED-LED/1/result` und erste 42 Bytes |
+| 42..73 | HMAC über Domain `LARP-LED/1/result` und erste 42 Bytes |
 
 Ergebnisse: 0 Applied, 1 GameActive, 2 StaleRevision, 3 InvalidCommand,
 4 Unavailable, 5 Conflict, 6 OutOfOrder, 7 Exhausted, 8 Expired, 9 Busy,
@@ -208,7 +208,7 @@ abschließen, überschreibt aber keinen bereits neueren Status.
 
 ## Implementierung und Nachweise
 
-Transportfreier Kern: `firmware/wled/usermods/larp_ble/src/LedWire.{h,cpp}`.
+Transportfreier Kern: `firmware/led/include/LedWire.h` und `firmware/led/src/LedWire.cpp`.
 `Session` und `Assembler` gehören genau einem Mainloop-/Workerbesitzer.
 Die Plattform injiziert HMAC, Zufall, Uhrzeit und `IControl`; das ist kein
 Ersatz für diese tatsächlichen Adapter. `disconnect()` muss auf diesem Besitzer
@@ -220,7 +220,7 @@ Der Generator nutzt Python HMAC/SHA256; der native Test BCrypt auf Windows
 bzw. OpenSSL auf anderen Hosts. Reproduzierbar:
 
 ```text
-python test/test_wled_ble_wire/run.py
+python test/test_led_ble_wire/run.py
 ```
 
 Der Test prüft Goldenbytes, gegenseitige Bindung, falsche MACs/Sitzungen,
