@@ -1,17 +1,21 @@
-# Projektfestlegungen: Übernahme und Rückweg
+# Projektfestlegungen: Übernahme und Korrektur
 
-## 15. Oktober 2026 — WLED als LED-Code-Standard
+## 15. Oktober 2026 — Fehlinterpretation zur LED-Grundlage zurückgenommen
 
-- **Bestätigt:** ausdrückliche Entscheidung des Projekt-Owners in Codex-Sitzung
-  `01a13c85-2371-7bd1-8b80-37104cb58c04`; verbindlich dokumentiert im
-  [WLED-Standard](docs/led/wled-standard.md).
-- **Beobachtete Anwendung und Bewertung:** WLED-Primärquellen wurden gegen den
-  vorhandenen LED-Referenzfall geprüft. Der Abgleich belegt verfügbare Bausteine
-  für Bedienung, Lichtzustände und Rückmeldung; die Nutzung als Grundlage
-  vermeidet deren parallele Neuentwicklung. Eine Laufzeit-/Geräteerprobung ist
-  offen. Die Verbindlichkeit stammt aus der Owner-Entscheidung, nicht aus einer
-  behaupteten Hardwarebewährung.
-- **Rückweg:** Bei einer späteren Owner-Entscheidung den Entscheidungsabschnitt
-  des Standards ersetzen und diesen Eintrag um Grund und Datum ergänzen. Die
-  Quellbelege bleiben erhalten; diese Dokumentationsübernahme selbst ändert
-  weder Firmware noch Geräte und erfordert deshalb keinen Flash-Rückweg.
+- **Bestätigt:** Der Projekt-Owner hat klargestellt, dass WLED ausschließlich
+  eine externe Beispielimplementierung ist. Die verbindliche Grenze steht in
+  [LED-Funktionalität: externe Beispielimplementierung](docs/led/implementation-reference.md).
+  Quelle: Klarstellungsauftrag in Codex-Sitzung
+  `01a13c85-2371-7bd1-8b80-37104cb58c04`.
+- **Korrektur:** Codex hatte den vorherigen Auftrag in `54933ea` fälschlich als
+  Einbindungsvorgabe dokumentiert und diese dem Owner zugeschrieben. Diese
+  Deutung ist zurückgenommen; es handelt sich nicht um einen nachträglichen
+  Wechsel der Produktentscheidung des Owners.
+- **Durchgeführter Rückweg:** Übernahme-, Migrations-, Usermod- und
+  Schnittstellenpflichten entfernt; den Zusatz zum Laufzeitvertrag
+  zurückgenommen; die Quellen als externe Beispiele eingeordnet. App und
+  Firmware wurden in diesem Dokumentationsbranch nicht verändert.
+- **Bewertung:** Der Quellenvergleich ist als Lernmaterial nützlich. Daraus
+  folgt keine Freigabe zur Nutzung als Projektkomponente. Abweichende
+  Implementierungsbranches und installierte Software benötigen eine eigene
+  Korrektur; dieser Eintrag behauptet deren Bereinigung nicht.

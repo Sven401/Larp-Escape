@@ -2,11 +2,6 @@
 
 **Stand:** 5. Oktober 2026. Quellcode im Arbeitsbranch ist maßgeblich; die folgenden Grenzen sind Implementierungsverträge, keine gemessenen Gerätelatenzen.
 
-**LED-Weiterentwicklung ab 15. Oktober 2026:** Maßgeblich ist der
-[WLED-Code-Standard](led/wled-standard.md). Die LED-Task-, Queue- und
-Framevorgaben unten beschreiben die bestehende Implementierung und werden nicht
-auf WLED übertragen. Der übrige Laufzeitvertrag gilt für den vorhandenen Code.
-
 ## Besitzer und Kontexte
 
 | Kontext | Besitzer | Kommunikation / Grenze |
