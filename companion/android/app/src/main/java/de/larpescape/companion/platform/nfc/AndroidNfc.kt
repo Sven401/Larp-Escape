@@ -1,17 +1,16 @@
 package de.larpescape.companion.platform.nfc
 
-import android.app.Activity
 import android.content.Context
 import android.nfc.NdefMessage
 import android.nfc.NdefRecord
-import android.nfc.NfcAdapter
-import android.nfc.Tag
 import android.nfc.tech.Ndef
 import android.util.Base64
 import android.util.Log
 import de.larpescape.companion.BuildConfig
 import de.larpescape.companion.ui.nfc.*
 import de.larpescape.protocol.*
+import java.io.IOException
+import java.util.concurrent.atomic.AtomicBoolean
 
 class AndroidNfcWriteJournal(context: Context) : NfcWriteJournal {
     private val preferences = context.getSharedPreferences("nfc-write-journal", Context.MODE_PRIVATE)
@@ -49,45 +48,75 @@ class AndroidNfcEnvelope : NfcEnvelopeCodec {
     }
 }
 
-private class AndroidNdefPort(private val ndef: Ndef) : NfcMessagePort {
-    private fun event(value: String) { if (BuildConfig.DEBUG) Log.i("LarpEscape", value) }
+/** Public live-NDEF API, isolated so its empty-discovery behaviour can be reproduced in tests. */
+internal interface NdefIo : AutoCloseable {
+    fun connect()
+    val writable: Boolean
+    val capacity: Int
+    fun read(): ByteArray?
+    fun write(message: ByteArray)
+}
+
+internal fun androidNdefPort(ndef: Ndef): NfcMessagePort = AndroidNdefPort(object : NdefIo {
     override fun connect() = ndef.connect()
     override val writable get() = ndef.isWritable
     override val capacity get() = ndef.maxSize
+    override fun read() = ndef.ndefMessage?.toByteArray()
+    override fun write(message: ByteArray) = ndef.writeNdefMessage(NdefMessage(message))
+    override fun close() = ndef.close()
+}) { value -> if (BuildConfig.DEBUG) Log.i("LarpEscape", value) }
+
+internal class AndroidNdefPort(
+    private val io: NdefIo,
+    private val event: (String) -> Unit = {}
+) : NfcMessagePort {
+    private var beforeWriteWasEmpty = false
+    private var writeCompleted = false
+    private val closed = AtomicBoolean(false)
+    private fun checkOpen() { if (closed.get()) throw IOException("NFC-Verbindung beendet") }
+    override fun connect() {
+        checkOpen()
+        io.connect()
+        // A concurrent foreground cancellation must never reopen this old tag.
+        if (closed.get()) {
+            io.close()
+            throw IOException("NFC-Verbindung beendet")
+        }
+    }
+    override val writable get() = io.writable
+    override val capacity get() = io.capacity
     override fun read(): ByteArray? = try {
-        ndef.ndefMessage?.toByteArray().also { event("nfc_rf_read_complete bytes=${it?.size ?: 0}") }
-    } catch (e: Exception) { event("nfc_rf_read_failure=${e.javaClass.simpleName}"); throw e }
+        checkOpen()
+        io.read().also {
+            if (!writeCompleted) beforeWriteWasEmpty = it == null
+            // Android can return null from its remembered empty discovery without RF I/O.
+            event("nfc_ndef_read_result bytes=${it?.size ?: 0} null=${it == null}")
+        }
+    } catch (e: Exception) { event("nfc_ndef_read_failure=${e.javaClass.simpleName}"); throw e }
     override fun write(message: ByteArray) {
+        checkOpen()
         event("nfc_rf_write_start")
-        try { ndef.writeNdefMessage(NdefMessage(message)); event("nfc_rf_write_complete") }
+        try {
+            io.write(message)
+            writeCompleted = true
+            event("nfc_rf_write_complete")
+        }
         catch (e: Exception) { event("nfc_rf_write_failure=${e.javaClass.simpleName}"); throw e }
     }
-    override fun close() = ndef.close()
-}
-
-/** Activity owns ReaderMode registration; ViewModel owns serialized I/O and the write request. */
-class AndroidNfcReader(private val activity: Activity, private val model: NfcViewModel) {
-    private val adapter = NfcAdapter.getDefaultAdapter(activity)
-    private var registered = false
-    fun start() {
-        stop()
-        val token = model.resume(adapter != null, adapter?.isEnabled == true)
-        if (adapter?.isEnabled != true) return
-        try {
-            adapter.enableReaderMode(activity, { tag: Tag ->
-                val ndef = Ndef.get(tag)
-                if (ndef == null) model.unsupported(token)
-                else model.tagDiscovered(token, tag.id.joinToString("") { "%02X".format(it.toInt() and 255) }, AndroidNdefPort(ndef))
-            }, NfcAdapter.FLAG_READER_NFC_A or NfcAdapter.FLAG_READER_NFC_B or
-                NfcAdapter.FLAG_READER_NFC_F or NfcAdapter.FLAG_READER_NFC_V, null)
-            registered = true
-        } catch (_: Exception) { model.pause() }
-    }
-    fun stop() {
-        model.pause()
-        if (registered) {
-            try { adapter?.disableReaderMode(activity) } catch (_: Exception) { }
-            registered = false
+    override fun readAfterWrite(): NfcReadback {
+        val bytes = read()
+        // Only the observed first-fill/null case asks for a new detection. Errors,
+        // mismatches and unexpected nulls on nonempty tags still remain uncertain.
+        return if (writeCompleted && beforeWriteWasEmpty && bytes == null) {
+            event("nfc_readback_requires_rediscovery")
+            NfcReadback.RequiresRediscovery
+        } else {
+            NfcReadback.Bytes(bytes)
         }
+    }
+    override fun close() {
+        // Core and ViewModel both clean up. A second close must not reconnect
+        // the obsolete Tag after ReaderMode has started its new discovery.
+        if (closed.compareAndSet(false, true)) io.close()
     }
 }
