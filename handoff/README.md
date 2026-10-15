@@ -22,13 +22,14 @@ Referenzfall: LEDs starten, stoppen und bewusst erneut starten, mit
 korrelierter Geräteantwort und getrennter Nutzerbeobachtung. Dieser Ablauf
 ist hier weder implementiert noch physisch abgenommen.
 
-## Ergänzende Owner-Entscheidung — 15. Oktober 2026
+## Owner-Klarstellung — 15. Oktober 2026
 
-Für neue LED-Arbeit gilt der [WLED-Code-Standard](../docs/led/wled-standard.md)
-mit Quellen und Abnahmekriterien. Die folgenden Architekturangaben bewahren
-weiterhin den bisherigen Implementierungsstand. Die eigene Android-/BLE-Strecke
-ist keine Voraussetzung des ersten WLED-LED-Ablaufs; die WLED-Integration und
-physische Abnahme sind noch offen.
+Die [externe Funktionsreferenz](../docs/led/implementation-reference.md) dient
+zum Vergleich mit einer Beispielimplementierung. WLED ist keine vorgesehene
+Projektkomponente, darf keine Dependency und keine direkte Referenz in App oder
+Firmware sein und darf in PRs/Veröffentlichungen nicht als Bestandteil geführt
+werden. Die zuvor von Codex abgeleitete Einbindungsvorgabe ist zurückgenommen.
+Die folgenden Architekturangaben werden dadurch nicht neu entschieden.
 
 ## Architektur und Start
 
