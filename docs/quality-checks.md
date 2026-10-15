@@ -1,6 +1,6 @@
 # Vollständiger Prüfweg der kuratierten Produktbasis
 
-Stand: **14. Oktober 2026**, Aufgabe [B0 / #38](https://github.com/Sven401/Larp-Escape/issues/38).
+Stand: **16. Oktober 2026**, Aufgabe [B0 / #38](https://github.com/Sven401/Larp-Escape/issues/38).
 Entwicklungsbasis ist `plan/projektuebergabe-kuratierter-stand`, Ausgangscommit
 `42610abfef07c971d9902ea6ca5a350ed68981bf`. Neue Änderungen auf einem eigenen
 `codex/`-Branch vorbereiten und den PR gegen diesen Integrationsbranch richten.
@@ -9,9 +9,14 @@ Entwicklungsbasis ist `plan/projektuebergabe-kuratierter-stand`, Ausgangscommit
 ## Reproduzierbare Eingänge
 
 Der [Quality-Workflow](../.github/workflows/quality.yml) führt drei unabhängige
-Jobs auf frischen Windows-2022-Runnern aus. Jeder Job protokolliert seinen
-tatsächlich ausgecheckten Commit. Bei PRs wird ausdrücklich deren Head-Commit
-geprüft; ein möglicher späterer Merge benötigt seine eigenen Prüfungen.
+Jobs auf frischen Windows-2022-Runnern aus. Bei Pull Requests prüfen alle drei
+Jobs den von GitHub erzeugten Zusammenführungsstand mit dem Zielbranch.
+Push-Läufe prüfen den jeweiligen Branch-Commit; ein manueller Lauf prüft den
+gewählten Ref. Dafür bleibt der `ref`-Parameter von `actions/checkout` ungesetzt,
+entsprechend der [GitHub-Ereignisdefinition](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#pull_request).
+Der tatsächlich ausgecheckte Commit, Ereignis-SHA sowie PR-Head und PR-Basis
+stehen getrennt in den Prüfbelegen. Eine spätere Änderung an Head oder Basis
+braucht einen neuen Nachweis des dann zusammengeführten Standes.
 Es werden keine Projekt-Builds oder Abhängigkeitscaches aus früheren Läufen
 wiederhergestellt. Der erste Lauf braucht Netzwerk.
 
@@ -33,6 +38,16 @@ Dateibestand gegen das Archiv. Vorhandene Eingaben werden erneut geprüft.
 Abweichende, fehlende oder beschädigte Eingaben sind Fehler; es gibt keinen
 Mock-Ersatz und keine automatische Änderung der Pins.
 
+Die Konsolidierung beruht auf [PR #43](https://github.com/Sven401/Larp-Escape/pull/43)
+bei `95212a7db5da7eae682ec9cfa09ee93c8e235dcb`. Aus der Alternative
+[PR #42](https://github.com/Sven401/Larp-Escape/pull/42) bei
+`e2c39806902888b69641bdbaa32f33612ef202bd` stammen die Prüfung des
+Zusammenführungsstands, der [Protokollhelfer](../scripts/quality_evidence.py)
+und die Grundlage der [Helfertests](../scripts/tests/test_prepare_peer_mbedtls.py).
+Die strengere Quellenextraktion, `--directory`-Schnittstelle, drei Jobs,
+Kryptografie-Negativprüfungen und Gradle-Prüfsumme von #43 bleiben erhalten.
+Die Alternative wird nicht als zweiter Workflow oder zweite Prüfanleitung gepflegt.
+
 ## Lokal ausführen
 
 Aus einem sauberen Checkout unter Windows mit Python und PlatformIO 6.2.0.
@@ -41,6 +56,7 @@ Befehle müssen mit Exitcode 0 enden; bei Fehlern nicht einfach den nächsten
 Befehl als erfolgreichen Gesamtnachweis werten.
 
 ```powershell
+python -m unittest discover -s scripts/tests -v
 python scripts/prepare_peer_mbedtls.py --directory .pio/peer-mbedtls
 $env:LARP_PEER_MBEDTLS_DIR = (Resolve-Path .pio/peer-mbedtls/source).Path
 $env:LARP_PEER_MBEDTLS_ARCHIVE = (Resolve-Path .pio/peer-mbedtls/mbedtls-2.28.4.tar.gz).Path
@@ -66,7 +82,7 @@ Für Android JDK 17/21 und SDK 35 wie in der
 über `JAVA_HOME` und `ANDROID_HOME` bereitstellen. Aus `companion/android/`:
 
 ```powershell
-./gradlew.bat :core:protocol:test :app:testDebugUnitTest :app:assembleDebug :app:lintDebug --no-daemon --console=plain
+./gradlew.bat :core:protocol:test :app:testDebugUnitTest :app:assembleDebug :app:lintDebug --no-daemon --console=plain --stacktrace --continue
 ```
 
 `--offline` funktioniert nur bei vollständigen lokalen Downloads. CI verwendet
@@ -86,6 +102,7 @@ bereits bestandenen Lauf.
 
 | Bereich | Erforderlicher Beleg |
 | --- | --- |
+| CI-Helfer | 20 Offlinefälle: 12 für Archivprüfung und Erhalt vorhandener Eingaben, 8 für echte Kindprozesse, Windows-Batchargumente, Exitcodes und Belegschutz; Windows-Batchfall nur unter Windows |
 | Hostregression / konfigurierte Steuerung | separate bestandene Läufe und JUnit-Dateien für `host-regression` und `host-configured-control` |
 | Echte Kryptografie | `host-peer-proof` mit erfolgreichem Quellaudit, echten Mbed-TLS-Fällen und eigenem JUnit-Bericht |
 | Herkunftsprüfungen | beide SDK-Binärpins im ABI-Build; acht native und zwei SDK-Kryptografie-Negativfälle aus `check_peer_crypto_sources.py` |
@@ -93,10 +110,36 @@ bereits bestandenen Lauf.
 | Android | Protokoll-/App-JUnit-Berichte, erfolgreicher Debug-Build, APK-SHA-256 im Log und Debug-Lint mit Fehler-/Warnungszahl |
 | Bestehende Qualitätsprüfungen | Architektur samt Fixtures, Profilwerkzeug, unabhängige C++11-Header und Formatbaseline erfolgreich |
 
-Die drei CI-Artefakte `host-tests-<run>-<attempt>`,
-`firmware-build-<run>-<attempt>` und `android-reports-<run>-<attempt>`
-bewahren JUnit, Firmware-Buildlog einschließlich Ressourcenangaben sowie
-Android-JUnit/Lint. Joblogs enthalten Aufrufe und Eingangsprüfungen.
+Die drei Artefakte `quality-hardware-independent-<run>-<attempt>`,
+`quality-esp32-build-<run>-<attempt>` und `quality-android-<run>-<attempt>`
+enthalten jeweils `provenance.json`, Aufruf und Exitcode je ausgeführtem
+Prüfschritt, vollständige kombinierte Standard-/Fehlerausgabe sowie
+`summary.md`. Die Provenienz nennt auch Runner-Image, Python und Lauf-URL.
+Werkzeugversionen, Quellaudit, Ressourcenwerte und APK-Prüfsumme stehen in den
+jeweiligen Befehlslogs. Die drei Host-JUnit-Dateien liegen im Host-Artefakt;
+`android-reports-<run>-<attempt>` bewahrt zusätzlich Android-JUnit, HTML-Testberichte
+und Lintberichte.
+
+Zusammenfassung und Upload laufen auch nach einem fehlgeschlagenen Prüfschritt.
+Der Protokollhelfer gibt dessen Exitcode unverändert zurück; ein fehlendes
+Programm wird ebenfalls als Fehler erfasst. Bereits vorhandene Protokolle
+werden nicht überschrieben. Eine fehlende Zeile in der Zusammenfassung ist
+keine bestandene Prüfung. Schlägt bereits Checkout oder Python-Einrichtung
+fehl, bleibt der GitHub-Joblog maßgeblich; ein noch nicht initialisierter
+Protokollhelfer kann dafür keine eigenen Belege erzeugen.
+
+Lokal ist dieselbe Protokollierung optional mit einem frischen Ausgabeordner
+möglich. Aus dem Repositorywurzelverzeichnis beispielsweise:
+
+```powershell
+python scripts/quality_evidence.py --output .pio/quality-run-01 init
+python scripts/quality_evidence.py --output .pio/quality-run-01 run --name ci-helpers -- python -m unittest discover -s scripts/tests -v
+python scripts/quality_evidence.py --output .pio/quality-run-01 finish
+```
+
+`init` zeichnet den Commit auf, nicht uncommittete Dateiänderungen. Für einen
+commitbezogenen Nachweis deshalb einen sauberen Checkout verwenden. `finish`
+schreibt nur den Bericht und ersetzt nicht die Prüfung der einzelnen Exitcodes.
 Aufbewahrung folgt den GitHub-Einstellungen; dauerhafte Zahlen und
 Aussagegrenzen gehören deshalb zusätzlich in den commitbezogenen PR-/Issue-Bericht.
 
