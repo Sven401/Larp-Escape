@@ -50,6 +50,16 @@ nach Neustart/Wiederverbindung.
 Die funktionale Sensorreaktion ist beobachtet; Chipmarking und reale Leitung
 von Wake 1/B7 bleiben physisch offen.
 
+## NFC: Vorerkundung und echter Tag
+
+Aktueller NFC-Gerätenachweis vom 16. Oktober 2026:
+[Handy-Vorerkundung](../docs/nfc/device-preparation-2026-10-16.md) mit zwei
+HCE-Zyklen und [ein echter NTAG213-Rundlauf](../docs/nfc/physical-tag-test-2026-10-16.md)
+App → Tag → Box → Tag → App sind belegt. Der echte Lauf erforderte nach
+zunächst unklarem App-Schreibergebnis ein erneutes Lesen; kein zweites
+Schreiben. Die begrenzte NFC-Prüffirmware ist temporär, Wake wurde jeweils
+verifiziert wiederhergestellt. Andere Tagtypen und Spielintegration bleiben offen.
+
 ## Architektur und Start
 
 Die Firmware liegt in `include/`, `src/` und `lib/`. Die Ausführung trennt
