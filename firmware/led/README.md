@@ -92,6 +92,11 @@ Auswahl ohne Wirkung; Wechsel/Neustart über Start; Stop; Trennen während eines
 Effekts; Wiederverbinden ohne Lichtstart; falscher Zugang ohne LED-Wirkung.
 App-/Firmwarehashes, signierte Boxantwort und Nutzerbeobachtung bleiben getrennt.
 
+Die [Geräteprüfung vom 15. Oktober](../../docs/led/device-test-2026-10-15.md)
+belegt Installation, Anmeldung sowie die gemeinsame Sichtbestätigung von Funkeln,
+Stop und dem automatischen Ende von Lichtimpuls/Ripple am eigenen Paar. Weitere
+Abnahmefälle bleiben dort ausdrücklich offen.
+
 Der [historische Installationsbericht](../../docs/led/install-2026-10-15.md)
 bewahrt einen inzwischen zurückgenommenen Architekturversuch. Seine Sichtbelege
 werden nicht als Nachweis dieser eigenen Implementierung übernommen. Die

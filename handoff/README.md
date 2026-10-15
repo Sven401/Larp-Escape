@@ -6,6 +6,9 @@ Der neue Produktzweig ergänzt die echte Android-App und einen geschützten
 BLE-Zugang mit eigener Effektberechnung und SDK-RMT-Ausgabe. Umfang, Quellen,
 USB-Einrichtung und Geräteabnahme stehen in
 [firmware/led/README.md](../firmware/led/README.md).
+Die [gemeinsame Geräteprüfung](../docs/led/device-test-2026-10-15.md)
+bestätigt Funkeln, Stop sowie Lichtimpuls/Ripple mit selbstständigem Aus am
+installierten eigenen Paar; weiterführende Abnahmefälle bleiben offen.
 Die frühere Einbindung einer externen Beispielimplementierung war eine
 Fehlinterpretation und ist zurückgenommen; die Owner-Klarstellung steht in
 [PR #44](https://github.com/Sven401/Larp-Escape/pull/44).
@@ -31,8 +34,9 @@ historische Quelle im Diagnose-Archiv; sie ist kein Einstieg für eine
 Hardwareabnahme. Das fortbestehende Nutzerziel ist eine am Handy auffindbare,
 verständliche und bewusst wiederholbare echte Baugruppenbedienung. Erster
 Referenzfall: LEDs starten, stoppen und bewusst erneut starten, mit
-korrelierter Geräteantwort und getrennter Nutzerbeobachtung. Dieser Ablauf
-ist hier weder implementiert noch physisch abgenommen.
+korrelierter Geräteantwort und getrennter Nutzerbeobachtung. Am ursprünglichen Übergabestand vom 13. Oktober war dieser Ablauf
+weder implementiert noch physisch abgenommen. Der aktuelle begrenzte LED-Nachweis
+steht in der oben verlinkten Geräteprüfung vom 15. Oktober.
 
 ## Architektur und Start
 
@@ -102,7 +106,7 @@ für Verständnis, Build und Bewertung nicht benötigt. Alle neuen Branches
 sind ausschließlich lokal vorhanden; ihre spätere Übertragung ist ein
 eigener Schritt.
 
-## Offene Entscheidungen und Grenzen
+## Offene Entscheidungen und Grenzen des ursprünglichen Übergabestands
 
 - F1-SDK-/SMP-Herkunft, Bond-Wiederverbindung und Rechtebindung sind nicht
   integriert oder am Funk abgenommen; dafür die F1-Quellen einzeln prüfen.
