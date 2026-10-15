@@ -2,8 +2,10 @@
 
 Stand: 15. Oktober 2026, neuer Produktzweig auf Integrationsbasis
 `42610abfef07c971d9902ea6ca5a350ed68981bf`. Implementiert und hostseitig geprüft;
-Geräteabnahme dieses WLED-/Android-Paars noch offen. Die endgültigen Builds und
-Prüfergebnisse stehen im zugehörigen Pull Request.
+App und Firmware sind am Gerät installiert, USB-Einrichtung und gegenseitige
+BLE-Anmeldung geprüft. Die sichtbare Effektabnahme bleibt offen. Den konkreten
+Stand und die getrennten Nachweise hält der
+[Installationsbericht vom 15.10.2026](../../docs/led/install-2026-10-15.md) fest.
 
 ## Bestätigter Umfang
 
@@ -49,6 +51,18 @@ Der Adapter setzt einen Bus mit **GPIO 15, 23 Pixeln, WLED-Bustyp WS2812_RGB
 Softwarebegrenzung** auf. Diese feste Konfiguration stammt aus
 dem bestätigten isolierten LED-Versuch; sie ist kein allgemeiner CAD-Pinvertrag.
 
+Der Produktbuild setzt WLEDs vorgesehenen Schalter `WLED_USE_SHARED_RMT` und
+verwendet damit NeoPixelBus' SDK-RMT-Treiber statt `NeoESP32RmtHI`. Beim ersten
+Geräteboot von `43cd95a` am 15.10.2026 wurde unmittelbar nach der Bereitschaftsmeldung
+ein reproduzierbarer `IllegalInstruction`-Absturz beobachtet. Das zugehörige ELF
+ordnet PC `0x40085856` der Rückkehr aus `hli_c_handler` zu. Der HI-Treiber registriert
+RMT am Bluetooth-Interrupt auf dem aufrufenden Core; das ELF enthält nur einen
+gemeinsamen HLI-Stack und Registerkontext. Ein Konflikt mit gleichzeitig aktivem
+Bluetooth ist damit als Ursache eingegrenzt. Der SDK-RMT-Pfad vermeidet diese
+Kopplung, ohne WLEDs Effekte, Busbesitz oder GPIO-Konfiguration zu ändern. Der
+korrigierte Start und die BLE-Anmeldung sind am Gerät geprüft; die sichtbare
+LED-Abnahme bleibt getrennt offen (siehe Installationsbericht).
+
 Die einmalige Ripple-Lebensdauer ist ein dünner Adapter um den nativen
 `mode_ripple`: Er setzt eine mittige Welle in dessen Runtime und unterdrückt weitere
 zufällige Starts. Er enthält keine eigene Wellen-/Pixelberechnung. Die Kopplung
@@ -76,8 +90,9 @@ Zusätzlich heruntergeladene Registry-Dubletten sind kein Beleg für deren Nutzu
 
 Die 4-MiB-Partitionstabelle reserviert eine einzelne 3-MiB-Anwendung und enthält
 keinen zweiten OTA-Slot. Ein späterer Upload ändert auch die Partitionierung;
-vorher den chipgebundenen vollständigen Flash-Rückweg prüfen. Dieser PR beauftragt
-und protokolliert keinen neuen Geräteupload.
+vorher den chipgebundenen vollständigen Flash-Rückweg prüfen. Für die ausdrücklich
+beauftragte Installation vom 15.10.2026 wurden der vorhandene Rückweg und ein
+frisches vollständiges Backup derselben Box geprüft; siehe Installationsbericht.
 
 ## Zugang und Einrichtung
 
@@ -123,6 +138,7 @@ rotation/Mehrbenutzerverwaltung ist noch nicht Teil dieses Umfangs.
 ```powershell
 python test/test_wled_ble_wire/run.py
 python firmware/wled/tests/run_output_tests.py
+python firmware/wled/tests/test_prepare_wled.py
 python scripts/prepare_wled.py
 python -m platformio run -d .pio/wled-source-stable -e larp-wled-ble -j 2
 cd companion/android
@@ -143,7 +159,8 @@ Streifen, Aus, erneut Rot und Aus beim Trennen bestätigt. Frühere FastLED-Vari
 hatten trotz Befehlsbestätigung nicht zuverlässig abgeschaltet. Das ist ein Beleg
 für Verdrahtung und den isolierten BLE-Weg, keine Abnahme dieses WLED-Produktbuilds.
 
-Für das neue Paar noch prüfen: Start dunkel; USB-Import; alle drei Effekte;
+USB-Import und gegenseitige Anmeldung sind im Installationsbericht nachgewiesen.
+Für das neue Paar noch sichtbar prüfen: Start dunkel; alle drei Effekte;
 selbstständiges Ende von Burst/Ripple; Auswahl ohne Wirkung; Wechsel und Neustart
 über Start; Stop; Trennen mitten im Funkeln und direkt nach Start; Wiederverbinden
 ohne automatisches Licht; falscher Zugang ohne LED-Wirkung. Dabei echte App-/Firmware-

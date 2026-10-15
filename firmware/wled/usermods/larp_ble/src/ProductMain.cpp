@@ -111,7 +111,9 @@ void gattEvent(esp_gatts_cb_event_t event, esp_gatt_if_t interface,
   if (event != ESP_GATTS_WRITE_EVT || p->write.conn_id != current.connection) return;
   const auto &w = p->write;
   if (subscription && w.handle == subscription->getHandle()) {
-    const bool valid = !w.is_prep && w.need_rsp && !w.offset && w.len == 2 &&
+    // Arduino creates CCCD with AUTO_RSP: Bluedroid already answers the write.
+    // need_rsp is therefore false even for a regular ATT Write Request.
+    const bool valid = !w.is_prep && !w.offset && w.len == 2 &&
                        w.value && w.value[0] == 1 && w.value[1] == 0;
     portENTER_CRITICAL(&linkLock);
     if (link.epoch == current.epoch) {
