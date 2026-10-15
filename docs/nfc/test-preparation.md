@@ -1,6 +1,9 @@
 # NFC: Vorbereitung des gemeinsamen Rundlauftests
 
 Stand: 15. Oktober 2026. **Testplan und Sollwerte; kein Geräteergebnis.**
+Die abgeschlossene Handy-Vorerkundung und der wiederhergestellte Wake-Zustand
+sind im [Gerätebericht vom 16. Oktober](device-preparation-2026-10-16.md)
+belegt. Die Nachweismatrix unten bleibt eine Vorlage für weitere Durchführungen.
 Der Nutzer hat separate beschreibbare Tags bestätigt. Zur automatischen
 Vorerkundung liegt zunächst das Handy mit seiner NFC-Antenne über dem Reader
 der Box. Danach folgt gemeinsam der Rundlauf **App schreibt Tag → Box liest
