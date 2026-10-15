@@ -1,7 +1,7 @@
 # Prüfstand der Matrix-Testvorbereitung
 
 Stand: **16. Oktober 2026**. Status: **Software geprüft; physische Abnahme offen**.
-Basis `e00fe437081582727b2308da7f3b0c835c9bda75`, eigener Branch
+Basis `c0f76ee5123ef51252341b21c18a636abb6f6bc2`, eigener Branch
 `codex/matrix-test-preparation`. Quelle: lokale Prüfläufe der unveränderten
 Quellen dieses Beitrags und unabhängige Durchsicht in derselben Sitzung.
 Die Commit- und Binärzuordnung steht im ausgelieferten Paketmanifest; zusätzliche
@@ -13,17 +13,25 @@ Buildresultate und GitHub-Prüfläufe stehen am zugehörigen Pull Request.
 |---|---|
 | Native BLE-Vertragsprüfung | **4572 Assertions bestanden**, echte HMAC mit unabhängigen Python-Referenzbytes |
 | LED-/SDK-/Wake-/Matrix-Hostsuite | **bestanden**; 16 LED-Fälle, 4 SDK-Fälle, Wake/I²C und neuer Matrixscanner |
-| Android-Protokollkern | **63 Tests**, 0 Fehler, 0 ausgelassen; darunter 20 LED-/Matrix-Vertragstests |
-| Android-App | **39 Tests**, 0 Fehler, 0 ausgelassen; darunter 8 neue Matrixfälle |
+| Android-Protokollkern | **68 Tests**, 0 Fehler, 0 ausgelassen; darunter 20 LED-/Matrix-Vertragstests |
+| Android-App | **52 Tests**, 0 Fehler, 0 ausgelassen; darunter 8 neue Matrixfälle |
 | Android-Build | Debug und unsigniertes Release **erfolgreich** |
+| ESP32-Builds | `larp-led-product` und `larp-matrix-test` **erfolgreich** |
 | Debug-Lint | **0 Fehler**, 3 bestehende Warnungen und 1 bestehende Information |
 | Architekturprüfung | **bestanden**, einschließlich 7 Guard-Selbsttests; 145 Dateien / 302 direkte Includes |
 | Diff-Prüfung | `git diff --check` **bestanden** |
 
 Debug-APK SHA-256:
-`e4ef2815efacbe1c87d46474313a19e09b78546fa9fdba0bff134ba2e55ae6f3`.
+`fbdb0439aef6eb950b39c9eaf1b042865654e0865e46cce36ae91c5dc6910cd6`.
 Unsigniertes Release-APK SHA-256:
-`ee4297159fb19f54729c5e9296fef1e5db0d984d0e27e70d670ef3c5be857522`.
+`bc534f35a15cc164081a8935de19a25dac0d9d3b81acd6ee8e52935bfe3c81a3`.
+
+Matrix-Firmware SHA-256:
+`50accb8ddb3e14a30e196a7f7dc6f479206d6e3a22e7f32337c8ac2a0c2f60ce`.
+RAM 42.472/532.480 Byte; Programm 1.133.537/3.145.728 Byte. Standardfirmware:
+RAM 42.424 Byte, Programm 1.131.449 Byte. Die Partitionstabelle entspricht
+bytegleich dem bestehenden Wake-Rückweg. Die NFC-Basisaktualisierung ändert
+keine Firmwarequelle; der Dateivergleich gegen den gebauten Stand ist leer.
 
 Compilerstarts innerhalb der Windows-Sandbox schlugen mit WinError 623 fehl;
 die genannten erfolgreichen nativen Läufe wurden mit demselben Quellstand
@@ -72,6 +80,6 @@ Wake-/LED-Betrieb im Matrixmodus werden gemeinsam nach dem
 nicht gleichzeitig; kurze Impulse und Entprellung werden nicht als abgenommen
 behauptet. Auch alle vorbereiteten Zeilen im Zuordnungsblatt bleiben offen.
 
-Die gleichzeitig bearbeitete NFC-Rücklesekorrektur war in der Basis noch nicht
-enthalten. Vor späterer Installation den dann aktuellen Appstand abgleichen,
-damit eine inzwischen installierte Korrektur nicht zurückgesetzt wird.
+Die inzwischen veröffentlichte NFC-Rücklesekorrektur `c0f76ee` wurde vor dem
+Abschluss als Basis übernommen. Die kombinierte App wurde erneut gebaut und
+geprüft; die oben genannten 120 Tests und Prüfsummen gehören zu diesem Stand.

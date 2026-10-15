@@ -2,10 +2,10 @@
 
 Stand: **16. Oktober 2026, Europe/Berlin**. Nutzerentscheidung: Tastenmatrix als
 nächste Baugruppe nach LED, Wake und NFC. **Vorbereitung, keine Geräteabnahme.**
-Basis: `e00fe437081582727b2308da7f3b0c835c9bda75` aus dem NFC-Testzweig.
-Die zeitgleich in einem anderen Chat bearbeitete NFC-Rücklesekorrektur gehört
-nicht zu dieser Basis. Vor einer Installation den dann neuesten Appstand
-abgleichen, damit eine zwischenzeitliche NFC-Korrektur erhalten bleibt.
+Basis: `c0f76ee5123ef51252341b21c18a636abb6f6bc2` aus dem NFC-Testzweig.
+Die während der Vorbereitung veröffentlichte NFC-Rücklesekorrektur ist
+enthalten. Das kombinierte APK ist erneut geprüft, damit der Matrixtest
+den korrigierten Appstand erhält.
 
 ## Ziel und Umfang
 
