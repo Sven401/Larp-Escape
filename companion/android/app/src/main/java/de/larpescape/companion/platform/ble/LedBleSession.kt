@@ -23,6 +23,7 @@ internal class LedBleSession(
     private val assembler = LedFrameAssembler()
     private val commands = LedCommandTracker()
     private val wake = WakeStateTracker(access.deviceId().joinToString("") { "%02x".format(it) })
+    private val matrix = MatrixStateTracker()
     private var input: BluetoothGattCharacteristic? = null
     private var output: BluetoothGattCharacteristic? = null
     private var alive = true
@@ -48,7 +49,8 @@ internal class LedBleSession(
             output!!.properties and BluetoothGattCharacteristic.PROPERTY_NOTIFY != 0) { "Unpassender LED-Dienst." }
         val descriptor = output!!.getDescriptor(CCCD) ?: error("LED-Statusabonnement fehlt.")
         check(connection.setCharacteristicNotification(output, true)) { "LED-Status nicht abonnierbar." }
-        update { it.copy(available = true, authenticated = false, current = false, message = lastMessage, wake = WakeUiState()) }
+        update { it.copy(available = true, authenticated = false, current = false, message = lastMessage,
+            wake = WakeUiState(), matrix = MatrixUiState()) }
         check(connection.writeDescriptor(descriptor, BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE) == BluetoothStatusCodes.SUCCESS)
         handler.postDelayed({ if (alive && !authenticated) failed("Box-Anmeldung nicht rechtzeitig bestätigt.") }, 10000)
     }
@@ -91,10 +93,11 @@ internal class LedBleSession(
         if (snapshot != null && value.statusSequence <= snapshot!!.statusSequence) return
         val now = SystemClock.elapsedRealtime()
         val wakeChanged = wake.accept(value, now)
+        val matrixChanged = matrix.accept(value, now)
         snapshot = value; receivedAt = now
-        // LED results can advance the shared sequence. The Wake expiry remains
+        // LED results can advance the shared sequence. Input expiry remains
         // scheduled independently, even when a result supersedes this status.
-        if (wakeChanged) handler.postDelayed({ if (alive) publish() }, 1000)
+        if (wakeChanged || matrixChanged) handler.postDelayed({ if (alive) publish() }, 1000)
         val sequence = value.statusSequence
         handler.postDelayed({ if (alive && snapshot?.statusSequence == sequence) publish() }, 1000)
     }
@@ -113,7 +116,8 @@ internal class LedBleSession(
             gameStopped = if (value.mode == 0 || value.mode == 4) null else value.mode == 1,
             ledOnly = value.mode == 0, busy = commands.request != null || value.pending || outgoing.isNotEmpty(),
             active = LedEffect.entries.singleOrNull { effect -> effect.wire == value.effect }, message = notice,
-            wake = wake.state(SystemClock.elapsedRealtime(), authenticated)) }
+            wake = wake.state(SystemClock.elapsedRealtime(), authenticated),
+            matrix = matrix.state(SystemClock.elapsedRealtime(), authenticated)) }
     }
     fun command(effect: Int) = runSafely {
         check(authenticated && commands.request == null && outgoing.isEmpty()) { "Ein LED-Auftrag läuft bereits." }
@@ -151,7 +155,7 @@ internal class LedBleSession(
         writing = true
         check(connection.writeCharacteristic(input!!, frame, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT) == BluetoothStatusCodes.SUCCESS) { "LED-Nachricht konnte nicht gesendet werden." }
     }
-    fun close() { if (!alive) return; alive = false; protocol.close(); wake.clear(); outgoing.clear(); input = null; output = null }
+    fun close() { if (!alive) return; alive = false; protocol.close(); wake.clear(); matrix.clear(); outgoing.clear(); input = null; output = null }
     companion object {
         val SERVICE: UUID = UUID.fromString("6c790001-2f50-4d5a-a7f4-35a478c4b101")
         val COMMAND: UUID = UUID.fromString("6c790002-2f50-4d5a-a7f4-35a478c4b101")

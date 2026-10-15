@@ -38,7 +38,11 @@ bool valid(const Snapshot &s) noexcept {
            ((s.flags & Off) != 0) == (s.effect == Effect::Off) &&
            !((s.flags & Ready) && (s.flags & Fault)) &&
            (s.wakeMask & ~15U) == 0 && (!s.wakeValid || s.wakeSupported) &&
-           (s.wakeValid || s.wakeMask == 0);
+           (s.wakeValid || s.wakeMask == 0) &&
+           (!s.matrixValid || s.matrixSupported) &&
+           (!s.matrixAmbiguous || s.matrixValid) &&
+           (s.matrixBits.back() & ~1U) == 0 &&
+           (s.matrixValid || !nonzero(s.matrixBits.data(), s.matrixBits.size()));
 }
 } // namespace
 std::uint32_t read32(const std::uint8_t *p) noexcept {
@@ -116,7 +120,8 @@ bool Session::status(std::uint8_t type, std::uint32_t now, Message &out) noexcep
         disconnect();
         return false;
     }
-    out.size = 70;
+    const std::size_t bodySize = state.matrixSupported ? 50 : 38;
+    out.size = static_cast<std::uint16_t>(bodySize + 32);
     out.bytes[0] = 1;
     out.bytes[1] = type;
     std::copy(session_.begin(), session_.end(), out.bytes.begin() + 2);
@@ -129,11 +134,16 @@ bool Session::status(std::uint8_t type, std::uint32_t now, Message &out) noexcep
     out.bytes[36] = static_cast<std::uint8_t>(state.mode);
     out.bytes[37] = (state.wakeSupported ? 0x80 : 0) |
                     (state.wakeValid ? 0x40 : 0) | state.wakeMask;
+    if (state.matrixSupported) {
+        out.bytes[38] = 0x80 | (state.matrixValid ? 0x40 : 0) |
+                        (state.matrixAmbiguous ? 0x20 : 0);
+        std::copy(state.matrixBits.begin(), state.matrixBits.end(), out.bytes.begin() + 39);
+    }
     Secret mac = {};
-    if (!tag(StatusDomain, out.bytes.data(), 38, mac)) {
+    if (!tag(StatusDomain, out.bytes.data(), bodySize, mac)) {
         disconnect(); out.size = 0; return false;
     }
-    std::copy(mac.begin(), mac.end(), out.bytes.begin() + 38);
+    std::copy(mac.begin(), mac.end(), out.bytes.begin() + bodySize);
     return true;
 }
 bool Session::result(Outcome outcome, std::uint32_t request, std::uint32_t now,

@@ -101,7 +101,8 @@ Startaufträge sperren und die LEDs über den alleinigen Ausgabebesitzer abschal
 
 ## Status und Spielgrenze
 
-Granted (Typ 0x82) und laufender Status (Typ 0x84) haben beide 70 Bytes:
+Granted (Typ 0x82) und laufender Status (Typ 0x84) haben ohne Matrix 70 Bytes;
+der separate Matrix-Prüfmodus erweitert beide auf 82 Bytes (siehe unten).
 
 | Offset | Inhalt |
 |---:|---|
@@ -158,6 +159,39 @@ Neue Apps unterstützen das bisherige Nullbyte. Alte Apps lehnen die Erweiterung
 ab; App und Firmware sind als zusammengehöriges Testpaar bereitzustellen.
 Prüfvorbehalte, Bedienung und Abnahme stehen in der
 [Wake-Testvorbereitung](../wake/test-preparation.md).
+
+### Matrix-Erweiterung für den gemeinsamen Kontakttest
+
+Stand 16. Oktober 2026. Die neue App akzeptiert exakt 70 oder 82 Bytes für
+Granted/Status. Bei 70 Bytes fehlt die Matrixunterstützung. Im 82-Byte-Format
+bleiben Bytes 0–37 unverändert; die bisherige MAC wird nach hinten versetzt:
+
+| Offset | Inhalt |
+|---:|---|
+| 38 | Bit 7 unterstützt, Bit 6 gültiger vollständiger Scan, Bit 5 mehrdeutiges Rechteckmuster; Bits 0–4 null |
+| 39..49 | 81 Kontaktbits, row-major: Index `9 * (Zeile - 1) + Spalte`, Spalte A=0 … I=8; je Byte niederwertiges Bit zuerst |
+| 49 | nur Bit 0 für I9 zulässig, Bits 1–7 null |
+| 50..81 | HMAC über `LARP-LED/1/status` und erste 50 Bytes |
+
+Ohne Unterstützung sind alle Matrixbits null; ohne gültigen Scan sind
+Kontaktmaske und Mehrdeutigkeitsflag null. Mehrdeutigkeit setzt Gültigkeit
+voraus. Nicht verwendete Bits oder widersprüchliche Flags werden verworfen.
+Die MAC schützt auch sämtliche Matrixdaten; Sitzung und gemeinsame strikt
+steigende Statussequenz gelten unverändert.
+
+Die Firmware sendet das erweiterte Format nur mit Matrixunterstützung. Results
+bleiben 74 Bytes ohne Matrixprobe. Sie können die gemeinsame Sequenz anheben,
+verlängern aber weder Matrixfrische noch Wakefrische. Fragmente und gleiche/
+ältere Sequenzen zählen ebenfalls nicht als neue Messung. Android entwertet
+Matrixwerte nach 1000 ms ohne neueren vollständigen Messstatus, bei ungültigem
+Scan, Sitzungswechsel und Trennung. Eine Teilrunde ist kein gültiger Scan.
+
+Das Mehrdeutigkeitsflag beschreibt ein beobachtetes Rechteckmuster, keine
+Diagnose eines einzelnen defekten Kontakts und keine zugesicherte Erkennung
+jeder möglichen Ghosting-Situation. Kontaktbits bleiben Rohbeobachtungen.
+Der [Matrix-Testplan](../matrix/test-preparation.md) beschreibt die provisorische
+Pinzuordnung, umgekehrte Scanrichtung, Hardwarefragen und Abnahmeschritte.
+Alte Apps lehnen das verlängerte Format ab: neue App zuerst installieren.
 
 ## Start, Stop und korrelierte Ausführung
 

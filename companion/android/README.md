@@ -13,7 +13,28 @@ werden mit kopierten Bytes auf dem Hauptthread verarbeitet und an die jeweilige
 Verbindungsgeneration gebunden. Ein ViewModel besitzt die Sitzung auch bei
 Rotation. Verlassen der App beendet die Sitzung; kein Hintergrundservice.
 
-## Wake-Inputs im nächsten gemeinsamen Test
+## Tastenmatrix im nächsten gemeinsamen Test
+
+Die ESP-Seite zeigt vor Wake und LEDs ein 9×9-Raster mit elektrischen
+Koordinaten A–I/1–9. Ein Kontakt trägt ein sichtbares Symbol und erscheint
+zusätzlich in der Liste aktiver Koordinaten. Auf kleinen Displays lässt sich
+das Raster seitlich verschieben; die Zellen bleiben mindestens 40 dp groß.
+Jeweils eine einzelne Taste mindestens eine Sekunde halten, loslassen und die
+Zuordnung zur physischen Taste im gemeinsamen Test protokollieren.
+Elektrische Pinbelegung und physische Zuordnung sind vorläufig.
+
+Nur vollständige, authentisierte Matrixmeldungen mit neuer Statussequenz
+halten die Anzeige für weniger als eine Sekunde aktuell. Lesefehler,
+Verbindungsende und veraltete Werte zeigen unbekannt. LED-Antworten und
+einzelne BLE-Fragmente verlängern die Frische nicht. Bei Mehrfachkontakt
+zeigt die App die beobachteten Kontaktkoordinaten ausdrücklich als mehrdeutig;
+ihre Zuordnung zu tatsächlich gedrückten Tasten bleibt unklar. Die bestehende LED-/Wake-Firmware
+bleibt verbindbar und zeigt sichtbar, dass sie noch keine Matrixdaten liefert.
+Die neue Matrix-Prüffirmware und der [gemeinsame Testablauf](../../docs/matrix/test-preparation.md)
+werden vor der Geräteprüfung zusammen bereitgestellt. Die Appanzeige selbst
+bestätigt noch keine physische Taste.
+
+## Wake-Inputs
 
 Die ESP-Seite zeigt vier Wake-Rohpegel in einem 2×2-Raster. Langes Berühren
 hebt eine Kachel auf; Ziehen zeigt den Tausch als Vorschau, Loslassen bestätigt.

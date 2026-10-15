@@ -6,7 +6,8 @@ import javax.crypto.spec.SecretKeySpec
 
 /** Independent LED control contract; this does not grant legacy game-master rights. */
 data class LedStatus(val revision: Long, val nextRequest: Long, val deviceMillis: Long,
-    val statusSequence: Long, val effect: Int, val flags: Int, val mode: Int, val wake: WakeStatus? = null) {
+    val statusSequence: Long, val effect: Int, val flags: Int, val mode: Int,
+    val wake: WakeStatus? = null, val matrix: MatrixStatus? = null) {
     val ready get() = flags and 1 != 0
     val pending get() = flags and 2 != 0
     val off get() = flags and 4 != 0
@@ -20,6 +21,15 @@ data class WakeStatus(val supported: Boolean, val valid: Boolean, val activeMask
     init {
         require(activeMask in 0..15 && (supported || (!valid && activeMask == 0)) &&
             (valid || activeMask == 0))
+    }
+}
+
+/** Row-major raw contacts 0..80; ambiguous means contacts cannot identify unique keys. */
+data class MatrixStatus(val supported: Boolean, val valid: Boolean,
+    val ambiguous: Boolean, val pressed: Set<Int>) {
+    init {
+        require(pressed.all { it in 0..80 } && (supported || !valid) &&
+            (valid || (pressed.isEmpty() && !ambiguous)))
     }
 }
 
@@ -52,15 +62,26 @@ class LedProtocol(access: LedAccess, private val clientNonce: ByteArray) {
     }
     fun status(bytes: ByteArray): LedStatus { check(granted); return status(bytes, 0x84) }
     private fun status(bytes: ByteArray, type: Int): LedStatus {
-        header(bytes, type, 70); binding(bytes); verify("status", bytes, 38)
+        require(bytes.size == 70 || bytes.size == 82) { "Unbekannte Boxnachricht." }
+        header(bytes, type, bytes.size); binding(bytes)
+        verify("status", bytes, if (bytes.size == 82) 50 else 38)
         val wakeByte = byte(bytes, 37)
         val supported = wakeByte and 0x80 != 0
         val valid = wakeByte and 0x40 != 0
         val mask = wakeByte and 15
         require(wakeByte and 0x30 == 0 && (supported || wakeByte == 0) &&
             (valid || mask == 0)) { "Widersprüchlicher Wake-Status." }
+        val matrix = if (bytes.size == 82) {
+            val matrixFlags = byte(bytes, 38)
+            require(matrixFlags and 0x1f == 0 && byte(bytes, 49) and 0xfe == 0) {
+                "Widersprüchlicher Matrixstatus."
+            }
+            MatrixStatus(matrixFlags and 0x80 != 0, matrixFlags and 0x40 != 0,
+                matrixFlags and 0x20 != 0,
+                (0..80).filterTo(mutableSetOf()) { byte(bytes, 39 + it / 8) and (1 shl (it % 8)) != 0 })
+        } else null
         return values(u32(bytes, 18), u32(bytes, 22), u32(bytes, 26), u32(bytes, 30),
-            byte(bytes, 34), byte(bytes, 35), byte(bytes, 36), WakeStatus(supported, valid, mask))
+            byte(bytes, 34), byte(bytes, 35), byte(bytes, 36), WakeStatus(supported, valid, mask), matrix)
     }
     fun command(status: LedStatus, effect: Int): ByteArray {
         check(granted)
@@ -76,10 +97,10 @@ class LedProtocol(access: LedAccess, private val clientNonce: ByteArray) {
         return LedResult(request, outcome, values(u32(bytes, 26), u32(bytes, 22), u32(bytes, 30),
             u32(bytes, 34), byte(bytes, 39), byte(bytes, 40), byte(bytes, 41)))
     }
-    private fun values(revision: Long, next: Long, millis: Long, sequence: Long, effect: Int, flags: Int, mode: Int, wake: WakeStatus? = null): LedStatus {
+    private fun values(revision: Long, next: Long, millis: Long, sequence: Long, effect: Int, flags: Int, mode: Int, wake: WakeStatus? = null, matrix: MatrixStatus? = null): LedStatus {
         require(next != 0L && sequence != 0L && effect in 0..3 && flags in 0..31 && mode in 0..4 &&
             (effect == 0) == (flags and 4 != 0) && !(flags and 1 != 0 && flags and 16 != 0)) { "Widersprüchlicher Boxstatus." }
-        return LedStatus(revision, next, millis, sequence, effect, flags, mode, wake)
+        return LedStatus(revision, next, millis, sequence, effect, flags, mode, wake, matrix)
     }
     private fun binding(bytes: ByteArray) {
         require(session != null && MessageDigest.isEqual(session, bytes.copyOfRange(2, 18))) { "Antwort gehört zu einer anderen Verbindung." }

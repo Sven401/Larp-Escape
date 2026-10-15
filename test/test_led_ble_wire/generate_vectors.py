@@ -17,8 +17,9 @@ def generate():
     session = tag("session", context)[:16]
     def signed(domain, body):
         return body + tag(domain, body)
-    def status(kind, revision, request, now, sequence, effect, flags, wake=0):
-        return signed("status", bytes([1, kind]) + session + struct.pack("<IIII", revision, request, now, sequence) + bytes([effect, flags, 0, wake]))
+    def status(kind, revision, request, now, sequence, effect, flags, wake=0, matrix=None):
+        extension = b"" if matrix is None else bytes([matrix[0]]) + matrix[1].to_bytes(11, "little")
+        return signed("status", bytes([1, kind]) + session + struct.pack("<IIII", revision, request, now, sequence) + bytes([effect, flags, 0, wake]) + extension)
     def command(request, revision, expires, op, effect):
         return signed("command", bytes([1, 3]) + session + struct.pack("<III", request, revision, expires) + bytes([op, effect]))
     def result(request, next_request, revision, now, sequence, effect, flags):
@@ -35,7 +36,10 @@ def generate():
         result_stop=result(2, 3, 2, 1252, 4, 0, 5),
         granted_wake_unknown=status(0x82, 0, 1, 1002, 1, 0, 5, 0x80),
         granted_wake_all=status(0x82, 0, 1, 1002, 1, 0, 5, 0xcf),
-        status_wake_1_3=status(0x84, 0, 1, 1250, 2, 0, 5, 0xc5))
+        status_wake_1_3=status(0x84, 0, 1, 1250, 2, 0, 5, 0xc5),
+        granted_matrix_unknown=status(0x82, 0, 1, 1002, 1, 0, 5, 0xc5, (0x80, 0)),
+        granted_matrix_corners=status(0x82, 0, 1, 1002, 1, 0, 5, 0xc5, (0xc0, (1 << 80) | 1)),
+        status_matrix_rectangle=status(0x84, 0, 1, 1250, 2, 0, 5, 0xc5, (0xe0, (1 << 10) | (1 << 9) | (1 << 1) | 1)))
     return {"warning": "Public deterministic test secret. NEVER provision on a real device.",
             **{key: value.hex() for key, value in values.items()}}
 

@@ -2,6 +2,9 @@
 #include "LedWire.h"
 #include "LedOutput.h"
 #include "WakeInputs.h"
+#ifdef LARP_MATRIX_TEST
+#include "MatrixInputs.h"
+#endif
 #include <BLEDevice.h>
 #include <BLEServer.h>
 #include <BLE2902.h>
@@ -18,6 +21,9 @@ namespace {
 namespace wire = larp::ledwire;
 larp::led::LedOutput output;
 larp::wake::WakeInputs wakeInputs(larp::wake::mcpWakeBus());
+#ifdef LARP_MATRIX_TEST
+larp::matrix::MatrixInputs matrixInputs(larp::wake::mcpWakeBus());
+#endif
 class Control final : public wire::IControl {
  public:
   wire::Snapshot snapshot() const noexcept override {
@@ -34,6 +40,11 @@ class Control final : public wire::IControl {
     const auto wake = wakeInputs.snapshot();
     out.wakeSupported = true; out.wakeValid = wake.valid;
     out.wakeMask = wake.activeMask;
+#ifdef LARP_MATRIX_TEST
+    const auto matrix = matrixInputs.snapshot(millis());
+    out.matrixSupported = true; out.matrixValid = matrix.valid;
+    out.matrixAmbiguous = matrix.ambiguous; out.matrixBits = matrix.bits;
+#endif
     return out;
   }
   bool submit(wire::Operation op, wire::Effect effect, uint32_t expected,
@@ -282,6 +293,9 @@ bool ready = false, outputInitialized = false;
 void setup() {
   Serial.begin(115200);
   wakeInputs.begin(millis());
+#ifdef LARP_MATRIX_TEST
+  matrixInputs.begin(millis());
+#endif
   outputInitialized = output.begin();
   if (!outputInitialized) { Serial.println("LARP ERROR LED initialization"); return; }
   received = xQueueCreate(32, sizeof(Frame));
@@ -301,9 +315,16 @@ void setup() {
   BLEDevice::getAdvertising()->setScanResponse(true);
   BLEDevice::startAdvertising();
   ready = true;
+#ifdef LARP_MATRIX_TEST
+  Serial.println("LARP matrix-test ready; provisional row-LOW scan; USB provisioning on explicit request");
+#else
   Serial.println("LARP LED-only ready; USB provisioning on explicit request");
+#endif
 }
 void loop() {
+#ifdef LARP_MATRIX_TEST
+  matrixInputs.service(millis());
+#endif
   wakeInputs.service(millis());
   serviceUsb();
   if (ready) serviceBle();

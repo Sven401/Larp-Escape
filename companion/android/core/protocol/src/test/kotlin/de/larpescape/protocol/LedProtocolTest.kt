@@ -98,6 +98,102 @@ class LedProtocolTest {
         assertNull(protocol.result(bytes("result_start")).status.wake)
         assertNull(protocol.result(bytes("result_stop")).status.wake)
     }
+    @Test fun matchesIndependentMatrixGrantAndStatusIncludingLastContact() {
+        val unknown = client(); unknown.proof(bytes("challenge"))
+        val unknownStatus = unknown.granted(bytes("granted_matrix_unknown"))
+        assertEquals(MatrixStatus(true, false, false, emptySet()), unknownStatus.matrix)
+        assertEquals(WakeStatus(true, true, 5), unknownStatus.wake)
+        val corners = client(); corners.proof(bytes("challenge"))
+        assertEquals(MatrixStatus(true, true, false, setOf(0, 80)),
+            corners.granted(bytes("granted_matrix_corners")).matrix)
+        assertEquals(MatrixStatus(true, true, true, setOf(0, 1, 9, 10)),
+            corners.status(bytes("status_matrix_rectangle")).matrix)
+    }
+    @Test fun matrixAcceptsEveryContactAndExplicitUnknownOrUnsupported() {
+        val (protocol, legacy) = authenticated()
+        assertNull(legacy.matrix)
+        assertNull(protocol.status(bytes("status_twinkle")).matrix)
+        for (contact in 0..80) {
+            val message = bytes("status_matrix_rectangle").also {
+                it[38] = 0xc0.toByte(); it.fill(0, 39, 50)
+                it[39 + contact / 8] = (1 shl (contact % 8)).toByte()
+            }
+            assertEquals(MatrixStatus(true, true, false, setOf(contact)),
+                protocol.status(resign(message, 50, "status")).matrix)
+        }
+        for (flags in listOf(0, 0x80, 0xc0, 0xe0)) {
+            val message = bytes("status_matrix_rectangle").also { it[38] = flags.toByte(); it.fill(0, 39, 50) }
+            assertEquals(MatrixStatus(flags and 0x80 != 0, flags and 0x40 != 0, flags and 0x20 != 0, emptySet()),
+                protocol.status(resign(message, 50, "status")).matrix)
+        }
+    }
+    @Test fun rejectsReservedFlagsAndContradictoryAuthenticatedMatrixData() {
+        val (protocol, _) = authenticated()
+        for (flags in 0..255) {
+            if (flags in listOf(0, 0x80, 0xc0, 0xe0)) continue
+            val invalid = bytes("status_matrix_rectangle").also { it[38] = flags.toByte(); it.fill(0, 39, 50) }
+            rejects { protocol.status(resign(invalid, 50, "status")) }
+        }
+        for (lastByte in 2..255) {
+            val invalid = bytes("status_matrix_rectangle").also { it[49] = lastByte.toByte() }
+            rejects { protocol.status(resign(invalid, 50, "status")) }
+        }
+        for (flags in listOf(0, 0x80)) for (contact in 0..80) {
+            val invalid = bytes("status_matrix_rectangle").also {
+                it[38] = flags.toByte(); it.fill(0, 39, 50)
+                it[39 + contact / 8] = (1 shl (contact % 8)).toByte()
+            }
+            rejects { protocol.status(resign(invalid, 50, "status")) }
+        }
+    }
+    @Test fun matrixAuthenticatesCompleteBodyAndRejectsWrongSessionLengthAndDomain() {
+        val (protocol, _) = authenticated()
+        val message = bytes("status_matrix_rectangle")
+        for (offset in message.indices) rejects {
+            protocol.status(message.copyOf().also { it[offset] = (it[offset].toInt() xor 1).toByte() })
+        }
+        rejects { protocol.status(resign(message.copyOf().also { it[2] = (it[2].toInt() xor 1).toByte() }, 50, "status")) }
+        rejects { protocol.status(resign(message, 50, "result")) }
+        for (length in 0..128) {
+            if (length == 82) continue
+            rejects { protocol.status(message.copyOf(length)) }
+        }
+        rejects { protocol.status(resign(message, 49, "status")) }
+        rejects { protocol.status(resign(message.copyOf(83), 51, "status")) }
+        val noGrant = client(); noGrant.proof(bytes("challenge"))
+        rejects { noGrant.status(message) }
+    }
+    @Test fun extendedGrantValidatesBeforeGrantingAndResultNeverInventsMatrix() {
+        for ((offset, value) in listOf(38 to 0x81, 38 to 0x40, 49 to 2, 2 to 0)) {
+            val protocol = client(); protocol.proof(bytes("challenge"))
+            val invalid = bytes("granted_matrix_corners").also { it[offset] = value.toByte() }
+            rejects { protocol.granted(resign(invalid, 50, "status")) }
+            assertEquals(setOf(0, 80), protocol.granted(bytes("granted_matrix_corners")).matrix!!.pressed)
+        }
+        val protocol = client(); protocol.proof(bytes("challenge")); protocol.granted(bytes("granted_matrix_corners"))
+        assertNull(protocol.result(bytes("result_start")).status.matrix)
+        assertNull(protocol.result(bytes("result_stop")).status.matrix)
+        rejects { protocol.result(resign(bytes("result_start").copyOf(86), 54, "result")) }
+    }
+    @Test fun matrixConstructorRejectsImpossibleObservations() {
+        for (contact in listOf(-1, 81, Int.MAX_VALUE)) rejects { MatrixStatus(true, true, false, setOf(contact)) }
+        rejects { MatrixStatus(false, true, false, emptySet()) }
+        rejects { MatrixStatus(false, false, true, emptySet()) }
+        rejects { MatrixStatus(true, false, true, emptySet()) }
+        rejects { MatrixStatus(true, false, false, setOf(0)) }
+        rejects { MatrixStatus(false, false, false, setOf(80)) }
+    }
+    @Test fun extendedMatrixStatusReassemblesBeforeItBecomesAnObservation() {
+        val (protocol, _) = authenticated()
+        val frames = LedFrames.encode(bytes("status_matrix_rectangle"), 1)
+        assertEquals(7, frames.size)
+        val assembler = LedFrameAssembler()
+        frames.dropLast(1).forEach { assertNull(assembler.accept(it, 10)) }
+        assertEquals(setOf(0, 1, 9, 10), protocol.status(assembler.accept(frames.last(), 10)!!).matrix!!.pressed)
+        rejects { assembler.accept(frames.first(), 11) }
+        val missing = LedFrameAssembler(); missing.accept(frames.first(), 0)
+        rejects { missing.accept(frames[2], 1) }
+    }
     @Test fun onlyStoppedOrExplicitLedOnlyModeAllowsStarting() {
         val (protocol, initial) = authenticated()
         for (mode in 2..4) rejects { protocol.command(initial.copy(mode = mode), 1) }

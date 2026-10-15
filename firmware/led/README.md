@@ -25,6 +25,21 @@ Der [gemeinsame Testplan](../../docs/wake/test-preparation.md) beschreibt
 Zuordnung, HIGH-Interpretation, offene B7-Eignung, Live-Fristen und die
 zusammengehörige App-/Firmwareinstallation.
 
+## Separater Matrix-Prüfmodus
+
+Die Umgebung `larp-matrix-test` ergänzt die 9×9-Kontaktanzeige in der echten
+Companion-App. Sie treibt einzelne Zeilen LOW, lässt die übrigen Scanzeilen
+hochohmig und liest die Spalten mit Pull-up. Die physische Zuordnung und
+Diodenrichtung sind offen. Die Standardumgebung `larp-led-product` aktiviert
+keinen Matrixscan. Beide Varianten verwenden dieselbe Partitionstabelle und
+denselben vorhandenen BLE-Zugang. App zuerst installieren; die Prüfumgebung
+sendet verlängerte Statusnachrichten. Vorbereitung und gemeinsame Abnahmefälle
+stehen im [Matrix-Testplan](../../docs/matrix/test-preparation.md).
+
+```powershell
+python -m platformio run -d firmware/led -e larp-matrix-test -j 2
+```
+
 ## Aufbau und Ausgabe
 
 `src/LedOutput.cpp` berechnet die Effekte eigenständig. `src/RmtLedBus.cpp`

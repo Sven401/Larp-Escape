@@ -28,6 +28,9 @@ struct Snapshot {
     // Wake1..4 are raw HIGH on MCP B7/B6/B4/B3. Unknown never carries a mask.
     bool wakeSupported = false, wakeValid = false;
     std::uint8_t wakeMask = 0;
+    // Nine rows by nine columns, row-major bits 0..80. Unknown carries no bits.
+    bool matrixSupported = false, matrixValid = false, matrixAmbiguous = false;
+    std::array<std::uint8_t, 11> matrixBits = {};
 };
 class IHmac256 {
   public:

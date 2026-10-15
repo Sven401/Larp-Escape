@@ -251,6 +251,62 @@ static void authentication() {
         check(h.session.receive(bad, 1010, out) == SessionResult::Rejected, "wrong session even valid MAC");
     }
 }
+static void matrixStatus() {
+    for (const bool valid : {false, true}) {
+        Harness h; Message out;
+        h.control.value.wakeSupported = h.control.value.wakeValid = true;
+        h.control.value.wakeMask = 5;
+        h.control.value.matrixSupported = true;
+        h.control.value.matrixValid = valid;
+        if (valid) { h.control.value.matrixBits[0] = 1; h.control.value.matrixBits[10] = 1; }
+        check(h.session.receive(get("hello"), 1001, out) == SessionResult::Reply, "matrix challenge");
+        check(h.session.receive(get("proof"), 1002, out) == SessionResult::Reply &&
+              same(out, get(valid ? "granted_matrix_corners" : "granted_matrix_unknown")),
+              "extended grant exact independent Python HMAC bytes including contact81");
+        h.control.value.matrixValid = h.control.value.matrixAmbiguous = true;
+        h.control.value.matrixBits.fill(0);
+        h.control.value.matrixBits[0] = 3; h.control.value.matrixBits[1] = 6;
+        check(h.session.publishStatus(1250, out) && same(out, get("status_matrix_rectangle")),
+              "ambiguous rectangle remains an authenticated raw matrix observation");
+        auto tampered = out; tampered.bytes[49] ^= 1;
+        sign(h.crypto, h.key, "status", tampered, 50);
+        check(!std::equal(tampered.bytes.begin() + 50, tampered.bytes.begin() + 82,
+                          out.bytes.begin() + 50), "81st contact belongs to authenticated body");
+    }
+    for (unsigned contact = 0; contact < 81; ++contact) {
+        Harness h; h.auth(); Message out;
+        h.control.value.matrixSupported = h.control.value.matrixValid = true;
+        h.control.value.matrixBits[contact / 8] = static_cast<std::uint8_t>(1U << (contact % 8));
+        check(h.session.publishStatus(1250, out) && out.size == 82 && out.bytes[38] == 0xc0 &&
+              out.bytes[39 + contact / 8] == (1U << (contact % 8)), "every row-major contact serialized");
+        auto signedCopy = out; sign(h.crypto, h.key, "status", signedCopy, 50);
+        check(same(out, signedCopy), "every contact has complete extended MAC");
+    }
+    const struct Bad { bool supported, valid, ambiguous; std::uint8_t first, last; } invalid[] = {
+        {false, true, false, 0, 0}, {false, false, true, 0, 0},
+        {false, false, false, 1, 0}, {false, false, false, 0, 1},
+        {true, false, true, 0, 0}, {true, false, false, 1, 0},
+        {true, false, false, 0, 1}, {true, true, false, 0, 2},
+        {true, true, false, 0, 0x80}
+    };
+    for (const auto &bad : invalid) {
+        Harness h; h.auth(); Message out;
+        h.control.value.matrixSupported = bad.supported; h.control.value.matrixValid = bad.valid;
+        h.control.value.matrixAmbiguous = bad.ambiguous;
+        h.control.value.matrixBits[0] = bad.first; h.control.value.matrixBits[10] = bad.last;
+        check(!h.session.publishStatus(1250, out) && !out.size && !h.session.connected(),
+              "contradictory matrix snapshots cannot be authenticated");
+    }
+    {
+        Harness h; h.auth(); Message out;
+        h.control.value.matrixSupported = true;
+        check(h.session.receive(get("command_start_twinkle"), 1010, out) == SessionResult::Accepted,
+              "unknown matrix does not block independent LED control");
+        h.control.apply(); h.control.value.matrixValid = true; h.control.value.matrixBits[10] = 1;
+        check(h.session.service(1011, out) && same(out, get("result_start")),
+              "Result stays byte-identical with no matrix observation");
+    }
+}
 static void admission() {
     for (const auto mode : {Mode::Running, Mode::Paused, Mode::Unknown}) {
         Harness h; h.auth(); Message out;
@@ -334,7 +390,8 @@ static void receiptsAndDriver() {
     }
 }
 static void framing() {
-    for (const auto &name : {"hello", "challenge", "proof", "command_start_twinkle", "result_stop"}) {
+    for (const auto &name : {"hello", "challenge", "proof", "command_start_twinkle", "result_stop",
+                            "granted_matrix_corners", "status_matrix_rectangle"}) {
         const auto message = get(name);
         Assembler assembler;
         Message out;
@@ -376,7 +433,7 @@ int main(int argc, char **argv) {
         std::ifstream source(argv[1]);
         check(source.good(), "fixture exists");
         fixture.assign(std::istreambuf_iterator<char>(source), std::istreambuf_iterator<char>());
-        happyPath(); wakeStatus(); authentication(); admission(); receiptsAndDriver(); framing();
+        happyPath(); wakeStatus(); matrixStatus(); authentication(); admission(); receiptsAndDriver(); framing();
         std::cout << "PASS: " << assertions << " assertions; real host HMAC, Python golden bytes, auth/replay/owner/framing.\n";
         return 0;
     } catch (const std::exception &error) {

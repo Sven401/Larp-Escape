@@ -47,6 +47,8 @@ jobs:
           python-version: '3.11'
       - run: python -m pip install platformio==6.2.0
       - run: python -m platformio run -d firmware/led -e larp-led-product -j 2
+      - name: Build the separate matrix test firmware
+        run: python -m platformio run -d firmware/led -e larp-matrix-test -j 2
 
   android:
     name: Android tests, lint and builds
