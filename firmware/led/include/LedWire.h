@@ -25,6 +25,9 @@ struct Snapshot {
     Effect effect = Effect::Off;
     std::uint8_t flags = Off;
     Mode mode = Mode::Unknown;
+    // Wake1..4 are raw HIGH on MCP B7/B6/B4/B3. Unknown never carries a mask.
+    bool wakeSupported = false, wakeValid = false;
+    std::uint8_t wakeMask = 0;
 };
 class IHmac256 {
   public:

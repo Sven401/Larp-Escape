@@ -60,6 +60,44 @@ class LedProtocolTest {
         val (other, _) = authenticated()
         rejects { other.result(resign(bytes("result_start").also { it[38] = 12 }, 42, "result")) }
     }
+    @Test fun matchesIndependentWakeHandshakeAndStatusFixtures() {
+        val unknown = client(); unknown.proof(bytes("challenge"))
+        assertEquals(WakeStatus(true, false, 0), unknown.granted(bytes("granted_wake_unknown")).wake)
+        val all = client(); all.proof(bytes("challenge"))
+        assertEquals(WakeStatus(true, true, 15), all.granted(bytes("granted_wake_all")).wake)
+        assertEquals(WakeStatus(true, true, 5), all.status(bytes("status_wake_1_3")).wake)
+    }
+    @Test fun wakeStatusAcceptsEveryMaskAndKeepsLegacyFirmwareExplicit() {
+        val (protocol, _) = authenticated()
+        for (mask in 0..15) {
+            val message = resign(bytes("status_twinkle").also { it[37] = (0xc0 or mask).toByte() }, 38, "status")
+            assertEquals(WakeStatus(true, true, mask), protocol.status(message).wake)
+            val other = client(); other.proof(bytes("challenge"))
+            val granted = resign(bytes("granted").also { it[37] = (0xc0 or mask).toByte() }, 38, "status")
+            assertEquals(WakeStatus(true, true, mask), other.granted(granted).wake)
+        }
+        val legacy = resign(bytes("status_twinkle").also { it[37] = 0 }, 38, "status")
+        assertEquals(WakeStatus(false, false, 0), protocol.status(legacy).wake)
+        val unavailable = resign(bytes("status_twinkle").also { it[37] = 0x80.toByte() }, 38, "status")
+        assertEquals(WakeStatus(true, false, 0), protocol.status(unavailable).wake)
+    }
+    @Test fun rejectsEveryReservedOrContradictorySignedWakeByte() {
+        val (protocol, _) = authenticated()
+        for (value in 0..255) {
+            if (value == 0 || value == 0x80 || value in 0xc0..0xcf) continue
+            val message = resign(bytes("status_twinkle").also { it[37] = value.toByte() }, 38, "status")
+            rejects { protocol.status(message) }
+        }
+    }
+    @Test fun wakeIsCoveredByTheStatusMacAndNeverInferredFromLedResults() {
+        val (protocol, _) = authenticated()
+        val signed = resign(bytes("status_twinkle").also { it[37] = 0xc5.toByte() }, 38, "status")
+        for (bit in 0..7) rejects {
+            protocol.status(signed.copyOf().also { it[37] = (it[37].toInt() xor (1 shl bit)).toByte() })
+        }
+        assertNull(protocol.result(bytes("result_start")).status.wake)
+        assertNull(protocol.result(bytes("result_stop")).status.wake)
+    }
     @Test fun onlyStoppedOrExplicitLedOnlyModeAllowsStarting() {
         val (protocol, initial) = authenticated()
         for (mode in 2..4) rejects { protocol.command(initial.copy(mode = mode), 1) }

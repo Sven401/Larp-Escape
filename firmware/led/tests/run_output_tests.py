@@ -40,7 +40,18 @@ def main():
         ], check=True, env=environment)
         for case in ("wire_and_completion", "bad_counter", "write_failure", "wait_failure"):
             subprocess.run([str(sdk_executable), case], check=True, env=environment)
-    print("16 independent LED engine cases and 4 SDK adapter cases passed")
+        for name, sources in (
+            ("wake", ("src/WakeInputs.cpp", "tests/test_wake_inputs.cpp")),
+            ("mcp-wake", ("src/McpWakeBus.cpp", "tests/test_mcp_wake_bus.cpp")),
+        ):
+            wake_executable = Path(temporary) / (name + (".exe" if os.name == "nt" else ""))
+            subprocess.run([
+                compiler, "-std=c++17", "-Wall", "-Wextra", "-Wpedantic", "-Werror",
+                "-I", str(ROOT / "tests/stubs"), "-I", str(ROOT / "include"),
+                *(str(ROOT / source) for source in sources), "-o", str(wake_executable),
+            ], check=True, env=environment)
+            subprocess.run([str(wake_executable)], check=True, env=environment)
+    print("16 LED engine cases, 4 SDK cases and Wake reader/I2C cases passed")
 
 
 if __name__ == "__main__":

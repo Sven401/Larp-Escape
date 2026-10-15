@@ -13,6 +13,13 @@ werden mit kopierten Bytes auf dem Hauptthread verarbeitet und an die jeweilige
 Verbindungsgeneration gebunden. Ein ViewModel besitzt die Sitzung auch bei
 Rotation. Verlassen der App beendet die Sitzung; kein Hintergrundservice.
 
+## Wake-Inputs im nächsten gemeinsamen Test
+
+Die ESP-Seite zeigt vier Wake-Rohpegel in einem 2×2-Raster. Langes Berühren
+hebt eine Kachel auf; Ziehen zeigt den Tausch als Vorschau, Loslassen bestätigt.
+Die Anordnung bleibt pro Box lokal erhalten. Lesefehler und veraltete Werte
+werden unbekannt, nicht inaktiv. [Testablauf, Hardwarevorbehalt und Upgrade-Reihenfolge](../../docs/wake/test-preparation.md).
+
 ## Bauen und installieren
 
 Alle Befehle in diesem Abschnitt laufen aus `companion/android/`.

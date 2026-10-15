@@ -156,6 +156,53 @@ static void happyPath() {
     h.session.disconnect();
     check(h.control.stops == 1 && !h.session.authenticated(), "disconnect revokes and stops");
 }
+static void wakeStatus() {
+    for (const bool all : {false, true}) {
+        Harness h; Message out;
+        h.control.value.wakeSupported = true;
+        h.control.value.wakeValid = all;
+        h.control.value.wakeMask = all ? 15 : 0;
+        check(h.session.receive(get("hello"), 1001, out) == SessionResult::Reply, "wake challenge");
+        check(h.session.receive(get("proof"), 1002, out) == SessionResult::Reply &&
+              same(out, get(all ? "granted_wake_all" : "granted_wake_unknown")),
+              "wake grant has independent Python HMAC bytes");
+        h.control.value.wakeValid = true; h.control.value.wakeMask = 5;
+        check(h.session.publishStatus(1250, out) && same(out, get("status_wake_1_3")),
+              "simultaneous wake1+3 is authenticated status");
+        auto tampered = out; tampered.bytes[37] ^= 1;
+        sign(h.crypto, h.key, "status", tampered, 38);
+        check(!std::equal(tampered.bytes.begin() + 38, tampered.bytes.begin() + 70,
+                          out.bytes.begin() + 38), "wake mask belongs to authenticated body");
+    }
+    for (unsigned mask = 0; mask < 16; ++mask) {
+        Harness h; h.auth(); Message out;
+        h.control.value.wakeSupported = h.control.value.wakeValid = true;
+        h.control.value.wakeMask = static_cast<std::uint8_t>(mask);
+        check(h.session.publishStatus(1250, out) && out.size == 70 && out.bytes[37] == (0xc0 | mask),
+              "all supported valid wake masks and unchanged status size");
+    }
+    const struct Bad { bool supported, valid; std::uint8_t mask; } invalid[] = {
+        {false, true, 0}, {false, true, 1}, {false, false, 1}, {true, false, 1},
+        {true, true, 0x10}, {true, true, 0x20}, {true, true, 0x40}, {true, true, 0x80}
+    };
+    for (const auto &bad : invalid) {
+        Harness h; h.auth(); Message out;
+        h.control.value.wakeSupported = bad.supported;
+        h.control.value.wakeValid = bad.valid; h.control.value.wakeMask = bad.mask;
+        check(!h.session.publishStatus(1250, out) && !out.size && !h.session.connected(),
+              "invalid wake combinations never leave as status");
+    }
+    {
+        Harness h; h.auth(); Message out;
+        h.control.value.wakeSupported = true; // I2C fault must not block LED control.
+        check(h.session.receive(get("command_start_twinkle"), 1010, out) == SessionResult::Accepted,
+              "supported unknown wake allows independent LED operation");
+        h.control.apply();
+        h.control.value.wakeValid = true; h.control.value.wakeMask = 15;
+        check(h.session.service(1011, out) && same(out, get("result_start")),
+              "Results carry no wake data and remain byte-identical");
+    }
+}
 static void authentication() {
     {
         Harness h; Message out;
@@ -329,7 +376,7 @@ int main(int argc, char **argv) {
         std::ifstream source(argv[1]);
         check(source.good(), "fixture exists");
         fixture.assign(std::istreambuf_iterator<char>(source), std::istreambuf_iterator<char>());
-        happyPath(); authentication(); admission(); receiptsAndDriver(); framing();
+        happyPath(); wakeStatus(); authentication(); admission(); receiptsAndDriver(); framing();
         std::cout << "PASS: " << assertions << " assertions; real host HMAC, Python golden bytes, auth/replay/owner/framing.\n";
         return 0;
     } catch (const std::exception &error) {

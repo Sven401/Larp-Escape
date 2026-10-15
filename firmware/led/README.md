@@ -17,6 +17,14 @@ Schwarzframe; die Box bestätigt erst dessen abgeschlossene Übertragung. Neue
 Verbindungen und Appstarts starten kein Licht. Verbindungsverlust, Verlust des
 Statusabonnements oder Protokollfehler verwerfen die Sitzung und fordern Aus.
 
+## Wake-Testvorbereitung
+
+Dieser Stand ergänzt die vier Wake-Rohpegel des ersten MCP als lesende
+Testfunktion. Das LED-Modell bleibt `LED_ONLY`; es entsteht keine Spielintegration.
+Der [gemeinsame Testplan](../../docs/wake/test-preparation.md) beschreibt
+Zuordnung, HIGH-Interpretation, offene B7-Eignung, Live-Fristen und die
+zusammengehörige App-/Firmwareinstallation.
+
 ## Aufbau und Ausgabe
 
 `src/LedOutput.cpp` berechnet die Effekte eigenständig. `src/RmtLedBus.cpp`

@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include "LedWire.h"
 #include "LedOutput.h"
+#include "WakeInputs.h"
 #include <BLEDevice.h>
 #include <BLEServer.h>
 #include <BLE2902.h>
@@ -16,6 +17,7 @@
 namespace {
 namespace wire = larp::ledwire;
 larp::led::LedOutput output;
+larp::wake::WakeInputs wakeInputs(larp::wake::mcpWakeBus());
 class Control final : public wire::IControl {
  public:
   wire::Snapshot snapshot() const noexcept override {
@@ -29,6 +31,9 @@ class Control final : public wire::IControl {
       (s.applied == larp::led::Effect::Off ? wire::Off : 0) |
       (s.completed ? wire::Completed : 0) | (s.fault ? wire::Fault : 0);
     out.mode = wire::Mode::LedOnly;
+    const auto wake = wakeInputs.snapshot();
+    out.wakeSupported = true; out.wakeValid = wake.valid;
+    out.wakeMask = wake.activeMask;
     return out;
   }
   bool submit(wire::Operation op, wire::Effect effect, uint32_t expected,
@@ -276,6 +281,7 @@ bool ready = false, outputInitialized = false;
 
 void setup() {
   Serial.begin(115200);
+  wakeInputs.begin(millis());
   outputInitialized = output.begin();
   if (!outputInitialized) { Serial.println("LARP ERROR LED initialization"); return; }
   received = xQueueCreate(32, sizeof(Frame));
@@ -298,6 +304,7 @@ void setup() {
   Serial.println("LARP LED-only ready; USB provisioning on explicit request");
 }
 void loop() {
+  wakeInputs.service(millis());
   serviceUsb();
   if (ready) serviceBle();
   if (ready) {

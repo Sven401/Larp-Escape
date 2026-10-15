@@ -1,7 +1,7 @@
 # Eigenständiger LED-Zugang über BLE, Version 1
 
 Status: implementierter begrenzter Produktvertrag, 15. Oktober 2026. Dieser Zugang
-steuert ausschließlich die eigene LED-Funktion. Er übernimmt weder den optionalen
+steuert die eigene LED-Funktion und überträgt lesend die vier Wake-Rohpegel. Er übernimmt weder den optionalen
 F1/P-256-Vertrag noch dessen Spielleiter-, Bond- oder Spielstatusversprechen.
 Die Einrichtung erfolgt nach ausdrücklicher Nutzerentscheidung einmal über einen
 vertrauenswürdigen USB-Weg mit einem zufälligen Schlüssel pro Box. Das öffentliche
@@ -114,7 +114,7 @@ Granted (Typ 0x82) und laufender Status (Typ 0x84) haben beide 70 Bytes:
 | 34 | aktuell ausgegebener Effekt |
 | 35 | Statusbits |
 | 36 | Modus |
-| 37 | reserviert, 0 |
+| 37 | Wake: Bit 7 unterstützt, Bit 6 gültige Lesung, Bits 0–3 HIGH-Maske Wake 1–4; Bits 4–5 = 0 |
 | 38..69 | HMAC über Domain `LARP-LED/1/status` und erste 38 Bytes |
 
 Effekte: 0 Aus, 1 Funkeln, 2 Lichtimpuls/Burst, 3 Ripple. Statusbits:
@@ -140,6 +140,24 @@ Der Server veröffentlicht alle 250 ms einen authentisierten Status. Android
 streng neuer Statussequenz. Ergebnis und Status teilen diese Sequenz. Ist die
 letzte neue Nachricht lokal älter als 1000 ms, wird Bedienung bis zu einer
 frischen Nachricht gesperrt.
+
+### Wake-Erweiterung für den gemeinsamen Eingangstest
+
+Byte 37 ist Bestandteil derselben Status-MAC. `0` bedeutet keine Unterstützung
+(alte Firmware), `0x80` Lesefehler/unbekannt und `0xC0 | mask` eine gültige gemeinsame
+GPIOB-Lesung. Ohne Unterstützung müssen alle Bits null sein; ohne gültige Lesung
+muss die Maske null sein. Bits 4–5 sind unzulässig. Bit 0 der Maske gehört zu B7,
+Bit 1 zu B6, Bit 2 zu B4, Bit 3 zu B3. HIGH wird vorläufig als aktiv interpretiert;
+Polarität und B7-Eignung sind keine bestätigten Hardwareeigenschaften.
+
+Nur Granted und laufender Status enthalten Wake. Results behalten ihr Format
+und aktualisieren weder Wake-Wert noch dessen Empfangszeit. Die App führt die
+höchste gemeinsame Statussequenz, verwirft ältere Messungen und entwertet Wake
+nach 1000 ms ohne neueren vollständigen Wake-Status sowie bei Trennung.
+Neue Apps unterstützen das bisherige Nullbyte. Alte Apps lehnen die Erweiterung
+ab; App und Firmware sind als zusammengehöriges Testpaar bereitzustellen.
+Prüfvorbehalte, Bedienung und Abnahme stehen in der
+[Wake-Testvorbereitung](../wake/test-preparation.md).
 
 ## Start, Stop und korrelierte Ausführung
 

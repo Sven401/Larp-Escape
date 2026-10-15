@@ -17,8 +17,8 @@ def generate():
     session = tag("session", context)[:16]
     def signed(domain, body):
         return body + tag(domain, body)
-    def status(kind, revision, request, now, sequence, effect, flags):
-        return signed("status", bytes([1, kind]) + session + struct.pack("<IIII", revision, request, now, sequence) + bytes([effect, flags, 0, 0]))
+    def status(kind, revision, request, now, sequence, effect, flags, wake=0):
+        return signed("status", bytes([1, kind]) + session + struct.pack("<IIII", revision, request, now, sequence) + bytes([effect, flags, 0, wake]))
     def command(request, revision, expires, op, effect):
         return signed("command", bytes([1, 3]) + session + struct.pack("<III", request, revision, expires) + bytes([op, effect]))
     def result(request, next_request, revision, now, sequence, effect, flags):
@@ -32,7 +32,10 @@ def generate():
         result_start=result(1, 2, 1, 1011, 2, 1, 1),
         status_twinkle=status(0x84, 1, 2, 1250, 3, 1, 1),
         command_stop=command(2, 1, 4250, 2, 0),
-        result_stop=result(2, 3, 2, 1252, 4, 0, 5))
+        result_stop=result(2, 3, 2, 1252, 4, 0, 5),
+        granted_wake_unknown=status(0x82, 0, 1, 1002, 1, 0, 5, 0x80),
+        granted_wake_all=status(0x82, 0, 1, 1002, 1, 0, 5, 0xcf),
+        status_wake_1_3=status(0x84, 0, 1, 1250, 2, 0, 5, 0xc5))
     return {"warning": "Public deterministic test secret. NEVER provision on a real device.",
             **{key: value.hex() for key, value in values.items()}}
 

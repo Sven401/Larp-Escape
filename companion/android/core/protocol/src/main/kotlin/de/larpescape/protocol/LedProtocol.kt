@@ -6,7 +6,7 @@ import javax.crypto.spec.SecretKeySpec
 
 /** Independent LED control contract; this does not grant legacy game-master rights. */
 data class LedStatus(val revision: Long, val nextRequest: Long, val deviceMillis: Long,
-    val statusSequence: Long, val effect: Int, val flags: Int, val mode: Int) {
+    val statusSequence: Long, val effect: Int, val flags: Int, val mode: Int, val wake: WakeStatus? = null) {
     val ready get() = flags and 1 != 0
     val pending get() = flags and 2 != 0
     val off get() = flags and 4 != 0
@@ -15,6 +15,14 @@ data class LedStatus(val revision: Long, val nextRequest: Long, val deviceMillis
     val canStart get() = ready && !pending && !fault && mode in 0..1
     val canStop get() = ready && !pending && !fault && mode in 0..1
 }
+/** Four raw HIGH levels interpreted as active by the provisional box configuration. */
+data class WakeStatus(val supported: Boolean, val valid: Boolean, val activeMask: Int) {
+    init {
+        require(activeMask in 0..15 && (supported || (!valid && activeMask == 0)) &&
+            (valid || activeMask == 0))
+    }
+}
+
 data class LedResult(val request: Long, val outcome: Int, val status: LedStatus)
 
 class LedProtocol(access: LedAccess, private val clientNonce: ByteArray) {
@@ -45,9 +53,14 @@ class LedProtocol(access: LedAccess, private val clientNonce: ByteArray) {
     fun status(bytes: ByteArray): LedStatus { check(granted); return status(bytes, 0x84) }
     private fun status(bytes: ByteArray, type: Int): LedStatus {
         header(bytes, type, 70); binding(bytes); verify("status", bytes, 38)
-        require(bytes[37] == 0.toByte()) { "Unbekannter Boxstatus." }
+        val wakeByte = byte(bytes, 37)
+        val supported = wakeByte and 0x80 != 0
+        val valid = wakeByte and 0x40 != 0
+        val mask = wakeByte and 15
+        require(wakeByte and 0x30 == 0 && (supported || wakeByte == 0) &&
+            (valid || mask == 0)) { "Widersprüchlicher Wake-Status." }
         return values(u32(bytes, 18), u32(bytes, 22), u32(bytes, 26), u32(bytes, 30),
-            byte(bytes, 34), byte(bytes, 35), byte(bytes, 36))
+            byte(bytes, 34), byte(bytes, 35), byte(bytes, 36), WakeStatus(supported, valid, mask))
     }
     fun command(status: LedStatus, effect: Int): ByteArray {
         check(granted)
@@ -63,10 +76,10 @@ class LedProtocol(access: LedAccess, private val clientNonce: ByteArray) {
         return LedResult(request, outcome, values(u32(bytes, 26), u32(bytes, 22), u32(bytes, 30),
             u32(bytes, 34), byte(bytes, 39), byte(bytes, 40), byte(bytes, 41)))
     }
-    private fun values(revision: Long, next: Long, millis: Long, sequence: Long, effect: Int, flags: Int, mode: Int): LedStatus {
+    private fun values(revision: Long, next: Long, millis: Long, sequence: Long, effect: Int, flags: Int, mode: Int, wake: WakeStatus? = null): LedStatus {
         require(next != 0L && sequence != 0L && effect in 0..3 && flags in 0..31 && mode in 0..4 &&
             (effect == 0) == (flags and 4 != 0) && !(flags and 1 != 0 && flags and 16 != 0)) { "Widersprüchlicher Boxstatus." }
-        return LedStatus(revision, next, millis, sequence, effect, flags, mode)
+        return LedStatus(revision, next, millis, sequence, effect, flags, mode, wake)
     }
     private fun binding(bytes: ByteArray) {
         require(session != null && MessageDigest.isEqual(session, bytes.copyOfRange(2, 18))) { "Antwort gehört zu einer anderen Verbindung." }

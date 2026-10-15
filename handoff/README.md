@@ -38,6 +38,14 @@ korrelierter Geräteantwort und getrennter Nutzerbeobachtung. Am ursprünglichen
 weder implementiert noch physisch abgenommen. Der aktuelle begrenzte LED-Nachweis
 steht in der oben verlinkten Geräteprüfung vom 15. Oktober.
 
+## Nächster gemeinsamer Test: Wake-Inputs
+
+Die [Wake-Testvorbereitung](../docs/wake/test-preparation.md) führt den neuen
+Umfang auf Basis des gemeinsam geprüften LED-Paars: vier Live-Kacheln,
+2×2-Tauschvorschau, gespeicherte Anordnung sowie getrennte Software- und
+Geräteabnahme. Die ursprüngliche Pin-/Polaritätszuordnung und insbesondere
+Wake 1/B7 bleiben physisch offen.
+
 ## Architektur und Start
 
 Die Firmware liegt in `include/`, `src/` und `lib/`. Die Ausführung trennt

@@ -36,7 +36,9 @@ bool valid(const Snapshot &s) noexcept {
     const auto effect = static_cast<unsigned>(s.effect);
     return effect <= 3 && static_cast<unsigned>(s.mode) <= 4 && (s.flags & ~31U) == 0 &&
            ((s.flags & Off) != 0) == (s.effect == Effect::Off) &&
-           !((s.flags & Ready) && (s.flags & Fault));
+           !((s.flags & Ready) && (s.flags & Fault)) &&
+           (s.wakeMask & ~15U) == 0 && (!s.wakeValid || s.wakeSupported) &&
+           (s.wakeValid || s.wakeMask == 0);
 }
 } // namespace
 std::uint32_t read32(const std::uint8_t *p) noexcept {
@@ -125,6 +127,8 @@ bool Session::status(std::uint8_t type, std::uint32_t now, Message &out) noexcep
     out.bytes[34] = static_cast<std::uint8_t>(state.effect);
     out.bytes[35] = state.flags;
     out.bytes[36] = static_cast<std::uint8_t>(state.mode);
+    out.bytes[37] = (state.wakeSupported ? 0x80 : 0) |
+                    (state.wakeValid ? 0x40 : 0) | state.wakeMask;
     Secret mac = {};
     if (!tag(StatusDomain, out.bytes.data(), 38, mac)) {
         disconnect(); out.size = 0; return false;
