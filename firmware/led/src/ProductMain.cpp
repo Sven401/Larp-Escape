@@ -2,6 +2,7 @@
 #include "LedWire.h"
 #include "LedOutput.h"
 #include "WakeInputs.h"
+#include "AudioOutput.h"
 #include <BLEDevice.h>
 #include <BLEServer.h>
 #include <BLE2902.h>
@@ -18,6 +19,7 @@ namespace {
 namespace wire = larp::ledwire;
 larp::led::LedOutput output;
 larp::wake::WakeInputs wakeInputs(larp::wake::mcpWakeBus());
+larp::audio::AudioOutput audioOutput;
 class Control final : public wire::IControl {
  public:
   wire::Snapshot snapshot() const noexcept override {
@@ -44,7 +46,23 @@ class Control final : public wire::IControl {
     revision = output.snapshot().revision;
     return ok;
   }
-  void stopOnDisconnect() noexcept override { output.stop(); }
+  wire::AudioSnapshot audioSnapshot() const noexcept override {
+    const auto s = audioOutput.snapshot();
+    wire::AudioSnapshot out;
+    out.supported = true; out.revision = s.revision; out.appliedRevision = s.appliedRevision;
+    out.track = s.track; out.volume = s.volume; out.ready = s.ready;
+    out.pending = s.pending; out.active = s.active; out.fault = s.fault;
+    out.busyValid = s.busyValid; out.busyLow = s.busyLow;
+    return out;
+  }
+  bool submitAudio(wire::Operation op, uint16_t track, uint8_t volume,
+                   uint32_t expected, uint32_t &revision) noexcept override {
+    if (expected != audioOutput.snapshot().revision) return false;
+    const bool ok = op == wire::Operation::Stop ? audioOutput.stop() : audioOutput.start(track, volume);
+    revision = audioOutput.snapshot().revision;
+    return ok;
+  }
+  void stopOnDisconnect() noexcept override { output.stop(); audioOutput.stop(); }
 } control;
 class Hmac final : public wire::IHmac256 {
  public:
@@ -157,7 +175,7 @@ void serviceBle() {
     clearTransport();
     if (current.epoch != ownerEpoch) {
       // Epoch is independent of recycled ATT conn_id and cannot lose disconnect.
-      output.stop(); ownerEpoch = current.epoch;
+      output.stop(); audioOutput.stop(); ownerEpoch = current.epoch;
     }
     if (current.connected && current.abort) {
       bleServer->disconnect(current.connection);
@@ -281,6 +299,7 @@ bool ready = false, outputInitialized = false;
 
 void setup() {
   Serial.begin(115200);
+  audioOutput.begin();
   wakeInputs.begin(millis());
   outputInitialized = output.begin();
   if (!outputInitialized) { Serial.println("LARP ERROR LED initialization"); return; }
@@ -315,6 +334,9 @@ void loop() {
       if (state.requested != larp::led::Effect::Off) output.stop();
     }
   }
+  // Apply link/epoch aborts before a prepared UART Play can leave the device.
+  // Boot/fault Stop still drains even when BLE initialization did not succeed.
+  audioOutput.service();
   if (outputInitialized) {
     output.service();
   }

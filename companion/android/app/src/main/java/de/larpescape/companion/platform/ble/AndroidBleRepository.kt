@@ -262,6 +262,17 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
     override fun selectLedEffect(effect: LedEffect) { mutable.value = mutable.value.copy(leds = mutable.value.leds.copy(selected = effect)) }
     override fun startLedEffect() = guarded { if (mutable.value.leds.canStart) ledSession?.command(mutable.value.leds.selected.wire) }
     override fun stopLeds() = guarded { if (mutable.value.leds.canStop) ledSession?.command(0) }
+    override fun selectAudioTrack(value: String) {
+        mutable.value = mutable.value.copy(leds = mutable.value.leds.let { it.copy(audio = it.audio.copy(trackText = value)) })
+    }
+    override fun selectAudioVolume(value: String) {
+        mutable.value = mutable.value.copy(leds = mutable.value.leds.let { it.copy(audio = it.audio.copy(volumeText = value)) })
+    }
+    override fun startAudio() = guarded {
+        val audio = mutable.value.leds.audio
+        if (audio.canStart) ledSession?.audioCommand(true, audio.selectedTrack!!, audio.selectedVolume!!)
+    }
+    override fun stopAudio() = guarded { if (mutable.value.leds.audio.canStop) ledSession?.audioCommand(false) }
     override fun importLedAccess(bytes: ByteArray) {
         try {
             val selected = LedAccess.parse(bytes)

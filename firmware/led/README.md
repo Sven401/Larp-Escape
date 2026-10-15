@@ -25,6 +25,15 @@ Der [gemeinsame Testplan](../../docs/wake/test-preparation.md) beschreibt
 Zuordnung, HIGH-Interpretation, offene B7-Eignung, Live-Fristen und die
 zusammengehörige App-/Firmwareinstallation.
 
+## Audio-Testvorbereitung
+
+Der [gemeinsame Audio-Testplan](../../docs/audio/test-preparation.md) führt
+durch bewussten Start, Stop und Neustart über die Companion-App. Er trennt
+UART-Auftrag, BUSY-Rohpegel und tatsächliche Hörbeobachtung und hält die
+offene Verdrahtung sowie den geprüften Rückweg fest. Der
+[Ergebnisbogen](../../docs/audio/test-record-template.md) ist eine Vorlage;
+aus der Vorbereitung folgt noch keine Geräteabnahme.
+
 ## Aufbau und Ausgabe
 
 `src/LedOutput.cpp` berechnet die Effekte eigenständig. `src/RmtLedBus.cpp`

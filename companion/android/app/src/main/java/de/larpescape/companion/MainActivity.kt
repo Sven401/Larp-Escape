@@ -24,6 +24,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.larpescape.companion.platform.ble.AndroidBleRepository
 import de.larpescape.companion.ui.device.DeviceViewModel
 import de.larpescape.companion.ui.device.LedControls
+import de.larpescape.companion.ui.device.AudioControls
 import de.larpescape.companion.ui.device.WakeControls
 import de.larpescape.protocol.LedAccess
 import de.larpescape.protocol.StatusFreshness
@@ -204,6 +205,8 @@ class MainActivity : ComponentActivity() {
                             } }
                         }
                         WakeControls(state.leds.wake)
+                        AudioControls(state.leds.audio, model::selectAudioTrack, model::selectAudioVolume,
+                            model::startAudio, model::stopAudio)
                         LedControls(state.leds, model::selectLedEffect, model::startLedEffect, model::stopLeds,
                             importAccess = { importBoxAccess.launch(arrayOf("application/json", "text/plain")) })
                         Text("LED-Bedienung · Geräteantwort und sichtbare Wirkung getrennt", style = MaterialTheme.typography.bodySmall)

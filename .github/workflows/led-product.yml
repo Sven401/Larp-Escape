@@ -2,7 +2,7 @@ name: LED product
 
 on:
   push:
-    paths: ['firmware/led/**', 'companion/android/**', 'docs/led/**', 'test/test_led*/**', 'scripts/*led*', '.github/workflows/led-product.yml']
+    paths: ['firmware/led/**', 'companion/android/**', 'docs/led/**', 'docs/audio/**', 'test/test_led*/**', 'scripts/*led*', '.github/workflows/led-product.yml']
   pull_request:
   workflow_dispatch:
 
@@ -31,6 +31,7 @@ jobs:
           sudo apt-get install --yes g++ libssl-dev
       - run: python test/test_led_ble_wire/run.py
       - run: python firmware/led/tests/run_output_tests.py
+      - run: python firmware/led/tests/run_audio_tests.py
 
   firmware:
     name: LED ESP32 product build

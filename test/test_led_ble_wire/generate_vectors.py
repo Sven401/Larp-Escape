@@ -36,6 +36,13 @@ def generate():
         granted_wake_unknown=status(0x82, 0, 1, 1002, 1, 0, 5, 0x80),
         granted_wake_all=status(0x82, 0, 1, 1002, 1, 0, 5, 0xcf),
         status_wake_1_3=status(0x84, 0, 1, 1250, 2, 0, 5, 0xc5))
+    audio = struct.pack("<IHBB", 0, 0, 5, 9)
+    values["granted_audio"] = signed("status", values["granted"][:38] + audio)
+    values["command_audio_100"] = signed("audio-command", bytes([1, 4]) + session +
+        struct.pack("<IIIBHB", 1, 0, 4002, 1, 100, 5))
+    values["result_audio_100"] = signed("audio-result", bytes([1, 0x85]) + session +
+        struct.pack("<IIIII", 1, 2, 0, 1011, 2) + bytes([0, 0, 5, 0]) +
+        struct.pack("<IHBB", 1, 100, 5, 13))
     return {"warning": "Public deterministic test secret. NEVER provision on a real device.",
             **{key: value.hex() for key, value in values.items()}}
 

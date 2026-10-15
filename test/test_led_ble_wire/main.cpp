@@ -53,6 +53,17 @@ class Control : public IControl {
     unsigned submissions = 0, stops = 0;
     bool accept = true;
     Effect requested = Effect::Off;
+    AudioSnapshot audio;
+    unsigned audioSubmissions = 0;
+    AudioSnapshot audioSnapshot() const noexcept override { return audio; }
+    bool submitAudio(Operation operation, std::uint16_t track, std::uint8_t volume,
+                     std::uint32_t revision, std::uint32_t &target) noexcept override {
+        if (revision != audio.revision) return false;
+        ++audioSubmissions; target = ++audio.revision; audio.pending = true;
+        audio.active = operation == Operation::Start;
+        audio.track = track; if (volume) audio.volume = volume;
+        return true;
+    }
     Control() { value.flags = Ready | Off; value.mode = Mode::LedOnly; }
     Snapshot snapshot() const noexcept override { return value; }
     bool submit(Operation op, Effect effect, std::uint32_t revision,
@@ -75,6 +86,7 @@ class Control : public IControl {
         value.appliedRevision = value.revision;
         value.effect = Effect::Off;
         value.flags = Ready | Off;
+        audio.active = false; audio.pending = false; ++audio.revision;
     }
 };
 static Message hex(const std::string &text) {
@@ -334,7 +346,7 @@ static void receiptsAndDriver() {
     }
 }
 static void framing() {
-    for (const auto &name : {"hello", "challenge", "proof", "command_start_twinkle", "result_stop"}) {
+    for (const auto &name : {"hello", "challenge", "proof", "command_start_twinkle", "result_stop", "granted_audio", "command_audio_100", "result_audio_100"}) {
         const auto message = get(name);
         Assembler assembler;
         Message out;
@@ -370,13 +382,76 @@ static void framing() {
         check(a.accept(f.data(), n, 30, out) == FrameResult::Rejected, "mixed transfer rejected");
     }
 }
+static void audioProtocol() {
+    {
+        Harness h; h.control.audio.supported = h.control.audio.ready = h.control.audio.busyValid = true;
+        h.control.audio.volume = 5;
+        Message out;
+        h.session.receive(get("hello"), 1001, out);
+        h.session.receive(get("proof"), 1002, out);
+        check(same(out, get("granted_audio")), "audio grant exact Python HMAC bytes");
+        const auto command = get("command_audio_100");
+        check(h.session.receive(command, 1010, out) == SessionResult::Accepted && !out.size,
+              "audio not acknowledged before UART completes");
+        check(h.control.audioSubmissions == 1 && h.control.submissions == 0, "audio independent LED owner");
+        check(!h.session.service(1010, out), "audio waits for UART observation");
+        h.session.receive(command, 1010, out);
+        check(h.control.audioSubmissions == 1, "duplicate audio does not replay");
+        h.control.audio.pending = false; h.control.audio.appliedRevision = 1;
+        check(h.session.service(1011, out) && same(out, get("result_audio_100")),
+              "audio result exact Python HMAC bytes");
+        h.session.receive(command, 9000, out);
+        check(same(out, get("result_audio_100")) && h.control.audioSubmissions == 1,
+              "finished audio duplicate returns old receipt without sound restart");
+        auto led = h.command(2, 0, 10000);
+        check(h.session.receive(led, 9000, out) == SessionResult::Accepted,
+              "LED shares request counter but uses independent revision");
+        h.session.disconnect();
+        check(!h.control.audio.active && h.control.stops == 1, "disconnect stops both owners");
+    }
+    for (unsigned kind = 0; kind < 8; ++kind) {
+        Harness h; h.auth(); Message out;
+        h.control.audio.supported = h.control.audio.ready = true;
+        auto command = get("command_audio_100");
+        Outcome expected = Outcome::InvalidCommand;
+        if (kind == 0) command.bytes[33] = 11;
+        if (kind == 1) { command.bytes[31] = 0; command.bytes[32] = 0; }
+        if (kind == 2) { command.bytes[31] = 0; command.bytes[32] = 1; }
+        if (kind == 3) { write32(command.bytes.data() + 22, 1); expected = Outcome::StaleRevision; }
+        if (kind == 4) { write32(command.bytes.data() + 26, 1010); expected = Outcome::Expired; }
+        if (kind == 5) { h.control.audio.supported = false; expected = Outcome::Unavailable; }
+        if (kind == 6) { h.control.value.mode = Mode::Running; expected = Outcome::GameActive; }
+        if (kind == 7) { command.bytes[30] = 2; /* Stop must not carry track/volume. */ }
+        sign(h.crypto, h.key, "audio-command", command, 34);
+        check(h.session.receive(command, 1010, out) == SessionResult::Reply && out.bytes[1] == 0x85 &&
+              out.bytes[38] == static_cast<std::uint8_t>(expected) && h.control.audioSubmissions == 0,
+              "invalid/stale/expired/unavailable/game audio command is inert");
+    }
+    for (unsigned i = 0; i < 66; ++i) {
+        Harness h; h.auth(); Message out;
+        auto command = get("command_audio_100"); command.bytes[i] ^= 0x80;
+        check(h.session.receive(command, 1010, out) == SessionResult::Rejected &&
+              h.control.audioSubmissions == 0, "every tampered audio byte rejected");
+    }
+    {
+        Harness h; h.auth(); Message out;
+        h.control.audio.supported = h.control.audio.ready = true;
+        auto command = get("command_audio_100");
+        h.session.receive(command, 1010, out);
+        check(h.session.receive(h.command(2), 1011, out) == SessionResult::Reply &&
+              out.bytes[38] == static_cast<std::uint8_t>(Outcome::Busy) && h.control.submissions == 0,
+              "LED cannot overlap pending audio command");
+        check(h.session.service(3010, out) && out.bytes[38] == static_cast<std::uint8_t>(Outcome::DriverFault) &&
+              h.control.stops == 1, "audio timeout invokes stop");
+    }
+}
 int main(int argc, char **argv) {
     try {
         check(argc == 2, "fixture path argument");
         std::ifstream source(argv[1]);
         check(source.good(), "fixture exists");
         fixture.assign(std::istreambuf_iterator<char>(source), std::istreambuf_iterator<char>());
-        happyPath(); wakeStatus(); authentication(); admission(); receiptsAndDriver(); framing();
+        happyPath(); wakeStatus(); authentication(); admission(); receiptsAndDriver(); framing(); audioProtocol();
         std::cout << "PASS: " << assertions << " assertions; real host HMAC, Python golden bytes, auth/replay/owner/framing.\n";
         return 0;
     } catch (const std::exception &error) {

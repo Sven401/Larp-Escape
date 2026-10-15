@@ -29,6 +29,14 @@ struct Snapshot {
     bool wakeSupported = false, wakeValid = false;
     std::uint8_t wakeMask = 0;
 };
+// Audio observations describe the UART and raw BUSY input, never audible sound.
+struct AudioSnapshot {
+    std::uint32_t revision = 0, appliedRevision = 0;
+    std::uint16_t track = 0;
+    std::uint8_t volume = 0;
+    bool supported = false, ready = false, pending = false, active = false;
+    bool busyValid = false, busyLow = false, fault = false;
+};
 class IHmac256 {
   public:
     virtual ~IHmac256() = default;
@@ -44,6 +52,9 @@ class IControl {
     virtual bool submit(Operation, Effect, std::uint32_t expectedRevision,
                         std::uint32_t &targetRevision) noexcept = 0;
     virtual void stopOnDisconnect() noexcept = 0;
+    virtual AudioSnapshot audioSnapshot() const noexcept { return {}; }
+    virtual bool submitAudio(Operation, std::uint16_t, std::uint8_t,
+                             std::uint32_t, std::uint32_t &) noexcept { return false; }
 };
 enum class SessionResult : std::uint8_t { Ignored, Reply, Accepted, Rejected };
 class Session {
@@ -74,13 +85,14 @@ class Session {
     std::array<std::uint8_t, 64> context_ = {};
     Message challenge_, lastCommand_, lastReply_, pendingCommand_;
     Phase phase_ = Phase::Closed;
-    bool configured_ = false, pending_ = false;
+    bool configured_ = false, pending_ = false, pendingAudio_ = false;
     std::uint32_t connectedAt_ = 0, nextRequest_ = 1, statusSequence_ = 0;
     std::uint32_t pendingRequest_ = 0, pendingRevision_ = 0, pendingAt_ = 0, lastRequest_ = 0;
     bool tag(const char *, const std::uint8_t *, std::size_t, Secret &) noexcept;
     bool verify(const char *, const Message &, std::size_t) noexcept;
     bool status(std::uint8_t type, std::uint32_t now, Message &) noexcept;
-    bool result(Outcome, std::uint32_t request, std::uint32_t now, Message &) noexcept;
+    bool result(Outcome, std::uint32_t request, std::uint32_t now, Message &,
+                bool audio = false) noexcept;
     bool finish(Outcome, const Message &, std::uint32_t now, Message &) noexcept;
     SessionResult reject(Message &) noexcept;
 };
