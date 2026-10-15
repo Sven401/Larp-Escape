@@ -38,13 +38,17 @@ korrelierter Geräteantwort und getrennter Nutzerbeobachtung. Am ursprünglichen
 weder implementiert noch physisch abgenommen. Der aktuelle begrenzte LED-Nachweis
 steht in der oben verlinkten Geräteprüfung vom 15. Oktober.
 
-## Nächster gemeinsamer Test: Wake-Inputs
+## Wake-Inputs: gemeinsamer Gerätetest
 
 Die [Wake-Testvorbereitung](../docs/wake/test-preparation.md) führt den neuen
 Umfang auf Basis des gemeinsam geprüften LED-Paars: vier Live-Kacheln,
 2×2-Tauschvorschau, gespeicherte Anordnung sowie getrennte Software- und
-Geräteabnahme. Die ursprüngliche Pin-/Polaritätszuordnung und insbesondere
-Wake 1/B7 bleiben physisch offen.
+Geräteabnahme. Der [Gerätetest vom 15. Oktober](../docs/wake/device-test-2026-10-15.md)
+belegt das installierte Paar `ca86b93`, die räumliche Zuordnung **2 / 1 / 4 / 3**,
+Vorschau und Tausch, Loslassen außerhalb/in Rasterlücken sowie Speicherung
+nach Neustart/Wiederverbindung.
+Die funktionale Sensorreaktion ist beobachtet; Chipmarking und reale Leitung
+von Wake 1/B7 bleiben physisch offen.
 
 ## Architektur und Start
 

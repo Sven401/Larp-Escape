@@ -8,6 +8,10 @@ LED-Produktstand `20518f52de82845635e8590f1440dbfbb268dcb2` aus
 Der neue PR enthält diese noch nicht integrierte Grundlage und richtet sich
 weiterhin gegen `plan/projektuebergabe-kuratierter-stand`; kein Merge beauftragt.
 
+Installation und gemeinsamer Funktionstest am 15. Oktober sind im
+[Gerätebericht](device-test-2026-10-15.md) belegt. Die beobachtete räumliche
+Anordnung ist oben **2 / 1**, unten **4 / 3**.
+
 ## Testumfang und Bedienung
 
 Auf der ESP-Seite steht **Wake-Inputs** vor der LED-Bedienung. Die vier Kacheln
@@ -45,7 +49,9 @@ MCP-Adresse `0x20`, SDA 21 / SCL 22 und folgende Kandidaten:
 Quellen am Basiscommit: `lib/Keymatrixwrapper/Keymatrix.cpp`,
 `lib/MCPConfig/MCPConfig.cpp`, `src/GameConfiguration/StandardProfile.cpp` und
 [Hardwarevertrag](../../Hardware/HARDWAREVERTRAG-V0.1-2026-10-11.md).
-Position, Chipmarking, Ruhepegel und aktive Polarität der realen Box bleiben offen.
+Position und beobachtete Ruhe-/Aktivpegel der getesteten Box stehen im
+[Gerätebericht](device-test-2026-10-15.md). Chipmarking und reale Leitungsprüfung
+bleiben offen.
 Ein offener Pull-up kann HIGH ergeben, ohne dass ein Sensor aktiv ist.
 
 **Belegt am 15.10.2026:** Das
@@ -107,11 +113,15 @@ neuer Schlüsselimport ist bei intaktem vorhandenem Zugang nicht erforderlich.
 
 ## Prüfstand und Artefakte
 
-**Offen:** Installation dieses Wake-Paars, echte Touch-/TalkBack-Prüfung, Funk,
-Ruhe-/Aktivpegel und elektrische Vierkanalabnahme. In dieser Vorbereitung wird
-keine Hardware beschrieben. Softwareprüfungen und Builds werden im zugehörigen
-PR am geprüften Commit dokumentiert; frühere grüne Ergebnisse gelten nicht als
-Nachweis der Änderung.
+**Am Gerät belegt:** Installation des Paars `ca86b93`, authentifizierte
+Verbindung, vier Sensorzuordnungen, Tauschvorschau und endgültiger Tausch,
+alle sechs Platzpaare, Abbruch außerhalb/in Lücken, zwei gleichzeitige Eingänge
+sowie gespeicherte Ordnung nach App-Neustart und Wiederverbindung.
+Details, getrennte Nutzer-/Appbeobachtungen und offene Prüfungen stehen im
+[Gerätebericht](device-test-2026-10-15.md). TalkBack und elektrische
+Vierkanalabnahme bleiben offen. Softwareprüfungen und Builds werden im
+zugehörigen PR am geprüften Commit dokumentiert; frühere grüne Ergebnisse
+gelten nicht als Nachweis einer späteren Änderung.
 
 Reproduzierbare Prüfwege:
 
@@ -124,7 +134,7 @@ cd companion/android
 ```
 
 Vor späterem Upload den chipgebundenen Flash-Rückweg aus dem
-[Gerätebericht](../led/device-test-2026-10-15.md) am tatsächlich angeschlossenen
+[Wake-Gerätebericht](device-test-2026-10-15.md) am tatsächlich angeschlossenen
 Chip erneut abgleichen. APK/Firmwarehash, Installation, empfangener Status und
 Nutzerbeobachtung getrennt protokollieren. Private Flash-/Zugangsdateien nicht
 ins Repository aufnehmen.
