@@ -28,18 +28,28 @@ fun NfcScreen(state: NfcUiState, prepare: (NfcTagData, Long) -> Unit, cancel: ()
     var hash by remember(state.tagId, state.data) { mutableStateOf(original.uidHash.toString()) }
     var flags by remember(state.tagId, state.data) { mutableStateOf(original.flags.toString()) }
     var history by remember(state.tagId, state.data) { mutableStateOf(original.visits.joinToString("\n") { "${it.nodeId}, ${it.result}, ${it.deltaMinutes}" }) }
+    var timestamp by remember(state.tagId, state.data) { mutableStateOf(original.timestampBinary) }
+    var testDataInserted by remember(state.tagId, state.data) { mutableStateOf(false) }
     var error by remember(state.tagId, state.data) { mutableStateOf<String?>(null) }
     var confirmation by remember(state.selectionId, state.listening) { mutableStateOf<NfcTagData?>(null) }
     Text("Tag ${state.tagId} · ${state.capacity} Byte verfügbar")
     val editing = state.canWrite && !state.busy && !state.armed
+    OutlinedButton(onClick = {
+        val test = NfcTestFixture.initial
+        hash = test.uidHash.toString(); flags = test.flags.toString()
+        history = test.visits.joinToString("\n") { "${it.nodeId}, ${it.result}, ${it.deltaMinutes}" }
+        timestamp = 0; testDataInserted = true; error = null
+    }, enabled = editing) { Text("NFC-Testdaten einsetzen") }
+    if (testDataInserted) Text("Testdaten nur im Formular: Kennwert 20261015, Flags 1, Zeitstempel 0, Besuch 1, 1, 0. Zum Übertragen Schreiben vorbereiten und bestätigen.", style = MaterialTheme.typography.bodySmall)
+    if (state.data == NfcTestFixture.changed) Text("Frisch gelesener Testdatensatz entspricht den Box-Sollwerten: Flags 2, übrige Testdaten unverändert, Prüfsumme gültig.")
     OutlinedTextField(hash, { hash = it }, label = { Text("Kennwert (0–4294967295)") }, enabled = editing, singleLine = true, modifier = Modifier.fillMaxWidth())
     OutlinedTextField(flags, { flags = it }, label = { Text("Flags (0–65535)") }, enabled = editing, singleLine = true, modifier = Modifier.fillMaxWidth())
     OutlinedTextField(history, { history = it }, label = { Text("Stationsbesuche") }, supportingText = { Text("Eine Zeile je Besuch: Station, Ergebnis, Minuten\nStation und Ergebnis: 0–255 · Minuten: 0–65535") }, enabled = editing, minLines = 3, modifier = Modifier.fillMaxWidth())
-    Text(if (state.data == null) "Leerer Tag wird im Format des Referenzprojekts angelegt." else "Der vorhandene Zeitstempel bleibt erhalten.", style = MaterialTheme.typography.bodySmall)
+    Text(if (testDataInserted) "Für diesen Test wird der Zeitstempel auf 0 gesetzt." else if (state.data == null) "Leerer Tag wird im Format des Referenzprojekts angelegt." else "Der vorhandene Zeitstempel bleibt erhalten.", style = MaterialTheme.typography.bodySmall)
     error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
     if (state.armed) OutlinedButton(onClick = cancel) { Text("Schreibauftrag abbrechen") }
     else Button(onClick = {
-        try { confirmation = editedNfcData(hash, flags, history, original.timestampBinary); error = null }
+        try { confirmation = editedNfcData(hash, flags, history, timestamp); error = null }
         catch (_: NumberFormatException) { error = "Bitte ganze Zahlen innerhalb der angegebenen Bereiche eingeben" }
         catch (e: IllegalArgumentException) { error = e.message }
     }, enabled = editing) { Text("Schreiben vorbereiten") }

@@ -3,6 +3,7 @@ package de.larpescape.companion
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -14,6 +15,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
@@ -37,6 +39,7 @@ import kotlinx.coroutines.withContext
 
 class MainActivity : ComponentActivity() {
     private var nfcScreen by mutableStateOf(false)
+    private var phoneNfcTest by mutableStateOf(false)
     private var scenarioScreen by mutableStateOf(false)
     private val scenarioModel by viewModels<ScenarioViewModel> {
         object : ViewModelProvider.Factory {
@@ -78,7 +81,7 @@ class MainActivity : ComponentActivity() {
     private fun selectScenario(selected: Boolean) {
         if (selected == scenarioScreen) return
         scenarioScreen = selected
-        if (selected) { nfcReader.stop(); nfcScreen = false; model.foregroundEnded() }
+        if (selected) { PhoneNfcTest.stop(this); nfcReader.stop(); nfcScreen = false; model.foregroundEnded() }
         else if (!nfcScreen) model.foregroundStarted(permissionsGranted())
     }
     private val nfcModel by viewModels<NfcViewModel> {
@@ -95,8 +98,15 @@ class MainActivity : ComponentActivity() {
         if (selected == nfcScreen) return
         nfcScreen = selected
         showPermissionExplanation = false
-        if (selected) { model.foregroundEnded(); nfcReader.start() }
-        else { nfcReader.stop(); if (!scenarioScreen) model.foregroundStarted(permissionsGranted()) }
+        if (selected) { model.foregroundEnded(); if (!phoneNfcTest) nfcReader.start() }
+        else { PhoneNfcTest.stop(this); nfcReader.stop(); if (!scenarioScreen) model.foregroundStarted(permissionsGranted()) }
+    }
+    private fun selectPhoneNfcTest(selected: Boolean) {
+        if (phoneNfcTest == selected) return
+        PhoneNfcTest.stop(this)
+        nfcReader.stop()
+        phoneNfcTest = selected
+        if (!selected && nfcScreen) nfcReader.start()
     }
     private val model by viewModels<DeviceViewModel> {
         object : ViewModelProvider.Factory {
@@ -128,6 +138,7 @@ class MainActivity : ComponentActivity() {
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        PhoneNfcTest.stop(this)
         nfcScreen = savedInstanceState?.getBoolean("nfcScreen") ?: false
         scenarioScreen = savedInstanceState?.getBoolean("scenarioScreen") ?: false
         setContent {
@@ -156,8 +167,23 @@ class MainActivity : ComponentActivity() {
                                 importFile = { importScenario.launch(arrayOf("application/json", "text/plain")) },
                                 exportFile = { if (scenarioModel.beginExport()) exportScenario.launch("szenario-entwurf.json") })
                         } else if (nfcScreen) {
-                            val nfcState by nfcModel.state.collectAsStateWithLifecycle()
-                            NfcScreen(nfcState, nfcModel::prepareWrite, nfcModel::cancelWrite)
+                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                FilterChip(selected = !phoneNfcTest, onClick = { selectPhoneNfcTest(false) }, label = { Text("Echter Tag") })
+                                FilterChip(selected = phoneNfcTest, onClick = { selectPhoneNfcTest(true) }, label = { Text("Handy als Testtag") })
+                            }
+                            if (phoneNfcTest) {
+                                val testState by PhoneNfcTest.state.collectAsStateWithLifecycle()
+                                DisposableEffect(testState.active) {
+                                    if (testState.active) window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                                    onDispose { window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) }
+                                }
+                                PhoneNfcTestScreen(testState, PhoneNfcTest.supported(this@MainActivity),
+                                    activate = { nfcReader.stop(); PhoneNfcTest.start(this@MainActivity) },
+                                    deactivate = { PhoneNfcTest.stop(this@MainActivity) })
+                            } else {
+                                val nfcState by nfcModel.state.collectAsStateWithLifecycle()
+                                NfcScreen(nfcState, nfcModel::prepareWrite, nfcModel::cancelWrite)
+                            }
                         } else {
                         Text("Gerät verbinden", style = MaterialTheme.typography.titleLarge)
                         Text(state.message)
@@ -188,8 +214,8 @@ class MainActivity : ComponentActivity() {
         }
     }
     override fun onStart() { super.onStart(); if (!nfcScreen && !scenarioScreen) model.foregroundStarted(permissionsGranted()) }
-    override fun onResume() { super.onResume(); if (nfcScreen && !scenarioScreen) nfcReader.start() else if (!scenarioScreen) model.permissionsChanged(permissionsGranted()) }
-    override fun onPause() { nfcReader.stop(); super.onPause() }
+    override fun onResume() { super.onResume(); if (nfcScreen && !scenarioScreen) { if (!phoneNfcTest) nfcReader.start() } else if (!scenarioScreen) model.permissionsChanged(permissionsGranted()) }
+    override fun onPause() { PhoneNfcTest.stop(this, "Vordergrund verlassen · Testtag deaktiviert"); nfcReader.stop(); super.onPause() }
     override fun onSaveInstanceState(outState: Bundle) { outState.putBoolean("nfcScreen", nfcScreen); outState.putBoolean("scenarioScreen", scenarioScreen); super.onSaveInstanceState(outState) }
     override fun onStop() {
         if (!isChangingConfigurations) { showPermissionExplanation = false; model.foregroundEnded() }

@@ -22,6 +22,12 @@ werden unbekannt, nicht inaktiv. [Testablauf, Hardwarevorbehalt und Upgrade-Reih
 
 ## Bauen und installieren
 
+Für die NFC-Baugruppenprüfung bietet die Seite **NFC-Tags** den normalen
+Tageditor und einen ausdrücklich aktivierten **Handy-Testtag**. Dessen
+Emulation endet bei Verlassen der Seite oder nach drei Minuten. Die
+getrennte NFC-Prüffirmware und der anschließende Rundlauf mit einem echten
+Tag stehen im [NFC-Testablauf](../../docs/nfc/test-preparation.md).
+
 Alle Befehle in diesem Abschnitt laufen aus `companion/android/`.
 Voraussetzung: JDK17 oder 21, Android SDK35 und Build Tools35.0.0. Der Gradle
 Wrapper lädt Gradle8.9; Versionen stehen in `gradle/libs.versions.toml`.

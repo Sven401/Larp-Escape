@@ -1,0 +1,44 @@
+name: NFC probe
+
+on:
+  push:
+    paths: ['firmware/nfc-probe/**', 'scripts/nfc_probe.py', 'docs/nfc/**', '.github/workflows/nfc-probe.yml']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nfc-probe-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  native:
+    name: NFC transport and tag tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.11'
+      - run: python firmware/nfc-probe/tests/run_tests.py
+
+  firmware:
+    name: NFC ESP32 probe build
+    runs-on: windows-2022
+    timeout-minutes: 30
+    env:
+      PYTHONUTF8: '1'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.11'
+      - run: python -m pip install platformio==6.2.0
+      - run: python -m platformio run -d firmware/nfc-probe -e nfc-probe -j 2
