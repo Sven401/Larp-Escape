@@ -1,6 +1,11 @@
 # Prüfstand der Matrix-Testvorbereitung
 
 Stand: **16. Oktober 2026**. Status: **Software geprüft; physische Abnahme offen**.
+Dieser Bericht hält die ursprüngliche Softwarevorbereitung fest. Der spätere
+[Gerätetest](device-test-2026-10-16.md) erkannte zwei betätigte Reedkontakte
+nicht. Scanrichtung und B7-Freigabe bleiben zu korrigieren beziehungsweise
+physisch abzugleichen; die grünen Hosttests belegen deren Eignung nicht.
+
 Basis `c0f76ee5123ef51252341b21c18a636abb6f6bc2`, eigener Branch
 `codex/matrix-test-preparation`. Quelle: lokale Prüfläufe der unveränderten
 Quellen dieses Beitrags und unabhängige Durchsicht in derselben Sitzung.

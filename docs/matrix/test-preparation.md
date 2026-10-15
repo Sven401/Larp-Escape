@@ -7,6 +7,13 @@ Die während der Vorbereitung veröffentlichte NFC-Rücklesekorrektur ist
 enthalten. Das kombinierte APK ist erneut geprüft, damit der Matrixtest
 den korrigierten Appstand erhält.
 
+**Nachtrag aus dem Gerätetest vom 16.10.2026:** App und Prüffirmware wurden
+installiert, aber weder der Reedkontakt unten links noch oben rechts wurde
+erkannt. Die umgekehrte Abfragerichtung und die B7-Freigabe müssen geklärt
+werden. Dieser Stand ist **nicht als funktionierende Matrixprüfung bestätigt**.
+Ergebnisse: [Gerätebericht](device-test-2026-10-16.md);
+Fortsetzung: [Sitzungsübergabe](../../handoff/matrix-test-2026-10-16.md).
+
 ## Ziel und Umfang
 
 Die echte Companion-App zeigt die **81 logischen Positionen A1 bis I9** als
@@ -49,10 +56,13 @@ historische `MCPConfig`-Initialisierung.
 
 **Belegt gegen Herstellerquelle am 16.10.2026:** Das
 [Microchip-Datenblatt DS20001952D, Seite 1](https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/MCP23017-Data-Sheet-DS20001952.pdf)
-bezeichnet A7/B7 beim MCP23017 als reine Ausgänge. Deshalb treibt dieser
-Prüfmodus die Zeilen und liest die Spalten, um Matrix-Zeile 1/B7 nicht als
-Eingang zu verwenden. Er ändert keine physische Pinzuordnung. Die separate
-Wake-1/B7-Frage bleibt offen.
+bezeichnet A7/B7 beim MCP23017 als reine Ausgänge. Diese Angabe war der Grund
+für den Richtungswechsel gegenüber dem ursprünglichen Spalten-LOW-Scanner.
+**Die daraus abgeleitete B7-Lösung ist unvollständig:** Der aktuelle Code liest
+B7 zwar nicht als Matrixeingang, setzt dessen IODIR-Bit beim Freigeben aber
+wieder auf Eingang. Abschnitt 3.5.1, Seite 18 verlangt für IO7 die
+Ausgangskonfiguration. Der vorhandene Scanner ist damit kein belegter
+datenblattkonformer Ausweg. Die separate Wake-1/B7-Frage bleibt offen.
 
 **Offen:** tatsächliche Chipmarkierungen, Kontaktart, Verdrahtung und
 Entkopplungsdioden. Der historische Scanner arbeitete in umgekehrter Richtung.
@@ -61,7 +71,8 @@ beweist bei unbekannter Diodenrichtung keinen defekten Taster; nicht durch
 blindes Umstellen auf die alte Treiberschaltung kompensieren.
 
 Nur eine Zeile wird auf LOW geschaltet; keine Scanleitung wird aktiv HIGH
-getrieben. Vor Auswahl einer anderen Zeile wird die bisherige freigegeben.
+getrieben. Vor Auswahl einer anderen Zeile setzt der Code die bisherige auf
+Eingang; die oben genannte Einschränkung von B7 gilt auch für diesen Schritt.
 Nach einem Busfehler wird der Messwert ungültig und die Freigabe bestmöglich
 versucht. Bei nicht erreichbarem Expander lässt sich die physische Freigabe
 nicht softwareseitig garantieren. Das ist kein elektrischer Sicherheitsnachweis.

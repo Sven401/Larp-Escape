@@ -1,5 +1,14 @@
 # Technische Projektübergabe – 13. Oktober 2026
 
+## Tastenmatrix: Fortsetzung in neuer Sitzung, 16. Oktober 2026
+
+Der [Gerätebericht](../docs/matrix/device-test-2026-10-16.md) hält die
+verifizierte Installation und die erfolglosen Kontaktversuche fest. Der
+Matrixstand ist nicht abgenommen. Der Nutzer hat den konkreten
+Leitungs-/Diodenabgleich auf eine neue Sitzung verschoben. Arbeitsstand,
+Gerätezustand und nächster Schritt stehen in der
+[Matrix-Sitzungsübergabe](matrix-test-2026-10-16.md).
+
 ## Ergänzung: eigenständige LED-Produktfunktion, 15. Oktober 2026
 
 Der neue Produktzweig ergänzt die echte Android-App und einen geschützten
