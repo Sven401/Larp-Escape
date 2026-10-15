@@ -39,11 +39,15 @@ Es wurde **nicht erneut geschrieben**. Erst nach Entfernen und erneutem
 Anhalten bestätigte eine neue Lesung dieselbe UID und alle erwarteten Bytes;
 das Journal wurde dadurch aufgelöst.
 
-Die Ursache dieses ersten leeren Rückleseergebnisses bleibt offen. Ein
+Zum Zeitpunkt dieses Laufs blieb die Ursache des ersten leeren Rückleseergebnisses offen. Ein
 Cache-, Tag-, Funk- oder Android-Fehler lässt sich daraus nicht bestimmen.
 Der direkte Erfolgsweg ohne zusätzliches Anhalten ist für diesen ersten
 Schreibversuch nicht belegt. Der vollständige Rundlauf ist mit der
 dokumentierten Wiederaufnahme durch Lesen belegt.
+
+Die spätere Ursachenanalyse und App-Korrektur sind getrennt im
+[Bericht zur Erstbefüllung](first-write-readback-2026-10-16.md) dokumentiert.
+Sie ändern diesen historischen Ablauf nicht.
 
 ## Installation und Rückweg
 

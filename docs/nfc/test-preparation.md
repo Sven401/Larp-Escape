@@ -7,6 +7,10 @@ belegt. Die Nachweismatrix unten bleibt eine Vorlage für weitere Durchführunge
 Der anschließende [echte NTAG213-Rundlauf](physical-tag-test-2026-10-16.md)
 ist einmal vollständig bestanden, einschließlich der dokumentierten
 Wiederaufnahme nach zunächst unklarem App-Schreibergebnis.
+Die [spätere App-Korrektur](first-write-readback-2026-10-16.md) bestätigt die
+Erstbefüllung am moto g14 durch automatische neue Erkennung. Für weitere
+Versuche die Bildschirmausrichtung während eines vorbereiteten Auftrags
+beibehalten; ein Activity-Neustart verwirft den noch nicht gestarteten Auftrag.
 Der Nutzer hat separate beschreibbare Tags bestätigt. Zur automatischen
 Vorerkundung liegt zunächst das Handy mit seiner NFC-Antenne über dem Reader
 der Box. Danach folgt gemeinsam der Rundlauf **App schreibt Tag → Box liest
