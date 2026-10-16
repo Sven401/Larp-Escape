@@ -76,6 +76,12 @@ Konfliktfreiheit ist weder semantische Kompatibilität noch Produktfreigabe.
 
 ## Fachliche Auflösung vor einem gemeinsamen Code-PR
 
+Ausgangsbelege und Erhaltungsprüfung: [Baugruppen-Nachweisregister](BAUGRUPPEN-NACHWEISE.md).
+Die acht dort benannten Teilergebnisse bleiben Projektfortschritt, auch wenn
+ein Prüfpfad eigenständig bleibt. Der spätere Code-PR muss für jede ID die
+Übernahme, Erhaltung oder begründete Zurückstellung mit Quell-/Zielstand ausweisen.
+Ein offener Gesamtumfang setzt einen bestandenen Baugruppentest nicht zurück.
+
 **Funkvertrag:** Im Quellvergleich bestätigt: Audio und NFC nutzen beide
 Auftrag `0x04` und Antwort `0x85`, aber verschiedene Größen und HMAC-Domänen.
 Audio erweitert Status auf 78 Byte, Matrix auf 82 Byte; beide beginnen ihre
