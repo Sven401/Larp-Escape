@@ -1,6 +1,8 @@
 # Gemeinsamer NFC-Test vollständig in der App
 
-Stand: 16. Oktober 2026. **Vorbereitete Erweiterung; noch kein Gerätenachweis.**
+Stand: 16. Oktober 2026. **Testplan; ein vollständiger App-Rundlauf am Gerät
+bestanden**, siehe [getrennter Gerätebericht](app-device-test-2026-10-16.md).
+Die untenstehenden offenen Zeilen bleiben die Vorlage für weitere Läufe.
 Auftrag: Tag an der Box erkennen und an die App melden, am Handy lesen und
 beschreiben, an der Box Payload lesen und melden, mit der Box schreiben,
 anschließend am Handy frisch lesen. Grundlage ist PR #47 bei

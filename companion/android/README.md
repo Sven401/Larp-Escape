@@ -264,7 +264,8 @@ Der [neue gemeinsame App-Rundlauf](../../docs/nfc/app-roundtrip.md) verwendet
 die ausdrücklich gebaute Firmwarevariante `larp-nfc-test`. Auf der NFC-Seite
 stehen Boxlesen und ein bestätigter einmaliger Box-Schreibauftrag bereit.
 Die zuvor eingerichtete Bluetoothverbindung bleibt auf dieser Seite bestehen.
-Der Gerätenachweis dieses neuen Pfads ist noch offen.
+Ein vollständiger Rundlauf dieses Pfads wurde am 16. Oktober 2026
+[am Gerät bestätigt](../../docs/nfc/app-device-test-2026-10-16.md).
 
 Die Seite „NFC-Tags“ verwendet Android ReaderMode im Vordergrund, unabhängig
 von Bluetoothrechten. Beim Wechsel zur NFC-Seite bleibt die BLE-Sitzung für den Box-Rundlauf erhalten.
