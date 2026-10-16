@@ -39,20 +39,32 @@ class NfcTagDataTest {
         var message: ByteArray? = byteArrayOf(1)
         override var capacity = 100
         override var writable = true
-        var writes = 0; var reads = 0; var closed = false
+        var writes = 0; var reads = 0; var readbacks = 0; var closed = false
         var failRead = false; var failWrite = false; var corruptWrite = false
+        var failReadback = false; var nullAfterWrite = false; var requiresRediscovery = false
         var afterRead: (() -> Unit)? = null
+        var afterWrite: (() -> Unit)? = null
+        var afterReadback: (() -> Unit)? = null
         override fun connect() { }
         override fun read(): ByteArray? {
             reads++
             if (failRead) error("tag lost")
             afterRead?.invoke()
+            if (nullAfterWrite && writes > 0) return null
             return message?.copyOf()
         }
         override fun write(message: ByteArray) {
             writes++
             if (failWrite) error("tag lost during write")
             this.message = if (corruptWrite) byteArrayOf(0) else message.copyOf()
+            afterWrite?.invoke()
+        }
+        override fun readAfterWrite(): NfcReadback {
+            readbacks++
+            if (failReadback) error("readback failed")
+            val result = if (requiresRediscovery) NfcReadback.RequiresRediscovery else NfcReadback.Bytes(read())
+            afterReadback?.invoke()
+            return result
         }
         override fun close() { closed = true }
     }
@@ -89,5 +101,38 @@ class NfcTagDataTest {
         val q = Port().apply { afterRead = { if (reads == 2) current = false } }
         assertEquals(NfcWriteResult.UNCERTAIN, VerifiedNfcWrite.execute(q, byteArrayOf(1), byteArrayOf(2)) { current })
         assertEquals(1, q.writes)
+    }
+    @Test fun emptyTagCanRequireNewDiscoveryWithoutClaimingSuccessOrRetrying() {
+        val p = Port().apply { message = null; requiresRediscovery = true }
+        assertEquals(NfcWriteResult.VERIFICATION_REQUIRED, VerifiedNfcWrite.execute(p, null, byteArrayOf(2)))
+        assertEquals(1, p.writes); assertEquals(1, p.readbacks); assertTrue(p.closed)
+    }
+    @Test fun ordinaryNullWrongAndFailedReadbacksRemainUncertain() {
+        for (p in listOf(Port().apply { message = null; nullAfterWrite = true },
+            Port().apply { message = null; corruptWrite = true },
+            Port().apply { message = null; failReadback = true })) {
+            assertEquals(NfcWriteResult.UNCERTAIN, VerifiedNfcWrite.execute(p, null, byteArrayOf(2)))
+            assertEquals(1, p.writes); assertEquals(1, p.readbacks); assertTrue(p.closed)
+        }
+    }
+    @Test fun failedWriteNeverAttemptsReadbackOrRediscovery() {
+        val p = Port().apply { failWrite = true; requiresRediscovery = true }
+        assertEquals(NfcWriteResult.UNCERTAIN, VerifiedNfcWrite.execute(p, byteArrayOf(1), byteArrayOf(2)))
+        assertEquals(1, p.writes); assertEquals(0, p.readbacks); assertTrue(p.closed)
+    }
+    @Test fun changedEmptyPreimageNeverWritesOrRequestsRediscovery() {
+        val p = Port().apply { requiresRediscovery = true }
+        assertEquals(NfcWriteResult.CHANGED, VerifiedNfcWrite.execute(p, null, byteArrayOf(2)))
+        assertEquals(0, p.writes); assertEquals(0, p.readbacks); assertTrue(p.closed)
+    }
+    @Test fun pauseAfterWriteSkipsReadbackAndPauseDuringReadbackCannotRequestRediscovery() {
+        var current = true
+        val p = Port().apply { afterWrite = { current = false }; requiresRediscovery = true }
+        assertEquals(NfcWriteResult.UNCERTAIN, VerifiedNfcWrite.execute(p, byteArrayOf(1), byteArrayOf(2)) { current })
+        assertEquals(1, p.writes); assertEquals(0, p.readbacks); assertTrue(p.closed)
+        current = true
+        val q = Port().apply { afterReadback = { current = false }; requiresRediscovery = true }
+        assertEquals(NfcWriteResult.UNCERTAIN, VerifiedNfcWrite.execute(q, byteArrayOf(1), byteArrayOf(2)) { current })
+        assertEquals(1, q.writes); assertEquals(1, q.readbacks); assertTrue(q.closed)
     }
 }

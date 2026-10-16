@@ -19,15 +19,40 @@ class NfcViewModelTest {
         override fun clear(): Boolean { if (works) pending = null; return works }
     }
     private class Port(var bytes: ByteArray? = NfcTagDataCodec.encode(NfcTagData())) : NfcMessagePort {
-        var writes = 0; var connects = 0; var failAfterWrite = false
+        var writes = 0; var connects = 0; var closes = 0; var failAfterWrite = false
+        var requiresRediscovery = false
+        var afterRead: (() -> Unit)? = null
+        var afterReadback: (() -> Unit)? = null
         override fun connect() { connects++ }
         override val writable = true
         override val capacity = 512
-        override fun read(): ByteArray? { if (failAfterWrite && writes > 0) error("lost"); return bytes }
+        override fun read(): ByteArray? {
+            if (failAfterWrite && writes > 0) error("lost")
+            afterRead?.invoke()
+            return bytes
+        }
         override fun write(message: ByteArray) { writes++; bytes = message }
-        override fun close() {}
+        override fun readAfterWrite(): NfcReadback {
+            val result = if (requiresRediscovery) NfcReadback.RequiresRediscovery else NfcReadback.Bytes(read())
+            afterReadback?.invoke()
+            return result
+        }
+        override fun close() { closes++ }
     }
-    private fun model(j: Journal = Journal(), executor: Executor = direct) = NfcViewModel(codec, j, executor, direct)
+    private fun model(j: Journal = Journal(), executor: Executor = direct,
+                      onVerificationRequired: (Long) -> Unit = {}) =
+        NfcViewModel(codec, j, executor, direct, onVerificationRequired = onVerificationRequired)
+
+    @Test fun onlyIndependentReadAdvancesReadOnlyProof() {
+        val m = model(); val token = m.resume(true, true); val p = Port()
+        m.tagDiscovered(token, "A", p)
+        assertEquals(m.state.value.selectionId, m.state.value.readOnlySelectionId)
+        m.prepareWrite(NfcTagData(flags = 2)); m.tagDiscovered(token, "A", p)
+        assertEquals(0L, m.state.value.readOnlySelectionId)
+        m.tagDiscovered(token, "A", p)
+        assertEquals(m.state.value.selectionId, m.state.value.readOnlySelectionId)
+        assertEquals(1, p.writes)
+    }
 
     @Test fun writesOnlyPreparedSameTagAndConsumesRequest() {
         val m = model(); val token = m.resume(true, true); val p = Port()
@@ -97,5 +122,104 @@ class NfcViewModelTest {
         m.prepareWrite(NfcTagData(flags = 2)); m.tagDiscovered(t, "A", p)
         m.cancelWrite(); assertTrue(m.state.value.busy); assertFalse(m.state.value.message.contains("abgebrochen"))
         jobs.removeAt(0).run(); assertEquals(1, p.writes)
+    }
+    @Test fun freshDiscoveryConfirmsEmptyTagWriteWithoutAnotherWrite() {
+        val j = Journal(); val m = model(j); val t = m.resume(true, true)
+        m.tagDiscovered(t, "A", Port(null)); m.prepareWrite(NfcTagData(flags = 3))
+        val writingPort = Port(null).apply { requiresRediscovery = true }
+        var callbacks = 0
+        m.onVerificationRequired = { token ->
+            callbacks++
+            assertEquals(t, token); assertTrue(m.isVerificationPending(token))
+            assertNotNull(j.pending); assertFalse(m.state.value.canWrite); assertFalse(m.state.value.busy)
+            assertEquals(1, writingPort.closes)
+            assertEquals("Schreiben abgeschlossen · Inhalt wird geprüft …", m.state.value.message)
+        }
+        m.tagDiscovered(t, "A", writingPort)
+        assertEquals(1, callbacks); assertEquals(1, writingPort.writes); assertEquals(1, writingPort.closes)
+        m.prepareWrite(NfcTagData(flags = 9)); assertFalse(m.state.value.armed)
+        val fresh = Port(writingPort.bytes)
+        m.tagDiscovered(t, "A", fresh)
+        assertEquals("Geschrieben und durch erneutes Lesen bestätigt", m.state.value.message)
+        assertEquals(3, m.state.value.data!!.flags); assertNull(j.pending)
+        assertFalse(m.isVerificationPending(t)); assertTrue(m.state.value.canWrite)
+        assertEquals(0, fresh.writes); assertEquals(1, writingPort.writes); assertEquals(1, callbacks)
+        val message = m.state.value.message
+        m.verificationNeedsRetap(t); assertEquals(message, m.state.value.message)
+    }
+    @Test fun differentTagAndDifferentContentCannotConfirmPendingVerification() {
+        val j = Journal(); val m = model(j); val t = m.resume(true, true)
+        m.tagDiscovered(t, "A", Port(null)); m.prepareWrite(NfcTagData(flags = 3))
+        val written = Port(null).apply { requiresRediscovery = true }
+        m.tagDiscovered(t, "A", written)
+        val other = Port(written.bytes)
+        m.tagDiscovered(t, "B", other)
+        assertNotNull(j.pending); assertTrue(m.isVerificationPending(t)); assertFalse(m.state.value.canWrite)
+        assertEquals("Tag gelesen · früherer Schreibausgang eines anderen Tags bleibt unklar", m.state.value.message)
+        val different = Port(NfcTagDataCodec.encode(NfcTagData(flags = 4)))
+        m.tagDiscovered(t, "A", different)
+        assertEquals("Frühere Schreibung nicht bestätigt · tatsächlicher Inhalt gelesen", m.state.value.message)
+        assertEquals(4, m.state.value.data!!.flags); assertNull(j.pending); assertFalse(m.isVerificationPending(t))
+        assertEquals(1, written.writes); assertEquals(0, other.writes); assertEquals(0, different.writes)
+    }
+    @Test fun missingDiscoveryOffersRetapAndPauseKeepsJournalForRecreation() {
+        val j = Journal(); val m = model(j); val t = m.resume(true, true)
+        m.tagDiscovered(t, "A", Port(null)); m.prepareWrite(NfcTagData(flags = 3))
+        val written = Port(null).apply { requiresRediscovery = true }
+        m.tagDiscovered(t, "A", written)
+        m.verificationNeedsRetap(t)
+        assertEquals("Inhalt noch nicht bestätigt · Tag entfernen und denselben Tag erneut anhalten", m.state.value.message)
+        assertNotNull(j.pending); assertFalse(m.state.value.canWrite); assertEquals(1, written.writes)
+        m.pause(); assertFalse(m.isVerificationPending(t)); assertNotNull(j.pending)
+        val pausedMessage = m.state.value.message
+        m.verificationNeedsRetap(t); assertEquals(pausedMessage, m.state.value.message)
+        val recreated = model(j); val next = recreated.resume(true, true)
+        assertFalse(recreated.isVerificationPending(next)); assertFalse(recreated.state.value.canWrite)
+        val fresh = Port(written.bytes); recreated.tagDiscovered(next, "A", fresh)
+        assertEquals("Frühere Schreibung durch erneutes Lesen bestätigt", recreated.state.value.message)
+        assertNull(j.pending); assertEquals(0, fresh.writes)
+    }
+    @Test fun failedRefreshCallbackKeepsVerificationPendingAndRequestsRetap() {
+        val j = Journal(); val m = model(j, onVerificationRequired = { error("reader unavailable") })
+        val t = m.resume(true, true); m.tagDiscovered(t, "A", Port(null)); m.prepareWrite(NfcTagData(flags = 3))
+        val written = Port(null).apply { requiresRediscovery = true }; m.tagDiscovered(t, "A", written)
+        assertTrue(m.isVerificationPending(t)); assertNotNull(j.pending); assertFalse(m.state.value.canWrite)
+        assertEquals("Inhalt noch nicht bestätigt · Tag entfernen und denselben Tag erneut anhalten", m.state.value.message)
+        assertEquals(1, written.writes)
+    }
+    @Test fun pauseDuringReadbackDoesNotStartRediscoveryOrClearJournal() {
+        val j = Journal(); var callbacks = 0; val m = model(j, onVerificationRequired = { callbacks++ })
+        val t = m.resume(true, true); m.tagDiscovered(t, "A", Port(null)); m.prepareWrite(NfcTagData(flags = 3))
+        val written = Port(null).apply {
+            requiresRediscovery = true
+            afterReadback = { m.pause(); m.resume(true, true) }
+        }
+        m.tagDiscovered(t, "A", written)
+        assertEquals(0, callbacks); assertNotNull(j.pending); assertFalse(m.isVerificationPending(t))
+        assertFalse(m.state.value.selected); assertFalse(m.state.value.canWrite); assertEquals(1, written.writes)
+    }
+    @Test fun pausedFreshReadCannotClearPendingJournalOrPublishSuccess() {
+        val j = Journal(); val m = model(j); val t = m.resume(true, true)
+        m.tagDiscovered(t, "A", Port(null)); m.prepareWrite(NfcTagData(flags = 3))
+        val written = Port(null).apply { requiresRediscovery = true }; m.tagDiscovered(t, "A", written)
+        val fresh = Port(written.bytes).apply { afterRead = { m.pause(); m.resume(true, true) } }
+        m.tagDiscovered(t, "A", fresh)
+        assertNotNull(j.pending); assertFalse(m.state.value.selected); assertFalse(m.state.value.canWrite)
+        assertEquals("Früherer Schreibausgang unklar · denselben Tag erneut lesen", m.state.value.message)
+        assertFalse(m.isVerificationPending(t)); assertEquals(0, fresh.writes)
+    }
+    @Test fun closingOldWritePortDoesNotLoseOwnershipOfQueuedFreshPort() {
+        val jobs = mutableListOf<Runnable>(); val j = Journal()
+        val m = model(j, Executor { jobs.add(it) }); val t = m.resume(true, true)
+        m.tagDiscovered(t, "A", Port(null)); jobs.removeAt(0).run(); m.prepareWrite(NfcTagData(flags = 3))
+        val written = Port(null).apply { requiresRediscovery = true }
+        val fresh = Port(NfcTagDataCodec.encode(NfcTagData(flags = 3)))
+        m.onVerificationRequired = { token -> m.tagDiscovered(token, "A", fresh) }
+        m.tagDiscovered(t, "A", written); jobs.removeAt(0).run()
+        assertEquals(1, jobs.size); assertTrue(m.state.value.busy)
+        m.pause(); assertTrue(fresh.closes > 0)
+        jobs.removeAt(0).run()
+        assertEquals(0, fresh.connects); assertEquals(0, fresh.writes); assertNotNull(j.pending)
+        assertEquals(1, written.writes)
     }
 }

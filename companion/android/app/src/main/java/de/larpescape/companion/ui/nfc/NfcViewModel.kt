@@ -23,7 +23,7 @@ data class NfcUiState(
     val available: Boolean = false, val enabled: Boolean = false, val listening: Boolean = false,
     val busy: Boolean = false, val armed: Boolean = false, val canWrite: Boolean = false,
     val selected: Boolean = false, val tagId: String? = null, val data: NfcTagData? = null,
-    val capacity: Int = 0, val selectionId: Long = 0, val message: String = "NFC-Seite öffnen und Tag anhalten"
+    val capacity: Int = 0, val selectionId: Long = 0, val readOnlySelectionId: Long = 0, val message: String = "NFC-Seite öffnen und Tag anhalten"
 )
 
 /** One foreground owner. Ports and whole NDEF snapshots never enter the UI. */
@@ -32,7 +32,8 @@ class NfcViewModel(
     private val journal: NfcWriteJournal,
     private val worker: Executor = Executors.newSingleThreadExecutor(),
     private val cancellation: Executor = Executors.newSingleThreadExecutor(),
-    private val event: (String) -> Unit = {}
+    private val event: (String) -> Unit = {},
+    @Volatile var onVerificationRequired: (Long) -> Unit = {}
 ) : ViewModel() {
     private data class Snapshot(val id: String, val bytes: ByteArray?, val writable: Boolean, val capacity: Int)
     private data class Request(val snapshot: Snapshot, val message: ByteArray, val data: NfcTagData)
@@ -46,6 +47,7 @@ class NfcViewModel(
     private var activePort: NfcMessagePort? = null
     private var writing = false
     private var uncertain = journal.load()
+    private var verificationPending = false
 
     fun resume(available: Boolean, enabled: Boolean): Long {
         pause()
@@ -65,12 +67,20 @@ class NfcViewModel(
         val port = synchronized(lock) {
             ++epoch
             val message = if (writing) "Schreibausgang unklar · denselben Tag erneut lesen" else "NFC-Lesen pausiert"
-            snapshot = null; request = null; writing = false
+            snapshot = null; request = null; writing = false; verificationPending = false
             mutable.value = mutable.value.copy(listening = false, busy = false, armed = false,
                 selected = false, canWrite = false, tagId = null, data = null, capacity = 0, message = message)
             activePort.also { activePort = null }
         }
         if (port != null) cancellation.execute { try { port.close() } catch (_: Exception) { } }
+    }
+    fun isVerificationPending(token: Long): Boolean = synchronized(lock) {
+        token == epoch && mutable.value.listening && verificationPending && uncertain != null
+    }
+    fun verificationNeedsRetap(token: Long, readerUnavailable: Boolean = false) = synchronized(lock) {
+        if (isVerificationPending(token)) mutable.value = mutable.value.copy(
+            message = if (readerUnavailable) "Prüfung unterbrochen · NFC-Seite erneut öffnen und denselben Tag anhalten"
+                else "Inhalt noch nicht bestätigt · Tag entfernen und denselben Tag erneut anhalten")
     }
     fun cancelWrite() = synchronized(lock) {
         // A delayed button event cannot claim that an already-started RF write was undone.
@@ -123,6 +133,7 @@ class NfcViewModel(
         }
         worker.execute {
             fun current() = synchronized(lock) { epoch == token && mutable.value.listening }
+            var writeOwnsPort = false
             try {
                 if (!current()) return@execute
                 if (pending != null) {
@@ -130,15 +141,21 @@ class NfcViewModel(
                     val result = if (pending.snapshot.id != id) NfcWriteResult.CHANGED else {
                         check(journal.mark(intended)) { "Schreibauftrag konnte nicht gesichert werden · nichts geschrieben" }
                         synchronized(lock) { uncertain = intended }
+                        writeOwnsPort = true
                         VerifiedNfcWrite.execute(port, pending.snapshot.bytes, pending.message, ::current)
                     }
                     event("nfc_write_result=$result")
-                    if (result != NfcWriteResult.UNCERTAIN && journal.clear()) synchronized(lock) { uncertain = null }
+                    if (result != NfcWriteResult.UNCERTAIN && result != NfcWriteResult.VERIFICATION_REQUIRED && journal.clear()) {
+                        synchronized(lock) { uncertain = null }
+                    }
                     synchronized(lock) {
-                        if (!current()) return@synchronized
+                        if (!current()) { return@synchronized }
+                        writing = false
+                        if (activePort === port) activePort = null // Core has closed the write port before rediscovery.
+                        verificationPending = result == NfcWriteResult.VERIFICATION_REQUIRED
                         if (result == NfcWriteResult.VERIFIED) {
                             snapshot = pending.snapshot.copy(bytes = pending.message.copyOf())
-                            mutable.value = mutable.value.copy(data = pending.data, selectionId = ++selection, canWrite = uncertain == null, busy = false,
+                            mutable.value = mutable.value.copy(data = pending.data, selectionId = ++selection, readOnlySelectionId = 0, canWrite = uncertain == null, busy = false,
                                 message = "Geschrieben und durch erneutes Lesen bestätigt")
                         } else {
                             snapshot = null
@@ -149,9 +166,14 @@ class NfcViewModel(
                                     NfcWriteResult.TOO_SMALL -> "Tag ist zu klein · nichts geschrieben"
                                     NfcWriteResult.READ_FAILED -> "Tag nicht lesbar · nichts geschrieben, erneut anhalten"
                                     NfcWriteResult.CANCELLED -> "Schreibauftrag abgebrochen"
+                                    NfcWriteResult.VERIFICATION_REQUIRED -> "Schreiben abgeschlossen · Inhalt wird geprüft …"
                                     else -> "Schreibausgang unklar · denselben Tag erneut lesen"
                                 })
                         }
+                    }
+                    if (result == NfcWriteResult.VERIFICATION_REQUIRED && isVerificationPending(token)) {
+                        try { onVerificationRequired(token) }
+                        catch (_: Exception) { verificationNeedsRetap(token) }
                     }
                 } else {
                     port.connect()
@@ -159,17 +181,23 @@ class NfcViewModel(
                     val data = envelope.read(bytes?.copyOf())
                     val writable = port.writable
                     val capacity = port.capacity
-                    val previous = synchronized(lock) { uncertain }
+                    val (previous, awaitingVerification) = synchronized(lock) { uncertain to verificationPending }
                     val recovered = previous != null && previous.id == id
                     val previousVerified = recovered && bytes?.contentEquals(previous!!.message) == true
                     event("nfc_read_valid empty=${data == null} recovered=$recovered previousVerified=$previousVerified")
-                    if (recovered && journal.clear()) synchronized(lock) { uncertain = null }
                     synchronized(lock) {
-                        if (!current()) return@synchronized
+                        if (!current()) { return@synchronized }
+                        if (recovered) {
+                            // Only a current discovery may resolve the pending write; a paused read keeps the journal.
+                            if (journal.clear()) uncertain = null
+                            verificationPending = false
+                        }
                         snapshot = Snapshot(id, bytes, writable, capacity)
                         mutable.value = mutable.value.copy(selected = true, tagId = id, data = data, selectionId = ++selection,
+                            readOnlySelectionId = if (!recovered && !awaitingVerification) selection else 0,
                             capacity = capacity, canWrite = writable && id.isNotEmpty() && uncertain == null, busy = false,
                             message = when {
+                                previousVerified && awaitingVerification -> "Geschrieben und durch erneutes Lesen bestätigt"
                                 previousVerified -> "Frühere Schreibung durch erneutes Lesen bestätigt"
                                 recovered -> "Frühere Schreibung nicht bestätigt · tatsächlicher Inhalt gelesen"
                                 previous != null -> "Tag gelesen · früherer Schreibausgang eines anderen Tags bleibt unklar"
@@ -189,8 +217,8 @@ class NfcViewModel(
                     }
                 }
             } finally {
-                try { port.close() } catch (_: Exception) { }
-                synchronized(lock) { if (token == epoch) { activePort = null; writing = false } }
+                if (!writeOwnsPort) try { port.close() } catch (_: Exception) { }
+                synchronized(lock) { if (token == epoch && activePort === port) { activePort = null; writing = false } }
             }
         }
     }

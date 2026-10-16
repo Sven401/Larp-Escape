@@ -13,13 +13,25 @@ class DeviceViewModelTest {
         var connections = 0
         var closes = 0
         var grants = 0
+        var starts = 0
+        var stops = 0
+        var audioStarts = 0
+        var audioStops = 0
+        override fun selectLedEffect(effect: LedEffect) { state.value = state.value.copy(leds = state.value.leds.copy(selected = effect)) }
+        override fun startLedEffect() { starts++ }
+        override fun stopLeds() { stops++ }
+        override fun selectAudioTrack(value: String) { state.value = state.value.copy(leds = state.value.leds.let { it.copy(audio = it.audio.copy(trackText = value)) }) }
+        override fun selectAudioVolume(value: String) { state.value = state.value.copy(leds = state.value.leds.let { it.copy(audio = it.audio.copy(volumeText = value)) }) }
+        override fun startAudio() { audioStarts++ }
+        override fun stopAudio() { audioStops++ }
+        override fun importLedAccess(bytes: ByteArray) { }
         override fun scan() { scans++; state.value = state.value.copy(scanning = true) }
         override fun connect(id: String) {
             connections++
             state.value = state.value.copy(connected = true, status = "sample", freshness = StatusFreshness.CURRENT)
         }
         override fun disconnect() {
-            state.value = state.value.copy(connected = false, status = null, freshness = StatusFreshness.DISCONNECTED)
+            state.value = state.value.copy(connected = false, status = null, freshness = StatusFreshness.DISCONNECTED, leds = state.value.leds.disconnected())
         }
         override fun close() { closes++; disconnect(); state.value = state.value.copy(scanning = false, targets = emptyList()) }
         override fun permissionsChanged(granted: Boolean, denied: Boolean) {
@@ -85,5 +97,60 @@ class DeviceViewModelTest {
         assertEquals(1, repo.connections); assertEquals(0, repo.closes)
         assertEquals("sample", model.state.value.status)
         assertNull(DeviceViewModel(FakeRepository()).state.value.status)
+    }
+    @Test fun effectSelectionDoesNotSendAndStartRemainsDeliberate() {
+        val repo = FakeRepository(); val model = DeviceViewModel(repo)
+        model.foregroundStarted(true)
+        repo.state.value = repo.state.value.copy(leds = LedUiState(available = true, authenticated = true,
+            current = true, ready = true, ledOnly = true, active = LedEffect.TWINKLE))
+        model.selectLedEffect(LedEffect.RIPPLE)
+        assertEquals(LedEffect.RIPPLE, model.state.value.leds.selected)
+        assertEquals(LedEffect.TWINKLE, model.state.value.leds.active)
+        assertEquals(0, repo.starts); assertEquals(0, repo.stops)
+        model.startLedEffect(); model.stopLeds(); model.startLedEffect()
+        assertEquals(2, repo.starts); assertEquals(1, repo.stops)
+    }
+    @Test fun unknownOrActiveGameCannotStartButLedOnlyCan() {
+        val repo = FakeRepository(); val model = DeviceViewModel(repo)
+        model.foregroundStarted(true)
+        val base = LedUiState(available = true, authenticated = true, current = true, ready = true)
+        listOf(base, base.copy(gameStopped = false), base.copy(gameStopped = true, current = false),
+            base.copy(gameStopped = true, authenticated = false), base.copy(ledOnly = true, busy = true),
+            base.copy(ledOnly = true, ready = false)).forEach {
+            repo.state.value = repo.state.value.copy(leds = it); model.startLedEffect()
+        }
+        assertEquals(0, repo.starts)
+        repo.state.value = repo.state.value.copy(leds = base.copy(gameStopped = true)); model.startLedEffect()
+        repo.state.value = repo.state.value.copy(leds = base.copy(ledOnly = true)); model.startLedEffect()
+        assertEquals(2, repo.starts)
+    }
+    @Test fun closingConnectionInvalidatesLedsWithoutRestartOnReturn() {
+        val repo = FakeRepository(); val model = DeviceViewModel(repo)
+        model.foregroundStarted(true)
+        repo.state.value = repo.state.value.copy(leds = LedUiState(available = true, authenticated = true,
+            current = true, ready = true, ledOnly = true, active = LedEffect.TWINKLE))
+        model.foregroundEnded(); model.foregroundStarted(true); model.startLedEffect(); model.stopLeds()
+        assertNull(model.state.value.leds.active)
+        assertFalse(model.state.value.leds.authenticated)
+        assertFalse(model.state.value.leds.current)
+        assertEquals(0, repo.starts); assertEquals(0, repo.stops)
+    }
+    @Test fun audioSelectionIsLocalAndNoForegroundOrPermissionTransitionRestartsPlayback() {
+        val repo = FakeRepository(); val model = DeviceViewModel(repo)
+        model.foregroundStarted(true)
+        val audio = AudioUiState(supported = true, authenticated = true, current = true, ready = true, modeAllowed = true)
+        // The LED driver need not be ready for an independently ready audio module.
+        repo.state.value = repo.state.value.copy(leds = LedUiState(audio = audio))
+        model.selectAudioTrack("42"); model.selectAudioVolume("3")
+        assertEquals(0, repo.audioStarts); assertEquals(0, repo.audioStops)
+        assertEquals("42", model.state.value.leds.audio.trackText)
+        model.startAudio(); model.stopAudio()
+        assertEquals(1, repo.audioStarts); assertEquals(1, repo.audioStops)
+        model.foregroundEnded(); model.foregroundStarted(true); model.startAudio(); model.stopAudio()
+        assertEquals(1, repo.audioStarts); assertEquals(1, repo.audioStops)
+        repo.state.value = repo.state.value.copy(leds = LedUiState(audio = audio))
+        model.permissionsChanged(false); model.startAudio(); model.stopAudio()
+        model.permissionsChanged(true)
+        assertEquals(1, repo.audioStarts); assertEquals(1, repo.audioStops)
     }
 }

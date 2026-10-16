@@ -2,6 +2,7 @@ package de.larpescape.companion.ui.device
 
 import androidx.lifecycle.ViewModel
 import de.larpescape.companion.data.device.DeviceRepository
+import de.larpescape.companion.data.device.LedEffect
 
 class DeviceViewModel(private val repository: DeviceRepository) : ViewModel() {
     val state = repository.state
@@ -32,6 +33,22 @@ class DeviceViewModel(private val repository: DeviceRepository) : ViewModel() {
     }
     fun scan() { if (foreground && permissionGranted) repository.scan() }
     fun connect(id: String) { if (foreground && permissionGranted) repository.connect(id) }
+    fun selectLedEffect(effect: LedEffect) = repository.selectLedEffect(effect)
+    fun startLedEffect() { if (foreground && permissionGranted && state.value.leds.canStart) repository.startLedEffect() }
+    fun boxNfc(change: Boolean) { if (foreground && permissionGranted) repository.boxNfc(change) }
+    fun stopLeds() { if (foreground && permissionGranted && state.value.leds.canStop) repository.stopLeds() }
+    fun selectAudioTrack(value: String) = repository.selectAudioTrack(value)
+    fun selectAudioVolume(value: String) = repository.selectAudioVolume(value)
+    fun startAudio() { if (foreground && permissionGranted && state.value.leds.audio.canStart) repository.startAudio() }
+    fun audioAction(operation: Int) {
+        val audio = state.value.leds.audio
+        if (foreground && permissionGranted && when(operation) {
+            3 -> audio.canPause; 4 -> audio.canResume; 5 -> audio.canSetVolume; else -> false
+        }) repository.audioAction(operation)
+    }
+    fun stopAudio() { if (foreground && permissionGranted && state.value.leds.audio.canStop) repository.stopAudio() }
+    fun importLedAccess(bytes: ByteArray) = repository.importLedAccess(bytes)
+    fun matrixAction(action: String) = repository.matrixAction(action)
     fun disconnect() = repository.disconnect()
     fun foregroundEnded() {
         foreground = false

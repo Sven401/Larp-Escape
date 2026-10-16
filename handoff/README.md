@@ -1,6 +1,63 @@
 # Technische Projektübergabe – 13. Oktober 2026
 
+Aktuelle Fortsetzung: [Baugruppen-Konsolidierung vom 17. Oktober 2026](KONSOLIDIERUNG-2026-10-17.md).
+
+**Abgeschlossener Folgeprüfstand:** [Sammelergebnis](../docs/matrix/collection-result-2026-10-16.md)
+mit 68 erkannten Koordinaten, vier offenen Problemstellen und neun
+nutzerbestätigt unbestückten, in der App deaktivierten Feldern.
+Die folgenden früheren Vorbereitungs-/Startangaben sind historische Belege.
+
+
+## Aktuelle Fortsetzung: Sammeldurchgang, 16. Oktober 2026
+
+Der [Sammeldurchgang](../docs/matrix/collection-run-2026-10-16.md) ersetzt für die nächste
+Bestückungserfassung die Einzelbestätigungen. Umsetzung, Arbeitskopie,
+Speicherung und Abschlussauswertung stehen dort. Der folgende frühere
+Arbeitsstand ist historisch; den neuen Geräte-/Prüfstand im verlinkten
+Sammellaufbericht lesen.
+
+
+## Tastenmatrix: Softwarekorrektur nach Originalrichtung, 16. Oktober 2026
+
+Der [Gerätebericht](../docs/matrix/device-test-2026-10-16.md) hält die
+verifizierte Installation von `c613ace` und die erfolglosen Kontaktversuche
+fest. Auf neuen Nutzerauftrag wird zuerst die Prüffirmware aus der
+ursprünglichen Scanrichtung und Pinbelegung korrigiert. Der
+[Korrekturbericht](../docs/matrix/scan-direction-correction-2026-10-16.md)
+führt Quellen, Änderung und Softwareprüfstand; eine neue Installation oder
+Geräteabnahme ist nicht erfolgt. Die Box ist laut Nutzer vollständig stromlos,
+die Matrixleitungen bleiben angeschlossen. Einige Kontakte sind bewusst
+nicht bestückt; ihre genaue Liste ist offen. Arbeitsstand, offener
+B7-Herstellerkonflikt und nächster gezielter Gerätetest stehen in der
+[Matrix-Sitzungsübergabe](matrix-test-2026-10-16.md).
+
+## Ergänzung: eigenständige LED-Produktfunktion, 15. Oktober 2026
+
+Der neue Produktzweig ergänzt die echte Android-App und einen geschützten
+BLE-Zugang mit eigener Effektberechnung und SDK-RMT-Ausgabe. Umfang, Quellen,
+USB-Einrichtung und Geräteabnahme stehen in
+[firmware/led/README.md](../firmware/led/README.md).
+Die [gemeinsame Geräteprüfung](../docs/led/device-test-2026-10-15.md)
+bestätigt Funkeln, Stop sowie Lichtimpuls/Ripple mit selbstständigem Aus am
+installierten eigenen Paar; weiterführende Abnahmefälle bleiben offen.
+Die frühere Einbindung einer externen Beispielimplementierung war eine
+Fehlinterpretation und ist zurückgenommen; die Owner-Klarstellung steht in
+[PR #44](https://github.com/Sven401/Larp-Escape/pull/44).
+Die Spielintegration bleibt getrennt. Die folgenden Abschnitte beschreiben
+den historischen Übergabestand vom 13. Oktober, nicht die neue LED-Abnahme.
+
+Aktuelle technische Fortsetzung: [Integrationsvorbereitung vom 16. Oktober 2026](INTEGRATION-2026-10-16.md).
+Bestätigter Baugruppenfortschritt bleibt im [Nachweisregister](BAUGRUPPEN-NACHWEISE.md)
+mit festen Quellen und Sicherungsreferenzen unabhängig von der Zielintegration erhalten.
+Sie erfasst die offenen Produktzweige, Konflikte und Prüftore; die folgende
+Übergabe bleibt der historische Quellenstand. Produktplanung: [Issue #25](https://github.com/Sven401/Larp-Escape/issues/25),
+Konsolidierung: [#53](https://github.com/Sven401/Larp-Escape/issues/53).
+
 ## Einstieg und Stand
+
+Seit dem 14. Oktober 2026 gilt der [Maintainer-Einstieg](MAINTAINER.md) für die
+weitere Betreuung: Arbeitsbasis, Mandat, Prüfwege und offene Abhängigkeiten.
+Die folgende technische Übergabe bewahrt den Stand vom 13. Oktober 2026.
 
 Dieser Branch `plan/projektuebergabe-kuratierter-stand` beginnt bei
 `a40365d715b2055ee23f767fa53b55ac25243437` (Merge von PR 24 auf
@@ -19,8 +76,49 @@ historische Quelle im Diagnose-Archiv; sie ist kein Einstieg für eine
 Hardwareabnahme. Das fortbestehende Nutzerziel ist eine am Handy auffindbare,
 verständliche und bewusst wiederholbare echte Baugruppenbedienung. Erster
 Referenzfall: LEDs starten, stoppen und bewusst erneut starten, mit
-korrelierter Geräteantwort und getrennter Nutzerbeobachtung. Dieser Ablauf
-ist hier weder implementiert noch physisch abgenommen.
+korrelierter Geräteantwort und getrennter Nutzerbeobachtung. Am ursprünglichen Übergabestand vom 13. Oktober war dieser Ablauf
+weder implementiert noch physisch abgenommen. Der aktuelle begrenzte LED-Nachweis
+steht in der oben verlinkten Geräteprüfung vom 15. Oktober.
+
+## Wake-Inputs: gemeinsamer Gerätetest
+
+Die [Wake-Testvorbereitung](../docs/wake/test-preparation.md) führt den neuen
+Umfang auf Basis des gemeinsam geprüften LED-Paars: vier Live-Kacheln,
+2×2-Tauschvorschau, gespeicherte Anordnung sowie getrennte Software- und
+Geräteabnahme. Der [Gerätetest vom 15. Oktober](../docs/wake/device-test-2026-10-15.md)
+belegt das installierte Paar `ca86b93`, die räumliche Zuordnung **2 / 1 / 4 / 3**,
+Vorschau und Tausch, Loslassen außerhalb/in Rasterlücken sowie Speicherung
+nach Neustart/Wiederverbindung.
+Die funktionale Sensorreaktion ist beobachtet; Chipmarking und reale Leitung
+von Wake 1/B7 bleiben physisch offen.
+
+## NFC: Vorerkundung und echter Tag
+
+Aktueller NFC-Gerätenachweis vom 16. Oktober 2026:
+[Handy-Vorerkundung](../docs/nfc/device-preparation-2026-10-16.md) mit zwei
+HCE-Zyklen und [ein echter NTAG213-Rundlauf](../docs/nfc/physical-tag-test-2026-10-16.md)
+App → Tag → Box → Tag → App sind belegt. Der echte Lauf erforderte nach
+zunächst unklarem App-Schreibergebnis ein erneutes Lesen; kein zweites
+Schreiben. Die begrenzte NFC-Prüffirmware ist temporär, Wake wurde jeweils
+verifiziert wiederhergestellt. Andere Tagtypen und Spielintegration bleiben offen.
+
+Die [Korrektur der Erstschreibprüfung](../docs/nfc/first-write-readback-2026-10-16.md)
+ist auf App-Commit `c0f76ee` mit einem weiteren leeren NDEF-Tag am moto g14
+belegt: Nach der veralteten Android-Leerantwort führt die App eine neue
+Erkennung aus und bestätigt UID sowie alle 59 Bytes automatisch, ohne
+erneut zu schreiben. 105 JVM-Tests, Build, Lint und die drei CI-Workflows
+sind erfolgreich. Die Box blieb unverändert auf Wake; die App ist wieder
+authentifiziert verbunden. Der Bericht trennt den erfolgreichen Lauf von
+vorherigen Funkfehlern und durch Bildschirmdrehung verworfenen Aufträgen.
+
+## Owner-Klarstellung — 15. Oktober 2026
+
+Die [externe Funktionsreferenz](../docs/led/implementation-reference.md) dient
+zum Vergleich mit einer Beispielimplementierung. WLED ist keine vorgesehene
+Projektkomponente, darf keine Dependency und keine direkte Referenz in App oder
+Firmware sein und darf in PRs/Veröffentlichungen nicht als Bestandteil geführt
+werden. Die zuvor von Codex abgeleitete Einbindungsvorgabe ist zurückgenommen.
+Die folgenden Architekturangaben werden dadurch nicht neu entschieden.
 
 ## Architektur und Start
 
@@ -45,6 +143,8 @@ Die editierbaren und exportierten Hardwareeingänge stehen unter `Hardware/`.
 ausdrücklich als vorläufig. Originalbox, CAD-Revision und Softwareannahmen
 sind nicht gleichzusetzen.
 
+Der vollständige [B0-Prüfweg](../docs/quality-checks.md) ergänzt die unten stehenden Einstiegsbefehle um echte Kryptografie, GATTS-ABI, Android-Lint und die zugehörigen CI-Belege.
+
 Zum Start ohne Hardware:
 
 ```powershell
@@ -65,7 +165,9 @@ Grenzen stehen in [PRUEFSTAND.md](PRUEFSTAND.md).
 
 [quelleninventar.json](quelleninventar.json) erfasst die 40 vorgefundenen
 Produkt-Worktrees, alle 41 vorherigen lokalen Branchspitzen, offene
-Dateien und begründete Ausschlüsse. Von diesem Branch zweigen lokal ab:
+Dateien und begründete Ausschlüsse. Von diesem Branch zweigen folgende
+Archivbranches ab; ihre Veröffentlichung auf GitHub wurde am 14. Oktober 2026
+über die Branchliste geprüft:
 
 | Branch | Inhalt |
 | --- | --- |
@@ -86,11 +188,13 @@ Verschachtelte Worktrees werden über ihre eigenen Einträge erfasst;
 erzeugbare Caches und Buildprodukte wurden nicht kopiert.
 
 Die Übergabe ist eigenständig. Ein separates früheres KI-Repository wird
-für Verständnis, Build und Bewertung nicht benötigt. Alle neuen Branches
-sind ausschließlich lokal vorhanden; ihre spätere Übertragung ist ein
-eigener Schritt.
+für Verständnis, Build und Bewertung nicht benötigt. Der kuratierte Branch
+und die sechs oben genannten Archivbranches sind auf GitHub veröffentlicht.
+Ihre Existenz im Remote bedeutet keine fachliche Freigabe der archivierten
+Entwürfe. In einem nur auf den kuratierten Branch begrenzten Klon müssen
+benötigte Archivbranches gezielt zusätzlich geholt werden.
 
-## Offene Entscheidungen und Grenzen
+## Offene Entscheidungen und Grenzen des ursprünglichen Übergabestands
 
 - F1-SDK-/SMP-Herkunft, Bond-Wiederverbindung und Rechtebindung sind nicht
   integriert oder am Funk abgenommen; dafür die F1-Quellen einzeln prüfen.

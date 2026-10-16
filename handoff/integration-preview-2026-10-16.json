@@ -1,0 +1,490 @@
+{
+  "date": "2026-10-16",
+  "status": "pairwise preview only; no branch merged or updated",
+  "base": "42610abfef07c971d9902ea6ca5a350ed68981bf",
+  "method": "git merge-tree --write-tree --name-only LEFT RIGHT; exit 0 clean / 1 conflicts. Writes unreferenced tree objects only, no commit/index/worktree/ref updates. No combined build or cumulative preview.",
+  "heads": {
+    "40": "0a1e6be68bf8e70f5a5184b3f6b3de1f94744b23",
+    "43": "5174b7bbac143d1359d15103c696c77ae47fc877",
+    "44": "99b6b4b33b3b7794e5b3b58d924d3bdb260ace9b",
+    "45": "20518f52de82845635e8590f1440dbfbb268dcb2",
+    "46": "10400350f31883b4e7b36df1d6875388a2d8953f",
+    "47": "33bf31bcd082ad62c14bd9ffaa2b547e17e919bc",
+    "48": "d1c70773958a8e4330a48c6f1d78e61c303545fe",
+    "49": "e4b2ce024655ae9e951e04542dc7f473e1bc6e9c",
+    "50": "724f0bdabed2bd51c170942f3e45bc2cecc34932",
+    "51": "cff0c998cde05715c2117c17ecf42681b69d1ad4",
+    "52": "14d7a0dae4ae0e697ff609bb0e86996e9864a62d"
+  },
+  "pairs": [
+    {
+      "left_pr": 40,
+      "right_pr": 43,
+      "merge_base": "42610abfef07c971d9902ea6ca5a350ed68981bf",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 40,
+      "right_pr": 44,
+      "merge_base": "42610abfef07c971d9902ea6ca5a350ed68981bf",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 40,
+      "right_pr": 45,
+      "merge_base": "42610abfef07c971d9902ea6ca5a350ed68981bf",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 40,
+      "right_pr": 46,
+      "merge_base": "42610abfef07c971d9902ea6ca5a350ed68981bf",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 40,
+      "right_pr": 47,
+      "merge_base": "42610abfef07c971d9902ea6ca5a350ed68981bf",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 40,
+      "right_pr": 48,
+      "merge_base": "42610abfef07c971d9902ea6ca5a350ed68981bf",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 40,
+      "right_pr": 49,
+      "merge_base": "42610abfef07c971d9902ea6ca5a350ed68981bf",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 40,
+      "right_pr": 50,
+      "merge_base": "42610abfef07c971d9902ea6ca5a350ed68981bf",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 40,
+      "right_pr": 51,
+      "merge_base": "42610abfef07c971d9902ea6ca5a350ed68981bf",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 40,
+      "right_pr": 52,
+      "merge_base": "42610abfef07c971d9902ea6ca5a350ed68981bf",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 43,
+      "right_pr": 44,
+      "merge_base": "42610abfef07c971d9902ea6ca5a350ed68981bf",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 43,
+      "right_pr": 45,
+      "merge_base": "42610abfef07c971d9902ea6ca5a350ed68981bf",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 43,
+      "right_pr": 46,
+      "merge_base": "42610abfef07c971d9902ea6ca5a350ed68981bf",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 43,
+      "right_pr": 47,
+      "merge_base": "42610abfef07c971d9902ea6ca5a350ed68981bf",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 43,
+      "right_pr": 48,
+      "merge_base": "42610abfef07c971d9902ea6ca5a350ed68981bf",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 43,
+      "right_pr": 49,
+      "merge_base": "42610abfef07c971d9902ea6ca5a350ed68981bf",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 43,
+      "right_pr": 50,
+      "merge_base": "42610abfef07c971d9902ea6ca5a350ed68981bf",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 43,
+      "right_pr": 51,
+      "merge_base": "42610abfef07c971d9902ea6ca5a350ed68981bf",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 43,
+      "right_pr": 52,
+      "merge_base": "42610abfef07c971d9902ea6ca5a350ed68981bf",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 44,
+      "right_pr": 45,
+      "merge_base": "42610abfef07c971d9902ea6ca5a350ed68981bf",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 44,
+      "right_pr": 46,
+      "merge_base": "42610abfef07c971d9902ea6ca5a350ed68981bf",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 44,
+      "right_pr": 47,
+      "merge_base": "42610abfef07c971d9902ea6ca5a350ed68981bf",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 44,
+      "right_pr": 48,
+      "merge_base": "42610abfef07c971d9902ea6ca5a350ed68981bf",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 44,
+      "right_pr": 49,
+      "merge_base": "42610abfef07c971d9902ea6ca5a350ed68981bf",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 44,
+      "right_pr": 50,
+      "merge_base": "42610abfef07c971d9902ea6ca5a350ed68981bf",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 44,
+      "right_pr": 51,
+      "merge_base": "42610abfef07c971d9902ea6ca5a350ed68981bf",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 44,
+      "right_pr": 52,
+      "merge_base": "42610abfef07c971d9902ea6ca5a350ed68981bf",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 45,
+      "right_pr": 46,
+      "merge_base": "20518f52de82845635e8590f1440dbfbb268dcb2",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 45,
+      "right_pr": 47,
+      "merge_base": "20518f52de82845635e8590f1440dbfbb268dcb2",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 45,
+      "right_pr": 48,
+      "merge_base": "20518f52de82845635e8590f1440dbfbb268dcb2",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 45,
+      "right_pr": 49,
+      "merge_base": "20518f52de82845635e8590f1440dbfbb268dcb2",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 45,
+      "right_pr": 50,
+      "merge_base": "20518f52de82845635e8590f1440dbfbb268dcb2",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 45,
+      "right_pr": 51,
+      "merge_base": "20518f52de82845635e8590f1440dbfbb268dcb2",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 45,
+      "right_pr": 52,
+      "merge_base": "20518f52de82845635e8590f1440dbfbb268dcb2",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 46,
+      "right_pr": 47,
+      "merge_base": "10400350f31883b4e7b36df1d6875388a2d8953f",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 46,
+      "right_pr": 48,
+      "merge_base": "10400350f31883b4e7b36df1d6875388a2d8953f",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 46,
+      "right_pr": 49,
+      "merge_base": "10400350f31883b4e7b36df1d6875388a2d8953f",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 46,
+      "right_pr": 50,
+      "merge_base": "10400350f31883b4e7b36df1d6875388a2d8953f",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 46,
+      "right_pr": 51,
+      "merge_base": "10400350f31883b4e7b36df1d6875388a2d8953f",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 46,
+      "right_pr": 52,
+      "merge_base": "10400350f31883b4e7b36df1d6875388a2d8953f",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 47,
+      "right_pr": 48,
+      "merge_base": "e00fe437081582727b2308da7f3b0c835c9bda75",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 47,
+      "right_pr": 49,
+      "merge_base": "c0f76ee5123ef51252341b21c18a636abb6f6bc2",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 47,
+      "right_pr": 50,
+      "merge_base": "c0f76ee5123ef51252341b21c18a636abb6f6bc2",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 47,
+      "right_pr": 51,
+      "merge_base": "33bf31bcd082ad62c14bd9ffaa2b547e17e919bc",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 47,
+      "right_pr": 52,
+      "merge_base": "33bf31bcd082ad62c14bd9ffaa2b547e17e919bc",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 48,
+      "right_pr": 49,
+      "merge_base": "e00fe437081582727b2308da7f3b0c835c9bda75",
+      "exit_code": 1,
+      "conflicting_paths": [
+        "companion/android/app/src/main/java/de/larpescape/companion/MainActivity.kt",
+        "companion/android/app/src/main/java/de/larpescape/companion/data/device/LedUiState.kt",
+        "companion/android/app/src/main/java/de/larpescape/companion/platform/ble/LedBleSession.kt",
+        "companion/android/core/protocol/src/main/kotlin/de/larpescape/protocol/LedProtocol.kt",
+        "docs/led/fixtures/wire-v1.json",
+        "firmware/led/README.md",
+        "firmware/led/src/LedWire.cpp",
+        "firmware/led/src/ProductMain.cpp",
+        "test/test_led_ble_wire/generate_vectors.py",
+        "test/test_led_ble_wire/main.cpp"
+      ]
+    },
+    {
+      "left_pr": 48,
+      "right_pr": 50,
+      "merge_base": "e00fe437081582727b2308da7f3b0c835c9bda75",
+      "exit_code": 1,
+      "conflicting_paths": [
+        "companion/android/app/src/main/java/de/larpescape/companion/MainActivity.kt",
+        "companion/android/app/src/main/java/de/larpescape/companion/data/device/LedUiState.kt",
+        "companion/android/app/src/main/java/de/larpescape/companion/platform/ble/LedBleSession.kt",
+        "companion/android/core/protocol/src/main/kotlin/de/larpescape/protocol/LedProtocol.kt",
+        "docs/led/fixtures/wire-v1.json",
+        "firmware/led/README.md",
+        "firmware/led/src/LedWire.cpp",
+        "firmware/led/src/ProductMain.cpp",
+        "test/test_led_ble_wire/generate_vectors.py",
+        "test/test_led_ble_wire/main.cpp"
+      ]
+    },
+    {
+      "left_pr": 48,
+      "right_pr": 51,
+      "merge_base": "d1c70773958a8e4330a48c6f1d78e61c303545fe",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 48,
+      "right_pr": 52,
+      "merge_base": "e00fe437081582727b2308da7f3b0c835c9bda75",
+      "exit_code": 1,
+      "conflicting_paths": [
+        "companion/android/app/src/main/java/de/larpescape/companion/data/device/LedUiState.kt",
+        "companion/android/app/src/main/java/de/larpescape/companion/platform/ble/LedBleSession.kt",
+        "companion/android/core/protocol/src/main/kotlin/de/larpescape/protocol/LedProtocol.kt",
+        "docs/led/fixtures/wire-v1.json",
+        "firmware/led/src/LedWire.cpp",
+        "firmware/led/src/ProductMain.cpp",
+        "test/test_led_ble_wire/generate_vectors.py",
+        "test/test_led_ble_wire/main.cpp"
+      ]
+    },
+    {
+      "left_pr": 49,
+      "right_pr": 50,
+      "merge_base": "e4b2ce024655ae9e951e04542dc7f473e1bc6e9c",
+      "exit_code": 0,
+      "conflicting_paths": []
+    },
+    {
+      "left_pr": 49,
+      "right_pr": 51,
+      "merge_base": "c0f76ee5123ef51252341b21c18a636abb6f6bc2",
+      "exit_code": 1,
+      "conflicting_paths": [
+        "companion/android/app/src/main/java/de/larpescape/companion/MainActivity.kt",
+        "companion/android/app/src/main/java/de/larpescape/companion/data/device/LedUiState.kt",
+        "companion/android/app/src/main/java/de/larpescape/companion/platform/ble/LedBleSession.kt",
+        "companion/android/core/protocol/src/main/kotlin/de/larpescape/protocol/LedProtocol.kt",
+        "docs/led/fixtures/wire-v1.json",
+        "firmware/led/README.md",
+        "firmware/led/src/LedWire.cpp",
+        "firmware/led/src/ProductMain.cpp",
+        "test/test_led_ble_wire/generate_vectors.py",
+        "test/test_led_ble_wire/main.cpp"
+      ]
+    },
+    {
+      "left_pr": 49,
+      "right_pr": 52,
+      "merge_base": "c0f76ee5123ef51252341b21c18a636abb6f6bc2",
+      "exit_code": 1,
+      "conflicting_paths": [
+        ".github/workflows/led-product.yml",
+        "companion/android/app/src/main/java/de/larpescape/companion/data/device/LedUiState.kt",
+        "companion/android/app/src/main/java/de/larpescape/companion/platform/ble/LedBleSession.kt",
+        "companion/android/core/protocol/src/main/kotlin/de/larpescape/protocol/LedProtocol.kt",
+        "docs/led/fixtures/wire-v1.json",
+        "firmware/led/platformio.ini",
+        "firmware/led/src/LedWire.cpp",
+        "firmware/led/src/ProductMain.cpp",
+        "test/test_led_ble_wire/generate_vectors.py",
+        "test/test_led_ble_wire/main.cpp"
+      ]
+    },
+    {
+      "left_pr": 50,
+      "right_pr": 51,
+      "merge_base": "c0f76ee5123ef51252341b21c18a636abb6f6bc2",
+      "exit_code": 1,
+      "conflicting_paths": [
+        "companion/android/app/src/main/java/de/larpescape/companion/MainActivity.kt",
+        "companion/android/app/src/main/java/de/larpescape/companion/data/device/LedUiState.kt",
+        "companion/android/app/src/main/java/de/larpescape/companion/platform/ble/LedBleSession.kt",
+        "companion/android/core/protocol/src/main/kotlin/de/larpescape/protocol/LedProtocol.kt",
+        "docs/led/fixtures/wire-v1.json",
+        "firmware/led/README.md",
+        "firmware/led/src/LedWire.cpp",
+        "firmware/led/src/ProductMain.cpp",
+        "test/test_led_ble_wire/generate_vectors.py",
+        "test/test_led_ble_wire/main.cpp"
+      ]
+    },
+    {
+      "left_pr": 50,
+      "right_pr": 52,
+      "merge_base": "c0f76ee5123ef51252341b21c18a636abb6f6bc2",
+      "exit_code": 1,
+      "conflicting_paths": [
+        ".github/workflows/led-product.yml",
+        "companion/android/app/src/main/java/de/larpescape/companion/data/device/LedUiState.kt",
+        "companion/android/app/src/main/java/de/larpescape/companion/platform/ble/LedBleSession.kt",
+        "companion/android/core/protocol/src/main/kotlin/de/larpescape/protocol/LedProtocol.kt",
+        "docs/led/fixtures/wire-v1.json",
+        "firmware/led/platformio.ini",
+        "firmware/led/src/LedWire.cpp",
+        "firmware/led/src/ProductMain.cpp",
+        "test/test_led_ble_wire/generate_vectors.py",
+        "test/test_led_ble_wire/main.cpp"
+      ]
+    },
+    {
+      "left_pr": 51,
+      "right_pr": 52,
+      "merge_base": "33bf31bcd082ad62c14bd9ffaa2b547e17e919bc",
+      "exit_code": 1,
+      "conflicting_paths": [
+        "companion/android/app/src/main/java/de/larpescape/companion/data/device/LedUiState.kt",
+        "companion/android/app/src/main/java/de/larpescape/companion/platform/ble/LedBleSession.kt",
+        "companion/android/core/protocol/src/main/kotlin/de/larpescape/protocol/LedProtocol.kt",
+        "docs/led/fixtures/wire-v1.json",
+        "firmware/led/src/LedWire.cpp",
+        "firmware/led/src/ProductMain.cpp",
+        "test/test_led_ble_wire/generate_vectors.py",
+        "test/test_led_ble_wire/main.cpp"
+      ]
+    }
+  ]
+}

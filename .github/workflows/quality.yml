@@ -14,12 +14,18 @@ concurrency:
 
 env:
   PYTHONUTF8: "1"
+  QUALITY_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+  QUALITY_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+
+defaults:
+  run:
+    shell: pwsh
 
 jobs:
   hardware-independent:
     name: Hardware-independent checks
     runs-on: windows-2022
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -27,25 +33,91 @@ jobs:
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.11"
+      - name: Record tested sources
+        run: python scripts/quality_evidence.py init
       - name: Install PlatformIO Core matching the local baseline
-        run: python -m pip install --disable-pip-version-check platformio==6.2.0
+        run: python scripts/quality_evidence.py run --name install-platformio -- python -m pip install --disable-pip-version-check platformio==6.2.0
+      - name: Record PlatformIO version
+        run: python scripts/quality_evidence.py run --name platformio-version -- python -m platformio --version
+      - name: Test the evidence and source preparation helpers
+        run: python scripts/quality_evidence.py run --name ci-helpers -- python -m unittest discover -s scripts/tests -v
+      - name: Prepare and audit the pinned real Mbed TLS sources
+        run: python scripts/quality_evidence.py run --name mbedtls-source -- python scripts/prepare_peer_mbedtls.py --directory "$env:RUNNER_TEMP/peer-mbedtls"
       - name: Check the architecture guard fixtures
-        run: python scripts/check_architecture.py --self-test
+        run: python scripts/quality_evidence.py run --name architecture-fixtures -- python scripts/check_architecture.py --self-test
       - name: Check direct dependencies of pure layers
-        run: python scripts/check_architecture.py
-      - name: Run every host test suite
-        run: python -m platformio test -e host-regression -v
+        run: python scripts/quality_evidence.py run --name architecture -- python scripts/check_architecture.py
+      - name: Run regression host tests
+        run: python scripts/quality_evidence.py run --name host-regression -- python -m platformio test -e host-regression -v --junit-output-path "$env:RUNNER_TEMP/larp-quality-hardware-independent/host-regression.xml"
+      - name: Run configured-control host tests
+        run: python scripts/quality_evidence.py run --name host-configured-control -- python -m platformio test -e host-configured-control -v --junit-output-path "$env:RUNNER_TEMP/larp-quality-hardware-independent/host-configured-control.xml"
+      - name: Run host tests with real peer cryptography
+        env:
+          LARP_PEER_MBEDTLS_DIR: ${{ runner.temp }}/peer-mbedtls/source
+          LARP_PEER_MBEDTLS_ARCHIVE: ${{ runner.temp }}/peer-mbedtls/mbedtls-2.28.4.tar.gz
+        run: python scripts/quality_evidence.py run --name host-peer-proof -- python -m platformio test -e host-peer-proof -v --junit-output-path "$env:RUNNER_TEMP/larp-quality-hardware-independent/host-peer-proof.xml"
       - name: Build the hardware-free profile authoring tool
-        run: python -m platformio run -e profile-tools
+        run: python scripts/quality_evidence.py run --name profile-tools -- python -m platformio run -e profile-tools
       - name: Install the pinned C++ formatter
-        run: python -m pip install --disable-pip-version-check clang-format==19.1.7
+        run: python scripts/quality_evidence.py run --name install-formatter -- python -m pip install --disable-pip-version-check clang-format==19.1.7
       - name: Compile independent C++11 headers with warnings as errors
-        run: python scripts/check_headers.py
+        run: python scripts/quality_evidence.py run --name headers -- python scripts/check_headers.py
       - name: Check the reviewed C++ formatting baseline
-        run: python scripts/check_format.py
+        run: python scripts/quality_evidence.py run --name format -- python scripts/check_format.py
+      - name: Summarize executed checks
+        if: always()
+        env:
+          QUALITY_JOB_STATUS: ${{ job.status }}
+        run: python scripts/quality_evidence.py finish
+      - name: Preserve host evidence even on failure
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: quality-hardware-independent-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/larp-quality-hardware-independent/
+          if-no-files-found: error
 
   esp32-build:
     name: ESP32 firmware build
+    runs-on: windows-2022
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.11"
+      - name: Record tested sources
+        run: python scripts/quality_evidence.py init
+      - name: Install PlatformIO Core matching the local baseline
+        run: python scripts/quality_evidence.py run --name install-platformio -- python -m pip install --disable-pip-version-check platformio==6.2.0
+      - name: Record PlatformIO version
+        run: python scripts/quality_evidence.py run --name platformio-version -- python -m platformio --version
+      - name: Build game firmware, runtime probes and pinned GATTS ABI probe
+        run: python scripts/quality_evidence.py run --name esp32-builds -- python -m platformio run -e az-delivery-devkit-v4 -e esp32-runtime-probe -e esp32-profile-runtime-probe -e esp32-gatts-abi-probe -j 2
+      - name: Prepare the pinned sources for negative guard checks
+        run: python scripts/quality_evidence.py run --name mbedtls-source -- python scripts/prepare_peer_mbedtls.py --directory "$env:RUNNER_TEMP/peer-mbedtls"
+      - name: Reject modified native and SDK cryptography inputs
+        run: |
+          $pioPackages = (python -c "from platformio.project.config import ProjectConfig; print(ProjectConfig.get_instance().get('platformio', 'packages_dir'))").Trim()
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python scripts/quality_evidence.py run --name crypto-guards -- python scripts/check_peer_crypto_sources.py --root "$env:RUNNER_TEMP/peer-mbedtls/source" --archive "$env:RUNNER_TEMP/peer-mbedtls/mbedtls-2.28.4.tar.gz" --sdk "$pioPackages/framework-arduinoespressif32"
+      - name: Summarize executed checks
+        if: always()
+        env:
+          QUALITY_JOB_STATUS: ${{ job.status }}
+        run: python scripts/quality_evidence.py finish
+      - name: Preserve firmware evidence even on failure
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: quality-esp32-build-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/larp-quality-esp32-build/
+          if-no-files-found: error
+
+  android:
+    name: Android checks
     runs-on: windows-2022
     timeout-minutes: 30
     steps:
@@ -55,7 +127,48 @@ jobs:
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.11"
-      - name: Install PlatformIO Core matching the local baseline
-        run: python -m pip install --disable-pip-version-check platformio==6.2.0
-      - name: Build game firmware and both isolated diagnostic profiles
-        run: python -m platformio run -e az-delivery-devkit-v4 -e esp32-runtime-probe -e esp32-profile-runtime-probe -j 2
+      - name: Record tested sources
+        run: python scripts/quality_evidence.py init
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: temurin
+          java-version: "21.0.8+9.0.LTS"
+      - name: Record Java version
+        run: python scripts/quality_evidence.py run --name java-version -- java -version
+      - name: Install the explicit Android SDK packages
+        run: |
+          $sdkManager = Join-Path $env:ANDROID_HOME "cmdline-tools/latest/bin/sdkmanager.bat"
+          if (-not (Test-Path -LiteralPath $sdkManager)) { throw "Android SDK manager is missing from the Windows runner" }
+          python scripts/quality_evidence.py run --name android-sdk --cwd (Split-Path $sdkManager) -- cmd /d /c sdkmanager.bat "platforms;android-35" "build-tools;35.0.0"
+      - name: Record installed Android SDK versions
+        run: python scripts/quality_evidence.py run --name android-sdk-versions -- python -c "import os; from pathlib import Path; sdk = Path(os.environ['ANDROID_HOME']); [print(name + '\n' + (sdk / name).read_text(encoding='utf-8')) for name in ('platforms/android-35/source.properties', 'build-tools/35.0.0/source.properties')]"
+      - name: Record Gradle version
+        run: python scripts/quality_evidence.py run --name gradle-version --cwd companion/android -- cmd /d /c gradlew.bat --version --no-daemon --console=plain
+      - name: Test, build and lint Android using the project wrapper
+        run: python scripts/quality_evidence.py run --name android-checks --cwd companion/android -- cmd /d /c gradlew.bat :core:protocol:test :app:testDebugUnitTest :app:assembleDebug :app:assembleRelease :app:lintDebug --no-daemon --console=plain --stacktrace --continue
+      - name: Record the debug APK identity
+        run: python scripts/quality_evidence.py run --name apk-sha256 -- python -c "import hashlib; from pathlib import Path; apk = Path('companion/android/app/build/outputs/apk/debug/app-debug.apk'); print(hashlib.sha256(apk.read_bytes()).hexdigest(), apk)"
+      - name: Summarize executed checks
+        if: always()
+        env:
+          QUALITY_JOB_STATUS: ${{ job.status }}
+        run: python scripts/quality_evidence.py finish
+      - name: Preserve Android evidence even on failure
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: quality-android-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/larp-quality-android/
+          if-no-files-found: error
+      - name: Preserve Android test and lint reports
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: android-reports-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            companion/android/core/protocol/build/test-results/**/*.xml
+            companion/android/core/protocol/build/reports/tests/
+            companion/android/app/build/test-results/**/*.xml
+            companion/android/app/build/reports/tests/
+            companion/android/app/build/reports/lint-results-debug.*
+          if-no-files-found: warn

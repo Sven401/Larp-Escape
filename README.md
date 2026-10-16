@@ -2,6 +2,8 @@
 
 ESP32-Steuerung des Reichstag-Spiels: Rollenkarten, Kristallmatrix, Audio, LEDs und ESP-NOW-Aktivierung.
 
+**LED-Entwicklung:** [Projektgrenzen und externe Funktionsreferenz](docs/led/implementation-reference.md). Die Umsetzung in App und Firmware bleibt eigenständig.
+
 **Übergabe an das neue Team:** [Einstieg, Quellenkarte und offene Prüfungen](handoff/README.md).
 Dieser Branch führt die geprüften Grundlagen ab `a40365d` zusammen. Unfertige und
 verworfene Arbeiten sind über die dort bezeichneten lokalen Archiv-Branches
@@ -21,7 +23,11 @@ python -m pip install clang-format==19.1.7
 python scripts/check_format.py
 ```
 
-Hosttests und Firmware-Build sind getrennte Nachweise. Der Build bestätigt weder Verdrahtung noch Timing am Gerät. Die CI führt diese Prüfungen aus; eine entfernte CI-Ausführung erfordert einen Push.
+Der [vollständige Prüfweg](docs/quality-checks.md) umfasst zusätzlich konfigurierte
+Steuerung, echte Kryptografie, die GATTS-ABI-Probe und Android. Die CI prüft bei
+Pull Requests den Zusammenführungsstand mit dem Zielbranch und bewahrt
+commitbezogene Prüfprotokolle auch bei Fehlern. Hosttests und Firmware-Build
+sind getrennte Nachweise; sie bestätigen weder Verdrahtung noch Timing am Gerät.
 
 ## Module
 

@@ -1,0 +1,129 @@
+{
+  "date": "2026-10-16",
+  "timezone": "Europe/Berlin",
+  "sourceCommit": "d4892bf67c330a7899d1249bc769187072bc23ff",
+  "documentationBase": "9eb88f603149e80981cd2a64524959abb8471d03",
+  "tagModel": "NTAG213",
+  "sameHardwareUidAcrossAppAndBox": true,
+  "androidNdefCapacity": 137,
+  "type2CcDataCapacity": 144,
+  "ndefBytes": 59,
+  "completedPhysicalRoundtrips": 1,
+  "appInitialWrite": "UNCERTAIN",
+  "appWriteRecoveredByFreshRetapRead": true,
+  "automaticWriteRetry": false,
+  "boxChange": "VERIFIED",
+  "finalAppFlags": 2,
+  "finalAppFullFixtureMatch": true,
+  "finalAppObservationConfirmedByUser": true,
+  "independentPythonStructZlibChecks": 2,
+  "wakeApplicationRestoredAndVerified": true,
+  "keyPartitionUnchangedVerified": true,
+  "wakeAuthenticatedLiveAfterRestore": true,
+  "appNfcEvents": [
+    {
+      "localTime": "00:17:33.007",
+      "event": "nfc_write_armed"
+    },
+    {
+      "localTime": "00:17:39.467",
+      "event": "nfc_rf_read_complete bytes=0"
+    },
+    {
+      "localTime": "00:17:39.467",
+      "event": "nfc_rf_write_start"
+    },
+    {
+      "localTime": "00:17:39.631",
+      "event": "nfc_rf_write_complete"
+    },
+    {
+      "localTime": "00:17:39.632",
+      "event": "nfc_rf_read_complete bytes=0"
+    },
+    {
+      "localTime": "00:17:39.653",
+      "event": "nfc_write_result=UNCERTAIN"
+    },
+    {
+      "localTime": "00:18:25.041",
+      "event": "nfc_rf_read_complete bytes=59"
+    },
+    {
+      "localTime": "00:18:25.042",
+      "event": "nfc_read_valid empty=false recovered=true previousVerified=true"
+    },
+    {
+      "localTime": "00:20:49.050",
+      "event": "nfc_rf_read_complete bytes=59"
+    },
+    {
+      "localTime": "00:20:49.051",
+      "event": "nfc_read_valid empty=false recovered=false previousVerified=false"
+    }
+  ],
+  "operations": [
+    {
+      "source": "info-01.json",
+      "startedUtc": "2026-10-15T22:17:43.057508+00:00",
+      "finishedUtc": "2026-10-15T22:17:43.331950+00:00",
+      "command": "INFO",
+      "status": "OK",
+      "lines": [
+        "NFC BEGIN INFO",
+        "NFC INFO build=nfc-probe-v1 chip=32 firmware=1.6 support=07 pins=16,17,23,4 nvs=unused",
+        "NFC SPI command=32 phase=complete status=01 polls=4",
+        "NFC HEADER offset=0 hex=0000FF02FED533F8",
+        "NFC END INFO OK"
+      ]
+    },
+    {
+      "source": "box-read-before.json",
+      "startedUtc": "2026-10-15T22:19:08.245286+00:00",
+      "finishedUtc": "2026-10-15T22:19:08.824215+00:00",
+      "command": "READ",
+      "status": "OK",
+      "lines": [
+        "NFC BEGIN READ",
+        "NFC TAG type=NTAG213 uid_bytes=7 atqa=0044 sak=00 writable=1 capacity=144 ndef_bytes=59",
+        "NFC NDEF offset=0 hex=D21F196170706C69636174696F6E2F766E642E796F75726170702E74616764617461019728350101000000000000000000010001010000F4617B57",
+        "NFC DATA test_record=1 flags=1 prepared=1 crc_checked=1",
+        "NFC DETAIL session=none reader=none",
+        "NFC SPI command=40 phase=complete status=01 polls=6",
+        "NFC HEADER offset=0 hex=0000FF13EDD54100",
+        "NFC END READ OK"
+      ]
+    },
+    {
+      "source": "box-change.json",
+      "startedUtc": "2026-10-15T22:19:36.908884+00:00",
+      "finishedUtc": "2026-10-15T22:19:37.788821+00:00",
+      "command": "CHANGE",
+      "status": "VERIFIED",
+      "lines": [
+        "NFC BEGIN CHANGE",
+        "NFC TAG type=NTAG213 uid_bytes=7 atqa=0044 sak=00 writable=1 capacity=144 ndef_bytes=59",
+        "NFC NDEF offset=0 hex=D21F196170706C69636174696F6E2F766E642E796F75726170702E7461676461746101972835010200000000000000000001000101000006D5B37E",
+        "NFC DATA test_record=1 flags=2 prepared=0 crc_checked=1",
+        "NFC DETAIL session=fresh_readback_exact reader=none",
+        "NFC SPI command=40 phase=complete status=01 polls=6",
+        "NFC HEADER offset=0 hex=0000FF13EDD54100",
+        "NFC END CHANGE VERIFIED"
+      ]
+    },
+    {
+      "source": "off-after-change.json",
+      "startedUtc": "2026-10-15T22:19:55.276628+00:00",
+      "finishedUtc": "2026-10-15T22:19:55.541174+00:00",
+      "command": "OFF",
+      "status": "OK",
+      "lines": [
+        "NFC BEGIN OFF",
+        "NFC DETAIL reader=none",
+        "NFC SPI command=32 phase=complete status=01 polls=6",
+        "NFC HEADER offset=0 hex=0000FF02FED533F8",
+        "NFC END OFF OK"
+      ]
+    }
+  ]
+}

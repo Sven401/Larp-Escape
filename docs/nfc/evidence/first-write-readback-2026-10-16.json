@@ -1,0 +1,138 @@
+{
+  "date": "2026-10-16",
+  "timezone": "Europe/Berlin",
+  "sourceCommit": "c0f76ee5123ef51252341b21c18a636abb6f6bc2",
+  "apkSha256": "2d8030388dd201a658a424b3a31af443f37f9a0e5c7c5f0df8ea46023195d2a3",
+  "installedApkHashMatched": true,
+  "phoneModel": "moto g14",
+  "androidVersion": "14",
+  "tagModel": "not separately identified",
+  "androidNdefCapacity": 137,
+  "emptyNdefBeforeSuccessfulWrite": true,
+  "ndefBytesAfter": 59,
+  "successfulRunWriteCalls": 1,
+  "successfulRunWriteCompletions": 1,
+  "sameTagUidAndAllBytesVerified": true,
+  "automaticRediscoveryCount": 1,
+  "verificationAfterWriteCompleteMs": 310,
+  "automaticWriteRetry": false,
+  "manualRetapRequiredForVerification": false,
+  "userConfirmedExecutingContactStep": true,
+  "immediateSuccessUiCaptured": false,
+  "subsequentReadUiCaptured": true,
+  "finalData": {
+    "uidHash": 20261015,
+    "flags": 1,
+    "timestampBinary": 0,
+    "visits": [
+      {
+        "station": 1,
+        "result": 1,
+        "minutes": 0
+      }
+    ]
+  },
+  "earlierAttempts": {
+    "writeIOExceptionObserved": true,
+    "freshReadsAfterExceptionWereEmpty": true,
+    "preparedRequestsCancelledByOrientationChanges": true,
+    "systemNfcToggleOpenedChooserAndCancelledRequest": true,
+    "notCountedAsSuccessfulFixTests": true
+  },
+  "rotationSettingsRestoredAndVerified": true,
+  "nfcEnabledAtEnd": true,
+  "boxFirmwareChangedInThisCorrection": false,
+  "wakeAccessAuthenticatedAtEnd": true,
+  "wakeLiveAtEnd": true,
+  "wakeArrangementAtEnd": [
+    2,
+    3,
+    4,
+    1
+  ],
+  "jvmTests": {
+    "tests": 105,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "debugBuild": "success",
+  "lintErrors": 0,
+  "lintWarnings": 3,
+  "ciOnSourceCommit": {
+    "quality": {
+      "runId": 38819322325,
+      "conclusion": "success"
+    },
+    "ledProduct": {
+      "runId": 38819322278,
+      "conclusion": "success"
+    },
+    "nfcProbe": {
+      "runId": 38819322246,
+      "conclusion": "success"
+    }
+  },
+  "events": [
+    {
+      "localTime": "00:59:17.195",
+      "event": "nfc_write_armed"
+    },
+    {
+      "localTime": "01:00:43.824",
+      "event": "nfc_ndef_read_result bytes=0 null=true"
+    },
+    {
+      "localTime": "01:00:43.825",
+      "event": "nfc_rf_write_start"
+    },
+    {
+      "localTime": "01:00:43.998",
+      "event": "nfc_rf_write_complete"
+    },
+    {
+      "localTime": "01:00:44.000",
+      "event": "nfc_ndef_read_result bytes=0 null=true"
+    },
+    {
+      "localTime": "01:00:44.000",
+      "event": "nfc_readback_requires_rediscovery"
+    },
+    {
+      "localTime": "01:00:44.019",
+      "event": "nfc_write_result=VERIFICATION_REQUIRED"
+    },
+    {
+      "localTime": "01:00:44.021",
+      "event": "nfc_reader_refresh_requested"
+    },
+    {
+      "localTime": "01:00:44.265",
+      "event": "nfc_reader_rediscovered"
+    },
+    {
+      "localTime": "01:00:44.307",
+      "event": "nfc_ndef_read_result bytes=59 null=false"
+    },
+    {
+      "localTime": "01:00:44.308",
+      "event": "nfc_read_valid empty=false recovered=true previousVerified=true"
+    },
+    {
+      "localTime": "01:01:00.758",
+      "event": "nfc_ndef_read_result bytes=59 null=false"
+    },
+    {
+      "localTime": "01:01:00.759",
+      "event": "nfc_read_valid empty=false recovered=false previousVerified=false"
+    },
+    {
+      "localTime": "01:01:01.712",
+      "event": "nfc_ndef_read_result bytes=59 null=false"
+    },
+    {
+      "localTime": "01:01:01.713",
+      "event": "nfc_read_valid empty=false recovered=false previousVerified=false"
+    }
+  ]
+}

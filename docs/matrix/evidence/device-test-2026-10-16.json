@@ -1,0 +1,148 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-16",
+  "timezone": "Europe/Berlin",
+  "testedSourceCommit": "c613acebfb07805d1c363b52a325721f2b6f8077",
+  "firmwareEnvironment": "larp-matrix-test",
+  "status": "Installation verified; no positive matrix contact observed; physical cause unresolved; continuation requested in a new session",
+  "installation": {
+    "sources": ["phone-backup.json", "flash-backup.json", "app-install.json", "matrix-install.json"],
+    "previousApkBackup": {
+      "saved": true,
+      "bytes": 23231270,
+      "sha256": "2d8030388dd201a658a424b3a31af443f37f9a0e5c7c5f0df8ea46023195d2a3"
+    },
+    "fullFlashBackup": {
+      "bytes": 4194304,
+      "sha256": "d82af581f2d09d50f3a0645f8b159bfadc77ce3f336897dd906cb40925788aa8",
+      "chipMatched": true,
+      "verifiedAtDevice": true,
+      "previousWakeApplicationMatched": true,
+      "partitionMapMatched": true,
+      "keyPartitionMatched": true
+    },
+    "apk": {
+      "bytes": 23264146,
+      "sha256": "fbdb0439aef6eb950b39c9eaf1b042865654e0865e46cce36ae91c5dc6910cd6",
+      "mode": "replaceKeepData",
+      "readbackMatched": true
+    },
+    "firmware": {
+      "bytes": 1139840,
+      "sha256": "50accb8ddb3e14a30e196a7f7dc6f479206d6e3a22e7f32337c8ac2a0c2f60ce",
+      "applicationOffset": "0x10000",
+      "applicationVerifiedAtDevice": true,
+      "partitionMapUnchanged": true,
+      "keyPartitionUnchanged": true
+    },
+    "existingBoxAccessConfirmed": true,
+    "wakeArrangementObserved": [2, 3, 4, 1],
+    "wakeArrangementOrder": "top-left, top-right, bottom-left, bottom-right",
+    "currentInstalledPair": "matrix APK and matrix firmware identified above",
+    "rollbackPerformed": false,
+    "rollbackVerified": false
+  },
+  "userReports": {
+    "sources": ["physical-precheck.json", "contact-01-retry.json", "contact-02.json"],
+    "priorDeviceTrialsComplete": true,
+    "diodesPresent": true,
+    "diodeRingSideDescription": "Zeilenleitung",
+    "actualCathodeExpanderTerminal": null,
+    "contactType": "Reed contacts actuated with a magnet",
+    "originalProjectDetectedContacts": true,
+    "exactSuccessfulHistoricalVersion": null,
+    "continuePhysicalTerminalCheckInNewSession": true
+  },
+  "observations": [
+    {
+      "step": "M1",
+      "userAction": "All contacts reported released",
+      "statusText": "Live · elektrische Kontaktkoordinaten",
+      "contactText": "Beobachtete Kontakte: keine",
+      "sources": ["initial-observation.json", "matrix-initial.xml", "matrix-ready.xml"],
+      "interpretation": "Fresh empty observation only; no function proof without a positive control",
+      "supersedesPreliminaryM1PassedLabel": true
+    },
+    {
+      "step": "M2 initial",
+      "physicalPosition": "unten links",
+      "userAction": "One contact reported held",
+      "statusText": "Live · elektrische Kontaktkoordinaten",
+      "contactText": "Beobachtete Kontakte: keine",
+      "sources": ["contact-01.json", "contact-01-lower-left-held.xml", "contact-01-lower-left-held-repeat.xml"],
+      "assignedCoordinate": null
+    },
+    {
+      "step": "M2 repeated",
+      "physicalPosition": "unten links",
+      "userAction": "Magnet reported directly at the magnetic matrix contact",
+      "connectionRestoredBeforeObservation": true,
+      "statusText": "Live · elektrische Kontaktkoordinaten",
+      "contactText": "Beobachtete Kontakte: keine",
+      "sources": ["contact-01-retry.json", "retry-connected.xml", "retry-live-held.xml"],
+      "assignedCoordinate": null
+    },
+    {
+      "step": "Second separated contact",
+      "physicalPosition": "oben rechts",
+      "userAction": "Magnet reported at a second matrix Reed contact",
+      "statusText": "Live · elektrische Kontaktkoordinaten",
+      "contactText": "Beobachtete Kontakte: keine",
+      "sources": ["contact-02.json", "contact-02-upper-right-live.xml"],
+      "assignedCoordinate": null
+    }
+  ],
+  "limits": {
+    "physicalMapping": [],
+    "positiveMatrixControlObserved": false,
+    "physicalDefectEstablished": false,
+    "physicalCauseEstablished": false,
+    "firstWakeCrossCheck": "Not evaluated: capture showed another foreground app",
+    "laterWakeObservation": "Four fresh LOW inputs; no new Wake activation acceptance",
+    "laterWakeSources": ["retry-wake-held.xml", "contact-02-upper-right-entry.xml"],
+    "notCompleted": ["M3", "M4", "M5", "M6", "full M7", "full M8", "M9 LED start/stop"],
+    "diagnosticReconnectObserved": true,
+    "currentGlobalValidityCannotRepresentPartialEightRowAcceptance": true
+  },
+  "confirmedSourceFindings": {
+    "reviewSource": "direction-review.json",
+    "originalScannerReference": "61ef6c65206b1fcd5656ac64825d22a518396f99:lib/Keymatrixwrapper/Keymatrix.cpp",
+    "currentScannerReference": "c613acebfb07805d1c363b52a325721f2b6f8077:firmware/led/src/MatrixInputs.cpp",
+    "originalDirection": "COLMAP output LOW; ROWMAP input pull-up; column then output HIGH",
+    "currentDirection": "ROWMAP output LOW; COLMAP input pull-up; row then IODIR input",
+    "exampleA9": {
+      "original": "0x20 B1 LOW, sense 0x20 B0 INPUT_PULLUP",
+      "current": "0x20 B0 LOW, sense 0x20 B1 INPUT_PULLUP"
+    },
+    "historicalColumnIChange": {
+      "commit": "61ef6c65206b1fcd5656ac64825d22a518396f99",
+      "date": "2025-02-19",
+      "file": "lib/Config/Config.h",
+      "before": "0x20 A7",
+      "after": "0x20 B5"
+    },
+    "historicalNamingTrap": "0472a9e:lib/Keymatrixwrapper/Keymatrix.cpp calls the colMapping output row pin in a comment",
+    "io7DirectionConflict": {
+      "datasheet": "Microchip DS20001952D, section 3.5.1, page 18",
+      "url": "https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/MCP23017-Data-Sheet-DS20001952.pdf",
+      "reviewedOn": "2026-10-16",
+      "requirement": "MCP23017 IO7 must be configured as output",
+      "codeConflict": "Current MatrixInputs releases 0x21 B7 through IODIR input; not reading B7 GPIO does not establish compliance",
+      "codeCorrectionApplied": false,
+      "actualChipIdentityConfirmed": false,
+      "physicalCausalityConfirmed": false
+    }
+  },
+  "hypothesis": {
+    "status": "vermutet",
+    "description": "Reversing the scan direction may be incompatible with the previously working diode matrix; the actual cathode terminal and successful old version remain unverified"
+  },
+  "nextStep": "In the requested new session identify both concrete expander terminals of one closed Reed branch and its cathode/ring side (0x20 or 0x21 plus A/B pin); then reconcile scan direction and IO7 direction before testing a correction",
+  "provenance": {
+    "sessionRelativeStructuredEvidence": "work/evidence/matrix-01",
+    "sessionRelativePrivateEvidence": "work/private/matrix-01",
+    "method": "Existing JSON and relevant XML text read; Git source/history compared; manufacturer datasheet read",
+    "newDeviceAccessForThisReport": false,
+    "rawFlashKeysAndDeviceIdentifiersIncluded": false
+  }
+}

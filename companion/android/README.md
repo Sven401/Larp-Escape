@@ -3,8 +3,9 @@
 Kotlin, Jetpack Compose und Material 3. Eigenständige App mit Paketname
 `de.larpescape.companion`, Mindestversion Android 13/API33. Bestehende
 Webprototypen und der .NET-Diagnoseclient bleiben separate Referenzen.
-Dies ist die Entwicklungsbasis der Projekt-App; die erste Version ist ein
-lesender Verbindungsprüfstand, noch keine freigegebene Spielleitungs-App.
+Die Projekt-App bedient den eigenen LED-Produktdienst mit Funkeln,
+Lichtimpuls und Ripple sowie Start/Stop. Der LED-Zweig hat zunächst kein
+Spielmodul; seine LED-Berechtigung ist keine Legacy-Spielleiteranmeldung.
 
 `app` enthält UI/ViewModel, DeviceRepository und Android-BLE. `core:protocol`
 enthält den plattformunabhängigen, begrenzten FrameAssembler. Alle BLE-Rückrufe
@@ -12,7 +13,41 @@ werden mit kopierten Bytes auf dem Hauptthread verarbeitet und an die jeweilige
 Verbindungsgeneration gebunden. Ein ViewModel besitzt die Sitzung auch bei
 Rotation. Verlassen der App beendet die Sitzung; kein Hintergrundservice.
 
+## Tastenmatrix im nächsten gemeinsamen Test
+
+Die ESP-Seite zeigt vor Wake und LEDs ein 9×9-Raster mit elektrischen
+Koordinaten A–I/1–9. Ein Kontakt trägt ein sichtbares Symbol und erscheint
+zusätzlich in der Liste aktiver Koordinaten. Auf kleinen Displays lässt sich
+das Raster seitlich verschieben; die Zellen bleiben mindestens 40 dp groß.
+Jeweils eine einzelne Taste mindestens eine Sekunde halten, loslassen und die
+Zuordnung zur physischen Taste im gemeinsamen Test protokollieren.
+Elektrische Pinbelegung und physische Zuordnung sind vorläufig.
+
+Nur vollständige, authentisierte Matrixmeldungen mit neuer Statussequenz
+halten die Anzeige für weniger als eine Sekunde aktuell. Lesefehler,
+Verbindungsende und veraltete Werte zeigen unbekannt. LED-Antworten und
+einzelne BLE-Fragmente verlängern die Frische nicht. Bei Mehrfachkontakt
+zeigt die App die beobachteten Kontaktkoordinaten ausdrücklich als mehrdeutig;
+ihre Zuordnung zu tatsächlich gedrückten Tasten bleibt unklar. Die bestehende LED-/Wake-Firmware
+bleibt verbindbar und zeigt sichtbar, dass sie noch keine Matrixdaten liefert.
+Die neue Matrix-Prüffirmware und der [gemeinsame Testablauf](../../docs/matrix/test-preparation.md)
+werden vor der Geräteprüfung zusammen bereitgestellt. Die Appanzeige selbst
+bestätigt noch keine physische Taste.
+
+## Wake-Inputs
+
+Die ESP-Seite zeigt vier Wake-Rohpegel in einem 2×2-Raster. Langes Berühren
+hebt eine Kachel auf; Ziehen zeigt den Tausch als Vorschau, Loslassen bestätigt.
+Die Anordnung bleibt pro Box lokal erhalten. Lesefehler und veraltete Werte
+werden unbekannt, nicht inaktiv. [Testablauf, Hardwarevorbehalt und Upgrade-Reihenfolge](../../docs/wake/test-preparation.md).
+
 ## Bauen und installieren
+
+Für die NFC-Baugruppenprüfung bietet die Seite **NFC-Tags** den normalen
+Tageditor und einen ausdrücklich aktivierten **Handy-Testtag**. Dessen
+Emulation endet bei Verlassen der Seite oder nach drei Minuten. Die
+getrennte NFC-Prüffirmware und der anschließende Rundlauf mit einem echten
+Tag stehen im [NFC-Testablauf](../../docs/nfc/test-preparation.md).
 
 Alle Befehle in diesem Abschnitt laufen aus `companion/android/`.
 Voraussetzung: JDK17 oder 21, Android SDK35 und Build Tools35.0.0. Der Gradle
@@ -22,7 +57,7 @@ SDK über `ANDROID_HOME` oder eine lokale, ignorierte `local.properties` angeben
 ```powershell
 $env:JAVA_HOME='C:/Program Files/Android/openjdk/jdk-21.0.8'
 $env:ANDROID_HOME='C:/Program Files (x86)/Android/android-sdk'
-./gradlew.bat :core:protocol:test :app:assembleDebug :app:lintDebug
+./gradlew.bat :core:protocol:test :app:testDebugUnitTest :app:assembleDebug :app:lintDebug
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 adb shell am start -n de.larpescape.companion/.MainActivity
 ```
@@ -55,18 +90,79 @@ Testlauf statt eines UP-TO-DATE-Ergebnisses:
 ## Debug-Labor und Release
 
 `BuildConfig.ALLOW_CONTRACT_LAB` ist in Debug `true`, in Release `false`.
-Debug darf den markierten Laborservice lesen. Release lehnt reine
-Laborgeräte bei der Dienstprüfung ab und verwendet auch bei gemeinsam
-angebotenen Diensten ausschließlich den kanonischen Produktservice.
+Debug darf den markierten Laborservice lesen. Der eigene LED-Produktdienst
+hat Vorrang; ein vorhandener kanonischer Dienst hat Vorrang vor dem Labor.
+Release lehnt reine
+Laborgeräte bei der Dienstprüfung ab und wählt bei gemeinsam angebotenen
+Diensten den eigenen LED-Dienst vor dem kanonischen Legacy-Produktservice, niemals das Labor.
 Werbenamen und UUIDs bleiben Auswahlhilfen; erst GATT bestätigt den Dienst.
 
 ```powershell
 ./gradlew.bat :app:assembleRelease :app:lintRelease
 ```
 
-Release ist derzeit unsigniert und noch nicht zur Bedienung freigegeben:
-Produktanmeldung, Produktstatus und Befehle fehlen. Der Build ist ein
-Prüfartefakt, kein Verteilungs- oder Veröffentlichungsauftrag.
+Release ist unsigniert. Der LED-Produktdienst bietet einen eigenen eingerichteten
+LED-Zugang; die frühere Legacy-Spielanmeldung bleibt unverbunden. Der Build
+ist ein Prüfartefakt, kein Verteilungs- oder Veröffentlichungsauftrag.
+
+## LED-Produktbedienung
+
+Die ESP-Seite enthält die drei festen Varianten **Funkeln**, **Lichtimpuls**
+und **Ripple**. Auswahl allein sendet nichts; „Start“ ersetzt den laufenden
+Effekt durch die ausgewählte Variante. „Stop · LEDs aus“ sendet einen eigenen
+Ausschaltauftrag. Funkeln läuft bis Stop, Lichtimpuls und Ripple enden nach
+jeweils einem Durchlauf dunkel. Wiederholter Start ist bewusst möglich.
+Die Anzeige unterscheidet Auswahl, offenen Auftrag und bestätigten Boxzustand.
+Eine Ausführungsantwort ist kein Nachweis des sichtbaren Lichts.
+
+Die Box wird zuerst über den getrennten lokalen USB-Einrichtungsweg versehen.
+Danach in der echten App „Box-Zugang importieren“ wählen und die erzeugte
+JSON-Datei importieren: `schemaVersion:1`, `deviceId` mit 32 Hexzeichen,
+`secret` mit 64 Hexzeichen, optional `name` (1–64 Zeichen). Die App akzeptiert
+höchstens 2048 UTF-8-Bytes und keine zusätzlichen oder doppelten Felder. Der
+Import ersetzt bewusst den einen eingerichteten Box-Zugang auf diesem Handy
+und beendet eine bestehende Verbindung. Eine andere Box braucht einen eigenen
+Import. Werbename und Bluetoothadresse richten keinen Zugang ein.
+
+Der aktuelle Zugang liegt als `led-access-v1.bin` AES-256-GCM-verschlüsselt in
+`noBackupFilesDir`. Der Schlüssel zum Entschlüsseln bleibt unter dem eigenen Alias
+`larpescape-led-access-v1` im Android Keystore; `allowBackup=false`
+bleibt gesetzt. Der Importinhalt und das Geheimnis werden nicht geloggt.
+Verlust des Keystore-Schlüssels macht einen erneuten Import erforderlich.
+Die exportierte USB-Einrichtungsdatei selbst bleibt außerhalb dieses Speichers.
+Die Oberfläche zeigt eine neutrale LED-Boxkennung, keinen importierten Produktnamen.
+Bei einem Update von einer früheren Zugangsvariante wird der bestehende
+Geräteschlüssel erneut über USB exportiert und bewusst importiert. Es gibt keine
+automatische Übernahme alter privater Zugangsspeicher. Andere Appdaten bleiben
+bei einem regulären Update erhalten; ältere private Artefakte werden nicht gelöscht.
+
+Eigener Dienst: `6c790001-2f50-4d5a-a7f4-35a478c4b101`. Er unterscheidet sich
+vom Legacy-Spiel- und vom Vertragslaborservice. Zufällige Handy-, Boot- und
+Verbindungswerte binden den gegenseitigen HMAC-SHA256-Nachweis an diese Sitzung.
+Befehle und Antworten besitzen getrennte HMAC-Domänen unter `LARP-LED/1/`. Die gemeinsamen
+[Firmware-Testvektoren](../../docs/led/fixtures/wire-v1.json) werden direkt von
+JVM-Tests gelesen; die dortigen öffentlichen Testschlüssel sind keine Einrichtung.
+
+Alle GATT-Werte sind höchstens 20 Byte groß; die App braucht keine MTU-Erhöhung.
+Sie sendet nur einen Auftrag gleichzeitig und wartet auf alle Write-ACKs **und**
+die passende authentisierte Geräteantwort. Ein Write-ACK allein zeigt keinen
+Erfolg. Veraltete Statussequenzen erneuern die lokale Frische nicht. Ein älteres,
+aber korrekt gebundenes Ergebnis kann noch seinen offenen Auftrag abschließen,
+ohne einen neueren Status zu überschreiben. Nach einer Sekunde ohne vollständigen
+neuen Status sind Befehle gesperrt, nach fünf Sekunden ohne Befehlsabschluss wird
+die Verbindung beendet. Es gibt keine automatische Wiederholung eines Starts.
+
+Der explizite Modus `LED_ONLY` wird als „Spielintegration folgt getrennt“ gezeigt
+und erlaubt den LED-Start. Für einen späteren Spielanschluss erlaubt allein
+`STOPPED` die manuelle Bedienung; `RUNNING`, `PAUSED` und `UNKNOWN` sperren
+Start und Stop. Die aktuelle
+LED-Firmware behauptet keinen geprüften Zustand eines nicht vorhandenen Spiels.
+Appwechsel, Rechteentzug, Bluetooth-Aus und bewusste Trennung entwerten den
+Appzustand; die Box schaltet bei erkanntem Verbindungsverlust aus.
+
+Hosttests und Builds prüfen Protokoll, Bedienregeln und Kompilierbarkeit. Der
+LED-Produktpfad wurde dadurch nicht auf Handy/Box physisch abgenommen; der
+frühere isolierte Rot-an/aus-Versuch war ein anderer Firmware- und Appstand.
 
 ## Handyprobe
 
@@ -83,7 +179,7 @@ neue Suche. Ein Prozessneustart übernimmt keinen alten Gerätestatus. Rechtever
 und ausgeschaltetes Bluetooth entwerten die Sitzung ebenfalls; der geschützte
 Bluetooth-Systembroadcast wird nur während des Vordergrundbetriebs empfangen.
 
-Die sieben Fake-Repository-Fälle prüfen die ViewModel-Regeln separat:
+Die zehn Fake-Repository-Fälle prüfen Verbindungs- und LED-Bedienregeln separat:
 
 ```powershell
 ./gradlew.bat :app:testDebugUnitTest
@@ -185,8 +281,15 @@ Messprotokoll liegen lokal unter `.local/evidence-a2-vite/` in beiden App-Teilen
 
 ## NFC-Tags
 
+Der [neue gemeinsame App-Rundlauf](../../docs/nfc/app-roundtrip.md) verwendet
+die ausdrücklich gebaute Firmwarevariante `larp-nfc-test`. Auf der NFC-Seite
+stehen Boxlesen und ein bestätigter einmaliger Box-Schreibauftrag bereit.
+Die zuvor eingerichtete Bluetoothverbindung bleibt auf dieser Seite bestehen.
+Ein vollständiger Rundlauf dieses Pfads wurde am 16. Oktober 2026
+[am Gerät bestätigt](../../docs/nfc/app-device-test-2026-10-16.md).
+
 Die Seite „NFC-Tags“ verwendet Android ReaderMode im Vordergrund, unabhängig
-von Bluetoothrechten. Beim Wechsel zur NFC-Seite endet die BLE-Sitzung.
+von Bluetoothrechten. Beim Wechsel zur NFC-Seite bleibt die BLE-Sitzung für den Box-Rundlauf erhalten.
 Hintergrund, Seitenwechsel und Rotation verwerfen einen vorbereiteten
 Schreibauftrag. NFC muss in den Handyeinstellungen eingeschaltet sein.
 
@@ -229,7 +332,7 @@ ist in dieser Messung nicht dokumentiert. Geänderte Daten, Fehlerfälle,
 Mehrrecord-Erhalt und Dauerbetrieb bleiben separat zu prüfen; die Ursache
 früherer unklarer Schreibausgänge ist weiterhin offen.
 Lokale Messdateien: `.local/evidence-live/phone-log.txt` und `phone-ui.txt`.
-In dieser Sitzung wurde keine neue APK installiert; die installierte Fassung
+In der NFC-Sitzung vom 10.10.2026 wurde keine neue APK installiert; die installierte Fassung
 wurde nicht erneut per Hash zugeordnet. Erneute Build-/Testversuche scheiterten
 vor der Ausführung an der lokalen Gradle-Daemon-Verbindung.
 
@@ -241,7 +344,7 @@ Neue Prüfungen mit Nutzerhandlungen werden vom Nutzer in der Projekt-App
 geführt; ein abgeschlossener exportierter Bericht wird anschließend ausgewertet.
 
 Ein einzelner Handytest belegt keinen Dauerbetrieb, weitere Androidmodelle,
-Produktanmeldung oder physischen Spielgerätebetrieb. Spielleitungsfunktionen und Produktzugang folgen weiteren Vertikalen.
+Legacy-Spielanmeldung oder physischen Spielgerätebetrieb. Legacy-Spielleitungsfunktionen bleiben ein eigener Anschluss.
 Für diese einzelne Seite genügt Konstruktorinjektion.
 
 Grundlagen, geprüft am 10.10.2026:

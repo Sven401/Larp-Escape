@@ -3,6 +3,7 @@ package de.larpescape.companion
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -14,6 +15,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
@@ -21,10 +23,17 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.larpescape.companion.platform.ble.AndroidBleRepository
 import de.larpescape.companion.ui.device.DeviceViewModel
+import de.larpescape.companion.ui.device.LedControls
+import de.larpescape.companion.ui.device.AudioControls
+
+import de.larpescape.companion.ui.device.MatrixControls
+import de.larpescape.companion.ui.device.WakeControls
+import de.larpescape.protocol.LedAccess
 import de.larpescape.protocol.StatusFreshness
 import de.larpescape.companion.platform.nfc.*
 import de.larpescape.companion.ui.nfc.*
 import de.larpescape.companion.data.scenario.LocalScenarioDraftRepository
+import de.larpescape.companion.data.device.MatrixCollectionCodec
 import de.larpescape.companion.ui.scenario.*
 import de.larpescape.protocol.ScenarioDraftCodec
 import androidx.lifecycle.lifecycleScope
@@ -34,6 +43,7 @@ import kotlinx.coroutines.withContext
 
 class MainActivity : ComponentActivity() {
     private var nfcScreen by mutableStateOf(false)
+    private var phoneNfcTest by mutableStateOf(false)
     private var scenarioScreen by mutableStateOf(false)
     private val scenarioModel by viewModels<ScenarioViewModel> {
         object : ViewModelProvider.Factory {
@@ -53,6 +63,15 @@ class MainActivity : ComponentActivity() {
             } catch (error: Exception) { scenarioModel.notice("Import fehlgeschlagen: ${error.message}") }
         }
     }
+    private val importBoxAccess = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        if (uri != null) lifecycleScope.launch {
+            val bytes = try {
+                withContext(Dispatchers.IO) { contentResolver.openInputStream(uri)?.use { it.readNBytes(LedAccess.MAX_BYTES + 1) } ?: ByteArray(0) }
+            } catch (_: Exception) { ByteArray(0) }
+            model.importLedAccess(bytes)
+            bytes.fill(0)
+        }
+    }
     private val exportScenario = registerForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
         val bytes = scenarioModel.takeExport()
         if (uri != null && bytes != null) lifecycleScope.launch {
@@ -66,7 +85,7 @@ class MainActivity : ComponentActivity() {
     private fun selectScenario(selected: Boolean) {
         if (selected == scenarioScreen) return
         scenarioScreen = selected
-        if (selected) { nfcReader.stop(); nfcScreen = false; model.foregroundEnded() }
+        if (selected) { PhoneNfcTest.stop(this); nfcReader.stop(); nfcScreen = false; model.foregroundEnded() }
         else if (!nfcScreen) model.foregroundStarted(permissionsGranted())
     }
     private val nfcModel by viewModels<NfcViewModel> {
@@ -83,14 +102,36 @@ class MainActivity : ComponentActivity() {
         if (selected == nfcScreen) return
         nfcScreen = selected
         showPermissionExplanation = false
-        if (selected) { model.foregroundEnded(); nfcReader.start() }
-        else { nfcReader.stop(); if (!scenarioScreen) model.foregroundStarted(permissionsGranted()) }
+        if (selected) { if (!phoneNfcTest) nfcReader.start() }
+        else { PhoneNfcTest.stop(this); nfcReader.stop(); if (!scenarioScreen) model.foregroundStarted(permissionsGranted()) }
+    }
+    private fun selectPhoneNfcTest(selected: Boolean) {
+        if (phoneNfcTest == selected) return
+        PhoneNfcTest.stop(this)
+        nfcReader.stop()
+        phoneNfcTest = selected
+        if (!selected && nfcScreen) nfcReader.start()
     }
     private val model by viewModels<DeviceViewModel> {
         object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 @Suppress("UNCHECKED_CAST")
                 return DeviceViewModel(AndroidBleRepository(applicationContext)) as T
+            }
+        }
+    }
+    private var pendingMatrixReport: String? = null
+    private val exportMatrix = registerForActivityResult(ActivityResultContracts.CreateDocument("text/plain")) { uri ->
+        val report = pendingMatrixReport
+        pendingMatrixReport = null
+        if (uri != null && report != null) lifecycleScope.launch {
+            try {
+                withContext(Dispatchers.IO) { contentResolver.openOutputStream(uri, "wt")?.use {
+                    it.write(report.toByteArray(Charsets.UTF_8))
+                } ?: error("Datei konnte nicht geschrieben werden") }
+                android.widget.Toast.makeText(this@MainActivity, "Sammelbericht exportiert", android.widget.Toast.LENGTH_LONG).show()
+            } catch (_: Exception) {
+                android.widget.Toast.makeText(this@MainActivity, "Export fehlgeschlagen · Lauf bleibt in der App gespeichert", android.widget.Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -116,6 +157,7 @@ class MainActivity : ComponentActivity() {
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        PhoneNfcTest.stop(this)
         nfcScreen = savedInstanceState?.getBoolean("nfcScreen") ?: false
         scenarioScreen = savedInstanceState?.getBoolean("scenarioScreen") ?: false
         setContent {
@@ -144,8 +186,25 @@ class MainActivity : ComponentActivity() {
                                 importFile = { importScenario.launch(arrayOf("application/json", "text/plain")) },
                                 exportFile = { if (scenarioModel.beginExport()) exportScenario.launch("szenario-entwurf.json") })
                         } else if (nfcScreen) {
-                            val nfcState by nfcModel.state.collectAsStateWithLifecycle()
-                            NfcScreen(nfcState, nfcModel::prepareWrite, nfcModel::cancelWrite)
+                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                FilterChip(selected = !phoneNfcTest, onClick = { selectPhoneNfcTest(false) }, label = { Text("Echter Tag") })
+                                FilterChip(selected = phoneNfcTest, onClick = { selectPhoneNfcTest(true) }, label = { Text("Handy als Testtag") })
+                            }
+                            if (phoneNfcTest) {
+                                val testState by PhoneNfcTest.state.collectAsStateWithLifecycle()
+                                DisposableEffect(testState.active) {
+                                    if (testState.active) window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                                    onDispose { window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) }
+                                }
+                                PhoneNfcTestScreen(testState, PhoneNfcTest.supported(this@MainActivity),
+                                    activate = { nfcReader.stop(); PhoneNfcTest.start(this@MainActivity) },
+                                    deactivate = { PhoneNfcTest.stop(this@MainActivity) })
+                            } else {
+                                val nfcState by nfcModel.state.collectAsStateWithLifecycle()
+                                BoxNfcControls(state.leds, model::boxNfc)
+                                BoxNfcComparison(state.leds, nfcState)
+                                NfcScreen(nfcState, nfcModel::prepareWrite, nfcModel::cancelWrite)
+                            }
                         } else {
                         Text("Gerät verbinden", style = MaterialTheme.typography.titleLarge)
                         Text(state.message)
@@ -165,16 +224,29 @@ class MainActivity : ComponentActivity() {
                                 }
                             } }
                         }
-                        Text("Version 0.1 · lesender Verbindungsprüfstand", style = MaterialTheme.typography.bodySmall)
+                        DisposableEffect(state.matrixCollection.collecting) {
+                            if (state.matrixCollection.collecting) window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                            onDispose { window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) }
+                        }
+                        MatrixControls(state.leds.matrix, state.matrixCollection, model::matrixAction, export = {
+                            pendingMatrixReport = MatrixCollectionCodec.report(model.state.value.matrixCollection)
+                            exportMatrix.launch("Tastenmatrix-Sammeldurchgang.txt")
+                        })
+                        WakeControls(state.leds.wake)
+                        AudioControls(state.leds.audio, model::selectAudioTrack, model::selectAudioVolume,
+                            model::startAudio, model::stopAudio, model::audioAction)
+                        LedControls(state.leds, model::selectLedEffect, model::startLedEffect, model::stopLeds,
+                            importAccess = { importBoxAccess.launch(arrayOf("application/json", "text/plain")) })
+                        Text("LED-Bedienung · Geräteantwort und sichtbare Wirkung getrennt", style = MaterialTheme.typography.bodySmall)
                         }
                     }
                 }
             }
         }
     }
-    override fun onStart() { super.onStart(); if (!nfcScreen && !scenarioScreen) model.foregroundStarted(permissionsGranted()) }
-    override fun onResume() { super.onResume(); if (nfcScreen && !scenarioScreen) nfcReader.start() else if (!scenarioScreen) model.permissionsChanged(permissionsGranted()) }
-    override fun onPause() { nfcReader.stop(); super.onPause() }
+    override fun onStart() { super.onStart(); if (!scenarioScreen) model.foregroundStarted(permissionsGranted()) }
+    override fun onResume() { super.onResume(); if (!scenarioScreen) model.permissionsChanged(permissionsGranted()); if (nfcScreen && !scenarioScreen && !phoneNfcTest) nfcReader.start() }
+    override fun onPause() { PhoneNfcTest.stop(this, "Vordergrund verlassen · Testtag deaktiviert"); nfcReader.stop(); super.onPause() }
     override fun onSaveInstanceState(outState: Bundle) { outState.putBoolean("nfcScreen", nfcScreen); outState.putBoolean("scenarioScreen", scenarioScreen); super.onSaveInstanceState(outState) }
     override fun onStop() {
         if (!isChangingConfigurations) { showPermissionExplanation = false; model.foregroundEnded() }

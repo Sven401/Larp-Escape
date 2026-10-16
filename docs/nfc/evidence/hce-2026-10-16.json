@@ -1,0 +1,171 @@
+{
+  "sourceCommit": "d4892bf67c330a7899d1249bc769187072bc23ff",
+  "firmwareSha256": "1b1d26962ef7a7d6801425a2607bf7f059e7420c6bbc8a68e48229f39b21c48c",
+  "apkSha256": "f3bba60e5bcfaff31d7875c9e1f5034733733af2d4ce94eee44e6355ed66b69a",
+  "scope": "Phone HCE; physical tags remain untested",
+  "independentPythonStructZlibByteChecks": 6,
+  "phoneCycle1": {
+    "readResponses": 18,
+    "acceptedUpdates": 3,
+    "commits": 1,
+    "flags": 2,
+    "includesRefusedRepeat": true
+  },
+  "phoneCycle2": {
+    "readResponses": 15,
+    "acceptedUpdates": 3,
+    "commits": 1,
+    "flags": 2
+  },
+  "timeoutRoutingReleased": true,
+  "manualStopRoutingReleased": true,
+  "wakeApplicationRestoredAndVerified": true,
+  "keyPartitionUnchangedVerified": true,
+  "wakeAuthenticatedLiveAfterRestore": true,
+  "operations": [
+    {
+      "source": "final-info-01.json",
+      "startedUtc": "2026-10-15T22:01:03.849133+00:00",
+      "finishedUtc": "2026-10-15T22:01:04.124100+00:00",
+      "command": "INFO",
+      "status": "OK",
+      "lines": [
+        "NFC BEGIN INFO",
+        "NFC INFO build=nfc-probe-v1 chip=32 firmware=1.6 support=07 pins=16,17,23,4 nvs=unused",
+        "NFC SPI command=32 phase=complete status=01 polls=4",
+        "NFC HEADER offset=0 hex=0000FF02FED533F8",
+        "NFC END INFO OK"
+      ]
+    },
+    {
+      "source": "final-read-01.json",
+      "startedUtc": "2026-10-15T22:01:20.125831+00:00",
+      "finishedUtc": "2026-10-15T22:01:20.746093+00:00",
+      "command": "READ",
+      "status": "OK",
+      "lines": [
+        "NFC BEGIN READ",
+        "NFC TAG type=TYPE4 uid_bytes=4 atqa=0004 sak=20 writable=1 capacity=512 ndef_bytes=59",
+        "NFC NDEF offset=0 hex=D21F196170706C69636174696F6E2F766E642E796F75726170702E74616764617461019728350101000000000000000000010001010000F4617B57",
+        "NFC DATA test_record=1 flags=1 prepared=1 crc_checked=1",
+        "NFC DETAIL session=none reader=none",
+        "NFC SPI command=40 phase=complete status=01 polls=12",
+        "NFC HEADER offset=0 hex=0000FF07F9D54100",
+        "NFC END READ OK"
+      ]
+    },
+    {
+      "source": "final-change-01.json",
+      "startedUtc": "2026-10-15T22:01:20.989816+00:00",
+      "finishedUtc": "2026-10-15T22:01:22.141602+00:00",
+      "command": "CHANGE",
+      "status": "VERIFIED",
+      "lines": [
+        "NFC BEGIN CHANGE",
+        "NFC TAG type=TYPE4 uid_bytes=4 atqa=0004 sak=20 writable=1 capacity=512 ndef_bytes=59",
+        "NFC NDEF offset=0 hex=D21F196170706C69636174696F6E2F766E642E796F75726170702E7461676461746101972835010200000000000000000001000101000006D5B37E",
+        "NFC DATA test_record=1 flags=2 prepared=0 crc_checked=1",
+        "NFC DETAIL session=fresh_readback_exact reader=none",
+        "NFC SPI command=40 phase=complete status=01 polls=12",
+        "NFC HEADER offset=0 hex=0000FF07F9D54100",
+        "NFC END CHANGE VERIFIED"
+      ]
+    },
+    {
+      "source": "final-readback-01.json",
+      "startedUtc": "2026-10-15T22:01:22.385657+00:00",
+      "finishedUtc": "2026-10-15T22:01:22.997012+00:00",
+      "command": "READ",
+      "status": "OK",
+      "lines": [
+        "NFC BEGIN READ",
+        "NFC TAG type=TYPE4 uid_bytes=4 atqa=0004 sak=20 writable=1 capacity=512 ndef_bytes=59",
+        "NFC NDEF offset=0 hex=D21F196170706C69636174696F6E2F766E642E796F75726170702E7461676461746101972835010200000000000000000001000101000006D5B37E",
+        "NFC DATA test_record=1 flags=2 prepared=0 crc_checked=1",
+        "NFC DETAIL session=none reader=none",
+        "NFC SPI command=40 phase=complete status=01 polls=12",
+        "NFC HEADER offset=0 hex=0000FF07F9D54100",
+        "NFC END READ OK"
+      ]
+    },
+    {
+      "source": "final-repeat-refused.json",
+      "startedUtc": "2026-10-15T22:01:38.785488+00:00",
+      "finishedUtc": "2026-10-15T22:01:39.264761+00:00",
+      "command": "CHANGE",
+      "status": "NOT_PREPARED",
+      "lines": [
+        "NFC BEGIN CHANGE",
+        "NFC DETAIL session=required_test_record_absent reader=none",
+        "NFC SPI command=40 phase=complete status=01 polls=13",
+        "NFC HEADER offset=0 hex=0000FF07F9D54100",
+        "NFC END CHANGE NOT_PREPARED"
+      ]
+    },
+    {
+      "source": "final-read-02.json",
+      "startedUtc": "2026-10-15T22:02:02.582753+00:00",
+      "finishedUtc": "2026-10-15T22:02:03.202674+00:00",
+      "command": "READ",
+      "status": "OK",
+      "lines": [
+        "NFC BEGIN READ",
+        "NFC TAG type=TYPE4 uid_bytes=4 atqa=0004 sak=20 writable=1 capacity=512 ndef_bytes=59",
+        "NFC NDEF offset=0 hex=D21F196170706C69636174696F6E2F766E642E796F75726170702E74616764617461019728350101000000000000000000010001010000F4617B57",
+        "NFC DATA test_record=1 flags=1 prepared=1 crc_checked=1",
+        "NFC DETAIL session=none reader=none",
+        "NFC SPI command=40 phase=complete status=01 polls=12",
+        "NFC HEADER offset=0 hex=0000FF07F9D54100",
+        "NFC END READ OK"
+      ]
+    },
+    {
+      "source": "final-change-02.json",
+      "startedUtc": "2026-10-15T22:02:03.466040+00:00",
+      "finishedUtc": "2026-10-15T22:02:04.631356+00:00",
+      "command": "CHANGE",
+      "status": "VERIFIED",
+      "lines": [
+        "NFC BEGIN CHANGE",
+        "NFC TAG type=TYPE4 uid_bytes=4 atqa=0004 sak=20 writable=1 capacity=512 ndef_bytes=59",
+        "NFC NDEF offset=0 hex=D21F196170706C69636174696F6E2F766E642E796F75726170702E7461676461746101972835010200000000000000000001000101000006D5B37E",
+        "NFC DATA test_record=1 flags=2 prepared=0 crc_checked=1",
+        "NFC DETAIL session=fresh_readback_exact reader=none",
+        "NFC SPI command=40 phase=complete status=01 polls=11",
+        "NFC HEADER offset=0 hex=0000FF07F9D54100",
+        "NFC END CHANGE VERIFIED"
+      ]
+    },
+    {
+      "source": "final-readback-02.json",
+      "startedUtc": "2026-10-15T22:02:04.893819+00:00",
+      "finishedUtc": "2026-10-15T22:02:05.516269+00:00",
+      "command": "READ",
+      "status": "OK",
+      "lines": [
+        "NFC BEGIN READ",
+        "NFC TAG type=TYPE4 uid_bytes=4 atqa=0004 sak=20 writable=1 capacity=512 ndef_bytes=59",
+        "NFC NDEF offset=0 hex=D21F196170706C69636174696F6E2F766E642E796F75726170702E7461676461746101972835010200000000000000000001000101000006D5B37E",
+        "NFC DATA test_record=1 flags=2 prepared=0 crc_checked=1",
+        "NFC DETAIL session=none reader=none",
+        "NFC SPI command=40 phase=complete status=01 polls=13",
+        "NFC HEADER offset=0 hex=0000FF07F9D54100",
+        "NFC END READ OK"
+      ]
+    },
+    {
+      "source": "final-off.json",
+      "startedUtc": "2026-10-15T22:02:34.125901+00:00",
+      "finishedUtc": "2026-10-15T22:02:34.396268+00:00",
+      "command": "OFF",
+      "status": "OK",
+      "lines": [
+        "NFC BEGIN OFF",
+        "NFC DETAIL reader=none",
+        "NFC SPI command=32 phase=complete status=01 polls=6",
+        "NFC HEADER offset=0 hex=0000FF02FED533F8",
+        "NFC END OFF OK"
+      ]
+    }
+  ]
+}
