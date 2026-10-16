@@ -1,0 +1,372 @@
+{
+  "date": "2026-10-16",
+  "source": "GitHub REST commits/{sha}/check-runs; read-only snapshot; no new test execution",
+  "prs": [
+    {
+      "pr": 43,
+      "head": "5174b7bbac143d1359d15103c696c77ae47fc877",
+      "checks": [
+        {
+          "name": "Hardware-independent checks",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38826354899/job/116734616979"
+        },
+        {
+          "name": "ESP32 firmware build",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38826354899/job/116734616870"
+        },
+        {
+          "name": "Android checks",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38826354899/job/116734616630"
+        },
+        {
+          "name": "Hardware-independent checks",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38826349287/job/116734600091"
+        },
+        {
+          "name": "Android checks",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38826349287/job/116734599957"
+        },
+        {
+          "name": "ESP32 firmware build",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38826349287/job/116734599665"
+        }
+      ]
+    },
+    {
+      "pr": 49,
+      "head": "e4b2ce024655ae9e951e04542dc7f473e1bc6e9c",
+      "checks": [
+        {
+          "name": "LED ESP32 product build",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38827943256/job/116739702496"
+        },
+        {
+          "name": "Android tests, lint and builds",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38827943256/job/116739702480"
+        },
+        {
+          "name": "LED protocol and output tests",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38827943256/job/116739702180"
+        },
+        {
+          "name": "NFC ESP32 probe build",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38827942945/job/116739700888"
+        },
+        {
+          "name": "Hardware-independent checks",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38827943012/job/116739700861"
+        },
+        {
+          "name": "NFC transport and tag tests",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38827942945/job/116739700613"
+        },
+        {
+          "name": "ESP32 firmware build",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38827943012/job/116739700343"
+        },
+        {
+          "name": "ESP32 firmware build",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38827936335/job/116739680433"
+        },
+        {
+          "name": "Android tests, lint and builds",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38827936248/job/116739680246"
+        },
+        {
+          "name": "Hardware-independent checks",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38827936335/job/116739680220"
+        },
+        {
+          "name": "LED protocol and output tests",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38827936248/job/116739680100"
+        },
+        {
+          "name": "LED ESP32 product build",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38827936248/job/116739679862"
+        }
+      ]
+    },
+    {
+      "pr": 50,
+      "head": "724f0bdabed2bd51c170942f3e45bc2cecc34932",
+      "checks": [
+        {
+          "name": "Android tests, lint and builds",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38952656300/job/117147631381"
+        },
+        {
+          "name": "LED protocol and output tests",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38952656300/job/117147631324"
+        },
+        {
+          "name": "LED ESP32 product build",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38952656300/job/117147631077"
+        },
+        {
+          "name": "Hardware-independent checks",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38952656292/job/117147630806"
+        },
+        {
+          "name": "NFC transport and tag tests",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38952656321/job/117147630774"
+        },
+        {
+          "name": "NFC ESP32 probe build",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38952656321/job/117147630519"
+        },
+        {
+          "name": "ESP32 firmware build",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38952656292/job/117147630502"
+        },
+        {
+          "name": "ESP32 firmware build",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38952647869/job/117147604230"
+        },
+        {
+          "name": "Hardware-independent checks",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38952647869/job/117147603507"
+        },
+        {
+          "name": "Android tests, lint and builds",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38952647900/job/117147603008"
+        },
+        {
+          "name": "LED ESP32 product build",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38952647900/job/117147602998"
+        },
+        {
+          "name": "LED protocol and output tests",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38952647900/job/117147602668"
+        }
+      ]
+    },
+    {
+      "pr": 51,
+      "head": "cff0c998cde05715c2117c17ecf42681b69d1ad4",
+      "checks": [
+        {
+          "name": "Android tests, lint and builds",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38961290835/job/117176716270"
+        },
+        {
+          "name": "Hardware-independent checks",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38961290827/job/117176716249"
+        },
+        {
+          "name": "LED ESP32 product build",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38961290835/job/117176716174"
+        },
+        {
+          "name": "ESP32 firmware build",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38961290827/job/117176716022"
+        },
+        {
+          "name": "LED protocol and output tests",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38961290835/job/117176715862"
+        },
+        {
+          "name": "NFC ESP32 probe build",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38961290688/job/117176714756"
+        },
+        {
+          "name": "NFC transport and tag tests",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38961290688/job/117176714545"
+        },
+        {
+          "name": "LED protocol and output tests",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38961282697/job/117176687716"
+        },
+        {
+          "name": "LED ESP32 product build",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38961282697/job/117176687413"
+        },
+        {
+          "name": "Android tests, lint and builds",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38961282697/job/117176687191"
+        },
+        {
+          "name": "ESP32 firmware build",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38961282338/job/117176686515"
+        },
+        {
+          "name": "Hardware-independent checks",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38961282338/job/117176686143"
+        }
+      ]
+    },
+    {
+      "pr": 52,
+      "head": "14d7a0dae4ae0e697ff609bb0e86996e9864a62d",
+      "checks": [
+        {
+          "name": "Hardware-independent checks",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38967182801/job/117196445162"
+        },
+        {
+          "name": "ESP32 firmware build",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38967182801/job/117196444903"
+        },
+        {
+          "name": "Android tests, lint and builds",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38967182676/job/117196444180"
+        },
+        {
+          "name": "LED protocol and output tests",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38967182676/job/117196444104"
+        },
+        {
+          "name": "NFC ESP32 probe build",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38967182687/job/117196443910"
+        },
+        {
+          "name": "LED ESP32 product build",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38967182676/job/117196443744"
+        },
+        {
+          "name": "NFC transport and tag tests",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38967182687/job/117196443591"
+        },
+        {
+          "name": "Hardware-independent checks",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38967178257/job/117196429658"
+        },
+        {
+          "name": "ESP32 firmware build",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38967178257/job/117196429266"
+        },
+        {
+          "name": "Android tests, lint and builds",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38967178230/job/117196429228"
+        },
+        {
+          "name": "LED ESP32 product build",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38967178230/job/117196429171"
+        },
+        {
+          "name": "NFC transport and tag tests",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38967178213/job/117196428993"
+        },
+        {
+          "name": "LED protocol and output tests",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38967178230/job/117196428903"
+        },
+        {
+          "name": "NFC ESP32 probe build",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38967178213/job/117196428882"
+        }
+      ]
+    }
+  ]
+}
