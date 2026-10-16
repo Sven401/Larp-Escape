@@ -37,6 +37,7 @@ class DeviceViewModel(private val repository: DeviceRepository) : ViewModel() {
     fun startLedEffect() { if (foreground && permissionGranted && state.value.leds.canStart) repository.startLedEffect() }
     fun stopLeds() { if (foreground && permissionGranted && state.value.leds.canStop) repository.stopLeds() }
     fun importLedAccess(bytes: ByteArray) = repository.importLedAccess(bytes)
+    fun matrixAction(action: String) = repository.matrixAction(action)
     fun disconnect() = repository.disconnect()
     fun foregroundEnded() {
         foreground = false

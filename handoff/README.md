@@ -1,5 +1,14 @@
 # Technische Projektübergabe – 13. Oktober 2026
 
+## Aktuelle Fortsetzung: Sammeldurchgang, 16. Oktober 2026
+
+Der [Sammeldurchgang](../docs/matrix/collection-run-2026-10-16.md) ersetzt für die nächste
+Bestückungserfassung die Einzelbestätigungen. Umsetzung, Arbeitskopie,
+Speicherung und Abschlussauswertung stehen dort. Der folgende frühere
+Arbeitsstand ist historisch; den neuen Geräte-/Prüfstand im verlinkten
+Sammellaufbericht lesen.
+
+
 ## Tastenmatrix: Softwarekorrektur nach Originalrichtung, 16. Oktober 2026
 
 Der [Gerätebericht](../docs/matrix/device-test-2026-10-16.md) hält die

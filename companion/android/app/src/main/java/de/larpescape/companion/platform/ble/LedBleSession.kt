@@ -18,6 +18,7 @@ internal class LedBleSession(
     access: LedAccess,
     private val update: ((LedUiState) -> LedUiState) -> Unit,
     private val failed: (String) -> Unit,
+    private val matrixSample: (MatrixUiState) -> Unit = {},
 ) {
     private val protocol = LedProtocol(access, ByteArray(16).also { SecureRandom().nextBytes(it) })
     private val assembler = LedFrameAssembler()
@@ -94,6 +95,7 @@ internal class LedBleSession(
         val now = SystemClock.elapsedRealtime()
         val wakeChanged = wake.accept(value, now)
         val matrixChanged = matrix.accept(value, now)
+        if (matrixChanged) matrixSample(matrix.state(now, true))
         snapshot = value; receivedAt = now
         // LED results can advance the shared sequence. Input expiry remains
         // scheduled independently, even when a result supersedes this status.

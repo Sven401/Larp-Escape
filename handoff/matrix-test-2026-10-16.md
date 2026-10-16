@@ -1,5 +1,14 @@
 # Tastenmatrix: Übergabe des offenen Gerätetests
 
+## Aktuelle Fortsetzung: Sammeldurchgang, 16. Oktober 2026
+
+Der [Sammeldurchgang](../docs/matrix/collection-run-2026-10-16.md) ersetzt für die nächste
+Bestückungserfassung die Einzelbestätigungen. Umsetzung, Arbeitskopie,
+Speicherung und Abschlussauswertung stehen dort. Der folgende frühere
+Arbeitsstand ist historisch; den neuen Geräte-/Prüfstand im verlinkten
+Sammellaufbericht lesen.
+
+
 Stand: **16. Oktober 2026, Europe/Berlin**. Fortsetzung in Sitzung
 `01a141f2-ef84-7a63-b492-6b1fa2e9d26e`; ursprünglicher Gerätetest in
 `01a141ae-0601-7570-9555-79479dbe81d1`.

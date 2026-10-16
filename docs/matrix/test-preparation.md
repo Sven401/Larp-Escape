@@ -1,5 +1,11 @@
 # Tastenmatrix: Vorbereitung des gemeinsamen Tests
 
+**Aktueller Folgeauftrag:** [Sammeldurchgang](collection-run-2026-10-16.md)
+mit gespeicherten Treffern und einer Gesamtbestätigung ersetzt M2–M4 für
+die nächste Bestückungserfassung. Dieser bisherige Ablauf bleibt historische
+Vorbereitung.
+
+
 Stand: **16. Oktober 2026, Europe/Berlin**. Nutzerentscheidung: die Prüffirmware
 zuerst aus der ursprünglichen Scanrichtung und Pinbelegung korrigieren.
 **Softwarekorrektur vorbereitet, keine Geräteabnahme oder neue Installation.**
