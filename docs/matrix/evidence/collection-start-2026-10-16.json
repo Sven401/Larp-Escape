@@ -1,0 +1,21 @@
+{
+  "sourceCommit": "20ac696f75630919949edceec975d593d46a4218",
+  "run": "5805f942-5e90-4948-9c2b-5a256f5d0307",
+  "phase": "RECORDING",
+  "startedAt": 1792176420644,
+  "hits": 0,
+  "interruptions": 0,
+  "rejectedSamples": 0,
+  "freshAuthenticatedMatrix": true,
+  "startRequiredEmptyMatrix": true,
+  "contactTestPerformed": false,
+  "date": "2026-10-16",
+  "timezone": "Europe/Berlin",
+  "apkSha256": "d1a12043c38d19008965530478c5834a4342d2774e3a9b3d6735f548437d694a",
+  "signingCertificateMatches": true,
+  "fullApkReadbackMatches": true,
+  "encryptedAccessAndWakeArrangementUnchanged": true,
+  "firmwareWritten": false,
+  "freshUiShowsRecordingAndNoContacts": true,
+  "screenKeptOnWhileCollecting": true
+}

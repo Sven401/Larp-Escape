@@ -7,6 +7,17 @@ Basis: `e4b2ce024655ae9e951e04542dc7f473e1bc6e9c` (#49), eigener Branch
 `codex/matrix-collection`. Maßgeblicher neuer Ablauf; die früheren
 Einzelschritte M2–M4 sind für diese Bestückungserfassung ersetzt.
 
+## Lauf bereitgestellt
+
+**Am 16. Oktober gestartet und aus der Appdatei verifiziert:**
+`5805f942-5e90-4948-9c2b-5a256f5d0307`, Phase `RECORDING`, zum Start null Treffer,
+null Unterbrechungen und null übersprungene Mehrfachkontakte.
+Installierte APK: Quellen `20ac696`, SHA-256
+`d1a12043c38d19008965530478c5834a4342d2774e3a9b3d6735f548437d694a`.
+[PR #50](https://github.com/Sven401/Larp-Escape/pull/50).
+Nächste Aktion ist der Rundgang des Nutzers und seine einmalige Fertigmeldung.
+Vor der nächsten Auswertung **diesen Lauf erhalten und keinen neuen starten**.
+
 ## Bedienung
 
 1. App öffnen, Box suchen und verbinden. Alle Magnete entfernen und einen

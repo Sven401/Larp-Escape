@@ -39,19 +39,32 @@ waren für die erste Sammelfassung erfolgreich (SHA-256
 Verschlüsselter Boxzugang und Wake-Anordnung blieben bytegleich.
 Eine frische UI-Abfrage zeigte die neue Sammelansicht mit null Treffern.
 
-Danach verlor das Handy die USB-Verbindung. Die endgültige Fassung ergänzt
-zusätzlich den Neubeginn nach einem leeren abgeschlossenen Lauf bei Erhalt
-der alten Laufdatei; sie wurde erneut vollständig wie oben geprüft.
-**Diese endgültige APK ist noch nicht installiert. Keine Boxverbindung,
-kein gestarteter Sammellauf und keine echte Kontaktbetätigung in dieser
-Sitzung belegt.** Der Nutzer wurde um Wiederanschließen gebeten.
-Die vorhandene Prüffirmware wurde weder beschrieben noch zurückgesetzt.
+Die USB-Unterbrechung wurde nach Nutzerbestätigung „angeschlossen“ behoben.
+Die endgültige APK aus Quellcommit `20ac696f75630919949edceec975d593d46a4218`
+ist inzwischen mit Datenerhalt installiert und vollständig zurückgelesen;
+ihre oben genannte Prüfsumme stimmt. Die Signatur passt zum vorherigen APK.
+Verschlüsselter Boxzugang und Wake-Anordnung sind erneut bytegleich.
+Keine Änderung oder Rücksetzung der Box-Firmware.
 
-Nächster Schritt: Handy wieder identifizieren, endgültiges APK mit Datenerhalt
-installieren und zurücklesen. App öffnen, Box suchen/verbinden, frischen
-leeren Matrixstatus prüfen, Sammlung starten und ihren gespeicherten
-`RECORDING`-Stand mit null Treffern kontrollieren. Erst dann zum Rundgang
-auffordern. Das ist kein abgeschlossener Kontakt- oder Dauertest.
+Die Box wurde frisch gesucht und über den vorhandenen Zugang authentisiert.
+Die App zeigte einen frischen Matrixstatus. **Der Sammellauf ist gestartet**;
+der Start verlangt eine frische leere Matrix. Die private Laufdatei wurde
+direkt aus dem Appbereich gelesen und abgeglichen:
+
+- Laufkennung: `5805f942-5e90-4948-9c2b-5a256f5d0307`.
+- Phase `RECORDING`, null gespeicherte Treffer, null Unterbrechungen,
+  null übersprungene Mehrfachkontakte zum Startzeitpunkt.
+- UI bestätigt „Sammlung läuft“, null von 81 Koordinaten und nach Scrollen
+  „Beobachtete Kontakte: keine“. Raster und Zähler sind auf dem Handy sichtbar.
+- [Bereinigter Startbeleg](evidence/collection-start-2026-10-16.json).
+
+**Offen:** Der Nutzer geht jetzt alle vorhandenen Kontakte durch und meldet
+sich einmal mit „Fertig“. Noch keine Betätigung oder vollständige Bestückung
+für diesen neuen Lauf behauptet; der Startnachweis ist keine Kontaktabnahme.
+Beim nächsten Zugriff bestehenden Lauf auslesen/abschließen, keinen neuen
+Lauf starten. Nach bestätigter Vollständigkeit unbestückte Koordinaten über
+die einmalige Gesamtbestätigung deaktivieren; stumme vorhandene Kontakte
+bleiben gezielt zu prüfen. Ablauf und Grenzen stehen im verlinkten Sammellauf.
 
 Private Messbelege, alte/neue APKs und Bedienhilfe liegen unter
 `.local/matrix-collection/` in der Arbeitskopie und bleiben unversioniert.
