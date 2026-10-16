@@ -297,6 +297,13 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
     }
     override fun matrixAction(action: String) {
         val live = mutable.value.leds.matrix
+        if (action.startsWith("confirm:")) {
+            matrixProblemIndices(action.removePrefix("confirm:"))?.let { problems ->
+                if (matrixRecorder.state.unseen.containsAll(problems)) matrixRecorder.confirmUnpopulated(problems)
+            }
+            publishCollection()
+            return
+        }
         when (action) {
             "start" -> matrixRecorder.start(live, System.currentTimeMillis())
             "resume" -> matrixRecorder.resume(live)

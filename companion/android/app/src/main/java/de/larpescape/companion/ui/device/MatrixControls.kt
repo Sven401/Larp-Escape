@@ -20,6 +20,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,17 +38,23 @@ import de.larpescape.companion.data.device.matrixCoordinate
 import de.larpescape.companion.data.device.MatrixCollection
 import de.larpescape.companion.data.device.MatrixCollectionRecorder
 import de.larpescape.companion.data.device.MatrixRunPhase
+import de.larpescape.companion.data.device.matrixProblemIndices
 
 @Composable
 fun MatrixControls(state: MatrixUiState, collection: MatrixCollection = MatrixCollection(),
                    action: (String) -> Unit = {}, export: () -> Unit = {}) {
     var confirm by remember { mutableStateOf(false) }
+    var problemText by remember(collection.run, collection.phase) {
+        mutableStateOf((collection.problems intersect collection.unseen).sorted().joinToString(", ", transform = ::matrixCoordinate))
+    }
+    val problems = matrixProblemIndices(problemText)
+    val validProblems = problems != null && collection.unseen.containsAll(problems)
     if (confirm) AlertDialog(onDismissRequest = { confirm = false },
         title = { Text("Unbestückte Koordinaten deaktivieren?") },
-        text = { Text("Ich habe alle vorhandenen Kontakte durchprobiert und jeder hat einen gespeicherten Treffer erzeugt. " +
-            "Die übrigen ${collection.unseen.size} Koordinaten besitzen keinen Kontakt. " +
-            "Falls ein vorhandener Kontakt ohne Reaktion blieb, stattdessen nachprüfen.") },
-        confirmButton = { TextButton(onClick = { confirm = false; action("confirm") }) { Text("Gesamtbestätigung speichern") } },
+        text = { Text("Alle vorhandenen Kontakte wurden durchprobiert. " +
+            "Vorhanden, aber gestört bleiben: ${problemText.ifBlank { "keine" }}. " +
+            "Die übrigen ${collection.unseen.size - problems.orEmpty().size} unbeobachteten Koordinaten besitzen keinen Kontakt und werden deaktiviert.") },
+        confirmButton = { TextButton(enabled = validProblems, onClick = { confirm = false; action("confirm:$problemText") }) { Text("Gesamtbestätigung speichern") } },
         dismissButton = { TextButton(onClick = { confirm = false }) { Text("Noch offen") } })
     Card(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -69,7 +76,11 @@ fun MatrixControls(state: MatrixUiState, collection: MatrixCollection = MatrixCo
                 }
                 MatrixRunPhase.REVIEW -> {
                     Text("Noch offen: ${collection.unseen.sorted().joinToString(", ", transform = ::matrixCoordinate)}")
-                    Button(onClick = { confirm = true }, enabled = collection.hits.isNotEmpty()) { Text("Übrige sind unbestückt") }
+                    OutlinedTextField(value = problemText, onValueChange = { problemText = it },
+                        label = { Text("Vorhanden, aber gestört") },
+                        supportingText = { Text("Koordinaten mit Komma trennen, z. B. C3, A8. Leer lassen, wenn keine Problemstellen vorhanden sind.") },
+                        isError = !validProblems, modifier = Modifier.fillMaxWidth())
+                    Button(onClick = { confirm = true }, enabled = collection.hits.isNotEmpty() && validProblems) { Text("Bestückung bestätigen") }
                     OutlinedButton(onClick = { action("start") }, enabled = MatrixCollectionRecorder.atRest(state)) {
                         Text("Neuen Lauf starten · bisherigen aufbewahren")
                     }
@@ -79,6 +90,7 @@ fun MatrixControls(state: MatrixUiState, collection: MatrixCollection = MatrixCo
                 OutlinedButton(onClick = { action("reopen") }) { Text("Kontakte nachprüfen") }
             }
             if (collection.run.isNotEmpty()) {
+                if (collection.problems.isNotEmpty()) Text("Problemstellen offen: ${collection.problems.sorted().joinToString(", ", transform = ::matrixCoordinate)}")
                 OutlinedButton(onClick = export) { Text("Sammelbericht exportieren") }
                 Text("Gespeicherte Treffer: ${collection.coordinates.ifEmpty { "keine" }}")
                 Text("Unterbrechungen: ${collection.interruptions} · übersprungene Mehrfachkontakte: ${collection.rejectedSamples}")
@@ -91,7 +103,7 @@ fun MatrixControls(state: MatrixUiState, collection: MatrixCollection = MatrixCo
                 active.isEmpty() -> "Beobachtete Kontakte: keine"
                 else -> "Beobachtete Kontakte: ${active.joinToString(", ")}"
             }, style = MaterialTheme.typography.titleMedium)
-            Text("● gerade aktiv · ✓ gespeichert · × deaktiviert · – noch offen · ? live unbekannt. Seitlich wischen für weitere Spalten.",
+            Text("● gerade aktiv · ✓ gespeichert · ! Problemstelle · × deaktiviert · – noch offen · ? live unbekannt. Seitlich wischen für weitere Spalten.",
                 style = MaterialTheme.typography.bodySmall)
             Text("Zeilen 1–9, Spalten A–I. Elektrische Pinzuordnung und Zuordnung zu den physischen Tasten " +
                 "sind vorläufig und werden im gemeinsamen Test geprüft.", style = MaterialTheme.typography.bodySmall)
@@ -126,11 +138,13 @@ private fun MatrixGrid(state: MatrixUiState, collection: MatrixCollection) {
                             val active = state.active(index)
                             val seen = index in collection.hits
                             val disabled = collection.phase == MatrixRunPhase.CONFIRMED && index in collection.disabled
+                            val problem = collection.phase == MatrixRunPhase.CONFIRMED && index in collection.problems
                             val colors = MaterialTheme.colorScheme
                             Surface(
                                 modifier = Modifier.size(cellSize).clearAndSetSemantics {
                                     contentDescription = "Matrix ${matrixCoordinate(index)}"
                                     stateDescription = when {
+                                        problem -> "Problemstelle offen · Kontakt oder Kabel prüfen"
                                         disabled -> "Deaktiviert · unbestückt bestätigt"
                                         seen -> "Im Sammeldurchgang gespeichert · ${collection.hits[index]?.count} Betätigungen"
                                         else -> when (active) {
@@ -142,6 +156,7 @@ private fun MatrixGrid(state: MatrixUiState, collection: MatrixCollection) {
                                 },
                                 shape = RoundedCornerShape(6.dp),
                                 color = when {
+                                    problem -> colors.errorContainer
                                     disabled -> colors.surfaceContainerHighest
                                     active == true -> colors.primaryContainer
                                     seen -> colors.tertiaryContainer
@@ -152,7 +167,7 @@ private fun MatrixGrid(state: MatrixUiState, collection: MatrixCollection) {
                                     if (active == true) colors.primary else colors.outline),
                             ) {
                                 Box(contentAlignment = Alignment.Center) {
-                                    Text(when { disabled -> "×"; active == true -> "●"; seen -> "✓"; active == null -> "?"; else -> "–" },
+                                    Text(when { problem -> "!"; disabled -> "×"; active == true -> "●"; seen -> "✓"; active == null -> "?"; else -> "–" },
                                         style = MaterialTheme.typography.titleMedium)
                                 }
                             }

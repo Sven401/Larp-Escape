@@ -15,8 +15,9 @@ null Unterbrechungen und null übersprungene Mehrfachkontakte.
 Installierte APK: Quellen `20ac696`, SHA-256
 `d1a12043c38d19008965530478c5834a4342d2774e3a9b3d6735f548437d694a`.
 [PR #50](https://github.com/Sven401/Larp-Escape/pull/50).
-Nächste Aktion ist der Rundgang des Nutzers und seine einmalige Fertigmeldung.
-Vor der nächsten Auswertung **diesen Lauf erhalten und keinen neuen starten**.
+**Rundgang und Auswertung abgeschlossen:** [Ergebnis](collection-result-2026-10-16.md).
+68 Treffer, vier vorhandene Problemstellen, neun unbestückte Felder.
+Diesen Lauf für eine gezielte Nachprüfung erhalten und keinen neuen starten.
 
 ## Bedienung
 
@@ -34,10 +35,12 @@ Vor der nächsten Auswertung **diesen Lauf erhalten und keinen neuen starten**.
    pausieren; alle gesicherten Treffer bleiben erhalten. Codex liest danach
    den gespeicherten Lauf aus und schließt ihn zur Auswertung ab. Alternativ
    selbst **Durchgang abschließen** drücken und den Sammelbericht exportieren.
-5. Erkanntes und unbeobachtete Koordinaten gemeinsam abgleichen. Eine einzelne
-   globale Bestätigung **Übrige sind unbestückt → Gesamtbestätigung speichern**
-   setzt die unbeobachteten Felder auf deaktiviert. Nur bestätigen, wenn jeder
-   vorhandene Kontakt einen Treffer erzeugt hat. Falls vorhandene Kontakte
+5. Erkanntes und unbeobachtete Koordinaten gemeinsam abgleichen. Vorhandene
+   stumme Kontakte unter **Vorhanden, aber gestört** als Koordinatenliste
+   eintragen; diese bleiben als Problemstellen offen. Eine einzelne
+   globale Bestätigung **Bestückung bestätigen → Gesamtbestätigung speichern**
+   deaktiviert die unbeobachteten Felder außer den benannten Problemstellen.
+   Nur die tatsächlich unbestückten Felder bestätigen. Falls vorhandene Kontakte
    ohne Reaktion blieben, zunächst **Kontakte nachprüfen**; keine pauschale
    Deaktivierung aus Schweigen. Keine Fragerunde pro Koordinate.
 

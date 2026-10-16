@@ -1,5 +1,11 @@
 # Technische Projektübergabe – 13. Oktober 2026
 
+**Abgeschlossener Folgeprüfstand:** [Sammelergebnis](../docs/matrix/collection-result-2026-10-16.md)
+mit 68 erkannten Koordinaten, vier offenen Problemstellen und neun
+nutzerbestätigt unbestückten, in der App deaktivierten Feldern.
+Die folgenden früheren Vorbereitungs-/Startangaben sind historische Belege.
+
+
 ## Aktuelle Fortsetzung: Sammeldurchgang, 16. Oktober 2026
 
 Der [Sammeldurchgang](../docs/matrix/collection-run-2026-10-16.md) ersetzt für die nächste

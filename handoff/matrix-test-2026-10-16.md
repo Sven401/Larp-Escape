@@ -1,5 +1,11 @@
 # Tastenmatrix: Übergabe des offenen Gerätetests
 
+**Aktuell ausgewertet:** [Sammelergebnis](../docs/matrix/collection-result-2026-10-16.md).
+68 erkannt; C3, G3, H3 und A8 bleiben als vorhandene Problemstellen offen;
+neun weitere Felder sind laut Nutzer unbestückt. Nächster Schritt ist deren
+gezielte Reparatur/Nachprüfung im erhaltenen Lauf, kein neuer Gesamtdurchgang.
+
+
 ## Aktuelle Fortsetzung: Sammeldurchgang, 16. Oktober 2026
 
 Der [Sammeldurchgang](../docs/matrix/collection-run-2026-10-16.md) ersetzt für die nächste

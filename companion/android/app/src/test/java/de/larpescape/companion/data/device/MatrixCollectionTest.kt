@@ -133,4 +133,42 @@ class MatrixCollectionTest {
         assertEquals(81, report.lines().count { it.matches(Regex("[A-I][1-9];.*")) })
         try { MatrixCollectionCodec.decode("schema=1\ndevice=../../outside") ; fail() } catch (_: Exception) {}
     }
+
+    @Test fun knownFaultsRemainOpenWhileOnlyUnpopulatedCoordinatesAreDisabled() {
+        val store = Store()
+        val r = ready(store)
+        val problems = matrixProblemIndices("C3, A8, G3, H3")!!
+        assertEquals(setOf(20, 63, 24, 25), problems)
+        r.observe(live(0), 200); r.finish(300)
+        r.confirmUnpopulated(problems)
+        assertEquals(problems, r.state.problems)
+        assertEquals(r.state.unseen - problems, r.state.disabled)
+        assertTrue((r.state.disabled intersect problems).isEmpty())
+        assertEquals(r.state, store.load(device))
+        assertTrue(MatrixCollectionCodec.report(r.state).contains("C3;0;;;false;false;true"))
+        r.reopen(); assertTrue(r.resume(live()))
+        r.observe(live(20), 400); r.finish(500)
+        r.confirmUnpopulated(problems - 20)
+        assertFalse(20 in r.state.problems)
+        assertFalse(20 in r.state.disabled)
+        assertTrue(20 in r.state.hits)
+    }
+
+    @Test fun invalidProblemListsCannotSilentlyConfirmAnEmptyExceptionList() {
+        assertNull(matrixProblemIndices("C3, Z4"))
+        assertNull(matrixProblemIndices("C3,"))
+        assertEquals(emptySet<Int>(), matrixProblemIndices(" "))
+        val r = ready()
+        r.observe(live(0), 200); r.finish(300)
+        try { r.confirmUnpopulated(setOf(0)); fail() } catch (_: IllegalArgumentException) {}
+        assertEquals(MatrixRunPhase.REVIEW, r.state.phase)
+        assertTrue(r.state.disabled.isEmpty())
+    }
+
+    @Test fun existingRunFormatLoadsWithoutLosingAnyHits() {
+        val r = ready()
+        r.observe(live(80), 200); r.finish(300)
+        val legacy = MatrixCollectionCodec.encode(r.state).lines().filterNot { it.startsWith("problems=") }.joinToString("\n")
+        assertEquals(r.state, MatrixCollectionCodec.decode(legacy))
+    }
 }

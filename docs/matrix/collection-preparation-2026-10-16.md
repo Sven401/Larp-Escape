@@ -1,5 +1,11 @@
 # Sammeldurchgang: Vorbereitung und Prüfstand
 
+**Abgeschlossener Folgeprüfstand:** [Sammelergebnis](collection-result-2026-10-16.md)
+mit 68 erkannten Koordinaten, vier offenen Problemstellen und neun
+nutzerbestätigt unbestückten, in der App deaktivierten Feldern.
+Die folgenden früheren Vorbereitungs-/Startangaben sind historische Belege.
+
+
 Stand: **16. Oktober 2026, Europe/Berlin**. Basis `e4b2ce0`, Branch
 `codex/matrix-collection`. [Ablauf und Wiederaufnahme](collection-run-2026-10-16.md).
 Getestete Quellen und Artefakt:

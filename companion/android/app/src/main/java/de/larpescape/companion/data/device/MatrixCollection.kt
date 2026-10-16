@@ -20,6 +20,7 @@ data class MatrixCollection(
     val interruptions: Int = 0,
     val rejectedSamples: Int = 0,
     val notice: String = "Bereit für einen neuen Sammeldurchgang",
+    val problems: Set<Int> = emptySet(),
 ) {
     val unseen: Set<Int> get() = (0..80).toSet() - hits.keys
     val collecting: Boolean get() = phase == MatrixRunPhase.RECORDING
@@ -75,7 +76,7 @@ class MatrixCollectionRecorder(private val store: MatrixCollectionStore) {
     fun start(live: MatrixUiState, now: Long): Boolean {
         if (storageFailed || state.device.isEmpty() || state.phase !in setOf(MatrixRunPhase.IDLE, MatrixRunPhase.REVIEW, MatrixRunPhase.CONFIRMED) || !atRest(live)) return false
         val next = MatrixCollection(device = state.device, run = UUID.randomUUID().toString(),
-            phase = MatrixRunPhase.RECORDING, startedAt = now, disabled = state.disabled,
+            phase = MatrixRunPhase.RECORDING, startedAt = now, disabled = state.disabled, problems = state.problems,
             notice = "Sammlung läuft · jeden Kontakt mindestens 1 Sekunde halten und wieder lösen")
         if (!save(next)) return false
         previous = emptySet()
@@ -125,10 +126,11 @@ class MatrixCollectionRecorder(private val store: MatrixCollectionStore) {
         previous = null
     }
 
-    fun confirmUnpopulated() {
+    fun confirmUnpopulated(problems: Set<Int> = emptySet()) {
         if (state.phase != MatrixRunPhase.REVIEW || state.hits.isEmpty()) return
-        save(state.copy(phase = MatrixRunPhase.CONFIRMED, disabled = state.unseen,
-            notice = "Gesamtbestätigung gespeichert · übrige Koordinaten als unbestückt deaktiviert"))
+        require(state.unseen.containsAll(problems))
+        save(state.copy(phase = MatrixRunPhase.CONFIRMED, disabled = state.unseen - problems, problems = problems.toSet(),
+            notice = "Bestückung gespeichert · ${state.unseen.size - problems.size} unbestückt deaktiviert · ${problems.size} Problemstellen offen"))
     }
 
     fun reopen() {
@@ -151,6 +153,7 @@ object MatrixCollectionCodec {
         p["phase"] = value.phase.name; p["startedAt"] = value.startedAt.toString(); p["endedAt"] = value.endedAt.toString()
         p["interruptions"] = value.interruptions.toString(); p["rejectedSamples"] = value.rejectedSamples.toString()
         p["notice"] = value.notice; p["disabled"] = value.disabled.sorted().joinToString(",")
+        p["problems"] = value.problems.sorted().joinToString(",")
         value.hits.forEach { (index, hit) -> p["hit.$index"] = "${hit.count},${hit.firstAt},${hit.lastAt}" }
         return StringWriter().also { p.store(it, "Larp Escape matrix collection; indices 0..80; times UTC epoch milliseconds") }.toString()
     }
@@ -170,8 +173,10 @@ object MatrixCollectionCodec {
             require(values.size == 3 && values[0] in 1..Int.MAX_VALUE.toLong() && values[1] >= 0 && values[2] >= values[1])
             index to MatrixHit(values[0].toInt(), values[1], values[2])
         }
+        val problems = p.getProperty("problems", "").takeIf { it.isNotEmpty() }?.split(",")
+            ?.map { it.toInt().also { n -> require(n in 0..80 && n !in disabled) } }?.toSet().orEmpty()
         return MatrixCollection(device, run, MatrixRunPhase.valueOf(p.getProperty("phase")), number("startedAt"),
-            number("endedAt"), hits, disabled, counter("interruptions"), counter("rejectedSamples"), p.getProperty("notice"))
+            number("endedAt"), hits, disabled, counter("interruptions"), counter("rejectedSamples"), p.getProperty("notice"), problems)
     }
 
     fun report(value: MatrixCollection): String = buildString {
@@ -181,11 +186,20 @@ object MatrixCollectionCodec {
         appendLine("Erkannt: ${value.coordinates}")
         appendLine("Unbeobachtet: ${value.unseen.sorted().joinToString(", ", transform = ::matrixCoordinate)}")
         appendLine("Deaktiviert (Bestückungsliste): ${value.disabled.sorted().joinToString(", ", transform = ::matrixCoordinate)}")
+        appendLine("Vorhanden, aber gestört/offen: ${value.problems.sorted().joinToString(", ", transform = ::matrixCoordinate)}")
         appendLine("Während der Erfassung werden auch deaktivierte Koordinaten geprüft. Keine räumliche Zuordnung abgeleitet.")
-        appendLine("Koordinate;Betätigungen;Erster Treffer UTC ms;Letzter Treffer UTC ms;Im Lauf erkannt;Deaktiviert")
+        appendLine("Koordinate;Betätigungen;Erster Treffer UTC ms;Letzter Treffer UTC ms;Im Lauf erkannt;Deaktiviert;Problemstelle")
         (0..80).forEach { index ->
             val hit = value.hits[index]
-            appendLine("${matrixCoordinate(index)};${hit?.count ?: 0};${hit?.firstAt ?: ""};${hit?.lastAt ?: ""};${hit != null};${index in value.disabled}")
+            appendLine("${matrixCoordinate(index)};${hit?.count ?: 0};${hit?.firstAt ?: ""};${hit?.lastAt ?: ""};${hit != null};${index in value.disabled};${index in value.problems}")
         }
     }
+}
+
+/** Comma-separated user-confirmed electrical coordinates; invalid text must never mean an empty exception list. */
+fun matrixProblemIndices(text: String): Set<Int>? {
+    if (text.isBlank()) return emptySet()
+    val coordinates = text.split(',').map { it.trim().uppercase() }
+    if (coordinates.any { !it.matches(Regex("[A-I][1-9]")) }) return null
+    return coordinates.map { (it[1] - '1') * 9 + (it[0] - 'A') }.toSet()
 }
