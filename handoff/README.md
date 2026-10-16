@@ -1,5 +1,10 @@
 # Technische Projektübergabe – 13. Oktober 2026
 
+Aktuelle technische Fortsetzung: [Integrationsvorbereitung vom 16. Oktober 2026](INTEGRATION-2026-10-16.md).
+Sie erfasst die offenen Produktzweige, Konflikte und Prüftore; die folgende
+Übergabe bleibt der historische Quellenstand. Produktplanung: [Issue #25](https://github.com/Sven401/Larp-Escape/issues/25),
+Konsolidierung: [#53](https://github.com/Sven401/Larp-Escape/issues/53).
+
 ## Einstieg und Stand
 
 Dieser Branch `plan/projektuebergabe-kuratierter-stand` beginnt bei
