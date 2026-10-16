@@ -69,7 +69,7 @@ Schlüssel und vollständiger Flash werden nicht veröffentlicht.
 | Manueller Stop während Track 101 | Vom Nutzer durchgeführt; kein zeitgleicher Codex-Mitschnitt | Nutzer bestätigt: Ton endet sofort, BUSY wechselt auf HIGH | nutzerbestätigt bestanden; keine gemessene Abschaltlatenz |
 | Bewusster Neustart von Track 101 nach Stop | Vom Nutzer durchgeführt | Derselbe Titel beginnt wieder am Anfang; BUSY wechselt auf LOW | nutzerbestätigt bestanden |
 | Play während Track 101 bereits spielt | Vom Nutzer durchgeführt | BUSY kurz HIGH, dann wieder LOW; Titel beginnt erneut am Anfang | nutzerbestätigt bestanden; keine gemessene Umschaltzeit |
-| Titelauswahl zwischen zwei hörbar erkannten Titeln | 100 stumm vor Versorgung, 101 hörbar danach | Keine zwei hörbar erkannten Inhalte unter gleicher Versorgung verglichen | offen |
+| Titelauswahl und BUSY-Anzeige | Vom Nutzer am Handy geprüft; konkrete weitere Titelnummern nicht mitgeteilt | „Track Nummer Auswahl und Play funktioniert zuverlässig. Busy anzeige ist korrekt.“ | nutzerbestätigt bestanden; keine Dateiliste oder Inhaltsinventarisierung |
 
 Quelle aller nachträglichen Hör-/Bedienbeobachtungen: Nutzerbericht am
 16. Oktober 2026 in dieser Sitzung. Sie werden nicht als eigener Geräte-
@@ -86,8 +86,23 @@ Pause war während der Wiedergabe verfügbar und nach dem wahrgenommenen
 Trackende nicht mehr verfügbar. Natürliches Titelende und automatische
 30-Sekunden-Begrenzung wurden zeitlich noch nicht getrennt protokolliert.
 
-**Nächster gemeinsamer Schritt:** Wiedergabe stoppen, Titelnummer 102
-als nächsten Kandidaten auswählen und einmal Play drücken. Prüfen, ob ein
-anderer hörbarer Inhalt als bei 101 beginnt; BUSY getrennt beobachten.
-Der tatsächliche Karteninhalt von 102 ist noch nicht bestätigt. Nach diesem
-Schritt auf die Nutzerbeobachtung warten. [Ablauf und Erweiterungen](test-preparation.md).
+## Verbleibende Tests, gemeinsam vorgelegt
+
+Der Nutzer bat am 16.10.2026, alle noch offenen Tests direkt gesammelt
+vorzulegen. Die folgenden Punkte sind geplante Prüfschritte, keine Ergebnisse.
+Innerhalb eines Pause-/Resume-Versuchs die ursprüngliche 30-Sekunden-Grenze
+ab Play beachten; Pause und Lautstärkeänderung verlängern diese nicht.
+
+| ID | Vorgehen | Erwartung | Status |
+|---|---|---|---|
+| R1 | An erkennbarer Stelle pausieren, 3 Sekunden warten; in Pause Lautstärke z. B. 5 auf 3 übernehmen; Fortsetzen | Während Pause still, Lautstärkeänderung startet nichts; Fortsetzung an der unterbrochenen Stelle mit neuer Lautstärke | offen |
+| R2 | Pausieren, anderen bekannten Titel auswählen, Play | Neu ausgewählter Titel beginnt am Anfang statt Fortsetzung des alten | offen |
+| R3 | Bekannten kurzen Titel unter 30 Sekunden natürlich enden lassen | Stille, BUSY HIGH, Pause nicht mehr verfügbar; vom Zeitlimit unterscheidbar | offen, sofern geeigneter kurzer Titel vorhanden |
+| R4 | Titel mit über 30 Sekunden Laufzeit unbedient ab Play laufen lassen, Zeit beobachten | Etwa nach 30 Sekunden Stop, Stille, BUSY HIGH, kein selbständiger Neustart | offen, sofern geeigneter langer Titel vorhanden |
+| R5 | Während Play Verbindung trennen, danach neu verbinden | Wiedergabe endet nach erkannter Trennung; Wiederverbindung bleibt still und erlaubt einen neuen bewussten Play-Auftrag | offen |
+| R6 | Während Play App verlassen, anschließend vollständig schließen und neu öffnen; nötigenfalls neu verbinden | Wiedergabe endet nach erkannter Trennung; nach Öffnen kein Autostart, Bedienung nach Verbindung wieder bereit | offen |
+
+Abschluss: Stop, Lautstärkeauswahl wieder 5, hörbare Stille und BUSY HIGH
+bestätigen. Nicht verfügbare kurze/lange Titel als „nicht geprüft“ zurückmelden;
+keinen fehlenden Zeitnachweis aus dem bisherigen Funktionstest ableiten.
+[Ablauf und Erweiterungen](test-preparation.md).
