@@ -27,6 +27,7 @@ struct Snapshot {
     Mode mode = Mode::Unknown;
     // Wake1..4 are raw HIGH on MCP B7/B6/B4/B3. Unknown never carries a mask.
     bool wakeSupported = false, wakeValid = false;
+    bool nfcSupported = false;
     std::uint8_t wakeMask = 0;
 };
 class IHmac256 {
@@ -60,6 +61,8 @@ class Session {
     SessionResult receive(const Message &, std::uint32_t now, Message &reply) noexcept;
     bool service(std::uint32_t now, Message &reply) noexcept;
     bool publishStatus(std::uint32_t now, Message &reply) noexcept;
+    bool verifyNfc(const Message &command) noexcept;
+    bool sealNfc(Message &reply) noexcept;
     bool authenticated() const noexcept { return phase_ == Phase::Authenticated; }
     bool connected() const noexcept { return phase_ != Phase::Closed; }
     bool pending() const noexcept { return pending_; }

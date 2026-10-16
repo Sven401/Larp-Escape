@@ -128,7 +128,7 @@ bool Session::status(std::uint8_t type, std::uint32_t now, Message &out) noexcep
     out.bytes[35] = state.flags;
     out.bytes[36] = static_cast<std::uint8_t>(state.mode);
     out.bytes[37] = (state.wakeSupported ? 0x80 : 0) |
-                    (state.wakeValid ? 0x40 : 0) | state.wakeMask;
+                    (state.wakeValid ? 0x40 : 0) | (state.nfcSupported ? 0x20 : 0) | state.wakeMask;
     Secret mac = {};
     if (!tag(StatusDomain, out.bytes.data(), 38, mac)) {
         disconnect(); out.size = 0; return false;
@@ -297,6 +297,19 @@ bool Session::service(std::uint32_t now, Message &out) noexcept {
 }
 bool Session::publishStatus(std::uint32_t now, Message &out) noexcept {
     return status(0x84, now, out);
+}
+bool Session::verifyNfc(const Message &m) noexcept {
+    return authenticated() && m.size == 70 && m.bytes[0] == 1 && m.bytes[1] == 4 &&
+        equal(session_.data(), m.bytes.data() + 2, 16) && verify("LARP-NFC/1/command", m, 38);
+}
+bool Session::sealNfc(Message &m) noexcept {
+    if (!authenticated() || m.size != 105) return false;
+    m.bytes[0] = 1; m.bytes[1] = 0x85;
+    std::copy(session_.begin(), session_.end(), m.bytes.begin() + 2);
+    Secret mac{};
+    if (!tag("LARP-NFC/1/result", m.bytes.data(), 73, mac)) return false;
+    std::copy(mac.begin(), mac.end(), m.bytes.begin() + 73);
+    return true;
 }
 void Assembler::reset() noexcept {
     current_ = {};

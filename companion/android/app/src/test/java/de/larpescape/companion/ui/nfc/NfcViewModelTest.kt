@@ -43,6 +43,17 @@ class NfcViewModelTest {
                       onVerificationRequired: (Long) -> Unit = {}) =
         NfcViewModel(codec, j, executor, direct, onVerificationRequired = onVerificationRequired)
 
+    @Test fun onlyIndependentReadAdvancesReadOnlyProof() {
+        val m = model(); val token = m.resume(true, true); val p = Port()
+        m.tagDiscovered(token, "A", p)
+        assertEquals(m.state.value.selectionId, m.state.value.readOnlySelectionId)
+        m.prepareWrite(NfcTagData(flags = 2)); m.tagDiscovered(token, "A", p)
+        assertEquals(0L, m.state.value.readOnlySelectionId)
+        m.tagDiscovered(token, "A", p)
+        assertEquals(m.state.value.selectionId, m.state.value.readOnlySelectionId)
+        assertEquals(1, p.writes)
+    }
+
     @Test fun writesOnlyPreparedSameTagAndConsumesRequest() {
         val m = model(); val token = m.resume(true, true); val p = Port()
         m.tagDiscovered(token, "A", p); assertEquals(0, p.writes)

@@ -1,5 +1,9 @@
 # NFC: Vorbereitung des gemeinsamen Rundlauftests
 
+Fuer den neuen Auftrag mit Boxmeldungen und Boxschreiben direkt in der App
+siehe [gemeinsamer App-Test](app-roundtrip.md). Die folgenden historischen
+Nachweise betreffen den USB-Pfad.
+
 Stand: 15. Oktober 2026. **Testplan und Sollwerte; kein Geräteergebnis.**
 Die abgeschlossene Handy-Vorerkundung und der wiederhergestellte Wake-Zustand
 sind im [Gerätebericht vom 16. Oktober](device-preparation-2026-10-16.md)

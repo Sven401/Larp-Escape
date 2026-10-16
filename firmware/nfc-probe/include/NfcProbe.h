@@ -49,7 +49,7 @@ class Session {
  public:
     explicit Session(Channel &channel) : channel_(channel) {}
     Result read(Snapshot &snapshot);
-    Result change(Snapshot &verified);
+    Result change(Snapshot &verified, const Target *expected = nullptr);
     const char *detail() const { return detail_; }
  private:
     bool cmd(const std::uint8_t *bytes, std::size_t size, std::uint8_t *out,

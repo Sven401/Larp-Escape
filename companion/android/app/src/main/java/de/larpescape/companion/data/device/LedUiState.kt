@@ -19,9 +19,10 @@ data class LedUiState(
     val message: String = "LED-Bedienung benötigt eine eingerichtete Box.",
     val accessLabel: String? = null,
     val wake: WakeUiState = WakeUiState(),
+    val nfc: BoxNfcUiState = BoxNfcUiState(),
 ) {
     val canStart: Boolean get() = available && authenticated && current && ready && (ledOnly || gameStopped == true) && !busy
     val canStop: Boolean get() = available && authenticated && current && ready && (ledOnly || gameStopped == true) && !busy
     fun disconnected() = copy(available = false, authenticated = false, current = false, ready = false, gameStopped = null, ledOnly = false,
-        busy = false, active = null, message = "Getrennt · LED-Zustand nicht mehr bestätigt", wake = WakeUiState())
+        busy = false, active = null, message = "Getrennt · LED-Zustand nicht mehr bestätigt", wake = WakeUiState(), nfc = BoxNfcUiState(message = if (nfc.busy) "Verbindung beendet · NFC-Ausgang unklar. Neu verbinden und zuerst lesen." else "Getrennt · Box erneut verbinden und Tag lesen"))
 }

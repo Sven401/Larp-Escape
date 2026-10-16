@@ -31,6 +31,10 @@ internal class LedBleSession(
     private var transfer = 0
     private var snapshot: LedStatus? = null
     private var receivedAt = 0L
+    private var nfcRequest = 1L
+    private var nfcPending: Long? = null
+    private var nfcSequence = 0L
+    private var nfcState = BoxNfcUiState()
     private var operation = 0
     private var lastMessage = "Box-Anmeldung wird geprüft …"
     private data class Transfer(val frames: List<ByteArray>, val complete: () -> Unit, var index: Int = 0)
@@ -84,6 +88,15 @@ internal class LedBleSession(
                 commands.received(result)?.let(::completed)
                 publish()
             }
+            0x85 -> {
+                check(authenticated)
+                val result = protocol.nfcResult(message)
+                check(nfcPending == result.request && result.sequence > nfcSequence) { "NFC-Antwort gehört zu keinem offenen Auftrag." }
+                check(result.nextRequest == result.request + 1) { "NFC-Auftrag wurde nicht abgeschlossen." }
+                nfcPending = null; nfcRequest = result.nextRequest; nfcSequence = result.sequence
+                nfcState = nfcState.copy(busy = false, result = result, message = result.message)
+                publish()
+            }
             else -> error("Unbekannte LED-Nachricht.")
         }
     }
@@ -92,6 +105,7 @@ internal class LedBleSession(
         val now = SystemClock.elapsedRealtime()
         val wakeChanged = wake.accept(value, now)
         snapshot = value; receivedAt = now
+        if (value.wake != null) nfcState = nfcState.copy(supported = value.nfcSupported)
         // LED results can advance the shared sequence. The Wake expiry remains
         // scheduled independently, even when a result supersedes this status.
         if (wakeChanged) handler.postDelayed({ if (alive) publish() }, 1000)
@@ -111,12 +125,12 @@ internal class LedBleSession(
         }
         update { it.copy(available = true, authenticated = authenticated, current = fresh, ready = value.ready && !value.fault,
             gameStopped = if (value.mode == 0 || value.mode == 4) null else value.mode == 1,
-            ledOnly = value.mode == 0, busy = commands.request != null || value.pending || outgoing.isNotEmpty(),
+            ledOnly = value.mode == 0, busy = nfcPending != null || commands.request != null || value.pending || outgoing.isNotEmpty(),
             active = LedEffect.entries.singleOrNull { effect -> effect.wire == value.effect }, message = notice,
-            wake = wake.state(SystemClock.elapsedRealtime(), authenticated)) }
+            wake = wake.state(SystemClock.elapsedRealtime(), authenticated), nfc = nfcState) }
     }
     fun command(effect: Int) = runSafely {
-        check(authenticated && commands.request == null && outgoing.isEmpty()) { "Ein LED-Auftrag läuft bereits." }
+        check(authenticated && nfcPending == null && commands.request == null && outgoing.isEmpty()) { "Ein LED-Auftrag läuft bereits." }
         val value = snapshot ?: error("Bestätigter Boxstatus fehlt.")
         check(SystemClock.elapsedRealtime() - receivedAt in 0..999) { "Boxstatus ist zu alt. Erneut verbinden." }
         val message = protocol.command(value, effect)
@@ -126,6 +140,21 @@ internal class LedBleSession(
         send(message) { commands.wrote()?.let(::completed); publish() }
         publish()
         handler.postDelayed({ if (alive && token == operation && commands.request != null) failed("LED-Ergebnis unbekannt · Verbindung beendet. Erneut verbinden und bewusst starten.") }, 5000)
+    }
+    fun nfcCommand(change: Boolean) = runSafely {
+        check(authenticated && nfcState.supported && nfcPending == null && commands.request == null && outgoing.isEmpty()) { "Box ist noch beschäftigt oder unterstützt NFC nicht." }
+        val value = snapshot ?: error("Boxstatus fehlt.")
+        check(SystemClock.elapsedRealtime() - receivedAt in 0..999 && value.off && !value.pending) { "Zuerst LEDs stoppen und frischen Boxstatus abwarten." }
+        val uid = if (change) {
+            check(nfcState.canChange) { "Zuerst denselben Tag mit Flags 1 an der Box lesen." }
+            nfcState.result!!.uid.copyOf()
+        } else null
+        val message = protocol.nfcCommand(nfcRequest, value.deviceMillis, uid)
+        nfcPending = nfcRequest
+        nfcState = nfcState.copy(busy = true, result = null, message = if (change) "Box schreibt einmalig · warte auf frisches Rücklesen …" else "Tag an die Box halten · Box liest …")
+        val request = nfcRequest
+        send(message); publish()
+        handler.postDelayed({ if (alive && nfcPending == request) failed("NFC-Ausgang unklar · neu verbinden und zuerst nur lesen. Kein Auftrag wird automatisch wiederholt.") }, 45000)
     }
     private fun completed(result: LedResult) {
         lastMessage = when (result.outcome) {

@@ -260,8 +260,14 @@ Messprotokoll liegen lokal unter `.local/evidence-a2-vite/` in beiden App-Teilen
 
 ## NFC-Tags
 
+Der [neue gemeinsame App-Rundlauf](../../docs/nfc/app-roundtrip.md) verwendet
+die ausdrücklich gebaute Firmwarevariante `larp-nfc-test`. Auf der NFC-Seite
+stehen Boxlesen und ein bestätigter einmaliger Box-Schreibauftrag bereit.
+Die zuvor eingerichtete Bluetoothverbindung bleibt auf dieser Seite bestehen.
+Der Gerätenachweis dieses neuen Pfads ist noch offen.
+
 Die Seite „NFC-Tags“ verwendet Android ReaderMode im Vordergrund, unabhängig
-von Bluetoothrechten. Beim Wechsel zur NFC-Seite endet die BLE-Sitzung.
+von Bluetoothrechten. Beim Wechsel zur NFC-Seite bleibt die BLE-Sitzung für den Box-Rundlauf erhalten.
 Hintergrund, Seitenwechsel und Rotation verwerfen einen vorbereiteten
 Schreibauftrag. NFC muss in den Handyeinstellungen eingeschaltet sein.
 

@@ -291,10 +291,14 @@ bool Session::same(const Snapshot &a, const Snapshot &b) const {
            a.mle == b.mle && a.mlc == b.mlc && a.file == b.file &&
            std::memcmp(a.bytes, b.bytes, a.rawSize) == 0;
 }
-Result Session::change(Snapshot &verified) {
+Result Session::change(Snapshot &verified, const Target *expected) {
     verified = Snapshot();
     auto result = read(before_);
     if (result != Result::Ok) return result;
+    if (expected && (expected->uidSize != before_.target.uidSize ||
+        std::memcmp(expected->uid, before_.target.uid, expected->uidSize) != 0)) {
+        detail_ = "expected_uid_changed"; return Result::Changed;
+    }
     if (!before_.writable) { detail_ = "write_protection_or_mirroring"; return Result::ReadOnly; }
     next_ = before_;
     if (!prepareChange(next_)) { detail_ = "required_test_record_absent"; return Result::NotPrepared; }

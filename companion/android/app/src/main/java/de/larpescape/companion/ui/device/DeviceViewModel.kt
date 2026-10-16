@@ -35,6 +35,7 @@ class DeviceViewModel(private val repository: DeviceRepository) : ViewModel() {
     fun connect(id: String) { if (foreground && permissionGranted) repository.connect(id) }
     fun selectLedEffect(effect: LedEffect) = repository.selectLedEffect(effect)
     fun startLedEffect() { if (foreground && permissionGranted && state.value.leds.canStart) repository.startLedEffect() }
+    fun boxNfc(change: Boolean) { if (foreground && permissionGranted) repository.boxNfc(change) }
     fun stopLeds() { if (foreground && permissionGranted && state.value.leds.canStop) repository.stopLeds() }
     fun importLedAccess(bytes: ByteArray) = repository.importLedAccess(bytes)
     fun disconnect() = repository.disconnect()

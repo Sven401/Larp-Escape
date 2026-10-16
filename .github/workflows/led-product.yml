@@ -46,7 +46,7 @@ jobs:
         with:
           python-version: '3.11'
       - run: python -m pip install platformio==6.2.0
-      - run: python -m platformio run -d firmware/led -e larp-led-product -j 2
+      - run: python -m platformio run -d firmware/led -e larp-led-product -e larp-nfc-test -j 2
 
   android:
     name: Android tests, lint and builds

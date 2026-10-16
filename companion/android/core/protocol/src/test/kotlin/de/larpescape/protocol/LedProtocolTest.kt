@@ -24,6 +24,44 @@ class LedProtocolTest {
         mac.update("LARP-LED/1/$domain".toByteArray(Charsets.US_ASCII))
         return data.copyOf(offset) + mac.doFinal(data.copyOf(offset))
     }
+    private fun nfcResign(data: ByteArray): ByteArray {
+        val body = data.copyOf(73)
+        val mac = Mac.getInstance("HmacSHA256").apply { init(SecretKeySpec(bytes("secret"), "HmacSHA256")) }
+        mac.update("LARP-NFC/1/result".toByteArray(Charsets.US_ASCII))
+        return body + mac.doFinal(body)
+    }
+    @Test fun nfcMatchesIndependentPythonAndFirmwareVectors() {
+        val (protocol, _) = authenticated()
+        assertArrayEquals(bytes("nfc_read"), protocol.nfcCommand(1, 1002))
+        val read = protocol.nfcResult(bytes("nfc_read_result"))
+        assertEquals(NfcTestFixture.initial, read.data); assertEquals("04010203040506", read.uidText)
+        assertEquals(0, read.outcome); assertEquals(2L, read.nextRequest)
+        assertArrayEquals(bytes("nfc_change"), protocol.nfcCommand(2, 1250, read.uid))
+        val written = protocol.nfcResult(bytes("nfc_write_result"))
+        assertEquals(8, written.outcome); assertEquals(NfcTestFixture.changed, written.data)
+        assertEquals(2L, written.request); assertEquals(2L, written.sequence)
+    }
+    @Test fun nfcRejectsForeignSessionsBadMacMalformedPayloadAndFalseSuccess() {
+        val (protocol, _) = authenticated()
+        for (offset in listOf(0, 1, 2, 18, 34, 36, 48, 73, 104)) rejects {
+            protocol.nfcResult(bytes("nfc_write_result").also { it[offset] = (it[offset].toInt() xor 1).toByte() })
+        }
+        for ((offset, value) in listOf(34 to 14, 35 to 5, 36 to 11, 47 to 24, 48 to 2, 18 to 0, 26 to 0)) rejects {
+            protocol.nfcResult(nfcResign(bytes("nfc_write_result").also { it[offset] = value.toByte() }))
+        }
+        rejects { protocol.nfcResult(nfcResign(bytes("nfc_read_result").also { it[34] = 8 })) }
+        rejects { protocol.nfcCommand(0, 1000) }
+        rejects { protocol.nfcCommand(1, 1000, ByteArray(4)) }
+        protocol.close(); rejects { protocol.nfcResult(bytes("nfc_write_result")) }
+    }
+    @Test fun nfcCapabilityIsExplicitAndMacCovered() {
+        val (protocol, _) = authenticated()
+        assertFalse(protocol.status(bytes("status_twinkle")).nfcSupported)
+        val message = resign(bytes("status_twinkle").also { it[37] = 0xe5.toByte() }, 38, "status")
+        assertTrue(protocol.status(message).nfcSupported)
+        assertEquals(WakeStatus(true, true, 5), protocol.status(message).wake)
+        rejects { protocol.status(message.copyOf().also { it[37] = 0xc5.toByte() }) }
+    }
     @Test fun matchesIndependentFirmwareHandshakeCommandsAndReplies() {
         val protocol = client()
         assertArrayEquals(bytes("hello"), protocol.hello())
@@ -84,7 +122,7 @@ class LedProtocolTest {
     @Test fun rejectsEveryReservedOrContradictorySignedWakeByte() {
         val (protocol, _) = authenticated()
         for (value in 0..255) {
-            if (value == 0 || value == 0x80 || value in 0xc0..0xcf) continue
+            if (value and 0xdf == 0 || value and 0xdf == 0x80 || value and 0xdf in 0xc0..0xcf) continue
             val message = resign(bytes("status_twinkle").also { it[37] = value.toByte() }, 38, "status")
             rejects { protocol.status(message) }
         }

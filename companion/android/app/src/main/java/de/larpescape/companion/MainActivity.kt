@@ -98,7 +98,7 @@ class MainActivity : ComponentActivity() {
         if (selected == nfcScreen) return
         nfcScreen = selected
         showPermissionExplanation = false
-        if (selected) { model.foregroundEnded(); if (!phoneNfcTest) nfcReader.start() }
+        if (selected) { if (!phoneNfcTest) nfcReader.start() }
         else { PhoneNfcTest.stop(this); nfcReader.stop(); if (!scenarioScreen) model.foregroundStarted(permissionsGranted()) }
     }
     private fun selectPhoneNfcTest(selected: Boolean) {
@@ -182,6 +182,8 @@ class MainActivity : ComponentActivity() {
                                     deactivate = { PhoneNfcTest.stop(this@MainActivity) })
                             } else {
                                 val nfcState by nfcModel.state.collectAsStateWithLifecycle()
+                                BoxNfcControls(state.leds, model::boxNfc)
+                                BoxNfcComparison(state.leds, nfcState)
                                 NfcScreen(nfcState, nfcModel::prepareWrite, nfcModel::cancelWrite)
                             }
                         } else {
@@ -213,8 +215,8 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-    override fun onStart() { super.onStart(); if (!nfcScreen && !scenarioScreen) model.foregroundStarted(permissionsGranted()) }
-    override fun onResume() { super.onResume(); if (nfcScreen && !scenarioScreen) { if (!phoneNfcTest) nfcReader.start() } else if (!scenarioScreen) model.permissionsChanged(permissionsGranted()) }
+    override fun onStart() { super.onStart(); if (!scenarioScreen) model.foregroundStarted(permissionsGranted()) }
+    override fun onResume() { super.onResume(); if (!scenarioScreen) model.permissionsChanged(permissionsGranted()); if (nfcScreen && !scenarioScreen && !phoneNfcTest) nfcReader.start() }
     override fun onPause() { PhoneNfcTest.stop(this, "Vordergrund verlassen · Testtag deaktiviert"); nfcReader.stop(); super.onPause() }
     override fun onSaveInstanceState(outState: Bundle) { outState.putBoolean("nfcScreen", nfcScreen); outState.putBoolean("scenarioScreen", scenarioScreen); super.onSaveInstanceState(outState) }
     override fun onStop() {

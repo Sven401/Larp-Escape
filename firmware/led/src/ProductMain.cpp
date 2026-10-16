@@ -2,6 +2,9 @@
 #include "LedWire.h"
 #include "LedOutput.h"
 #include "WakeInputs.h"
+#ifdef LARP_NFC_TEST
+#include "NfcBox.h"
+#endif
 #include <BLEDevice.h>
 #include <BLEServer.h>
 #include <BLE2902.h>
@@ -32,19 +35,29 @@ class Control final : public wire::IControl {
       (s.completed ? wire::Completed : 0) | (s.fault ? wire::Fault : 0);
     out.mode = wire::Mode::LedOnly;
     const auto wake = wakeInputs.snapshot();
+#ifdef LARP_NFC_TEST
+    out.nfcSupported = true;
+#endif
     out.wakeSupported = true; out.wakeValid = wake.valid;
     out.wakeMask = wake.activeMask;
     return out;
   }
   bool submit(wire::Operation op, wire::Effect effect, uint32_t expected,
               uint32_t &revision) noexcept override {
+#ifdef LARP_NFC_TEST
+    if (larp::nfcble::busy()) return false;
+#endif
     if (expected != output.snapshot().revision) return false;
     const bool ok = op == wire::Operation::Stop ? output.stop() :
       output.start(static_cast<larp::led::Effect>(effect));
     revision = output.snapshot().revision;
     return ok;
   }
-  void stopOnDisconnect() noexcept override { output.stop(); }
+  void stopOnDisconnect() noexcept override { output.stop();
+#ifdef LARP_NFC_TEST
+    larp::nfcble::box().cancel();
+#endif
+  }
 } control;
 class Hmac final : public wire::IHmac256 {
  public:
@@ -56,6 +69,9 @@ class Hmac final : public wire::IHmac256 {
   }
 } crypto;
 wire::Session session(crypto, control);
+#ifdef LARP_NFC_TEST
+larp::nfcble::Session nfcSession(session, larp::nfcble::box());
+#endif
 wire::Assembler assembler;
 wire::Nonce bootNonce;
 struct Credentials { uint8_t version; wire::Nonce device; wire::Secret secret; } credentials{};
@@ -98,6 +114,9 @@ void gattEvent(esp_gatts_cb_event_t event, esp_gatt_if_t interface,
     return;
   }
   if (event == ESP_GATTS_DISCONNECT_EVT) {
+#ifdef LARP_NFC_TEST
+    larp::nfcble::box().cancel();
+#endif
     portENTER_CRITICAL(&linkLock);
     if (link.connected && link.connection == p->disconnect.conn_id && link.interface == interface) {
       link.connected = false; link.subscribed = false; link.abort = true;
@@ -142,6 +161,9 @@ wire::Message tx[4];
 uint8_t txHead = 0, txCount = 0;
 uint16_t txOffset = 0, txTransfer = 1;
 void clearTransport() {
+#ifdef LARP_NFC_TEST
+  nfcSession.reset();
+#endif
   assembler.reset(); txHead = txCount = 0; txOffset = 0; txTransfer = 1;
 }
 bool enqueue(const wire::Message &message) {
@@ -187,6 +209,15 @@ void serviceBle() {
     const auto assembled = assembler.accept(frame.bytes, frame.size, millis(), message);
     if (assembled == wire::FrameResult::Rejected) { abortLink(ownerEpoch); return; }
     if (assembled == wire::FrameResult::Complete) {
+#ifdef LARP_NFC_TEST
+      if (message.bytes[1] == 4) {
+        const auto led = output.snapshot();
+        larp::nfcble::allow(led.ready && !led.fault && !led.pending && led.applied == larp::led::Effect::Off && led.requested == larp::led::Effect::Off);
+        if (!nfcSession.receive(message, millis(), reply)) { abortLink(ownerEpoch); return; }
+        if (!enqueue(reply)) return;
+        continue;
+      }
+#endif
       if (session.receive(message, millis(), reply) == wire::SessionResult::Rejected) {
         abortLink(ownerEpoch); return;
       }
@@ -195,6 +226,10 @@ void serviceBle() {
   }
   wire::Message reply{};
   if (session.service(millis(), reply) && !enqueue(reply)) return;
+#ifdef LARP_NFC_TEST
+  if (!nfcSession.service(millis(), reply)) { abortLink(ownerEpoch); return; }
+  if (!enqueue(reply)) return;
+#endif
   if (!session.connected()) { abortLink(ownerEpoch); return; }
   if (session.authenticated() && txCount == 0 && millis() - lastStatus >= 250) {
     lastStatus = millis();
@@ -281,6 +316,9 @@ bool ready = false, outputInitialized = false;
 
 void setup() {
   Serial.begin(115200);
+#ifdef LARP_NFC_TEST
+  if (!larp::nfcble::begin()) { Serial.println("LARP ERROR NFC worker"); return; }
+#endif
   wakeInputs.begin(millis());
   outputInitialized = output.begin();
   if (!outputInitialized) { Serial.println("LARP ERROR LED initialization"); return; }

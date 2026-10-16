@@ -261,6 +261,7 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
     }
     override fun selectLedEffect(effect: LedEffect) { mutable.value = mutable.value.copy(leds = mutable.value.leds.copy(selected = effect)) }
     override fun startLedEffect() = guarded { if (mutable.value.leds.canStart) ledSession?.command(mutable.value.leds.selected.wire) }
+    override fun boxNfc(change: Boolean) = guarded { ledSession?.nfcCommand(change) }
     override fun stopLeds() = guarded { if (mutable.value.leds.canStop) ledSession?.command(0) }
     override fun importLedAccess(bytes: ByteArray) {
         try {

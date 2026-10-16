@@ -23,7 +23,7 @@ data class NfcUiState(
     val available: Boolean = false, val enabled: Boolean = false, val listening: Boolean = false,
     val busy: Boolean = false, val armed: Boolean = false, val canWrite: Boolean = false,
     val selected: Boolean = false, val tagId: String? = null, val data: NfcTagData? = null,
-    val capacity: Int = 0, val selectionId: Long = 0, val message: String = "NFC-Seite öffnen und Tag anhalten"
+    val capacity: Int = 0, val selectionId: Long = 0, val readOnlySelectionId: Long = 0, val message: String = "NFC-Seite öffnen und Tag anhalten"
 )
 
 /** One foreground owner. Ports and whole NDEF snapshots never enter the UI. */
@@ -149,13 +149,13 @@ class NfcViewModel(
                         synchronized(lock) { uncertain = null }
                     }
                     synchronized(lock) {
-                        if (!current()) return@synchronized
+                        if (!current()) { return@synchronized }
                         writing = false
                         if (activePort === port) activePort = null // Core has closed the write port before rediscovery.
                         verificationPending = result == NfcWriteResult.VERIFICATION_REQUIRED
                         if (result == NfcWriteResult.VERIFIED) {
                             snapshot = pending.snapshot.copy(bytes = pending.message.copyOf())
-                            mutable.value = mutable.value.copy(data = pending.data, selectionId = ++selection, canWrite = uncertain == null, busy = false,
+                            mutable.value = mutable.value.copy(data = pending.data, selectionId = ++selection, readOnlySelectionId = 0, canWrite = uncertain == null, busy = false,
                                 message = "Geschrieben und durch erneutes Lesen bestätigt")
                         } else {
                             snapshot = null
@@ -186,7 +186,7 @@ class NfcViewModel(
                     val previousVerified = recovered && bytes?.contentEquals(previous!!.message) == true
                     event("nfc_read_valid empty=${data == null} recovered=$recovered previousVerified=$previousVerified")
                     synchronized(lock) {
-                        if (!current()) return@synchronized
+                        if (!current()) { return@synchronized }
                         if (recovered) {
                             // Only a current discovery may resolve the pending write; a paused read keeps the journal.
                             if (journal.clear()) uncertain = null
@@ -194,6 +194,7 @@ class NfcViewModel(
                         }
                         snapshot = Snapshot(id, bytes, writable, capacity)
                         mutable.value = mutable.value.copy(selected = true, tagId = id, data = data, selectionId = ++selection,
+                            readOnlySelectionId = if (!recovered && !awaitingVerification) selection else 0,
                             capacity = capacity, canWrite = writable && id.isNotEmpty() && uncertain == null, busy = false,
                             message = when {
                                 previousVerified && awaitingVerification -> "Geschrieben und durch erneutes Lesen bestätigt"

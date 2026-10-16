@@ -18,6 +18,7 @@ interface DeviceRepository {
     fun connect(id: String)
     fun selectLedEffect(effect: LedEffect)
     fun startLedEffect()
+    fun boxNfc(change: Boolean) {}
     fun stopLeds()
     fun importLedAccess(bytes: ByteArray)
     fun disconnect()

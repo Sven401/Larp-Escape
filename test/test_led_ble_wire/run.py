@@ -36,6 +36,7 @@ def main():
         command += ["-I", str(ROOT / "firmware/led/include"),
                     str(ROOT / "test/test_led_ble_wire/main.cpp"),
                     str(ROOT / "firmware/led/src/LedWire.cpp"),
+                    str(ROOT / "firmware/led/src/NfcBleWire.cpp"),
                     "-lbcrypt" if os.name == "nt" else "-lcrypto", "-o", str(executable)]
         subprocess.run(command, cwd=ROOT, env=environment, check=True)
         subprocess.run([str(executable), str(ROOT / "docs/led/fixtures/wire-v1.json")],

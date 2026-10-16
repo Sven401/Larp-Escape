@@ -159,6 +159,15 @@ class Tag final : public Channel {
 
 unsigned cases = 0;
 void transactionTests(bool type4, unsigned model) {
+    { Tag tag(type4, model); Session session(tag); Snapshot s;
+      assert(session.read(s) == Result::Ok);
+      auto expected = s.target; expected.uid[0] ^= 1;
+      assert(session.change(s, &expected) == Result::Changed && tag.writes == 0); ++cases; }
+    { Tag tag(type4, model); Session session(tag); Snapshot s;
+      assert(session.read(s) == Result::Ok);
+      const auto expected = s.target;
+      assert(session.change(s, &expected) == Result::Verified && tag.writes > 0); ++cases; }
+
     for (bool extra : {false, true}) {
         Tag tag(type4, model, extra); Session session(tag); Snapshot s;
         const auto before = tag.data;

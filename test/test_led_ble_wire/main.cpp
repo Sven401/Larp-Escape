@@ -1,4 +1,5 @@
 #include "../../firmware/led/include/LedWire.h"
+#include "../../firmware/led/include/NfcBleWire.h"
 #include <algorithm>
 #include <cstdio>
 #include <fstream>
@@ -370,13 +371,55 @@ static void framing() {
         check(a.accept(f.data(), n, 30, out) == FrameResult::Rejected, "mixed transfer rejected");
     }
 }
+class NfcPort : public larp::nfcble::Port {
+ public:
+    unsigned submissions = 0, cancellations = 0;
+    bool ready = false, accepted = true;
+    larp::nfcble::Reply reply;
+    bool submit(bool, const std::uint8_t *, std::uint8_t) override { ++submissions; return accepted; }
+    bool poll(larp::nfcble::Reply &out) override { if (!ready) return false; out = reply; ready = false; return true; }
+    void cancel() override { ++cancellations; }
+};
+static void nfcWire() {
+    Harness h; NfcPort port; larp::nfcble::Session nfc(h.session, port); Message out;
+    check(!nfc.receive(get("nfc_read"), 1002, out), "NFC before auth rejected");
+    check(port.submissions == 0, "no NFC without auth"); h.auth();
+    auto bad = get("nfc_read"); bad.bytes[40] ^= 1;
+    check(!nfc.receive(bad, 1003, out) && port.submissions == 0, "NFC bad MAC rejected");
+    bad = get("nfc_read"); bad.bytes[2] ^= 1;
+    check(!nfc.receive(bad, 1003, out), "NFC wrong session rejected");
+    check(nfc.receive(get("nfc_read"), 1003, out) && out.size == 0 && nfc.busy(), "NFC asynchronous read");
+    check(nfc.receive(get("nfc_read"), 1004, out) && port.submissions == 1, "pending NFC duplicate never reexecutes");
+    check(nfc.receive(get("nfc_change"), 1005, out) && out.bytes[34] == 10 && port.submissions == 1, "NFC busy rejects another command");
+    // Busy response advanced the result sequence, start a fresh session for golden bytes.
+    nfc.reset();
+    check(port.cancellations == 1 && !nfc.busy(), "NFC reset cancels owner");
+    check(nfc.receive(get("nfc_read"), 1003, out), "NFC read after reset");
+    auto expected = get("nfc_read_result");
+    port.reply.outcome = 0; port.reply.kind = 2; port.reply.uidSize = 7; port.reply.payloadSize = 25;
+    std::copy_n(expected.bytes.data() + 37, 7, port.reply.uid);
+    std::copy_n(expected.bytes.data() + 48, 25, port.reply.payload); port.ready = true;
+    check(nfc.service(1010, out) && same(out, expected), "C++ NFC read response matches Python HMAC");
+    const auto submitted = port.submissions;
+    check(nfc.receive(get("nfc_read"), 1011, out) && same(out, expected) && port.submissions == submitted, "completed duplicate cached");
+    check(nfc.receive(get("nfc_change"), 1250, out) && !out.size, "NFC bound write accepted");
+    expected = get("nfc_write_result"); port.reply.outcome = 8;
+    std::copy_n(expected.bytes.data() + 48, 25, port.reply.payload); port.ready = true;
+    check(nfc.service(1252, out) && same(out, expected), "C++ NFC verified write matches Python HMAC");
+    check(nfc.receive(get("nfc_change"), 1253, out) && same(out, expected), "write duplicate never rewrites");
+    h.session.disconnect();
+    check(!nfc.receive(get("nfc_read"), 1254, out), "closed NFC session rejected");
+    Harness late; late.auth(); NfcPort other; larp::nfcble::Session expired(late.session, other);
+    check(expired.receive(get("nfc_read"), 4002, out) && out.bytes[34] == 11 && other.submissions == 0, "expired NFC does not touch tag");
+    check(expired.receive(get("nfc_read"), 4003, out) && out.bytes[34] == 11 && other.submissions == 0, "expired NFC cached");
+}
 int main(int argc, char **argv) {
     try {
         check(argc == 2, "fixture path argument");
         std::ifstream source(argv[1]);
         check(source.good(), "fixture exists");
         fixture.assign(std::istreambuf_iterator<char>(source), std::istreambuf_iterator<char>());
-        happyPath(); wakeStatus(); authentication(); admission(); receiptsAndDriver(); framing();
+        happyPath(); wakeStatus(); authentication(); admission(); receiptsAndDriver(); framing(); nfcWire();
         std::cout << "PASS: " << assertions << " assertions; real host HMAC, Python golden bytes, auth/replay/owner/framing.\n";
         return 0;
     } catch (const std::exception &error) {
