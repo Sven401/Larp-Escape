@@ -67,7 +67,8 @@ Schlüssel und vollständiger Flash werden nicht veröffentlicht.
 | Pause-Verfügbarkeit | Nutzer beobachtet die App | Nur während Track spielte verfügbar; nach Trackende nicht mehr verfügbar | Bedienbeobachtung nutzerbestätigt; Ursache der Zustandsänderung nicht separat gemessen |
 | BUSY beim erfolgreichen Versuch | Kein zeitgleicher unabhängiger Pegelmitschnitt | LOW während Audio spielte, HIGH bei Stille (vom Nutzer unmittelbar berichtigt) | Verlauf nutzerbestätigt; keine unabhängige elektrische Messung |
 | Manueller Stop während Track 101 | Vom Nutzer durchgeführt; kein zeitgleicher Codex-Mitschnitt | Nutzer bestätigt: Ton endet sofort, BUSY wechselt auf HIGH | nutzerbestätigt bestanden; keine gemessene Abschaltlatenz |
-| Bewusster Neustart nach Stop | noch nicht separat protokolliert | ausstehend: Beginn desselben Titels am Anfang | offen |
+| Bewusster Neustart von Track 101 nach Stop | Vom Nutzer durchgeführt | Derselbe Titel beginnt wieder am Anfang; BUSY wechselt auf LOW | nutzerbestätigt bestanden |
+| Play während Track 101 bereits spielt | Vom Nutzer durchgeführt | BUSY kurz HIGH, dann wieder LOW; Titel beginnt erneut am Anfang | nutzerbestätigt bestanden; keine gemessene Umschaltzeit |
 | Titelauswahl zwischen zwei hörbar erkannten Titeln | 100 stumm vor Versorgung, 101 hörbar danach | Keine zwei hörbar erkannten Inhalte unter gleicher Versorgung verglichen | offen |
 
 Quelle aller nachträglichen Hör-/Bedienbeobachtungen: Nutzerbericht am
@@ -85,8 +86,8 @@ Pause war während der Wiedergabe verfügbar und nach dem wahrgenommenen
 Trackende nicht mehr verfügbar. Natürliches Titelende und automatische
 30-Sekunden-Begrenzung wurden zeitlich noch nicht getrennt protokolliert.
 
-**Nächster gemeinsamer Schritt:** Nach dem bestätigten Stop Titel 101
-unverändert lassen und einmal Play drücken. Nutzer bestätigt, ob derselbe
-Titel wieder am Anfang beginnt und BUSY auf LOW wechselt. Danach einen
-zweiten hörbar erkannten Titel prüfen. Nach jedem Schritt auf die
-Nutzerbeobachtung warten. [Ablauf und Erweiterungen](test-preparation.md).
+**Nächster gemeinsamer Schritt:** Wiedergabe stoppen, Titelnummer 102
+als nächsten Kandidaten auswählen und einmal Play drücken. Prüfen, ob ein
+anderer hörbarer Inhalt als bei 101 beginnt; BUSY getrennt beobachten.
+Der tatsächliche Karteninhalt von 102 ist noch nicht bestätigt. Nach diesem
+Schritt auf die Nutzerbeobachtung warten. [Ablauf und Erweiterungen](test-preparation.md).
