@@ -3,10 +3,19 @@
 #include <array>
 #include <cstdint>
 
+// The explicit legacy test reads row 1 at 0x21 B7, as the original did.
+// MCP23017 DS20001952D specifies IO7 as output-only. This opt-in acknowledges
+// that unresolved hardware limitation; it does not establish chip suitability.
+#if defined(LARP_MATRIX_TEST) && (!defined(LARP_MATRIX_LEGACY_IO7_INPUT) || LARP_MATRIX_LEGACY_IO7_INPUT != 1)
+#error "Historical matrix test requires LARP_MATRIX_LEGACY_IO7_INPUT=1"
+#endif
+
 namespace larp {
 namespace matrix {
 // Row-major A1..I1, A2..I2, ... A9..I9; unused bits 81..87 stay zero.
-// These are provisional wiring coordinates, not a physical key identification.
+// These are wiring coordinates, not a physical key identification.
+// Some positions are deliberately unpopulated; an open bit cannot identify them.
+// valid means a complete fresh register scan, not physical/chip qualification.
 struct Snapshot {
     bool valid = false;
     bool ambiguous = false;
@@ -29,7 +38,7 @@ class MatrixInputs {
     std::array<std::uint8_t, 11> pending_{};
     bool initialized_ = false;
     Phase phase_ = Phase::Start;
-    std::uint8_t row_ = 0;
+    std::uint8_t column_ = 0;
     std::uint32_t lastInit_ = 0, roundStarted_ = 0, selectedAt_ = 0, sampledAt_ = 0;
     bool bankZero(std::uint8_t address) noexcept;
     bool update(std::uint8_t address, std::uint8_t reg,
@@ -38,9 +47,9 @@ class MatrixInputs {
                  std::uint8_t mask, std::uint8_t wanted) noexcept;
     bool configure() noexcept;
     bool configurationIntact() noexcept;
-    bool releaseRows() noexcept;
-    bool selectRow(bool selected) noexcept;
-    bool readRow() noexcept;
+    bool releaseColumns() noexcept;
+    bool selectColumn(bool selected) noexcept;
+    bool readColumn() noexcept;
     void fail(std::uint32_t now) noexcept;
     bool ambiguous() const noexcept;
 };

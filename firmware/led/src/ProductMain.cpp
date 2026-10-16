@@ -316,7 +316,7 @@ void setup() {
   BLEDevice::startAdvertising();
   ready = true;
 #ifdef LARP_MATRIX_TEST
-  Serial.println("LARP matrix-test ready; provisional row-LOW scan; USB provisioning on explicit request");
+  Serial.println("LARP matrix-test ready; historical column-LOW scan; B7 input unqualified; USB provisioning on explicit request");
 #else
   Serial.println("LARP LED-only ready; USB provisioning on explicit request");
 #endif

@@ -12,6 +12,11 @@ Quellen dieses Beitrags und unabhängige Durchsicht in derselben Sitzung.
 Die Commit- und Binärzuordnung steht im ausgelieferten Paketmanifest; zusätzliche
 Buildresultate und GitHub-Prüfläufe stehen am zugehörigen Pull Request.
 
+**Nachtrag vom 16.10.2026:** Die spätere Korrektur auf die ursprüngliche
+Scanrichtung und deren eigener Prüfstand stehen im
+[Korrekturbericht](scan-direction-correction-2026-10-16.md).
+Die folgenden Resultate bleiben die historischen Ergebnisse der ersten Vorbereitung.
+
 ## Gemessene Softwareprüfungen
 
 | Prüfung | Ergebnis |

@@ -1,26 +1,33 @@
 # Tastenmatrix: Vorbereitung des gemeinsamen Tests
 
-Stand: **16. Oktober 2026, Europe/Berlin**. Nutzerentscheidung: Tastenmatrix als
-nächste Baugruppe nach LED, Wake und NFC. **Vorbereitung, keine Geräteabnahme.**
-Basis: `c0f76ee5123ef51252341b21c18a636abb6f6bc2` aus dem NFC-Testzweig.
-Die während der Vorbereitung veröffentlichte NFC-Rücklesekorrektur ist
-enthalten. Das kombinierte APK ist erneut geprüft, damit der Matrixtest
-den korrigierten Appstand erhält.
+Stand: **16. Oktober 2026, Europe/Berlin**. Nutzerentscheidung: die Prüffirmware
+zuerst aus der ursprünglichen Scanrichtung und Pinbelegung korrigieren.
+**Softwarekorrektur vorbereitet, keine Geräteabnahme oder neue Installation.**
+Änderung, Quellenvergleich und Prüfstand:
+[Korrekturbericht](scan-direction-correction-2026-10-16.md).
 
-**Nachtrag aus dem Gerätetest vom 16.10.2026:** App und Prüffirmware wurden
-installiert, aber weder der Reedkontakt unten links noch oben rechts wurde
-erkannt. Die umgekehrte Abfragerichtung und die B7-Freigabe müssen geklärt
-werden. Dieser Stand ist **nicht als funktionierende Matrixprüfung bestätigt**.
-Ergebnisse: [Gerätebericht](device-test-2026-10-16.md);
-Fortsetzung: [Sitzungsübergabe](../../handoff/matrix-test-2026-10-16.md).
+Der erste [Gerätetest](device-test-2026-10-16.md) mit dem installierten Paar
+`c613ace` erkannte weder den Reedkontakt unten links noch oben rechts.
+Diese historischen Ergebnisse und die
+[ursprünglichen Softwareprüfungen](preparation-results-2026-10-16.md)
+bleiben getrennte Belege. Die Box ist nach Nutzerbestätigung vollständig
+stromlos; die Matrixleitungen sind angeschlossen. Die neue Software wurde
+nicht auf die Geräte übertragen. Aktueller Arbeitsstand und nächster Schritt:
+[Sitzungsübergabe](../../handoff/matrix-test-2026-10-16.md).
 
 ## Ziel und Umfang
 
 Die echte Companion-App zeigt die **81 logischen Positionen A1 bis I9** als
 Live-Raster und aktive Koordinaten als Text. Das ist keine Behauptung, dass die
-Box 81 bestückte Tasten besitzt. Wir erfassen jeden tatsächlich vorhandenen
-Kontakt einzeln und ordnen seine reale Position der beobachteten Koordinate zu.
-Die Anzeige verändert weder Pinzuordnung noch Spielkonfiguration.
+Box 81 bestückte Tasten besitzt. Der Nutzer bestätigt am 16.10.2026, dass einige
+Kontakte wegen Platzkollisionen mit anderen Baugruppen bewusst nicht bestückt
+sind; die genaue Liste ist noch unbekannt. Die Koordinaten werden deshalb
+nicht zusammengezogen oder neu nummeriert. Ein leerer Messwert beweist weder
+einen Defekt noch eine fehlende Bestückung.
+
+Wir erfassen jeden tatsächlich vorhandenen Kontakt einzeln und ordnen seine
+reale Position der beobachteten Koordinate zu. Die Anzeige verändert weder
+Pinzuordnung noch Spielkonfiguration.
 
 Die separate Firmwareumgebung `larp-matrix-test` ergänzt den vorhandenen
 LED-/Wake-Zugang. Die normale Umgebung `larp-led-product` aktiviert keinen
@@ -36,49 +43,59 @@ einzigen verspäteten Bildschirmbild.
 
 ## Quellenzuordnung und offene Hardwarefragen
 
-**Ausgelesen am Basiscommit:** `lib/Config/Config.h`,
-`src/GameConfiguration/StandardProfile.cpp` und
-[Hardwarevertrag](../../Hardware/HARDWAREVERTRAG-V0.1-2026-10-11.md).
-Die Leitungszuordnung ist ein Softwarekandidat, keine elektrische Abnahme.
+**Quellabgleich am 16.10.2026:** `001eb7b50d79c67c5a738411390db2cb668cf050`
+und `61ef6c65206b1fcd5656ac64825d22a518396f99`, jeweils
+`lib/Config/Config.h`, `lib/Keymatrixwrapper/Keymatrix.cpp` und
+`lib/MCPHandler/MCPHandler.cpp`. Beide zeigen die folgende Pinbelegung und
+Abfragerichtung: Spalte LOW, Zeile mit Pull-up lesen. Der Nutzer bestätigt den
+funktionierenden Originalbetrieb; die genaue Zuordnung des damaligen
+installierten Binärstands ist offen. Quellvergleich und Nutzerbeobachtung
+reichen als Grundlage dieser Softwarekorrektur, ersetzen aber keine neue
+physische Kontaktzuordnung.
 
-| Logische Leitung | MCP / Anschluss | Neue Scanrolle |
+| Logische Leitung | MCP / Anschluss | Korrigierte Scanrolle |
 |---|---|---|
-| Zeilen 1–8 | 0x21 / B7, B6, B5, B4, B3, B2, B1, B0 | einzeln LOW, sonst hochohmig |
-| Zeile 9 | 0x20 / B0 | einzeln LOW, sonst hochohmig |
-| Spalte A | 0x20 / B1 | Eingang mit Pull-up |
-| Spalten B–H | 0x20 / A0–A6 | Eingänge mit Pull-up |
-| Spalte I | 0x20 / B5 | Eingang mit Pull-up |
+| Zeilen 1–8 | 0x21 / B7, B6, B5, B4, B3, B2, B1, B0 | Eingänge mit Pull-up; B7 nur im historischen Prüfmodus |
+| Zeile 9 | 0x20 / B0 | Eingang mit Pull-up |
+| Spalte A | 0x20 / B1 | einzeln LOW, sonst hochohmig |
+| Spalten B–H | 0x20 / A0–A6 | einzeln LOW, sonst hochohmig |
+| Spalte I | 0x20 / B5 | einzeln LOW, sonst hochohmig |
 | Wake 1–4 | 0x20 / B7, B6, B4, B3 | bestehende Wake-Konfiguration erhalten |
 
 SDA21/SCL22 und 100 kHz folgen der vorhandenen Wake-Strecke. Der Matrixscanner
-initialisiert keinen zweiten I²C-Bus und benutzt nicht die widersprüchliche
+initialisiert keinen zweiten I²C-Bus und übernimmt nicht die widersprüchliche
 historische `MCPConfig`-Initialisierung.
 
-**Belegt gegen Herstellerquelle am 16.10.2026:** Das
-[Microchip-Datenblatt DS20001952D, Seite 1](https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/MCP23017-Data-Sheet-DS20001952.pdf)
-bezeichnet A7/B7 beim MCP23017 als reine Ausgänge. Diese Angabe war der Grund
-für den Richtungswechsel gegenüber dem ursprünglichen Spalten-LOW-Scanner.
-**Die daraus abgeleitete B7-Lösung ist unvollständig:** Der aktuelle Code liest
-B7 zwar nicht als Matrixeingang, setzt dessen IODIR-Bit beim Freigeben aber
-wieder auf Eingang. Abschnitt 3.5.1, Seite 18 verlangt für IO7 die
-Ausgangskonfiguration. Der vorhandene Scanner ist damit kein belegter
-datenblattkonformer Ausweg. Die separate Wake-1/B7-Frage bleibt offen.
+**Offener Herstellerkonflikt:** Das
+[Microchip-Datenblatt DS20001952D, Seite 1 und Abschnitt 3.5.1, Seite 18](https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/MCP23017-Data-Sheet-DS20001952.pdf)
+bezeichnet GPA7/GPB7 beim MCP23017 als reine Ausgänge und verlangt IO7=0.
+Die frühere Umkehr des Scanners löste diesen Konflikt nicht, weil sie B7 beim
+Freigeben ebenfalls auf Eingang setzte. Die Korrektur verwendet B7 nun
+ausdrücklich wie der Originalscanner als Eingang; das ist **kein
+datenblattkonformer Ausweg**. Die Umgebung `larp-matrix-test` setzt dafür
+zusätzlich `LARP_MATRIX_LEGACY_IO7_INPUT=1`; ein Matrix-Testbuild ohne dieses
+Opt-in wird abgewiesen. Chipidentität und Eignung sowie die separate
+Wake-1/B7-Frage bleiben offen. Das Standardprodukt aktiviert keinen Matrixscan.
 
-**Offen:** tatsächliche Chipmarkierungen, Kontaktart, Verdrahtung und
-Entkopplungsdioden. Der historische Scanner arbeitete in umgekehrter Richtung.
-Vor dem Gerätetest Dioden bzw. ihre Richtung prüfen. Ein ausbleibender Kontakt
-beweist bei unbekannter Diodenrichtung keinen defekten Taster; nicht durch
-blindes Umstellen auf die alte Treiberschaltung kompensieren.
+Nur eine Spalte wird auf LOW geschaltet; vor der nächsten Auswahl wird sie
+wieder hochohmig. Anders als im Original erfolgt kein aktives HIGH nach dem
+Lesen. Die Stromrichtung durch die Dioden bleibt dieselbe, während Kontakte
+keine aktiv HIGH und LOW getriebenen Spalten verbinden können. Bei fehlender
+Diodenentkopplung bleibt Ghosting möglich. Die reale Ring-/Kathodenseite wurde
+noch nicht bis zu einer konkreten MCP-Klemme verfolgt; erforderliche physische
+Abgleiche erfolgen gezielt nach Bedarf und sind keine Vorbedingung der vom
+Nutzer beauftragten Softwarekorrektur.
 
-Nur eine Zeile wird auf LOW geschaltet; keine Scanleitung wird aktiv HIGH
-getrieben. Vor Auswahl einer anderen Zeile setzt der Code die bisherige auf
-Eingang; die oben genannte Einschränkung von B7 gilt auch für diesen Schritt.
 Nach einem Busfehler wird der Messwert ungültig und die Freigabe bestmöglich
 versucht. Bei nicht erreichbarem Expander lässt sich die physische Freigabe
-nicht softwareseitig garantieren. Das ist kein elektrischer Sicherheitsnachweis.
-Mehrfachkontakte mit Rechteckmuster werden als mehrdeutig markiert; angezeigt
-werden Rohbeobachtungen, keine behauptete Ghostingfreiheit. Ein Scan ist
-zeitlich gestaffelt, keine atomare Momentaufnahme aller Kontakte.
+nicht softwareseitig garantieren. Erst nach neun vollständig gelesenen Spalten
+und geprüfter Konfiguration wird ein neuer Snapshot veröffentlicht.
+`valid` bedeutet einen vollständigen frischen Registerscan, keine Chip- oder
+Geräteabnahme. Es gibt keinen Acht-Reihen-Teilscan, der als vollständige Matrix
+ausgegeben wird. Mehrfachkontakte mit Rechteckmuster werden konservativ als
+mehrdeutig markiert; angezeigt werden Rohbeobachtungen, keine behauptete
+Ghostingfreiheit. Der Scan ist zeitlich gestaffelt, keine atomare
+Momentaufnahme aller Kontakte.
 
 ## Vorbereitung für die gemeinsame Sitzung
 
@@ -87,17 +104,20 @@ zeitlich gestaffelt, keine atomare Momentaufnahme aller Kontakte.
 2. Box, reale Kontaktflächen und Orientierung benennen; vorhandene
    Wake-Anordnung erhalten. Alte Berichte nennen unterschiedliche Anordnungen,
    deshalb keine historische Reihenfolge zurückschreiben.
-3. Chip, Leitungen und Diodenrichtung anhand der realen Box abgleichen.
-   Fehlende Informationen im Protokoll offen lassen; vor unerwarteter
-   elektrischer Wirkung abbrechen und die Verdrahtung klären.
+3. Die korrigierte historische Scanrichtung und den offenen IO7-Konflikt im
+   Korrekturbericht abgleichen. Physische Unklarheiten gezielt prüfen, wenn
+   der begrenzte Kontaktversuch sie erfordert; keinen vollständigen Kabelbaum
+   als Vorbedingung der Softwarekorrektur aufnehmen.
 4. Erst beim gesondert beauftragten Installationsschritt den chipgebundenen
    vollständigen Flash-Rückweg am tatsächlich angeschlossenen ESP32 prüfen,
    aktuellen Vollflash privat sichern und verifizieren. Vorhandene Schlüssel
    und Partitionstabelle mit dem Rückweg vergleichen.
-5. Zuerst APK mit Datenerhalt installieren und zurücklesen/hashprüfen; danach
-   nur die passende Anwendung ab `0x10000` schreiben und verifizieren.
-   Ältere Apps verstehen den erweiterten Matrixstatus nicht. Keine automatische
-   Provisionierung, keine Löschung der Appdaten oder Schlüsselpartition.
+5. Den vorhandenen Appstand frisch abgleichen: das installierte Matrix-APK
+   versteht den unveränderten Matrixstatus bereits. Ein nötiger Appwechsel
+   erfolgt mit Datenerhalt und Rücklese-/Hashprüfung vor dem Firmwarewechsel.
+   Nur die passende Anwendung ab `0x10000` schreiben und verifizieren.
+   Keine automatische Provisionierung, keine Löschung der Appdaten oder
+   Schlüsselpartition.
 6. Authentifizierte Verbindung und frische Matrixwerte abwarten. Bis dahin
    sind unbekannte Werte korrekt; nicht als unbetätigt werten.
 
@@ -122,8 +142,10 @@ Flash- und Zugangsdateien gehören nicht ins Repository oder öffentliche Paket.
 | R1 | Falls temporärer Versuch: vorherige verifizierte Anwendung zurückspielen | Anwendung/Schlüssel unverändert verifiziert; frische authentisierte Wake-Werte |
 
 Bei M2–M4 die reale Position **vor** der erwarteten Softwarekoordinate benennen,
-damit eine falsche Zuordnung sichtbar wird. Nicht vorhandene Positionen als
-„nicht bestückt“ kennzeichnen, unbeobachtete als „offen“. Ein Fehler bleibt
+damit eine falsche Zuordnung sichtbar wird. Nur physisch bestätigte fehlende
+Kontakte als „nicht bestückt“ kennzeichnen; unbekannte Bestückung und
+unbeobachtete Positionen bleiben „offen“. Keine Nummerierung komprimieren und
+keine Bestückungsentscheidung aus einem leeren Messwert ableiten. Ein Fehler bleibt
 offen, bis seine Ursache geklärt und genau der auslösende Schritt erneut geprüft
 wurde. Hosttests und erfolgreiche Installation ersetzen keine dieser Zeilen.
 
@@ -142,5 +164,7 @@ cd companion/android
 ./gradlew.bat :core:protocol:test :app:testDebugUnitTest :app:lintDebug :app:assembleDebug :app:assembleRelease --no-daemon
 ```
 
-Geprüfte Ergebnisse und Paketzuordnung werden nach den frischen Läufen im
-[Vorbereitungsbericht](preparation-results-2026-10-16.md) festgehalten.
+Die ursprünglichen Ergebnisse bleiben im
+[Vorbereitungsbericht](preparation-results-2026-10-16.md). Frische Prüfungen und
+Artefaktzuordnung der Scanrichtungskorrektur werden getrennt im
+[Korrekturbericht](scan-direction-correction-2026-10-16.md) festgehalten.

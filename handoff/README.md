@@ -1,12 +1,17 @@
 # Technische Projektübergabe – 13. Oktober 2026
 
-## Tastenmatrix: Fortsetzung in neuer Sitzung, 16. Oktober 2026
+## Tastenmatrix: Softwarekorrektur nach Originalrichtung, 16. Oktober 2026
 
 Der [Gerätebericht](../docs/matrix/device-test-2026-10-16.md) hält die
-verifizierte Installation und die erfolglosen Kontaktversuche fest. Der
-Matrixstand ist nicht abgenommen. Der Nutzer hat den konkreten
-Leitungs-/Diodenabgleich auf eine neue Sitzung verschoben. Arbeitsstand,
-Gerätezustand und nächster Schritt stehen in der
+verifizierte Installation von `c613ace` und die erfolglosen Kontaktversuche
+fest. Auf neuen Nutzerauftrag wird zuerst die Prüffirmware aus der
+ursprünglichen Scanrichtung und Pinbelegung korrigiert. Der
+[Korrekturbericht](../docs/matrix/scan-direction-correction-2026-10-16.md)
+führt Quellen, Änderung und Softwareprüfstand; eine neue Installation oder
+Geräteabnahme ist nicht erfolgt. Die Box ist laut Nutzer vollständig stromlos,
+die Matrixleitungen bleiben angeschlossen. Einige Kontakte sind bewusst
+nicht bestückt; ihre genaue Liste ist offen. Arbeitsstand, offener
+B7-Herstellerkonflikt und nächster gezielter Gerätetest stehen in der
 [Matrix-Sitzungsübergabe](matrix-test-2026-10-16.md).
 
 ## Ergänzung: eigenständige LED-Produktfunktion, 15. Oktober 2026
