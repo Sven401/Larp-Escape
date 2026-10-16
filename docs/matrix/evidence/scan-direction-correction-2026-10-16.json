@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-16",
+  "timezone": "Europe/Berlin",
+  "baseCommit": "50effd812bb8f2ac30031aa836936a8efd7086ba",
+  "status": "Software correction built and host-tested; not installed; physical acceptance open",
+  "historicalReferences": [
+    "61ef6c65206b1fcd5656ac64825d22a518396f99",
+    "001eb7b50d79c67c5a738411390db2cb668cf050"
+  ],
+  "scan": {
+    "direction": "COLMAP LOW, ROWMAP INPUT_PULLUP",
+    "inactiveColumns": "high impedance; deliberate difference from original HIGH",
+    "wireBitOrder": "row * 9 + column",
+    "partialScanPublished": false,
+    "legacyIo7InputOptIn": "LARP_MATRIX_LEGACY_IO7_INPUT=1",
+    "io7DatasheetCompliance": false
+  },
+  "userConfirmed": {
+    "source": "User messages in session 01a141f2-ef84-7a63-b492-6b1fa2e9d26e on 2026-10-16",
+    "boxPower": "fully disconnected",
+    "matrixWiresConnected": true,
+    "somePositionsIntentionallyUnpopulated": true,
+    "reason": "space conflicts with other assemblies",
+    "actualUnpopulatedCoordinates": null,
+    "softwareCorrectionFromOriginalAuthorized": true
+  },
+  "tests": {
+    "ledWakeMatrixHostSuite": "passed: 16 LED, 4 SDK, Wake mapping/I2C, matrix direction/diodes/sparse model/81 logical coordinates/failures/recovery/atomicity",
+    "legacyIo7Gate": "missing and zero opt-in rejected; explicit opt-in accepted",
+    "oldVsNewScanner": "same directed-diode A1 fixture: old 50effd8 scanner misses closed contact; corrected scanner detects it",
+    "wireAssertions": 4572,
+    "architecture": {
+      "selfTestsPassed": 7,
+      "files": 145,
+      "directIncludes": 302
+    },
+    "esp32Builds": {
+      "larp-led-product": {
+        "passed": true,
+        "ram": 42424,
+        "programBytes": 1131449
+      },
+      "larp-matrix-test": {
+        "passed": true,
+        "ram": 42472,
+        "programBytes": 1133557
+      }
+    },
+    "android": "unchanged; not rerun for this firmware-only correction",
+    "independentImplementationReview": "no actionable findings"
+  },
+  "artifacts": {
+    "larp-led-product": {
+      "firmware": {
+        "bytes": 1137744,
+        "sha256": "5ddaea18074335573236175835798ef61c9680e8f4bd3c88a6013128d81529cc"
+      },
+      "partitions": {
+        "bytes": 3072,
+        "sha256": "22790624ada38b3379c977dd7fd8452c6a3c86c00c64ec118380c888655e5b91"
+      }
+    },
+    "larp-matrix-test": {
+      "firmware": {
+        "bytes": 1139856,
+        "sha256": "a15c2c698c527c1b919ffde7cc31b213c91570856100a16d9d5d7741d27beb8d"
+      },
+      "partitions": {
+        "bytes": 3072,
+        "sha256": "22790624ada38b3379c977dd7fd8452c6a3c86c00c64ec118380c888655e5b91"
+      }
+    }
+  },
+  "sourceFileSha256": {
+    "firmware/led/src/LedOutput.cpp": "e1e54ff0e6419552a901dad600208c3a67f18052cdcac446e896f99791084842",
+    "firmware/led/src/LedWire.cpp": "0fec04eff3ee2be677f98b533d422792ee7c6683ad2b653b8f94f3d925a75d07",
+    "firmware/led/src/MatrixInputs.cpp": "dc3123d0d5aca6e15eea5771b6a80473ef2241cd0f90d483d6bb4de51c381612",
+    "firmware/led/src/McpWakeBus.cpp": "173a9e4d970c8b3c3a305ddeca2331048f70a759f947836e1ce3d135bd5d735a",
+    "firmware/led/src/ProductMain.cpp": "3021b8413cb81161a6a80294891a3211d0cca82daf91b47f8b49f615221a8c7c",
+    "firmware/led/src/RmtLedBus.cpp": "5aad06ba6a9ddfcc274dbbd1a5e94ed61278b327a0b0072a8fddc555899a23e9",
+    "firmware/led/src/WakeInputs.cpp": "7a13d1f313f2f27c0714136889dd2e9ac234346d81f48a79f35890a46e35077f",
+    "firmware/led/include/LedOutput.h": "84b0c8775a3fdd3bb404467091e4bc2f54f62b5d4432f57e8fba182c704a9acf",
+    "firmware/led/include/LedWire.h": "0aebd176447457ad8ab23862f70ae49f0a4ffe73d8e9226f8e848ff011393168",
+    "firmware/led/include/MatrixInputs.h": "31296295b95cf25bdcfc9f4e2ca1396165acd8676834b95f009bc81a2dea06ae",
+    "firmware/led/include/WakeInputs.h": "86bc4c4b89f82c8adf5978cd05e671701014783ec849ab16bbc2e359a67d159c",
+    "firmware/led/platformio.ini": "847cb912c2a6de277754a5a4ecf800397a56d002959e947cff8b6faced13d7de",
+    "firmware/led/partitions.csv": "cf2fb88c97d3b96cedf8df07eb6f29942ca63a465e2bbb6895cd867c081d7334",
+    "firmware/led/tests/test_matrix_inputs.cpp": "c155cf85a3d33d513343bf95b46edccb88fb46a63d53bcc425edaa2ec17612f4",
+    "firmware/led/tests/run_output_tests.py": "bf98af4a569399b7feafc17c5d014d2f78d45995e7b1e8aaf0e2c8720bd61763"
+  },
+  "device": {
+    "accessed": false,
+    "uploaded": false,
+    "lastVerifiedInstalledSourceCommit": "c613acebfb07805d1c363b52a325721f2b6f8077",
+    "physicalMappingConfirmed": false,
+    "rollbackPerformed": false
+  },
+  "limits": [
+    "Host diode network is a model, not physical diagnosis.",
+    "Actual chip/IO7 suitability and successful historical binary version remain unconfirmed.",
+    "Illustrative absent contacts in tests are not the physical layout.",
+    "No new hardware, Android or GitHub CI pass is claimed by this local report."
+  ]
+}

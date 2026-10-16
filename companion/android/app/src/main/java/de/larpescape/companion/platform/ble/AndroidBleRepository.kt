@@ -41,9 +41,13 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
     private var ledSession: LedBleSession? = null
     private val accessStore = LedAccessStore(context)
     private var access: LedAccess? = null
+    private val matrixRecorder = MatrixCollectionRecorder(AndroidMatrixCollectionStore(context))
+    private fun publishCollection() { mutable.value = mutable.value.copy(matrixCollection = matrixRecorder.state) }
     init {
         try {
             access = accessStore.read()?.let { bytes -> try { LedAccess.parse(bytes) } finally { bytes.fill(0) } }
+            access?.let { matrixRecorder.selectDevice(it.deviceId().joinToString("") { byte -> "%02x".format(byte) }) }
+            publishCollection()
             mutable.value = mutable.value.copy(leds = mutable.value.leds.copy(accessLabel = access?.displayName))
         } catch (_: Exception) {
             mutable.value = mutable.value.copy(leds = mutable.value.leds.copy(message = "Box-Zugang nicht lesbar · erneut importieren"))
@@ -125,7 +129,7 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
     override fun scan() = guarded {
         if (adapter?.isEnabled != true) { clearSession(); report("Bluetooth einschalten, danach erneut suchen"); return@guarded }
         stopScan(); disconnect(); devices.clear()
-        mutable.value = DeviceUiState(message = "Suche läuft …", scanning = true, leds = mutable.value.leds.disconnected())
+        mutable.value = DeviceUiState(message = "Suche läuft …", scanning = true, leds = mutable.value.leds.disconnected(), matrixCollection = matrixRecorder.state)
         val token = ++scanGeneration
         scanner = adapter.bluetoothLeScanner ?: error("BLE-Scanner fehlt")
         scanCallback = object : ScanCallback() {
@@ -191,9 +195,12 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
                         ledSession = LedBleSession(connection, handler, credential,
                             update = { change ->
                                 val leds = change(mutable.value.leds)
+                                if (!leds.matrix.current) matrixRecorder.pause()
                                 mutable.value = mutable.value.copy(leds = leds, message = if (leds.authenticated) "LED-Box verbunden · Zugang bestätigt" else mutable.value.message)
+                                publishCollection()
                             },
-                            failed = { message -> disconnect(); report(message); mutable.value = mutable.value.copy(leds = mutable.value.leds.copy(message = message)) })
+                            failed = { message -> disconnect(); report(message); mutable.value = mutable.value.copy(leds = mutable.value.leds.copy(message = message)) },
+                            matrixSample = { sample -> matrixRecorder.observe(sample, System.currentTimeMillis()); publishCollection() })
                         ledSession!!.start()
                     }
                     return@dispatch
@@ -263,15 +270,34 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
     override fun startLedEffect() = guarded { if (mutable.value.leds.canStart) ledSession?.command(mutable.value.leds.selected.wire) }
     override fun boxNfc(change: Boolean) = guarded { ledSession?.nfcCommand(change) }
     override fun stopLeds() = guarded { if (mutable.value.leds.canStop) ledSession?.command(0) }
+    override fun selectAudioTrack(value: String) {
+        mutable.value = mutable.value.copy(leds = mutable.value.leds.let { it.copy(audio = it.audio.copy(trackText = value)) })
+    }
+    override fun selectAudioVolume(value: String) {
+        mutable.value = mutable.value.copy(leds = mutable.value.leds.let { it.copy(audio = it.audio.copy(volumeText = value)) })
+    }
+    override fun startAudio() = guarded {
+        val audio = mutable.value.leds.audio
+        if (audio.canStart) ledSession?.audioCommand(true, audio.selectedTrack!!, audio.selectedVolume!!)
+    }
+    override fun audioAction(operation: Int) = guarded {
+        val audio = mutable.value.leds.audio
+        if (when(operation) { 3 -> audio.canPause; 4 -> audio.canResume; 5 -> audio.canSetVolume; else -> false })
+            ledSession?.audioAction(operation, if (operation == 5) audio.selectedVolume!! else 0)
+    }
+    override fun stopAudio() = guarded { if (mutable.value.leds.audio.canStop) ledSession?.audioCommand(false) }
     override fun importLedAccess(bytes: ByteArray) {
         try {
             val selected = LedAccess.parse(bytes)
             accessStore.save(bytes)
             disconnect(); access = selected
+            matrixRecorder.selectDevice(selected.deviceId().joinToString("") { "%02x".format(it) })
+            publishCollection()
             mutable.value = mutable.value.copy(leds = mutable.value.leds.copy(accessLabel = selected.displayName, message = "Box-Zugang eingerichtet · Box suchen und verbinden"))
         } catch (_: Exception) { mutable.value = mutable.value.copy(leds = mutable.value.leds.copy(message = "Einrichtung nicht übernommen. Gültige USB-Zugangsdatei der Box auswählen.")) }
     }
     override fun disconnect() {
+        matrixRecorder.pause(); publishCollection()
         ledSession?.close(); ledSession = null
         ++generation; frames.clear(); receivedStatus = false
         statuses.disconnect(); expiry?.let { handler.removeCallbacks(it) }; expiry = null
@@ -285,6 +311,24 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
         stopScan(); disconnect(); handler.removeCallbacksAndMessages(null)
         devices.clear()
         mutable.value = mutable.value.copy(targets = emptyList())
+    }
+    override fun matrixAction(action: String) {
+        val live = mutable.value.leds.matrix
+        if (action.startsWith("confirm:")) {
+            matrixProblemIndices(action.removePrefix("confirm:"))?.let { problems ->
+                if (matrixRecorder.state.unseen.containsAll(problems)) matrixRecorder.confirmUnpopulated(problems)
+            }
+            publishCollection()
+            return
+        }
+        when (action) {
+            "start" -> matrixRecorder.start(live, System.currentTimeMillis())
+            "resume" -> matrixRecorder.resume(live)
+            "finish" -> matrixRecorder.finish(System.currentTimeMillis())
+            "confirm" -> matrixRecorder.confirmUnpopulated()
+            "reopen" -> matrixRecorder.reopen()
+        }
+        publishCollection()
     }
     override fun close() {
         val permissionMessage = mutable.value.message.takeIf { mutable.value.permissionMissing }

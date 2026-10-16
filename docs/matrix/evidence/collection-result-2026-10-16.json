@@ -1,0 +1,529 @@
+{
+  "date": "2026-10-16",
+  "timezone": "Europe/Berlin",
+  "run": "5805f942-5e90-4948-9c2b-5a256f5d0307",
+  "recordingSourceCommit": "20ac696f75630919949edceec975d593d46a4218",
+  "phaseAtRead": "REVIEW",
+  "startedAt": 1792176420644,
+  "endedAt": 1792177291802,
+  "recognizedCount": 68,
+  "activationCount": 110,
+  "interruptions": 0,
+  "rejectedSamples": 0,
+  "recognized": [
+    "A1",
+    "C1",
+    "D1",
+    "E1",
+    "F1",
+    "G1",
+    "H1",
+    "I1",
+    "B2",
+    "C2",
+    "D2",
+    "E2",
+    "F2",
+    "G2",
+    "H2",
+    "I2",
+    "B3",
+    "D3",
+    "E3",
+    "F3",
+    "I3",
+    "A4",
+    "C4",
+    "D4",
+    "E4",
+    "F4",
+    "G4",
+    "H4",
+    "I4",
+    "A5",
+    "B5",
+    "C5",
+    "D5",
+    "F5",
+    "G5",
+    "H5",
+    "I5",
+    "A6",
+    "B6",
+    "C6",
+    "D6",
+    "E6",
+    "F6",
+    "G6",
+    "H6",
+    "I6",
+    "A7",
+    "B7",
+    "C7",
+    "D7",
+    "E7",
+    "F7",
+    "G7",
+    "H7",
+    "I7",
+    "B8",
+    "D8",
+    "E8",
+    "F8",
+    "G8",
+    "H8",
+    "I8",
+    "A9",
+    "B9",
+    "C9",
+    "D9",
+    "F9",
+    "H9"
+  ],
+  "unobserved": [
+    "B1",
+    "A2",
+    "A3",
+    "C3",
+    "G3",
+    "H3",
+    "B4",
+    "E5",
+    "A8",
+    "C8",
+    "E9",
+    "G9",
+    "I9"
+  ],
+  "problemsUserConfirmed": [
+    "C3",
+    "G3",
+    "H3",
+    "A8"
+  ],
+  "unpopulatedUserConfirmed": [
+    "B1",
+    "A2",
+    "A3",
+    "B4",
+    "E5",
+    "C8",
+    "E9",
+    "G9",
+    "I9"
+  ],
+  "classificationSource": "User confirmed every existing contact tried; C3, A8, G3, H3 have contact/cable problems; all other unobserved coordinates have no contacts. Cause not independently measured.",
+  "hits": {
+    "A1": {
+      "count": 1,
+      "firstAt": 1792176746974,
+      "lastAt": 1792176746974
+    },
+    "C1": {
+      "count": 1,
+      "firstAt": 1792176778206,
+      "lastAt": 1792176778206
+    },
+    "D1": {
+      "count": 1,
+      "firstAt": 1792176788555,
+      "lastAt": 1792176788555
+    },
+    "E1": {
+      "count": 2,
+      "firstAt": 1792176810515,
+      "lastAt": 1792176811053
+    },
+    "F1": {
+      "count": 1,
+      "firstAt": 1792176811594,
+      "lastAt": 1792176811594
+    },
+    "G1": {
+      "count": 1,
+      "firstAt": 1792176823652,
+      "lastAt": 1792176823652
+    },
+    "H1": {
+      "count": 1,
+      "firstAt": 1792176824643,
+      "lastAt": 1792176824643
+    },
+    "I1": {
+      "count": 1,
+      "firstAt": 1792176834948,
+      "lastAt": 1792176834948
+    },
+    "B2": {
+      "count": 3,
+      "firstAt": 1792176745718,
+      "lastAt": 1792176946589
+    },
+    "C2": {
+      "count": 1,
+      "firstAt": 1792176778971,
+      "lastAt": 1792176778971
+    },
+    "D2": {
+      "count": 1,
+      "firstAt": 1792176791570,
+      "lastAt": 1792176791570
+    },
+    "E2": {
+      "count": 1,
+      "firstAt": 1792176809793,
+      "lastAt": 1792176809793
+    },
+    "F2": {
+      "count": 1,
+      "firstAt": 1792176812538,
+      "lastAt": 1792176812538
+    },
+    "G2": {
+      "count": 1,
+      "firstAt": 1792176822887,
+      "lastAt": 1792176822887
+    },
+    "H2": {
+      "count": 2,
+      "firstAt": 1792176825136,
+      "lastAt": 1792177010262
+    },
+    "I2": {
+      "count": 1,
+      "firstAt": 1792176834454,
+      "lastAt": 1792176834454
+    },
+    "B3": {
+      "count": 7,
+      "firstAt": 1792176744950,
+      "lastAt": 1792177060930
+    },
+    "D3": {
+      "count": 2,
+      "firstAt": 1792176792828,
+      "lastAt": 1792176793863
+    },
+    "E3": {
+      "count": 1,
+      "firstAt": 1792176809255,
+      "lastAt": 1792176809255
+    },
+    "F3": {
+      "count": 1,
+      "firstAt": 1792176813033,
+      "lastAt": 1792176813033
+    },
+    "I3": {
+      "count": 1,
+      "firstAt": 1792176833958,
+      "lastAt": 1792176833958
+    },
+    "A4": {
+      "count": 2,
+      "firstAt": 1792176743195,
+      "lastAt": 1792176950414
+    },
+    "C4": {
+      "count": 5,
+      "firstAt": 1792176770149,
+      "lastAt": 1792177065205
+    },
+    "D4": {
+      "count": 2,
+      "firstAt": 1792176794855,
+      "lastAt": 1792176859877
+    },
+    "E4": {
+      "count": 1,
+      "firstAt": 1792176808038,
+      "lastAt": 1792176808038
+    },
+    "F4": {
+      "count": 1,
+      "firstAt": 1792176813572,
+      "lastAt": 1792176813572
+    },
+    "G4": {
+      "count": 4,
+      "firstAt": 1792176821627,
+      "lastAt": 1792176990239
+    },
+    "H4": {
+      "count": 2,
+      "firstAt": 1792176826399,
+      "lastAt": 1792177014269
+    },
+    "I4": {
+      "count": 1,
+      "firstAt": 1792176833193,
+      "lastAt": 1792176833193
+    },
+    "A5": {
+      "count": 1,
+      "firstAt": 1792176741934,
+      "lastAt": 1792176741934
+    },
+    "B5": {
+      "count": 3,
+      "firstAt": 1792176758044,
+      "lastAt": 1792176761374
+    },
+    "C5": {
+      "count": 1,
+      "firstAt": 1792176770870,
+      "lastAt": 1792176770870
+    },
+    "D5": {
+      "count": 1,
+      "firstAt": 1792176795617,
+      "lastAt": 1792176795617
+    },
+    "F5": {
+      "count": 1,
+      "firstAt": 1792176814296,
+      "lastAt": 1792176814296
+    },
+    "G5": {
+      "count": 3,
+      "firstAt": 1792176821133,
+      "lastAt": 1792176978674
+    },
+    "H5": {
+      "count": 1,
+      "firstAt": 1792177016292,
+      "lastAt": 1792177016292
+    },
+    "I5": {
+      "count": 1,
+      "firstAt": 1792176832699,
+      "lastAt": 1792176832699
+    },
+    "A6": {
+      "count": 1,
+      "firstAt": 1792176740676,
+      "lastAt": 1792176740676
+    },
+    "B6": {
+      "count": 2,
+      "firstAt": 1792176762816,
+      "lastAt": 1792176763579
+    },
+    "C6": {
+      "count": 1,
+      "firstAt": 1792176771633,
+      "lastAt": 1792176771633
+    },
+    "D6": {
+      "count": 1,
+      "firstAt": 1792176796609,
+      "lastAt": 1792176796609
+    },
+    "E6": {
+      "count": 2,
+      "firstAt": 1792176806732,
+      "lastAt": 1792176853846
+    },
+    "F6": {
+      "count": 1,
+      "firstAt": 1792176814789,
+      "lastAt": 1792176814789
+    },
+    "G6": {
+      "count": 1,
+      "firstAt": 1792176820367,
+      "lastAt": 1792176820367
+    },
+    "H6": {
+      "count": 1,
+      "firstAt": 1792176827660,
+      "lastAt": 1792176827660
+    },
+    "I6": {
+      "count": 1,
+      "firstAt": 1792176832203,
+      "lastAt": 1792176832203
+    },
+    "A7": {
+      "count": 1,
+      "firstAt": 1792176737165,
+      "lastAt": 1792176737165
+    },
+    "B7": {
+      "count": 1,
+      "firstAt": 1792176755300,
+      "lastAt": 1792176755300
+    },
+    "C7": {
+      "count": 1,
+      "firstAt": 1792176772670,
+      "lastAt": 1792176772670
+    },
+    "D7": {
+      "count": 1,
+      "firstAt": 1792176797913,
+      "lastAt": 1792176797913
+    },
+    "E7": {
+      "count": 2,
+      "firstAt": 1792176805743,
+      "lastAt": 1792176852585
+    },
+    "F7": {
+      "count": 1,
+      "firstAt": 1792176815328,
+      "lastAt": 1792176815328
+    },
+    "G7": {
+      "count": 1,
+      "firstAt": 1792176819604,
+      "lastAt": 1792176819604
+    },
+    "H7": {
+      "count": 1,
+      "firstAt": 1792176828918,
+      "lastAt": 1792176828918
+    },
+    "I7": {
+      "count": 1,
+      "firstAt": 1792176972867,
+      "lastAt": 1792176972867
+    },
+    "B8": {
+      "count": 1,
+      "firstAt": 1792176754040,
+      "lastAt": 1792176754040
+    },
+    "D8": {
+      "count": 1,
+      "firstAt": 1792176799174,
+      "lastAt": 1792176799174
+    },
+    "E8": {
+      "count": 4,
+      "firstAt": 1792176804978,
+      "lastAt": 1792176851327
+    },
+    "F8": {
+      "count": 2,
+      "firstAt": 1792176816094,
+      "lastAt": 1792176848806
+    },
+    "G8": {
+      "count": 1,
+      "firstAt": 1792176819108,
+      "lastAt": 1792176819108
+    },
+    "H8": {
+      "count": 1,
+      "firstAt": 1792176967785,
+      "lastAt": 1792176967785
+    },
+    "I8": {
+      "count": 2,
+      "firstAt": 1792176831213,
+      "lastAt": 1792176971069
+    },
+    "A9": {
+      "count": 1,
+      "firstAt": 1792176730596,
+      "lastAt": 1792176730596
+    },
+    "B9": {
+      "count": 2,
+      "firstAt": 1792176752510,
+      "lastAt": 1792176842238
+    },
+    "C9": {
+      "count": 2,
+      "firstAt": 1792176773929,
+      "lastAt": 1792177026101
+    },
+    "D9": {
+      "count": 2,
+      "firstAt": 1792176800433,
+      "lastAt": 1792176845296
+    },
+    "F9": {
+      "count": 6,
+      "firstAt": 1792176816587,
+      "lastAt": 1792177173609
+    },
+    "H9": {
+      "count": 2,
+      "firstAt": 1792176830448,
+      "lastAt": 1792176964274
+    }
+  },
+  "classificationVerification": {
+    "installedApkSha256": "c13841e8a2047425df796e39bad8b01df2dda66ad17fae5b0912c7806bca2bd6",
+    "bytes": 23287898,
+    "signingCertificateMatches": true,
+    "apkReadbackMatches": true,
+    "originalRunByteIdenticalAfterInstall": true,
+    "accessAndWakeUnchanged": true,
+    "firmwareWritten": false,
+    "protocol": {
+      "tests": 68,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "app": {
+      "tests": 62,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "lint": [
+      {
+        "id": "OldTargetApi",
+        "severity": "Warning"
+      },
+      {
+        "id": "DataExtractionRules",
+        "severity": "Warning"
+      },
+      {
+        "id": "AutoboxingStateCreation",
+        "severity": "Information"
+      },
+      {
+        "id": "MissingApplicationIcon",
+        "severity": "Warning"
+      }
+    ],
+    "testedSourceSha256": {
+      "companion/android/app/src/main/java/de/larpescape/companion/MainActivity.kt": "36e757bd6688f07e6f605a4a1fa8053b064bd5434f9cc08d91b6ed6821f3d35a",
+      "companion/android/app/src/main/java/de/larpescape/companion/data/device/DeviceRepository.kt": "f5c2eafa8bd819b8fd30a374560d04bce05dca5b5f72fa1de4846f922680640c",
+      "companion/android/app/src/main/java/de/larpescape/companion/data/device/MatrixCollection.kt": "414656e1976b38cf3335fc70087623d11e29fc0011330ab7881480f6ce29c1c0",
+      "companion/android/app/src/main/java/de/larpescape/companion/platform/ble/AndroidBleRepository.kt": "e2c3d5e610b1e2bdd782beee77cb12e2065c6a9823e3551c1eb93ad099012dd3",
+      "companion/android/app/src/main/java/de/larpescape/companion/platform/ble/AndroidMatrixCollectionStore.kt": "3232dfc75a7c79e981a70b7f56f053f7534fc31551a5737da943b8624f37f817",
+      "companion/android/app/src/main/java/de/larpescape/companion/platform/ble/LedBleSession.kt": "bfe7fc02927a4ebbf971150cf84a64a3921354c87f622d2a2288d3f99164212c",
+      "companion/android/app/src/main/java/de/larpescape/companion/ui/device/DeviceViewModel.kt": "63532fddd46af9b946fa1e28ddd062cb00482b6183a7b64550cbf13b8b9659ab",
+      "companion/android/app/src/main/java/de/larpescape/companion/ui/device/MatrixControls.kt": "0079510b889578a00873f75fcc7d67c75f5a21b9589ecd04982757ca7bbd4cc6",
+      "companion/android/app/src/test/java/de/larpescape/companion/data/device/MatrixCollectionTest.kt": "ceb1d98bfb0baf7e401d8829be916bcb6e1016ad22fe2bc72b457f775a312c35"
+    },
+    "persistedPhase": "CONFIRMED",
+    "sameRunAndTimestamps": true,
+    "allHitsAndCountsUnchanged": true,
+    "persistedDisabledIndices": [
+      1,
+      9,
+      18,
+      28,
+      40,
+      65,
+      76,
+      78,
+      80
+    ],
+    "persistedProblemIndices": [
+      20,
+      24,
+      25,
+      63
+    ],
+    "processRestartRestoresClassificationAndHitCount": true
+  }
+}

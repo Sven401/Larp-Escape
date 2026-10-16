@@ -1,5 +1,11 @@
 # Eigenständige LED-Produktfunktion
 
+Aktueller konsolidierter Vertrag: [Baugruppen-Wire V2](../../docs/led/ble-wire-v2.md).
+Alle drei Varianten enthalten Audio; NFC-/Matrix-Tests bleiben getrennt.
+Ein gemeinsames App-/Firmwarepaar ist nötig; es wurde hier nicht installiert.
+Prüfstand und Herkunft: [Konsolidierungsbericht](../../handoff/KONSOLIDIERUNG-2026-10-17.md).
+Die folgenden datierten Abschnitte bewahren die ursprünglichen Einzelstände.
+
 Stand: 15. Oktober 2026. Die echte Companion-App steuert drei eigene Effekte
 über den geschützten BLE-Zugang. Dieser Produktbuild enthält zunächst nur die
 LED-Funktion; die Spielintegration folgt getrennt. Die Firmware meldet `LED_ONLY`
@@ -24,6 +30,45 @@ Testfunktion. Das LED-Modell bleibt `LED_ONLY`; es entsteht keine Spielintegrati
 Der [gemeinsame Testplan](../../docs/wake/test-preparation.md) beschreibt
 Zuordnung, HIGH-Interpretation, offene B7-Eignung, Live-Fristen und die
 zusammengehörige App-/Firmwareinstallation.
+
+## Audio-Testvorbereitung
+
+Der [gemeinsame Audio-Testplan](../../docs/audio/test-preparation.md) führt
+durch bewussten Start, Stop und Neustart über die Companion-App. Er trennt
+UART-Auftrag, BUSY-Rohpegel und tatsächliche Hörbeobachtung und hält die
+offene Verdrahtung sowie den geprüften Rückweg fest. Der
+[Ergebnisbogen](../../docs/audio/test-record-template.md) ist eine Vorlage;
+aus der Vorbereitung folgt noch keine Geräteabnahme.
+
+## Separater Matrix-Prüfmodus
+
+Stand der Korrektur: **16. Oktober 2026**. Die Umgebung `larp-matrix-test`
+ergänzt die 9×9-Kontaktanzeige in der echten Companion-App. Sie verwendet
+wieder die ursprüngliche Richtung: Spalten `0x20 B1/A0–A6/B5` einzeln LOW,
+Zeilen `0x21 B7–B0` und `0x20 B0` mit Pull-up lesen. Inaktive Spalten bleiben
+hochohmig; das historische anschließende HIGH wird nicht übernommen.
+Die Koordinaten A1 bis I9 bleiben unverändert. Einige Kontakte sind laut Nutzer
+wegen Platzkollisionen bewusst nicht bestückt; die genaue Liste ist unbekannt.
+
+Der historische Prüfmodus setzt ausdrücklich
+`LARP_MATRIX_LEGACY_IO7_INPUT=1`. Er liest B7 wie das Original, löst aber den
+dokumentierten MCP23017-Konflikt mit dessen Ausgangsvorgabe für IO7 nicht.
+Chipidentität, Eignung und physische Zuordnung bleiben offen. Ein gültiger
+Snapshot bedeutet einen vollständigen frischen Registerscan über neun Spalten,
+keine Geräteabnahme; fehlende Zeilen werden nicht stillschweigend ausgeblendet.
+
+Die Standardumgebung `larp-led-product` aktiviert keinen Matrixscan. Beide
+Varianten verwenden dieselbe Partitionstabelle und denselben vorhandenen
+BLE-Zugang. Der Matrixstatus bleibt gegenüber dem installierten Matrix-APK
+unverändert. Quelle, Änderung und Softwareprüfstand stehen im
+[Korrekturbericht](../../docs/matrix/scan-direction-correction-2026-10-16.md),
+Vorbereitung und gemeinsame Abnahmefälle im
+[Matrix-Testplan](../../docs/matrix/test-preparation.md).
+Die Korrektur ist noch nicht installiert oder am Gerät geprüft.
+
+```powershell
+python -m platformio run -d firmware/led -e larp-matrix-test -j 2
+```
 
 ## Aufbau und Ausgabe
 

@@ -21,7 +21,7 @@ class TwoWire {
     std::size_t write(std::uint8_t value) { sent.push_back(value); return writeCount; }
     std::uint8_t endTransmission(bool stop) { ++endCalls; lastStop = stop; return endResult; }
     std::size_t requestFrom(std::uint8_t target, std::size_t size, bool stop) {
-        if (target != 0x20 || size != 1 || !stop) return 0;
+        if ((target != 0x20 && target != 0x21) || size != 1 || !stop) return 0;
         ++requestCalls; return requestCount;
     }
     int available() { return availableCount; }

@@ -1,0 +1,54 @@
+{
+  "date": "2026-10-16",
+  "timezone": "Europe/Berlin",
+  "baseCommit": "e4b2ce024655ae9e951e04542dc7f473e1bc6e9c",
+  "command": ":core:protocol:test :app:testDebugUnitTest :app:lintDebug :app:assembleDebug --offline --no-daemon",
+  "java": "21.0.8",
+  "gradle": "8.9",
+  "core/protocol": {
+    "tests": 68,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "app": {
+    "tests": 59,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "newCollectionTests": 7,
+  "lint": [
+    {
+      "id": "OldTargetApi",
+      "severity": "Warning"
+    },
+    {
+      "id": "DataExtractionRules",
+      "severity": "Warning"
+    },
+    {
+      "id": "AutoboxingStateCreation",
+      "severity": "Information"
+    },
+    {
+      "id": "MissingApplicationIcon",
+      "severity": "Warning"
+    }
+  ],
+  "apk": {
+    "sha256": "d1a12043c38d19008965530478c5834a4342d2774e3a9b3d6735f548437d694a",
+    "bytes": 23283438
+  },
+  "testedSourceSha256": {
+    "companion/android/app/src/main/java/de/larpescape/companion/MainActivity.kt": "36e757bd6688f07e6f605a4a1fa8053b064bd5434f9cc08d91b6ed6821f3d35a",
+    "companion/android/app/src/main/java/de/larpescape/companion/data/device/DeviceRepository.kt": "f5c2eafa8bd819b8fd30a374560d04bce05dca5b5f72fa1de4846f922680640c",
+    "companion/android/app/src/main/java/de/larpescape/companion/data/device/MatrixCollection.kt": "390456f235374338f9c41a4c9ecba6902a6d8126ebdf1c0111cb5c51e9891823",
+    "companion/android/app/src/main/java/de/larpescape/companion/platform/ble/AndroidBleRepository.kt": "0c3b2411e0722651d1e88b8d333da2cbd7894aa659a31a3833f6f90bab75af6a",
+    "companion/android/app/src/main/java/de/larpescape/companion/platform/ble/AndroidMatrixCollectionStore.kt": "3232dfc75a7c79e981a70b7f56f053f7534fc31551a5737da943b8624f37f817",
+    "companion/android/app/src/main/java/de/larpescape/companion/platform/ble/LedBleSession.kt": "bfe7fc02927a4ebbf971150cf84a64a3921354c87f622d2a2288d3f99164212c",
+    "companion/android/app/src/main/java/de/larpescape/companion/ui/device/DeviceViewModel.kt": "63532fddd46af9b946fa1e28ddd062cb00482b6183a7b64550cbf13b8b9659ab",
+    "companion/android/app/src/main/java/de/larpescape/companion/ui/device/MatrixControls.kt": "4b2f017b6ce8178c7d7bfd02d5992dfa1d6617abaef7e4db089d134dd1ab8891",
+    "companion/android/app/src/test/java/de/larpescape/companion/data/device/MatrixCollectionTest.kt": "8c3a5404b260ca95ce0b420332a8821cb696c76c7e0faff00d0d60125e970c58"
+  }
+}

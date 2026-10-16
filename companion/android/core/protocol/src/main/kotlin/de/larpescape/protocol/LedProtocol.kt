@@ -7,7 +7,7 @@ import javax.crypto.spec.SecretKeySpec
 /** Independent LED control contract; this does not grant legacy game-master rights. */
 data class LedStatus(val revision: Long, val nextRequest: Long, val deviceMillis: Long,
     val statusSequence: Long, val effect: Int, val flags: Int, val mode: Int, val wake: WakeStatus? = null,
-    val nfcSupported: Boolean = false) {
+    val nfcSupported: Boolean = false, val matrix: MatrixStatus? = null, val audio: AudioStatus? = null) {
     val ready get() = flags and 1 != 0
     val pending get() = flags and 2 != 0
     val off get() = flags and 4 != 0
@@ -16,11 +16,40 @@ data class LedStatus(val revision: Long, val nextRequest: Long, val deviceMillis
     val canStart get() = ready && !pending && !fault && mode in 0..1
     val canStop get() = ready && !pending && !fault && mode in 0..1
 }
+/** UART delivery and the raw BUSY pin are observations, never proof of audible sound. */
+data class AudioStatus(val revision: Long = 0, val track: Int = 0, val volume: Int = 0,
+    val flags: Int = 0, val supported: Boolean = true) {
+    init {
+        require(revision in 0..LedProtocol.U32 && track in 0..255 && volume in 0..10 && flags in 0..127 &&
+            (flags and 16 == 0 || flags and 8 != 0) &&
+            !(flags and 1 != 0 && flags and 32 != 0) &&
+            (flags and 68 == 0 || (track in 1..255 && volume in 1..10)) && flags and 68 != 68 &&
+            (supported || (revision == 0L && track == 0 && volume == 0 && flags == 0))) { "Widersprüchlicher Audiostatus." }
+    }
+    val ready get() = supported && flags and 1 != 0
+    val pending get() = flags and 2 != 0
+    val active get() = flags and 4 != 0
+    val paused get() = flags and 64 != 0
+    val busyValid get() = flags and 8 != 0
+    val busyLow get() = flags and 16 != 0
+    val fault get() = flags and 32 != 0
+    val canStart get() = ready && !pending && !fault
+    val canStop get() = ready && !pending && !fault
+}
 /** Four raw HIGH levels interpreted as active by the provisional box configuration. */
 data class WakeStatus(val supported: Boolean, val valid: Boolean, val activeMask: Int) {
     init {
         require(activeMask in 0..15 && (supported || (!valid && activeMask == 0)) &&
             (valid || activeMask == 0))
+    }
+}
+
+/** Row-major raw contacts 0..80; ambiguous means contacts cannot identify unique keys. */
+data class MatrixStatus(val supported: Boolean, val valid: Boolean,
+    val ambiguous: Boolean, val pressed: Set<Int>) {
+    init {
+        require(pressed.all { it in 0..80 } && (supported || !valid) &&
+            (valid || (pressed.isEmpty() && !ambiguous)))
     }
 }
 
@@ -32,7 +61,7 @@ class LedProtocol(access: LedAccess, private val clientNonce: ByteArray) {
     private var session: ByteArray? = null
     private var granted = false
     init { require(clientNonce.size == 16 && clientNonce.any { it != 0.toByte() }) }
-    fun hello(): ByteArray = byteArrayOf(1, 1) + clientNonce
+    fun hello(): ByteArray = byteArrayOf(2, 1) + clientNonce
     fun proof(challenge: ByteArray): ByteArray {
         check(session == null) { "Unerwartete erneute Box-Anmeldung." }
         header(challenge, 0x81, 98)
@@ -43,7 +72,7 @@ class LedProtocol(access: LedAccess, private val clientNonce: ByteArray) {
         verify("challenge", challenge, 66)
         val context = challenge.copyOfRange(2, 66)
         session = mac("session", context).copyOf(16)
-        return byteArrayOf(1, 2) + mac("proof", context)
+        return byteArrayOf(2, 2) + mac("proof", context)
     }
     fun granted(bytes: ByteArray): LedStatus {
         check(!granted)
@@ -53,20 +82,34 @@ class LedProtocol(access: LedAccess, private val clientNonce: ByteArray) {
     }
     fun status(bytes: ByteArray): LedStatus { check(granted); return status(bytes, 0x84) }
     private fun status(bytes: ByteArray, type: Int): LedStatus {
-        header(bytes, type, 70); binding(bytes); verify("status", bytes, 38)
+        require(bytes.size == 91) { "Unbekannte Boxnachricht." }
+        header(bytes, type, bytes.size); binding(bytes); verify("status", bytes, bytes.size - 32)
         val wakeByte = byte(bytes, 37)
         val supported = wakeByte and 0x80 != 0
         val valid = wakeByte and 0x40 != 0
         val mask = wakeByte and 15
         require(wakeByte and 0x10 == 0 && (supported || wakeByte and 0xdf == 0) &&
             (valid || mask == 0)) { "Widersprüchlicher Wake-Status." }
+        val matrix = run {
+            val matrixFlags = byte(bytes, 47)
+            require(matrixFlags and 0x1f == 0 && byte(bytes, 58) and 0xfe == 0) {
+                "Widersprüchlicher Matrixstatus."
+            }
+            MatrixStatus(matrixFlags and 0x80 != 0, matrixFlags and 0x40 != 0,
+                matrixFlags and 0x20 != 0,
+                (0..80).filterTo(mutableSetOf()) { byte(bytes, 48 + it / 8) and (1 shl (it % 8)) != 0 })
+        }
+        require(byte(bytes, 38) in 0..1) { "Unbekannte Boxf�higkeiten." }
+        val audioSupported = byte(bytes, 38) == 1
+        val audio = audioValues(bytes, 39, audioSupported)
         return values(u32(bytes, 18), u32(bytes, 22), u32(bytes, 26), u32(bytes, 30),
-            byte(bytes, 34), byte(bytes, 35), byte(bytes, 36), WakeStatus(supported, valid, mask), wakeByte and 0x20 != 0)
+            byte(bytes, 34), byte(bytes, 35), byte(bytes, 36), WakeStatus(supported, valid, mask), wakeByte and 0x20 != 0, matrix,
+            audio)
     }
     fun command(status: LedStatus, effect: Int): ByteArray {
         check(granted)
         require(effect in 0..3 && if (effect == 0) status.canStop else status.canStart) { "LED-Bedienung derzeit gesperrt." }
-        val value = byteArrayOf(1, 3) + session!! + le(status.nextRequest) + le(status.revision) +
+        val value = byteArrayOf(2, 3) + session!! + le(status.nextRequest) + le(status.revision) +
             le((status.deviceMillis + 3000) and U32) + byteArrayOf(if (effect == 0) 2 else 1, effect.toByte())
         return value + mac("command", value)
     }
@@ -77,10 +120,44 @@ class LedProtocol(access: LedAccess, private val clientNonce: ByteArray) {
         return LedResult(request, outcome, values(u32(bytes, 26), u32(bytes, 22), u32(bytes, 30),
             u32(bytes, 34), byte(bytes, 39), byte(bytes, 40), byte(bytes, 41)))
     }
-    private fun values(revision: Long, next: Long, millis: Long, sequence: Long, effect: Int, flags: Int, mode: Int, wake: WakeStatus? = null, nfcSupported: Boolean = false): LedStatus {
+    fun audioCommand(status: LedStatus, start: Boolean, track: Int = 0, volume: Int = 0): ByteArray {
+        check(granted)
+        val audio = status.audio ?: error("Bestätigter Audiostatus fehlt.")
+        require(status.mode in 0..1 && if (start) audio.canStart else audio.canStop) { "Audio-Bedienung derzeit gesperrt." }
+        require(if (start) track in 1..255 && volume in 1..10 else track == 0 && volume == 0) { "Ungültiger Audiotitel oder Lautstärke." }
+        val value = byteArrayOf(2, 4) + session!! + le(status.nextRequest) + le(audio.revision) +
+            le((status.deviceMillis + 3000) and U32) + byteArrayOf(if (start) 1 else 2,
+                track.toByte(), (track shr 8).toByte(), volume.toByte())
+        return value + mac("audio-command", value)
+    }
+    fun audioAction(status: LedStatus, operation: Int, volume: Int = 0): ByteArray {
+        check(granted)
+        val audio = status.audio ?: error("Audiostatus fehlt.")
+        require(status.mode in 0..1 && audio.canStop)
+        require(when(operation) {
+            3 -> audio.active && volume == 0
+            4 -> audio.paused && volume == 0
+            5 -> volume in 1..10
+            else -> false
+        })
+        val value = byteArrayOf(2, 4) + session!! + le(status.nextRequest) + le(audio.revision) +
+            le((status.deviceMillis + 3000) and U32) + byteArrayOf(operation.toByte(), 0, 0, volume.toByte())
+        return value + mac("audio-command", value)
+    }
+    fun audioResult(bytes: ByteArray): LedResult {
+        check(granted); header(bytes, 0x85, 82); binding(bytes); verify("audio-result", bytes, 50)
+        val request = u32(bytes, 18); val outcome = byte(bytes, 38)
+        require(request != 0L && outcome in 0..11) { "Ungültige Audio-Befehlsantwort." }
+        return LedResult(request, outcome, values(u32(bytes, 26), u32(bytes, 22), u32(bytes, 30),
+            u32(bytes, 34), byte(bytes, 39), byte(bytes, 40), byte(bytes, 41), audio = audioValues(bytes, 42)))
+    }
+    private fun audioValues(bytes: ByteArray, at: Int, supported: Boolean = true) = AudioStatus(u32(bytes, at),
+        byte(bytes, at + 4) or (byte(bytes, at + 5) shl 8), byte(bytes, at + 6), byte(bytes, at + 7), supported)
+    private fun values(revision: Long, next: Long, millis: Long, sequence: Long, effect: Int, flags: Int, mode: Int,
+        wake: WakeStatus? = null, nfcSupported: Boolean = false, matrix: MatrixStatus? = null, audio: AudioStatus? = null): LedStatus {
         require(next != 0L && sequence != 0L && effect in 0..3 && flags in 0..31 && mode in 0..4 &&
             (effect == 0) == (flags and 4 != 0) && !(flags and 1 != 0 && flags and 16 != 0)) { "Widersprüchlicher Boxstatus." }
-        return LedStatus(revision, next, millis, sequence, effect, flags, mode, wake, nfcSupported)
+        return LedStatus(revision, next, millis, sequence, effect, flags, mode, wake, nfcSupported, matrix, audio)
     }
     private fun binding(bytes: ByteArray) {
         require(session != null && MessageDigest.isEqual(session, bytes.copyOfRange(2, 18))) { "Antwort gehört zu einer anderen Verbindung." }
@@ -89,19 +166,19 @@ class LedProtocol(access: LedAccess, private val clientNonce: ByteArray) {
         require(MessageDigest.isEqual(mac(domain, bytes.copyOf(offset)), bytes.copyOfRange(offset, bytes.size))) { "Box-Antwort konnte nicht bestätigt werden." }
     }
     private fun mac(domain: String, bytes: ByteArray): ByteArray = Mac.getInstance("HmacSHA256").run {
-        init(SecretKeySpec(secret, "HmacSHA256")); update("LARP-LED/1/$domain".toByteArray(Charsets.US_ASCII)); doFinal(bytes)
+        init(SecretKeySpec(secret, "HmacSHA256")); update("LARP-LED/2/$domain".toByteArray(Charsets.US_ASCII)); doFinal(bytes)
     }
     private fun nfcMac(domain: String, bytes: ByteArray): ByteArray = Mac.getInstance("HmacSHA256").run {
-        init(SecretKeySpec(secret, "HmacSHA256")); update("LARP-NFC/1/$domain".toByteArray(Charsets.US_ASCII)); doFinal(bytes)
+        init(SecretKeySpec(secret, "HmacSHA256")); update("LARP-NFC/2/$domain".toByteArray(Charsets.US_ASCII)); doFinal(bytes)
     }
     fun nfcCommand(request: Long, deviceMillis: Long, uid: ByteArray? = null): ByteArray {
         check(granted); require(request in 1 until U32 && (uid == null || uid.size == 7))
-        val body = byteArrayOf(1, 4) + session!! + le(request) + le((deviceMillis + 3000) and U32) +
+        val body = byteArrayOf(2, 5) + session!! + le(request) + le((deviceMillis + 3000) and U32) +
             byteArrayOf(if (uid == null) 1 else 2, (uid?.size ?: 0).toByte()) + (uid ?: byteArrayOf()).copyOf(10)
         return body + nfcMac("command", body)
     }
     fun nfcResult(bytes: ByteArray): BoxNfcResult {
-        check(granted); header(bytes, 0x85, 105); binding(bytes)
+        check(granted); header(bytes, 0x86, 105); binding(bytes)
         require(MessageDigest.isEqual(nfcMac("result", bytes.copyOf(73)), bytes.copyOfRange(73, 105)))
         val size = byte(bytes, 36); val payloadSize = byte(bytes, 47)
         val outcome = byte(bytes, 34); val kind = byte(bytes, 35)
@@ -120,7 +197,8 @@ class LedProtocol(access: LedAccess, private val clientNonce: ByteArray) {
         private fun u32(bytes: ByteArray, at: Int): Long = (0..3).fold(0L) { value, i -> value or (byte(bytes, at + i).toLong() shl (i * 8)) }
         private fun le(value: Long) = ByteArray(4) { (value shr (it * 8)).toByte() }
         private fun header(bytes: ByteArray, type: Int, count: Int) {
-            require(bytes.size == count && byte(bytes, 0) == 1 && byte(bytes, 1) == type) { "Unbekannte Boxnachricht." }
+            require(bytes.isEmpty() || byte(bytes, 0) == 2) { "App und Box-Firmware verwenden unterschiedliche Protokollversionen. Passendes Paar erforderlich." }
+            require(bytes.size == count && byte(bytes, 0) == 2 && byte(bytes, 1) == type) { "Unbekannte Boxnachricht." }
         }
     }
 }

@@ -1,5 +1,36 @@
 # Technische Projektübergabe – 13. Oktober 2026
 
+Aktuelle Fortsetzung: [Baugruppen-Konsolidierung vom 17. Oktober 2026](KONSOLIDIERUNG-2026-10-17.md).
+
+**Abgeschlossener Folgeprüfstand:** [Sammelergebnis](../docs/matrix/collection-result-2026-10-16.md)
+mit 68 erkannten Koordinaten, vier offenen Problemstellen und neun
+nutzerbestätigt unbestückten, in der App deaktivierten Feldern.
+Die folgenden früheren Vorbereitungs-/Startangaben sind historische Belege.
+
+
+## Aktuelle Fortsetzung: Sammeldurchgang, 16. Oktober 2026
+
+Der [Sammeldurchgang](../docs/matrix/collection-run-2026-10-16.md) ersetzt für die nächste
+Bestückungserfassung die Einzelbestätigungen. Umsetzung, Arbeitskopie,
+Speicherung und Abschlussauswertung stehen dort. Der folgende frühere
+Arbeitsstand ist historisch; den neuen Geräte-/Prüfstand im verlinkten
+Sammellaufbericht lesen.
+
+
+## Tastenmatrix: Softwarekorrektur nach Originalrichtung, 16. Oktober 2026
+
+Der [Gerätebericht](../docs/matrix/device-test-2026-10-16.md) hält die
+verifizierte Installation von `c613ace` und die erfolglosen Kontaktversuche
+fest. Auf neuen Nutzerauftrag wird zuerst die Prüffirmware aus der
+ursprünglichen Scanrichtung und Pinbelegung korrigiert. Der
+[Korrekturbericht](../docs/matrix/scan-direction-correction-2026-10-16.md)
+führt Quellen, Änderung und Softwareprüfstand; eine neue Installation oder
+Geräteabnahme ist nicht erfolgt. Die Box ist laut Nutzer vollständig stromlos,
+die Matrixleitungen bleiben angeschlossen. Einige Kontakte sind bewusst
+nicht bestückt; ihre genaue Liste ist offen. Arbeitsstand, offener
+B7-Herstellerkonflikt und nächster gezielter Gerätetest stehen in der
+[Matrix-Sitzungsübergabe](matrix-test-2026-10-16.md).
+
 ## Ergänzung: eigenständige LED-Produktfunktion, 15. Oktober 2026
 
 Der neue Produktzweig ergänzt die echte Android-App und einen geschützten

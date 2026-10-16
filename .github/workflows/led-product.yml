@@ -2,12 +2,16 @@ name: LED product
 
 on:
   push:
-    paths: ['firmware/led/**', 'companion/android/**', 'docs/led/**', 'test/test_led*/**', 'scripts/*led*', '.github/workflows/led-product.yml']
+    paths: ['firmware/led/**', 'companion/android/**', 'docs/led/**', 'docs/audio/**', 'docs/matrix/**', 'docs/nfc/**', 'scripts/quality_evidence.py', 'test/test_led*/**', 'scripts/*led*', '.github/workflows/led-product.yml']
   pull_request:
   workflow_dispatch:
 
 permissions:
   contents: read
+
+env:
+  QUALITY_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+  QUALITY_BASE_SHA: ${{ github.event.pull_request.base.sha }}
 
 concurrency:
   group: led-product-${{ github.ref }}
@@ -29,8 +33,24 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install --yes g++ libssl-dev
-      - run: python test/test_led_ble_wire/run.py
-      - run: python firmware/led/tests/run_output_tests.py
+      - name: Record common test sources
+        run: python scripts/quality_evidence.py init
+      - run: python scripts/quality_evidence.py run --name common-wire -- python test/test_led_ble_wire/run.py
+      - run: python scripts/quality_evidence.py run --name led-wake-matrix -- python firmware/led/tests/run_output_tests.py
+      - run: python scripts/quality_evidence.py run --name audio -- python firmware/led/tests/run_audio_tests.py
+      - run: python scripts/quality_evidence.py run --name nfc -- python firmware/nfc-probe/tests/run_tests.py
+      - name: Summarize common tests
+        if: always()
+        env:
+          QUALITY_JOB_STATUS: ${{ job.status }}
+        run: python scripts/quality_evidence.py finish
+      - name: Preserve common test evidence
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: common-wire-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/larp-quality-protocol-output/
+          if-no-files-found: error
 
   firmware:
     name: LED ESP32 product build
@@ -46,7 +66,22 @@ jobs:
         with:
           python-version: '3.11'
       - run: python -m pip install platformio==6.2.0
-      - run: python -m platformio run -d firmware/led -e larp-led-product -e larp-nfc-test -j 2
+      - name: Record common firmware sources
+        run: python scripts/quality_evidence.py init
+      - name: Build all separate product variants and record resources
+        run: python scripts/quality_evidence.py run --name common-builds -- python -m platformio run -d firmware/led -e larp-led-product -e larp-nfc-test -e larp-matrix-test -j 2
+      - name: Summarize common firmware checks
+        if: always()
+        env:
+          QUALITY_JOB_STATUS: ${{ job.status }}
+        run: python scripts/quality_evidence.py finish
+      - name: Preserve common firmware evidence
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: common-firmware-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/larp-quality-firmware/
+          if-no-files-found: error
 
   android:
     name: Android tests, lint and builds

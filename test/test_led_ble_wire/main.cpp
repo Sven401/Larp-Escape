@@ -54,6 +54,17 @@ class Control : public IControl {
     unsigned submissions = 0, stops = 0;
     bool accept = true;
     Effect requested = Effect::Off;
+    AudioSnapshot audio;
+    unsigned audioSubmissions = 0;
+    AudioSnapshot audioSnapshot() const noexcept override { return audio; }
+    bool submitAudio(Operation operation, std::uint16_t track, std::uint8_t volume,
+                     std::uint32_t revision, std::uint32_t &target) noexcept override {
+        if (revision != audio.revision) return false;
+        ++audioSubmissions; target = ++audio.revision; audio.pending = true;
+        audio.active = operation == Operation::Start;
+        audio.track = track; if (volume) audio.volume = volume;
+        return true;
+    }
     Control() { value.flags = Ready | Off; value.mode = Mode::LedOnly; }
     Snapshot snapshot() const noexcept override { return value; }
     bool submit(Operation op, Effect effect, std::uint32_t revision,
@@ -76,6 +87,7 @@ class Control : public IControl {
         value.appliedRevision = value.revision;
         value.effect = Effect::Off;
         value.flags = Ready | Off;
+        audio.active = false; audio.pending = false; ++audio.revision;
     }
 };
 static Message hex(const std::string &text) {
@@ -106,7 +118,7 @@ static bool same(const Message &a, const Message &b) {
 }
 static void sign(Crypto &crypto, const Secret &key, const char *domain,
                  Message &m, std::size_t body) {
-    const std::string prefix = std::string("LARP-LED/1/") + domain;
+    const std::string prefix = std::string("LARP-LED/2/") + domain;
     std::vector<std::uint8_t> bytes(prefix.begin(), prefix.end());
     bytes.insert(bytes.end(), m.bytes.begin(), m.bytes.begin() + body);
     Secret mac = {};
@@ -171,15 +183,15 @@ static void wakeStatus() {
         check(h.session.publishStatus(1250, out) && same(out, get("status_wake_1_3")),
               "simultaneous wake1+3 is authenticated status");
         auto tampered = out; tampered.bytes[37] ^= 1;
-        sign(h.crypto, h.key, "status", tampered, 38);
-        check(!std::equal(tampered.bytes.begin() + 38, tampered.bytes.begin() + 70,
-                          out.bytes.begin() + 38), "wake mask belongs to authenticated body");
+        sign(h.crypto, h.key, "status", tampered, 59);
+        check(!std::equal(tampered.bytes.begin() + 59, tampered.bytes.begin() + 91,
+                          out.bytes.begin() + 59), "wake mask belongs to authenticated body");
     }
     for (unsigned mask = 0; mask < 16; ++mask) {
         Harness h; h.auth(); Message out;
         h.control.value.wakeSupported = h.control.value.wakeValid = true;
         h.control.value.wakeMask = static_cast<std::uint8_t>(mask);
-        check(h.session.publishStatus(1250, out) && out.size == 70 && out.bytes[37] == (0xc0 | mask),
+        check(h.session.publishStatus(1250, out) && out.size == 91 && out.bytes[37] == (0xc0 | mask),
               "all supported valid wake masks and unchanged status size");
     }
     const struct Bad { bool supported, valid; std::uint8_t mask; } invalid[] = {
@@ -250,6 +262,62 @@ static void authentication() {
         Harness h; h.auth(); Message out;
         auto bad = h.command(); bad.bytes[2] ^= 1; sign(h.crypto, h.key, "command", bad, 32);
         check(h.session.receive(bad, 1010, out) == SessionResult::Rejected, "wrong session even valid MAC");
+    }
+}
+static void matrixStatus() {
+    for (const bool valid : {false, true}) {
+        Harness h; Message out;
+        h.control.value.wakeSupported = h.control.value.wakeValid = true;
+        h.control.value.wakeMask = 5;
+        h.control.value.matrixSupported = true;
+        h.control.value.matrixValid = valid;
+        if (valid) { h.control.value.matrixBits[0] = 1; h.control.value.matrixBits[10] = 1; }
+        check(h.session.receive(get("hello"), 1001, out) == SessionResult::Reply, "matrix challenge");
+        check(h.session.receive(get("proof"), 1002, out) == SessionResult::Reply &&
+              same(out, get(valid ? "granted_matrix_corners" : "granted_matrix_unknown")),
+              "extended grant exact independent Python HMAC bytes including contact81");
+        h.control.value.matrixValid = h.control.value.matrixAmbiguous = true;
+        h.control.value.matrixBits.fill(0);
+        h.control.value.matrixBits[0] = 3; h.control.value.matrixBits[1] = 6;
+        check(h.session.publishStatus(1250, out) && same(out, get("status_matrix_rectangle")),
+              "ambiguous rectangle remains an authenticated raw matrix observation");
+        auto tampered = out; tampered.bytes[58] ^= 1;
+        sign(h.crypto, h.key, "status", tampered, 59);
+        check(!std::equal(tampered.bytes.begin() + 59, tampered.bytes.begin() + 91,
+                          out.bytes.begin() + 59), "81st contact belongs to authenticated body");
+    }
+    for (unsigned contact = 0; contact < 81; ++contact) {
+        Harness h; h.auth(); Message out;
+        h.control.value.matrixSupported = h.control.value.matrixValid = true;
+        h.control.value.matrixBits[contact / 8] = static_cast<std::uint8_t>(1U << (contact % 8));
+        check(h.session.publishStatus(1250, out) && out.size == 91 && out.bytes[47] == 0xc0 &&
+              out.bytes[48 + contact / 8] == (1U << (contact % 8)), "every row-major contact serialized");
+        auto signedCopy = out; sign(h.crypto, h.key, "status", signedCopy, 59);
+        check(same(out, signedCopy), "every contact has complete extended MAC");
+    }
+    const struct Bad { bool supported, valid, ambiguous; std::uint8_t first, last; } invalid[] = {
+        {false, true, false, 0, 0}, {false, false, true, 0, 0},
+        {false, false, false, 1, 0}, {false, false, false, 0, 1},
+        {true, false, true, 0, 0}, {true, false, false, 1, 0},
+        {true, false, false, 0, 1}, {true, true, false, 0, 2},
+        {true, true, false, 0, 0x80}
+    };
+    for (const auto &bad : invalid) {
+        Harness h; h.auth(); Message out;
+        h.control.value.matrixSupported = bad.supported; h.control.value.matrixValid = bad.valid;
+        h.control.value.matrixAmbiguous = bad.ambiguous;
+        h.control.value.matrixBits[0] = bad.first; h.control.value.matrixBits[10] = bad.last;
+        check(!h.session.publishStatus(1250, out) && !out.size && !h.session.connected(),
+              "contradictory matrix snapshots cannot be authenticated");
+    }
+    {
+        Harness h; h.auth(); Message out;
+        h.control.value.matrixSupported = true;
+        check(h.session.receive(get("command_start_twinkle"), 1010, out) == SessionResult::Accepted,
+              "unknown matrix does not block independent LED control");
+        h.control.apply(); h.control.value.matrixValid = true; h.control.value.matrixBits[10] = 1;
+        check(h.session.service(1011, out) && same(out, get("result_start")),
+              "Result stays byte-identical with no matrix observation");
     }
 }
 static void admission() {
@@ -335,7 +403,7 @@ static void receiptsAndDriver() {
     }
 }
 static void framing() {
-    for (const auto &name : {"hello", "challenge", "proof", "command_start_twinkle", "result_stop"}) {
+    for (const auto &name : {"hello", "challenge", "proof", "command_start_twinkle", "result_stop", "granted_audio", "command_audio_100", "result_audio_100", "granted_matrix_corners", "status_matrix_rectangle"}) {
         const auto message = get(name);
         Assembler assembler;
         Message out;
@@ -383,7 +451,7 @@ class NfcPort : public larp::nfcble::Port {
 static void nfcWire() {
     Harness h; NfcPort port; larp::nfcble::Session nfc(h.session, port); Message out;
     check(!nfc.receive(get("nfc_read"), 1002, out), "NFC before auth rejected");
-    check(port.submissions == 0, "no NFC without auth"); h.auth();
+    check(port.submissions == 0, "no NFC without auth"); h.auth(); h.control.value.nfcSupported = true;
     auto bad = get("nfc_read"); bad.bytes[40] ^= 1;
     check(!nfc.receive(bad, 1003, out) && port.submissions == 0, "NFC bad MAC rejected");
     bad = get("nfc_read"); bad.bytes[2] ^= 1;
@@ -409,9 +477,164 @@ static void nfcWire() {
     check(nfc.receive(get("nfc_change"), 1253, out) && same(out, expected), "write duplicate never rewrites");
     h.session.disconnect();
     check(!nfc.receive(get("nfc_read"), 1254, out), "closed NFC session rejected");
-    Harness late; late.auth(); NfcPort other; larp::nfcble::Session expired(late.session, other);
+    Harness late; late.auth(); late.control.value.nfcSupported = true; NfcPort other; larp::nfcble::Session expired(late.session, other);
     check(expired.receive(get("nfc_read"), 4002, out) && out.bytes[34] == 11 && other.submissions == 0, "expired NFC does not touch tag");
     check(expired.receive(get("nfc_read"), 4003, out) && out.bytes[34] == 11 && other.submissions == 0, "expired NFC cached");
+}
+static void audioActions() {
+    for (unsigned op = 3; op <= 5; ++op) {
+        Harness h; h.auth(); Message out;
+        h.control.audio.supported = h.control.audio.ready = true;
+        h.control.audio.volume = 5;
+        auto command = get("command_audio_100"); command.bytes[30] = op;
+        command.bytes[31] = command.bytes[32] = 0; command.bytes[33] = op == 5 ? 8 : 0;
+        sign(h.crypto, h.key, "audio-command", command, 34);
+        check(h.session.receive(command, 1010, out) == SessionResult::Accepted && h.control.audioSubmissions == 1, "new audio operation admitted after authentication");
+        check(!h.session.service(1010, out), "new action waits for UART completion");
+        h.control.audio.pending = false; h.control.audio.appliedRevision = h.control.audio.revision;
+        check(h.session.service(1011, out) && out.bytes[38] == 0, "new action correlated result");
+        h.session.receive(command, 1020, out);
+        check(h.control.audioSubmissions == 1, "new action replay is inert");
+    }
+}
+static void audioProtocol() {
+    {
+        Harness h; h.control.audio.supported = h.control.audio.ready = h.control.audio.busyValid = true;
+        h.control.audio.volume = 5;
+        Message out;
+        h.session.receive(get("hello"), 1001, out);
+        h.session.receive(get("proof"), 1002, out);
+        check(same(out, get("granted_audio")), "audio grant exact Python HMAC bytes");
+        const auto command = get("command_audio_100");
+        check(h.session.receive(command, 1010, out) == SessionResult::Accepted && !out.size,
+              "audio not acknowledged before UART completes");
+        check(h.control.audioSubmissions == 1 && h.control.submissions == 0, "audio independent LED owner");
+        check(!h.session.service(1010, out), "audio waits for UART observation");
+        h.session.receive(command, 1010, out);
+        check(h.control.audioSubmissions == 1, "duplicate audio does not replay");
+        h.control.audio.pending = false; h.control.audio.appliedRevision = 1;
+        check(h.session.service(1011, out) && same(out, get("result_audio_100")),
+              "audio result exact Python HMAC bytes");
+        h.session.receive(command, 9000, out);
+        check(same(out, get("result_audio_100")) && h.control.audioSubmissions == 1,
+              "finished audio duplicate returns old receipt without sound restart");
+        auto led = h.command(2, 0, 10000);
+        check(h.session.receive(led, 9000, out) == SessionResult::Accepted,
+              "LED shares request counter but uses independent revision");
+        h.session.disconnect();
+        check(!h.control.audio.active && h.control.stops == 1, "disconnect stops both owners");
+    }
+    for (unsigned kind = 0; kind < 8; ++kind) {
+        Harness h; h.auth(); Message out;
+        h.control.audio.supported = h.control.audio.ready = true;
+        auto command = get("command_audio_100");
+        Outcome expected = Outcome::InvalidCommand;
+        if (kind == 0) command.bytes[33] = 11;
+        if (kind == 1) { command.bytes[31] = 0; command.bytes[32] = 0; }
+        if (kind == 2) { command.bytes[31] = 0; command.bytes[32] = 1; }
+        if (kind == 3) { write32(command.bytes.data() + 22, 1); expected = Outcome::StaleRevision; }
+        if (kind == 4) { write32(command.bytes.data() + 26, 1010); expected = Outcome::Expired; }
+        if (kind == 5) { h.control.audio.supported = false; expected = Outcome::Unavailable; }
+        if (kind == 6) { h.control.value.mode = Mode::Running; expected = Outcome::GameActive; }
+        if (kind == 7) { command.bytes[30] = 2; /* Stop must not carry track/volume. */ }
+        sign(h.crypto, h.key, "audio-command", command, 34);
+        check(h.session.receive(command, 1010, out) == SessionResult::Reply && out.bytes[1] == 0x85 &&
+              out.bytes[38] == static_cast<std::uint8_t>(expected) && h.control.audioSubmissions == 0,
+              "invalid/stale/expired/unavailable/game audio command is inert");
+    }
+    for (unsigned i = 0; i < 66; ++i) {
+        Harness h; h.auth(); Message out;
+        auto command = get("command_audio_100"); command.bytes[i] ^= 0x80;
+        check(h.session.receive(command, 1010, out) == SessionResult::Rejected &&
+              h.control.audioSubmissions == 0, "every tampered audio byte rejected");
+    }
+    {
+        Harness h; h.auth(); Message out;
+        h.control.audio.supported = h.control.audio.ready = true;
+        auto command = get("command_audio_100");
+        h.session.receive(command, 1010, out);
+        check(h.session.receive(h.command(2), 1011, out) == SessionResult::Reply &&
+              out.bytes[38] == static_cast<std::uint8_t>(Outcome::Busy) && h.control.submissions == 0,
+              "LED cannot overlap pending audio command");
+        check(h.session.service(3010, out) && out.bytes[38] == static_cast<std::uint8_t>(Outcome::DriverFault) &&
+              h.control.stops == 1, "audio timeout invokes stop");
+    }
+}
+static Message nfcCommand(Harness &h, std::uint32_t request) {
+    auto m = get("nfc_read"); write32(m.bytes.data() + 18, request);
+    const std::string domain = "LARP-NFC/2/command";
+    std::vector<std::uint8_t> input(domain.begin(), domain.end());
+    input.insert(input.end(), m.bytes.begin(), m.bytes.begin() + 38);
+    Secret mac{}; check(h.crypto.calculate(h.key, input.data(), input.size(), mac), "NFC HMAC");
+    std::copy(mac.begin(), mac.end(), m.bytes.begin() + 38); return m;
+}
+static void combinedContract() {
+    {
+        Harness h; h.auth(); Message out;
+        h.control.value.wakeSupported = h.control.value.wakeValid = h.control.value.nfcSupported = true;
+        h.control.value.wakeMask = 5;
+        h.control.value.matrixSupported = h.control.value.matrixValid = true;
+        h.control.value.matrixBits[0] = h.control.value.matrixBits[10] = 1;
+        h.control.audio.supported = h.control.audio.ready = h.control.audio.busyValid = true;
+        h.control.audio.volume = 5;
+        check(h.session.publishStatus(1250, out) && same(out, get("status_all")),
+              "one common schema authenticates all capabilities without overlapping offsets");
+    }
+    {
+        Harness h; h.auth(); Message out;
+        h.control.value.nfcSupported = true;
+        NfcPort port; larp::nfcble::Session nfc(h.session, port);
+        check(h.session.receive(h.command(), 1003, out) == SessionResult::Accepted, "combined LED request 1");
+        check(nfc.receive(nfcCommand(h, 1), 1004, out) && out.bytes[34] == 10 && port.submissions == 0,
+              "NFC cannot reserve a pending LED request");
+        h.control.apply(); check(h.session.service(1005, out), "LED completes");
+        h.control.audio.supported = h.control.audio.ready = true;
+        auto audio = get("command_audio_100"); write32(audio.bytes.data() + 18, 2);
+        sign(h.crypto, h.key, "audio-command", audio, 34);
+        check(h.session.receive(audio, 1006, out) == SessionResult::Accepted, "combined audio request 2");
+        check(nfc.receive(nfcCommand(h, 2), 1007, out) && out.bytes[34] == 10 && port.submissions == 0,
+              "NFC cannot overlap pending audio");
+        h.control.audio.pending = false; h.control.audio.appliedRevision = h.control.audio.revision;
+        check(h.session.service(1008, out) && read32(out.bytes.data() + 22) == 3, "audio advances common request");
+        const auto read = nfcCommand(h, 3);
+        check(nfc.receive(read, 1009, out) && !out.size && port.submissions == 1, "combined NFC request 3");
+        check(h.session.receive(h.command(3, 1), 1010, out) == SessionResult::Reply &&
+              out.bytes[38] == static_cast<std::uint8_t>(Outcome::Busy) && h.control.submissions == 1,
+              "LED cannot overlap NFC reservation");
+        write32(audio.bytes.data() + 18, 3); write32(audio.bytes.data() + 22, 1);
+        sign(h.crypto, h.key, "audio-command", audio, 34);
+        check(h.session.receive(audio, 1011, out) == SessionResult::Reply &&
+              out.bytes[38] == static_cast<std::uint8_t>(Outcome::Busy) && h.control.audioSubmissions == 1,
+              "audio cannot overlap NFC reservation");
+        port.ready = true;
+        check(nfc.service(1012, out) && read32(out.bytes.data() + 22) == 4 && h.session.nextRequest() == 4,
+              "NFC completion advances common request");
+        const auto cached = out;
+        check(nfc.receive(read, 1013, out) && same(cached, out) && port.submissions == 1, "NFC replay never resubmits");
+        check(h.session.receive(h.command(4, 1), 1014, out) == SessionResult::Accepted, "LED follows NFC with request 4");
+        h.control.apply(); check(h.session.service(1015, out) && h.session.nextRequest() == 5, "common stream continues");
+        check(nfc.receive(read, 1016, out) && out.bytes[34] == 13 && port.submissions == 1,
+              "NFC reply cannot replay across later common completion");
+        h.session.disconnect();
+        check(!nfc.receive(read, 1017, out), "NFC reservation invalid after disconnect");
+        check(h.session.beginConnection(fixed<16>("boot"), fixed<16>("connection"), 1000), "new connection reset");
+        nfc.reset(); h.control.value.nfcSupported = false; h.control.audio = {}; h.control.value = Control().value;
+        h.auth(); check(h.session.nextRequest() == 1, "all command owners restart request stream after reconnect");
+    }
+    {
+        Harness h; Message out; auto old = get("hello"); old.bytes[0] = 1;
+        check(h.session.receive(old, 1001, out) == SessionResult::Rejected && h.control.submissions == 0,
+              "version 1 pairing fails before any control");
+    }
+    for (bool asAudio : {false, true}) {
+        Harness h; h.auth(); h.control.value.nfcSupported = true;
+        NfcPort port; larp::nfcble::Session nfc(h.session, port); Message out;
+        auto wrong = get(asAudio ? "nfc_read" : "command_audio_100"); wrong.bytes[1] = asAudio ? 4 : 5;
+        check(asAudio ? h.session.receive(wrong, 1003, out) == SessionResult::Rejected : !nfc.receive(wrong, 1003, out),
+              "foreign command type and length never route to another owner");
+        check(port.submissions == 0 && h.control.audioSubmissions == 0 && h.control.submissions == 0,
+              "misrouted command has no side effect");
+    }
 }
 int main(int argc, char **argv) {
     try {
@@ -419,7 +642,7 @@ int main(int argc, char **argv) {
         std::ifstream source(argv[1]);
         check(source.good(), "fixture exists");
         fixture.assign(std::istreambuf_iterator<char>(source), std::istreambuf_iterator<char>());
-        happyPath(); wakeStatus(); authentication(); admission(); receiptsAndDriver(); framing(); nfcWire();
+        happyPath(); wakeStatus(); matrixStatus(); authentication(); admission(); receiptsAndDriver(); framing(); audioProtocol(); audioActions(); nfcWire(); combinedContract();
         std::cout << "PASS: " << assertions << " assertions; real host HMAC, Python golden bytes, auth/replay/owner/framing.\n";
         return 0;
     } catch (const std::exception &error) {

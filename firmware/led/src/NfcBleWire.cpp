@@ -3,7 +3,7 @@
 
 namespace larp { namespace nfcble {
 void Session::reset() {
-    port_.cancel(); next_ = 1; sequence_ = request_ = last_ = 0;
+    port_.cancel(); auth_.cancelNfc(); next_ = 1; sequence_ = request_ = last_ = 0;
     pending_ = false; command_ = {}; previous_ = {}; cached_ = {};
 }
 bool Session::result(const Reply &r, std::uint32_t request, std::uint32_t now, ledwire::Message &out) {
@@ -27,8 +27,9 @@ bool Session::receive(const ledwire::Message &m, std::uint32_t now, ledwire::Mes
         return a.size == b.size && std::memcmp(a.bytes.data(), b.bytes.data(), a.size) == 0;
     };
     if (!id) return false;
+    next_ = auth_.nextRequest();
     Reply rejection;
-    if (id == last_) {
+    if (id == last_ && id + 1 == next_) {
         if (same(m, previous_)) { out = cached_; return true; }
         rejection.outcome = 12; return result(rejection, id, now, out);
     }
@@ -44,11 +45,15 @@ bool Session::receive(const ledwire::Message &m, std::uint32_t now, ledwire::Mes
     const auto op = m.bytes[26], size = m.bytes[27];
     if ((op != 1 && op != 2) || (op == 1 && size != 0) || (op == 2 && size != 7)) return false;
     for (unsigned i = size; i < 10; ++i) if (m.bytes[28 + i]) return false;
+    if (!auth_.reserveNfc(id)) {
+        rejection.outcome = 10; return result(rejection, id, now, out);
+    }
     if (!remaining || remaining > 3000) rejection.outcome = 11;
     else if (port_.submit(op == 2, m.bytes.data() + 28, size)) {
         command_ = m; request_ = id; pending_ = true; return true;
     }
-    ++next_; last_ = id; previous_ = m;
+    if (!auth_.finishNfc(id)) return false;
+    next_ = auth_.nextRequest(); last_ = id; previous_ = m;
     if (!result(rejection, id, now, out)) return false;
     cached_ = out; return true;
 }
@@ -57,7 +62,8 @@ bool Session::service(std::uint32_t now, ledwire::Message &out) {
     Reply r;
     if (!pending_) { port_.poll(r); return true; }
     if (!port_.poll(r)) return true;
-    pending_ = false; ++next_; last_ = request_; previous_ = command_;
+    if (!auth_.finishNfc(request_)) return false;
+    pending_ = false; next_ = auth_.nextRequest(); last_ = request_; previous_ = command_;
     if (!result(r, request_, now, out)) return false;
     cached_ = out; return true;
 }

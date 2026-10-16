@@ -2,8 +2,16 @@
 #include "LedWire.h"
 #include "LedOutput.h"
 #include "WakeInputs.h"
+#if defined(LARP_NFC_TEST) && defined(LARP_MATRIX_TEST)
+#error "NFC and matrix hardware tests require separate firmware variants"
+#endif
 #ifdef LARP_NFC_TEST
 #include "NfcBox.h"
+#endif
+#include "AudioOutput.h"
+
+#ifdef LARP_MATRIX_TEST
+#include "MatrixInputs.h"
 #endif
 #include <BLEDevice.h>
 #include <BLEServer.h>
@@ -21,6 +29,11 @@ namespace {
 namespace wire = larp::ledwire;
 larp::led::LedOutput output;
 larp::wake::WakeInputs wakeInputs(larp::wake::mcpWakeBus());
+larp::audio::AudioOutput audioOutput;
+
+#ifdef LARP_MATRIX_TEST
+larp::matrix::MatrixInputs matrixInputs(larp::wake::mcpWakeBus());
+#endif
 class Control final : public wire::IControl {
  public:
   wire::Snapshot snapshot() const noexcept override {
@@ -40,6 +53,11 @@ class Control final : public wire::IControl {
 #endif
     out.wakeSupported = true; out.wakeValid = wake.valid;
     out.wakeMask = wake.activeMask;
+#ifdef LARP_MATRIX_TEST
+    const auto matrix = matrixInputs.snapshot(millis());
+    out.matrixSupported = true; out.matrixValid = matrix.valid;
+    out.matrixAmbiguous = matrix.ambiguous; out.matrixBits = matrix.bits;
+#endif
     return out;
   }
   bool submit(wire::Operation op, wire::Effect effect, uint32_t expected,
@@ -53,7 +71,29 @@ class Control final : public wire::IControl {
     revision = output.snapshot().revision;
     return ok;
   }
-  void stopOnDisconnect() noexcept override { output.stop();
+  wire::AudioSnapshot audioSnapshot() const noexcept override {
+    const auto s = audioOutput.snapshot();
+    wire::AudioSnapshot out;
+    out.supported = true; out.revision = s.revision; out.appliedRevision = s.appliedRevision;
+    out.track = s.track; out.volume = s.volume; out.ready = s.ready;
+    out.pending = s.pending; out.active = s.active; out.fault = s.fault; out.paused = s.paused;
+    out.busyValid = s.busyValid; out.busyLow = s.busyLow;
+    return out;
+  }
+  bool submitAudio(wire::Operation op, uint16_t track, uint8_t volume,
+                   uint32_t expected, uint32_t &revision) noexcept override {
+#ifdef LARP_NFC_TEST
+    if (larp::nfcble::busy()) return false;
+#endif
+    if (expected != audioOutput.snapshot().revision) return false;
+    const bool ok = op == wire::Operation::Stop ? audioOutput.stop() :
+        op == wire::Operation::Pause ? audioOutput.pause() :
+        op == wire::Operation::Resume ? audioOutput.resume() :
+        op == wire::Operation::Volume ? audioOutput.volume(volume) : audioOutput.start(track, volume);
+    revision = audioOutput.snapshot().revision;
+    return ok;
+  }
+  void stopOnDisconnect() noexcept override { output.stop(); audioOutput.stop();
 #ifdef LARP_NFC_TEST
     larp::nfcble::box().cancel();
 #endif
@@ -179,7 +219,7 @@ void serviceBle() {
     clearTransport();
     if (current.epoch != ownerEpoch) {
       // Epoch is independent of recycled ATT conn_id and cannot lose disconnect.
-      output.stop(); ownerEpoch = current.epoch;
+      output.stop(); audioOutput.stop(); ownerEpoch = current.epoch;
     }
     if (current.connected && current.abort) {
       bleServer->disconnect(current.connection);
@@ -210,7 +250,7 @@ void serviceBle() {
     if (assembled == wire::FrameResult::Rejected) { abortLink(ownerEpoch); return; }
     if (assembled == wire::FrameResult::Complete) {
 #ifdef LARP_NFC_TEST
-      if (message.bytes[1] == 4) {
+      if (message.bytes[1] == 5) {
         const auto led = output.snapshot();
         larp::nfcble::allow(led.ready && !led.fault && !led.pending && led.applied == larp::led::Effect::Off && led.requested == larp::led::Effect::Off);
         if (!nfcSession.receive(message, millis(), reply)) { abortLink(ownerEpoch); return; }
@@ -319,7 +359,11 @@ void setup() {
 #ifdef LARP_NFC_TEST
   if (!larp::nfcble::begin()) { Serial.println("LARP ERROR NFC worker"); return; }
 #endif
+  audioOutput.begin();
   wakeInputs.begin(millis());
+#ifdef LARP_MATRIX_TEST
+  matrixInputs.begin(millis());
+#endif
   outputInitialized = output.begin();
   if (!outputInitialized) { Serial.println("LARP ERROR LED initialization"); return; }
   received = xQueueCreate(32, sizeof(Frame));
@@ -339,9 +383,16 @@ void setup() {
   BLEDevice::getAdvertising()->setScanResponse(true);
   BLEDevice::startAdvertising();
   ready = true;
+#ifdef LARP_MATRIX_TEST
+  Serial.println("LARP matrix-test ready; historical column-LOW scan; B7 input unqualified; USB provisioning on explicit request");
+#else
   Serial.println("LARP LED-only ready; USB provisioning on explicit request");
+#endif
 }
 void loop() {
+#ifdef LARP_MATRIX_TEST
+  matrixInputs.service(millis());
+#endif
   wakeInputs.service(millis());
   serviceUsb();
   if (ready) serviceBle();
@@ -353,6 +404,9 @@ void loop() {
       if (state.requested != larp::led::Effect::Off) output.stop();
     }
   }
+  // Apply link/epoch aborts before a prepared UART Play can leave the device.
+  // Boot/fault Stop still drains even when BLE initialization did not succeed.
+  audioOutput.service();
   if (outputInitialized) {
     output.service();
   }

@@ -23,7 +23,7 @@ def main():
     spec = importlib.util.spec_from_file_location("wire_vectors", Path(__file__).with_name("generate_vectors.py"))
     generator = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(generator)
-    expected = json.loads((ROOT / "docs/led/fixtures/wire-v1.json").read_text(encoding="utf-8"))
+    expected = json.loads((ROOT / "docs/led/fixtures/wire-v2.json").read_text(encoding="utf-8"))
     if generator.generate() != expected:
         raise RuntimeError("Committed wire vectors differ from independent Python HMAC output")
     environment = dict(os.environ)
@@ -39,7 +39,7 @@ def main():
                     str(ROOT / "firmware/led/src/NfcBleWire.cpp"),
                     "-lbcrypt" if os.name == "nt" else "-lcrypto", "-o", str(executable)]
         subprocess.run(command, cwd=ROOT, env=environment, check=True)
-        subprocess.run([str(executable), str(ROOT / "docs/led/fixtures/wire-v1.json")],
+        subprocess.run([str(executable), str(ROOT / "docs/led/fixtures/wire-v2.json")],
                        cwd=ROOT, env=environment, check=True)
     print("Public fixture generation and native wire/security tests passed.")
 if __name__ == "__main__":

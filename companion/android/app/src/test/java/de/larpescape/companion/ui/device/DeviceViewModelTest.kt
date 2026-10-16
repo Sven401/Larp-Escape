@@ -15,9 +15,15 @@ class DeviceViewModelTest {
         var grants = 0
         var starts = 0
         var stops = 0
+        var audioStarts = 0
+        var audioStops = 0
         override fun selectLedEffect(effect: LedEffect) { state.value = state.value.copy(leds = state.value.leds.copy(selected = effect)) }
         override fun startLedEffect() { starts++ }
         override fun stopLeds() { stops++ }
+        override fun selectAudioTrack(value: String) { state.value = state.value.copy(leds = state.value.leds.let { it.copy(audio = it.audio.copy(trackText = value)) }) }
+        override fun selectAudioVolume(value: String) { state.value = state.value.copy(leds = state.value.leds.let { it.copy(audio = it.audio.copy(volumeText = value)) }) }
+        override fun startAudio() { audioStarts++ }
+        override fun stopAudio() { audioStops++ }
         override fun importLedAccess(bytes: ByteArray) { }
         override fun scan() { scans++; state.value = state.value.copy(scanning = true) }
         override fun connect(id: String) {
@@ -128,5 +134,23 @@ class DeviceViewModelTest {
         assertFalse(model.state.value.leds.authenticated)
         assertFalse(model.state.value.leds.current)
         assertEquals(0, repo.starts); assertEquals(0, repo.stops)
+    }
+    @Test fun audioSelectionIsLocalAndNoForegroundOrPermissionTransitionRestartsPlayback() {
+        val repo = FakeRepository(); val model = DeviceViewModel(repo)
+        model.foregroundStarted(true)
+        val audio = AudioUiState(supported = true, authenticated = true, current = true, ready = true, modeAllowed = true)
+        // The LED driver need not be ready for an independently ready audio module.
+        repo.state.value = repo.state.value.copy(leds = LedUiState(audio = audio))
+        model.selectAudioTrack("42"); model.selectAudioVolume("3")
+        assertEquals(0, repo.audioStarts); assertEquals(0, repo.audioStops)
+        assertEquals("42", model.state.value.leds.audio.trackText)
+        model.startAudio(); model.stopAudio()
+        assertEquals(1, repo.audioStarts); assertEquals(1, repo.audioStops)
+        model.foregroundEnded(); model.foregroundStarted(true); model.startAudio(); model.stopAudio()
+        assertEquals(1, repo.audioStarts); assertEquals(1, repo.audioStops)
+        repo.state.value = repo.state.value.copy(leds = LedUiState(audio = audio))
+        model.permissionsChanged(false); model.startAudio(); model.stopAudio()
+        model.permissionsChanged(true)
+        assertEquals(1, repo.audioStarts); assertEquals(1, repo.audioStops)
     }
 }

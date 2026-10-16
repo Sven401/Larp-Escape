@@ -24,12 +24,16 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.larpescape.companion.platform.ble.AndroidBleRepository
 import de.larpescape.companion.ui.device.DeviceViewModel
 import de.larpescape.companion.ui.device.LedControls
+import de.larpescape.companion.ui.device.AudioControls
+
+import de.larpescape.companion.ui.device.MatrixControls
 import de.larpescape.companion.ui.device.WakeControls
 import de.larpescape.protocol.LedAccess
 import de.larpescape.protocol.StatusFreshness
 import de.larpescape.companion.platform.nfc.*
 import de.larpescape.companion.ui.nfc.*
 import de.larpescape.companion.data.scenario.LocalScenarioDraftRepository
+import de.larpescape.companion.data.device.MatrixCollectionCodec
 import de.larpescape.companion.ui.scenario.*
 import de.larpescape.protocol.ScenarioDraftCodec
 import androidx.lifecycle.lifecycleScope
@@ -113,6 +117,21 @@ class MainActivity : ComponentActivity() {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 @Suppress("UNCHECKED_CAST")
                 return DeviceViewModel(AndroidBleRepository(applicationContext)) as T
+            }
+        }
+    }
+    private var pendingMatrixReport: String? = null
+    private val exportMatrix = registerForActivityResult(ActivityResultContracts.CreateDocument("text/plain")) { uri ->
+        val report = pendingMatrixReport
+        pendingMatrixReport = null
+        if (uri != null && report != null) lifecycleScope.launch {
+            try {
+                withContext(Dispatchers.IO) { contentResolver.openOutputStream(uri, "wt")?.use {
+                    it.write(report.toByteArray(Charsets.UTF_8))
+                } ?: error("Datei konnte nicht geschrieben werden") }
+                android.widget.Toast.makeText(this@MainActivity, "Sammelbericht exportiert", android.widget.Toast.LENGTH_LONG).show()
+            } catch (_: Exception) {
+                android.widget.Toast.makeText(this@MainActivity, "Export fehlgeschlagen · Lauf bleibt in der App gespeichert", android.widget.Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -205,7 +224,17 @@ class MainActivity : ComponentActivity() {
                                 }
                             } }
                         }
+                        DisposableEffect(state.matrixCollection.collecting) {
+                            if (state.matrixCollection.collecting) window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                            onDispose { window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) }
+                        }
+                        MatrixControls(state.leds.matrix, state.matrixCollection, model::matrixAction, export = {
+                            pendingMatrixReport = MatrixCollectionCodec.report(model.state.value.matrixCollection)
+                            exportMatrix.launch("Tastenmatrix-Sammeldurchgang.txt")
+                        })
                         WakeControls(state.leds.wake)
+                        AudioControls(state.leds.audio, model::selectAudioTrack, model::selectAudioVolume,
+                            model::startAudio, model::stopAudio, model::audioAction)
                         LedControls(state.leds, model::selectLedEffect, model::startLedEffect, model::stopLeds,
                             importAccess = { importBoxAccess.launch(arrayOf("application/json", "text/plain")) })
                         Text("LED-Bedienung · Geräteantwort und sichtbare Wirkung getrennt", style = MaterialTheme.typography.bodySmall)

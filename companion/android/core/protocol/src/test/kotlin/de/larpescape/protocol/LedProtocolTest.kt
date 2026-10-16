@@ -8,7 +8,7 @@ import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
 class LedProtocolTest {
-    private val fixture = JsonParser.parseString(File(System.getProperty("ledFixtures"), "wire-v1.json").readText()).asJsonObject
+    private val fixture = JsonParser.parseString(File(System.getProperty("ledFixtures"), "wire-v2.json").readText()).asJsonObject
     private fun hex(value: String): ByteArray = value.chunked(2).map { it.toInt(16).toByte() }.toByteArray()
     private fun bytes(name: String) = hex(fixture[name].asString)
     private fun access(extra: String = "") = LedAccess.parse(("{\"schemaVersion\":1,\"deviceId\":\"${fixture["device"].asString}\",\"secret\":\"${fixture["secret"].asString}\"$extra}").toByteArray())
@@ -21,13 +21,13 @@ class LedProtocolTest {
     }
     private fun resign(data: ByteArray, offset: Int, domain: String): ByteArray {
         val mac = Mac.getInstance("HmacSHA256"); mac.init(SecretKeySpec(bytes("secret"), "HmacSHA256"))
-        mac.update("LARP-LED/1/$domain".toByteArray(Charsets.US_ASCII))
+        mac.update("LARP-LED/2/$domain".toByteArray(Charsets.US_ASCII))
         return data.copyOf(offset) + mac.doFinal(data.copyOf(offset))
     }
     private fun nfcResign(data: ByteArray): ByteArray {
         val body = data.copyOf(73)
         val mac = Mac.getInstance("HmacSHA256").apply { init(SecretKeySpec(bytes("secret"), "HmacSHA256")) }
-        mac.update("LARP-NFC/1/result".toByteArray(Charsets.US_ASCII))
+        mac.update("LARP-NFC/2/result".toByteArray(Charsets.US_ASCII))
         return body + mac.doFinal(body)
     }
     @Test fun nfcMatchesIndependentPythonAndFirmwareVectors() {
@@ -57,7 +57,7 @@ class LedProtocolTest {
     @Test fun nfcCapabilityIsExplicitAndMacCovered() {
         val (protocol, _) = authenticated()
         assertFalse(protocol.status(bytes("status_twinkle")).nfcSupported)
-        val message = resign(bytes("status_twinkle").also { it[37] = 0xe5.toByte() }, 38, "status")
+        val message = resign(bytes("status_twinkle").also { it[37] = 0xe5.toByte() }, 59, "status")
         assertTrue(protocol.status(message).nfcSupported)
         assertEquals(WakeStatus(true, true, 5), protocol.status(message).wake)
         rejects { protocol.status(message.copyOf().also { it[37] = 0xc5.toByte() }) }
@@ -93,7 +93,7 @@ class LedProtocolTest {
         val (protocol, _) = authenticated()
         for ((offset, value) in listOf(22 to 0, 30 to 0, 34 to 4, 35 to 0x81, 35 to 0x11, 35 to 5, 36 to 5, 37 to 1)) {
             val modified = bytes("status_twinkle").also { it[offset] = value.toByte() }
-            rejects { protocol.status(resign(modified, 38, "status")) }
+            rejects { protocol.status(resign(modified, 59, "status")) }
         }
         val (other, _) = authenticated()
         rejects { other.result(resign(bytes("result_start").also { it[38] = 12 }, 42, "result")) }
@@ -108,33 +108,129 @@ class LedProtocolTest {
     @Test fun wakeStatusAcceptsEveryMaskAndKeepsLegacyFirmwareExplicit() {
         val (protocol, _) = authenticated()
         for (mask in 0..15) {
-            val message = resign(bytes("status_twinkle").also { it[37] = (0xc0 or mask).toByte() }, 38, "status")
+            val message = resign(bytes("status_twinkle").also { it[37] = (0xc0 or mask).toByte() }, 59, "status")
             assertEquals(WakeStatus(true, true, mask), protocol.status(message).wake)
             val other = client(); other.proof(bytes("challenge"))
-            val granted = resign(bytes("granted").also { it[37] = (0xc0 or mask).toByte() }, 38, "status")
+            val granted = resign(bytes("granted").also { it[37] = (0xc0 or mask).toByte() }, 59, "status")
             assertEquals(WakeStatus(true, true, mask), other.granted(granted).wake)
         }
-        val legacy = resign(bytes("status_twinkle").also { it[37] = 0 }, 38, "status")
+        val legacy = resign(bytes("status_twinkle").also { it[37] = 0 }, 59, "status")
         assertEquals(WakeStatus(false, false, 0), protocol.status(legacy).wake)
-        val unavailable = resign(bytes("status_twinkle").also { it[37] = 0x80.toByte() }, 38, "status")
+        val unavailable = resign(bytes("status_twinkle").also { it[37] = 0x80.toByte() }, 59, "status")
         assertEquals(WakeStatus(true, false, 0), protocol.status(unavailable).wake)
     }
     @Test fun rejectsEveryReservedOrContradictorySignedWakeByte() {
         val (protocol, _) = authenticated()
         for (value in 0..255) {
             if (value and 0xdf == 0 || value and 0xdf == 0x80 || value and 0xdf in 0xc0..0xcf) continue
-            val message = resign(bytes("status_twinkle").also { it[37] = value.toByte() }, 38, "status")
+            val message = resign(bytes("status_twinkle").also { it[37] = value.toByte() }, 59, "status")
             rejects { protocol.status(message) }
         }
     }
     @Test fun wakeIsCoveredByTheStatusMacAndNeverInferredFromLedResults() {
         val (protocol, _) = authenticated()
-        val signed = resign(bytes("status_twinkle").also { it[37] = 0xc5.toByte() }, 38, "status")
+        val signed = resign(bytes("status_twinkle").also { it[37] = 0xc5.toByte() }, 59, "status")
         for (bit in 0..7) rejects {
             protocol.status(signed.copyOf().also { it[37] = (it[37].toInt() xor (1 shl bit)).toByte() })
         }
         assertNull(protocol.result(bytes("result_start")).status.wake)
         assertNull(protocol.result(bytes("result_stop")).status.wake)
+    }
+    @Test fun matchesIndependentMatrixGrantAndStatusIncludingLastContact() {
+        val unknown = client(); unknown.proof(bytes("challenge"))
+        val unknownStatus = unknown.granted(bytes("granted_matrix_unknown"))
+        assertEquals(MatrixStatus(true, false, false, emptySet()), unknownStatus.matrix)
+        assertEquals(WakeStatus(true, true, 5), unknownStatus.wake)
+        val corners = client(); corners.proof(bytes("challenge"))
+        assertEquals(MatrixStatus(true, true, false, setOf(0, 80)),
+            corners.granted(bytes("granted_matrix_corners")).matrix)
+        assertEquals(MatrixStatus(true, true, true, setOf(0, 1, 9, 10)),
+            corners.status(bytes("status_matrix_rectangle")).matrix)
+    }
+    @Test fun matrixAcceptsEveryContactAndExplicitUnknownOrUnsupported() {
+        val (protocol, legacy) = authenticated()
+        assertEquals(MatrixStatus(false, false, false, emptySet()), legacy.matrix)
+        assertEquals(MatrixStatus(false, false, false, emptySet()), protocol.status(bytes("status_twinkle")).matrix)
+        for (contact in 0..80) {
+            val message = bytes("status_matrix_rectangle").also {
+                it[47] = 0xc0.toByte(); it.fill(0, 48, 59)
+                it[48 + contact / 8] = (1 shl (contact % 8)).toByte()
+            }
+            assertEquals(MatrixStatus(true, true, false, setOf(contact)),
+                protocol.status(resign(message, 59, "status")).matrix)
+        }
+        for (flags in listOf(0, 0x80, 0xc0, 0xe0)) {
+            val message = bytes("status_matrix_rectangle").also { it[47] = flags.toByte(); it.fill(0, 48, 59) }
+            assertEquals(MatrixStatus(flags and 0x80 != 0, flags and 0x40 != 0, flags and 0x20 != 0, emptySet()),
+                protocol.status(resign(message, 59, "status")).matrix)
+        }
+    }
+    @Test fun rejectsReservedFlagsAndContradictoryAuthenticatedMatrixData() {
+        val (protocol, _) = authenticated()
+        for (flags in 0..255) {
+            if (flags in listOf(0, 0x80, 0xc0, 0xe0)) continue
+            val invalid = bytes("status_matrix_rectangle").also { it[47] = flags.toByte(); it.fill(0, 48, 59) }
+            rejects { protocol.status(resign(invalid, 59, "status")) }
+        }
+        for (lastByte in 2..255) {
+            val invalid = bytes("status_matrix_rectangle").also { it[58] = lastByte.toByte() }
+            rejects { protocol.status(resign(invalid, 59, "status")) }
+        }
+        for (flags in listOf(0, 0x80)) for (contact in 0..80) {
+            val invalid = bytes("status_matrix_rectangle").also {
+                it[47] = flags.toByte(); it.fill(0, 48, 59)
+                it[48 + contact / 8] = (1 shl (contact % 8)).toByte()
+            }
+            rejects { protocol.status(resign(invalid, 59, "status")) }
+        }
+    }
+    @Test fun matrixAuthenticatesCompleteBodyAndRejectsWrongSessionLengthAndDomain() {
+        val (protocol, _) = authenticated()
+        val message = bytes("status_matrix_rectangle")
+        for (offset in message.indices) rejects {
+            protocol.status(message.copyOf().also { it[offset] = (it[offset].toInt() xor 1).toByte() })
+        }
+        rejects { protocol.status(resign(message.copyOf().also { it[2] = (it[2].toInt() xor 1).toByte() }, 59, "status")) }
+        rejects { protocol.status(resign(message, 59, "result")) }
+        for (length in 0..128) {
+            if (length == 91) continue
+            rejects { protocol.status(message.copyOf(length)) }
+        }
+        rejects { protocol.status(resign(message, 49, "status")) }
+        rejects { protocol.status(resign(message.copyOf(83), 51, "status")) }
+        val noGrant = client(); noGrant.proof(bytes("challenge"))
+        rejects { noGrant.status(message) }
+    }
+    @Test fun extendedGrantValidatesBeforeGrantingAndResultNeverInventsMatrix() {
+        for ((offset, value) in listOf(47 to 0x81, 47 to 0x40, 58 to 2, 2 to 0)) {
+            val protocol = client(); protocol.proof(bytes("challenge"))
+            val invalid = bytes("granted_matrix_corners").also { it[offset] = value.toByte() }
+            rejects { protocol.granted(resign(invalid, 59, "status")) }
+            assertEquals(setOf(0, 80), protocol.granted(bytes("granted_matrix_corners")).matrix!!.pressed)
+        }
+        val protocol = client(); protocol.proof(bytes("challenge")); protocol.granted(bytes("granted_matrix_corners"))
+        assertNull(protocol.result(bytes("result_start")).status.matrix)
+        assertNull(protocol.result(bytes("result_stop")).status.matrix)
+        rejects { protocol.result(resign(bytes("result_start").copyOf(86), 54, "result")) }
+    }
+    @Test fun matrixConstructorRejectsImpossibleObservations() {
+        for (contact in listOf(-1, 81, Int.MAX_VALUE)) rejects { MatrixStatus(true, true, false, setOf(contact)) }
+        rejects { MatrixStatus(false, true, false, emptySet()) }
+        rejects { MatrixStatus(false, false, true, emptySet()) }
+        rejects { MatrixStatus(true, false, true, emptySet()) }
+        rejects { MatrixStatus(true, false, false, setOf(0)) }
+        rejects { MatrixStatus(false, false, false, setOf(80)) }
+    }
+    @Test fun extendedMatrixStatusReassemblesBeforeItBecomesAnObservation() {
+        val (protocol, _) = authenticated()
+        val frames = LedFrames.encode(bytes("status_matrix_rectangle"), 1)
+        assertEquals(8, frames.size)
+        val assembler = LedFrameAssembler()
+        frames.dropLast(1).forEach { assertNull(assembler.accept(it, 10)) }
+        assertEquals(setOf(0, 1, 9, 10), protocol.status(assembler.accept(frames.last(), 10)!!).matrix!!.pressed)
+        rejects { assembler.accept(frames.first(), 11) }
+        val missing = LedFrameAssembler(); missing.accept(frames.first(), 0)
+        rejects { missing.accept(frames[2], 1) }
     }
     @Test fun onlyStoppedOrExplicitLedOnlyModeAllowsStarting() {
         val (protocol, initial) = authenticated()

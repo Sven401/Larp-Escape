@@ -11,7 +11,7 @@ struct Message {
     std::array<std::uint8_t, 128> bytes = {};
     std::uint16_t size = 0;
 };
-enum class Operation : std::uint8_t { Start = 1, Stop = 2 };
+enum class Operation : std::uint8_t { Start = 1, Stop = 2, Pause = 3, Resume = 4, Volume = 5 };
 enum class Effect : std::uint8_t { Off = 0, Twinkle = 1, Burst = 2, Ripple = 3 };
 enum class Mode : std::uint8_t { LedOnly = 0, Stopped = 1, Running = 2, Paused = 3, Unknown = 4 };
 enum Flags : std::uint8_t { Ready = 1, Pending = 2, Off = 4, Completed = 8, Fault = 16 };
@@ -29,6 +29,17 @@ struct Snapshot {
     bool wakeSupported = false, wakeValid = false;
     bool nfcSupported = false;
     std::uint8_t wakeMask = 0;
+    // Nine rows by nine columns, row-major bits 0..80. Unknown carries no bits.
+    bool matrixSupported = false, matrixValid = false, matrixAmbiguous = false;
+    std::array<std::uint8_t, 11> matrixBits = {};
+};
+// Audio observations describe the UART and raw BUSY input, never audible sound.
+struct AudioSnapshot {
+    std::uint32_t revision = 0, appliedRevision = 0;
+    std::uint16_t track = 0;
+    std::uint8_t volume = 0;
+    bool supported = false, ready = false, pending = false, active = false;
+    bool busyValid = false, busyLow = false, fault = false, paused = false;
 };
 class IHmac256 {
   public:
@@ -45,6 +56,9 @@ class IControl {
     virtual bool submit(Operation, Effect, std::uint32_t expectedRevision,
                         std::uint32_t &targetRevision) noexcept = 0;
     virtual void stopOnDisconnect() noexcept = 0;
+    virtual AudioSnapshot audioSnapshot() const noexcept { return {}; }
+    virtual bool submitAudio(Operation, std::uint16_t, std::uint8_t,
+                             std::uint32_t, std::uint32_t &) noexcept { return false; }
 };
 enum class SessionResult : std::uint8_t { Ignored, Reply, Accepted, Rejected };
 class Session {
@@ -62,6 +76,9 @@ class Session {
     bool service(std::uint32_t now, Message &reply) noexcept;
     bool publishStatus(std::uint32_t now, Message &reply) noexcept;
     bool verifyNfc(const Message &command) noexcept;
+    bool reserveNfc(std::uint32_t request) noexcept;
+    void cancelNfc() noexcept { nfcPending_ = false; }
+    bool finishNfc(std::uint32_t request) noexcept;
     bool sealNfc(Message &reply) noexcept;
     bool authenticated() const noexcept { return phase_ == Phase::Authenticated; }
     bool connected() const noexcept { return phase_ != Phase::Closed; }
@@ -77,13 +94,14 @@ class Session {
     std::array<std::uint8_t, 64> context_ = {};
     Message challenge_, lastCommand_, lastReply_, pendingCommand_;
     Phase phase_ = Phase::Closed;
-    bool configured_ = false, pending_ = false;
+    bool configured_ = false, pending_ = false, pendingAudio_ = false, nfcPending_ = false;
     std::uint32_t connectedAt_ = 0, nextRequest_ = 1, statusSequence_ = 0;
     std::uint32_t pendingRequest_ = 0, pendingRevision_ = 0, pendingAt_ = 0, lastRequest_ = 0;
     bool tag(const char *, const std::uint8_t *, std::size_t, Secret &) noexcept;
     bool verify(const char *, const Message &, std::size_t) noexcept;
     bool status(std::uint8_t type, std::uint32_t now, Message &) noexcept;
-    bool result(Outcome, std::uint32_t request, std::uint32_t now, Message &) noexcept;
+    bool result(Outcome, std::uint32_t request, std::uint32_t now, Message &,
+                bool audio = false) noexcept;
     bool finish(Outcome, const Message &, std::uint32_t now, Message &) noexcept;
     SessionResult reject(Message &) noexcept;
 };
