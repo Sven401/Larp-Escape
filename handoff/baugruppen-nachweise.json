@@ -1,0 +1,375 @@
+{
+  "schema_version": 1,
+  "recorded_date": "2026-10-16",
+  "status": "source-and-document inventory; historical observations read, no device tests rerun",
+  "source": "user mandate to preserve confirmed component progress; existing versioned source reports",
+  "groups": [
+    {
+      "id": "led",
+      "pr": 45,
+      "snapshot_commit": "20518f52de82845635e8590f1440dbfbb268dcb2",
+      "preservation_tag": "evidence/2026-10-16/led",
+      "source_tree": "75fb5caa7b255e138113d92e9a236e8b1fc8d81d",
+      "documents": [
+        {
+          "path": "docs/led/ble-wire-v1.md",
+          "git_blob": "1aac842fbd68f29a658d43a9e087627d12c8783c",
+          "sha256": "318c0b1036f9ee10f8c2de871e5d9eaaf7148e9392387ba27d240286788ac09f",
+          "size": 11162,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/20518f52de82845635e8590f1440dbfbb268dcb2/docs/led/ble-wire-v1.md"
+        },
+        {
+          "path": "docs/led/device-test-2026-10-15.md",
+          "git_blob": "4ae033e3d4026541cb94616405a76a36b8727fb5",
+          "sha256": "867eac524150df441206bbc79cd754e4cd263c6dfb631c095681b9a395be809f",
+          "size": 6049,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/20518f52de82845635e8590f1440dbfbb268dcb2/docs/led/device-test-2026-10-15.md"
+        },
+        {
+          "path": "docs/led/fixtures/wire-v1.json",
+          "git_blob": "c6a143dcdd90cc472b8e459d44fc656a1c1e7727",
+          "sha256": "b3153485579e6462e1592e753c08c3679547b88ae854e026b89a4a7c60af0035",
+          "size": 1728,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/20518f52de82845635e8590f1440dbfbb268dcb2/docs/led/fixtures/wire-v1.json"
+        },
+        {
+          "path": "docs/led/install-2026-10-15.md",
+          "git_blob": "d6c5d22af05d44041f0660b2c1ae7a9cbd9eb7cf",
+          "sha256": "312a8756d1e7f15eeeca9d05d612b3c3bd4d8d181fb78315922c5d61a431eef5",
+          "size": 6155,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/20518f52de82845635e8590f1440dbfbb268dcb2/docs/led/install-2026-10-15.md"
+        },
+        {
+          "path": "firmware/led/README.md",
+          "git_blob": "2e71bf49d669ee2d1cf22f1b6ad147f5700c2046",
+          "sha256": "ac08395dd7ef01e994e3bc248b1dadbce5028934502a82f2946d714db1b95b5b",
+          "size": 5925,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/20518f52de82845635e8590f1440dbfbb268dcb2/firmware/led/README.md"
+        }
+      ],
+      "annotated_tag_object": "75d63f2a1085eb2be3297ebadd94fb8fac749e86"
+    },
+    {
+      "id": "wake",
+      "pr": 46,
+      "snapshot_commit": "10400350f31883b4e7b36df1d6875388a2d8953f",
+      "preservation_tag": "evidence/2026-10-16/wake",
+      "source_tree": "5a7cf53d219948f8119beb09d74694e0e7243980",
+      "documents": [
+        {
+          "path": "docs/wake/device-test-2026-10-15.md",
+          "git_blob": "8dbf9a8530504a73e995fe6ea3697e87b56d1ba5",
+          "sha256": "de9bf891c4a2c08ed8c4d73684023e5e5240ddf446b2e219d9cfda0960397e69",
+          "size": 6963,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/10400350f31883b4e7b36df1d6875388a2d8953f/docs/wake/device-test-2026-10-15.md"
+        },
+        {
+          "path": "docs/wake/test-preparation.md",
+          "git_blob": "ba7db0c8af93d3ce6e5444344e6df13a7c4ae1db",
+          "sha256": "7c73124ceb12dfda0a6d2271ec231e99d6bd9085e53e6a420be7b1d1dcd04ea6",
+          "size": 8053,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/10400350f31883b4e7b36df1d6875388a2d8953f/docs/wake/test-preparation.md"
+        }
+      ],
+      "annotated_tag_object": "eec29f87fb6bc7cf48f427a7ab65399e8279ee5d"
+    },
+    {
+      "id": "nfc-usb",
+      "pr": 47,
+      "snapshot_commit": "33bf31bcd082ad62c14bd9ffaa2b547e17e919bc",
+      "preservation_tag": "evidence/2026-10-16/nfc-usb",
+      "source_tree": "f28c5a4cd01222efd4c68d801139489d0090df3c",
+      "documents": [
+        {
+          "path": "docs/nfc/device-preparation-2026-10-16.md",
+          "git_blob": "8abab6a1075781d7060c67eab6ca16f73a428f59",
+          "sha256": "abf7b0b67fe2bcb975b84de79661ea47cd91c4a8858dcf37e410ef7bf50d307a",
+          "size": 7663,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/33bf31bcd082ad62c14bd9ffaa2b547e17e919bc/docs/nfc/device-preparation-2026-10-16.md"
+        },
+        {
+          "path": "docs/nfc/evidence/first-write-readback-2026-10-16.json",
+          "git_blob": "bc5a41d87e7b757100815f2f1b162b9a08789901",
+          "sha256": "a0177627f9966580cb81fd487e3b49bc53ae02d0eed01f8c0c0b58f6378d42fe",
+          "size": 3541,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/33bf31bcd082ad62c14bd9ffaa2b547e17e919bc/docs/nfc/evidence/first-write-readback-2026-10-16.json"
+        },
+        {
+          "path": "docs/nfc/evidence/hce-2026-10-16.json",
+          "git_blob": "6625bf200ca12f6b8c55ffbdaca620168322ffb7",
+          "sha256": "24588c3e81429c0892c068ae2e0adf23e5340422f9509f3a65c674193aff0aa7",
+          "size": 6933,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/33bf31bcd082ad62c14bd9ffaa2b547e17e919bc/docs/nfc/evidence/hce-2026-10-16.json"
+        },
+        {
+          "path": "docs/nfc/evidence/physical-tag-2026-10-16.json",
+          "git_blob": "d37c922b2c4f6bdf8df0593ea5856cb0276abc79",
+          "sha256": "db56b95e1d3db0c56e06ad163d802963a8bdd47f186c5428336d24c76ad53563",
+          "size": 4314,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/33bf31bcd082ad62c14bd9ffaa2b547e17e919bc/docs/nfc/evidence/physical-tag-2026-10-16.json"
+        },
+        {
+          "path": "docs/nfc/first-write-readback-2026-10-16.md",
+          "git_blob": "de6503ce82fc7b180fde1a4079de2aab69df53d6",
+          "sha256": "ec8078d13842447a3a5f8e1c9d4244af3a3c4d082bcaf1b361affbf4f0f980ef",
+          "size": 8623,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/33bf31bcd082ad62c14bd9ffaa2b547e17e919bc/docs/nfc/first-write-readback-2026-10-16.md"
+        },
+        {
+          "path": "docs/nfc/physical-tag-test-2026-10-16.md",
+          "git_blob": "545abd02e2b04f2a91997b015bfc8fae5e0fd7e6",
+          "sha256": "eafdaf22e138cbd819450c902245f9aeab8156850a9b5a71f603229a02f3c054",
+          "size": 6122,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/33bf31bcd082ad62c14bd9ffaa2b547e17e919bc/docs/nfc/physical-tag-test-2026-10-16.md"
+        },
+        {
+          "path": "docs/nfc/test-preparation.md",
+          "git_blob": "7d22d47749f4713173ccc6521771bca2987c0792",
+          "sha256": "abf252db932dd241a50a4b8cde41ebf8aa2cc7c50f6e76336a0e4139bc29676b",
+          "size": 19094,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/33bf31bcd082ad62c14bd9ffaa2b547e17e919bc/docs/nfc/test-preparation.md"
+        }
+      ],
+      "annotated_tag_object": "6e3eef12390bb8c7121f2afabc984dc8a78874a2"
+    },
+    {
+      "id": "matrix",
+      "pr": 50,
+      "snapshot_commit": "724f0bdabed2bd51c170942f3e45bc2cecc34932",
+      "preservation_tag": "evidence/2026-10-16/matrix",
+      "source_tree": "37d33e7423c17e0ce2edeac6483ba9c50dc3d40d",
+      "documents": [
+        {
+          "path": "docs/matrix/collection-preparation-2026-10-16.md",
+          "git_blob": "af7ed318926f9218a1f87a20548802f35e8830d4",
+          "sha256": "00fa31a87aad8fa2241a9c54e92d81ee1f4a7eb1168b5692bfb861fa873adbf9",
+          "size": 4191,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/724f0bdabed2bd51c170942f3e45bc2cecc34932/docs/matrix/collection-preparation-2026-10-16.md"
+        },
+        {
+          "path": "docs/matrix/collection-result-2026-10-16.md",
+          "git_blob": "f8df9dcf59d9d7602f21a26352971e069656b986",
+          "sha256": "e3a09ea1ca376521108f782c61c2f43cecb1cf56273508bc69c225be4a9a7310",
+          "size": 4761,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/724f0bdabed2bd51c170942f3e45bc2cecc34932/docs/matrix/collection-result-2026-10-16.md"
+        },
+        {
+          "path": "docs/matrix/collection-run-2026-10-16.md",
+          "git_blob": "a5851622f031f0f0fba1e8715e2bb963000f7712",
+          "sha256": "e7a1c0999fb034c333bbd0c1d19dd556ae2ca90a0a6e8629271c84b20351215a",
+          "size": 6491,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/724f0bdabed2bd51c170942f3e45bc2cecc34932/docs/matrix/collection-run-2026-10-16.md"
+        },
+        {
+          "path": "docs/matrix/device-test-2026-10-16.md",
+          "git_blob": "d8d07928b47022de4cc1f17cea251b63bb1c9627",
+          "sha256": "423254a7a7f7eae34d4bbeb015b36a2bade49e6ebf0b543924869e74217fee88",
+          "size": 5923,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/724f0bdabed2bd51c170942f3e45bc2cecc34932/docs/matrix/device-test-2026-10-16.md"
+        },
+        {
+          "path": "docs/matrix/evidence/collection-preparation-2026-10-16.json",
+          "git_blob": "65fd01809e965dad81f70c58f25b87755e2d78fd",
+          "sha256": "4e94b5ca89f092ed95c59b26830bc7a7857b38189eadc57cfaf71dfbdbbbddb0",
+          "size": 2455,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/724f0bdabed2bd51c170942f3e45bc2cecc34932/docs/matrix/evidence/collection-preparation-2026-10-16.json"
+        },
+        {
+          "path": "docs/matrix/evidence/collection-result-2026-10-16.csv",
+          "git_blob": "94060420eed34920f942b177d517f4e78426a5b4",
+          "sha256": "e90d08ffe886610c6b03411bf72bea2ea74f0cfca3dc37b0ef24022443d22b0f",
+          "size": 3237,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/724f0bdabed2bd51c170942f3e45bc2cecc34932/docs/matrix/evidence/collection-result-2026-10-16.csv"
+        },
+        {
+          "path": "docs/matrix/evidence/collection-result-2026-10-16.json",
+          "git_blob": "961e31aa3507bc888944234e1a39827e75398578",
+          "sha256": "71455d0fbff415136babb772d7fbc4ad0aa3610e165d0c8e3aea76d080299996",
+          "size": 11195,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/724f0bdabed2bd51c170942f3e45bc2cecc34932/docs/matrix/evidence/collection-result-2026-10-16.json"
+        },
+        {
+          "path": "docs/matrix/evidence/collection-start-2026-10-16.json",
+          "git_blob": "a8e085a59dd9794933b37ebc45085b46f82ad49d",
+          "sha256": "810f762be5c18a910f9dfab0b52bfdb0afd97d0a0e5f5d415838d6d9e91e514b",
+          "size": 708,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/724f0bdabed2bd51c170942f3e45bc2cecc34932/docs/matrix/evidence/collection-start-2026-10-16.json"
+        },
+        {
+          "path": "docs/matrix/evidence/device-test-2026-10-16.json",
+          "git_blob": "bed57cfe64cc43fa29a7219da868cfd344194260",
+          "sha256": "f1bb3536b063ebd45f83f33d92a0150da4c77a514735ef21b542d094f8482985",
+          "size": 6938,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/724f0bdabed2bd51c170942f3e45bc2cecc34932/docs/matrix/evidence/device-test-2026-10-16.json"
+        },
+        {
+          "path": "docs/matrix/evidence/scan-direction-correction-2026-10-16.json",
+          "git_blob": "87496c7a1e202de96213099b6a8171274b0f479a",
+          "sha256": "8b4a8440f67384a0bacbe66777c33dd74304c89d8c5909fd96b3b205352509ba",
+          "size": 4844,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/724f0bdabed2bd51c170942f3e45bc2cecc34932/docs/matrix/evidence/scan-direction-correction-2026-10-16.json"
+        },
+        {
+          "path": "docs/matrix/mapping-template.csv",
+          "git_blob": "9ff8f2802ffffa69c4e64f5ca8dfc9c2b9aa6f5d",
+          "sha256": "4a34da8b65d2b0f7a872e2054d2872836340412ffd91e5663bf5ed58f32b09ad",
+          "size": 2218,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/724f0bdabed2bd51c170942f3e45bc2cecc34932/docs/matrix/mapping-template.csv"
+        },
+        {
+          "path": "docs/matrix/preparation-results-2026-10-16.md",
+          "git_blob": "d8bb6738201d296981e81e2b7532838f68471520",
+          "sha256": "56044dbb4db4bfa69f14ba1642359aa9b35e6818703c1c98d45d2abb07d72033",
+          "size": 5433,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/724f0bdabed2bd51c170942f3e45bc2cecc34932/docs/matrix/preparation-results-2026-10-16.md"
+        },
+        {
+          "path": "docs/matrix/scan-direction-correction-2026-10-16.md",
+          "git_blob": "c60ffcc09849721d9087a97cebf153174979b79d",
+          "sha256": "d3c546cd54813b99451b6f634f1c2f1ff040a50cb5c5e0670a11355c37ad7a7e",
+          "size": 5695,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/724f0bdabed2bd51c170942f3e45bc2cecc34932/docs/matrix/scan-direction-correction-2026-10-16.md"
+        },
+        {
+          "path": "docs/matrix/test-preparation.md",
+          "git_blob": "30cacfdd4d0e61b5686bb9583c464ed08c137572",
+          "sha256": "6ebba6166244122f02962f18c8a979d6dbba1b763cfaa588d6a1c128524c41d4",
+          "size": 10937,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/724f0bdabed2bd51c170942f3e45bc2cecc34932/docs/matrix/test-preparation.md"
+        }
+      ],
+      "annotated_tag_object": "fc7c3f60a12b698d04f0f5085be149d7f681bec5"
+    },
+    {
+      "id": "audio",
+      "pr": 51,
+      "snapshot_commit": "cff0c998cde05715c2117c17ecf42681b69d1ad4",
+      "preservation_tag": "evidence/2026-10-16/audio",
+      "source_tree": "836d165deb702f39a80dcaceb1182de113a152b2",
+      "documents": [
+        {
+          "path": "docs/audio/ble-wire.md",
+          "git_blob": "07da56ea21773df6c93b8b5fd621d03fb0e6adaa",
+          "sha256": "54ec489132c637f562f915bb8bf6a8af437b5bf7b0d16c6476ace4546427dffd",
+          "size": 8585,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/cff0c998cde05715c2117c17ecf42681b69d1ad4/docs/audio/ble-wire.md"
+        },
+        {
+          "path": "docs/audio/controls-results-2026-10-16.md",
+          "git_blob": "17e5a471716cd1461d5c44adca006f053fbf7d41",
+          "sha256": "2ed3a65b922d3e55a0176c1f2d7a3be052f236a52e807c156897cc1e0c742cc5",
+          "size": 5253,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/cff0c998cde05715c2117c17ecf42681b69d1ad4/docs/audio/controls-results-2026-10-16.md"
+        },
+        {
+          "path": "docs/audio/device-test-2026-10-16.md",
+          "git_blob": "40965aa040a705e94d5ad4d7d46dbbbc0a493998",
+          "sha256": "0245691ddeb6071e23c7e77f2a9aec2c2eb4d66a8bea3dc3f580615bad5fa5ba",
+          "size": 10884,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/cff0c998cde05715c2117c17ecf42681b69d1ad4/docs/audio/device-test-2026-10-16.md"
+        },
+        {
+          "path": "docs/audio/preparation-results-2026-10-16.md",
+          "git_blob": "17472e9aa7850420f9524a5d0aa6e27fe78ee9b9",
+          "sha256": "b84263d149866fb6cab986d683c6d382d40c16b8766a09a6f2044d55c02dc18f",
+          "size": 4162,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/cff0c998cde05715c2117c17ecf42681b69d1ad4/docs/audio/preparation-results-2026-10-16.md"
+        },
+        {
+          "path": "docs/audio/test-preparation.md",
+          "git_blob": "85261cde159636b4395acfca6c8680389529aa8d",
+          "sha256": "c7c774054f74dda03a7aa168a9f751059934abcb375051ab7d13e10bdd3a21c4",
+          "size": 15177,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/cff0c998cde05715c2117c17ecf42681b69d1ad4/docs/audio/test-preparation.md"
+        },
+        {
+          "path": "docs/audio/test-record-template.md",
+          "git_blob": "add07c584a2d21713b4e50e5ab21298dd3317f63",
+          "sha256": "95c1439698a12f712e3dbcb989313e9b15f0cec10782351f832e56ba3ef75953",
+          "size": 4838,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/cff0c998cde05715c2117c17ecf42681b69d1ad4/docs/audio/test-record-template.md"
+        }
+      ],
+      "annotated_tag_object": "4f02bb4aeb6379aac16995d3c967f2d85772d9ab"
+    },
+    {
+      "id": "nfc-app",
+      "pr": 52,
+      "snapshot_commit": "14d7a0dae4ae0e697ff609bb0e86996e9864a62d",
+      "preservation_tag": "evidence/2026-10-16/nfc-app",
+      "source_tree": "16e1d9ece13fada521ca24e8b42e7a094d48b664",
+      "documents": [
+        {
+          "path": "docs/nfc/app-device-test-2026-10-16.md",
+          "git_blob": "29a310da68eb58a05a0fb6903a61ae426e4bca9b",
+          "sha256": "ebe64e0a208287adee19a1f58c23dd2713af55304c931e2fc2fc71963786e772",
+          "size": 6199,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/14d7a0dae4ae0e697ff609bb0e86996e9864a62d/docs/nfc/app-device-test-2026-10-16.md"
+        },
+        {
+          "path": "docs/nfc/app-roundtrip.md",
+          "git_blob": "9111902af2cf5d632b96de8c178a3748f375ab98",
+          "sha256": "a1e91bafd5b8af1c1c7782757ee87a53b6ee3fc2f1d04d3ac230b2b637928278",
+          "size": 8049,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/14d7a0dae4ae0e697ff609bb0e86996e9864a62d/docs/nfc/app-roundtrip.md"
+        },
+        {
+          "path": "docs/nfc/device-preparation-2026-10-16.md",
+          "git_blob": "8abab6a1075781d7060c67eab6ca16f73a428f59",
+          "sha256": "abf7b0b67fe2bcb975b84de79661ea47cd91c4a8858dcf37e410ef7bf50d307a",
+          "size": 7663,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/14d7a0dae4ae0e697ff609bb0e86996e9864a62d/docs/nfc/device-preparation-2026-10-16.md"
+        },
+        {
+          "path": "docs/nfc/evidence/first-write-readback-2026-10-16.json",
+          "git_blob": "bc5a41d87e7b757100815f2f1b162b9a08789901",
+          "sha256": "a0177627f9966580cb81fd487e3b49bc53ae02d0eed01f8c0c0b58f6378d42fe",
+          "size": 3541,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/14d7a0dae4ae0e697ff609bb0e86996e9864a62d/docs/nfc/evidence/first-write-readback-2026-10-16.json"
+        },
+        {
+          "path": "docs/nfc/evidence/hce-2026-10-16.json",
+          "git_blob": "6625bf200ca12f6b8c55ffbdaca620168322ffb7",
+          "sha256": "24588c3e81429c0892c068ae2e0adf23e5340422f9509f3a65c674193aff0aa7",
+          "size": 6933,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/14d7a0dae4ae0e697ff609bb0e86996e9864a62d/docs/nfc/evidence/hce-2026-10-16.json"
+        },
+        {
+          "path": "docs/nfc/evidence/physical-tag-2026-10-16.json",
+          "git_blob": "d37c922b2c4f6bdf8df0593ea5856cb0276abc79",
+          "sha256": "db56b95e1d3db0c56e06ad163d802963a8bdd47f186c5428336d24c76ad53563",
+          "size": 4314,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/14d7a0dae4ae0e697ff609bb0e86996e9864a62d/docs/nfc/evidence/physical-tag-2026-10-16.json"
+        },
+        {
+          "path": "docs/nfc/first-write-readback-2026-10-16.md",
+          "git_blob": "de6503ce82fc7b180fde1a4079de2aab69df53d6",
+          "sha256": "ec8078d13842447a3a5f8e1c9d4244af3a3c4d082bcaf1b361affbf4f0f980ef",
+          "size": 8623,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/14d7a0dae4ae0e697ff609bb0e86996e9864a62d/docs/nfc/first-write-readback-2026-10-16.md"
+        },
+        {
+          "path": "docs/nfc/physical-tag-test-2026-10-16.md",
+          "git_blob": "545abd02e2b04f2a91997b015bfc8fae5e0fd7e6",
+          "sha256": "eafdaf22e138cbd819450c902245f9aeab8156850a9b5a71f603229a02f3c054",
+          "size": 6122,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/14d7a0dae4ae0e697ff609bb0e86996e9864a62d/docs/nfc/physical-tag-test-2026-10-16.md"
+        },
+        {
+          "path": "docs/nfc/test-preparation.md",
+          "git_blob": "d8c265fabb7fbf90f58b8bf7ab5ede9bd83acdc1",
+          "sha256": "e13b0f7b8f137eb165eda710bdafb370f5f3fb8090df9f58b4f0f2125fa56ff6",
+          "size": 19279,
+          "url": "https://github.com/Sven401/Larp-Escape/blob/14d7a0dae4ae0e697ff609bb0e86996e9864a62d/docs/nfc/test-preparation.md"
+        }
+      ],
+      "annotated_tag_object": "25bd497cfbb777a5e25d2b3765a20aa9dc45b70f"
+    }
+  ],
+  "scope": "Tags retain complete source commit trees and ancestry; document SHA-256 computed on Git blob bytes, not working-tree CRLF files. Private APK/flash/key files not copied or reverified. Artifact identities and private evidence locations remain in original reports. These are preservation references, not releases.",
+  "preservation_verification": {
+    "date": "2026-10-16",
+    "remote": "origin",
+    "result": "Six explicit tags pushed successfully; ls-remote peeled target SHAs matched all six snapshot commits. 43 document blobs and hashes checked locally. Private binary artifacts not audited."
+  }
+}

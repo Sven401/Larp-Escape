@@ -16,6 +16,8 @@ Die Spielintegration bleibt getrennt. Die folgenden Abschnitte beschreiben
 den historischen Übergabestand vom 13. Oktober, nicht die neue LED-Abnahme.
 
 Aktuelle technische Fortsetzung: [Integrationsvorbereitung vom 16. Oktober 2026](INTEGRATION-2026-10-16.md).
+Bestätigter Baugruppenfortschritt bleibt im [Nachweisregister](BAUGRUPPEN-NACHWEISE.md)
+mit festen Quellen und Sicherungsreferenzen unabhängig von der Zielintegration erhalten.
 Sie erfasst die offenen Produktzweige, Konflikte und Prüftore; die folgende
 Übergabe bleibt der historische Quellenstand. Produktplanung: [Issue #25](https://github.com/Sven401/Larp-Escape/issues/25),
 Konsolidierung: [#53](https://github.com/Sven401/Larp-Escape/issues/53).
