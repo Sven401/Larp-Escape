@@ -66,7 +66,8 @@ Schlüssel und vollständiger Flash werden nicht veröffentlicht.
 | Lautstärkeänderung während Wiedergabe | Vom Nutzer durchgeführt; konkrete Stellwerte nicht mitgeteilt | Funktional während der Track spielt | nutzerbestätigt; getestete Stellwerte offen |
 | Pause-Verfügbarkeit | Nutzer beobachtet die App | Nur während Track spielte verfügbar; nach Trackende nicht mehr verfügbar | Bedienbeobachtung nutzerbestätigt; Ursache der Zustandsänderung nicht separat gemessen |
 | BUSY beim erfolgreichen Versuch | Kein zeitgleicher unabhängiger Pegelmitschnitt | LOW während Audio spielte, HIGH bei Stille (vom Nutzer unmittelbar berichtigt) | Verlauf nutzerbestätigt; keine unabhängige elektrische Messung |
-| Manueller Stop / bewusster Neustart | noch nicht separat protokolliert | ausstehend | offen |
+| Manueller Stop während Track 101 | Vom Nutzer durchgeführt; kein zeitgleicher Codex-Mitschnitt | Nutzer bestätigt: Ton endet sofort, BUSY wechselt auf HIGH | nutzerbestätigt bestanden; keine gemessene Abschaltlatenz |
+| Bewusster Neustart nach Stop | noch nicht separat protokolliert | ausstehend: Beginn desselben Titels am Anfang | offen |
 | Titelauswahl zwischen zwei hörbar erkannten Titeln | 100 stumm vor Versorgung, 101 hörbar danach | Keine zwei hörbar erkannten Inhalte unter gleicher Versorgung verglichen | offen |
 
 Quelle aller nachträglichen Hör-/Bedienbeobachtungen: Nutzerbericht am
@@ -84,8 +85,8 @@ Pause war während der Wiedergabe verfügbar und nach dem wahrgenommenen
 Trackende nicht mehr verfügbar. Natürliches Titelende und automatische
 30-Sekunden-Begrenzung wurden zeitlich noch nicht getrennt protokolliert.
 
-**Nächster gemeinsamer Schritt:** Titel 101 bewusst neu starten und nach
-wenigen hörbaren Sekunden manuell Stop drücken; hörbares Ende unabhängig
-vom BUSY-Pegel bestätigen. Danach gezielt den Neustart desselben Titels
-und einen zweiten hörbar erkannten Titel prüfen. Nach jedem Schritt auf
-die Nutzerbeobachtung warten. [Ablauf und Erweiterungen](test-preparation.md).
+**Nächster gemeinsamer Schritt:** Nach dem bestätigten Stop Titel 101
+unverändert lassen und einmal Play drücken. Nutzer bestätigt, ob derselbe
+Titel wieder am Anfang beginnt und BUSY auf LOW wechselt. Danach einen
+zweiten hörbar erkannten Titel prüfen. Nach jedem Schritt auf die
+Nutzerbeobachtung warten. [Ablauf und Erweiterungen](test-preparation.md).
