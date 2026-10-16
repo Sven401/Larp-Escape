@@ -60,6 +60,15 @@ zunächst unklarem App-Schreibergebnis ein erneutes Lesen; kein zweites
 Schreiben. Die begrenzte NFC-Prüffirmware ist temporär, Wake wurde jeweils
 verifiziert wiederhergestellt. Andere Tagtypen und Spielintegration bleiben offen.
 
+Die [Korrektur der Erstschreibprüfung](../docs/nfc/first-write-readback-2026-10-16.md)
+ist auf App-Commit `c0f76ee` mit einem weiteren leeren NDEF-Tag am moto g14
+belegt: Nach der veralteten Android-Leerantwort führt die App eine neue
+Erkennung aus und bestätigt UID sowie alle 59 Bytes automatisch, ohne
+erneut zu schreiben. 105 JVM-Tests, Build, Lint und die drei CI-Workflows
+sind erfolgreich. Die Box blieb unverändert auf Wake; die App ist wieder
+authentifiziert verbunden. Der Bericht trennt den erfolgreichen Lauf von
+vorherigen Funkfehlern und durch Bildschirmdrehung verworfenen Aufträgen.
+
 ## Architektur und Start
 
 Die Firmware liegt in `include/`, `src/` und `lib/`. Die Ausführung trennt

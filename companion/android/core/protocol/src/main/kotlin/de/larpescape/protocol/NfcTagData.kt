@@ -47,15 +47,21 @@ object NfcTagDataCodec {
     }
 }
 
-/** The port reads actual NDEF message bytes from RF, never the discovery cache. */
+sealed interface NfcReadback {
+    data class Bytes(val message: ByteArray?) : NfcReadback
+    data object RequiresRediscovery : NfcReadback
+}
+
+/** Uses NDEF reads and explicitly reports when verification needs a new discovery. */
 interface NfcMessagePort : AutoCloseable {
     fun connect()
     val writable: Boolean
     val capacity: Int
     fun read(): ByteArray?
     fun write(message: ByteArray)
+    fun readAfterWrite(): NfcReadback = NfcReadback.Bytes(read())
 }
-enum class NfcWriteResult { VERIFIED, CHANGED, READ_ONLY, TOO_SMALL, READ_FAILED, UNCERTAIN, CANCELLED }
+enum class NfcWriteResult { VERIFIED, VERIFICATION_REQUIRED, CHANGED, READ_ONLY, TOO_SMALL, READ_FAILED, UNCERTAIN, CANCELLED }
 
 object VerifiedNfcWrite {
     fun execute(port: NfcMessagePort, expected: ByteArray?, replacement: ByteArray,
@@ -73,8 +79,12 @@ object VerifiedNfcWrite {
             if (!current()) return NfcWriteResult.CANCELLED
             attempted = true
             port.write(next.copyOf())
-            val verified = port.read()
-            return if (current() && verified?.contentEquals(next) == true) NfcWriteResult.VERIFIED else NfcWriteResult.UNCERTAIN
+            if (!current()) return NfcWriteResult.UNCERTAIN
+            return when (val verified = port.readAfterWrite()) {
+                is NfcReadback.Bytes -> if (current() && verified.message?.contentEquals(next) == true)
+                    NfcWriteResult.VERIFIED else NfcWriteResult.UNCERTAIN
+                NfcReadback.RequiresRediscovery -> if (current()) NfcWriteResult.VERIFICATION_REQUIRED else NfcWriteResult.UNCERTAIN
+            }
         } catch (_: Exception) {
             return if (attempted) NfcWriteResult.UNCERTAIN else if (!current()) NfcWriteResult.CANCELLED else NfcWriteResult.READ_FAILED
         } finally {
