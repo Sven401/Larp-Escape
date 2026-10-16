@@ -1,7 +1,7 @@
 # Gemeinsamer Baugruppenstand · 17. Oktober 2026
 
-**Status: implementiert; gemeinsame Softwareprüfung und CI werden am
-veröffentlichten Commit ausgewiesen. Keine neue Geräteabnahme.**
+**Status: implementiert und lokal vollständig softwaregeprüft; CI am
+veröffentlichten PR-Stand läuft. Keine neue Geräteabnahme.**
 Auftrag: Arbeitsplan aus der Zieldatei bis zum gemeinsam geprüften
 Konsolidierungs-PR umsetzen, keine Merges oder Geräteuploads.
 Codex-Sitzung: `01a146a9-aa36-71b0-9ea3-bddac4d2cab8`.
@@ -69,8 +69,8 @@ allgemeiner Rollen-/Bondzugang bleiben #27/#28/F5a/#30/F5b.
 
 ## Erhaltungsnachweis je Ergebnis-ID
 
-Ziel aller Softwareübernahmen ist der Implementierungscommit dieses PRs;
-die genaue SHA und abschließenden Läufe werden unten ergänzt. Originale und
+Ziel aller Softwareübernahmen ist Implementierungscommit
+`59e7311e4abc5ea81156a6b2631a744229e404ef` in [PR #56](https://github.com/Sven401/Larp-Escape/pull/56). Originale und
 Sicherungs-Tags: [Nachweisregister](BAUGRUPPEN-NACHWEISE.md).
 
 | ID / Quelle | Behandlung im gemeinsamen Stand | Neu nötiger Nachweis |
@@ -89,8 +89,12 @@ Historische Bestätigung und neue gemeinsame Geräteabnahme bleiben getrennt.
 
 ## Softwareprüfung
 
-Vorläufig **gemessen am gemeinsamen Arbeitsstand**, noch kein
-commitbezogener Abschlussbericht:
+**Gemessen am gemeinsamen Quellenstand von Implementierungscommit
+`59e7311e4abc5ea81156a6b2631a744229e404ef`.** Die Prüfungen liefen während
+der Vorbereitung; anschließend stimmten alle versionierten Arbeitsdateien mit
+diesem Commit überein (`git diff --exit-code`). Die CI prüft den veröffentlichten
+Checkout gesondert. [Maschinenlesbarer Prüfstand samt Ressourcen, Artefakthashes
+und unveränderten Besitzer-/Datenquellen](konsolidierung-pruefstand-2026-10-17.json).
 
 - B0 Host: 105 Regressionen, 509 konfigurierte Steuerungsfälle; separate
   echte Mbed-TLS-Suite 519 Fälle. Alle bestanden, Suiten überlappen.
@@ -108,7 +112,8 @@ commitbezogener Abschlussbericht:
   eine Information (`AutoboxingStateCreation`). Release ist kein freigegebenes,
   signiertes Verteilungspaket.
 - `larp-led-product`, `larp-nfc-test`, `larp-matrix-test` und `nfc-probe`
-  gebaut. Weitere B0-Builds und Ressourcen werden beim Abschluss ergänzt.
+  sowie Spielprodukt, Runtime-/Profil-Runtime-/GATTS-ABI-Probe gebaut:
+  alle acht ESP32-Ziele erfolgreich. Profilwerkzeug ebenfalls gebaut.
 
 Die anfänglichen Androidfehler betrafen eine alte Fragmentanzahl (nun acht
 bei 91 Byte) und einen positionsgebundenen Testkonstruktor nach Zusammenführung;
@@ -116,6 +121,35 @@ beide behoben und vollständigen Android-Aufruf erfolgreich wiederholt.
 Temporärdatei-/Compilerfehler der lokalen Windows-Sandbox wurden durch
 Ausführung mit den vorhandenen lokalen Werkzeugen außerhalb der Sandbox
 behoben; sie zählen nicht als bestandene Produktprüfung.
+
+## Ressourcen und Quellenbeleg
+
+Statische Linkerwerte der gemeinsamen lokalen Builds; kein gemessener Heap,
+Stack oder Energieverbrauch. RAM-Kapazität je ESP32-Ziel 532.480 Byte.
+
+| Variante | RAM Byte | Flash Byte / Anwendungskapazität |
+| --- | ---: | ---: |
+| Spielprodukt `az-delivery-devkit-v4` | 55.148 | 1.229.077 / 1.310.720 |
+| `esp32-runtime-probe` | 21.480 | 291.881 / 1.310.720 |
+| `esp32-profile-runtime-probe` | 107.560 | 407.077 / 1.310.720 |
+| `esp32-gatts-abi-probe` | 50.920 | 1.092.337 / 1.310.720 |
+| `larp-led-product` | 42.504 | 1.134.909 / 3.145.728 |
+| `larp-nfc-test` | 47.264 | 1.146.033 / 3.145.728 |
+| `larp-matrix-test` | 42.552 | 1.137.029 / 3.145.728 |
+| `nfc-probe` | 25.172 | 239.401 / 3.145.728 |
+
+Der Spielbuild bleibt bei 93,8 % seiner kleineren Anwendungspartition.
+Die Baugruppenpartition ist unverändert 3 MiB; deren Reserve ist keine
+Ressourcenzusage für den späteren Gesamtspielbuild.
+
+**Belegt:** sechs historische Quellbäume und 43 Dokumentblobs samt Größen,
+Git-Blob-IDs und SHA-256 erneut gegen das Manifest geprüft. Matrix-Laufdaten,
+Speichercodec/-adapter, NFC-Probe und Android-NFC-Pfad, LED-Ausgabebesitzer,
+Audio-Ausgabe/UART und Wake-Anordnungsmodell stimmen bytegleich mit den
+jeweils benannten Originalständen überein (Pfadliste im JSON).
+Nur Transport-/Sitzungs-/Statusintegration ist gemeinsam neu zu beurteilen.
+APKs und acht Firmware-Binärdateien sind lokal per Größe/SHA-256 zugeordnet;
+Hashangaben sind keine Veröffentlichung oder Sicherung dieser Binärdateien.
 
 ## Restabnahme und nächster Schritt
 

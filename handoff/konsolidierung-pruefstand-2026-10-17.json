@@ -1,0 +1,307 @@
+{
+  "date": "2026-10-17",
+  "implementation_commit": "59e7311e4abc5ea81156a6b2631a744229e404ef",
+  "target_branch": "plan/projektuebergabe-kuratierter-stand",
+  "target_commit": "42610abfef07c971d9902ea6ca5a350ed68981bf",
+  "pull_request": "https://github.com/Sven401/Larp-Escape/pull/56",
+  "hardware_tests": false,
+  "uploads": false,
+  "resources": [
+    {
+      "environment": "az-delivery-devkit-v4",
+      "kind": "RAM",
+      "used": 55148,
+      "capacity": 532480
+    },
+    {
+      "environment": "az-delivery-devkit-v4",
+      "kind": "Flash",
+      "used": 1229077,
+      "capacity": 1310720
+    },
+    {
+      "environment": "esp32-runtime-probe",
+      "kind": "RAM",
+      "used": 21480,
+      "capacity": 532480
+    },
+    {
+      "environment": "esp32-runtime-probe",
+      "kind": "Flash",
+      "used": 291881,
+      "capacity": 1310720
+    },
+    {
+      "environment": "esp32-profile-runtime-probe",
+      "kind": "RAM",
+      "used": 107560,
+      "capacity": 532480
+    },
+    {
+      "environment": "esp32-profile-runtime-probe",
+      "kind": "Flash",
+      "used": 407077,
+      "capacity": 1310720
+    },
+    {
+      "environment": "esp32-gatts-abi-probe",
+      "kind": "RAM",
+      "used": 50920,
+      "capacity": 532480
+    },
+    {
+      "environment": "esp32-gatts-abi-probe",
+      "kind": "Flash",
+      "used": 1092337,
+      "capacity": 1310720
+    },
+    {
+      "environment": "larp-led-product",
+      "kind": "RAM",
+      "used": 42504,
+      "capacity": 532480
+    },
+    {
+      "environment": "larp-led-product",
+      "kind": "Flash",
+      "used": 1134909,
+      "capacity": 3145728
+    },
+    {
+      "environment": "larp-nfc-test",
+      "kind": "RAM",
+      "used": 47264,
+      "capacity": 532480
+    },
+    {
+      "environment": "larp-nfc-test",
+      "kind": "Flash",
+      "used": 1146033,
+      "capacity": 3145728
+    },
+    {
+      "environment": "larp-matrix-test",
+      "kind": "RAM",
+      "used": 42552,
+      "capacity": 532480
+    },
+    {
+      "environment": "larp-matrix-test",
+      "kind": "Flash",
+      "used": 1137029,
+      "capacity": 3145728
+    },
+    {
+      "environment": "nfc-probe",
+      "kind": "RAM",
+      "used": 25172,
+      "capacity": 532480
+    },
+    {
+      "environment": "nfc-probe",
+      "kind": "Flash",
+      "used": 239401,
+      "capacity": 3145728
+    }
+  ],
+  "artifacts": [
+    {
+      "path": ".pio/build/az-delivery-devkit-v4/firmware.bin",
+      "size": 1235376,
+      "sha256": "ee6e92b788a1eff5c5b8beb73217eb0516bdb23e341623af62ad4035a01881cd"
+    },
+    {
+      "path": ".pio/build/esp32-gatts-abi-probe/firmware.bin",
+      "size": 1092960,
+      "sha256": "ae046a29141bfe5dbf7f63016be0f9617f7c8e3d01e43f8907286dd98bbff2ad"
+    },
+    {
+      "path": ".pio/build/esp32-profile-runtime-probe/firmware.bin",
+      "size": 407440,
+      "sha256": "9e62e4877f89d59994d4ece3e1cf10963d0941c54b6d9a8bc5ef5bcda2b571e8"
+    },
+    {
+      "path": ".pio/build/esp32-runtime-probe/firmware.bin",
+      "size": 292240,
+      "sha256": "8495a326927b21f09f35692bb1d7b56c1f6e8a2416a5401143893ef9d21e9a3f"
+    },
+    {
+      "path": ".pio/led-product/larp-led-product/firmware.bin",
+      "size": 1141200,
+      "sha256": "ca06331bacf6386e556a71279209dfdcaed7938400a66d5fde50948b87619a0d"
+    },
+    {
+      "path": ".pio/led-product/larp-matrix-test/firmware.bin",
+      "size": 1143328,
+      "sha256": "7ae06901cb68e7ebff40ee60cbef2715ebcfb7be6d28e1df3e9af782cc8357d4"
+    },
+    {
+      "path": ".pio/led-product/larp-nfc-test/firmware.bin",
+      "size": 1152336,
+      "sha256": "fc7b6491c4036f7c2978e3e7d63554609cae4deae747bdf05705d0a5da6d1226"
+    },
+    {
+      "path": ".pio/nfc-probe/nfc-probe/firmware.bin",
+      "size": 239760,
+      "sha256": "01cdcf41942f43433428b90e1f67ae32aa6582da1d21fdf73ada08294847bc34"
+    },
+    {
+      "path": "companion/android/app/build/outputs/apk/debug/app-debug.apk",
+      "size": 23257626,
+      "sha256": "3c40edfd8a2893a8dff6dd8b2c75816e792600bc7c5859561c8b59ea38f21cc3"
+    },
+    {
+      "path": "companion/android/app/build/outputs/apk/release/app-release-unsigned.apk",
+      "size": 18690980,
+      "sha256": "ef7004d07b9bb424198f21dc3a66abded3db41189a7447ee1d64c91ec02d87c9"
+    }
+  ],
+  "source_verification": "Working files matched implementation commit after completion of the local checks; git diff --exit-code. CI verifies the published PR checkout separately.",
+  "host_checks": {
+    "host-regression": 105,
+    "host-configured-control": 509,
+    "host-peer-proof": 519,
+    "overlap": true,
+    "wire_assertions": 7347,
+    "ci_helpers": 20,
+    "architecture_fixtures": 7,
+    "architecture_files": 145,
+    "direct_includes": 302,
+    "headers": 86,
+    "format_files": 309,
+    "clang_format": "19.1.7",
+    "crypto_official_files": 221,
+    "crypto_negative_native": 8,
+    "crypto_negative_sdk": 2
+  },
+  "android": {
+    "core": {
+      "tests": 83,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "app": {
+      "tests": 72,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "lint": {
+      "errors": 0,
+      "warnings": 3,
+      "information": 1
+    }
+  },
+  "checks": [
+    {
+      "command": "python test/test_led_ble_wire/run.py",
+      "result": "passed"
+    },
+    {
+      "command": "python firmware/led/tests/run_output_tests.py",
+      "result": "passed"
+    },
+    {
+      "command": "python firmware/led/tests/run_audio_tests.py",
+      "result": "passed"
+    },
+    {
+      "command": "python firmware/nfc-probe/tests/run_tests.py",
+      "result": "passed"
+    },
+    {
+      "command": "python -m unittest discover -s scripts/tests -v",
+      "result": "passed"
+    },
+    {
+      "command": "python scripts/check_architecture.py --self-test",
+      "result": "passed"
+    },
+    {
+      "command": "python scripts/check_architecture.py",
+      "result": "passed"
+    },
+    {
+      "command": "python scripts/check_headers.py",
+      "result": "passed"
+    },
+    {
+      "command": "python scripts/check_format.py --formatter .pio/formatter/clang_format/data/bin/clang-format.exe",
+      "result": "passed"
+    },
+    {
+      "command": "python -m platformio test -e host-regression -e host-configured-control -v",
+      "result": "passed"
+    },
+    {
+      "command": "python -m platformio test -e host-peer-proof -v",
+      "result": "passed"
+    },
+    {
+      "command": "python -m platformio run -e az-delivery-devkit-v4 -e esp32-runtime-probe -e esp32-profile-runtime-probe -e esp32-gatts-abi-probe -e profile-tools -j 2",
+      "result": "passed"
+    },
+    {
+      "command": "python -m platformio run -d firmware/led -e larp-led-product -e larp-nfc-test -e larp-matrix-test -j 2",
+      "result": "passed"
+    },
+    {
+      "command": "python -m platformio run -d firmware/nfc-probe -e nfc-probe -j 2",
+      "result": "passed"
+    },
+    {
+      "command": "gradlew.bat :core:protocol:test :app:testDebugUnitTest :app:assembleDebug :app:assembleRelease :app:lintDebug --offline --no-daemon --console=plain",
+      "result": "passed"
+    }
+  ],
+  "provenance_audit": {
+    "NFC-01/02/03": {
+      "source_commit": "14d7a0dae4ae0e697ff609bb0e86996e9864a62d",
+      "unchanged_paths": [
+        "firmware/nfc-probe",
+        "companion/android/app/src/main/java/de/larpescape/companion/platform/nfc"
+      ],
+      "result": "identical"
+    },
+    "MATRIX-01": {
+      "source_commit": "724f0bdabed2bd51c170942f3e45bc2cecc34932",
+      "unchanged_paths": [
+        "companion/android/app/src/main/java/de/larpescape/companion/data/device/MatrixCollection.kt",
+        "companion/android/app/src/main/java/de/larpescape/companion/platform/ble/AndroidMatrixCollectionStore.kt",
+        "docs/matrix/evidence/collection-result-2026-10-16.json",
+        "docs/matrix/evidence/collection-result-2026-10-16.csv"
+      ],
+      "result": "identical"
+    },
+    "AUDIO-01": {
+      "source_commit": "cff0c998cde05715c2117c17ecf42681b69d1ad4",
+      "unchanged_paths": [
+        "firmware/led/include/AudioOutput.h",
+        "firmware/led/src/AudioOutput.cpp",
+        "firmware/led/src/DfPlayerBus.cpp"
+      ],
+      "result": "identical"
+    },
+    "LED-01": {
+      "source_commit": "14d7a0dae4ae0e697ff609bb0e86996e9864a62d",
+      "unchanged_paths": [
+        "firmware/led/src/LedOutput.cpp",
+        "firmware/led/src/RmtLedBus.cpp"
+      ],
+      "result": "identical"
+    },
+    "WAKE-01": {
+      "source_commit": "14d7a0dae4ae0e697ff609bb0e86996e9864a62d",
+      "unchanged_paths": [
+        "companion/android/app/src/main/java/de/larpescape/companion/data/device/WakeUiState.kt"
+      ],
+      "result": "identical"
+    }
+  },
+  "historical_manifest_audit": {
+    "groups": 6,
+    "documents": 43,
+    "result": "all original trees, document blobs, sizes and sha256 verified against Git"
+  }
+}
