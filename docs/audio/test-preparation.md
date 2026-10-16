@@ -23,7 +23,7 @@ Der ältere Prüfbericht oben belegt ausschließlich den ursprünglichen Start-/
 
 App und Firmware sind inzwischen installiert und am Gerät verifiziert:
 [Installationsbericht und laufender gemeinsamer Test](device-test-2026-10-16.md).
-Die Hörbeobachtungen sind noch offen.
+Erste Hör-/Bedienbeobachtungen sind im Gerätebericht nutzerbestätigt; weitere Schritte bleiben offen.
 
 ## Vorbereiteter Bedienumfang
 

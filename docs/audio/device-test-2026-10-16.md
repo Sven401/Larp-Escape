@@ -1,7 +1,7 @@
 # Audio: Installation und gemeinsamer Test – 16. Oktober 2026
 
 **Status: App-/Firmwarepaar installiert und technisch verifiziert;
-Hörtest noch nicht durchgeführt.** Nutzerauftrag in dieser Sitzung:
+erste Hör-/Bedienprüfung nutzerbestätigt, weitere Schritte offen.** Nutzerauftrag in dieser Sitzung:
 „Installiere App und Firmware und dann testen wir die Audio-Baugruppe gemeinsam Schritt für Schritt.“
 
 ## Installiertes Paar
@@ -35,7 +35,7 @@ kein beobachteter Panic-, Abort-, Brownout- oder eigener Fehler-Marker.
 Die echte App fand die Box und meldete „LED-Box verbunden · Zugang bestätigt“.
 Gespeicherter Zugang und Wake-Anordnung 2 / 3 / 4 / 1 blieben erhalten.
 Die Audioanzeige meldet bereit, keinen aktiven Startauftrag und BUSY HIGH.
-Titel 100 und Lautstärke 5 sind nur vorausgewählt; **kein Play gesendet**.
+Zu diesem Installationszeitpunkt waren Titel 100 und Lautstärke 5 nur vorausgewählt; noch kein Play gesendet. Die späteren Versuche stehen unten.
 Die Buttons Play/Stop/Lautstärke sind freigegeben; Pause/Fortsetzen sind im
 Ruhezustand gesperrt. Eine UART-Annahme oder dieses BUSY-Signal beweist keine Stille.
 
@@ -58,13 +58,34 @@ Schlüssel und vollständiger Flash werden nicht veröffentlicht.
 
 | Schritt | Geräte-/Appbeleg | Nutzerbeobachtung | Ergebnis |
 |---|---|---|---|
-| A0: Verbunden, kein Start gedrückt | Authentifiziert, Audio bereit, kein aktiver Startauftrag, BUSY HIGH | noch ausstehend: hörbare Stille | offen |
-| Play Titel 100, Lautstärke 5 | nicht ausgelöst | ausstehend | nicht durchgeführt |
-| Pause / Fortsetzen | nicht ausgelöst | ausstehend | nicht durchgeführt |
-| Stop / bewusster Neustart | nicht ausgelöst | ausstehend | nicht durchgeführt |
-| Titelauswahl / Lautstärke übernehmen | nur 100 / 5 vorausgewählt | ausstehend | nicht durchgeführt |
+| A0: Verbunden, kein Start gedrückt | Authentifiziert, Audio bereit, kein aktiver Startauftrag, BUSY HIGH | Nutzer: „Ja, die Audio-Baugruppe ist still.“ | bestanden für diesen Ruhezustand |
+| Erster Play-Versuch: Titel 100, Lautstärke 5 | Genau ein Play-Tap; App meldet UART-Übertragung, beim anschließenden Auslesen kein aktiver Startauftrag und BUSY HIGH; private Belege `play-before.xml`, `play-first-result.xml` | Nutzer: „Es bleibt still, ich höre nichts.“ | Hörversuch fehlgeschlagen; UART-Ausgabe separat bestätigt |
+| Zusätzliche Audio-Versorgung manuell hergestellt | Keine neue Spannungs-/Strommessung durch Codex | Nutzer: Powerindicator leuchtete anschließend | Versorgungshandlung und Anzeige nutzerbestätigt; elektrische Werte offen |
+| Play Titel 101 nach Versorgungshandlung | Vom Nutzer am Handy durchgeführt; kein zeitgleicher Codex-Mitschnitt | Track 101 abgespielt und gehört | hörbare Wiedergabe für diesen Versuch nutzerbestätigt |
+| Pause / Fortsetzen | Vom Nutzer durchgeführt | Beides funktional | nutzerbestätigt; genaue Zeit-/Fortsetzungsposition nicht protokolliert |
+| Lautstärkeänderung während Wiedergabe | Vom Nutzer durchgeführt; konkrete Stellwerte nicht mitgeteilt | Funktional während der Track spielt | nutzerbestätigt; getestete Stellwerte offen |
+| Pause-Verfügbarkeit | Nutzer beobachtet die App | Nur während Track spielte verfügbar; nach Trackende nicht mehr verfügbar | Bedienbeobachtung nutzerbestätigt; Ursache der Zustandsänderung nicht separat gemessen |
+| BUSY beim erfolgreichen Versuch | Kein zeitgleicher unabhängiger Pegelmitschnitt | LOW während Audio spielte, HIGH bei Stille (vom Nutzer unmittelbar berichtigt) | Verlauf nutzerbestätigt; keine unabhängige elektrische Messung |
+| Manueller Stop / bewusster Neustart | noch nicht separat protokolliert | ausstehend | offen |
+| Titelauswahl zwischen zwei hörbar erkannten Titeln | 100 stumm vor Versorgung, 101 hörbar danach | Keine zwei hörbar erkannten Inhalte unter gleicher Versorgung verglichen | offen |
 
-**Nächster Schritt:** Nutzer bestätigt zunächst den Ruhezustand ohne hörbare
-Wiedergabe. Erst anschließend einen einzelnen Play-Versuch gemeinsam auslösen
-und dessen Höreindruck abwarten. Nach jedem physischen Schritt auf die
-Nutzerbeobachtung warten. [Ablauf und Erweiterungen](test-preparation.md).
+Quelle aller nachträglichen Hör-/Bedienbeobachtungen: Nutzerbericht am
+16. Oktober 2026 in dieser Sitzung. Sie werden nicht als eigener Geräte-
+oder Messmitschnitt ausgegeben. Nach dem Zuschalten der Zusatzversorgung
+war Track 101 hörbar; daraus allein folgt kein Nachweis des tatsächlichen
+Dateiinhalts von Track 100 oder einer vollständigen elektrischen Fehlerursache.
+
+**Berichtigung des Nutzers am 16. Oktober 2026:** BUSY ist bei Stille
+HIGH; die unmittelbar zuvor gemeldete Angabe LOW bei Stille war falsch
+wiedergegeben. Maßgeblich ist der berichtigte Verlauf **LOW bei Wiedergabe,
+HIGH bei Stille**. Er passt zur konfigurierten aktiven LOW-Interpretation.
+Die Korrektur ist eine Nutzerbeobachtung, keine nachträgliche eigene Messung.
+Pause war während der Wiedergabe verfügbar und nach dem wahrgenommenen
+Trackende nicht mehr verfügbar. Natürliches Titelende und automatische
+30-Sekunden-Begrenzung wurden zeitlich noch nicht getrennt protokolliert.
+
+**Nächster gemeinsamer Schritt:** Titel 101 bewusst neu starten und nach
+wenigen hörbaren Sekunden manuell Stop drücken; hörbares Ende unabhängig
+vom BUSY-Pegel bestätigen. Danach gezielt den Neustart desselben Titels
+und einen zweiten hörbar erkannten Titel prüfen. Nach jedem Schritt auf
+die Nutzerbeobachtung warten. [Ablauf und Erweiterungen](test-preparation.md).
