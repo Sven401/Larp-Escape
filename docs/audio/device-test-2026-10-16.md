@@ -1,7 +1,8 @@
 # Audio: Installation und gemeinsamer Test – 16. Oktober 2026
 
 **Status: App-/Firmwarepaar installiert und technisch verifiziert;
-erste Hör-/Bedienprüfung nutzerbestätigt, weitere Schritte offen.** Nutzerauftrag in dieser Sitzung:
+gemeinsame funktionale Prüfung nutzerbestätigt abgeschlossen.
+Natürlicher Abschluss eines kurzen Titels vom Nutzer ausgenommen, nicht geprüft.** Nutzerauftrag in dieser Sitzung:
 „Installiere App und Firmware und dann testen wir die Audio-Baugruppe gemeinsam Schritt für Schritt.“
 
 ## Installiertes Paar
@@ -62,7 +63,7 @@ Schlüssel und vollständiger Flash werden nicht veröffentlicht.
 | Erster Play-Versuch: Titel 100, Lautstärke 5 | Genau ein Play-Tap; App meldet UART-Übertragung, beim anschließenden Auslesen kein aktiver Startauftrag und BUSY HIGH; private Belege `play-before.xml`, `play-first-result.xml` | Nutzer: „Es bleibt still, ich höre nichts.“ | Hörversuch fehlgeschlagen; UART-Ausgabe separat bestätigt |
 | Zusätzliche Audio-Versorgung manuell hergestellt | Keine neue Spannungs-/Strommessung durch Codex | Nutzer: Powerindicator leuchtete anschließend | Versorgungshandlung und Anzeige nutzerbestätigt; elektrische Werte offen |
 | Play Titel 101 nach Versorgungshandlung | Vom Nutzer am Handy durchgeführt; kein zeitgleicher Codex-Mitschnitt | Track 101 abgespielt und gehört | hörbare Wiedergabe für diesen Versuch nutzerbestätigt |
-| Pause / Fortsetzen | Vom Nutzer durchgeführt | Beides funktional | nutzerbestätigt; genaue Zeit-/Fortsetzungsposition nicht protokolliert |
+| Pause / Fortsetzen | Vom Nutzer durchgeführt; zusätzlich R1 bestätigt | Funktional, Fortsetzung an der unterbrochenen Stelle nach Pause | nutzerbestätigt bestanden; keine gemessene Zeit-/Positionsabweichung |
 | Lautstärkeänderung während Wiedergabe | Vom Nutzer durchgeführt; konkrete Stellwerte nicht mitgeteilt | Funktional während der Track spielt | nutzerbestätigt; getestete Stellwerte offen |
 | Pause-Verfügbarkeit | Nutzer beobachtet die App | Nur während Track spielte verfügbar; nach Trackende nicht mehr verfügbar | Bedienbeobachtung nutzerbestätigt; Ursache der Zustandsänderung nicht separat gemessen |
 | BUSY beim erfolgreichen Versuch | Kein zeitgleicher unabhängiger Pegelmitschnitt | LOW während Audio spielte, HIGH bei Stille (vom Nutzer unmittelbar berichtigt) | Verlauf nutzerbestätigt; keine unabhängige elektrische Messung |
@@ -86,23 +87,42 @@ Pause war während der Wiedergabe verfügbar und nach dem wahrgenommenen
 Trackende nicht mehr verfügbar. Natürliches Titelende und automatische
 30-Sekunden-Begrenzung wurden zeitlich noch nicht getrennt protokolliert.
 
-## Verbleibende Tests, gemeinsam vorgelegt
+## Ergänzende Ablaufprüfungen und Abschluss
 
 Der Nutzer bat am 16.10.2026, alle noch offenen Tests direkt gesammelt
-vorzulegen. Die folgenden Punkte sind geplante Prüfschritte, keine Ergebnisse.
+vorzulegen. Anschließend bestätigte er R1, R2 und R4–R6 jeweils als
+„wie erwartet“. R3 soll mangels kurzen Titels vernachlässigt werden.
+Die Ergebnisse sind Nutzerbeobachtungen am oben installierten Paar.
 Innerhalb eines Pause-/Resume-Versuchs die ursprüngliche 30-Sekunden-Grenze
 ab Play beachten; Pause und Lautstärkeänderung verlängern diese nicht.
 
 | ID | Vorgehen | Erwartung | Status |
 |---|---|---|---|
-| R1 | An erkennbarer Stelle pausieren, 3 Sekunden warten; in Pause Lautstärke z. B. 5 auf 3 übernehmen; Fortsetzen | Während Pause still, Lautstärkeänderung startet nichts; Fortsetzung an der unterbrochenen Stelle mit neuer Lautstärke | offen |
-| R2 | Pausieren, anderen bekannten Titel auswählen, Play | Neu ausgewählter Titel beginnt am Anfang statt Fortsetzung des alten | offen |
-| R3 | Bekannten kurzen Titel unter 30 Sekunden natürlich enden lassen | Stille, BUSY HIGH, Pause nicht mehr verfügbar; vom Zeitlimit unterscheidbar | offen, sofern geeigneter kurzer Titel vorhanden |
-| R4 | Titel mit über 30 Sekunden Laufzeit unbedient ab Play laufen lassen, Zeit beobachten | Etwa nach 30 Sekunden Stop, Stille, BUSY HIGH, kein selbständiger Neustart | offen, sofern geeigneter langer Titel vorhanden |
-| R5 | Während Play Verbindung trennen, danach neu verbinden | Wiedergabe endet nach erkannter Trennung; Wiederverbindung bleibt still und erlaubt einen neuen bewussten Play-Auftrag | offen |
-| R6 | Während Play App verlassen, anschließend vollständig schließen und neu öffnen; nötigenfalls neu verbinden | Wiedergabe endet nach erkannter Trennung; nach Öffnen kein Autostart, Bedienung nach Verbindung wieder bereit | offen |
+| R1 | An erkennbarer Stelle pausieren, 3 Sekunden warten; in Pause Lautstärke z. B. 5 auf 3 übernehmen; Fortsetzen | Während Pause still, Lautstärkeänderung startet nichts; Fortsetzung an der unterbrochenen Stelle mit neuer Lautstärke | nutzerbestätigt bestanden („wie erwartet“) |
+| R2 | Pausieren, anderen bekannten Titel auswählen, Play | Neu ausgewählter Titel beginnt am Anfang statt Fortsetzung des alten | nutzerbestätigt bestanden („wie erwartet“) |
+| R3 | Bekannten kurzen Titel unter 30 Sekunden natürlich enden lassen | Stille, BUSY HIGH, Pause nicht mehr verfügbar; vom Zeitlimit unterscheidbar | nicht geprüft; kein ausreichend kurzer Titel, auf Nutzerwunsch ausgenommen |
+| R4 | Titel mit über 30 Sekunden Laufzeit unbedient ab Play laufen lassen, Zeit beobachten | Etwa nach 30 Sekunden Stop, Stille, BUSY HIGH, kein selbständiger Neustart | nutzerbestätigt bestanden („wie erwartet“) |
+| R5 | Während Play Verbindung trennen, danach neu verbinden | Wiedergabe endet nach erkannter Trennung; Wiederverbindung bleibt still und erlaubt einen neuen bewussten Play-Auftrag | nutzerbestätigt bestanden („wie erwartet“) |
+| R6 | Während Play App verlassen, anschließend vollständig schließen und neu öffnen; nötigenfalls neu verbinden | Wiedergabe endet nach erkannter Trennung; nach Öffnen kein Autostart, Bedienung nach Verbindung wieder bereit | nutzerbestätigt bestanden („wie erwartet“) |
 
-Abschluss: Stop, Lautstärkeauswahl wieder 5, hörbare Stille und BUSY HIGH
-bestätigen. Nicht verfügbare kurze/lange Titel als „nicht geprüft“ zurückmelden;
-keinen fehlenden Zeitnachweis aus dem bisherigen Funktionstest ableiten.
-[Ablauf und Erweiterungen](test-preparation.md).
+**Abschluss nutzerbestätigt:** Lautstärke am Ende auf **5** gesetzt,
+BUSY steht auf **HIGH**. R1, R2 und R4–R6 wurden ohne weitere Firmware-/Appänderung
+mit dem installierten Paar aus `243f00c` durchgeführt; Produktquellen `958d6dc`.
+Die Nachträge dieses Berichts ändern ausschließlich Dokumentation.
+
+Play/Titelauswahl, Pause/Fortsetzen, Lautstärke während Wiedergabe und Pause,
+Stop, bewusster Neustart, zeitbegrenzter Stop, Verbindungsabbruch und
+App-Neustart sind im beschriebenen Aufbau funktional nutzerbestätigt.
+Die zusätzliche Audio-Versorgung war beim erfolgreichen Lauf eingeschaltet.
+Die anfänglich stumme Wiedergabe von 100 vor dieser Versorgungshandlung
+bleibt als eigener fehlgeschlagener Hörversuch erhalten.
+
+**Verbleibende Grenze:** Ein natürliches Titelende vor 30 Sekunden wurde
+nicht getrennt von der Testbegrenzung nachgewiesen. Der Nutzer hat diesen
+Punkt mangels passenden kurzen Titels ausdrücklich ausgenommen. Er wird
+nicht als bestanden gewertet und erfordert für diesen abgeschlossenen
+Testlauf keinen weiteren Versuch. Elektrische Pegel-/Versorgungswerte,
+Schalldruck und harte Abschaltlatenzen wurden hier nicht gemessen.
+Die Ergebnisse gelten für dieses App-/Firmwarepaar und den beschriebenen
+Aufbau; sie sind keine allgemeine Geräte- oder elektrische Abnahme.
+[Ablauf und Sollwerte](test-preparation.md).

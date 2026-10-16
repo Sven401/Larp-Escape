@@ -22,8 +22,10 @@ Aktueller Umfang und aktuelles App-/Firmwarepaar: [Prüfbericht der vollständig
 Der ältere Prüfbericht oben belegt ausschließlich den ursprünglichen Start-/Stop-Stand.
 
 App und Firmware sind inzwischen installiert und am Gerät verifiziert:
-[Installationsbericht und laufender gemeinsamer Test](device-test-2026-10-16.md).
-Erste Hör-/Bedienbeobachtungen sind im Gerätebericht nutzerbestätigt; weitere Schritte bleiben offen.
+[Installationsbericht und abgeschlossener gemeinsamer Test](device-test-2026-10-16.md).
+Die funktionalen Hör-/Bedienprüfungen sind nutzerbestätigt abgeschlossen.
+Ein natürliches Titelende unter 30 Sekunden wurde mangels geeigneten Titels
+auf Nutzerwunsch ausgenommen und bleibt ausdrücklich ungeprüft.
 
 ## Vorbereiteter Bedienumfang
 
