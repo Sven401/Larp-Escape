@@ -21,6 +21,10 @@ führt den gebauten Quellstand, frische Softwaretests und Artefakthashes.
 Aktueller Umfang und aktuelles App-/Firmwarepaar: [Prüfbericht der vollständigen Bedienung](controls-results-2026-10-16.md).
 Der ältere Prüfbericht oben belegt ausschließlich den ursprünglichen Start-/Stop-Stand.
 
+App und Firmware sind inzwischen installiert und am Gerät verifiziert:
+[Installationsbericht und laufender gemeinsamer Test](device-test-2026-10-16.md).
+Die Hörbeobachtungen sind noch offen.
+
 ## Vorbereiteter Bedienumfang
 
 - Die Audio-Bedienung läuft über die echte App und ihren authentifizierten
