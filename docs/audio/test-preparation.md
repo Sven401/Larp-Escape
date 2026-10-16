@@ -11,11 +11,15 @@ Das Verfahren folgt den getrennten Geräte- und Nutzerbelegen der
 [Wake-Prüfung](../wake/device-test-2026-10-15.md) und dem verifizierten
 [NFC-Rückweg](../nfc/physical-tag-test-2026-10-16.md). Der
 [Ergebnisbogen](test-record-template.md) bleibt bis zur Durchführung offen.
-Quellbasis dieses Arbeitsstands ist `e00fe437` des dokumentierten
-NFC-Rundlaufs. Die Audio-Erweiterung muss mit ihrem eigenen endgültigen
+Die ursprüngliche Vorbereitung basierte auf `e00fe437` des dokumentierten
+NFC-Rundlaufs. Der vervollständigte Stand baut auf Audio-PR #48 (`d1c7077`)
+auf und enthält außerdem die jüngsten NFC-Rücklesekorrekturen aus `33bf31b`. Die Audio-Erweiterung muss mit ihrem eigenen endgültigen
 Commit und Artefakthashes im Installationsbericht bezeichnet werden.
 Der [Prüfbericht der Vorbereitung](preparation-results-2026-10-16.md)
 führt den gebauten Quellstand, frische Softwaretests und Artefakthashes.
+
+Aktueller Umfang und aktuelles App-/Firmwarepaar: [Prüfbericht der vollständigen Bedienung](controls-results-2026-10-16.md).
+Der ältere Prüfbericht oben belegt ausschließlich den ursprünglichen Start-/Stop-Stand.
 
 ## Vorbereiteter Bedienumfang
 
