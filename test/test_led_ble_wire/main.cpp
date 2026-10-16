@@ -382,6 +382,22 @@ static void framing() {
         check(a.accept(f.data(), n, 30, out) == FrameResult::Rejected, "mixed transfer rejected");
     }
 }
+static void audioActions() {
+    for (unsigned op = 3; op <= 5; ++op) {
+        Harness h; h.auth(); Message out;
+        h.control.audio.supported = h.control.audio.ready = true;
+        h.control.audio.volume = 5;
+        auto command = get("command_audio_100"); command.bytes[30] = op;
+        command.bytes[31] = command.bytes[32] = 0; command.bytes[33] = op == 5 ? 8 : 0;
+        sign(h.crypto, h.key, "audio-command", command, 34);
+        check(h.session.receive(command, 1010, out) == SessionResult::Accepted && h.control.audioSubmissions == 1, "new audio operation admitted after authentication");
+        check(!h.session.service(1010, out), "new action waits for UART completion");
+        h.control.audio.pending = false; h.control.audio.appliedRevision = h.control.audio.revision;
+        check(h.session.service(1011, out) && out.bytes[38] == 0, "new action correlated result");
+        h.session.receive(command, 1020, out);
+        check(h.control.audioSubmissions == 1, "new action replay is inert");
+    }
+}
 static void audioProtocol() {
     {
         Harness h; h.control.audio.supported = h.control.audio.ready = h.control.audio.busyValid = true;
@@ -451,7 +467,7 @@ int main(int argc, char **argv) {
         std::ifstream source(argv[1]);
         check(source.good(), "fixture exists");
         fixture.assign(std::istreambuf_iterator<char>(source), std::istreambuf_iterator<char>());
-        happyPath(); wakeStatus(); authentication(); admission(); receiptsAndDriver(); framing(); audioProtocol();
+        happyPath(); wakeStatus(); authentication(); admission(); receiptsAndDriver(); framing(); audioProtocol(); audioActions();
         std::cout << "PASS: " << assertions << " assertions; real host HMAC, Python golden bytes, auth/replay/owner/framing.\n";
         return 0;
     } catch (const std::exception &error) {

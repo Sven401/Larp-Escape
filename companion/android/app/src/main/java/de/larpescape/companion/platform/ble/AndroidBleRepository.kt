@@ -272,6 +272,11 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
         val audio = mutable.value.leds.audio
         if (audio.canStart) ledSession?.audioCommand(true, audio.selectedTrack!!, audio.selectedVolume!!)
     }
+    override fun audioAction(operation: Int) = guarded {
+        val audio = mutable.value.leds.audio
+        if (when(operation) { 3 -> audio.canPause; 4 -> audio.canResume; 5 -> audio.canSetVolume; else -> false })
+            ledSession?.audioAction(operation, if (operation == 5) audio.selectedVolume!! else 0)
+    }
     override fun stopAudio() = guarded { if (mutable.value.leds.audio.canStop) ledSession?.audioCommand(false) }
     override fun importLedAccess(bytes: ByteArray) {
         try {

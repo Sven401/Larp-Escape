@@ -55,6 +55,18 @@ bool AudioOutput::requestStop(bool timedOut) {
 
 bool AudioOutput::stop() { return requestStop(false); }
 
+bool AudioOutput::requestSingle(Phase phase) {
+    if (!initialized_ || !status_.ready || status_.fault || status_.pending || status_.revision == UINT32_MAX) return false;
+    ++status_.revision; status_.pending = true; wantedPlay_ = false; phase_ = phase;
+    return true;
+}
+bool AudioOutput::pause() { return status_.active && requestSingle(Phase::Pause); }
+bool AudioOutput::resume() { return status_.paused && requestSingle(Phase::Resume); }
+bool AudioOutput::volume(std::uint8_t value) {
+    if (!value || value > MaximumVolume || !requestSingle(Phase::AdjustVolume)) return false;
+    wantedVolume_ = value; return true;
+}
+
 void AudioOutput::fail() {
     status_.fault = true;
     status_.ready = false;
@@ -71,13 +83,17 @@ void AudioOutput::completeTransfer(std::uint32_t now) {
     haveCompletedTransfer_ = true;
     completedAt_ = now;
     if (sentPhase_ == Phase::Stop) {
-        status_.active = false;
+        status_.active = false; status_.paused = false;
         status_.track = 0;
         seenBusyLow_ = bounded_ = false;
-    } else if (sentPhase_ == Phase::Volume) {
+    } else if (sentPhase_ == Phase::Volume || sentPhase_ == Phase::AdjustVolume) {
         status_.volume = sentVolume_;
+    } else if (sentPhase_ == Phase::Pause) {
+        status_.active = false; status_.paused = true;
+    } else if (sentPhase_ == Phase::Resume) {
+        status_.active = true; status_.paused = false; seenBusyLow_ = false;
     } else {
-        status_.active = true;
+        status_.active = true; status_.paused = false;
         status_.track = sentTrack_;
         status_.completed = false;
         seenBusyLow_ = false;
@@ -86,8 +102,8 @@ void AudioOutput::completeTransfer(std::uint32_t now) {
     }
     // A superseded Play may already be on the wire. Its completion never
     // acknowledges the new Stop; the next bounded command sends that Stop.
-    if (sentRevision_ != status_.revision || (!wantedPlay_ && sentPhase_ != Phase::Stop)) return;
-    if (wantedPlay_ && sentPhase_ != Phase::Play) {
+    if (sentRevision_ != status_.revision) return;
+    if (wantedPlay_ && (sentPhase_ == Phase::Stop || sentPhase_ == Phase::Volume)) {
         phase_ = sentPhase_ == Phase::Stop ? Phase::Volume : Phase::Play;
         return;
     }
@@ -123,8 +139,10 @@ void AudioOutput::service() {
     }
     if (!status_.pending || (haveCompletedTransfer_ &&
         now - completedAt_ < CommandGapMilliseconds)) return;
-    const auto command = phase_ == Phase::Stop ? 0x16 : phase_ == Phase::Volume ? 0x06 : 0x12;
-    const auto parameter = phase_ == Phase::Volume ? wantedVolume_ :
+    const auto command = phase_ == Phase::Stop ? 0x16 :
+        (phase_ == Phase::Volume || phase_ == Phase::AdjustVolume) ? 0x06 :
+        phase_ == Phase::Pause ? 0x0e : phase_ == Phase::Resume ? 0x0d : 0x12;
+    const auto parameter = (phase_ == Phase::Volume || phase_ == Phase::AdjustVolume) ? wantedVolume_ :
         phase_ == Phase::Play ? wantedTrack_ : 0;
     if (status_.fault) recoverySubmitted_ = true;
     if (!bus_.submit(encode(static_cast<std::uint8_t>(command), parameter))) {

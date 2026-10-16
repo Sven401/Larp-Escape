@@ -44,12 +44,12 @@ bool valid(const Snapshot &s) noexcept {
 }
 bool valid(const AudioSnapshot &s) noexcept {
     return s.track <= 255 && s.volume <= 10 && (!s.busyLow || s.busyValid) &&
-           !(s.ready && s.fault) && (!s.active || (s.track && s.volume));
+           !(s.ready && s.fault) && !(s.active && s.paused) && (!(s.active || s.paused) || (s.track && s.volume));
 }
 void writeAudio(std::uint8_t *p, const AudioSnapshot &s) noexcept {
     write32(p, s.revision); write16(p + 4, s.track); p[6] = s.volume;
     p[7] = (s.ready ? 1 : 0) | (s.pending ? 2 : 0) | (s.active ? 4 : 0) |
-           (s.busyValid ? 8 : 0) | (s.busyLow ? 16 : 0) | (s.fault ? 32 : 0);
+           (s.busyValid ? 8 : 0) | (s.busyLow ? 16 : 0) | (s.fault ? 32 : 0) | (s.paused ? 64 : 0);
 }
 Snapshot commandState(const Snapshot &led, const AudioSnapshot &audio, bool isAudio) noexcept {
     if (!isAudio) return led;
@@ -274,7 +274,8 @@ SessionResult Session::receive(const Message &m, std::uint32_t now, Message &out
     const auto volume = isAudio ? m.bytes[33] : 0;
     const bool commandValid = isAudio ?
         ((operation == Operation::Start && track >= 1 && track <= 255 && volume >= 1 && volume <= 10) ||
-         (operation == Operation::Stop && track == 0 && volume == 0)) :
+         ((operation == Operation::Stop || operation == Operation::Pause || operation == Operation::Resume) && track == 0 && volume == 0) ||
+         (operation == Operation::Volume && track == 0 && volume >= 1 && volume <= 10)) :
         ((operation == Operation::Start && m.bytes[31] >= 1 && m.bytes[31] <= 3) ||
          (operation == Operation::Stop && effect == Effect::Off));
     if (!remaining || remaining > 3000U) rejection = Outcome::Expired;

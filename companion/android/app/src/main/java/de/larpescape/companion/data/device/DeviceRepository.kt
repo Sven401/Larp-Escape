@@ -22,6 +22,7 @@ interface DeviceRepository {
     fun selectAudioTrack(value: String)
     fun selectAudioVolume(value: String)
     fun startAudio()
+    fun audioAction(operation: Int) {}
     fun stopAudio()
     fun importLedAccess(bytes: ByteArray)
     fun disconnect()

@@ -135,9 +135,30 @@ static void wraparound() {
     r.step(1); assert(r.output.snapshot().timedOut); r.drain();
     assert(!r.output.snapshot().active);
 }
+static void pauseResumeAndLiveVolume() {
+    Rig r; r.boot(); assert(!r.output.pause() && !r.output.resume());
+    assert(r.output.start(100, 5)); r.drain();
+    const auto played = now;
+    assert(r.output.pause()); assert(!r.output.resume()); r.drain();
+    assert(r.output.snapshot().paused && !r.output.snapshot().active && r.output.snapshot().track == 100);
+    assert(r.bus.sent.back() == AudioOutput::encode(0x0e, 0));
+    const auto count = r.bus.sent.size();
+    assert(r.output.volume(8)); r.drain();
+    assert(r.bus.sent.size() == count + 1 && r.bus.sent.back() == AudioOutput::encode(0x06, 8));
+    assert(r.output.snapshot().volume == 8 && r.output.snapshot().paused);
+    assert(r.output.resume()); r.drain();
+    assert(r.bus.sent.back() == AudioOutput::encode(0x0d, 0) && r.output.snapshot().active && !r.output.snapshot().paused);
+    assert(r.output.volume(3)); r.drain(); assert(r.output.snapshot().active && r.output.snapshot().track == 100);
+    assert(!r.output.volume(0) && !r.output.volume(11));
+    now = played + 30000; r.output.service(); r.drain();
+    assert(r.output.snapshot().timedOut && !r.output.snapshot().paused && !r.output.snapshot().active);
+    assert(!r.output.resume());
+    assert(r.output.start(101)); r.drain(); assert(r.output.pause()); r.step();
+    assert(r.output.stop()); r.drain(); assert(!r.output.snapshot().paused && r.bus.sent.back()[3] == 0x16);
+}
 int main() {
-    goldenFrames(); bootNoAutoplay(); boundedInputsAndPlay(); repeatAndStop();
+    pauseResumeAndLiveVolume(); goldenFrames(); bootNoAutoplay(); boundedInputsAndPlay(); repeatAndStop();
     busyEvidenceAndBound(); stopDuringPreparation(); stopDuringPlayTransmission();
     respectsGapAndTransmission(); failuresAndRecovery(); wraparound();
-    std::cout << "10 audio output cases passed\n";
+    std::cout << "11 audio output cases passed\n";
 }

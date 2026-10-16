@@ -43,13 +43,36 @@ genaue Bedeutung der Ausgabebestätigung. Vor Start überträgt der Besitzer
 Stop, Lautstärke und Play in dieser Reihenfolge; der Play-Befehl `0x12`
 nutzt denselben MP3-Ordnerpfad wie das bisherige `playFromMP3Folder`.
 
+## Ergänzung für Play, Pause und Lautstärke
+
+Am 16. Oktober 2026 zusätzlich vorbereitet: Pause und Fortsetzen sowie
+**Lautstärke übernehmen** während Play, Pause oder Stopp. Die Eingabe allein
+sendet weiter nichts. Play startet den ausgewählten Titel neu; Fortsetzen
+setzt ausschließlich den pausierten Titel fort. Die Prüfgrenzen 1–255 und
+1–10 bleiben bestehen. Die 30-Sekunden-Grenze ab dem ursprünglichen Play wird
+durch Pause, Fortsetzen oder Lautstärke nicht verlängert.
+
+Zusätzliche gemeinsame Schritte nach A2: markante Hörstelle benennen,
+Pause drücken und drei Sekunden Stille bestätigen; Fortsetzen drücken und
+hörbare Fortsetzung an derselben Stelle bestätigen. Lautstärke 5 → 8 → 3 → 5
+jeweils übernehmen und hörbaren Unterschied prüfen. Danach Stop und Play:
+der Titel muss neu beginnen. Bei Pause einen anderen Titel auswählen und
+Play drücken: der neu ausgewählte Titel muss beginnen. UART-/BUSY-Belege
+und Höreindruck für jeden dieser Schritte getrennt im Ergebnisbogen notieren.
+
+**Nutzerbestätigt am 16. Oktober 2026 in dieser Sitzung:** DFPlayer-RX an
+ESP GPIO26, DFPlayer-TX an GPIO25 und BUSY an GPIO14. Quelle: Antwort
+„GPIO26/25/14 bestätigt“. Dies ersetzt die bisher offene As-built-Zuordnung
+für diese drei Leitungen; keine neue Durchgangs-, Pegel- oder Versorgungsmessung.
+GPIO13 bleibt unberührt. Die historischen Zeichnungen bleiben abweichende Quellen.
+
 ## Ausgangslage und offene Hardwarefragen
 
 Der bestehende Spielpfad in
 [`DFMinniHandler.cpp`](../../lib/DFMinniHandler/DFMinniHandler.cpp) nutzt
 UART1, 9600 Baud, 8N1, ESP-RX **25**, ESP-TX **26**, BUSY **14**
 (LOW als busy) sowie einen als WAKE bezeichneten GPIO **13**. Diese Werte
-sind Quellenbefunde, keine neu bestätigte Verdrahtung. Der bisherige
+waren zunächst Quellenbefunde; die drei UART-/BUSY-Leitungen sind inzwischen wie oben nutzerbestätigt. Der bisherige
 Wake-Pfad schaltet GPIO13 mehrfach und später periodisch; daraus folgt
 keine bestätigte Bedeutung des tatsächlich angeschlossenen Signals.
 Ein Pinwechsel oder Versuch mit anderen GPIOs gehört nicht zum Hörtest.
@@ -61,7 +84,7 @@ führt abweichende ältere Zeichnungen auf: DFPlayer-RX an GPIO17, TX an
 GPIO16, BUSY ohne gezeichneten Anschluss und keine bestätigte WAKE-Leitung.
 GPIO16/17 dienen im zuletzt erfolgreich getesteten NFC-Pfad dem PN532.
 Die Zeichnungen sind deshalb keine Grundlage für automatisches Umschalten
-der Audiopins. Tatsächliche UART-/BUSY-/WAKE-Leitungen und der angeschlossene
+der Audiopins. Die drei UART-/BUSY-Leitungen wurden wie oben bestätigt; WAKE und der angeschlossene
 Lautsprecher beziehungsweise Verstärker bleiben zuzuordnen.
 
 Derselbe historische Abgleich berichtet einen Versuch mit **Track 100**

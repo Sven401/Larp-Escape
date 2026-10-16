@@ -73,3 +73,20 @@ GPIO13 bleibt im Prüfpfad unberührt; die Funktion seiner externen
 Beschaltung ist weiterhin unbekannt.
 Weitere Einschränkungen nach dem Lauf konkret ergänzen. Keine vollständige
 Hardware-, Lautstärke-, Dauerlauf- oder Spielintegrationsabnahme ableiten.
+
+## Ergänzung: Pause/Fortsetzen und direkte Lautstärke
+
+Pinzuordnung GPIO26/25/14 wurde vom Nutzer am 16.10.2026 bestätigt;
+Messmittel und elektrische Messung bleiben gesonderte Nachweise.
+
+| Versuch | App-/UART-Beleg | BUSY-Rohwert | Hörbeobachtung | Ergebnis |
+|---|---|---|---|---|
+| Pause an benannter Stelle, 3 s warten | offen | offen | Stille? | offen |
+| Fortsetzen | offen | offen | Richtige Fortsetzungsposition? | offen |
+| Lautstärke 5 → 8 → 3 → 5 jeweils übernehmen | offen | offen | Hörbarer Unterschied? | offen |
+| Pause, Lautstärke ändern, Fortsetzen | offen | offen | Pause erhalten, neue Lautstärke? | offen |
+| Stop, gleicher Titel mit Play | offen | offen | Neuer Anfang? | offen |
+| Pause, anderen Titel wählen, Play | offen | offen | Neu ausgewählter Inhalt? | offen |
+
+Die ursprüngliche 30-s-Frist bleibt während Pause/Resume/Regelung bestehen;
+ein daraus resultierender Stop ist kein selbständiger Wiedergabefehler.

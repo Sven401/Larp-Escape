@@ -10,6 +10,17 @@ class AudioUiStateTest {
         LedStatus(0, 1, 0, sequence, 0, 5, 0, audio = audio)
     private fun state(tracker: AudioStateTracker, now: Long) = tracker.state(now, true, true, false, "bereit")
 
+    @Test fun pauseAndResumeNeedFreshObservedStateAndVolumeDoesNotNeedPlayback() {
+        val tracker = AudioStateTracker()
+        tracker.accept(status(1, AudioStatus(7, 42, 5, 13)), 100)
+        assertTrue(state(tracker, 100).canPause); assertFalse(state(tracker, 100).canResume)
+        tracker.accept(status(2, AudioStatus(8, 42, 5, 73)), 200)
+        val paused = state(tracker, 200)
+        assertTrue(paused.paused); assertTrue(paused.canResume); assertFalse(paused.canPause)
+        assertTrue(paused.canSetVolume); assertFalse(paused.copy(volumeText = "11").canSetVolume)
+        assertFalse(state(tracker, 1200).canResume)
+        assertFalse(paused.disconnected().canResume)
+    }
     @Test fun ledResultsDoNotRefreshAudioAndExpiryClearsAllObservations() {
         val tracker = AudioStateTracker()
         assertTrue(tracker.accept(status(1), 100))

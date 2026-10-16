@@ -11,7 +11,7 @@ struct Message {
     std::array<std::uint8_t, 128> bytes = {};
     std::uint16_t size = 0;
 };
-enum class Operation : std::uint8_t { Start = 1, Stop = 2 };
+enum class Operation : std::uint8_t { Start = 1, Stop = 2, Pause = 3, Resume = 4, Volume = 5 };
 enum class Effect : std::uint8_t { Off = 0, Twinkle = 1, Burst = 2, Ripple = 3 };
 enum class Mode : std::uint8_t { LedOnly = 0, Stopped = 1, Running = 2, Paused = 3, Unknown = 4 };
 enum Flags : std::uint8_t { Ready = 1, Pending = 2, Off = 4, Completed = 8, Fault = 16 };
@@ -35,7 +35,7 @@ struct AudioSnapshot {
     std::uint16_t track = 0;
     std::uint8_t volume = 0;
     bool supported = false, ready = false, pending = false, active = false;
-    bool busyValid = false, busyLow = false, fault = false;
+    bool busyValid = false, busyLow = false, fault = false, paused = false;
 };
 class IHmac256 {
   public:

@@ -39,6 +39,12 @@ class DeviceViewModel(private val repository: DeviceRepository) : ViewModel() {
     fun selectAudioTrack(value: String) = repository.selectAudioTrack(value)
     fun selectAudioVolume(value: String) = repository.selectAudioVolume(value)
     fun startAudio() { if (foreground && permissionGranted && state.value.leds.audio.canStart) repository.startAudio() }
+    fun audioAction(operation: Int) {
+        val audio = state.value.leds.audio
+        if (foreground && permissionGranted && when(operation) {
+            3 -> audio.canPause; 4 -> audio.canResume; 5 -> audio.canSetVolume; else -> false
+        }) repository.audioAction(operation)
+    }
     fun stopAudio() { if (foreground && permissionGranted && state.value.leds.audio.canStop) repository.stopAudio() }
     fun importLedAccess(bytes: ByteArray) = repository.importLedAccess(bytes)
     fun disconnect() = repository.disconnect()

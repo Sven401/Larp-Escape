@@ -43,7 +43,8 @@ beibehalten und behauptet keinen gemessenen gestoppten Spielzustand.
 | 7 | Audioflags |
 
 Audioflags: Bit 0 `ready`, Bit 1 `pending`, Bit 2 `active`, Bit 3
-`busyValid`, Bit 4 `busyLow`, Bit 5 `fault`; Bits 6/7 sind null.
+`busyValid`, Bit 4 `busyLow`, Bit 5 `fault`, Bit 6 `paused`; Bit 7 ist null.
+`active` und `paused` schließen sich aus; beide verlangen Titel und Lautstärke > 0.
 BUSY LOW ohne gültige Abtastung ist unzulässig. Bereit und Fehler sind
 nicht zugleich gültig; aktiver Auftrag verlangt Titel und Lautstärke > 0.
 
@@ -85,16 +86,22 @@ zuerst die passende neue App installieren.
 | 18–21 | gemeinsame Requestnummer, LE32 |
 | 22–25 | erwartete **Audio-Revision**, LE32 |
 | 26–29 | `expiresAt` in Geräte-Millisekunden, LE32 |
-| 30 | Operation: 1 Start, 2 Stop |
-| 31–32 | Titelnummer, LE16; Start **1–255**, Stop **0** |
-| 33 | Lautstärke; Start **1–10**, Stop **0** |
+| 30 | Operation: 1 Play, 2 Stop, 3 Pause, 4 Resume, 5 Lautstärke |
+| 31–32 | Titelnummer, LE16; Play **1–255**, sonst **0** |
+| 33 | Lautstärke; Play und Operation 5 **1–10**, sonst **0** |
 | 34–65 | HMAC über `LARP-LED/1/audio-command` und die ersten 34 Bytes |
 
 Auswahl allein sendet nichts. Die Appvorgabe für Lautstärke ist 5. Start
 desselben Titels ist ein bewusster Neustart. Der Besitzer überträgt
 **Stop (`0x16`) → Lautstärke (`0x06`) → MP3-Ordner-Titel (`0x12`)**,
 jeweils mit mindestens 100 ms Abstand nach abgeschlossenem Transfer.
-Nach 30 Sekunden ab abgeschlossenem Play-Transfer fordert er Stop an,
+Pause überträgt `0x0e`, Resume `0x0d` und Operation 5 ausschließlich `0x06`.
+Die Befehle werden über dieselbe nicht blockierende Transferkette bestätigt.
+Pause behält die Titelnummer; Resume setzt diesen Titel fort und ändert weder
+Titel noch Lautstärke. Lautstärkeänderung bewahrt den bisherigen Play-/Pausezustand.
+Das neue Pausenbit erfordert das gemeinsam gebaute App-/Firmwarepaar.
+Nach 30 Sekunden ab abgeschlossenem Play-Transfer fordert er Stop an;
+Pause, Resume und Lautstärke setzen diese Grenze nicht zurück,
 auch wenn BUSY vorher ein Ende anzeigte. Das verhindert, dass eine
 unbestätigte BUSY-Leitung die Begrenzung außer Kraft setzt.
 

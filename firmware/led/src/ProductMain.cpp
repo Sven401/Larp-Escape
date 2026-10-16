@@ -51,14 +51,17 @@ class Control final : public wire::IControl {
     wire::AudioSnapshot out;
     out.supported = true; out.revision = s.revision; out.appliedRevision = s.appliedRevision;
     out.track = s.track; out.volume = s.volume; out.ready = s.ready;
-    out.pending = s.pending; out.active = s.active; out.fault = s.fault;
+    out.pending = s.pending; out.active = s.active; out.fault = s.fault; out.paused = s.paused;
     out.busyValid = s.busyValid; out.busyLow = s.busyLow;
     return out;
   }
   bool submitAudio(wire::Operation op, uint16_t track, uint8_t volume,
                    uint32_t expected, uint32_t &revision) noexcept override {
     if (expected != audioOutput.snapshot().revision) return false;
-    const bool ok = op == wire::Operation::Stop ? audioOutput.stop() : audioOutput.start(track, volume);
+    const bool ok = op == wire::Operation::Stop ? audioOutput.stop() :
+        op == wire::Operation::Pause ? audioOutput.pause() :
+        op == wire::Operation::Resume ? audioOutput.resume() :
+        op == wire::Operation::Volume ? audioOutput.volume(volume) : audioOutput.start(track, volume);
     revision = audioOutput.snapshot().revision;
     return ok;
   }

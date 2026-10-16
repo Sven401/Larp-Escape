@@ -11,7 +11,7 @@ import de.larpescape.companion.data.device.AudioUiState
 
 @Composable
 fun AudioControls(state: AudioUiState, selectTrack: (String) -> Unit, selectVolume: (String) -> Unit,
-    start: () -> Unit, stop: () -> Unit) {
+    start: () -> Unit, stop: () -> Unit, action: (Int) -> Unit) {
     Card(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text("Audio testen", style = MaterialTheme.typography.titleLarge)
@@ -30,10 +30,16 @@ fun AudioControls(state: AudioUiState, selectTrack: (String) -> Unit, selectVolu
                 style = MaterialTheme.typography.bodySmall)
             Text("Auswahl allein sendet nichts. Nach spätestens 30 Sekunden fordert die Box Stop an.",
                 style = MaterialTheme.typography.bodySmall)
-            Button(onClick = start, enabled = state.canStart, modifier = Modifier.fillMaxWidth()) { Text("Start · Audio testen") }
+            Button(onClick = start, enabled = state.canStart, modifier = Modifier.fillMaxWidth()) { Text("Play · Titel starten") }
             OutlinedButton(onClick = stop, enabled = state.canStop, modifier = Modifier.fillMaxWidth()) { Text("Stop · Audio") }
             HorizontalDivider()
             Text("Boxmeldung und Höreindruck", style = MaterialTheme.typography.titleMedium)
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedButton(onClick = { action(3) }, enabled = state.canPause) { Text("Pause") }
+                OutlinedButton(onClick = { action(4) }, enabled = state.canResume) { Text("Fortsetzen") }
+            }
+            OutlinedButton(onClick = { action(5) }, enabled = state.canSetVolume) { Text("Lautstärke übernehmen") }
+            if (state.paused) Text("Box meldet: Pauseauftrag übertragen · Hörposition prüfen")
             Text(when (state.active) {
                 true -> "Box meldet: Startauftrag aktiv · Track ${state.observedTrack ?: "unbekannt"} · Lautstärke ${state.observedVolume ?: "unbekannt"}"
                 false -> "Box meldet: kein aktiver Startauftrag"

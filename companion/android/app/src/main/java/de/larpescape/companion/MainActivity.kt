@@ -206,7 +206,7 @@ class MainActivity : ComponentActivity() {
                         }
                         WakeControls(state.leds.wake)
                         AudioControls(state.leds.audio, model::selectAudioTrack, model::selectAudioVolume,
-                            model::startAudio, model::stopAudio)
+                            model::startAudio, model::stopAudio, model::audioAction)
                         LedControls(state.leds, model::selectLedEffect, model::startLedEffect, model::stopLeds,
                             importAccess = { importBoxAccess.launch(arrayOf("application/json", "text/plain")) })
                         Text("LED-Bedienung · Geräteantwort und sichtbare Wirkung getrennt", style = MaterialTheme.typography.bodySmall)

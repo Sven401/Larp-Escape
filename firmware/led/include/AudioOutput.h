@@ -25,7 +25,7 @@ struct OutputSnapshot {
     bool ready = false, pending = false, fault = false;
     // Valid means an initialized GPIO sample; it does not verify the wire.
     bool busyValid = false, busyLow = false;
-    bool active = false, completed = false, timedOut = false;
+    bool active = false, paused = false, completed = false, timedOut = false;
 };
 
 class AudioOutput {
@@ -39,6 +39,9 @@ public:
     bool start(std::uint16_t track, std::uint8_t volume = 5);
     // Stop supersedes any pending Start, including volume/play preparation.
     bool stop();
+    bool pause();
+    bool resume();
+    bool volume(std::uint8_t value);
     void service();
     void tick() { service(); }
     OutputSnapshot snapshot() const { return status_; }
@@ -51,8 +54,9 @@ public:
     static constexpr std::uint32_t MaximumPlaybackMilliseconds = 30000;
     static CommandFrame encode(std::uint8_t command, std::uint16_t parameter);
 private:
-    enum class Phase { Stop, Volume, Play };
+    enum class Phase { Stop, Volume, Play, Pause, Resume, AdjustVolume };
     bool requestStop(bool timedOut);
+    bool requestSingle(Phase phase);
     void fail();
     void completeTransfer(std::uint32_t now);
     AudioBus &bus_;

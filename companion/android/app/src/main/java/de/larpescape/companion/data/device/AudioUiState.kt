@@ -14,6 +14,7 @@ data class AudioUiState(
     val busy: Boolean = false,
     val fault: Boolean = false,
     val active: Boolean? = null,
+    val paused: Boolean = false,
     val observedTrack: Int? = null,
     val observedVolume: Int? = null,
     val busyLow: Boolean? = null,
@@ -22,6 +23,9 @@ data class AudioUiState(
     val selectedTrack get() = trackText.toIntOrNull()?.takeIf { it in 1..255 }
     val selectedVolume get() = volumeText.toIntOrNull()?.takeIf { it in 1..10 }
     val canStop get() = supported && authenticated && current && ready && modeAllowed && !busy && !fault
+    val canPause get() = canStop && active == true
+    val canResume get() = canStop && paused
+    val canSetVolume get() = canStop && selectedVolume != null
     val canStart get() = canStop && selectedTrack != null && selectedVolume != null
     fun disconnected() = AudioUiState(trackText = trackText, volumeText = volumeText)
 }
@@ -60,7 +64,7 @@ internal class AudioStateTracker {
         }
         return AudioUiState(supported = audio.supported, authenticated = true, current = readable,
             ready = readable && audio.ready, modeAllowed = modeAllowed, busy = sharedBusy || audio.pending,
-            fault = audio.fault, active = if (readable) audio.active else null,
+            fault = audio.fault, active = if (readable) audio.active else null, paused = readable && audio.paused,
             observedTrack = audio.track.takeIf { readable && it != 0 },
             observedVolume = audio.volume.takeIf { readable && it != 0 },
             busyLow = if (readable && audio.busyValid) audio.busyLow else null, message = message)

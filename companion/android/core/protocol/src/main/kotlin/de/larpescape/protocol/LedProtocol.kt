@@ -20,15 +20,16 @@ data class LedStatus(val revision: Long, val nextRequest: Long, val deviceMillis
 data class AudioStatus(val revision: Long = 0, val track: Int = 0, val volume: Int = 0,
     val flags: Int = 0, val supported: Boolean = true) {
     init {
-        require(revision in 0..LedProtocol.U32 && track in 0..255 && volume in 0..10 && flags in 0..63 &&
+        require(revision in 0..LedProtocol.U32 && track in 0..255 && volume in 0..10 && flags in 0..127 &&
             (flags and 16 == 0 || flags and 8 != 0) &&
             !(flags and 1 != 0 && flags and 32 != 0) &&
-            (flags and 4 == 0 || (track in 1..255 && volume in 1..10)) &&
+            (flags and 68 == 0 || (track in 1..255 && volume in 1..10)) && flags and 68 != 68 &&
             (supported || (revision == 0L && track == 0 && volume == 0 && flags == 0))) { "Widersprüchlicher Audiostatus." }
     }
     val ready get() = supported && flags and 1 != 0
     val pending get() = flags and 2 != 0
     val active get() = flags and 4 != 0
+    val paused get() = flags and 64 != 0
     val busyValid get() = flags and 8 != 0
     val busyLow get() = flags and 16 != 0
     val fault get() = flags and 32 != 0
@@ -106,6 +107,20 @@ class LedProtocol(access: LedAccess, private val clientNonce: ByteArray) {
         val value = byteArrayOf(1, 4) + session!! + le(status.nextRequest) + le(audio.revision) +
             le((status.deviceMillis + 3000) and U32) + byteArrayOf(if (start) 1 else 2,
                 track.toByte(), (track shr 8).toByte(), volume.toByte())
+        return value + mac("audio-command", value)
+    }
+    fun audioAction(status: LedStatus, operation: Int, volume: Int = 0): ByteArray {
+        check(granted)
+        val audio = status.audio ?: error("Audiostatus fehlt.")
+        require(status.mode in 0..1 && audio.canStop)
+        require(when(operation) {
+            3 -> audio.active && volume == 0
+            4 -> audio.paused && volume == 0
+            5 -> volume in 1..10
+            else -> false
+        })
+        val value = byteArrayOf(1, 4) + session!! + le(status.nextRequest) + le(audio.revision) +
+            le((status.deviceMillis + 3000) and U32) + byteArrayOf(operation.toByte(), 0, 0, volume.toByte())
         return value + mac("audio-command", value)
     }
     fun audioResult(bytes: ByteArray): LedResult {

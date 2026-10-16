@@ -144,6 +144,16 @@ internal class LedBleSession(
         lastAudioMessage = "Audio-Befehl gesendet · warte auf Boxbestätigung …"
         sendCommand(message, value.nextRequest, 0x85)
     }
+    fun audioAction(operation: Int, volume: Int) = runSafely {
+        check(authenticated && commands.request == null && outgoing.isEmpty())
+        val now = SystemClock.elapsedRealtime()
+        val value = snapshot ?: error("Boxstatus fehlt.")
+        check(now - receivedAt in 0..999)
+        val observation = audio.observation(now) ?: error("Audiostatus ist überholt.")
+        val message = protocol.audioAction(value.copy(audio = observation), operation, volume)
+        lastAudioMessage = "Audio-Befehl gesendet · warte auf Boxbestätigung …"
+        sendCommand(message, value.nextRequest, 0x85)
+    }
     private fun sendCommand(message: ByteArray, request: Long, resultType: Int) {
         commands.begin(request)
         expectedResult = resultType

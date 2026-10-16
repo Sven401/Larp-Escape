@@ -34,6 +34,23 @@ class AudioProtocolTest {
         try { action(); fail("Expected rejected input") } catch (_: IllegalArgumentException) { } catch (_: IllegalStateException) { }
     }
 
+    @Test fun pauseResumeAndVolumeHaveDistinctCommandsAndValidatedState() {
+        val (protocol, initial) = authenticated()
+        val playing = initial.copy(audio = AudioStatus(7, 42, 5, 13))
+        val pause = protocol.audioAction(playing, 3)
+        assertArrayEquals(signed(pause.copyOf(34).also { it[30] = 3; it[31] = 0; it[32] = 0; it[33] = 0 }, "audio-command"), pause)
+        assertEquals(3, pause[30].toInt())
+        rejects { protocol.audioAction(initial, 3) }
+        rejects { protocol.audioAction(initial, 4) }
+        val paused = protocol.status(extended("status_twinkle", hex("070000002a000549")))
+        assertTrue(paused.audio!!.paused); assertFalse(paused.audio!!.active)
+        assertEquals(4, protocol.audioAction(paused, 4)[30].toInt())
+        val volume = protocol.audioAction(paused, 5, 8)
+        assertEquals(5, volume[30].toInt()); assertEquals(8, volume[33].toInt())
+        assertEquals(0, volume[31].toInt()); assertEquals(0, volume[32].toInt())
+        for (v in listOf(0, 11, -1)) rejects { protocol.audioAction(paused, 5, v) }
+        rejects { protocol.status(extended("status_twinkle", hex("070000002a00054d"))) }
+    }
     @Test fun legacyStatusCannotEnableAudioAndLedResultsNeverCarryAnObservation() {
         val protocol = client()
         assertFalse(protocol.granted(bytes("granted")).audio!!.supported)
@@ -61,7 +78,7 @@ class AudioProtocolTest {
 
     @Test fun malformedSignedObservationsCannotEnableControls() {
         val (protocol, _) = authenticated()
-        for (flags in 64..255) rejects {
+        for (flags in 128..255) rejects {
             protocol.status(extended("status_twinkle", hex("070000002a000519").also { it[7] = flags.toByte() }))
         }
         for (audio in listOf("0700000000010519", "070000002a000b19", "070000002a000511",
