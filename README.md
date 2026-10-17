@@ -4,10 +4,14 @@ ESP32-Steuerung des Reichstag-Spiels: Rollenkarten, Kristallmatrix, Audio, LEDs 
 
 **LED-Entwicklung:** [Projektgrenzen und externe Funktionsreferenz](docs/led/implementation-reference.md). Die Umsetzung in App und Firmware bleibt eigenständig.
 
-**Übergabe an das neue Team:** [Einstieg, Quellenkarte und offene Prüfungen](handoff/README.md).
-Dieser Branch führt die geprüften Grundlagen ab `a40365d` zusammen. Unfertige und
-verworfene Arbeiten sind über die dort bezeichneten lokalen Archiv-Branches
-erreichbar.
+**Aktueller Einstieg:** [Maintainer-Stand](handoff/MAINTAINER.md) und
+[technische Übergabe](handoff/README.md). PR #56 ist in
+`plan/projektuebergabe-kuratierter-stand` integriert: gemeinsamer V2-Vertrag für
+LED, Wake, Matrix, Audio und NFC. Die gemeinsame Geräteabnahme bleibt offen.
+Die [Repository-Hygiene vom 18. Oktober](handoff/REPOSITORY-HYGIENE-2026-10-18.md)
+ordnet ersetzte PRs, Prüfbelege und erhaltene Arbeitszweige zu.
+Unfertige und verworfene Arbeiten bleiben in den dokumentierten,
+veröffentlichten Archivbranches und Sicherungs-Tags erreichbar.
 
 ## Entwicklung ohne Hardware
 
