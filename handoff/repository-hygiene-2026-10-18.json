@@ -1,0 +1,573 @@
+{
+  "date": "2026-10-18",
+  "target": "784984da05249c77525273c658405d2f3b8e8e24",
+  "ci": [
+    {
+      "name": "LED ESP32 product build",
+      "id": 117238670034,
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38980094470/job/117238670034"
+    },
+    {
+      "name": "LED protocol and output tests",
+      "id": 117238669839,
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38980094470/job/117238669839"
+    },
+    {
+      "name": "ESP32 firmware build",
+      "id": 117238669672,
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38980094469/job/117238669672"
+    },
+    {
+      "name": "Hardware-independent checks",
+      "id": 117238669607,
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38980094469/job/117238669607"
+    },
+    {
+      "name": "Android tests, lint and builds",
+      "id": 117238669437,
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38980094470/job/117238669437"
+    },
+    {
+      "name": "Android checks",
+      "id": 117238669324,
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38980094469/job/117238669324"
+    },
+    {
+      "name": "NFC ESP32 probe build",
+      "id": 117238669308,
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38980094423/job/117238669308"
+    },
+    {
+      "name": "NFC transport and tag tests",
+      "id": 117238668958,
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Sven401/Larp-Escape/actions/runs/38980094423/job/117238668958"
+    }
+  ],
+  "ruleset": {
+    "id": 24680694,
+    "name": "Main",
+    "target": "branch",
+    "source_type": "Repository",
+    "source": "Sven401/Larp-Escape",
+    "enforcement": "active",
+    "conditions": {
+      "ref_name": {
+        "exclude": [],
+        "include": [
+          "~DEFAULT_BRANCH"
+        ]
+      }
+    },
+    "rules": [
+      {
+        "type": "deletion"
+      },
+      {
+        "type": "non_fast_forward"
+      },
+      {
+        "type": "creation"
+      },
+      {
+        "type": "update"
+      },
+      {
+        "type": "required_linear_history"
+      },
+      {
+        "type": "required_signatures"
+      },
+      {
+        "type": "pull_request",
+        "parameters": {
+          "required_approving_review_count": 1,
+          "dismiss_stale_reviews_on_push": true,
+          "required_reviewers": [],
+          "require_code_owner_review": true,
+          "require_last_push_approval": true,
+          "required_review_thread_resolution": true,
+          "require_extra_approval_for_unattributed_changes": true,
+          "allowed_merge_methods": [
+            "squash"
+          ]
+        }
+      },
+      {
+        "type": "required_status_checks",
+        "parameters": {
+          "strict_required_status_checks_policy": true,
+          "do_not_enforce_on_create": false,
+          "required_status_checks": []
+        }
+      }
+    ],
+    "node_id": "RRS_lACqUmVwb3NpdG9yec40oUP8zgF4mPY",
+    "created_at": "2026-10-07T23:50:40.062+02:00",
+    "updated_at": "2026-10-07T23:50:40.141+02:00",
+    "bypass_actors": [],
+    "current_user_can_bypass": "never",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/Sven401/Larp-Escape/rulesets/24680694"
+      },
+      "html": {
+        "href": "https://github.com/Sven401/Larp-Escape/rules/24680694"
+      }
+    }
+  },
+  "repo": {
+    "default_branch": "main",
+    "allow_merge_commit": true,
+    "allow_squash_merge": true,
+    "allow_rebase_merge": true,
+    "allow_auto_merge": false,
+    "delete_branch_on_merge": false
+  },
+  "classic_protection": "403 Resource not accessible by integration",
+  "prs": [
+    {
+      "number": 40,
+      "head": "0a1e6be68bf8e70f5a5184b3f6b3de1f94744b23",
+      "state": "closed"
+    },
+    {
+      "number": 43,
+      "head": "5174b7bbac143d1359d15103c696c77ae47fc877",
+      "state": "closed"
+    },
+    {
+      "number": 44,
+      "head": "99b6b4b33b3b7794e5b3b58d924d3bdb260ace9b",
+      "state": "closed"
+    },
+    {
+      "number": 48,
+      "head": "d1c70773958a8e4330a48c6f1d78e61c303545fe",
+      "state": "closed"
+    },
+    {
+      "number": 49,
+      "head": "e4b2ce024655ae9e951e04542dc7f473e1bc6e9c",
+      "state": "closed"
+    },
+    {
+      "number": 50,
+      "head": "724f0bdabed2bd51c170942f3e45bc2cecc34932",
+      "state": "closed"
+    },
+    {
+      "number": 51,
+      "head": "cff0c998cde05715c2117c17ecf42681b69d1ad4",
+      "state": "closed"
+    },
+    {
+      "number": 55,
+      "head": "fba195fda9bf96f17414ee7dfdb8ce355349521d",
+      "state": "closed"
+    }
+  ],
+  "inventory_at_start": {
+    "date": "2026-10-18",
+    "target": "784984da05249c77525273c658405d2f3b8e8e24",
+    "worktrees": [
+      {
+        "branch": "codex/maintainer-uebernahme",
+        "head": "0a1e6be68bf8e70f5a5184b3f6b3de1f94744b23",
+        "tracked_changes": [
+          "M .vscode/extensions.json"
+        ],
+        "untracked_count": 0,
+        "ignored_count": 4852,
+        "commits_not_on_remote_branches": 0,
+        "disposition": "retain; inspect private artifacts before any later removal",
+        "ignored_artifact_extensions": {
+          ".bin": 35,
+          ".apk": 2,
+          ".zip": 1
+        }
+      },
+      {
+        "branch": "codex/audio-controls-completion",
+        "head": "cff0c998cde05715c2117c17ecf42681b69d1ad4",
+        "tracked_changes": [],
+        "untracked_count": 0,
+        "ignored_count": 1537,
+        "commits_not_on_remote_branches": 0,
+        "disposition": "retain; inspect private artifacts before any later removal",
+        "ignored_artifact_extensions": {
+          ".bin": 38,
+          ".apk": 1
+        }
+      },
+      {
+        "branch": "codex/audio-test-alternative-local",
+        "head": "704f54456ef9522447783ab3a4da26f12b89f267",
+        "tracked_changes": [],
+        "untracked_count": 0,
+        "ignored_count": 1684,
+        "commits_not_on_remote_branches": 2,
+        "disposition": "retain; inspect private artifacts before any later removal",
+        "ignored_artifact_extensions": {
+          ".bin": 41,
+          ".apk": 1
+        }
+      },
+      {
+        "branch": "codex/baugruppen-konsolidierung",
+        "head": "c03c490604c5db8b15395b5b46d9c31becf6dc7f",
+        "tracked_changes": [],
+        "untracked_count": 0,
+        "ignored_count": 9091,
+        "commits_not_on_remote_branches": 0,
+        "disposition": "retain; inspect private artifacts before any later removal",
+        "ignored_artifact_extensions": {
+          ".bin": 73,
+          ".apk": 2,
+          ".zip": 1
+        }
+      },
+      {
+        "branch": "codex/integration-vorbereitung",
+        "head": "fba195fda9bf96f17414ee7dfdb8ce355349521d",
+        "tracked_changes": [],
+        "untracked_count": 0,
+        "ignored_count": 0,
+        "commits_not_on_remote_branches": 0,
+        "disposition": "retain; inspect private artifacts before any later removal",
+        "ignored_artifact_extensions": {}
+      },
+      {
+        "branch": "codex/nfc-gemeinsamer-test",
+        "head": "14d7a0dae4ae0e697ff609bb0e86996e9864a62d",
+        "tracked_changes": [],
+        "untracked_count": 0,
+        "ignored_count": 1716,
+        "commits_not_on_remote_branches": 0,
+        "disposition": "retain; inspect private artifacts before any later removal",
+        "ignored_artifact_extensions": {
+          ".bin": 43,
+          ".apk": 1
+        }
+      },
+      {
+        "branch": "codex/b0-konsolidierung",
+        "head": "5174b7bbac143d1359d15103c696c77ae47fc877",
+        "tracked_changes": [],
+        "untracked_count": 0,
+        "ignored_count": 5,
+        "commits_not_on_remote_branches": 0,
+        "disposition": "retain; inspect private artifacts before any later removal",
+        "ignored_artifact_extensions": {
+          ".zip": 4
+        }
+      },
+      {
+        "branch": "codex/b0-pruefgrundlage",
+        "head": "95212a7db5da7eae682ec9cfa09ee93c8e235dcb",
+        "tracked_changes": [],
+        "untracked_count": 0,
+        "ignored_count": 6347,
+        "commits_not_on_remote_branches": 0,
+        "disposition": "retain; inspect private artifacts before any later removal",
+        "ignored_artifact_extensions": {
+          ".bin": 46,
+          ".apk": 1,
+          ".zip": 1
+        }
+      },
+      {
+        "branch": "codex/b0-reproduzierbare-pruefgrundlage",
+        "head": "e2c39806902888b69641bdbaa32f33612ef202bd",
+        "tracked_changes": [],
+        "untracked_count": 0,
+        "ignored_count": 1,
+        "commits_not_on_remote_branches": 0,
+        "disposition": "retain; inspect private artifacts before any later removal",
+        "ignored_artifact_extensions": {}
+      },
+      {
+        "branch": "codex/ble-led-versuch",
+        "head": "747812b3bc8a8b937fa8b5c40eea6d4a113afe6b",
+        "tracked_changes": [],
+        "untracked_count": 0,
+        "ignored_count": 295,
+        "commits_not_on_remote_branches": 1,
+        "disposition": "retain; inspect private artifacts before any later removal",
+        "ignored_artifact_extensions": {
+          ".bin": 19,
+          ".apk": 1
+        }
+      },
+      {
+        "branch": "codex/produkt-led-effekte",
+        "head": "20518f52de82845635e8590f1440dbfbb268dcb2",
+        "tracked_changes": [],
+        "untracked_count": 0,
+        "ignored_count": 2504,
+        "commits_not_on_remote_branches": 0,
+        "disposition": "retain; inspect private artifacts before any later removal",
+        "ignored_artifact_extensions": {
+          ".bin": 53,
+          ".apk": 2
+        }
+      },
+      {
+        "branch": "codex/wake-input-test",
+        "head": "10400350f31883b4e7b36df1d6875388a2d8953f",
+        "tracked_changes": [],
+        "untracked_count": 0,
+        "ignored_count": 2271,
+        "commits_not_on_remote_branches": 0,
+        "disposition": "retain; inspect private artifacts before any later removal",
+        "ignored_artifact_extensions": {
+          ".bin": 51,
+          ".apk": 2
+        }
+      },
+      {
+        "branch": "codex/wled-led-standard",
+        "head": "99b6b4b33b3b7794e5b3b58d924d3bdb260ace9b",
+        "tracked_changes": [],
+        "untracked_count": 0,
+        "ignored_count": 0,
+        "commits_not_on_remote_branches": 0,
+        "disposition": "retain; inspect private artifacts before any later removal",
+        "ignored_artifact_extensions": {}
+      },
+      {
+        "branch": "codex/nfc-test-preparation",
+        "head": "33bf31bcd082ad62c14bd9ffaa2b547e17e919bc",
+        "tracked_changes": [],
+        "untracked_count": 0,
+        "ignored_count": 1332,
+        "commits_not_on_remote_branches": 0,
+        "disposition": "retain; inspect private artifacts before any later removal",
+        "ignored_artifact_extensions": {
+          ".bin": 39,
+          ".apk": 1
+        }
+      },
+      {
+        "branch": "codex/repository-hygiene-2026-10-18",
+        "head": "784984da05249c77525273c658405d2f3b8e8e24",
+        "tracked_changes": [],
+        "untracked_count": 0,
+        "ignored_count": 0,
+        "commits_not_on_remote_branches": 0,
+        "disposition": "retain; inspect private artifacts before any later removal",
+        "ignored_artifact_extensions": {}
+      }
+    ],
+    "local_branches": [
+      {
+        "branch": "codex/audio-controls-completion",
+        "head": "cff0c998cde05715c2117c17ecf42681b69d1ad4",
+        "upstream": "",
+        "commits_not_on_remote_branches": 0
+      },
+      {
+        "branch": "codex/audio-test-alternative-local",
+        "head": "704f54456ef9522447783ab3a4da26f12b89f267",
+        "upstream": "",
+        "commits_not_on_remote_branches": 2
+      },
+      {
+        "branch": "codex/b0-konsolidierung",
+        "head": "5174b7bbac143d1359d15103c696c77ae47fc877",
+        "upstream": "",
+        "commits_not_on_remote_branches": 0
+      },
+      {
+        "branch": "codex/b0-pruefgrundlage",
+        "head": "95212a7db5da7eae682ec9cfa09ee93c8e235dcb",
+        "upstream": "",
+        "commits_not_on_remote_branches": 0
+      },
+      {
+        "branch": "codex/b0-reproduzierbare-pruefgrundlage",
+        "head": "e2c39806902888b69641bdbaa32f33612ef202bd",
+        "upstream": "",
+        "commits_not_on_remote_branches": 0
+      },
+      {
+        "branch": "codex/baugruppen-konsolidierung",
+        "head": "c03c490604c5db8b15395b5b46d9c31becf6dc7f",
+        "upstream": "",
+        "commits_not_on_remote_branches": 0
+      },
+      {
+        "branch": "codex/ble-led-versuch",
+        "head": "747812b3bc8a8b937fa8b5c40eea6d4a113afe6b",
+        "upstream": "",
+        "commits_not_on_remote_branches": 1
+      },
+      {
+        "branch": "codex/integration-vorbereitung",
+        "head": "fba195fda9bf96f17414ee7dfdb8ce355349521d",
+        "upstream": "",
+        "commits_not_on_remote_branches": 0
+      },
+      {
+        "branch": "codex/maintainer-uebernahme",
+        "head": "0a1e6be68bf8e70f5a5184b3f6b3de1f94744b23",
+        "upstream": "origin/codex/maintainer-uebernahme",
+        "commits_not_on_remote_branches": 0
+      },
+      {
+        "branch": "codex/nfc-gemeinsamer-test",
+        "head": "14d7a0dae4ae0e697ff609bb0e86996e9864a62d",
+        "upstream": "",
+        "commits_not_on_remote_branches": 0
+      },
+      {
+        "branch": "codex/nfc-test-preparation",
+        "head": "33bf31bcd082ad62c14bd9ffaa2b547e17e919bc",
+        "upstream": "",
+        "commits_not_on_remote_branches": 0
+      },
+      {
+        "branch": "codex/produkt-led-effekte",
+        "head": "20518f52de82845635e8590f1440dbfbb268dcb2",
+        "upstream": "",
+        "commits_not_on_remote_branches": 0
+      },
+      {
+        "branch": "codex/repository-hygiene-2026-10-18",
+        "head": "784984da05249c77525273c658405d2f3b8e8e24",
+        "upstream": "origin/plan/projektuebergabe-kuratierter-stand",
+        "commits_not_on_remote_branches": 0
+      },
+      {
+        "branch": "codex/wake-input-test",
+        "head": "10400350f31883b4e7b36df1d6875388a2d8953f",
+        "upstream": "",
+        "commits_not_on_remote_branches": 0
+      },
+      {
+        "branch": "codex/wled-led-standard",
+        "head": "99b6b4b33b3b7794e5b3b58d924d3bdb260ace9b",
+        "upstream": "",
+        "commits_not_on_remote_branches": 0
+      },
+      {
+        "branch": "plan/projektuebergabe-kuratierter-stand",
+        "head": "784984da05249c77525273c658405d2f3b8e8e24",
+        "upstream": "origin/plan/projektuebergabe-kuratierter-stand",
+        "commits_not_on_remote_branches": 0
+      }
+    ],
+    "remote_refs": [
+      "origin/Starwarscon|540aeec1362c2d29a3f28267a0abf3b794cf8c1b",
+      "origin/SvensBranch|a40365d715b2055ee23f767fa53b55ac25243437",
+      "origin/codex/audio-controls-completion|cff0c998cde05715c2117c17ecf42681b69d1ad4",
+      "origin/codex/audio-test-preparation|d1c70773958a8e4330a48c6f1d78e61c303545fe",
+      "origin/codex/b0-pruefgrundlage|5174b7bbac143d1359d15103c696c77ae47fc877",
+      "origin/codex/b0-reproduzierbare-pruefgrundlage|e2c39806902888b69641bdbaa32f33612ef202bd",
+      "origin/codex/baugruppen-konsolidierung|c03c490604c5db8b15395b5b46d9c31becf6dc7f",
+      "origin/codex/integration-vorbereitung|fba195fda9bf96f17414ee7dfdb8ce355349521d",
+      "origin/codex/maintainer-uebernahme|0a1e6be68bf8e70f5a5184b3f6b3de1f94744b23",
+      "origin/codex/matrix-collection|724f0bdabed2bd51c170942f3e45bc2cecc34932",
+      "origin/codex/matrix-test-preparation|e4b2ce024655ae9e951e04542dc7f473e1bc6e9c",
+      "origin/codex/nfc-gemeinsamer-test|14d7a0dae4ae0e697ff609bb0e86996e9864a62d",
+      "origin/codex/nfc-test-preparation|33bf31bcd082ad62c14bd9ffaa2b547e17e919bc",
+      "origin/codex/produkt-led-effekte|20518f52de82845635e8590f1440dbfbb268dcb2",
+      "origin/codex/svensbranch-regression|9af36a00df6760223db2900658c17bdb82f48871",
+      "origin/codex/wake-input-test|10400350f31883b4e7b36df1d6875388a2d8953f",
+      "origin/codex/wled-led-standard|99b6b4b33b3b7794e5b3b58d924d3bdb260ace9b",
+      "origin/main|29da937c4309beddfd45c5dd0fbf84fdf853d8e4",
+      "origin/plan/projektuebergabe-android-entwuerfe-archiv|b13aa57ff9b4ab0171b5f608c985a8eb5926edf3",
+      "origin/plan/projektuebergabe-diagnose-historie-archiv|8e1fc9abf57d88e98a56fd8ef1f42028eb78ed7b",
+      "origin/plan/projektuebergabe-experimente-archiv|d4993a6442ff64a22a108bb3de3879a3a57f76ac",
+      "origin/plan/projektuebergabe-firmware-f1-archiv|7617db248fe06bc4968152210b3a6015f455c7f6",
+      "origin/plan/projektuebergabe-hardwarequellen-archiv|a52ce791ac7b0a25352ba142cba33cfafb438b34",
+      "origin/plan/projektuebergabe-kuratierter-stand|784984da05249c77525273c658405d2f3b8e8e24",
+      "origin/plan/projektuebergabe-led-entwurf-archiv|918d418ece097ecaa1e730130b0fc22a352c4dda"
+    ],
+    "preservation": {
+      "source_trees": 6,
+      "documents": 43,
+      "remote_tags_verified": true
+    }
+  },
+  "adoption": {
+    "40": {
+      "head": "0a1e6be68bf8e70f5a5184b3f6b3de1f94744b23",
+      "unchanged_paths": 2,
+      "evolved_paths": 1,
+      "missing_paths": []
+    },
+    "43": {
+      "head": "5174b7bbac143d1359d15103c696c77ae47fc877",
+      "unchanged_paths": 6,
+      "evolved_paths": 3,
+      "missing_paths": []
+    },
+    "44": {
+      "head": "99b6b4b33b3b7794e5b3b58d924d3bdb260ace9b",
+      "unchanged_paths": 2,
+      "evolved_paths": 2,
+      "missing_paths": []
+    },
+    "48": {
+      "head": "d1c70773958a8e4330a48c6f1d78e61c303545fe",
+      "unchanged_paths": 56,
+      "evolved_paths": 40,
+      "missing_paths": []
+    },
+    "49": {
+      "head": "e4b2ce024655ae9e951e04542dc7f473e1bc6e9c",
+      "unchanged_paths": 66,
+      "evolved_paths": 33,
+      "missing_paths": []
+    },
+    "50": {
+      "head": "724f0bdabed2bd51c170942f3e45bc2cecc34932",
+      "unchanged_paths": 79,
+      "evolved_paths": 30,
+      "missing_paths": []
+    },
+    "51": {
+      "head": "cff0c998cde05715c2117c17ecf42681b69d1ad4",
+      "unchanged_paths": 74,
+      "evolved_paths": 33,
+      "missing_paths": []
+    },
+    "55": {
+      "head": "fba195fda9bf96f17414ee7dfdb8ce355349521d",
+      "unchanged_paths": 5,
+      "evolved_paths": 1,
+      "missing_paths": []
+    }
+  },
+  "local_validation": {
+    "local_markdown_targets": 82,
+    "ignore_excluded_cases": 9,
+    "ignore_retained_cases": 5,
+    "limited_secret_scan_tracked_files": 760,
+    "secret_or_package_findings": 0,
+    "diff_check": "passed",
+    "helpers": "20/20 passed",
+    "scope": "current tracked sources only; not history or private artifact audit"
+  },
+  "issues": {
+    "25": "open; current integrated plan",
+    "38": "closed/completed; B0 adopted",
+    "53": "closed/completed; software consolidation integrated"
+  }
+}
