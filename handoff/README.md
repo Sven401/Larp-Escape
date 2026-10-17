@@ -1,6 +1,34 @@
-# Technische Projektübergabe – 13. Oktober 2026
+# Technische Projektübergabe
 
-Aktuelle Fortsetzung: [Baugruppen-Konsolidierung vom 17. Oktober 2026](KONSOLIDIERUNG-2026-10-17.md).
+## Aktueller Stand · 18. Oktober 2026
+
+**Belegt:** [PR #56](https://github.com/Sven401/Larp-Escape/pull/56) ist in
+`plan/projektuebergabe-kuratierter-stand` bei
+`784984da05249c77525273c658405d2f3b8e8e24` integriert. LED, Wake, Matrix,
+Audio und NFC verwenden den [gemeinsamen V2-Vertrag](../docs/led/ble-wire-v2.md).
+Alle acht CI-Jobs am Mergecommit sind erfolgreich; Einzelheiten und Grenzen
+stehen im [Maintainer-Einstieg](MAINTAINER.md).
+
+- [Konsolidierung: Herkunft, Konfliktentscheidungen, acht Ergebnis-IDs](KONSOLIDIERUNG-2026-10-17.md).
+- [Nachweisregister: historische Gerätebelege und Sicherungsreferenzen](BAUGRUPPEN-NACHWEISE.md).
+- [Repository-Hygiene: ersetzte PRs, Worktree-Bestand und Prüfstand](REPOSITORY-HYGIENE-2026-10-18.md).
+- [Operative Planung #25](https://github.com/Sven401/Larp-Escape/issues/25)
+  und [abgeschlossene Softwarekonsolidierung #53](https://github.com/Sven401/Larp-Escape/issues/53).
+
+**Offen:** gemeinsames V2-Paar am Gerät, Matrixproblemstellen #54,
+LED-/NFC-/Sitzungsfehlerfälle sowie allgemeiner Spielzugang und Profilbetrieb.
+Historische bestandene Teiltests bleiben erhalten. Ein Geräteupload ist ein
+separater Auftrag; vorab tatsächliches Paar und chipgebundenen Rückweg prüfen.
+
+Die folgenden Abschnitte bewahren frühere Ablesestände. Aussagen wie
+„nicht installiert“, „Integration offen“ oder „aktuell“ gelten dort nur für
+das jeweilige Datum; sie ersetzen nicht den heutigen Einstieg oben.
+
+---
+
+# Historische Übergabe und Ergänzungen · 13.–17. Oktober 2026
+
+Historische Fortsetzung: [Baugruppen-Konsolidierung vom 17. Oktober 2026](KONSOLIDIERUNG-2026-10-17.md).
 
 **Abgeschlossener Folgeprüfstand:** [Sammelergebnis](../docs/matrix/collection-result-2026-10-16.md)
 mit 68 erkannten Koordinaten, vier offenen Problemstellen und neun
@@ -8,7 +36,7 @@ nutzerbestätigt unbestückten, in der App deaktivierten Feldern.
 Die folgenden früheren Vorbereitungs-/Startangaben sind historische Belege.
 
 
-## Aktuelle Fortsetzung: Sammeldurchgang, 16. Oktober 2026
+## Historische Fortsetzung: Sammeldurchgang, 16. Oktober 2026
 
 Der [Sammeldurchgang](../docs/matrix/collection-run-2026-10-16.md) ersetzt für die nächste
 Bestückungserfassung die Einzelbestätigungen. Umsetzung, Arbeitskopie,
@@ -46,7 +74,7 @@ Fehlinterpretation und ist zurückgenommen; die Owner-Klarstellung steht in
 Die Spielintegration bleibt getrennt. Die folgenden Abschnitte beschreiben
 den historischen Übergabestand vom 13. Oktober, nicht die neue LED-Abnahme.
 
-Aktuelle technische Fortsetzung: [Integrationsvorbereitung vom 16. Oktober 2026](INTEGRATION-2026-10-16.md).
+Historische technische Fortsetzung: [Integrationsvorbereitung vom 16. Oktober 2026](INTEGRATION-2026-10-16.md).
 Bestätigter Baugruppenfortschritt bleibt im [Nachweisregister](BAUGRUPPEN-NACHWEISE.md)
 mit festen Quellen und Sicherungsreferenzen unabhängig von der Zielintegration erhalten.
 Sie erfasst die offenen Produktzweige, Konflikte und Prüftore; die folgende
@@ -130,7 +158,7 @@ Spiel-/Profilmodell, Geräteplanung, Companion-Vertrag und konkrete Adapter;
 getrennte Windows-Hosttests, Produktionsbuild und synthetische ESP32-Proben.
 
 Die Android-Entwicklungsbasis liegt unter `companion/android/` (Kotlin,
-Compose, `app` und `core:protocol`). Ihr aktueller Produktpfad ist eine
+Compose, `app` und `core:protocol`). Am Übergabestand vom 13. Oktober war ihr Produktpfad eine
 lesende BLE-Verbindungsprüfung; der A3-Peer-Auth-Kern ist hostseitig. Für
 Voraussetzungen, Berechtigungen und Buildbefehle siehe
 `companion/android/README.md`. Ein Debug-Build ist kein freigegebener

@@ -5,3 +5,28 @@
 .vscode/ipch
 
 __pycache__/
+
+# Local worktrees, evidence, device backups and generated deliverables.
+# Keep curated source evidence under docs/ and handoff/ versioned.
+/.worktrees/
+/work/
+/private/
+/outputs/
+/artifacts/
+
+# Local credentials and signing material; provisioning exports belong outside Git.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.jks
+*.keystore
+*access*.json
+*credentials*.json
+
+# Regenerable Android packages and device flash backups.
+*.apk
+*.aab
+*flash*.bin
+*backup*.bin

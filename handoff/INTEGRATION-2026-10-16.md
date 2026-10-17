@@ -1,5 +1,13 @@
 # Integrationsvorbereitung · 16. Oktober 2026
 
+> **Nachtrag · 18. Oktober 2026:** PR #56 ist bei `784984d` in den
+> kuratierten Zielbranch integriert; alle acht Push-CI-Jobs am Mergecommit
+> sind erfolgreich. [Aktueller Einstieg](MAINTAINER.md) und
+> [Hygienebericht](REPOSITORY-HYGIENE-2026-10-18.md).
+> Der folgende Bericht bewahrt den damaligen Vorbereitungs-/Prüfstand;
+> „Merge offen“ und „CI läuft“ sind historische Aussagen. Die gemeinsame
+> Geräteabnahme bleibt offen.
+
 **Status: vorbereitet; gemeinsame Codekonsolidierung und Prüfung offen.**
 Auftrag: Integration vorbereiten und Backlog priorisieren, **noch nichts mergen**.
 Quelle: Nutzerauftrag vom 16.10.2026, Codex-Sitzung

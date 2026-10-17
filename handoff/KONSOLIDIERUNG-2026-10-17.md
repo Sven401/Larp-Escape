@@ -1,5 +1,13 @@
 # Gemeinsamer Baugruppenstand · 17. Oktober 2026
 
+> **Nachtrag · 18. Oktober 2026:** PR #56 ist bei `784984d` in den
+> kuratierten Zielbranch integriert; alle acht Push-CI-Jobs am Mergecommit
+> sind erfolgreich. [Aktueller Einstieg](MAINTAINER.md) und
+> [Hygienebericht](REPOSITORY-HYGIENE-2026-10-18.md).
+> Der folgende Bericht bewahrt den damaligen Vorbereitungs-/Prüfstand;
+> „Merge offen“ und „CI läuft“ sind historische Aussagen. Die gemeinsame
+> Geräteabnahme bleibt offen.
+
 **Status: implementiert und lokal vollständig softwaregeprüft; CI am
 veröffentlichten PR-Stand läuft. Keine neue Geräteabnahme.**
 Auftrag: Arbeitsplan aus der Zieldatei bis zum gemeinsam geprüften

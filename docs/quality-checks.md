@@ -1,10 +1,20 @@
 # Vollständiger Prüfweg der kuratierten Produktbasis
 
-Stand: **16. Oktober 2026**, Aufgabe [B0 / #38](https://github.com/Sven401/Larp-Escape/issues/38).
+Stand des B0-Verfahrens: **16. Oktober 2026**, Aufgabe [B0 / #38](https://github.com/Sven401/Larp-Escape/issues/38).
 Entwicklungsbasis ist `plan/projektuebergabe-kuratierter-stand`, Ausgangscommit
 `42610abfef07c971d9902ea6ca5a350ed68981bf`. Neue Änderungen auf einem eigenen
 `codex/`-Branch vorbereiten und den PR gegen diesen Integrationsbranch richten.
 `main` ist nicht die Grundlage dieses Prüfwegs.
+
+## Integrierter Prüfstand · 18. Oktober 2026
+
+B0 ist durch PR #56 im Zielbranch bei `784984d` integriert. Die CI dieses
+Mergecommits ist vollständig erfolgreich; [aktuelle Laufzuordnung und
+Workflow-Abgrenzung](../handoff/REPOSITORY-HYGIENE-2026-10-18.md).
+Die oben genannte `42610abf` ist die historische Ausgangsbasis.
+Der Windows-Androidjob baut inzwischen zusätzlich `:app:assembleRelease`.
+Die Baugruppen-CI ergänzt gemeinsame Wire-/Adaptertests und getrennte
+LED-/NFC-/Matrix-Firmwarevarianten. Ein Softwarelauf ist keine Geräteabnahme.
 
 ## Reproduzierbare Eingänge
 
@@ -82,7 +92,7 @@ Für Android JDK 17/21 und SDK 35 wie in der
 über `JAVA_HOME` und `ANDROID_HOME` bereitstellen. Aus `companion/android/`:
 
 ```powershell
-./gradlew.bat :core:protocol:test :app:testDebugUnitTest :app:assembleDebug :app:lintDebug --no-daemon --console=plain --stacktrace --continue
+./gradlew.bat :core:protocol:test :app:testDebugUnitTest :app:assembleDebug :app:assembleRelease :app:lintDebug --no-daemon --console=plain --stacktrace --continue
 ```
 
 `--offline` funktioniert nur bei vollständigen lokalen Downloads. CI verwendet
