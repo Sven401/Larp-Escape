@@ -1,5 +1,11 @@
 # Maintainer-Einstieg
 
+Aktuelle fachliche Ergänzung vom **18. Oktober 2026**:
+[abgestimmtes veranstaltungsbezogenes Zugangskonzept](../docs/companion/veranstaltungszugang.md)
+mit Rechteverwaltung, Schlüsselwechsel, Wiederherstellung, Unterbrechungspunkten
+und offenen Abnahmekriterien. **Sollkonzept, keine Implementierung.**
+Die folgenden datierten Übernahmeangaben bleiben historische Belege.
+
 Stand: **14. Oktober 2026**. Diese Datei führt den aktuellen Projekteinstieg
 und die Nachweise zur Maintainer-Übernahme. Das verbindliche Mandat steht in
 [AGENTS.md](../AGENTS.md). Quelle der Vereinbarung ist der vom Nutzer am
