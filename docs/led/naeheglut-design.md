@@ -1,5 +1,12 @@
 # Näheglut: Entwurf und Rollenprobe
 
+**Spielbedeutung bestätigt · 18.10.2026:** Durchlaufender Spieleffekt wie
+Funkeln; die Erkennung einer korrespondierenden Spielstation startet ihn.
+[Konkreter Spielanschluss](naeheglut-spielanschluss.md) beschreibt Bindung,
+Wiedererkennung, Frische und Stop. Stations-/Quellenzuordnung und Pause bleiben
+offen. Frühere Hinweise auf eine noch unbekannte Spielsituation unten sind
+der historische Entwurfsstand; kein automatischer Stop bei Phasenwechsel.
+
 Datum: **18. Oktober 2026**. Status: **Nutzerabsicht bestätigt; ausführbarer
 Laborprototyp mit gemeinsamem C++-Effektkern**. Der ursprüngliche skalare
 Entwurf 1.0 und sein Pythonbeleg bleiben unten als historische Rechenreferenz
