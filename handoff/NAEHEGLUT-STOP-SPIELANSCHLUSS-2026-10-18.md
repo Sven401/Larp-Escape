@@ -4,6 +4,30 @@
 nach vollständig grüner CI in `plan/projektuebergabe-kuratierter-stand` gemergt.
 Operativer Projektstand: [Issue #25](https://github.com/Sven401/Larp-Escape/issues/25).
 
+## Abgeschlossener Merge von PR #84
+
+**Fortgeschrieben und erneut geprüft · 19.10.2026.**
+[PR #84](https://github.com/Sven401/Larp-Escape/pull/84) wurde am 18.10.2026
+um 23:57 Uhr (Europe/Berlin) nach **9/9 erfolgreichen PR-CI-Jobs** bei
+[`8af3ffaac7208ba3944b927bb472195e18b63510`](https://github.com/Sven401/Larp-Escape/commit/8af3ffaac7208ba3944b927bb472195e18b63510)
+in `plan/projektuebergabe-kuratierter-stand` integriert.
+
+- Geprüfter Head: `0a8bb416a86e433214de4a38aba1d50462273c77`.
+- Frischer Fetch bestätigt Eltern `9d8bf44aff9da1d4c47f109c451cb251a9d626cd`
+  und `0a8bb416a86e433214de4a38aba1d50462273c77`.
+- Vollständiger Dateibaum von Head und Merge identisch:
+  `a6a842e1c68be3734a16c596b2e0324cd698ecb8`; keine Integrationsänderung.
+- Abgeschlossene PR-CI: [Quality, 3/3](https://github.com/Sven401/Larp-Escape/actions/runs/39169473393),
+  [LED/Android/Kamera, 4/4](https://github.com/Sven401/Larp-Escape/actions/runs/39169473456),
+  [NFC, 2/2](https://github.com/Sven401/Larp-Escape/actions/runs/39169473431).
+
+Damit ist die in #84 enthaltene Merge-Dokumentation von #83 übernommen.
+Alle Änderungen in #84 betreffen die drei Übergabe-Markdown-Dateien;
+Produktadapter, physische Dunkelursache/optische Freigabe, Pausenregel und
+Stations-/Quellenzuordnung bleiben offen. Die PR-CI wird nicht als eigene
+Push-CI am tatsächlichen Merge oder an dieser Fortschreibung ausgegeben.
+Keine neue Produktimplementierung oder Geräteprüfung durch diesen Abschluss.
+
 ## Abgeschlossener Merge von PR #83
 
 **Belegt · 18.10.2026:** [PR #83](https://github.com/Sven401/Larp-Escape/pull/83)
@@ -77,7 +101,7 @@ Der operative Ablesestand steht ebenfalls in #25. Keine neue Softwareausführung
 Geräteprüfung oder optische Freigabe durch diesen CI-Statusauftrag.
 
 Die folgende ursprüngliche Basis bezeichnet die Diagnose-/Entwurfssitzung.
-Aktuelle Mergefortschreibung auf `codex/pr83-merge-dokumentation` im
+Aktuelle Mergefortschreibung auf `codex/pr84-merge-dokumentation` im
 Worktree `C:/Users/seide/Documents/Codex/2026-10-18/m/work/naeheglut`.
 Vor Fortsetzung aktuellen Integrationsbranch, #25 und Arbeitsbaum neu prüfen.
 
