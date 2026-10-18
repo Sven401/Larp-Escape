@@ -1,0 +1,31 @@
+{
+  "status": "unselected-imagegen-concepts",
+  "date": "2026-10-18",
+  "design_basis": "7e72411bb1c416b5864036c79a1e17d9cf46b5ac",
+  "images": [
+    {
+      "display_order": 1,
+      "file": "status-im-mittelpunkt.png",
+      "source_generation": "exec-885dec99-4a58-4ec6-be5f-1ff99b136e6b.png",
+      "sha256": "c8b6a83b454c381a625357a5873e760debd8bdb5c0a7d3ffbc91c0183e5d07a4",
+      "width": 853,
+      "height": 1844
+    },
+    {
+      "display_order": 2,
+      "file": "gefuehrter-rueckweg.png",
+      "source_generation": "exec-f3434077-c695-4e4a-b9cf-ed235caae1de.png",
+      "sha256": "fce276c2e5d8aa156d0c3a69819473b1a9ff7e871f5316201816ebb544344b01",
+      "width": 853,
+      "height": 1844
+    },
+    {
+      "display_order": 3,
+      "file": "kontext-erhalten.png",
+      "source_generation": "exec-9ce2500e-dfe8-4f90-8b07-bc56bdead608.png",
+      "sha256": "ac35dad2265448cb6cc85c615a82e71ae2b69af953f00826626e3a67372d1b69",
+      "width": 853,
+      "height": 1844
+    }
+  ]
+}
