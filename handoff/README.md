@@ -1,5 +1,10 @@
 # Technische Projektübergabe
 
+Aktuell vorbereitete Zusammenführung von #58/#64/#65/#66/#68:
+[Integrationsprüfung vom 18. Oktober](INTEGRATION-2026-10-18.md).
+Der [abgeschlossene RSSI-Gehversuch](../docs/espnow/distance-camera-result-2026-10-18.md)
+ergänzt die älteren Gerätebelege; ein Update des Zielbranches bleibt offen.
+
 **Verbindlicher Architekturstand · 18. Oktober 2026:** [VA-01: dezentrale Veranstaltung](../docs/veranstaltungsarchitektur.md) und [Vertrags-/Arbeitspaketmatrix](../docs/veranstaltungsarchitektur-umsetzung.md). Kein vorausgesetztes gemeinsames WLAN, keine kontinuierliche Erreichbarkeit. Mehrere Handys bedienen verschiedene autonome Boxen; Zentrale sammelt und vermittelt bei Kontakt. Umsetzung und Abnahme bleiben offen.
 
 ## Aktueller Stand · 18. Oktober 2026

@@ -5,8 +5,9 @@
 Die ESP-Seite enthält **ESP-NOW testen** mit Empfänger-MAC und bewusstem
 Einzelsenden. Lokale Sendeannahme, MAC-Zustellung und korrelierte Rückantwort
 werden getrennt angezeigt. Ein Funk-ACK allein ist kein bestätigter Empfang.
-Benötigtes App-/Firmwarepaar und noch offene Handyabnahme:
-[ESP-NOW-Test](../../docs/espnow/app-test.md).
+App-/Firmwarepaar und Einzelsendetest: [ESP-NOW-Test](../../docs/espnow/app-test.md).
+Der [RSSI-Gehversuch mit Kameravergleich](../../docs/espnow/distance-camera-result-2026-10-18.md)
+ist abgeschlossen; Reichweite und Dauerbetrieb bleiben offen.
 
 Kotlin, Jetpack Compose und Material 3. Eigenständige App mit Paketname
 `de.larpescape.companion`, Mindestversion Android 13/API33. Bestehende

@@ -2,7 +2,8 @@
 
 **Architekturanschluss · 18.10.2026:** [VA-01](../veranstaltungsarchitektur.md) erhält diesen lokalen Baugruppenvertrag einschließlich Bytes, Fristen und manueller Abbruchregeln. BLE-Abbruch manueller Ausgaben ist kein pauschaler Stop des autonomen Spiels. Boxübergreifende Ereignisse bekommen einen eigenen Vertrag; siehe [Änderungsmatrix](../veranstaltungsarchitektur-umsetzung.md).
 
-Stand: **18. Oktober 2026; ESP-NOW-Erweiterung implementiert, gemeinsame Geräteprüfung dieses neuen Paars offen.**
+Stand: **18. Oktober 2026; ESP-NOW-Erweiterung implementiert, begrenzter App-/Geräte-Gehversuch abgeschlossen.**
+[Ergebnis und Grenzen](../espnow/distance-camera-result-2026-10-18.md): keine gemeinsame Gesamtspielabnahme.
 Quellen: [Firmware-Session](../../firmware/led/src/LedWire.cpp),
 [NFC-Session](../../firmware/led/src/NfcBleWire.cpp),
 [Android-Decoder](../../companion/android/core/protocol/src/main/kotlin/de/larpescape/protocol/LedProtocol.kt),
