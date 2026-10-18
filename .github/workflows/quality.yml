@@ -44,6 +44,9 @@ jobs:
           python scripts/quality_evidence.py run --name ci-helpers -- python -m unittest discover -s scripts/tests -p test_quality_evidence.py -v
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           python scripts/quality_evidence.py run --name source-helper-tests -- python -m unittest discover -s scripts/tests -p test_prepare_peer_mbedtls.py -v
+      - name: Check D0 event contract examples
+        # D0 examples are a semantic specification, not a crypto/device proof.
+        run: python scripts/quality_evidence.py run --name d0-contract -- python scripts/check_d0_contract.py
       - name: Prepare and audit the pinned real Mbed TLS sources
         run: python scripts/quality_evidence.py run --name mbedtls-source -- python scripts/prepare_peer_mbedtls.py --directory "$env:RUNNER_TEMP/peer-mbedtls"
       - name: Check the architecture guard fixtures

@@ -1,5 +1,9 @@
 # Technische Projektübergabe
 
+[D0-Vertragsvorschlag zu #59](../docs/veranstaltung/d0-vertrag-v1.md) auf Basis
+`5f90d10`: Identitäten, Ereignisse, Ausfallregeln, Vertrauen und Migration.
+Noch keine neue Produktfunktion oder verteilte Abnahme.
+
 Abgeschlossene Zusammenführung von #58/#64/#65/#66/#68 über PR #69,
 Mergecommit `0b0843d5fce475d14705c42c21f4f8bf4314df30`:
 [Integrationsprüfung vom 18. Oktober](INTEGRATION-2026-10-18.md).

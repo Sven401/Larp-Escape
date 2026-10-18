@@ -9,6 +9,13 @@ Zugangskonzept PR #58 am selben Tag gelesen. Keine Laufzeitprüfung.
 
 ## 1. Vertragsmatrix
 
+Für D0 liegt jetzt ein [versionierter Vertragsvorschlag](veranstaltung/d0-vertrag-v1.md)
+mit [Format-/Sicherheits-/Migrationsprofil](veranstaltung/d0-sicherheit-migration-v1.md)
+und [negativen Modellfixtures](veranstaltung/fixtures/d0-v1.json) vor, Basis
+`5f90d10`. D0-Spezifikation, Integration und Implementierungs-/Geräteabnahme
+bleiben getrennt. D0-G1–G5 weisen die Nachweise D1/D2/#28/#30/#31/D3/D4 zu;
+die offenen VA-T01–VA-T12 werden dadurch nicht als bestanden markiert.
+
 | Bestehender Vertrag / Einstieg | Beibehalten | Erforderliche Anpassung / neues Anschlussdokument | Paket |
 | --- | --- | --- | --- |
 | [Identität/Zugang](companion/identity-access.md), [Register](companion/peer-registry-v1.md), [Geräteidentität](companion/device-identity-store-v1.md) | Stabile Boxidentität, ausdrückliche lokale Rechte; zunächst eine aktive Steuerverbindung je Box | Veranstaltung, Station, Zuordnungsgeneration und Durchlauf trennen; BLE-Übergabe; Rechtekapazität von Gleichzeitigkeit trennen. Boxereignisvertrauen ist eigener Vertrag, kein automatisches GM-Recht. PR #58 berücksichtigen. | #27/#28, D0 |

@@ -1,5 +1,10 @@
 # Maintainer-Einstieg
 
+**D0 ausgearbeitet · 18. Oktober 2026:** [Vertragsvorschlag zu #59](../docs/veranstaltung/d0-vertrag-v1.md)
+mit Ereignisidentitäten, Offline-/Replayregeln, Ursprungsvertrauen und Migration.
+Basis `5f90d109e3589d74d73ac26f859dcd76c2902439` (#70 integriert).
+Spezifikations-/Modellprüfung ist keine Produktimplementierung; Merge offen.
+
 **Integration abgeschlossen · 18. Oktober 2026:** [geprüfte PR-Stände,
 Konfliktentscheidungen und Prüftore](INTEGRATION-2026-10-18.md).
 [PR #69](https://github.com/Sven401/Larp-Escape/pull/69) hat #58/#64/#65/#66/#68
@@ -24,8 +29,8 @@ und offenen Abnahmekriterien. **Sollkonzept, keine Implementierung.**
 ## Aktuelle Arbeitsbasis
 
 - **Belegt:** Zielbasis nach Merge und frischem Fetch am 18.10.2026:
-  `0b0843d5fce475d14705c42c21f4f8bf4314df30`, einschließlich #56
-  (Baugruppenkonsolidierung), #57 (Hygiene), #67 (Hardwareplanung) und #69.
+  `5f90d109e3589d74d73ac26f859dcd76c2902439`, einschließlich #56
+  (Baugruppenkonsolidierung), #57 (Hygiene), #67 (Hardwareplanung), #69 und #70.
   Die frühere #56-Basis `784984d` bleibt Bezug der historischen CI unten.
 - LED, Wake, Matrix, Audio und NFC sind auf dem
   [gemeinsamen V2-Vertrag](../docs/led/ble-wire-v2.md) zusammengeführt.
@@ -46,9 +51,9 @@ und offenen Abnahmekriterien. **Sollkonzept, keine Implementierung.**
 Planung. [#53](https://github.com/Sven401/Larp-Escape/issues/53) dokumentiert
 abgeschlossene Softwarekonsolidierung und Integration durch #56.
 
-- **Ohne Hardware nächster Architekturschritt #59 / D0:** Ereigniskennungen,
-  Offline-Regeln, Ursprung/Vertrauen und Migration konkretisieren, abgestimmt
-  mit #28. D1–D4 bleiben Folgearbeit; App-Messjournal und Funkprobe schließen
+- **D0 #59:** Spezifikationsvorschlag und Gegenbeispiele prüfen/integrieren,
+  abgestimmt mit #28; danach Implementierungstore D0-G1–G5 beachten.
+  D1–D4 bleiben Folgearbeit; App-Messjournal und Funkprobe schließen
   weder dauerhaften Box-Spielfortschritt noch Veranstaltungsbetrieb ab.
 
 - **Gemeinsame Geräteabnahme offen:** passendes V2-App-/Firmwarepaar gezielt
