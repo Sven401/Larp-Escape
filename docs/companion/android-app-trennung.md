@@ -111,6 +111,47 @@ Der optionale Vergleich prüft Dev-Paketkennung, Version und Signatur gegen das
 angegebene Alt-APK. Das ist ein Artefaktbeleg, kein Nachweis gespeicherter Handydaten.
 Beide Android-CI-Jobs bauen/linten beide Apps und führen den Prüfer aus.
 
+## Prüfstand der Umsetzung
+
+**Bestätigt am 18.10.2026**, Implementierungscommit
+`3afc09a7e0c5fa097427713d65ca8ecac5e4bb9e` (inhaltlich identischer lokaler Buildbaum),
+Windows, JDK 21.0.8, Projektwrapper Gradle 8.9, SDK/Build Tools 35:
+
+- Debug und unsigniertes Release beider Apps erfolgreich gebaut; vier Lintläufe
+  ohne Fehler. Je Lauf drei Warnungen (`OldTargetApi`, `DataExtractionRules`,
+  `ObsoleteSdkInt`), bei Dev zusätzlich `AutoboxingStateCreation` als Information.
+  Diese Hinweise sind keine native UX-/Backup-Abnahme und wurden nicht unterdrückt.
+- 88 Protokolltests und 76 Dev-App-Tests erfolgreich, keine übersprungenen Tests;
+  acht Tests des Trennungsprüfers erfolgreich.
+- `check_android_apps.py` erfolgreich für alle vier APKs. Paket-/Manifestgrenzen
+  und gültige Debugsignaturen bestätigt, kein Dev-Code im Spielleitungs-DEX.
+- Die sieben oben verlinkten Speicherdateien sind per `git diff --exit-code`
+  gegen die Quellbasis `2c3964a` unverändert. Bei bestehendem Dev-Kotlin-Code
+  wurde ausschließlich die sichtbare Kopfzeile in `MainActivity` angepasst.
+- Separater Code-/Ablaufreview: eigene Einstiege und Speichergrenzen, keine
+  Geräteaktion der Spielleitung, kein vorgetäuschter Einrichtungsschritt.
+  Die native Sicht-, Touch- und Accessibility-Prüfung bleibt offen.
+
+**Zusätzlicher, rein lesender Gerätebeleg:** Im Verlauf wurde ein Moto G14 erreichbar.
+`pm path` und `dumpsys package` bestätigten die installierte Dev-App
+`de.larpescape.companion`, Code 1 / Version 0.1. Ihr APK wurde ohne private Appdaten
+lokal ausgelesen (SHA-256
+`80a24cad9b0d3e7e91b6bd29b00fdbad1cd4ff4c5f8d4a4405438823329f999b`).
+Der Prüfer mit diesem APK als `--dev-baseline` bestätigt dieselbe Paketkennung,
+denselben Signierer und den Versionsanstieg auf Code 2 / 0.2. Auch der Vergleich
+mit dem bereits vorhandenen lokalen Dev-APK war erfolgreich. Damit ist die
+Updateidentität abgeglichen; ein tatsächlich ausgeführtes Update samt Datenerhalt
+ist weiterhin nicht geprüft. Die installierte App wurde nicht verändert.
+
+SHA-256 der lokal geprüften neuen Artefakte (kein reproduzierbarer Build zugesagt):
+
+| Artefakt | SHA-256 |
+| --- | --- |
+| Dev Debug | `cb4812f80f193388a3cc2a1056eb215cb2f950fca8d593d7adfe930eeb7c9d8e` |
+| Spielleitung Debug | `97ddb5735977ae08bc6b1bd251bde90524a8b4f4c4d7a2f157e40d53622da6b1` |
+| Dev Release, unsigniert | `ad316b937dd7681a505526b6671849fac42d166dcea5bf5207a390ff506ad245` |
+| Spielleitung Release, unsigniert | `b547d879512807ae84253de11ce90389e81c01be9b3d3581fef341f0a2a68dd1` |
+
 ## Geräteabnahme vor einem beauftragten Update
 
 1. Tatsächlich installiertes Dev-Paket, Version und öffentliches Signaturzertifikat
