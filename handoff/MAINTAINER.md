@@ -1,10 +1,14 @@
 # Maintainer-Einstieg
 
-**UI/UX-Pilot gestartet · 18. Oktober 2026:** [Rolle](../docs/ui-ux/ROLLE.md)
-mit Projektagent und Skill eingerichtet; [Box-Pilot](../docs/ui-ux/BOX-PILOT.md)
-hält Brief, Zustände und Prüfplan fest. Die Richtung ist bestätigt;
-[Figma und geprüfter Webprototyp](../design/box-pilot/README.md) sind ausgearbeitet.
-Native Android-/Geräte- und Nutzerabnahme bleiben offen.
+**UI/UX-Pilot integriert · 18. Oktober 2026:** [PR #78](https://github.com/Sven401/Larp-Escape/pull/78)
+ist bei `42853bc1aa93de23b5fcfc72e66d2c1a397361af` in den kuratierten
+Integrationsbranch übernommen. [Rolle](../docs/ui-ux/ROLLE.md),
+[aktueller Zustandsvertrag](../docs/ui-ux/BOX-PILOT.md),
+[Prototyp/Figma](../design/box-pilot/README.md) und
+[PO-/Figma-Nachprüfung](../design/box-pilot/figma-sync-review.md) sind integriert.
+Drei P2-Punkte behoben; 56 editierbare Figma-Screens, 148 geprüfte Verknüpfungen.
+**Design-/Prototyppaket, keine native Produktumsetzung oder Geräteabnahme.**
+[Mergebeleg, Prüfnachweise und konkrete Fortsetzung](UI-UX-INTEGRATION-2026-10-18.md).
 
 **Näheglut mit realem ESP-NOW geprüft · 18. Oktober 2026:** Drei Laborläufe
 belegen Funkanbindung, Veraltung/Wiederkehr und gezielten Stop ohne Wiederanlauf.
@@ -52,8 +56,8 @@ ergänzen die bisherigen Teilbelege. Gesamtspiel, Reichweite und Dauerlast bleib
 **Neue verbindliche Produktentscheidung · 18. Oktober 2026:** [VA-01](../docs/veranstaltungsarchitektur.md) legt autonome Boxen, BLE-Bedienung je Box, unterbrechbare ESP-NOW-/WLAN-Kommunikation und die Zentrale ohne Betriebszwang fest. [Vertrags-/Backlogmatrix](../docs/veranstaltungsarchitektur-umsetzung.md), neue Pakete #59–#63. Zugangskonzept PR #58 bleibt ergänzend maßgeblich. **Architektur-Soll; keine Implementierung oder neue Geräteabnahme.**
 
 Stand: **18. Oktober 2026**. Mandat: [AGENTS.md](../AGENTS.md).
-Quelle dieser Aktualisierung: beauftragter Merge von #74 sowie Fortschreibung
-von Projektstand und Übergabe am 18.10.2026. D0-Merge #72 bleibt erhalten.
+Quelle dieser Aktualisierung: beauftragter Merge von #78 und Projektstands-/
+Übergabeabschluss am 18.10.2026. Frühere Integrationen #74/#76/#77 und D0/#72 bleiben erhalten.
 Vorheriger Integrationsabschluss: beauftragter Merge von #69 und Planabgleich;
 [Integrationsabschluss](INTEGRATION-2026-10-18.md). Frühere Hygiene:
 [Prüfbericht und Bestandsaufnahme](REPOSITORY-HYGIENE-2026-10-18.md).
@@ -65,13 +69,13 @@ und offenen Abnahmekriterien. **Sollkonzept, keine Implementierung.**
 
 ## Aktuelle Arbeitsbasis
 
-- **Belegt:** PR #74 ist bei `d4dd7c67cd6ba0e1903d8bf6c5df256c49fe5c3e`
-  im kuratierten Integrationsbranch angekommen. Eltern: `dead1204` (D0/#72)
-  und `40d9621` (geprüfter #74-Head); vollständige Dateibäume von Merge und
-  PR-Head sind identisch. [Integrationsbeleg und neue Merge-CI](LED-EFFEKT-ARCHITEKT-INTEGRATION-2026-10-18.md).
-  Die bisherigen Integrationen #56/#57/#67/#69/#70/#72 bleiben enthalten.
-  Die folgende Dokumentationsfortschreibung ändert keine Produktquellen;
-  ihren Abschluss führt [Projektplan #25](https://github.com/Sven401/Larp-Escape/issues/25).
+- **Belegt:** PR #78 ist bei `42853bc1aa93de23b5fcfc72e66d2c1a397361af`
+  angekommen. Frischer Fetch: Eltern `7e72411` (#77) + `3b2f6b4` (geprüfter #78-Head).
+  Vollständiger Dateibaum identisch zum PR-Head; alle drei PR-Workflows erfolgreich.
+  [Integrationsbeleg und getrennte Merge-CI](UI-UX-INTEGRATION-2026-10-18.md).
+  Die bisherigen Integrationen einschließlich #74/#76/#77 bleiben enthalten.
+  Der anschließende Dokumentationsabschluss ändert keine Produktquellen;
+  seinen tatsächlichen Merge und Prüfstatus führt [Projektplan #25](https://github.com/Sven401/Larp-Escape/issues/25).
 - LED, Wake, Matrix, Audio und NFC sind auf dem
   [gemeinsamen V2-Vertrag](../docs/led/ble-wire-v2.md) zusammengeführt.
   [Herkunft und Erhaltung aller acht Ergebnis-IDs](KONSOLIDIERUNG-2026-10-17.md)
@@ -90,6 +94,15 @@ und offenen Abnahmekriterien. **Sollkonzept, keine Implementierung.**
 [Issue #25](https://github.com/Sven401/Larp-Escape/issues/25) führt die operative
 Planung. [#53](https://github.com/Sven401/Larp-Escape/issues/53) dokumentiert
 abgeschlossene Softwarekonsolidierung und Integration durch #56.
+
+- **UI/UX-Pilot als Entwurfsgrundlage integriert:** Bei einem gesonderten
+  Folgeauftrag zuerst [Rollenvertrag](../docs/ui-ux/ROLLE.md),
+  [aktuellen Zustands-/Akzeptanzvertrag](../docs/ui-ux/BOX-PILOT.md) und
+  [Fortsetzung](UI-UX-INTEGRATION-2026-10-18.md) lesen. Nächster möglicher Schritt:
+  Stationsansicht und Zustandsbindung in Compose auf den bestehenden BLE-/Rechte-
+  verträgen planen; reale Stationszuordnung und Mehrstationswechsel als offene
+  Abhängigkeiten behandeln. Native Android-/BLE-, TalkBack-/Lifecycle- und
+  Nutzerabnahme bleiben offen. Dieser Merge startet diese Folgearbeit nicht.
 
 - **D0 #59 abgeschlossen als Spezifikationspaket:** Nach Übernahme von #72
   D0-G1–G5 in #28/D1/D2/#30/#31/D3/D4 erfüllen. D1/D2 können nun gegen den
@@ -137,6 +150,14 @@ Produktabnahme sind getrennte Nachweise. Der Baugruppenstand ist kein
 abgenommenes Gesamtspiel. Keine neue Geräteprüfung in der Hygienesitzung.
 
 ## Aktuelle Prüfwege und CI
+
+**UI/UX #78, Head `3b2f6b4`: alle drei PR-Workflows erfolgreich.**
+[Quality](https://github.com/Sven401/Larp-Escape/actions/runs/39164422680),
+[LED/Android/Kamera](https://github.com/Sven401/Larp-Escape/actions/runs/39164422724),
+[NFC](https://github.com/Sven401/Larp-Escape/actions/runs/39164422681).
+Die [eigene Quality-Push-CI am Merge `42853bc`](https://github.com/Sven401/Larp-Escape/actions/runs/39165151009)
+war beim Dokumentationsentwurf noch aktiv. Nachfolgende Dokumentations-/Push-Läufe
+werden gesondert in #25 ausgewiesen; kein übertragener grüner Status.
 
 Der [vollständige B0-Prüfweg](../docs/quality-checks.md) enthält echte
 Kryptografie, konfigurierte Hosttests, vier Legacy-/ABI-Firmwareziele,
