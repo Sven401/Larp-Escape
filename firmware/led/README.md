@@ -125,6 +125,11 @@ USB-/Flashzugriff und die Einrichtungsdatei gehören zum vertrauenswürdigen Set
 
 ## Prüfwege und Geräteabnahme
 
+Der [USB-Kamera-Messweg](../../docs/led/camera-measurement.md) ergänzt
+reproduzierbare Bildaufnahmen, Regionsmessungen und Referenzframes aus der
+echten Effektengine. Er ist ein Prototyp; Index-/Farbkalibrierung und
+automatische Geräteabnahme bleiben offen.
+
 ```powershell
 python test/test_led_ble_wire/run.py
 python firmware/led/tests/run_output_tests.py
