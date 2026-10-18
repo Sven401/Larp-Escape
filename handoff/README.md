@@ -1,5 +1,10 @@
 # Technische Projektübergabe
 
+**PR #83 abgeschlossen · 18.10.2026:** CI-Statusfortschreibung nach 9/9 grünen
+PR-Jobs bei `9d8bf44aff9da1d4c47f109c451cb251a9d626cd` integriert.
+[Mergebeleg, getrennte CI-Nachweise und offene fachliche Punkte](NAEHEGLUT-STOP-SPIELANSCHLUSS-2026-10-18.md).
+Keine neue Produktimplementierung oder Geräteabnahme.
+
 **Näheglut-Diagnose und Spielanschluss integriert · 18.10.2026:**
 [PR #81](https://github.com/Sven401/Larp-Escape/pull/81), Merge
 `c4870215a155b9abff2e36fccfe93d42e1a03043`, zuvor 9/9 PR-CI-Jobs erfolgreich.
