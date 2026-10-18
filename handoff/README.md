@@ -1,5 +1,7 @@
 # Technische Projektübergabe
 
+**Stationspilot #79 integriert · 19.10.2026:** Merge `7e19c95` in den kuratierten Integrationsbranch; Dateibaum identisch zum geprüften Head `98488ea`. [Mergebeleg, getrennte CI und offene Geräteabnahmen](STATIONSPILOT-INTEGRATION-2026-10-19.md). Der lesende native Pilot und die Apptrennung sind integriert; TalkBack, Mehrstationsbetrieb, echter Funkverlust und Langzeitbetrieb bleiben offen. Keine neue Geräteprüfung durch den Merge.
+
 **Nativer Stationspilot · 19. Oktober 2026:** [Lokale Vorbereitung, Stationsauswahl, automatische BLE-Anmeldung und bestätigter Zustand](../docs/companion/spielleiter-stationspilot.md) in Larp GM implementiert und an der lokalen Box/Moto G14 geprüft. Bluetooth-Wiederkehr, Hintergrund/Rückkehr, bewusste Pause, Prozessneustart, große Schrift und Rotation geprüft. Dev-Quellen und alle zehn erfassten Dev-Dateien unverändert; Licht-/Spielaktionen sind Folgearbeit.
 
 **Android-Apptrennung · 18. Oktober 2026:** [Zwei Anwendungsprojekte und Erhalt der Dev-Daten](../docs/companion/android-app-trennung.md): Dev behält Paketkennung/Speicher; Spielleitung erhält eine eigene Kennung und einen leeren Veranstaltungseinstieg. [Beide Apps am Moto G14 installiert, Dev ohne Deinstallation aktualisiert und Daten erhalten](../docs/companion/android-app-geraetepruefung-2026-10-18.md). App-Auswahl: Larp Dev mit DEV-Badge und Larp GM mit übernommenem GM-Companion-Icon. Neue Spielsteuerung bleibt Folgearbeit.
@@ -79,19 +81,15 @@ ergänzt die älteren Gerätebelege; die fünf Original-PRs sind als gemergt ges
 
 **Verbindlicher Architekturstand · 18. Oktober 2026:** [VA-01: dezentrale Veranstaltung](../docs/veranstaltungsarchitektur.md) und [Vertrags-/Arbeitspaketmatrix](../docs/veranstaltungsarchitektur-umsetzung.md). Kein vorausgesetztes gemeinsames WLAN, keine kontinuierliche Erreichbarkeit. Mehrere Handys bedienen verschiedene autonome Boxen; Zentrale sammelt und vermittelt bei Kontakt. Umsetzung und Abnahme bleiben offen.
 
-## Aktueller Stand · 18. Oktober 2026
+## Aktueller Stand · 19. Oktober 2026
 
 - [ESP-NOW-Sitzungsabschluss: RSSI, Funkelsteuerung und vollständiger Kameravergleich](ESPNOW-UEBERGABE-2026-10-18.md); PR #66 ist über #69 integriert. Der Sitzungsabschluss bleibt der historische Beleg vor Integration.
 
-**Belegt:** [PR #78](https://github.com/Sven401/Larp-Escape/pull/78) ist bei
-`42853bc1aa93de23b5fcfc72e66d2c1a397361af` integriert; Eltern `7e72411` +
-`3b2f6b4`, vollständiger Dateibaum identisch zum geprüften Head. Drei PR-Workflows
-erfolgreich; eigene Merge-/Dokumentations-CI getrennt in
-[Integrationsbeleg und Fortsetzung](UI-UX-INTEGRATION-2026-10-18.md) und #25.
-Frühere Integrationen #56/#57/#67/#69/#70/#72/#74/#76/#77 bleiben erhalten.
-LED/Wake/Matrix/Audio/NFC/ESP-NOW verwenden weiterhin den
-[gemeinsamen V2-Vertrag](../docs/led/ble-wire-v2.md); der isolierte Webpilot ersetzt
-keine Android-App oder Gerätefunktion. Weitere Nachweise im [Maintainer-Einstieg](MAINTAINER.md).
+**Belegt:** [PR #79](https://github.com/Sven401/Larp-Escape/pull/79) bei
+`7e19c955aaa54bcc7ed318d594a6f69476de4aa9` integriert; Eltern `494f1c4` +
+`98488ea`, vollständiger Dateibaum identisch zum geprüften Head. Frühere
+Integrationen bleiben erhalten. Neun PR-Jobs erfolgreich; eigene Merge-CI und
+Abnahmegrenzen im [Integrationsbericht](STATIONSPILOT-INTEGRATION-2026-10-19.md).
 
 - [Konsolidierung: Herkunft, Konfliktentscheidungen, acht Ergebnis-IDs](KONSOLIDIERUNG-2026-10-17.md).
 - [Nachweisregister: historische Gerätebelege und Sicherungsreferenzen](BAUGRUPPEN-NACHWEISE.md).
@@ -99,9 +97,10 @@ keine Android-App oder Gerätefunktion. Weitere Nachweise im [Maintainer-Einstie
 - [Operative Planung #25](https://github.com/Sven401/Larp-Escape/issues/25)
   und [abgeschlossene Softwarekonsolidierung #53](https://github.com/Sven401/Larp-Escape/issues/53).
 
-**Offen:** native Umsetzung des Stationspiloten, reale Einrichtung, Mehrstations-,
-Android-/BLE-/TalkBack-/Lifecycle- und Nutzerabnahme; außerdem gemeinsames V2-Paar
-am Gerät, Matrixproblemstellen #54,
+**Offen:** TalkBack, mehrere reale Stationen, Funkverlust bei Bluetooth an
+und Langzeitbetrieb des Stationspiloten; Licht-/Spielaktionen und allgemeine
+Spielleitungsrechte sind Folgearbeit. Außerdem gemeinsame Baugruppenabnahme
+am passenden V2-Paar, Matrixproblemstellen #54,
 LED-/NFC-/Sitzungsfehlerfälle sowie allgemeiner Spielzugang und Profilbetrieb.
 Für Näheglut fehlen echter Spieleinsatz/Nähequelle, Produktadapter und optisches
 Nutzerurteil. D1-A/PR #73 bleibt gesondert in Review; #60/D1-B/C bleibt offen.
