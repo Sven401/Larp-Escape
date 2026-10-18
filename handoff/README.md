@@ -7,6 +7,7 @@ Optische Dunkelprüfung und zwei Übergangsabweichungen bleiben offen;
 Originalinstallation vollständig wiederhergestellt und verifiziert.
 [Arbeitsstand, Belege und Grenzen](NAEHEGLUT-ESPNOW-2026-10-18.md);
 keine Produkt- oder Gesamtspielabnahme.
+[PR #76](https://github.com/Sven401/Larp-Escape/pull/76) liegt zur Prüfung vor.
 
 **LED-Effektentwicklung integriert · 18. Oktober 2026:**
 [PR #74](https://github.com/Sven401/Larp-Escape/pull/74) ist bei

@@ -82,6 +82,8 @@ Papierkalibrierung und Goldreferenz, drei Laufordner mit Aufträgen/Funk/TX/Kame
 5. Produktadapter, echte Spielregeln, kalibrierte Meterentfernung, Reichweite,
    Dauerbetrieb und Gesamtspiel bleiben außerhalb dieses Zusatzversuchs.
 
-Die beauftragte Testanbindung samt ehrlichen Teilbefunden als PR vorlegen;
-spätere Nutzerbeobachtungen an diesem Ergebnis ergänzen. Ein weiterer Upload
-oder Merge benötigt seinen passenden konkreten Auftrag.
+Die Testanbindung und Ergebnisbelege liegen in
+[PR #76](https://github.com/Sven401/Larp-Escape/pull/76) gegen den kuratierten
+Integrationsbranch vor. Aktuelle automatische Prüfungen am PR nachsehen; kein Merge
+vorgenommen. Spätere Nutzerbeobachtungen an diesem Ergebnis ergänzen. Ein weiterer
+Upload oder Merge benötigt seinen passenden konkreten Auftrag.
