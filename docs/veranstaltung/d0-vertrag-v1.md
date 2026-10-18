@@ -23,7 +23,7 @@ Transport und Nachweise; D4 liefert die verteilte Geräteabnahme.
 | Logische Station `station` | eigene nichtnull 128-Bit-ID | Bezeichnet eine Spielrolle/Station, nicht Gerät, Komponente oder Handy. |
 | Stationsbindung | `(event, station, generation, box, bindingDigest)` | `generation` 1..2^64−1; `bindingDigest` SHA-256 des vollständigen Bindungsdatensatzes. Gegenstelle installiert ausdrücklich genau diesen Stand. |
 | Durchlauf `run` | eigene nichtnull 128-Bit-ID | Vorab im Veranstaltungspaket vorbereitet; je Box bewusst aktivieren. Kein automatischer Wechsel bei Neustart, Profilimport oder Wiederverbindung. |
-| Paket `packageDigest` | SHA-256 der unveränderlichen Veranstaltungspaketbytes | Enthält konkrete Boxprofile, Ressourcenhashes, Regeln und Bindungsbezüge. Gemeinsame Paketkennung bedeutet nicht gleiche boxlokale Profilbytes. |
+| Paket `packageDigest` | SHA-256 der unveränderlichen deterministischen Manifestbytes | Manifest bindet Boxprofile und Ressourcen über deren Hashes sowie Regeln und Bindungsbezüge. Kein Hash eines ZIP-/Transportcontainers; gemeinsame Paketkennung bedeutet nicht gleiche boxlokale Profilbytes. |
 | Ereignisepoche `epoch` | nichtnull 128-Bit-ID einer dauerhaft eingerichteten Ursprungsinkarnation | Bleibt über gewöhnliche Boots erhalten; hängt weder an BLE-Lease noch Profilrevision. Neue Epoche nach verlorener/unsicherer Zählerbasis; Gegenstellen müssen sie bewusst zulassen. |
 | Ereignisfolge `sequence` | 1..2^64−1, je `(event, box, epoch)` | Nur für dauerhafte Tatsachen; niemals Wrap oder Wiederverwendung. |
 | Schlüssel `kid` | SHA-256 des kanonischen öffentlichen COSE_Key | Eigener Wert; Schlüsselrotation ist nicht automatisch Box-/Stations-/Durchlaufwechsel. |
@@ -119,18 +119,33 @@ Ziel B verarbeitet ein Ereignis von A in dieser Reihenfolge:
 2. Aktive Veranstaltung/Durchlauf/Paket und die ausdrücklich installierte
    Stationsbindung einschließlich erlaubter Epoche und Faktentyp prüfen.
    Lokaler Entzug wird erneut unmittelbar am Übernahmepunkt geprüft.
-3. Gleiche ID und gleicher kanonischer Fact-Inhalt: bereits bekannt; bestehenden
+   Ein ausdrücklich hinterlegter historischer Kontext darf ausschließlich den
+   unten beschriebenen Streamabgleich bedienen, nicht diesen Anwendungsweg.
+3. Fact-Position gegen dauerhaft geschlossene `unused_range`-Bereiche prüfen.
+   Ein Fakt in einer solchen Position ist ein Ursprungskonflikt, auch wenn er
+   erst nach dem Bereichsabschluss ankommt. Umgekehrt darf ein Abschluss keinen
+   bereits belegten Fakt umfassen. Beides sperrt den betroffenen Ursprungspfad;
+   Empfangsstand/Freigaben werden nicht still überschrieben.
+   Gleiche ID und gleicher kanonischer Fact-Inhalt: bereits bekannt; bestehenden
    Annahme-/Anwendungsstand zurückgeben. Signaturbytes sind keine Faktidentität.
    Gleiche ID mit anderem Inhalt: Ursprungskonflikt quarantänisieren, nicht
    überschreiben, nicht als zweites Ereignis verarbeiten.
+   Ein dauerhaft aufgenommener, noch nicht angewandter Eingang bleibt dabei
+   ausstehend. D1 nimmt ihn nach fehlenden Abhängigkeiten, Wiederanlauf oder
+   freier Kapazität unter erneuter Rechteprüfung zur Anwendung auf. Eine
+   Duplikatantwort darf diese ausstehende Arbeit weder löschen noch als
+   bereits angewandt zählen; verarbeitet markiert erst der Anwendungscommit.
 4. Noch fehlende ausdrücklich benannte Abhängigkeiten zurückhalten. Für jede
    Regel hat das lokale Profil einen stabilen `ruleId` und `ruleGeneration`.
-   Die Wirkung wird mit `(run, localStation, ruleId, ruleGeneration, fact.id)`
-   dauerhaft dedupliziert. Eine lokale Ersatzfreigabe belegt dieselbe
-   Freigabe-Latch des Ziels, damit spätere Originaldaten keine zweite Wirkung
-   auslösen. AND-Regeln prüfen alle Abhängigkeiten, nicht nur das letzte Paket.
-   Ein Regelversionswechsel im selben Durchlauf setzt diesen Latch nicht zurück;
-   eine Migration muss ihn erhalten oder ausdrücklich einen neuen Durchlauf wählen.
+   Der Eingangsbeleg dedupliziert `fact.id`; die fachliche Freigabe hat separat
+   den dauerhaften Latch `(event, run, localStation, ruleId)`. Er ist unabhängig
+   von auslösendem Fakt, Paket und `ruleGeneration`. Damit lösen zwei verschiedene
+   passende Fakten oder eine lokale Ersatzfreigabe mit späterem Original nicht
+   zweimal dieselbe Regel aus. Der Beleg hält Generation und Auslöser fest;
+   AND-Regeln prüfen alle Abhängigkeiten, nicht nur das letzte Paket.
+   Ein Paket-/Regelversionswechsel im selben Durchlauf erhält den Latch. Ein
+   neuer `ruleId` ist eine neue fachliche Regel und verlangt bewusste Migration;
+   Umbenennen darf keine bereits ausgeführte Freigabe versteckt zurücksetzen.
 5. Eingangsbeleg, lokale Zustandsänderung, angewandte Regel und ausgehende
    Folgeereignisse erhalten in D1 einen atomaren Commit oder einen gleichwertig
    wiederaufnehmbaren Intent-Vertrag. Erst danach `durable_received` bzw.
@@ -152,6 +167,34 @@ Authentifizierte `unused_range`-Facts werden nach Kontext-/Konfliktprüfung
 unabhängig von wartenden Spielregeln aufgenommen; sonst könnte der Lückenschluss
 auf genau seine eigene geschlossene Lücke warten. Sie erzeugen keine Spielwirkung.
 
+**Durchlauf-/Paketwechsel:** Allocator, Präfix, belegte IDs/Inhaltsdigests und
+geschlossene Bereiche gehören zum Stream `(event, originBox, epoch)`. Sie werden
+bei Run-, Paket-, Stationsbindungs- oder Regelwechsel nicht zurückgesetzt.
+Beispiel: R1 belegt 1..10, R2 beginnt mit 11; ein neues Ziel darf 11 weder als
+vollständigen Stream zählen noch für immer auf abgewiesene R1-Nummern warten.
+Für den Streamabgleich dürfen ausdrücklich lokal hinterlegte historische
+Kontexte derselben Veranstaltung weiter geprüft werden: vollständige
+Run-/Paket-/Stations-/Bindungszuordnung, aktuell zugelassener Ursprung/Schlüssel,
+Epoche und inhaltliche Erlaubnis bleiben erforderlich. Deren Fakten füllen
+ausschließlich den historischen Streambeleg, niemals aktuelle Abhängigkeiten
+oder Freigaben. Historische `unused_range`-Abschlüsse schließen nur tatsächlich
+unbenutzte Positionen; benutzte alte Nummern werden nicht als unbenutzt erklärt.
+Unbekannter Altstand bleibt abgewiesen/quarantänisiert, nicht automatisch vertraut.
+
+Bei kompaktierter Historie oder einem neuen Ziel ist alternativ ein bewusst
+zugelassener, dauerhaft übernommener Snapshot-/Bootstrapstand nötig (D1/#30).
+Er bindet Ziel, Stream, Kontext und Inhaltsdigest, den bestätigten historischen
+Präfixboden sowie erforderliche Konflikt-/Replay- und Freigabebelege. Der Boden
+bestätigt historische Abdeckung, keine nachträgliche Spielwirkung. Unterhalb
+des Bodens wird nichts erneut angewandt; notwendige Abhängigkeiten brauchen
+ihren ausdrücklich erhaltenen Inhalts-/Anwendungsbeleg. Fehlen diese Belege,
+bleibt die abhängige Regel gesperrt. Weder ein hoher Empfangszähler, ein Relay
+noch die Aktivierung allein darf diesen Boden setzen. Ein Bootstrap darf keinen
+neueren lokalen Stream-/Freigabebeleg durch einen älteren ersetzen. Ohne Historie oder
+zugelassenen Bootstrap bleibt die Lücke sichtbar; lokale unabhängige Regeln
+laufen nach ihrem Profil weiter. D1 muss Stream- und Latch-Erhalt bei Wechsel,
+Neustart und Kompaktierung gemeinsam prüfen; kein neues Snapshot-Wireformat in D0.
+
 Bei unbekanntem Paket/Bindungsstand kann eine begrenzte Quarantäne existieren;
 sie bestätigt weder dauerhafte fachliche Annahme noch Zustellung. Kein
 unbegrenztes Speichern ungeprüfter Daten. Nach einem Entzug wird ein alter,
@@ -168,6 +211,12 @@ Veranstaltung/Durchlauf, ursprüngliche ID und **Fact-Digest** sowie eigene
 authentifizierte Antwortkennung. Wiederholte Antworten sind keine neuen Effekte.
 `rejected`, `deferred` und `effect_unknown` sind eigene Ergebnisse mit Grund.
 Bei Widerspruch zweier gültiger Ergebnisstände: Konflikt sichtbar machen.
+Die numerischen Codes sind keine Fortschrittsordnung: 5/6/7 bedeuten weder
+`applied` noch `effect_observed`. Eine verspätete frühere Stufe darf bestätigte
+Verarbeitung nicht zurücknehmen; Ablehnung/Warten/unklare Wirkung bleiben
+getrennt. Eine bereits belegte Anwendung wird bei widersprechender Antwort
+nicht erneut ausgeführt. Quittung ohne passende ursprüngliche Referenz und
+Inhaltsdigest ändert keinen Auftragsstand.
 
 Ein Ursprung verwirft notwendige Wiederanlauf-/Outboxdaten nicht nach einer
 Funkquittung. Aufbewahrung hängt von bestätigten Zielständen und dem aktiven
@@ -226,6 +275,26 @@ Nach Zielneustart sind alle alten Grants ungültig. Kein Vertrauen in absolute
 UTC-Timestamps des Senders. Offene alte Aufträge werden nach Trennung oder
 Neustart nicht automatisch neu erzeugt; verlorene Ergebnisantwort bleibt unklar.
 Lokale Berechtigungs-/Revision-/Spielzustandsprüfungen bleiben zusätzlich nötig.
+Ein pauschal gestopptes Spiel ist für `play_once`/`light_once` keine Voraussetzung:
+das Zielprofil entscheidet über erlaubte Aktion, Ressource und Ausführungszustand.
+Die Stopbedingung für Paketaktivierung ist davon getrennt. Wiederholungen eines
+bereits verbrauchten Grants dürfen nur dessen bekannten Ergebnisstand liefern,
+niemals erneut ausführen; fehlender Ergebnisbeleg bleibt unklar.
+
+**Kontrollaustausch vor Nutzung:** Die vier D0-Nachrichten transportieren noch
+keinen Challengeauftrag und keine Grantausgabe. D2/#28 benötigt dafür vor
+Anbieten von `observation_v1`/`command_grant_v1` einen separat versionierten,
+authentifizierten Kontrollvertrag. Er bindet Challenge/Anfragekennung,
+Anfragenden samt Schlüssel, Zielbox, Veranstaltung/Durchlauf/Paket, relevante
+Stationsbindungen, Zielboot/-revision und bei Grants die erlaubte Aktion/Ressource.
+Nur der adressierte Ursprung beantwortet die Beobachtungschallenge; nur das
+Ziel stellt seinen Grant aus und hält dessen ursprüngliche Frist fest.
+Wiederholte Anfrage/Antwort verlängert keine Frist und bewirkt keinen Auftrag.
+Abbruch, alte Sitzung, Budgeterschöpfung und unklarer Ausgang müssen ohne
+automatisches Neuerzeugen behandelt werden. Ein Relayfeld oder eine normale
+Statusmeldung ersetzt diesen Nachweis nicht. Das Modell setzt den geprüften
+Kontrollaustausch als vertrauenswürdigen Kontext voraus; es implementiert ihn
+nicht. D0-G1/G2/G4 müssen dessen Codec, Rechtebindung und Budgets nachweisen.
 
 ## 5. D0-Abschluss und Anschluss
 
@@ -249,3 +318,6 @@ Das Modell ist absichtlich eine dekodierte Projektion: Verifizierer-/Rechte-/
 Abhängigkeitsbeobachtungen werden simuliert. Vollständige Byte-/Tiefen-/
 Kurvenprüfung, stationlose Zentralenmeldungen, Quittungs-Referenzcodec und
 Crashdurabilität sind nicht implementiert; diese Nachweise liegen in D0-G1–G5.
+
+Fachliche Nachprüfung und korrigierte Gegenbeispiele vom 18.10.2026:
+[Reviewbericht zu PR #72](../../handoff/D0-REVIEW-2026-10-18.md).

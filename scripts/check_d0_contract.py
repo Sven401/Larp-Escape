@@ -26,12 +26,20 @@ def identifier(value, size=16):
 def context_gate(message, context):
     if not context["verified"]:
         return "reject_signature"
+    expected = context
     if any(message[k] != context[k] for k in ("event", "run", "packageDigest")):
-        return "reject_context"
+        # A retained historical context can fill the persistent origin stream,
+        # but must never release a rule in the active run/package.
+        historical = context.get("historicalContext")
+        if (message["kind"] != "fact" or message["event"] != context["event"] or
+                historical is None or
+                any(message[k] != historical[k] for k in
+                    ("event", "run", "packageDigest", "station", "generation", "bindingDigest"))):
+            return "reject_context"
+        expected = historical
     if not context["authorized"] or message["origin"] != context["origin"]:
         return "reject_trust"
-    if any(message[k] != context[k] for k in
-           ("station", "generation", "bindingDigest")):
+    if any(message[k] != expected[k] for k in ("station", "generation", "bindingDigest")):
         return "reject_binding"
     return None
 
@@ -47,17 +55,20 @@ def evaluate(model, message, context):
         return [context["storedEnd"] + 1,
                 context["storedEnd"] + context["blockSize"]]
     if model == "prefix":
-        # Only verified accepted facts and verified unused-range closures here.
+        # Trusted snapshot floor and normalized verified stream evidence only.
+        floor = context["bootstrapFloor"]
+        if not integer(floor, 0) or (floor and not context["bootstrapAuthorized"]):
+            return "reject_bootstrap"
         present = set(context["present"])
         intervals = [[n, n] for n in present]
         previous_end = 0
         for first, last in context["closedUnused"]:
-            if (not integer(first) or not integer(last) or last < first or
+            if (not integer(first) or not integer(last) or last < first or last == MAX_SEQUENCE or
                     first <= previous_end or any(first <= n <= last for n in present)):
                 return "conflict"
             intervals.append([first, last])
             previous_end = last
-        prefix = 0
+        prefix = floor
         for first, last in sorted(intervals):
             if first > prefix + 1:
                 break
@@ -72,6 +83,8 @@ def evaluate(model, message, context):
             return "pending_confirmation"
         if not context["stopped"] or not context["expectedRevision"]:
             return "reject_state"
+        if not context["streamStatePreserved"] or not context["latchesPreserved"]:
+            return "reject_state"
         return "ready_for_atomic_activation"
 
     required = {"version", "kind", "event", "run", "origin", "station",
@@ -82,7 +95,7 @@ def evaluate(model, message, context):
         "observation": {"boot", "observationSequence", "state", "challenge"},
         "command": {"commandId", "targetBox", "targetBoot", "grant",
                     "targetRevision", "action", "resource", "contentDigest"},
-        "receipt": {"targetBox", "receiptId", "stage", "reason", "contentDigest"},
+        "receipt": {"ref", "targetBox", "receiptId", "stage", "reason", "contentDigest"},
     }
     if (model not in specific or set(message) != required | specific[model] or
             type(message["version"]) is not int or message["version"] != 1 or
@@ -106,6 +119,11 @@ def evaluate(model, message, context):
             return "reject_format"
         if message["epoch"] != context["epoch"]:
             return "reject_epoch"
+        if (not integer(context["bootstrapFloor"], 0) or
+                (context["bootstrapFloor"] and not context["bootstrapAuthorized"])):
+            return "reject_bootstrap"
+        if context["sequenceClosedUnused"]:
+            return "conflict"
         # Projection dependencies are full validated reference tokens supplied
         # by the hypothetical decoder; this is not a FactRef byte decoder.
         if context["selfDependency"]:
@@ -128,9 +146,16 @@ def evaluate(model, message, context):
             return "reject_format"
         known = context["knownDigest"]
         if known is not None:
-            return "duplicate" if known == message["contentDigest"] else "conflict"
+            if known != message["contentDigest"]:
+                return "conflict"
+            if not context["pendingApplication"]:
+                return "duplicate"
         if message["factType"] == 3:
             return "record_unused" if context["capacity"] else "reject_capacity"
+        if message["sequence"] <= context["bootstrapFloor"]:
+            return "bootstrap_covered"
+        if any(message[k] != context[k] for k in ("run", "packageDigest")):
+            return "record_history" if context["capacity"] else "reject_capacity"
         if not context["dependenciesPresent"] or (context["orderedRule"] and context["gap"]):
             return "deferred"
         if not context["capacity"]:
@@ -155,23 +180,39 @@ def evaluate(model, message, context):
             return "reject_format"
         if any(message[k] != context[k] for k in ("targetBox", "targetBoot", "grant")):
             return "reject_grant"
-        if not 0 <= context["grantAgeMs"] < context["grantLifetimeMs"] <= 5000:
-            return "expired"
-        if message["targetRevision"] != context["targetRevision"] or not context["stopped"]:
-            return "reject_state"
         if context["spentCommand"] is not None:
             return ("duplicate" if context["spentCommand"] == message["commandId"] and
                     context["spentDigest"] == message["contentDigest"] else "grant_conflict")
+        if not 0 <= context["grantAgeMs"] < context["grantLifetimeMs"] <= 5000:
+            return "expired"
+        if not context["resourceAllowed"]:
+            return "reject_resource"
+        if message["targetRevision"] != context["targetRevision"] or not context["actionAllowed"]:
+            return "reject_state"
         return "consume_then_execute"
     if (not identifier(message["targetBox"]) or not identifier(message["receiptId"]) or
             not integer(message["stage"], 1, 7) or not integer(message["reason"], 0, 7) or
             not identifier(message["contentDigest"], 32)):
         return "reject_format"
+    ref = message["ref"]
+    if not (identifier(ref) or
+            (type(ref) is list and len(ref) == 4 and
+             all(identifier(x) for x in ref[:3]) and integer(ref[3]))):
+        return "reject_format"
+    stage, reason = message["stage"], message["reason"]
+    allowed_reasons = {1: {0}, 2: {0}, 3: {0}, 4: {0},
+                       5: {1, 2, 3, 4, 5, 6}, 6: {3, 4}, 7: {7}}
+    if reason not in allowed_reasons[stage]:
+        return "reject_format"
     if (message["origin"] != context["expectedReceiver"] or
             message["targetBox"] != context["targetBox"] or
+            message["ref"] != context["expectedRef"] or
             message["contentDigest"] != context["expectedDigest"]):
         return "reject_receipt_binding"
-    return "not_applied" if message["stage"] < 3 else "record_stage"
+    # Result codes are a sum type, not a numeric progress counter.
+    return {1: "not_applied", 2: "not_applied", 3: "record_applied",
+            4: "record_effect_observed", 5: "record_rejected",
+            6: "record_deferred", 7: "record_effect_unknown"}[stage]
 
 
 def main():

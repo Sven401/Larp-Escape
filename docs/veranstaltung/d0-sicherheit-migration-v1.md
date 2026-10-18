@@ -49,7 +49,7 @@ kein alternativ erlaubtes Signatur-/Transportformat.
 | 5 | `station` | bstr16 oder null; Facts/Spielkommandos verlangen Station, Zentrale darf nur stationlose Beobachtung/Quittung liefern |
 | 6 | `generation` | unsigned64 >0 bei Station, sonst null |
 | 7 | `bindingDigest` | bstr32 bei Station, sonst null |
-| 8 | `packageDigest` | bstr32, konkrete Paketbytes |
+| 8 | `packageDigest` | bstr32, SHA-256 der deterministischen Manifestbytes; Dateien über ihre Manifesthashes gebunden |
 | 9 | `body` | eine der folgenden festen Arrays |
 
 `fact`: `[epoch:bstr16, sequence:uint64>0, factType:uint, subject:bstr16,
@@ -59,6 +59,8 @@ einzigen v1-Typen. Typen 1/2 haben `value=true` und leere unusedRanges.
 Typ 3 hat subject=origin, value=true, keine dependencies und 1..8 disjunkte,
 aufsteigende Bereiche mit `0 < first <= last < sequence`. Historisch bereits
 bekannte Facts in einem solchen Bereich erzeugen Konflikt statt Löschung.
+Auch umgekehrt ist jeder später eintreffende Fakt an einer bereits als unbenutzt
+geschlossenen Position ein Ursprungskonflikt, unabhängig von seiner Art.
 Andere Regeln/Faktentypen benötigen eine neue ausgewiesene Fähigkeit/Version.
 `FactRef=[event:bstr16, origin:bstr16, epoch:bstr16, sequence:uint64>0]`.
 Höchstens acht unterschiedliche Abhängigkeiten, keine Selbstabhängigkeit;
@@ -85,6 +87,13 @@ Rückmeldung, origin der bestätigende Knoten. stage 1 transport_received,
 7 effect_unknown; reason 0 none, 1 context, 2 trust, 3 gap, 4 capacity,
 5 expired, 6 conflict, 7 effect_uncertain. Eine stage-4-Aussage setzt einen
 eigenen beobachteten Gerätebeleg voraus, kein bloßes Senden.
+Erlaubte Kombinationen: Stufen 1..4 nur mit reason=0; rejected mit reason=1..6,
+deferred mit reason=3/4, effect_unknown mit reason=7. Andere Kombinationen sind
+Formatfehler. Stufen 5/6/7 sind eigene Ergebniszweige, keine höheren Erfolgsstufen.
+`ref` und `digest` müssen gemeinsam den ursprünglichen offenen/belegten Auftrag
+oder Fakt bezeichnen; beim Command ist `digest` ebenfalls SHA-256 seiner
+deterministischen Payloadbytes. Numerischer Stufenvergleich ersetzt keine
+fachliche Ergebniszusammenführung nach D0-ACK.
 
 Fact-Digest ist SHA-256 der ursprünglichen deterministischen Payloadbytes.
 Gleiche Fact-ID bei anderem Digest ist Konflikt, auch bei gültiger Signatur.
@@ -150,9 +159,9 @@ lokale Folgeentscheidungen sichtbar prüfen; kein automatischer globaler Rollbac
 
 | Tor / Eigentümer | Vor Implementierungs-/Produktfreigabe nachweisen |
 | --- | --- |
-| D0-G1 · #28/D2 | Gepinnte COSE-Verarbeitung/Bibliothek auswählen und Herkunft/Lizenz prüfen; unabhängig erzeugte ES256/COSE-Goldenbytes und Manipulations-/Kurven-/Parameter-/Framinggegenfälle. Keine Freigabe aus dem Vertragsmodell. |
+| D0-G1 · #28/D2 | Gepinnte COSE-Verarbeitung/Bibliothek auswählen und Herkunft/Lizenz prüfen; unabhängig erzeugte ES256/COSE-Goldenbytes und Manipulations-/Kurven-/Parameter-/Framinggegenfälle. Separaten versionierten Challenge-/Grant-Kontrollvertrag nach D0-FRESH vor dessen Fähigkeiten implementieren und prüfen. Keine Freigabe aus dem Vertragsmodell. |
 | D0-G2 · #28/D1 | Schlüsselentropie und sichere Aufbewahrung, authentifizierter öffentlicher Fingerprintabgleich, atomare Vertrauensänderung, Recovery/Flashrestore-Sperre und Entzug am Commitpunkt implementieren und prüfen. |
-| D0-G3 · D1/#31 | Fact-Allocator, Reservierungen/unusedRanges, Journal/Replay/Outbox, gleiche-ID-Konflikt, atomare Anwendung und Kompaktierung bei begrenztem Speicher; reale Stromausfälle separat. |
+| D0-G3 · D1/#31 | Fact-Allocator, Reservierungen/unusedRanges einschließlich umgekehrter Konflikte, Journal/Replay/Outbox, gleiche-ID-Konflikt, atomare Anwendung; Stream-/Latch-Erhalt über Run-/Paketwechsel und historischer Abgleich/zugelassener Bootstrap bei Kompaktierung; reale Stromausfälle separat. |
 | D0-G4 · D2/#31 | 2048-Byte-Grenze in RAM/Stack/Flash prüfen, gepinnte SDK-Transferlimits/Fragmentierung/Kanal/Retry/Queues und BLE-Koexistenz nachweisen. Vorhandene Funkprobe ist kein neuer Codecbeleg. |
 | D0-G5 · #30/D3/D4 | Paketmanifest/-hashes, Fähigkeiten, Profil-/Ressourcenanschluss, explizite lokale Aktivierung und verteilter Referenzlauf. Keine Verpflichtung zu zentraler Erreichbarkeit. |
 
@@ -190,7 +199,11 @@ Grenzen aus; (2) Manifest/Profile/Ressourcen vollständig separat bereitstellen;
 (3) Hashes, referenzierte Bindungen/Regeln und Offlinefälle prüfen; (4) an der
 aktuell berechtigten Zielbox bei geeignetem gestopptem Spiel bewusst aktivieren;
 (5) atomar alten oder neuen aktiven Kontext und dauerhaften Fortschrittsbezug
-bestätigen. Teilerfolg/unklare Antwort löst keine automatische Wiederholung aus.
+bestätigen. Der Streambeleg bleibt erhalten; im selben Durchlauf bleiben auch
+bereits belegte Freigabe-Latches erhalten. Ein neues Ziel benötigt historische
+Belege oder ausdrücklich zugelassenen Bootstrap gemäß D0-APPLY; ein hoher erster
+Zähler ist kein neuer Nullpunkt. Teilerfolg/unklare Antwort löst keine
+automatische Wiederholung aus.
 Fremde/neue Run-ID erfordert ausdrückliche Durchlaufentscheidung; Verwaltungs-
 Recovery bewirkt keinen Reset. Alte Ereignisse verbleiben im alten Kontext.
 
