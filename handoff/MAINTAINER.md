@@ -1,5 +1,14 @@
 # Maintainer-Einstieg
 
+**D0 integriert · 18. Oktober 2026:** [Vertrag zu #59](../docs/veranstaltung/d0-vertrag-v1.md)
+mit Ereignisidentitäten, Offline-/Replayregeln, Ursprungsvertrauen und Migration.
+[PR #72](https://github.com/Sven401/Larp-Escape/pull/72) übernimmt den fachlich
+nachgeprüften Inhalt `a9481e0` auf Basis `5f90d10` samt dieser Statusfortschreibung.
+Quelle: ausdrücklicher Merge-/Projektstandsauftrag vom 18.10.2026;
+[Review, 111 Modellfälle und offene Implementierungstore](D0-REVIEW-2026-10-18.md).
+Das D0-Spezifikationspaket ist abgeschlossen; D0-G1–G5 sowie Implementierungs-
+und Gerätenachweise bleiben offen. Tatsächlicher Mergecommit und neue CI: PR #72/#25.
+
 **Integration abgeschlossen · 18. Oktober 2026:** [geprüfte PR-Stände,
 Konfliktentscheidungen und Prüftore](INTEGRATION-2026-10-18.md).
 [PR #69](https://github.com/Sven401/Larp-Escape/pull/69) hat #58/#64/#65/#66/#68
@@ -12,7 +21,8 @@ ergänzen die bisherigen Teilbelege. Gesamtspiel, Reichweite und Dauerlast bleib
 **Neue verbindliche Produktentscheidung · 18. Oktober 2026:** [VA-01](../docs/veranstaltungsarchitektur.md) legt autonome Boxen, BLE-Bedienung je Box, unterbrechbare ESP-NOW-/WLAN-Kommunikation und die Zentrale ohne Betriebszwang fest. [Vertrags-/Backlogmatrix](../docs/veranstaltungsarchitektur-umsetzung.md), neue Pakete #59–#63. Zugangskonzept PR #58 bleibt ergänzend maßgeblich. **Architektur-Soll; keine Implementierung oder neue Geräteabnahme.**
 
 Stand: **18. Oktober 2026**. Mandat: [AGENTS.md](../AGENTS.md).
-Quelle dieser Aktualisierung: beauftragter Merge von #69 und Planabgleich;
+Quelle dieser Aktualisierung: beauftragter Merge von #72 und Projektstandsabgleich.
+Vorheriger Integrationsabschluss: beauftragter Merge von #69 und Planabgleich;
 [Integrationsabschluss](INTEGRATION-2026-10-18.md). Frühere Hygiene:
 [Prüfbericht und Bestandsaufnahme](REPOSITORY-HYGIENE-2026-10-18.md).
 
@@ -23,9 +33,11 @@ und offenen Abnahmekriterien. **Sollkonzept, keine Implementierung.**
 
 ## Aktuelle Arbeitsbasis
 
-- **Belegt:** Zielbasis nach Merge und frischem Fetch am 18.10.2026:
-  `0b0843d5fce475d14705c42c21f4f8bf4314df30`, einschließlich #56
-  (Baugruppenkonsolidierung), #57 (Hygiene), #67 (Hardwareplanung) und #69.
+- **Belegt:** PR #72 übernimmt D0 einschließlich fachlicher Korrekturen
+  (Inhaltsstand `a9481e0`) in den kuratierten Integrationsbranch. Ausgangsbasis
+  nach frischem Fetch am 18.10.2026: `5f90d109e3589d74d73ac26f859dcd76c2902439`,
+  einschließlich #56 (Baugruppenkonsolidierung), #57 (Hygiene), #67
+  (Hardwareplanung), #69 und #70. Konkreter Merge-/CI-Beleg im Projektplan #25.
   Die frühere #56-Basis `784984d` bleibt Bezug der historischen CI unten.
 - LED, Wake, Matrix, Audio und NFC sind auf dem
   [gemeinsamen V2-Vertrag](../docs/led/ble-wire-v2.md) zusammengeführt.
@@ -46,9 +58,11 @@ und offenen Abnahmekriterien. **Sollkonzept, keine Implementierung.**
 Planung. [#53](https://github.com/Sven401/Larp-Escape/issues/53) dokumentiert
 abgeschlossene Softwarekonsolidierung und Integration durch #56.
 
-- **Ohne Hardware nächster Architekturschritt #59 / D0:** Ereigniskennungen,
-  Offline-Regeln, Ursprung/Vertrauen und Migration konkretisieren, abgestimmt
-  mit #28. D1–D4 bleiben Folgearbeit; App-Messjournal und Funkprobe schließen
+- **D0 #59 abgeschlossen als Spezifikationspaket:** Nach Übernahme von #72
+  D0-G1–G5 in #28/D1/D2/#30/#31/D3/D4 erfüllen. D1/D2 können nun gegen den
+  integrierten Vertrag konkretisiert werden; die Zugangsspur #27 → #28 → #37
+  bleibt eigenständig. Kein Beginn dieser Folgearbeiten durch den Mergeauftrag.
+  D1–D4 bleiben offen; App-Messjournal und Funkprobe schließen
   weder dauerhaften Box-Spielfortschritt noch Veranstaltungsbetrieb ab.
 
 - **Gemeinsame Geräteabnahme offen:** passendes V2-App-/Firmwarepaar gezielt

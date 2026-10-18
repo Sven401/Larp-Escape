@@ -1,5 +1,14 @@
 # Verbindliche Entscheidung: dezentrale Veranstaltungsarchitektur
 
+Technische Ausarbeitung auf Integrationsbasis `5f90d10`:
+[D0 v1: Identitäten, Ereignisse und Offline-Regeln](veranstaltung/d0-vertrag-v1.md),
+[Format, Ursprungsvertrauen und Migration](veranstaltung/d0-sicherheit-migration-v1.md).
+Status: D0-Spezifikation #59 einschließlich fachlicher Korrekturen über
+[PR #72](https://github.com/Sven401/Larp-Escape/pull/72) integriert; keine
+Implementierung. D0-G1–G5 und D1–D4 bleiben offen. Die nachfolgenden
+Beschluss-/Basisangaben bewahren die Herkunft von VA-01; #58/#64 sind inzwischen
+über #69 integriert, der Integrationsabschluss über #70.
+
 **Status: bestätigt, verbindliches Architektur-Soll; Umsetzung und Abnahme offen.**
 Datum: **18. Oktober 2026**. Quelle: Nutzerimperativ „Infrastruktur ist
 unzuverlässig“, anschließende Architekturberatung und ausdrücklicher Auftrag

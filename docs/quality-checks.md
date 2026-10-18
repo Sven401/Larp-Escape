@@ -62,6 +62,11 @@ Die Alternative wird nicht als zweiter Workflow oder zweite Prüfanleitung gepfl
 
 ## Lokal ausführen
 
+Das [D0-Vertragsmodell](veranstaltung/d0-vertrag-v1.md) ist hardwarefrei und
+benötigt nur die Python-Standardbibliothek: `python scripts/check_d0_contract.py`.
+Es prüft die versionierten semantischen Gegenbeispiele, keine Signaturen,
+CBOR-Bytes, Flashdurabilität oder installierte Produktfunktionen.
+
 Aus einem sauberen Checkout unter Windows mit Python und PlatformIO 6.2.0.
 Die folgenden Prüfungen laufen ohne angeschlossene Hardware. Alle nativen
 Befehle müssen mit Exitcode 0 enden; bei Fehlern nicht einfach den nächsten
