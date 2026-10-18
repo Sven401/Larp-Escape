@@ -27,5 +27,15 @@
       "width": 853,
       "height": 1844
     }
-  ]
+  ],
+  "revision": {
+    "status": "awaiting-user-review",
+    "file": "veranstaltung-station-v2.png",
+    "source_generation": "exec-1aa6d3e3-d6df-43c3-930b-93649248950c.png",
+    "sha256": "943ad3c21eb71aff772f992debe01591ec4fe2a7bc20dead4bcee416ddac4992",
+    "dimensions": [
+      853,
+      1844
+    ]
+  }
 }

@@ -4,6 +4,13 @@
 Datum: 18. Oktober 2026. Auftrag und Sitzung: siehe [Rollenvertrag](ROLLE.md).
 Geprüfte Quellbasis: `7e72411bb1c416b5864036c79a1e17d9cf46b5ac`.
 
+## Aktuelle Entwurfsfortschreibung
+
+Die Nutzerkorrektur zum Veranstaltungskontext und der überarbeitete Bildentwurf
+stehen in [Entwurf v2](REVISION-VERANSTALTUNG.md). Veranstaltung und Station
+stehen in der Produktbedienung im Vordergrund; die generischen Bestandsbegriffe
+unten bleiben technische Herkunft. Visuelle Bestätigung vor Figma/Prototyp offen.
+
 ## Brief
 
 Nutzer: Spielleitung mit Android-Handy an einer lokalen Box. Ziel: eine gefundene
