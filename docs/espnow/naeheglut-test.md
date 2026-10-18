@@ -1,10 +1,12 @@
 # Näheglut mit ESP-NOW: kurzer Geh- und Ausfallversuch
 
-Stand: **18. Oktober 2026**. Status: **vorbereitet, Durchführung separat**.
+Stand: **18. Oktober 2026**. Status: **Vorabplan; drei Laboraufnahmen inzwischen abgeschlossen**.
 Auftrag: Näheglut gegen den bereits bekannten Powerbank-ESP
-`A8:42:E3:CE:DE:D8` erproben. Dieser Plan behauptet keine neue Installation,
-Gerätebeobachtung oder Abnahme. Die konkreten Anweisungen an den Nutzer folgen
-erst, wenn Aufnahme, Steuerung und Stop am Messplatz bereit sind.
+`A8:42:E3:CE:DE:D8` erproben. Der [Ergebnisbericht](naeheglut-result-2026-10-18.md)
+führt reale Funk-/Stopnachweise, zwei offene Rechenabweichungen, negative optische
+Stopkriterien und den verifizierten Rückweg. Nutzerurteil und vollständige
+optische Abnahme bleiben offen. Der folgende Vorabplan bleibt als Maßstab erhalten;
+abweichender tatsächlicher Ablauf und Ergebnisgrenzen stehen im Bericht.
 
 ## Umfang und wiederverwendete Grundlage
 

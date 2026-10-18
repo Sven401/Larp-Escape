@@ -1,89 +1,87 @@
 # Näheglut mit echtem Funkwert · 18. Oktober 2026
 
-Status: **Laboranbindung softwaregeprüft; neue Papier-Kamerakalibrierung untersucht;
-Gehversuch mit dem Powerbank-ESP wartet auf die Bereitschaft des Nutzers.**
-Dies ist ein laufender Arbeitsstand, kein abgeschlossener Geräte- oder Produktnachweis.
+Status: **Drei Laborläufe ausgewertet; ursprüngliche Boxinstallation vollständig
+wiederhergestellt und verifiziert. Optische Abnahme bleibt eingeschränkt/offen.**
+[Ergebnisbericht und Diagramm](../docs/espnow/naeheglut-result-2026-10-18.md),
+[Prüfplan](../docs/espnow/naeheglut-test.md),
+[Papier-Kamerakalibrierung](../docs/led/paper-camera-calibration-2026-10-18.md).
 
-## Auftrag und Arbeitsbasis
+## Auftrag, geprüfter Stand und Ergebnis
 
-Der Nutzer beauftragt den neuen Näheglut-Effekt gegen denselben Powerbank-ESP
-wie beim früheren Funkel-Gehversuch. Vorher verlangt er wegen neu aufgelegtem
-weißem transparentem Papier die Prüfung der Kamerakalibrierung.
-Der frühere Rollenauftrag und Merge #74/#75 sind abgeschlossen; dieser Zusatz
-ist eine neue Laborprüfung ohne Änderung des produktiven Spieladapters.
+Der Nutzer beauftragte Näheglut gegen denselben Powerbank-ESP wie beim früheren
+Funkel-Gehversuch und vorher eine neue Kameraprüfung wegen weißem transparentem
+Papier auf den LEDs. Der frühere Rollenauftrag sowie Merge #74/#75 bleiben
+abgeschlossen. Der Zusatz ist ein Laborversuch ohne Produkt-Spieladapter.
 
-Arbeitsbranch `codex/naeheglut-espnow-test` im bestehenden Worktree
-`C:/Users/seide/.codex/worktrees/led-effekt-architekt/Larp Escape`, Basis
-`42d986ed353277d861df07ae59bd1c06345d3b52` plus eigener Arbeitsbaum.
-PR-Ziel bleibt `plan/projektuebergabe-kuratierter-stand`; kein neuer Mergeauftrag.
+Geprüfter Quellcommit: `e26bd93dc13ffd7aba0918df3c4c2c5246ef73a7`, Branch
+`codex/naeheglut-espnow-test`, Basis `42d986ed353277d861df07ae59bd1c06345d3b52`.
+Worktree `C:/Users/seide/.codex/worktrees/led-effekt-architekt/Larp Escape`.
+Quell-/Binaryfingerabdrücke stehen zusätzlich in den privaten Belegen.
 Die fremde `.vscode/extensions.json` im Hauptcheckout bleibt unangetastet.
+PR-Ziel ist `plan/projektuebergabe-kuratierter-stand`; kein neuer Mergeauftrag.
 
-## Geprüfter und offener Stand
-
-- [Versuchsplan](../docs/espnow/naeheglut-test.md): bestehender Funkpfad liefert
-  gefilterten ganzzahligen RSSI; `p = clamp(20 * (RSSI + 90), 0, 1000)`.
-  Frische unter 3000 ms ab letzter gültiger Antwort; Veraltung blendet aus.
-  Gezielter Stop verhindert automatische Updates und Wiederanlauf.
-- Neue isolierte Umgebung `larp-led-camera-rssi-lab`, separater Messauftrag
-  und Hostadapter `scripts/led_camera_rssi.py`. Produktpfad, Funkkern,
-  Filter und Näheglut-Rechenkern unverändert.
-- Softwareprüfung vor Installation: 10 neue RSSI-Laborfälle, 9 bestehende
-  Camera-Fälle sowie 7 NearGlow-Gruppen mit 2002 Werte-/Kurvenfällen bestanden.
-  Host: 14 neue RSSI- und 13 bestehende Fälle bestanden. Diese Ausgaben liegen
-  im Sitzungsprotokoll; keine separate Testlogdatei behauptet.
+- Separate Variante `larp-led-camera-rssi-lab` und Hostadapter
+  `scripts/led_camera_rssi.py`. Originalfunkkern, Filter und Näheglut-Kern
+  unverändert; normale GLOW-Aufträge koppeln reale Messungen an den Effekt.
+- `p=clamp(20*(ganzzahliger Filter-RSSI+90),0,1000)`, Frische unter 3000 ms,
+  Ausblenden bei Veraltung; gezielter Stop sperrt weitere automatische Updates.
+- Softwareprüfung: 10 neue RSSI-Laborfälle, 9 Camera-Fälle, 7 NearGlow-Gruppen
+  mit 2002 Werte-/Kurvenfällen sowie 14 neue RSSI- und 13 bestehende Hostfälle
+  bestanden. Ausgaben im Sitzungsprotokoll; keine separate Testlogdatei behauptet.
   RF-Laborbuild erfolgreich, RAM 45336/Flash 710985 Byte.
-- [Papier-Kamerabefund](../docs/led/paper-camera-calibration-2026-10-18.md):
-  neue 23 Bereiche; Voll-CAL bei Belichtung −8 bestanden. Goldmaximum in den
-  festen Weiß-CAL-Masken nur 12,58–21,55 Kameracodes über Hintergrund;
-  19/23 unterschreiten das vorab festgelegte 20-Code-Kriterium. Keine volle
-  quantitative Goldfreigabe. Deutliche Helligkeitsänderungen, Drift und Ende
-  sind beobachtbar; unterste Stufen und harte Timing-/Flimmeraussagen bleiben offen.
-- Der vollständige Goldlauf `paper-gold-e8-complete` endete mit bestätigtem
-  schwarzem Transfer und DONE. Kein offener Aufnahmeprozess. Echter RSSI-
-  Gehversuch und Ausfall/Wiederkehr-Lauf haben noch nicht begonnen.
+- `walk01`: 160 gültige Funkresultate; verspätete Chat-Phasensteuerung,
+  weitgehend obere Begrenzung und nur globaler Abschluss.
+- `walk02`: 142 gültige Funkresultate, Filter −82…−34 dBm, p 160…1000;
+  Hinweg und begonnene Rückkehr erfasst. Gezielter Stop trotz weiterer Antworten.
+- `outage01`: 116 gültige und 26 Sendefehlerresultate. Nach 3016 ms ohne frischen
+  Wert valid=0; neuer Peerboot mit Zähler 1 bringt die aktive Instanz zurück.
+  Zwei gezielte Stops mit jeweils 12 weiteren gültigen Antworten ohne Auto-Update;
+  dazwischen ausdrücklich Generation 2 gestartet.
+- Alle 444 Funkresultate und 6686 Kamerabildhashes geprüft. Nominale Nachrechnung
+  der TX-Ausgabe: 6730/6732 Frames exakt; zwei Übergangsframes im Ausfalllauf
+  weichen um einen Rotcode ab. Tatsächliche Apply-/Render-Zeitpunkte fehlen;
+  diese Zeitstempelgrenze ist eine mögliche Einordnung, keine bewiesene Ursache.
+- Kamera-Dunkelkriterium nach gezieltem Stop: walk02 0/23, outage01 je 15/23
+  Messflächen bestanden. Hintergrundabweichung bleibt sichtbar; keine optische
+  Stopfreigabe aus digitalen Schwarzframes ableiten. Gold-Feinstufen und
+  lückenloses Timing/Flimmern bleiben durch den Kalibrierbefund eingeschränkt.
 
-## Geräte und verpflichtender Rückweg
+## Geräte und abgeschlossener Rückweg
 
-LED-Box `A8:42:E3:CD:4B:18` an COM3. Frische 4-MiB-Sicherung am selben Chip
-vor Installation verifiziert, SHA-256
+LED-Box `A8:42:E3:CD:4B:18` an COM3, Powerbank-Peer `A8:42:E3:CE:DE:D8`, Kanal 1.
+Peerfirmware unverändert. Die vor dem Versuch frisch am selben Chip verifizierte
+4-MiB-Sicherung hat SHA-256
 `b703f4b13aaaaa3e8c3bc68d8e8134b1cec0a77df957ea06175ac147d1d03c71`.
-Sie entspricht der zuvor wiederhergestellten Originalinstallation.
-Nur App ab `0x10000` wurde temporär ersetzt; Boot-/Schlüsselbereiche geprüft
-unverändert. Aktuell ist die Laborfirmware installiert und nach STOP inaktiv.
-Binary-SHA-256:
+Temporäres Laborbinary:
 `8c8ee844b9f7f18bfe20846f0a07946352677fdae27a998eab4e306f7fc0d27a`.
 
-Powerbank-Peer `A8:42:E3:CE:DE:D8`, Kanal 1; keine Peerinstallation vorgenommen.
-Historische COM-Nummern sind keine Geräteidentität.
+Nach allen Aufnahmen wurde die Original-App zurückgeschrieben. `restore.json`
+bestätigt Appverifikation, unveränderte Boot-/Schlüsselbereiche, Verifikation
+des vollständigen Flashs gegen die Sicherung und beobachteten Originalboot.
+**Keine Laborfirmware mehr installiert; kein Aufnahmeprozess offen.**
 
-Private Belege und Werkzeug unter
-`C:/Dev/Larp Escape/private/naeheglut-espnow-20261018/`:
-`source-manifest.json`, `before-full-flash.bin`, `backup.json`, `install.json`,
-`lab-firmware.bin/.elf`, `rssi-lab-build.log`, Papieraufnahmen und Auswertung.
-Kamera-Python: `C:/Dev/Larp Escape/private/led-live-20261018/venv/Scripts/python.exe`.
-Nach den temporären Versuchen `device.py restore --port COM3` aus diesem
-Belegordner ausführen: chipgebundene Original-App wiederherstellen,
-Boot/Schlüssel vergleichen und vollständige 4 MiB gegen Sicherung verifizieren.
-Der Rückweg dieses Zusatzversuchs ist **noch offen**, nicht durch den alten
-Wiederherstellungsbeleg ersetzt.
+Private Rohbelege: `C:/Dev/Larp Escape/private/naeheglut-espnow-20261018/`.
+Enthalten sind chipgebundene Sicherungs-/Restorebelege, Quellmanifest/Binary/ELF,
+Papierkalibrierung und Goldreferenz, drei Laufordner mit Aufträgen/Funk/TX/Kamera,
+`walk-analysis.json`, CSVs/Manifeste und editierbare Analyse-/Ablaufquellen.
+Öffentliche Diagrammdaten und Plotquelle liegen unter
+`docs/espnow/probes/naeheglut/`; Rohbilder und Flashmaterial bleiben privat.
 
-## Nächster konkreter Schritt
+## Offene Punkte und konkrete Fortsetzung
 
-Die Bereitschaftsfrage an den Nutzer ist gestellt; erst nach seiner Rückmeldung
-den abgestimmten kurzen Gehversuch beginnen. Box, Kamera und Papier nicht bewegen.
-1280×720, Belichtung −8, `paper-rois-e8.json`, derselbe Binaryhash.
-Interaktiver Host mit `--rssi-peer A8:42:E3:CE:DE:D8 --rssi-slot 0`;
-bewusster Start mit p0/valid0, RGB(24,8,0), Gain1000, Smoothstep1000ms.
-Bewegungsphasen gemeinsam markieren; danach Ausfall/Wiederkehr und Stop prüfen.
-Keine Meterkalibrierung oder Erfolgskurve voraussetzen.
+1. Nutzerurteil zu Ausblenden, Wiederkehr, Restlicht, Sprüngen und Flackern wurde
+   erfragt und ist noch offen. Nicht als optische Zustimmung auslegen.
+2. Vollständige kontinuierliche Rückkehr bis zum Nahplateau ist im begrenzten
+   Gehfenster nicht belegt. Eine eventuelle Folgeprüfung benötigt einen zum
+   tatsächlichen Weg passenden Ablauf; Chatantwortzeiten sind kein Messtakt.
+3. Für quantitative optische Abschaltung die veränderte Schwarzbasis untersuchen;
+   Umgebung, Schatten oder Kameraautomatik sind bislang nur mögliche Ursachen.
+   Vorab festgelegte Masken/Schwellen nicht nachträglich passend machen.
+4. Zwei ±1-Rotabweichungen brauchen bei Bedarf einen separaten Nachweis genauer
+   Apply-/Render-Zeitpunkte. Keine nachträgliche Zeitverschiebung zur Ergebnisrettung.
+5. Produktadapter, echte Spielregeln, kalibrierte Meterentfernung, Reichweite,
+   Dauerbetrieb und Gesamtspiel bleiben außerhalb dieses Zusatzversuchs.
 
-Bei automatischer Ablaufsteuerung stdout des Hosts direkt in Datei schreiben
-oder ständig lesen: ein nicht geleerter PIPE blockierte einen verworfenen
-Goldversuch bis zum KEEP-Watchdog. Der abgeschlossene Wiederholungslauf verwendet
-direkte Dateiprotokollierung. Eine weitere Vorprobe scheiterte vor COM-Öffnung
-im eingeschränkten Ausführungskontext; sie enthält keinen Geräte-/Optiknachweis.
-
-Danach Funk-/Auftrags-/TX-Spur und Kamera getrennt auswerten, Nutzerurteil
-festhalten, Originalzustand verifiziert wiederherstellen, Dokumentation und
-Quellfingerabdrücke abschließen und eigene Änderungen als PR vorlegen.
-Rohbilder und Flash-/Schlüsselmaterial bleiben privat.
+Die beauftragte Testanbindung samt ehrlichen Teilbefunden als PR vorlegen;
+spätere Nutzerbeobachtungen an diesem Ergebnis ergänzen. Ein weiterer Upload
+oder Merge benötigt seinen passenden konkreten Auftrag.
