@@ -1,3 +1,39 @@
+# Vorläufiger Hardwarevertrag — fortgeschriebener Prüfstand
+
+**Stand: 18. Oktober 2026. Status: funktionale Teilbefunde belegt;
+elektrische Gesamtfreigabe und Fertigungsfreigabe offen.** Quellenabgleich am
+Integrationscommit `d61f77fe753c1a837c13a67edb282d6a79610a30`.
+Die [Hardwareplanung](HARDWAREPLANUNG.md) führt alle acht Ergebnis-IDs,
+Originalberichte, Quellkonfigurationen und verbleibenden Aufgaben für #39/#54.
+Kein neuer Gerätetest dieser Fortschreibung.
+
+| Schnittstelle | Übernommener Stand | Verbleibender Hardwarebeleg |
+| --- | --- | --- |
+| LED | GPIO15 nutzerbestätigt; vorhandener 23-LED-Streifen und sichtbare Effekte/Stop/selbstständiges Aus am Prüfstand `7d1f45b` belegt (LED-01). | LED-Chip, Pegel, reale Versorgungs-/Lastwerte und Positionen; GPIO4-Zeichnungen bleiben historische Entwürfe. |
+| Wake | Vier Sensorpositionen funktional 2/1/4/3 zugeordnet (`ca86b93`, WAKE-01); spätere gespeicherte 2/3/4/1 ist eine Bedienkonfiguration. Quelle `0x20 B7/B6/B4/B3`, HIGH aktiv. | Chipmarking, reale Wake-1/B7-Leitung und elektrische Eignung. Funktionale Reaktion hebt den dokumentierten B7-Konflikt nicht auf. |
+| Matrix | MATRIX-01: 68 Koordinaten/110 Kontaktfolgen, neun unbestückt; C3/G3/H3/A8 gezielt offen. Aktueller Scanner: Spalten LOW/sonst hochohmig, Zeilen mit Pull-up lesen. | Räumliche Zuordnung, Fehlerursache und getrennte `0x21 B7`-Eignung; vorhandenen Lauf erhalten, kein pauschaler Vollrundgang. |
+| Audio | Nutzerbestätigt: DFPlayer-RX an ESP-TX26, DFPlayer-TX an ESP-RX25, BUSY an GPIO14. Nach zusätzlicher Audioversorgung Track 101 hörbar; BUSY LOW beim Spielen/HIGH bei Stille (AUDIO-01). | Versorgungszweig/Lastwerte, Verstärker-/Lautsprecherweg und GPIO13/WAKE. Der aktuelle Baugruppenpfad lässt GPIO13 unberührt. R3 kurzes natürliches Titelende ausdrücklich ausgenommen. |
+| NFC | SCK16/MISO17/MOSI23/SS4 funktional am Aufbau; HCE, ein NTAG213-Rundlauf, Erstschreibkorrektur und ein vollständiger App-Rundlauf belegt (NFC-01 bis NFC-04). | Stecker/Leitungen/Pegel, weitere Tagtypen und Fehlerfälle; IRQ/Reset nicht genutzt und nicht bestätigt. |
+| Bus/Versorgung/CAD | Quellen- und Funktionsstand getrennt erhalten. Zusätzliche Audioversorgung ist Nutzerbeobachtung. | Expander-VCC/Pull-ups/Adressierung, Steckerorientierung, gemeinsame Masse, USB-Rückspeisung/Schutz/Lastreserve, native Netzliste/ERC/PCB/DRC und zugeordnete Revision. |
+
+Die früher offene LED-, Audio- und NFC-Funktion sowie Wake-Positionen sind im
+oben begrenzten Umfang inzwischen belegt. Die elektrische Freigabe bleibt offen.
+Die am 13. Oktober verworfene Diagnose-App und der folgende alte 500-ms-
+Einzel-LED-Entwurf sind keine aktuellen Produktaufträge oder nachträglichen
+Bedingungen für die anerkannten Tests. Aktuelle Restabnahme und Quellen:
+[Hardwareplanung](HARDWAREPLANUNG.md), [Maintainer-Einstieg](../handoff/MAINTAINER.md).
+
+## Historischer Vertrag und Messentwurf vom 11. Oktober 2026
+
+Der folgende Wortlaut bewahrt Herkunft und damalige Sperren. Aussagen wie
+„Funktion offen“, „physische Nummerierung offen“ und „beide Neuzuordnungen“
+sind der damalige Stand. Für heutige Arbeiten gelten die Fortschreibung oben
+und ihre konkreten Restnachweise; ein neuer Pinvertrag folgt erst aus
+identifizierten Bauteilen und gemeinsamer Hardware-/Firmwareprüfung.
+
+<details>
+<summary>Historischer Wortlaut v0.1.1 mit damaligem Diagnoseentwurf</summary>
+
 # Vorläufiger Hardwarevertrag v0.1.1 und Messauftrag
 
 **Stand:** 11. Oktober 2026. **Status:** Quellen- und Nutzerbefund, gesperrt für echte
@@ -97,3 +133,5 @@ Versorgung und USB trennen. Kein Codex-gesteuerter Test, Upload oder Restore.
 LED-Modul und Pegelanforderung, beide MCP-B7-Neuzuordnungen, Matrix-/Wake-
 Polarität, CAD-Netzliste, ERC, PCB-Quelle und DRC. Dieser Quellenabgleich
 enthält keine CAD-Designregelprüfung und keine Fertigungsfreigabe.
+
+</details>
