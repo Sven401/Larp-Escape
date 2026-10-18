@@ -17,5 +17,6 @@ with tempfile.TemporaryDirectory(prefix="camera-loop-") as temp:
                     "-I", str(root / "tests/camera_stubs"), "-I", str(root / "include"),
                     str(root / "tests/test_camera_lab.cpp"), str(root / "src/LedOutput.cpp"),
                     "-o", str(exe)], env=environment, check=True)
-    for case in ("sequence", "watchdog", "stop-inflight", "twinkle", "burst", "ripple"):
+    for case in ("sequence", "watchdog", "stop-inflight", "twinkle", "burst", "ripple",
+                 "resonance", "resonance-transitions", "resonance-colors", "resonance-watchdog"):
         subprocess.run([str(exe), case], env=environment, check=True)
