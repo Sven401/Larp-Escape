@@ -1,5 +1,11 @@
 # Identitätslabels und ausdrückliche Spielleitungszuordnung
 
+**Abgestimmtes Produkt-Soll, 18. Oktober 2026:**
+[Veranstaltungszugang](veranstaltungszugang.md) ergänzt die Anforderungen an
+Rechteverwaltung, Einrichtungsschlüssel und Wiederherstellung. Die nachfolgenden
+lokalen Administrationsports und vier Plätze beschreiben den bisherigen Kern,
+nicht die Umsetzung dieser neuen Anforderungen.
+
 Aktuelle Fortsetzung: [Verifizierter Workerauftrag zum Originalaktor](peer-proof-grant-v1.md).
 Die nachfolgenden Prüfzahlen und offenen Punkte beschreiben den jeweiligen
 historischen Schnitt; dessen Nachweise werden hier nicht neu behauptet.

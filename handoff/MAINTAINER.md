@@ -4,6 +4,11 @@ Stand: **18. Oktober 2026**. Mandat: [AGENTS.md](../AGENTS.md).
 Quelle dieser Aktualisierung: beauftragte Repository-Hygiene;
 [Prüfbericht und Bestandsaufnahme](REPOSITORY-HYGIENE-2026-10-18.md).
 
+Aktuelle fachliche Ergänzung vom **18. Oktober 2026**:
+[abgestimmtes veranstaltungsbezogenes Zugangskonzept](../docs/companion/veranstaltungszugang.md)
+mit Rechteverwaltung, Schlüsselwechsel, Wiederherstellung, Unterbrechungspunkten
+und offenen Abnahmekriterien. **Sollkonzept, keine Implementierung.**
+
 ## Aktuelle Arbeitsbasis
 
 - **Belegt:** [PR #56](https://github.com/Sven401/Larp-Escape/pull/56) ist
