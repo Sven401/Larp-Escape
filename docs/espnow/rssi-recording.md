@@ -1,4 +1,4 @@
-# Vollständiges Messprotokoll und geplanter Kameravergleich
+# Vollständiges Messprotokoll und Kameravergleich
 
 ## Geprüfter Stand
 
@@ -19,7 +19,8 @@ Anfragen, 25 Ergebnisse mit Ausgang 0, keine offenen Anfragen, 52 Ereignisse
 einschließlich Start und Stop-Anforderung. CSV SHA-256
 `b2d7a08ae3277b5f97dd963adf4269706fe9ed9fa38c6b46c1c19afd06e55c6b`.
 Belege: `private/espnow-app/journal-install-20261018/`, CSV/Prüfsumme unter
-`exports/123917-386726/`. Neuer Nutzerlauf und Kameraaufnahme noch offen.
+`exports/123917-386726/`. Dies war der technische Probelauf; der spätere
+vollständige Gehversuch ist im unten verlinkten Messbericht dokumentiert.
 Nächster Start erzeugt eine eigene Datei; der technische Probelauf bleibt erhalten.
 
 ## Auftrag und Ablauf
@@ -63,31 +64,20 @@ Der Debug-Zugang ist aktuell verfügbar; ohne USB-Verbindung zum Handy bleibt da
 Protokoll trotzdem dort erhalten. Für spätere Release-Nutzung wäre ein eigener
 Exportweg eine gesonderte Erweiterung.
 
-## USB-Kamera: vorgeschlagener nächster Schritt
+## USB-Kamera: abgeschlossener Gehversuch
 
-Am Rechner als **HD Webcam USB**, VID `0C45`, PID `6366` erkannt. Noch keine
-Bildaufnahme, unterstützte Bildrate oder manuelle Belichtungssteuerung geprüft.
-In den geprüften Laufzeitpfaden sind FFmpeg/OpenCV aktuell nicht verfügbar.
-Die Kameraaufzeichnung/-auswertung ist deshalb noch nicht eingerichtet.
+**Belegt, 18.10.2026:** Kameraaufnahme und Auswertung sind inzwischen eingerichtet.
+Der Nutzer hat den kombinierten Gehversuch durchgeführt und beendet. Sämtliche
+92 Anfragen und Ergebnisse wurden ausgelesen; der Kameraverlauf bestätigt
+Abdunkeln und Wiederaufhellen sowie das abschließende Aus.
 
-Geeigneter Weg: lokale Videoaufnahme über Windows DirectShow, z. B. mit
-[FFmpeg](https://ffmpeg.org/ffmpeg-devices.html#dshow). Vor dem nächsten
-gemeinsamen Videolauf zunächst kurze Probeaufnahme und unterstützte Einstellungen
-prüfen. Kamera fest auf die LEDs ausrichten, Umgebungslicht stabil halten,
-Überbelichtung vermeiden und automatische Belichtung/Verstärkung nach Möglichkeit
-ausschalten. Andernfalls ist ein quantitativer Helligkeitsvergleich eingeschränkt.
+Der [vollständige Messbericht](distance-camera-result-2026-10-18.md) ist die
+kanonische Quelle für Zeitabgleich, Ergebniszahlen, Bildprüfungen, Aufnahme-
+bedingungen und Grenzen. Die isolierte Kalibrierung stammt aus dem getrennten
+[Kamera-PR #68](https://github.com/Sven401/Larp-Escape/pull/68).
 
-Video vor dem App-Test starten. Handy-/PC-Zeit mit gemessener Unsicherheit
-abgleichen und eine gemeinsame sichtbare Ein-/Aus-Zeitmarke aufzeichnen.
-Die Kamerazeitachse dann den protokollierten Start-/LED-Ereignissen zuordnen.
-Nach Testende Video und CSV unverändert sichern. Ohne diese Synchronisation
-keine exakte Zuordnung einzelner Messpunkte behaupten.
-
-Aus jedem Videobild einen festen LED-Ausschnitt auswerten, Hintergrund abziehen
-und relative Helligkeit bestimmen. Über etwa zwei Sekunden mitteln, damit die
-normalen Funkelpulse nicht als Regelungsfehler erscheinen. Roh-RSSI, geglätteten
-RSSI, Zielintensität und Kamerakurve gemeinsam darstellen; zeitlichen Nachlauf,
-Ausreißer, Clipping und fehlende Bilder markieren. Zielintensität ist ein Sollwert,
-kein Messwert des tatsächlich ausgegebenen LED-Stroms. Kamerawerte sind ohne
-Kalibrierung relative Helligkeit, keine Luxmessung und nicht zwingend linear zur
-Prozentanzeige. Messwerte bei bekannten Abständen bleiben eine eigene Beobachtung.
+Die frühere Einschätzung fehlender OpenCV-/Aufnahmemöglichkeiten ist durch den
+inzwischen eingerichteten Kamera-Messweg überholt. In diesem Versuch wurden
+feste LED-Aufnahmeflächen bei rund 30 Bildern/s und regelmäßige Kontextbilder
+gespeichert. Kein lückenloser Vollbildfilm und keine Luxmessung. RSSI-Zielwert
+und relative Kamerahelligkeit haben unterschiedliche Prozentbezüge.

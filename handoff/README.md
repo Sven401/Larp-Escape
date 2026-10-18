@@ -2,6 +2,8 @@
 
 ## Aktueller Stand · 18. Oktober 2026
 
+- [ESP-NOW-Sitzungsabschluss: RSSI, Funkelsteuerung und vollständiger Kameravergleich](ESPNOW-UEBERGABE-2026-10-18.md); eigener PR #66, noch nicht integriert.
+
 **Belegt:** [PR #56](https://github.com/Sven401/Larp-Escape/pull/56) ist in
 `plan/projektuebergabe-kuratierter-stand` bei
 `784984da05249c77525273c658405d2f3b8e8e24` integriert. LED, Wake, Matrix,
