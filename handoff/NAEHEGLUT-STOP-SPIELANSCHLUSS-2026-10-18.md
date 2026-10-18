@@ -4,6 +4,31 @@
 nach vollständig grüner CI in `plan/projektuebergabe-kuratierter-stand` gemergt.
 Operativer Projektstand: [Issue #25](https://github.com/Sven401/Larp-Escape/issues/25).
 
+## Abgeschlossener Merge von PR #83
+
+**Belegt · 18.10.2026:** [PR #83](https://github.com/Sven401/Larp-Escape/pull/83)
+ist nach **9/9 erfolgreichen PR-CI-Jobs** bei
+[`9d8bf44aff9da1d4c47f109c451cb251a9d626cd`](https://github.com/Sven401/Larp-Escape/commit/9d8bf44aff9da1d4c47f109c451cb251a9d626cd)
+in `plan/projektuebergabe-kuratierter-stand` integriert. Quelle: ausdrücklicher
+Mergeauftrag und anschließend beauftragte Fortschreibung von Projektstand/Übergabe.
+
+- Unveränderter geprüfter Head: `0fb6ab096ebf0858121875b1e028222bc60f35d1`.
+- Frischer Fetch bestätigt Eltern `8648f573ed7bbd2e76530b15d3f5883945b7c1a4`
+  und `0fb6ab096ebf0858121875b1e028222bc60f35d1`.
+- Vollständiger Dateibaum von Head und Merge identisch:
+  `975e7e043788a98c31b8680f9f83f668ade1122b`; keine Integrationsänderung.
+- Abgeschlossene PR-CI: [Quality, 3/3](https://github.com/Sven401/Larp-Escape/actions/runs/39168415055),
+  [LED/Android/Kamera, 4/4](https://github.com/Sven401/Larp-Escape/actions/runs/39168415043),
+  [NFC, 2/2](https://github.com/Sven401/Larp-Escape/actions/runs/39168415029).
+  Vor Merge keine offenen Reviewthreads oder Änderungsforderungen.
+
+PR #83 integriert ausschließlich die Statusfortschreibung in drei
+Übergabe-Markdown-Dateien. Die folgenden älteren Laufbelege bleiben ihren
+jeweiligen Commits zugeordnet. Die erfolgreiche #83-PR-CI ist kein Nachweis
+für eigene spätere Push-Läufe am Merge oder an dieser erneuten Dokumentation.
+Physische Dunkelursache/optische Freigabe, Pausenregel, Stations-/Quellenzuordnung
+und Produktadapter bleiben offen; keine neue Produkt- oder Geräteabnahme.
+
 ## Integration und Prüfstand
 
 [PR #81](https://github.com/Sven401/Larp-Escape/pull/81) ist bei
@@ -45,14 +70,14 @@ umbenannt. Kein fehlgeschlagener oder noch laufender Job in diesen sechs Läufen
 Der Dokumentationsabschluss [PR #82](https://github.com/Sven401/Larp-Escape/pull/82)
 ist bei `8648f573ed7bbd2e76530b15d3f5883945b7c1a4` integriert; Eltern
 `c487021` und `edde13f`, vollständiger Dateibaum identisch zum Dokumentationshead
-(`4b8b66035af73d811c90f443f30e63ecd864f7a5`). Diese neue Statusfortschreibung
-ändert ausschließlich drei Übergabe-Markdown-Dateien. Deren eigene neue CI ist
-ein weiterer, unabhängiger Lauf und kein rückwirkender Bestandteil dieser Tabelle.
+(`4b8b66035af73d811c90f443f30e63ecd864f7a5`). Die damals neue Statusfortschreibung
+ist inzwischen durch #83 integriert; ihre eigene erfolgreiche PR-CI steht oben
+und ist kein rückwirkender Bestandteil dieser Tabelle.
 Der operative Ablesestand steht ebenfalls in #25. Keine neue Softwareausführung,
 Geräteprüfung oder optische Freigabe durch diesen CI-Statusauftrag.
 
 Die folgende ursprüngliche Basis bezeichnet die Diagnose-/Entwurfssitzung.
-Aktuelle CI-Statusfortschreibung auf `codex/naeheglut-ci-abschluss` im
+Aktuelle Mergefortschreibung auf `codex/pr83-merge-dokumentation` im
 Worktree `C:/Users/seide/Documents/Codex/2026-10-18/m/work/naeheglut`.
 Vor Fortsetzung aktuellen Integrationsbranch, #25 und Arbeitsbaum neu prüfen.
 
