@@ -4,6 +4,10 @@
 #include <cstdlib>
 #include "CameraSequence.h"
 #include "CameraLabController.h"
+#ifdef LARP_LED_CAMERA_RSSI_LAB
+#include "CameraLabRssi.h"
+#include "EspNowRadio.h"
+#endif
 
 namespace larp { namespace led { LedBus &cameraLabBus(); }}
 using namespace larp::led;
@@ -18,6 +22,39 @@ camera::LiveController live;
 bool liveMode = false, traceLive = false;
 std::uint32_t traceRevision = 0, lastLiveSubmit = 0;
 void liveState();
+std::uint32_t loopNow = 0;
+#ifdef LARP_LED_CAMERA_RSSI_LAB
+struct LabRadio final : camera::RssiRadio {
+    void service(std::uint32_t now) override { larp::espnowradio::service(now); }
+    larp::ledwire::EspNowSnapshot snapshot() override { return larp::espnowradio::snapshot(); }
+    bool submit(const std::array<std::uint8_t, 6> &peer, std::uint32_t now) override {
+        return larp::espnowradio::submit(peer, now, true, false);
+    }
+    void cancel() override { larp::espnowradio::cancel(); }
+} labRadio;
+struct MeasureOutput final : camera::RssiObserver {
+    void measuring(const char *id, std::uint32_t sample, std::uint32_t now) override {
+        Serial.printf("MEASURING %s %lu %lu\n", id, (unsigned long)sample, (unsigned long)now);
+    }
+    void rejected(const char *id, std::uint32_t sample, const char *reason, std::uint32_t now) override {
+        Serial.printf("MEASURE_REJECT %s %lu %s %lu\n", id, (unsigned long)sample, reason, (unsigned long)now);
+    }
+    void measured(const camera::RssiResult &result) override {
+        const auto &r = result.radio;
+        Serial.printf("MEASURE %s %lu %lu %u %u %u %u %u %d %d %lu %lu ", result.token,
+                      (unsigned long)result.sample, (unsigned long)result.now,
+                      unsigned(r.outcome), unsigned(r.accepted), unsigned(r.link),
+                      unsigned(r.received), unsigned(r.rssiValid), int(r.rssi), int(r.filteredRssi),
+                      (unsigned long)r.receiverBoot, (unsigned long)r.receiverCount);
+        const char *digits = "0123456789abcdef";
+        for (const auto b : r.token) { Serial.write(digits[b >> 4]); Serial.write(digits[b & 15]); }
+        Serial.write(' ');
+        for (const auto b : r.peer) { Serial.write(digits[b >> 4]); Serial.write(digits[b & 15]); }
+        Serial.println();
+    }
+} measureOutput;
+camera::RssiController rssi(labRadio, measureOutput);
+#endif
 
 struct TraceBus final : LedBus {
     LedBus &bus = cameraLabBus();
@@ -72,6 +109,9 @@ void liveState() {
     Serial.println();
 }
 void stop(const char *reason) {
+#ifdef LARP_LED_CAMERA_RSSI_LAB
+    rssi.end(loopNow);
+#endif
     if (liveMode) {
         live.hardStop(); traceRevision = live.scene().revision(); liveState(); liveMode = false;
     }
@@ -84,9 +124,18 @@ void command(char *line) {
     if (std::strcmp(line, "HELLO") == 0) {
         Serial.printf("LARP-CAMERA/1 23 32 GPIO15 %lu %s\n",
                       (unsigned long)ESP.getSketchSize(), ESP.getSketchMD5().c_str());
-        Serial.println("LARP-LIVE/1 2 23 32"); return;
+        Serial.println("LARP-LIVE/1 2 23 32");
+#ifdef LARP_LED_CAMERA_RSSI_LAB
+        Serial.println("LARP-RSSI/1 1 2000 3000");
+#endif
+        return;
     }
     if (std::strcmp(line, "STOP") == 0) { stop("host"); return; }
+#ifdef LARP_LED_CAMERA_RSSI_LAB
+    if (std::strncmp(line, "RSSI ", 5) == 0 || std::strcmp(line, "RSSI") == 0) {
+        rssi.command(line, loopNow); return;
+    }
+#endif
     if (std::strncmp(line, "GLOW ", 5) == 0 || std::strncmp(line, "BG ", 3) == 0 ||
         std::strncmp(line, "STATUS ", 7) == 0) {
         if (!running || !liveMode) { Serial.printf("REJECT %s 0 inactive 0 %lu\n", token, (unsigned long)millis()); return; }
@@ -120,6 +169,9 @@ void command(char *line) {
         started = lastKeep = millis(); lastLiveSubmit = started - LedOutput::FrameMilliseconds;
         running = liveMode = traceLive = true; waiting = effectMode = false;
         traceRevision = live.scene().revision();
+#ifdef LARP_LED_CAMERA_RSSI_LAB
+        rssi.begin(token);
+#endif
         Serial.printf("LIVE %s %lu %lu\n", token, (unsigned long)traceRevision, (unsigned long)started);
         liveState(); return;
     }
@@ -157,9 +209,16 @@ void setup() {
     Serial.begin(115200);
     if (!engine.begin()) { Serial.println("FAULT init"); return; }
     stopPending = true;
+#ifdef LARP_LED_CAMERA_RSSI_LAB
+    if (!larp::espnowradio::begin()) Serial.println("FAULT rssi-init");
+#endif
     Serial.println("LARP-CAMERA/1 23 32 GPIO15");
 }
 void loop() {
+    loopNow = millis();
+#ifdef LARP_LED_CAMERA_RSSI_LAB
+    rssi.service(loopNow);
+#endif
     usb();
     if (running && (millis()-lastKeep > 1500 || millis()-started > 90000)) stop("watchdog");
     if (stopPending) {
