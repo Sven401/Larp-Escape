@@ -1,5 +1,9 @@
 # Resonanzkreis: Umsetzung und Geräteprüfung
 
+Historische Vergleichsbasis für den nächsten getrennten Prüflauf:
+[ursprüngliche Standby-Ripples im Live-Referenzstand](legacy-wake-ripple-analysis.md).
+Sie verwenden andere Puls-, Loslass- und Spielstartregeln als der neue Effekt.
+
 Stand: **18. Oktober 2026**. Auftrag: erster neuer LED-Effekt aus dem gemeinsam
 geschärften Entwurf. Basis: `fcb91216b335db77d07da702056d8b9b33969b9d`.
 Für den endgültigen Prüfstand wurde der inzwischen integrierte Stand
