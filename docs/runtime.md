@@ -1,5 +1,7 @@
 # Laufzeitvertrag
 
+**Neue verbindliche Zielarchitektur · 18.10.2026:** [VA-01](veranstaltungsarchitektur.md) und [Vertragsmatrix](veranstaltungsarchitektur-umsetzung.md). Lokaler Spieltakt und Ressourcenbesitzer bleiben unabhängig von Funk und Zentrale. Dauerhafte Ereignisaufnahme/-abgleich und beidseitige ESP-NOW-/WLAN-Adapter sind Folgearbeit #60/#61. Die folgenden Queue-/Sendepfade belegen noch kein dezentrales Veranstaltungssystem.
+
 **Stand:** 5. Oktober 2026. Quellcode im Arbeitsbranch ist maßgeblich; die folgenden Grenzen sind Implementierungsverträge, keine gemessenen Gerätelatenzen.
 
 ## Besitzer und Kontexte

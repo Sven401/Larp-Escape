@@ -1,5 +1,7 @@
 # Dauerhafte Profile: Zwei-Datensatz-Journal
 
+**Geltungsgrenze gemäß [VA-01](../veranstaltungsarchitektur.md) · 18.10.2026:** Dieses Journal sichert Profile, keinen dauerhaften Spielfortschritt und keine veranstaltungsweiten Ereignisse. Eigenes Fortschritts-/Ereignisjournal mit Abgleich, Wiederholungserkennung und Wiederanlauf folgt in #60. [Vertrags-/Arbeitspaketmatrix](../veranstaltungsarchitektur-umsetzung.md). Die bisherigen Speicher- und Rückfallregeln bleiben unverändert.
+
 Stand: 6. Oktober 2026. Implementiert: hardwarefreier Journalkern und synchronisierter Rechner-Dateispeicher. ESP32-Adapter über vorhandenes LittleFS 1.10.0 an die synthetische FreeRTOS-Probe angeschlossen und gebaut. Geräte-/Stromausfallabnahme offen.
 
 ## Besitz und Ablauf

@@ -1,5 +1,7 @@
 # Maintainer-Einstieg
 
+**Neue verbindliche Produktentscheidung · 18. Oktober 2026:** [VA-01](../docs/veranstaltungsarchitektur.md) legt autonome Boxen, BLE-Bedienung je Box, unterbrechbare ESP-NOW-/WLAN-Kommunikation und die Zentrale ohne Betriebszwang fest. [Vertrags-/Backlogmatrix](../docs/veranstaltungsarchitektur-umsetzung.md), neue Pakete #59–#63. Zugangskonzept PR #58 bleibt ergänzend maßgeblich. **Architektur-Soll; keine Implementierung oder neue Geräteabnahme.**
+
 Stand: **18. Oktober 2026**. Mandat: [AGENTS.md](../AGENTS.md).
 Quelle dieser Aktualisierung: beauftragte Repository-Hygiene;
 [Prüfbericht und Bestandsaufnahme](REPOSITORY-HYGIENE-2026-10-18.md).
