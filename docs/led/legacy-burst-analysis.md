@@ -9,6 +9,8 @@ Git-Blob `b2438b877cde21a90d8fefcdf7f031497761d330`, identisch zum Stand
 `c4c8d9603d724c924ac12fa00dd6e1006dddccb9` („Last Changes bis Aufbautag“).
 In diesem älteren Commit wurden Farbparameter und die grüne Idle-Anforderung
 ergänzt. Der nachfolgende Refactor im Referenzstand ändert diese Burst-Datei nicht.
+Die [ursprüngliche Funkelschicht](legacy-twinkle-analysis.md) ergänzt den
+hier betrachteten Hintergrund und dessen Spiel-/Palettenübergänge.
 
 ## Ergebnis
 

@@ -2,6 +2,8 @@
 
 Ergänzender Einzelbefund: [ursprünglicher Burst mit Spielauslösern,
 Startkonflikten und eigenem Kameraprüfplan](legacy-burst-analysis.md).
+Die darunterliegende [ursprüngliche Funkelschicht](legacy-twinkle-analysis.md)
+ist separat mit Paletten, Dichte-/Tempoübergängen und Bootfolge analysiert.
 
 Stand: **18. Oktober 2026**. Status: **Quellcodeanalyse und gezielte
 Rechnercharakterisierung belegt; ursprünglicher Ablauf noch nicht mit Kamera geprüft.**
