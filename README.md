@@ -1,5 +1,7 @@
 # Larp-Escape
 
+**Verbindliche Architektur · 18. Oktober 2026:** [Dezentrale Veranstaltung (VA-01)](docs/veranstaltungsarchitektur.md): autonome Boxen, mehrere BLE-Spielleitungen, ESP-NOW/WLAN bei Kontakt und eine zeitweise erreichbare Zentrale. [Verträge und Folgepakete](docs/veranstaltungsarchitektur-umsetzung.md). **Bestätigtes Soll; Umsetzung und Abnahme offen.**
+
 ESP32-Steuerung des Reichstag-Spiels: Rollenkarten, Kristallmatrix, Audio, LEDs und ESP-NOW-Aktivierung.
 
 **LED-Entwicklung:** [Projektgrenzen und externe Funktionsreferenz](docs/led/implementation-reference.md). Die Umsetzung in App und Firmware bleibt eigenständig.

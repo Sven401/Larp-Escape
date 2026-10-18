@@ -1,5 +1,7 @@
 # Konfigurierter Companion-Vertrag v2
 
+**Verbindliches Architektur-Soll · 18.10.2026:** [VA-01](../veranstaltungsarchitektur.md) und [Änderungsmatrix](../veranstaltungsarchitektur-umsetzung.md). Boot/Lease/Request bleiben lokale BLE-Befehlsbindung; dauerhafte Boxereignisse erhalten einen eigenen Vertrag. Zunächst eine steuernde BLE-Sitzung je Box, mehrere Spielleitungen an verschiedenen Boxen. Die nachfolgenden v2-Bytes und bisherigen Prüfaussagen werden dadurch nicht geändert.
+
 **Stand:** 7. Oktober 2026. Status-/Befehlskern, [begrenzter JSON-Befehlscodec](command-codec-v2.md) und statischer FreeRTOS-Adapter implementiert; Appfunk, Anmeldung und Android noch offen. 25 gezielte Hostfälle prüfen den vertikalen Codec-/Aufnahme-/Anwendungs-/Antwortpfad mit synthetischen Geräten und einem deterministischen RTOS-Modell; echte Geräte-/SMP-Abnahme steht aus. Status v1 bleibt unverändert.
 
 ## Zuständigkeit

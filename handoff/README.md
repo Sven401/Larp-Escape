@@ -1,5 +1,7 @@
 # Technische Projektübergabe
 
+**Verbindlicher Architekturstand · 18. Oktober 2026:** [VA-01: dezentrale Veranstaltung](../docs/veranstaltungsarchitektur.md) und [Vertrags-/Arbeitspaketmatrix](../docs/veranstaltungsarchitektur-umsetzung.md). Kein vorausgesetztes gemeinsames WLAN, keine kontinuierliche Erreichbarkeit. Mehrere Handys bedienen verschiedene autonome Boxen; Zentrale sammelt und vermittelt bei Kontakt. Umsetzung und Abnahme bleiben offen.
+
 ## Aktueller Stand · 18. Oktober 2026
 
 **Belegt:** [PR #56](https://github.com/Sven401/Larp-Escape/pull/56) ist in

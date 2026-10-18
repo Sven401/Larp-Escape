@@ -1,5 +1,7 @@
 # Gemeinsamer Baugruppenvertrag, Version 2
 
+**Architekturanschluss · 18.10.2026:** [VA-01](../veranstaltungsarchitektur.md) erhält diesen lokalen Baugruppenvertrag einschließlich Bytes, Fristen und manueller Abbruchregeln. BLE-Abbruch manueller Ausgaben ist kein pauschaler Stop des autonomen Spiels. Boxübergreifende Ereignisse bekommen einen eigenen Vertrag; siehe [Änderungsmatrix](../veranstaltungsarchitektur-umsetzung.md).
+
 Stand: **17. Oktober 2026; implementiert, Softwareprüfung im Konsolidierungsbericht.**
 Quellen: [Firmware-Session](../../firmware/led/src/LedWire.cpp),
 [NFC-Session](../../firmware/led/src/NfcBleWire.cpp),
