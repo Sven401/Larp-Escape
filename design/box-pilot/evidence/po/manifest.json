@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-18",
+  "base": "c04a540bfebb1a633f104232ee4eb9d57996d4eb",
+  "files": {
+    "design/box-pilot/src/Prototype.tsx": "b2e5ec49ccfcf11bf3f4546d00b4812545957d46147e24c935a482d3a636f28a",
+    "design/box-pilot/src/pilot.ts": "dc0171aa69a0787113b88e5f92cdf6194c1f43c31008d8b0c0c0d66b8dd26ea5",
+    "design/box-pilot/src/prototype.css": "f55f15701f0686203da89199f771374e4982cdc43afc8e1549f70ac3e3ec72f7",
+    "design/box-pilot/tests/pilot-state.test.mjs": "45ccd4792648804dbcc88697c73f42d5d192b2986097b73a47edd0e7563369fc",
+    "docs/ui-ux/BOX-PILOT.md": "51f924c279e9c0192ad704ca792afe2625a0174cb7585f2c7ef912870a101c2a",
+    "design/box-pilot/evidence/po/01-bereit.png": "66d0308d87bc5e35b431114eae1c5a74468f2395116174e28a901f17d53e0e70",
+    "design/box-pilot/evidence/po/02-auftrag-unklar.png": "7bdd6e4f22e8554fd23a9b62d496c5f0960595f6d8b49bbf992766fdb6d68aa2",
+    "design/box-pilot/evidence/po/03-start-nicht-angekommen.png": "0dba8c5df253a42866ec7fb84fd09da82662b1b44f6ba0d99f3caf96c96e6ab9",
+    "design/box-pilot/evidence/po/04-start-ausgefuehrt.png": "a4597d13cfb03aa9d541622e3a15284554be4c4723eb388fb6e268b5e32a3ce0",
+    "design/box-pilot/evidence/po/05-stop-nicht-angekommen.png": "36c74fdab07ee3378e6c26620c5222c08a49a98c7f507568d27f9e77668851c4",
+    "design/box-pilot/evidence/po/06-stop-ausgefuehrt.png": "4126d3d77e8752f023f45ec84d23d9baf688a5da81ab98187807847461e191f7",
+    "design/box-pilot/evidence/po/07-zuordnungsfehler.png": "37bd1b58bcac5b7aa72bb43adf285c40de21382f8eb7a8f7fc9da0ea1306dc17",
+    "design/box-pilot/evidence/po/08-zuordnungshilfe.png": "dd2f62e167e4fda0e807ff4b5249fbbbeb7fa09cf25d4dc0896ba9231ba3358f",
+    "design/box-pilot/evidence/po/09-fehler-bleibt.png": "45928fca03b1dd1c34553957bbaef28615f9c768661b167768cce3b1afcb41e4",
+    "design/box-pilot/evidence/po/10-nach-korrektur-bereit.png": "2691a02f8234febd7fe7997e5adc76a197038869d2bf91590882e7f266d43e27",
+    "design/box-pilot/evidence/po/11-zugangshilfe.png": "3561db0a030fa0ba11b7dc6b0e7949bafff9b7567b312741f0f007c9ce5ae7a9",
+    "design/box-pilot/evidence/po/12-hilfe-grosse-schrift.png": "bbcf0d4b86b8d8a09a438fc41f71e987eee9a4c2fb772d947747092486674088",
+    "design/box-pilot/evidence/po/13-hilfe-rueckkehr-grosse-schrift.png": "e499b79606ffdab964a98582ddf2307196698c3e72d15251b5216ccee3c01aeb",
+    "design/box-pilot/evidence/po/14-zugangsfehler-bleibt.png": "dbfd95750a30257a71fe8805a9a3db52b58dc3b2fcff33c40e3d4de71bade443",
+    "design/box-pilot/evidence/po/15-zugang-wieder-bereit.png": "cfc6962b809e52b15e6361e67f5f2e9a83868772665db4f459fc08f123553f42"
+  }
+}

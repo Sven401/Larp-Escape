@@ -1,5 +1,11 @@
 # Maintainer-Einstieg
 
+**UI/UX-Pilot gestartet · 18. Oktober 2026:** [Rolle](../docs/ui-ux/ROLLE.md)
+mit Projektagent und Skill eingerichtet; [Box-Pilot](../docs/ui-ux/BOX-PILOT.md)
+hält Brief, Zustände und Prüfplan fest. Die Richtung ist bestätigt;
+[Figma und geprüfter Webprototyp](../design/box-pilot/README.md) sind ausgearbeitet.
+Native Android-/Geräte- und Nutzerabnahme bleiben offen.
+
 **Näheglut mit realem ESP-NOW geprüft · 18. Oktober 2026:** Drei Laborläufe
 belegen Funkanbindung, Veraltung/Wiederkehr und gezielten Stop ohne Wiederanlauf.
 Optische Dunkelprüfung und zwei Übergangsabweichungen bleiben offen;
