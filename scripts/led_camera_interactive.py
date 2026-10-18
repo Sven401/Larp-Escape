@@ -21,6 +21,7 @@ import time
 
 from led_camera import digest
 from led_camera_lab import pack_frame
+import led_camera_rssi as rssi_module
 
 
 class CommandTail:
@@ -272,18 +273,42 @@ def run(args):
     args.output.mkdir(parents=True, exist_ok=False)
     origin = time.perf_counter()
     token = secrets.token_hex(8)
+    rssi_peer = getattr(args, "rssi_peer", None)
+    rssi = rssi_module.RssiAdapter(token, rssi_peer, getattr(args, "rssi_slot", 0)) if rssi_peer else None
     report = {"schema": 1, "status": "incomplete", "token": token,
               "utc": datetime.now(timezone.utc).isoformat(), "port": args.port,
               "firmware_sha256": hashlib.sha256(binary).hexdigest(),
               "host_source_sha256": digest(Path(__file__)), "commands": [], "events": [],
               "states": [], "serial": [], "scope": "Interactive visual trial; not optical acceptance",
               "time_meaning": "Host perf_counter receive times; camera exposure and buffering unknown"}
+    if rssi:
+        report["rssi"] = {"peer": rssi.peer, "slot": rssi.slot, "samples": rssi.samples,
+                          "interval_ms": rssi.interval_ms, "freshness_ms": rssi.freshness_ms,
+                          "host_timeout_ms": rssi.host_timeout_ms,
+                          "mapping": "clamp(20*(filtered+90),0,1000); stale -> valid=0",
+                          "source_sha256": digest(Path(rssi_module.__file__))}
+    measurement_log = (args.output / "measurements.jsonl").open("w", encoding="utf-8") if rssi else None
     trace = (args.output / "session.jsonl").open("w", encoding="utf-8")
     def now_ms():
         return (time.perf_counter() - origin) * 1000
     def record(kind, data):
         trace.write(json.dumps({"kind": kind, "host_ms": now_ms(), **data}) + "\n")
         trace.flush()
+    def measurement_record(kind, data):
+        if measurement_log:
+            value = {"kind": kind, "host_ms": now_ms(), **data}
+            measurement_log.write(json.dumps(value) + "\n")
+            measurement_log.flush()
+            record("measurement", value)
+    def publish_measurement():
+        if rssi:
+            try:
+                path = args.output / "measurement.tmp.json"
+                path.write_text(json.dumps(rssi.snapshot(), indent=2), encoding="utf-8")
+                os.replace(path, args.output / "measurement.json")
+            except OSError as error:
+                report["rssi"]["status_write_warning_count"] = report["rssi"].get("status_write_warning_count", 0) + 1
+                report["rssi"]["last_status_write_warning"] = str(error)
     connection = serial.Serial(port=None, baudrate=115200, timeout=0, write_timeout=.25)
     connection.dtr = connection.rts = False
     connection.port = args.port
@@ -321,11 +346,18 @@ def run(args):
             if report["events"] and event["sequence"] != report["events"][-1]["sequence"] + 1:
                 report.setdefault("trace_sequence_gaps", []).append(event["sequence"])
             report["events"].append(event)
+            if rssi:
+                rssi.observe_frame(event["completed_ms"])
         elif line.startswith(f"STATE {token} "):
             last_state = parse_state(line, token)
             last_state["host_ms"] = now_ms()
             report["states"].append(last_state)
             (args.output / "active.json").write_text(json.dumps(last_state, indent=2), encoding="utf-8")
+        if rssi:
+            measurement = rssi.receive(line, now_ms())
+            if measurement:
+                measurement_record("receive", measurement)
+                publish_measurement()
     def acknowledge(line):
         nonlocal pending
         fields = line.split()
@@ -344,8 +376,9 @@ def run(args):
     try:
         connection.open()
         identity = capability = False
+        rssi_capability = rssi is None
         deadline, last_hello = time.perf_counter() + 5, 0
-        while time.perf_counter() < deadline and not (identity and capability):
+        while time.perf_counter() < deadline and not (identity and capability and rssi_capability):
             if time.perf_counter() - last_hello > .3:
                 send("HELLO")
                 last_hello = time.perf_counter()
@@ -357,9 +390,11 @@ def run(args):
                     identity = True
                 if fields == ["LARP-LIVE/1", "2", "23", "32"]:
                     capability = True
+                if line == rssi_module.CAPABILITY:
+                    rssi_capability = True
             time.sleep(.002)
-        if not (identity and capability):
-            raise RuntimeError("Missing exact firmware identity or LIVE capability")
+        if not (identity and capability and rssi_capability):
+            raise RuntimeError("Missing exact firmware identity or required LIVE/RSSI capability")
         identity_confirmed = True
         send("STOP")
         deadline = time.perf_counter() + 3
@@ -400,6 +435,7 @@ def run(args):
         tail, requests, pending, req = CommandTail(args.commands), deque(), None, 0
         last_keep, end = 0, time.perf_counter() + args.seconds
         last_camera_frame = time.perf_counter()
+        last_measurement_status = 0
         while time.perf_counter() < end:
             if time.perf_counter() - last_keep >= .2:
                 send(f"KEEP {token}")
@@ -446,6 +482,25 @@ def run(args):
                     req += 1
                     pending = {"req": req, "input": item, "wire": wire, "sent_ms": send(wire)}
                     report["commands"].append(pending)
+            elif rssi:
+                suggestion = rssi.update(last_state, glow_pending=pending is not None, manual_queued=bool(requests))
+                if suggestion:
+                    item, context = suggestion
+                    wire = encode_command(item, token, req + 1, last_state)
+                    req += 1
+                    pending = {"req": req, "input": item, "wire": wire, "sent_ms": send(wire), "rssi": context}
+                    report["commands"].append(pending)
+                    measurement_record("effect_update", {"req": req, **context, "p": item["p"], "valid": item["valid"]})
+            if rssi:
+                rssi.check_timeout(now_ms())
+                request = rssi.request(now_ms())
+                if request:
+                    wire, sample = request
+                    measurement_record("request", {"sample": dict(sample), "wire": wire})
+                    sample["sent_host_ms"] = send(wire)
+                if now_ms()-last_measurement_status >= 500:
+                    publish_measurement()
+                    last_measurement_status = now_ms()
             time.sleep(.002)
         report["status"] = "trial_finished"
     except BaseException as error:
@@ -478,6 +533,14 @@ def run(args):
             time.sleep(.5)  # Capture an optical tail; still no calibrated delay claim.
         if unresolved_at_close(pending):
             report["unresolved_commands"] = [pending["req"]]
+        if rssi:
+            if rssi.close(now_ms()):
+                report["unresolved_measurements"] = [rssi.pending["sample_id"]]
+            measurement_record("complete", rssi.snapshot())
+            publish_measurement()
+            report["rssi"]["final_status"] = rssi.snapshot()
+            measurement_log.close()
+            report["rssi"]["journal_sha256"] = digest(args.output / "measurements.jsonl")
         camera_stop.set()
         if camera:
             camera.join(3)
@@ -501,7 +564,7 @@ def run(args):
             report["camera_status"] = camera_data["status"]
             report["camera_timing"] = camera_data.get("timing")
             report["camera_manifest_sha256"] = digest(camera_manifest)
-        if report["status"] == "trial_finished" and report.get("final_black_confirmed") and report.get("camera_status") == "recorded" and not report.get("unresolved_commands"):
+        if report["status"] == "trial_finished" and report.get("final_black_confirmed") and report.get("camera_status") == "recorded" and not report.get("unresolved_commands") and not report.get("unresolved_measurements"):
             report["status"] = "recorded"
         else:
             report["status"] = "incomplete"
@@ -526,6 +589,9 @@ def main():
     parser.add_argument("--height", type=int, default=480)
     parser.add_argument("--exposure", type=float, default=-7)
     parser.add_argument("--rois", type=Path)
+    parser.add_argument("--rssi-peer", type=rssi_module.normalize_peer,
+                        help="Optional unicast peer MAC; RSSI updates only an explicitly started active slot")
+    parser.add_argument("--rssi-slot", type=int, choices=(0, 1), default=0)
     args = parser.parse_args()
     if not 1 <= args.seconds <= 80:
         parser.error("Trial duration must be 1..80 seconds (firmware limit 90 seconds)")

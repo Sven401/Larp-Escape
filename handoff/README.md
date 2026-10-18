@@ -1,5 +1,11 @@
 # Technische Projektübergabe
 
+**Laufender Zusatzversuch · 18. Oktober 2026:** Näheglut soll denselben
+Powerbank-ESP als reale Nähequelle verwenden. Die neue Papier-Kamerakalibrierung
+ist geprüft; Gold-Messgrenzen und noch ausstehender Gehversuch/Rückweg stehen im
+[aktuellen Arbeitsstand](NAEHEGLUT-ESPNOW-2026-10-18.md).
+Laborarbeitsbranch, keine Produkt- oder Gesamtspielabnahme.
+
 **LED-Effektentwicklung integriert · 18. Oktober 2026:**
 [PR #74](https://github.com/Sven401/Larp-Escape/pull/74) ist bei
 `d4dd7c67cd6ba0e1903d8bf6c5df256c49fe5c3e` in
