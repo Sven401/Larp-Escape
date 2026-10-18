@@ -1,6 +1,8 @@
 # UI/UX-Pilot: Box auswählen, verbinden und wieder aufnehmen
 
-**Status: Designrichtung bestätigt, Figma und interaktiver Webprototyp ausgearbeitet; native Produktumsetzung und Geräteabnahme offen.**
+**Status: Designrichtung, Figma und Webprototyp ausgearbeitet; lesender nativer Stationsschnitt implementiert und begrenzt am Gerät geprüft.**
+
+**Fortschreibung · 19.10.2026:** [Native Stationsvorbereitung, automatische Anmeldung und frischer Zustand](../companion/spielleiter-stationspilot.md). Normalweg, Bluetooth-Wiederkehr, Hintergrund/Rückkehr, Pause, Prozessneustart, 200-%-Schrift und Rotation am Moto G14 mit lokaler Box geprüft. Licht-Start/Stop und weitere Pilotfälle bleiben eigene Folgearbeit. Die folgenden älteren Prüfgrenzen gelten für ihre jeweils genannte Basis.
 Datum: 18. Oktober 2026. Auftrag und Sitzung: siehe [Rollenvertrag](ROLLE.md).
 Geprüfte Quellbasis: `7e72411bb1c416b5864036c79a1e17d9cf46b5ac`.
 

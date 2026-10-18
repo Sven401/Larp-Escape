@@ -1,5 +1,7 @@
 # Rolle: UI/UX Designer
 
+**Appübergreifende Referenz · 18.10.2026:** [UX-01, Überblick und Hauptabläufe](PROJEKTREFERENZ.md) halten die bestätigte separate Auslieferung von Dev-App und Spielleiter-App fest. Der Stationspilot konkretisiert die Spielleiter-App; Entwicklerabläufe sind separat beschrieben.
+
 **Status: vom Nutzer zur Einrichtung beauftragt; Fassung 1.0 für den Pilot.**
 Datum: 18. Oktober 2026. Quelle: ausdrücklicher Auftrag in Sitzung
 `01a1505d-dfd4-7ad2-89cf-8d7be1b02240`: Rolle etablieren und Box-Pilot starten.

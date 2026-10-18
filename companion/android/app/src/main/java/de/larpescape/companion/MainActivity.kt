@@ -180,7 +180,7 @@ class MainActivity : ComponentActivity() {
                 }
                 Surface(Modifier.fillMaxSize()) {
                     Column(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing).verticalScroll(rememberScrollState()).padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                        Text("Larp Escape", style = MaterialTheme.typography.headlineLarge)
+                        Text(getString(R.string.app_name), style = MaterialTheme.typography.headlineLarge)
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             FilterChip(selected = !nfcScreen && !scenarioScreen, onClick = { selectScenario(false); selectNfc(false) }, label = { Text("ESP") })
                             FilterChip(selected = nfcScreen && !scenarioScreen, onClick = { selectScenario(false); selectNfc(true) }, label = { Text("NFC-Tags") })
