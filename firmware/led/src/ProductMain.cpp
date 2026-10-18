@@ -67,6 +67,7 @@ class Control final : public wire::IControl {
     out.nfcSupported = true;
 #endif
     out.wakeSupported = true; out.wakeValid = wake.valid;
+    out.resonanceSupported = true;
     out.wakeMask = wake.activeMask;
 #ifdef LARP_MATRIX_TEST
     const auto matrix = matrixInputs.snapshot(millis());
@@ -421,6 +422,8 @@ void loop() {
   matrixInputs.service(millis());
 #endif
   wakeInputs.service(millis());
+  const auto wake = wakeInputs.snapshot();
+  output.updateWake(wake.valid, wake.activeMask);
   serviceUsb();
   if (ready) serviceBle();
   if (ready) {

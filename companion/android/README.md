@@ -13,7 +13,10 @@ Kotlin, Jetpack Compose und Material 3. Eigenständige App mit Paketname
 `de.larpescape.companion`, Mindestversion Android 13/API33. Bestehende
 Webprototypen und der .NET-Diagnoseclient bleiben separate Referenzen.
 Die Projekt-App bedient den eigenen LED-Produktdienst mit Funkeln,
-Lichtimpuls und Ripple sowie Start/Stop. Der LED-Zweig hat zunächst kein
+Lichtimpuls, Ripple und Resonanzkreis sowie Start/Stop. Der
+[Resonanzkreis-Prüfplan](../../docs/led/resonance-test-preparation.md) beschreibt
+die Wake-Reaktion, das passende App-/Firmwarepaar und die offene Sichtabnahme.
+Der LED-Zweig hat zunächst kein
 Spielmodul; seine LED-Berechtigung ist keine Legacy-Spielleiteranmeldung.
 
 `app` enthält UI/ViewModel, DeviceRepository und Android-BLE. `core:protocol`

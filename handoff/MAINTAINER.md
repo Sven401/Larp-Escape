@@ -17,6 +17,10 @@ integriert. Alle fünf Original-PRs sind als gemergt geschlossen; ihre Heads erh
 Der abgeschlossene [RSSI-Gehversuch](../docs/espnow/distance-camera-result-2026-10-18.md)
 und die [isolierte Kameraabnahme](../docs/led/camera-results-2026-10-18.md)
 ergänzen die bisherigen Teilbelege. Gesamtspiel, Reichweite und Dauerlast bleiben offen.
+Der [Resonanzkreis-Kameralauf](../docs/led/resonance-camera-results-2026-10-18.md)
+belegt zusätzlich alle 16 synthetischen Wake-Masken und Übergangs-/Stop-Fälle
+auf allen 23 LEDs. Reale Sensor-/BLE-Abnahme bleibt offen; ursprünglicher
+RSSI-Boxstand anschließend vollständig verifiziert wiederhergestellt.
 
 **Neue verbindliche Produktentscheidung · 18. Oktober 2026:** [VA-01](../docs/veranstaltungsarchitektur.md) legt autonome Boxen, BLE-Bedienung je Box, unterbrechbare ESP-NOW-/WLAN-Kommunikation und die Zentrale ohne Betriebszwang fest. [Vertrags-/Backlogmatrix](../docs/veranstaltungsarchitektur-umsetzung.md), neue Pakete #59–#63. Zugangskonzept PR #58 bleibt ergänzend maßgeblich. **Architektur-Soll; keine Implementierung oder neue Geräteabnahme.**
 

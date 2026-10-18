@@ -7,6 +7,7 @@ constexpr std::uint8_t LedOutput::LedPin, LedOutput::Brightness;
 constexpr std::uint16_t LedOutput::Milliamps;
 constexpr std::uint32_t LedOutput::BurstMilliseconds, LedOutput::RippleMilliseconds;
 constexpr std::uint32_t LedOutput::FrameMilliseconds, LedOutput::TransferTimeoutMilliseconds;
+constexpr std::uint32_t LedOutput::ResonancePeriodMilliseconds, LedOutput::ResonanceMergeMilliseconds;
 
 bool LedOutput::begin() {
     if (initialized_ || status_.fault) return false;
@@ -20,11 +21,23 @@ bool LedOutput::begin() {
 
 bool LedOutput::start(Effect effect) {
     if (!status_.ready || status_.fault ||
-        (effect != Effect::Twinkle && effect != Effect::Burst && effect != Effect::Ripple)) return false;
+        (effect != Effect::Twinkle && effect != Effect::Burst && effect != Effect::Ripple &&
+         effect != Effect::Resonance)) return false;
     return accept(effect);
 }
 
 bool LedOutput::stop() { return initialized_ && accept(Effect::Off); }
+
+void LedOutput::updateWake(bool valid, std::uint8_t mask) {
+    wakeValid_ = valid && (mask & ~15U) == 0;
+    wakeMask_ = wakeValid_ ? mask : 0;
+    const bool together = wakeValid_ && wakeMask_ == 15;
+    if (together != resonanceTogether_) {
+        resonanceTogetherAt_ = clock_ ? clock_() : 0;
+        resonanceMerged_ = false;
+    }
+    resonanceTogether_ = together;
+}
 
 bool LedOutput::accept(Effect effect) {
     if (status_.revision == std::numeric_limits<std::uint32_t>::max()) {
@@ -105,6 +118,32 @@ void LedOutput::render(std::uint32_t elapsed) {
         }
         break;
     }
+    case Effect::Resonance: {
+        if (!wakeValid_) break;
+        // Existing Wake origins on the physical strip, independent of app tile order.
+        constexpr std::uint8_t origins[] = {22, 2, 16, 10};
+        const auto togetherElapsed = static_cast<std::uint32_t>(clock_() - resonanceTogetherAt_);
+        // Latch the settled phase so a later uint32 clock wrap cannot replay the merge.
+        if (resonanceTogether_ && togetherElapsed >= ResonanceMergeMilliseconds) resonanceMerged_ = true;
+        const auto blend = resonanceTogether_ ?
+            (resonanceMerged_ ? 256U : togetherElapsed * 256U / ResonanceMergeMilliseconds) : 0U;
+        for (std::size_t i = 0; i < PixelCount; ++i) {
+            unsigned zone = 0, nearest = PixelCount;
+            for (unsigned candidate = 0; candidate < 4; ++candidate) {
+                const auto distance = i > origins[candidate] ? i - origins[candidate] : origins[candidate] - i;
+                if (distance < nearest) { zone = candidate; nearest = static_cast<unsigned>(distance); }
+            }
+            if (!(wakeMask_ & (1U << zone))) continue;
+            const auto phase = (elapsed % ResonancePeriodMilliseconds + zone * 600U) % ResonancePeriodMilliseconds;
+            const auto triangle = phase < 1200U ? phase : ResonancePeriodMilliseconds - phase;
+            const auto breath = 4U + triangle * 20U / 1200U;
+            const auto value = static_cast<std::uint8_t>((breath * (256U - blend) + 24U * blend) / 256U);
+            frame_[i].red = value / 6U;
+            frame_[i].green = value * 2U / 3U;
+            frame_[i].blue = value;
+        }
+        break;
+    }
     case Effect::Off: break;
     }
 }
@@ -143,7 +182,13 @@ void LedOutput::service() {
         }
     }
     if (!dirty_ && (!active_ || static_cast<std::uint32_t>(now - lastSubmit_) < FrameMilliseconds)) return;
-    if (dirty_) startedAt_ = now;
+    if (dirty_) {
+        startedAt_ = now;
+        if (status_.requested == Effect::Resonance) {
+            resonanceTogetherAt_ = now;
+            resonanceMerged_ = false;
+        }
+    }
     render(now - startedAt_);
     if (!bus_.submit(frame_)) { fail(); return; }
     txBlack_ = true;
