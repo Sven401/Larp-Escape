@@ -18,7 +18,9 @@ Geprüfter Quellcommit: `e26bd93dc13ffd7aba0918df3c4c2c5246ef73a7`, Branch
 Worktree `C:/Users/seide/.codex/worktrees/led-effekt-architekt/Larp Escape`.
 Quell-/Binaryfingerabdrücke stehen zusätzlich in den privaten Belegen.
 Die fremde `.vscode/extensions.json` im Hauptcheckout bleibt unangetastet.
-PR-Ziel ist `plan/projektuebergabe-kuratierter-stand`; kein neuer Mergeauftrag.
+PR #76 ist inzwischen auf ausdrücklichen Folgeauftrag integriert;
+[Merge- und CI-Beleg](NAEHEGLUT-ESPNOW-INTEGRATION-2026-10-18.md).
+Der folgende Geräteprüfstand bleibt historisch auf `e26bd93` begrenzt.
 
 - Separate Variante `larp-led-camera-rssi-lab` und Hostadapter
   `scripts/led_camera_rssi.py`. Originalfunkkern, Filter und Näheglut-Kern
@@ -82,8 +84,8 @@ Papierkalibrierung und Goldreferenz, drei Laufordner mit Aufträgen/Funk/TX/Kame
 5. Produktadapter, echte Spielregeln, kalibrierte Meterentfernung, Reichweite,
    Dauerbetrieb und Gesamtspiel bleiben außerhalb dieses Zusatzversuchs.
 
-Die Testanbindung und Ergebnisbelege liegen in
-[PR #76](https://github.com/Sven401/Larp-Escape/pull/76) gegen den kuratierten
-Integrationsbranch vor. Aktuelle automatische Prüfungen am PR nachsehen; kein Merge
-vorgenommen. Spätere Nutzerbeobachtungen an diesem Ergebnis ergänzen. Ein weiterer
-Upload oder Merge benötigt seinen passenden konkreten Auftrag.
+Die Testanbindung und Ergebnisbelege sind über
+[PR #76](https://github.com/Sven401/Larp-Escape/pull/76) in den kuratierten
+Integrationsbranch übernommen. [Integrationsabschluss und CI](NAEHEGLUT-ESPNOW-INTEGRATION-2026-10-18.md).
+Spätere Nutzerbeobachtungen an diesem Ergebnis ergänzen. Weitere Geräteversuche,
+Uploads oder Produktintegration benötigen ihren passenden konkreten Auftrag.

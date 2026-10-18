@@ -7,7 +7,9 @@ Optische Dunkelprüfung und zwei Übergangsabweichungen bleiben offen;
 Originalinstallation vollständig wiederhergestellt und verifiziert.
 [Arbeitsstand, Belege und Grenzen](NAEHEGLUT-ESPNOW-2026-10-18.md);
 keine Produkt- oder Gesamtspielabnahme.
-[PR #76](https://github.com/Sven401/Larp-Escape/pull/76) liegt zur Prüfung vor.
+[PR #76](https://github.com/Sven401/Larp-Escape/pull/76) ist nach grüner CI
+bei `1646bc37d43f29f0fb48b3cf13adf597dfdc2cf4` im kuratierten Integrationsbranch gemergt.
+[Integrationsbeleg und Fortsetzung](NAEHEGLUT-ESPNOW-INTEGRATION-2026-10-18.md).
 
 **LED-Effektentwicklung integriert · 18. Oktober 2026:**
 [PR #74](https://github.com/Sven401/Larp-Escape/pull/74) ist bei
@@ -19,7 +21,7 @@ gemeinsamem Effektkern, seriellen Liveparametern und parallelem Kamerafeedback
 praktisch erprobt. [Näheglut-Versuchsbericht](../docs/led/naeheglut-live-results-2026-10-18.md):
 Farb-/Kurveniteration, zwei vollständige Folgeläufe und verifizierter Flash-Rückweg.
 [Ausführbare Anleitung](../docs/led/interactive-development.md).
-Produktadapter, echte Nähequelle und optisches Nutzerurteil bleiben offen;
+Produktadapter, produktseitiger Nähe-/Spielwertvertrag und optisches Nutzerurteil bleiben offen;
 die [Rechnerprobe 1.0](LED-EFFEKT-ARCHITEKT-ERPROBUNG-2026-10-18.md) bleibt
 historischer Beleg.
 
