@@ -1,6 +1,18 @@
 # Technische Projektübergabe
 
-**LED-Effektentwicklung · 18. Oktober 2026:** [Architektenrolle 2.0](../docs/led/rollen/led-effekt-architekt.md) praktisch erweitert: gemeinsamer Effektkern, serielle Liveparameter und paralleles Kamerafeedback. [Näheglut-Versuchsbericht](../docs/led/naeheglut-live-results-2026-10-18.md) mit tatsächlicher Farb-/Kurveniteration, zwei vollständigen Folgeläufen und verifiziertem Flash-Rückweg. [Ausführbare Anleitung](../docs/led/interactive-development.md). Produktadapter, echte Nähequelle und optisches Nutzerurteil bleiben offen; die [Rechnerprobe 1.0](LED-EFFEKT-ARCHITEKT-ERPROBUNG-2026-10-18.md) bleibt historischer Beleg.
+**LED-Effektentwicklung integriert · 18. Oktober 2026:**
+[PR #74](https://github.com/Sven401/Larp-Escape/pull/74) ist bei
+`d4dd7c67cd6ba0e1903d8bf6c5df256c49fe5c3e` in
+`plan/projektuebergabe-kuratierter-stand` gemergt.
+[Mergebeleg, Prüfstand und offene Folgearbeit](LED-EFFEKT-ARCHITEKT-INTEGRATION-2026-10-18.md).
+Die [Architektenrolle 2.0](../docs/led/rollen/led-effekt-architekt.md) wurde mit
+gemeinsamem Effektkern, seriellen Liveparametern und parallelem Kamerafeedback
+praktisch erprobt. [Näheglut-Versuchsbericht](../docs/led/naeheglut-live-results-2026-10-18.md):
+Farb-/Kurveniteration, zwei vollständige Folgeläufe und verifizierter Flash-Rückweg.
+[Ausführbare Anleitung](../docs/led/interactive-development.md).
+Produktadapter, echte Nähequelle und optisches Nutzerurteil bleiben offen;
+die [Rechnerprobe 1.0](LED-EFFEKT-ARCHITEKT-ERPROBUNG-2026-10-18.md) bleibt
+historischer Beleg.
 
 [D0-Vertrag zu #59](../docs/veranstaltung/d0-vertrag-v1.md) über
 [PR #72](https://github.com/Sven401/Larp-Escape/pull/72) integriert:
@@ -23,13 +35,15 @@ ergänzt die älteren Gerätebelege; die fünf Original-PRs sind als gemergt ges
 
 - [ESP-NOW-Sitzungsabschluss: RSSI, Funkelsteuerung und vollständiger Kameravergleich](ESPNOW-UEBERGABE-2026-10-18.md); PR #66 ist über #69 integriert. Der Sitzungsabschluss bleibt der historische Beleg vor Integration.
 
-**Belegt:** [PR #69](https://github.com/Sven401/Larp-Escape/pull/69) ist in
-`plan/projektuebergabe-kuratierter-stand` bei `0b0843d` integriert, aufbauend
-auf #56/#57/#67. LED, Wake, Matrix, Audio, NFC und die explizite ESP-NOW-
-Testvariante verwenden den [gemeinsamen V2-Vertrag](../docs/led/ble-wire-v2.md).
-Alle zehn gemeinsamen PR-CI-Jobs erfolgreich; Merge-CI gesondert auslesen.
-Einzelheiten und Grenzen
-stehen im [Maintainer-Einstieg](MAINTAINER.md).
+**Belegt:** [PR #74](https://github.com/Sven401/Larp-Escape/pull/74) ist in
+`plan/projektuebergabe-kuratierter-stand` bei `d4dd7c6` integriert; Eltern
+`dead1204` + `40d9621`, vollständiger Dateibaum identisch zum geprüften PR-Head.
+[Merge-Nachweis, aktuelle CI und konkrete Fortsetzung](LED-EFFEKT-ARCHITEKT-INTEGRATION-2026-10-18.md).
+Die Integrationen #56/#57/#67/#69/#70/#72 bleiben enthalten. LED, Wake, Matrix,
+Audio, NFC und die explizite ESP-NOW-Testvariante verwenden weiterhin den
+[gemeinsamen V2-Vertrag](../docs/led/ble-wire-v2.md). Das Näheglut-Labor ergänzt
+diesen Stand; sein LIVE-Protokoll ist kein neuer Produkt-USB-/BLE-Vertrag.
+Einzelheiten und Grenzen stehen im [Maintainer-Einstieg](MAINTAINER.md).
 
 - [Konsolidierung: Herkunft, Konfliktentscheidungen, acht Ergebnis-IDs](KONSOLIDIERUNG-2026-10-17.md).
 - [Nachweisregister: historische Gerätebelege und Sicherungsreferenzen](BAUGRUPPEN-NACHWEISE.md).
@@ -39,6 +53,8 @@ stehen im [Maintainer-Einstieg](MAINTAINER.md).
 
 **Offen:** gemeinsames V2-Paar am Gerät, Matrixproblemstellen #54,
 LED-/NFC-/Sitzungsfehlerfälle sowie allgemeiner Spielzugang und Profilbetrieb.
+Für Näheglut fehlen echter Spieleinsatz/Nähequelle, Produktadapter und optisches
+Nutzerurteil. D1-A/PR #73 bleibt gesondert in Review; #60/D1-B/C bleibt offen.
 Historische bestandene Teiltests bleiben erhalten. Ein Geräteupload ist ein
 separater Auftrag; vorab tatsächliches Paar und chipgebundenen Rückweg prüfen.
 
