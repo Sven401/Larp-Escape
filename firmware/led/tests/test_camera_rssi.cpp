@@ -175,7 +175,8 @@ int main(int argc, char **argv) {
             request("1"); const auto nonce=rf::core.snapshot().token;
             if(name=="watchdog") ticks(1600);
             else if(name=="bus-fault") {
-                while(!bus.inFlight) loop(); fake.stuck=true; keepTicks(2050);
+                while (!bus.inFlight) { loop(); }
+                fake.stuck=true; keepTicks(2050);
             } else send("STOP");
             auto r=result(1,14);
             check(r[5]=="1" && r[7]=="0" && r[8]=="0" && r[9]=="0" && r[10]=="0" && r[11]=="0" && r[12]=="0","cancel retained measurement");
