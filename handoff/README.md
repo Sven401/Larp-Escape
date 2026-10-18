@@ -6,6 +6,22 @@
 
 **UI/UX · 18. Oktober 2026:** [Projektreferenz und bestätigte separate Appauslieferung](../docs/ui-ux/PROJEKTREFERENZ.md), [Dev-Hauptabläufe](../docs/ui-ux/DEV-APP-ABLAEUFE.md) und [Spielleitungs-Hauptabläufe](../docs/ui-ux/SPIELLEITER-APP-ABLAEUFE.md). Dokumentierter Designstand; Apptrennung samt begrenzter Geräteabnahme siehe Fortschreibung oben.
 
+**PR #83 abgeschlossen · 18.10.2026:** CI-Statusfortschreibung nach 9/9 grünen
+PR-Jobs bei `9d8bf44aff9da1d4c47f109c451cb251a9d626cd` integriert.
+[Mergebeleg, getrennte CI-Nachweise und offene fachliche Punkte](NAEHEGLUT-STOP-SPIELANSCHLUSS-2026-10-18.md).
+Keine neue Produktimplementierung oder Geräteabnahme.
+
+**Näheglut-Diagnose und Spielanschluss integriert · 18.10.2026:**
+[PR #81](https://github.com/Sven401/Larp-Escape/pull/81), Merge
+`c4870215a155b9abff2e36fccfe93d42e1a03043`, zuvor 9/9 PR-CI-Jobs erfolgreich.
+**Zusätzliche Prüfungen abgeschlossen:** #82-PR-CI 9/9, Quality am #82-Merge
+`8648f57` 3/3 und LED am #81-Merge 4/4 erfolgreich. Alter Quality-Abbruch bleibt
+historisch erhalten; siehe getrennte Laufbelege in der folgenden Übergabe.
+[Stopdiagnose und konkreter Spielanschluss](NAEHEGLUT-STOP-SPIELANSCHLUSS-2026-10-18.md).
+Digitaler Stop bestätigt; optischer Restpegel auch am Papierrand nachgewiesen,
+Ursache weiterhin ohne kontrollierten Gerätevergleich offen. Adapterentwurf
+mit Instanz-/Stop-/Frische-/Profilvertrag, noch keine Produktimplementierung.
+
 **UI/UX-Pilot integriert · 18. Oktober 2026:** [PR #78](https://github.com/Sven401/Larp-Escape/pull/78)
 ist bei `42853bc1aa93de23b5fcfc72e66d2c1a397361af` in den kuratierten
 Integrationsbranch übernommen. [Rolle](../docs/ui-ux/ROLLE.md),

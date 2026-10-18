@@ -6,6 +6,25 @@
 
 **UI/UX-Entscheidung · 18. Oktober 2026:** [UX-01 und Projektreferenz](../docs/ui-ux/PROJEKTREFERENZ.md): Dev-App für Entwicklung/Tests/Experimente und Spielleiter-App für Endnutzer werden als zwei separate Apps ausgeliefert. Hauptabläufe für beide Apps sind ausgearbeitet; technische Trennung ist im oben verlinkten Folgeschritt umgesetzt; Installation/Datenerhalt sind oben geprüft; fachliche native Stationsbedienung bleibt offen. Der über PR #78 integrierte Stationspilot bleibt die Grundlage der Spielleitungsbedienung.
 
+**Näheglut-CI-Status integriert · 18.10.2026:**
+[PR #83](https://github.com/Sven401/Larp-Escape/pull/83) nach 9/9 grünen PR-CI-Jobs
+bei `9d8bf44aff9da1d4c47f109c451cb251a9d626cd` übernommen. Vollständiger
+Dateibaum identisch zum geprüften Head `0fb6ab0`.
+[Merge-/CI-Belege und unverändert offene Folgearbeit](NAEHEGLUT-STOP-SPIELANSCHLUSS-2026-10-18.md).
+
+**Näheglut-Stopdiagnose und Spielanschluss integriert · 18.10.2026:**
+[PR #81](https://github.com/Sven401/Larp-Escape/pull/81) nach 9/9 erfolgreichen
+PR-CI-Jobs bei `c4870215a155b9abff2e36fccfe93d42e1a03043` übernommen.
+**Zusätzlicher CI-Abschluss geprüft:** #82-PR-CI 9/9 und Quality am tatsächlichen
+#82-Merge `8648f57` 3/3 erfolgreich; LED am #81-Merge 4/4 erfolgreich.
+Der durch den Folgemerge abgebrochene alte Quality-Lauf bleibt als solcher dokumentiert.
+[Befund, Spezifikation und nächste Schritte](NAEHEGLUT-STOP-SPIELANSCHLUSS-2026-10-18.md).
+650 Originalbilder erneut geprüft; digitaler Stop bestätigt, flächiger Anstieg
+auch außerhalb der CAL-Masken. Physische Ursache/optische Freigabe weiter offen.
+Konkreter Produktadaptervorschlag liegt vor; keine Produktimplementierung oder
+neue Geräteprüfung. Nutzerbestätigter Start: korrespondierende Station erkannt;
+Näheglut läuft durch wie Funkeln. Quellenzuordnung/Pausenregel bleiben offen.
+
 **UI/UX-Pilot integriert · 18. Oktober 2026:** [PR #78](https://github.com/Sven401/Larp-Escape/pull/78)
 ist bei `42853bc1aa93de23b5fcfc72e66d2c1a397361af` in den kuratierten
 Integrationsbranch übernommen. [Rolle](../docs/ui-ux/ROLLE.md),
