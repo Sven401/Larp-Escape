@@ -43,6 +43,9 @@ larp::matrix::MatrixInputs matrixInputs(larp::wake::mcpWakeBus());
 class Control final : public wire::IControl {
  public:
 #ifdef LARP_ESPNOW_TEST
+  bool submitRssi(const std::array<uint8_t, 6> &peer, uint32_t now, bool intensity) noexcept override {
+    return larp::espnowradio::submit(peer, now, true, intensity);
+  }
   wire::EspNowSnapshot espNowSnapshot() const noexcept override { return larp::espnowradio::snapshot(); }
   bool submitEspNow(const std::array<uint8_t, 6> &peer, uint32_t now) noexcept override {
     return larp::espnowradio::submit(peer, now);
@@ -78,6 +81,9 @@ class Control final : public wire::IControl {
     if (larp::nfcble::busy()) return false;
 #endif
     if (expected != output.snapshot().revision) return false;
+    #ifdef LARP_ESPNOW_TEST
+    larp::espnowradio::clearIntensity();
+#endif
     const bool ok = op == wire::Operation::Stop ? output.stop() :
       output.start(static_cast<larp::led::Effect>(effect));
     revision = output.snapshot().revision;
@@ -429,6 +435,9 @@ void loop() {
   // Boot/fault Stop still drains even when BLE initialization did not succeed.
   audioOutput.service();
   if (outputInitialized) {
+#ifdef LARP_ESPNOW_TEST
+    output.setTwinkleIntensity(larp::espnowradio::intensity(millis()));
+#endif
     output.service();
   }
   delay(1);

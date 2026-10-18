@@ -68,4 +68,24 @@ class EspNowProtocolTest {
         assertArrayEquals(peer,espNowPeer("02:03:04:05:06:07"))
         for (text in listOf("", "0001", "FF:FF:FF:FF:FF:FF", "00:00:00:00:00:00", "02:03:04:05:06", "02:03:04:05:06:GG")) assertNull(espNowPeer(text))
     }
+    @Test fun rssiHasSeparateCapabilityDomainAndSignedMeasurement() {
+        val p = client(); val status = p.granted(grant(14))
+        assertEquals(true, status.rssiSupported)
+        val command = p.espNowCommand(status, peer, true, true)
+        assertEquals(7, command[1].toInt()); assertEquals(2, command[30].toInt())
+        assertArrayEquals(sign(command.copyOf(38), "rssi-command"), command)
+        rejects { p.espNowCommand(status.copy(rssiSupported=false),peer,true) }
+        val b = body().copyOf(80).also {
+            it[1]=0x88.toByte(); it[76]=1; it[77]=(-63).toByte(); it[78]=(-61).toByte(); it[79]=66
+        }
+        val wire=sign(b,"rssi-result"); val result=p.espNowResult(wire,true)
+        assertEquals(-63,result.rssi); assertEquals(-61,result.filteredRssi); assertEquals(66,result.intensity)
+        for (i in wire.indices) rejects { p.espNowResult(wire.copyOf().also { it[i]=(it[i].toInt() xor 1).toByte() },true) }
+        rejects { p.espNowResult(wire) }
+        rejects { p.espNowResult(sign(b,"espnow-result"),true) }
+        for (offset in listOf(76,77,78,79)) rejects { p.espNowResult(sign(b.copyOf().also { it[offset]=0 },"rssi-result"),true) }
+        val timeout=b.copyOf().also { it[38]=13; it[44]=0; it[68]=0; it[72]=0; (76..79).forEach { n -> it[n]=0 } }
+        assertNull(p.espNowResult(sign(timeout,"rssi-result"),true).rssi)
+        rejects { p.espNowResult(sign(timeout.also { it[77]=(-63).toByte() },"rssi-result"),true) }
+    }
 }

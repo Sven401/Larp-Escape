@@ -1,5 +1,8 @@
 # ESP-NOW in der Baugruppenbedienung
 
+Die zusätzliche [RSSI-Messung und Funkelsteuerung](rssi-test.md) verwendet
+das bestehende Framework und ergänzt die folgenden Einzelsendetests.
+
 Stand: **18. Oktober 2026**. Implementiert und softwareseitig geprüft;
 **Installation und gemeinsame Handy-/BLE-/Funkprüfung noch offen**.
 Der frühere [Zwei-Geräte-Nachweis](device-test-2026-10-18.md) bleibt gültig

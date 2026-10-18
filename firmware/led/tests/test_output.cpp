@@ -228,6 +228,19 @@ void frame_rate() {
     check(f.bus.frames.size() == count, "effect ignored frame budget");
     f.output.service(); check(f.bus.frames.size() == count + 1, "effect missed next frame");
 }
+void twinkle_intensity() {
+    Fixture full; full.boot(); full.start(Effect::Twinkle); full.at(330);
+    const auto reference = full.bus.frames.back();
+    Fixture dim; dim.boot(); dim.output.setTwinkleIntensity(20); dim.start(Effect::Twinkle); dim.at(330);
+    const auto revision = dim.output.snapshot().revision;
+    for (std::size_t i=0;i<PixelCount;++i)
+        check(dim.bus.frames.back()[i].red == reference[i].red * 20U / 100U, "twinkle modulation lost original phase");
+    dim.output.setTwinkleIntensity(1000); dim.at(363);
+    check(dim.output.snapshot().revision == revision, "intensity restarted effect or incremented command revision");
+    bounded(dim.bus.frames.back());
+    dim.output.setTwinkleIntensity(0); dim.at(396); check(black(dim.bus.frames.back()), "zero intensity not dark");
+    dim.start(Effect::Burst); check(!black(dim.bus.frames.back()), "twinkle intensity leaked into other effect");
+}
 }
 int main(int argc, char **argv) {
     const struct { const char *name; void (*run)(); } cases[] = {
@@ -236,7 +249,7 @@ int main(int argc, char **argv) {
         {"burst_once", burst_once}, {"restart_same", restart_same}, {"ripple_once", ripple_once},
         {"replace_automatic_off", replace_automatic_off}, {"submit_failure", submit_failure},
         {"failed_completion", failed_completion}, {"timeout", timeout}, {"clock_wrap", clock_wrap},
-        {"invalid_effect", invalid_effect}, {"frame_rate", frame_rate},
+        {"invalid_effect", invalid_effect}, {"frame_rate", frame_rate}, {"twinkle_intensity", twinkle_intensity},
     };
     try {
         for (const auto &test : cases) if (argc == 1 || std::string(argv[1]) == test.name) {

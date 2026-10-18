@@ -8,7 +8,7 @@ import javax.crypto.spec.SecretKeySpec
 data class LedStatus(val revision: Long, val nextRequest: Long, val deviceMillis: Long,
     val statusSequence: Long, val effect: Int, val flags: Int, val mode: Int, val wake: WakeStatus? = null,
     val nfcSupported: Boolean = false, val matrix: MatrixStatus? = null, val audio: AudioStatus? = null,
-    val espNowSupported: Boolean? = null, val espNowReady: Boolean? = null) {
+    val espNowSupported: Boolean? = null, val espNowReady: Boolean? = null, val rssiSupported: Boolean? = null) {
     val ready get() = flags and 1 != 0
     val pending get() = flags and 2 != 0
     val off get() = flags and 4 != 0
@@ -56,7 +56,8 @@ data class MatrixStatus(val supported: Boolean, val valid: Boolean,
 
 data class LedResult(val request: Long, val outcome: Int, val status: LedStatus)
 data class EspNowResult(val led: LedResult, val accepted: Boolean, val link: Int, val received: Boolean,
-    val peer: ByteArray, val token: ByteArray, val receiverCount: Long, val receiverBoot: Long)
+    val peer: ByteArray, val token: ByteArray, val receiverCount: Long, val receiverBoot: Long,
+    val rssi: Int? = null, val filteredRssi: Int? = null, val intensity: Int? = null)
 
 fun espNowPeer(text: String): ByteArray? {
     if (!Regex("[0-9a-fA-F]{2}(:[0-9a-fA-F]{2}){5}").matches(text.trim())) return null
@@ -109,12 +110,12 @@ class LedProtocol(access: LedAccess, private val clientNonce: ByteArray) {
                 (0..80).filterTo(mutableSetOf()) { byte(bytes, 48 + it / 8) and (1 shl (it % 8)) != 0 })
         }
         val capabilities = byte(bytes, 38)
-        require(capabilities in 0..7 && (capabilities and 4 == 0 || capabilities and 2 != 0)) { "Unbekannte Boxfähigkeiten." }
+        require(capabilities in 0..15 && (capabilities and 12 == 0 || capabilities and 2 != 0)) { "Unbekannte Boxfähigkeiten." }
         val audioSupported = capabilities and 1 != 0
         val audio = audioValues(bytes, 39, audioSupported)
         return values(u32(bytes, 18), u32(bytes, 22), u32(bytes, 26), u32(bytes, 30),
             byte(bytes, 34), byte(bytes, 35), byte(bytes, 36), WakeStatus(supported, valid, mask), wakeByte and 0x20 != 0, matrix,
-            audio).copy(espNowSupported = capabilities and 2 != 0, espNowReady = capabilities and 4 != 0)
+            audio).copy(espNowSupported = capabilities and 2 != 0, espNowReady = capabilities and 4 != 0, rssiSupported = capabilities and 8 != 0)
     }
     fun command(status: LedStatus, effect: Int): ByteArray {
         check(granted)
@@ -161,17 +162,19 @@ class LedProtocol(access: LedAccess, private val clientNonce: ByteArray) {
         return LedResult(request, outcome, values(u32(bytes, 26), u32(bytes, 22), u32(bytes, 30),
             u32(bytes, 34), byte(bytes, 39), byte(bytes, 40), byte(bytes, 41), audio = audioValues(bytes, 42)))
     }
-    fun espNowCommand(status: LedStatus, peer: ByteArray): ByteArray {
+    fun espNowCommand(status: LedStatus, peer: ByteArray, rssi: Boolean = false, twinkle: Boolean = false): ByteArray {
         check(granted)
         require(status.espNowSupported == true && status.espNowReady == true && status.mode in 0..1)
         require(peer.size == 6 && peer.any { it != 0.toByte() } && peer[0].toInt() and 1 == 0)
         require(status.nextRequest in 1 until U32)
-        val body = byteArrayOf(2, 6) + session!! + le(status.nextRequest) + le(0) +
-            le((status.deviceMillis + 3000) and U32) + byteArrayOf(1, 1) + peer
-        return body + mac("espnow-command", body)
+        require(!rssi || status.rssiSupported == true)
+        val body = byteArrayOf(2, if (rssi) 7 else 6) + session!! + le(status.nextRequest) + le(0) +
+            le((status.deviceMillis + 3000) and U32) + byteArrayOf(if (rssi && twinkle) 2 else 1, 1) + peer
+        return body + mac(if (rssi) "rssi-command" else "espnow-command", body)
     }
-    fun espNowResult(bytes: ByteArray): EspNowResult {
-        check(granted); header(bytes, 0x87, 108); binding(bytes); verify("espnow-result", bytes, 76)
+    fun espNowResult(bytes: ByteArray, rssi: Boolean = false): EspNowResult {
+        check(granted); header(bytes, if (rssi) 0x88 else 0x87, if (rssi) 112 else 108); binding(bytes)
+        verify(if (rssi) "rssi-result" else "espnow-result", bytes, if (rssi) 80 else 76)
         val request = u32(bytes, 18); val outcome = byte(bytes, 38)
         val accepted = byte(bytes, 42); val link = byte(bytes, 43); val received = byte(bytes, 44)
         val peer = bytes.copyOfRange(46, 52); val token = bytes.copyOfRange(52, 68)
@@ -186,9 +189,17 @@ class LedProtocol(access: LedAccess, private val clientNonce: ByteArray) {
         require(received == 0 || count != 0L)
         require(outcome != 12 || (accepted == 1 && link == 2 && received == 0))
         require(outcome != 13 || (accepted == 1 && received == 0))
+        val validRssi = rssi && byte(bytes, 76) == 1
+        if (rssi) {
+            require(byte(bytes,76) in 0..1 && validRssi == (received == 1))
+            if (validRssi) require(bytes[77].toInt() in -127..-1 && bytes[78].toInt() in -127..-1 && byte(bytes,79) in 20..100)
+            else require((77..79).all { byte(bytes,it) == 0 })
+        }
         return EspNowResult(LedResult(request, outcome, values(u32(bytes,26), u32(bytes,22),
             u32(bytes,30), u32(bytes,34), byte(bytes,39), byte(bytes,40), byte(bytes,41))),
-            accepted == 1, link, received == 1, peer, token, count, boot)
+            accepted == 1, link, received == 1, peer, token, count, boot,
+            if (validRssi) bytes[77].toInt() else null, if (validRssi) bytes[78].toInt() else null,
+            if (validRssi) byte(bytes,79) else null)
     }
     private fun audioValues(bytes: ByteArray, at: Int, supported: Boolean = true) = AudioStatus(u32(bytes, at),
         byte(bytes, at + 4) or (byte(bytes, at + 5) shl 8), byte(bytes, at + 6), byte(bytes, at + 7), supported)

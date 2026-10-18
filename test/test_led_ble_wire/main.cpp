@@ -60,6 +60,9 @@ class Control : public IControl {
     EspNowSnapshot esp;
     unsigned espSubmissions = 0;
     EspNowSnapshot espNowSnapshot() const noexcept override { return esp; }
+    bool submitRssi(const std::array<std::uint8_t,6> &peer, std::uint32_t now, bool) noexcept override {
+        return submitEspNow(peer, now);
+    }
     bool submitEspNow(const std::array<std::uint8_t,6> &peer, std::uint32_t) noexcept override {
         ++espSubmissions; esp.peer = peer; esp.token.fill(7); esp.pending = true; esp.accepted = true; return true;
     }

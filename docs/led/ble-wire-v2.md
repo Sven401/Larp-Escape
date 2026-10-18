@@ -44,6 +44,7 @@ unveränderter Statuspfad und nicht diese Baugruppen-Protokollversion.
 | `0x04` | Audio-Auftrag | 66 | `LARP-LED/2/audio-command`, Body 34 |
 | `0x05` | NFC-Auftrag | 70 | `LARP-NFC/2/command`, Body 38 |
 | `0x06` | ESP-NOW-Testauftrag | 70 | `LARP-LED/2/espnow-command`, Body 38 |
+| `0x07` | RSSI-Messauftrag | 70 | `LARP-LED/2/rssi-command`, Body 38 |
 | `0x81` | Challenge | 98 | `LARP-LED/2/challenge`, Body 66 |
 | `0x82` | Granted/Gesamtstatus | 91 | `LARP-LED/2/status`, Body 59 |
 | `0x83` | LED-Ergebnis | 74 | `LARP-LED/2/result`, Body 42 |
@@ -51,6 +52,7 @@ unveränderter Statuspfad und nicht diese Baugruppen-Protokollversion.
 | `0x85` | Audio-Ergebnis | 82 | `LARP-LED/2/audio-result`, Body 50 |
 | `0x86` | NFC-Ergebnis | 105 | `LARP-NFC/2/result`, Body 73 |
 | `0x87` | ESP-NOW-Testergebnis | 108 | `LARP-LED/2/espnow-result`, Body 76 |
+| `0x88` | RSSI-Messergebnis | 112 | `LARP-LED/2/rssi-result`, Body 80 |
 
 Mehrbytezahlen sind little endian. Außer Hello/Proof enthalten Nachrichten
 nach dem Header die 16-Byte-Session-ID. Typ, exakte Länge, Sitzung und
@@ -74,7 +76,7 @@ Baugruppen. Fähigkeiten werden nicht mehr aus der Nachrichtenlänge abgeleitet.
 | 30–33 | gemeinsame LED-/Audio-/Gesamtstatussequenz |
 | 34–36 | LED-Effekt, LED-Flags, Modus; Semantik aus V1 |
 | 37 | Wake: Bit 7 unterstützt, Bit 6 gültig, Bits 0–3 Rohmaske; NFC: Bit 5 unterstützt; Bit 4 null |
-| 38 | Fähigkeiten: Bit 0 Audio unterstützt, Bit 1 ESP-NOW unterstützt, Bit 2 ESP-NOW bereit; übrige Bits null; bereit verlangt unterstützt |
+| 38 | Fähigkeiten: Bit 0 Audio unterstützt, Bit 1 ESP-NOW unterstützt, Bit 2 ESP-NOW bereit, Bit 3 RSSI unterstützt; Bits 4–7 null; bereit/RSSI verlangen ESP-NOW-Unterstützung |
 | 39–46 | Audio-Snapshot: LE32 Revision, LE16 Titel, Lautstärke, Flags |
 | 47 | Matrix: Bit 7 unterstützt, Bit 6 gültig, Bit 5 mehrdeutig; Bits 0–4 null |
 | 48–58 | Matrixkontakte 0–80, zeilenweise; nur Bit 0 des letzten Bytes verwendet |
@@ -99,6 +101,8 @@ alte V2-Apps lehnen die neuen Fähigkeitsbits ab und benötigen ein Update.
 [ESP-NOW-Vertrag und Testablauf](../espnow/app-test.md) definieren die neuen
 Typen, Korrelation, Fristen und das erforderliche Empfängerpaar. Der folgende
 ursprüngliche Umfang wird um ESP-NOW als vierte gemeinsame Auftragsart ergänzt.
+Die [RSSI-Erweiterung](../espnow/rssi-test.md) ergänzt Messwerte und optionale
+Funkelmodulation mit eigenen Typen/Domänen; kein automatischer Einzelteststart.
 
 NFC und Matrix bleiben bewusst getrennte Prüfvarianten. Gleichzeitige
 Testmakros sind ein Buildfehler. Der gemeinsame Decoder kann alle Felder

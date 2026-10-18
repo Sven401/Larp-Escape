@@ -1,3 +1,4 @@
+#include "RssiMeasurement.h"
 static Message espCommand(Harness &h, std::uint32_t id = 1) {
     auto m = h.command(id); m.bytes[1] = 6;
     m.bytes[30] = 1; m.bytes[31] = 1;
@@ -16,6 +17,45 @@ static void espNowCases() {
         bool send(const Peer &, const Packet &p) override { ++sends; last = p; return accepts; }
     } radio;
     Core core(radio); core.enable(true);
+    {
+        Core measurement(radio); measurement.enable(true);
+        Peer target{{2,3,4,5,6,7}}; Token id{}; id.fill(3);
+        check(measurement.start(target,id,100,true), "RSSI probe admitted");
+        auto reply=request(id); reply[5]=2; encode32(reply.data()+60,1);
+        measurement.delivery(target,true);
+        measurement.receive(target,reply.data(),64);
+        check(measurement.snapshot().pending, "ordinary callback cannot invent RSSI");
+        auto wrong=target; wrong[5]++;
+        measurement.receive(wrong,reply.data(),64,-60);
+        auto stale=reply; stale[8]++;
+        measurement.receive(target,stale.data(),64,-60);
+        check(measurement.snapshot().pending, "RSSI bound to exact source and nonce");
+        measurement.receive(target,reply.data(),64,-60);
+        check(measurement.snapshot().rssiValid && measurement.snapshot().rssi == -60, "matching sample accepted");
+        larp::rssi::Filter f;
+        check(!f.valid(0) && f.target(0)==20, "unknown has conservative intensity");
+        f.sample(-90,UINT32_MAX-1000); check(f.target(UINT32_MAX-1000)==20, "weak lower endpoint");
+        f.sample(-40,UINT32_MAX-999); check(f.value() < -70 && f.target(0)<60, "smoothing limits jump");
+        check(f.valid(1998) && !f.valid(2000), "RSSI expiry handles wrap");
+        f.sample(-20,2001); check(f.target(2001)==100, "strong upper clamp");
+        f.clear(); f.sample(-120,2002); check(f.target(2002)==20, "weak clamp after reset");
+        std::array<std::uint8_t,107> frame{};
+        frame[0]=0xd0; frame[24]=127; frame[25]=frame[34]=0x18;
+        frame[26]=frame[35]=0xfe; frame[27]=frame[36]=0x34;
+        frame[32]=221; frame[33]=69; frame[37]=4; frame[38]=1;
+        std::copy(target.begin(),target.end(),frame.begin()+10);
+        std::copy(target.begin(),target.end(),frame.begin()+4);
+        std::copy(reply.begin(),reply.end(),frame.begin()+39);
+        larp::rssi::Observation observation;
+        check(larp::rssi::decode(frame.data(),107,-60,observation) && observation.source==target && observation.packet==reply,
+              "bounded vendor action parser associates payload and source");
+        for (unsigned n=0;n<107;++n) check(!larp::rssi::decode(frame.data(),n,-60,observation),"truncated frames rejected");
+        for (unsigned at : {0U,24U,25U,26U,27U,32U,33U,34U,35U,36U,37U,38U,39U,94U}) {
+            auto bad=frame; bad[at]^=1; check(!larp::rssi::decode(bad.data(),107,-60,observation),"wrong protocol frame rejected");
+        }
+        check(!larp::rssi::decode(frame.data(),107,0,observation),"absent RSSI rejected");
+    }
+    radio.sends=0;
     Peer peer{{2,3,4,5,6,7}}, wrong{{2,3,4,5,6,8}};
     Token token{}; token.fill(9);
     check(core.start(peer, token, 100), "one deliberate send");
@@ -45,6 +85,23 @@ static void espNowCases() {
     radio.accepts = false; check(core.start(peer, token, 2000), "local failure has terminal observation");
     check(!core.snapshot().accepted && core.snapshot().outcome == 10, "local rejection never delivery");
     core.overflow(); check(!core.start(peer, token, 2001), "queue overflow fails closed");
+    {
+        Harness h; h.auth(); Message out;
+        h.control.esp.supported = h.control.esp.ready = h.control.esp.rssiSupported = true;
+        check(h.session.publishStatus(1004,out) && out.bytes[38]==14,"RSSI capability explicit");
+        auto command=espCommand(h); command.bytes[1]=7; command.bytes[30]=2; sign(h.crypto,h.key,"rssi-command",command,38);
+        check(h.session.receive(command,1010,out)==SessionResult::Accepted,"RSSI has authenticated common slot");
+        h.control.esp.pending=false; h.control.esp.received=true; h.control.esp.rssiValid=true;
+        h.control.esp.rssi=-63; h.control.esp.filteredRssi=-61; h.control.esp.intensity=66;
+        h.control.esp.outcome=0; h.control.esp.receiverCount=1;
+        check(h.session.service(1020,out) && out.size==112 && out.bytes[1]==0x88 && out.bytes[76]==1 &&
+            out.bytes[77]==static_cast<std::uint8_t>(-63) && out.bytes[79]==66,"RSSI signed result metadata");
+        auto signedResult=out; sign(h.crypto,h.key,"rssi-result",signedResult,80);
+        check(same(out,signedResult),"RSSI uses separate HMAC domain");
+        const auto cached=out;
+        check(h.session.receive(command,1021,out)==SessionResult::Reply && same(out,cached) && h.control.espSubmissions==1,
+              "RSSI duplicate never repeats measurement or LED action");
+    }
     {
         Harness h; h.auth(); Message out;
         h.control.esp.supported = h.control.esp.ready = true;

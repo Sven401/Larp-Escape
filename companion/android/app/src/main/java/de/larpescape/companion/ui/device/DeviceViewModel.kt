@@ -39,6 +39,8 @@ class DeviceViewModel(private val repository: DeviceRepository) : ViewModel() {
     fun stopLeds() { if (foreground && permissionGranted && state.value.leds.canStop) repository.stopLeds() }
     fun selectEspNowPeer(value: String) = repository.selectEspNowPeer(value)
     fun sendEspNowTest() { if (foreground && permissionGranted && state.value.leds.espNow.canSend) repository.sendEspNowTest() }
+    fun measureEspNow(twinkle: Boolean) { if (foreground && permissionGranted && state.value.leds.espNow.canSend && state.value.leds.espNow.rssiSupported) repository.measureEspNow(twinkle) }
+    fun stopEspNowMeasurement() = repository.stopEspNowMeasurement()
     fun selectAudioTrack(value: String) = repository.selectAudioTrack(value)
     fun selectAudioVolume(value: String) = repository.selectAudioVolume(value)
     fun startAudio() { if (foreground && permissionGranted && state.value.leds.audio.canStart) repository.startAudio() }

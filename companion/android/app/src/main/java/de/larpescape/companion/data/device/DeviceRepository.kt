@@ -23,6 +23,8 @@ interface DeviceRepository {
     fun stopLeds()
     fun selectEspNowPeer(value: String) {}
     fun sendEspNowTest() {}
+    fun measureEspNow(twinkle: Boolean) {}
+    fun stopEspNowMeasurement() {}
     fun selectAudioTrack(value: String)
     fun selectAudioVolume(value: String)
     fun startAudio()

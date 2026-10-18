@@ -234,7 +234,7 @@ class MainActivity : ComponentActivity() {
                             exportMatrix.launch("Tastenmatrix-Sammeldurchgang.txt")
                         })
                         WakeControls(state.leds.wake)
-                        EspNowControls(state.leds.espNow, model::selectEspNowPeer, model::sendEspNowTest)
+                        EspNowControls(state.leds.espNow, model::selectEspNowPeer, model::sendEspNowTest, model::measureEspNow, model::stopEspNowMeasurement)
                         AudioControls(state.leds.audio, model::selectAudioTrack, model::selectAudioVolume,
                             model::startAudio, model::stopAudio, model::audioAction)
                         LedControls(state.leds, model::selectLedEffect, model::startLedEffect, model::stopLeds,

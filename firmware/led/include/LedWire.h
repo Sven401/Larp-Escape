@@ -43,6 +43,9 @@ struct AudioSnapshot {
 };
 struct EspNowSnapshot {
     bool supported = false, ready = false, pending = false, accepted = false, received = false;
+    bool rssiSupported = false, rssiValid = false;
+    std::int8_t rssi = 0, filteredRssi = 0;
+    std::uint8_t intensity = 0;
     std::uint8_t link = 0, outcome = 4; // link: 0 unknown, 1 delivered, 2 failed
     std::array<std::uint8_t, 6> peer = {};
     Nonce token = {};
@@ -63,6 +66,7 @@ class IControl {
     virtual bool submit(Operation, Effect, std::uint32_t expectedRevision,
                         std::uint32_t &targetRevision) noexcept = 0;
     virtual void stopOnDisconnect() noexcept = 0;
+    virtual bool submitRssi(const std::array<std::uint8_t, 6> &, std::uint32_t, bool) noexcept { return false; }
     virtual AudioSnapshot audioSnapshot() const noexcept { return {}; }
     virtual EspNowSnapshot espNowSnapshot() const noexcept { return {}; }
     virtual bool submitEspNow(const std::array<std::uint8_t, 6> &, std::uint32_t) noexcept { return false; }
@@ -110,7 +114,7 @@ class Session {
     bool verify(const char *, const Message &, std::size_t) noexcept;
     bool status(std::uint8_t type, std::uint32_t now, Message &) noexcept;
     bool result(Outcome, std::uint32_t request, std::uint32_t now, Message &,
-                bool audio = false, bool espNow = false) noexcept;
+                bool audio = false, bool espNow = false, bool rssi = false) noexcept;
     bool finish(Outcome, const Message &, std::uint32_t now, Message &) noexcept;
     SessionResult reject(Message &) noexcept;
 };

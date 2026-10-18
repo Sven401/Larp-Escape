@@ -44,7 +44,7 @@ public:
 class Core {
     IRadio &radio_;
     ledwire::EspNowSnapshot state_{};
-    bool enabled_ = false, flight_ = false, fault_ = false;
+    bool enabled_ = false, flight_ = false, fault_ = false, needRssi_ = false;
     std::uint32_t started_ = 0;
 public:
     explicit Core(IRadio &r) : radio_(r) { state_.supported = true; }
@@ -52,8 +52,9 @@ public:
     ledwire::EspNowSnapshot snapshot() const {
         auto out = state_; out.ready = enabled_ && !fault_ && !flight_; return out;
     }
-    bool start(const Peer &peer, const Token &token, std::uint32_t now) {
+    bool start(const Peer &peer, const Token &token, std::uint32_t now, bool needRssi = false) {
         if (!snapshot().ready || state_.pending || !validPeer(peer) || !validToken(token)) return false;
+        needRssi_ = needRssi;
         state_ = {}; state_.supported = true; state_.pending = true;
         state_.peer = peer; state_.token = token; started_ = now;
         flight_ = true;
@@ -70,11 +71,12 @@ public:
         state_.link = ok ? 1 : 2;
         if (!ok) { state_.pending = false; state_.outcome = 12; }
     }
-    void receive(const Peer &peer, const std::uint8_t *bytes, std::size_t size) {
-        if (!state_.pending || peer != state_.peer || !validPacket(bytes, size, true) ||
+    void receive(const Peer &peer, const std::uint8_t *bytes, std::size_t size, int rssi = 0) {
+        if ((needRssi_ && (rssi < -127 || rssi >= 0)) || !state_.pending || peer != state_.peer || !validPacket(bytes, size, true) ||
             std::memcmp(bytes + 8, state_.token.data(), 16) != 0) return;
         const auto count = decode32(bytes + 60);
         if (!count) return;
+        state_.rssiValid = needRssi_; state_.rssi = static_cast<std::int8_t>(needRssi_ ? rssi : 0);
         state_.receiverBoot = decode32(bytes + 56);
         state_.receiverCount = count; state_.received = true;
         state_.pending = false; state_.outcome = 0;
@@ -87,11 +89,13 @@ public:
     }
     void cancel() {
         state_.pending = false; state_.received = false; state_.accepted = false;
+        state_.rssiValid = false; state_.rssi = state_.filteredRssi = 0; state_.intensity = 0;
         state_.link = 0; state_.token.fill(0); state_.receiverCount = state_.receiverBoot = 0;
         // Keep peer and flight until the old callback has been drained.
     }
     void overflow() {
         fault_ = true; state_.pending = false; state_.outcome = 10;
+        state_.rssiValid = false; state_.rssi = state_.filteredRssi = 0; state_.intensity = 0;
         state_.received = false; state_.receiverCount = state_.receiverBoot = 0;
     }
 };

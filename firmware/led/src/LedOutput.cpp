@@ -76,7 +76,7 @@ void LedOutput::render(std::uint32_t elapsed) {
             const std::uint32_t triangle = (phase <= period / 2U ? phase : period - phase) * 510U / period;
             const std::uint32_t sparkle = triangle * triangle * triangle / (255U * 255U);
             const auto value = static_cast<std::uint8_t>(4U + sparkle * (Brightness - 4U) / 255U);
-            frame_[i].red = frame_[i].green = frame_[i].blue = value;
+            frame_[i].red = frame_[i].green = frame_[i].blue = static_cast<std::uint8_t>(value * twinkleIntensity_ / 100U);
         }
         break;
     case Effect::Burst: {

@@ -1,6 +1,7 @@
 #ifdef LARP_ESPNOW_TEST
 #include "EspNowRadio.h"
 #include "EspNowTest.h"
+#include "RssiMeasurement.h"
 #include <Arduino.h>
 #include <atomic>
 #include <esp_event.h>
@@ -16,6 +17,7 @@ struct Event {
     bool receipt = false, ok = false;
     Peer peer{};
     Packet packet{};
+    int strength = 0;
 };
 QueueHandle_t queue = nullptr;
 std::atomic<bool> dropped{false};
@@ -37,6 +39,20 @@ public:
     }
 } radio;
 Core core(radio);
+Peer local{}, selected{};
+larp::rssi::Filter filter;
+Token sampled{};
+bool controlIntensity = false;
+unsigned appliedIntensity = 100;
+std::uint32_t lastIntensityAt = 0;
+void sniff(void *buffer, wifi_promiscuous_pkt_type_t type) {
+    if (!buffer || type != WIFI_PKT_MGMT) return;
+    const auto *p = static_cast<const wifi_promiscuous_pkt_t *>(buffer);
+    larp::rssi::Observation o;
+    if (!larp::rssi::decode(p->payload, p->rx_ctrl.sig_len, p->rx_ctrl.rssi, o) || o.destination != local) return;
+    Event e{}; e.receipt = true; e.peer = o.source; e.packet = o.packet; e.strength = o.strength;
+    if (xQueueSend(queue, &e, 0) != pdTRUE) dropped.store(true);
+}
 void tx(const uint8_t *mac, esp_now_send_status_t status) {
     if (!mac) return;
     Event e{}; std::copy(mac, mac + 6, e.peer.begin()); e.ok = status == ESP_NOW_SEND_SUCCESS;
@@ -60,23 +76,48 @@ bool begin() {
         esp_wifi_set_mode(WIFI_MODE_STA) == ESP_OK && esp_wifi_start() == ESP_OK &&
         // ESP-IDF 4.4 requires modem sleep for WiFi/Bluetooth coexistence.
         esp_wifi_set_channel(1, WIFI_SECOND_CHAN_NONE) == ESP_OK && esp_wifi_set_ps(WIFI_PS_MIN_MODEM) == ESP_OK &&
-        esp_now_init() == ESP_OK && esp_now_register_send_cb(tx) == ESP_OK && esp_now_register_recv_cb(rx) == ESP_OK;
-    core.enable(ok); return ok;
+        esp_now_init() == ESP_OK && esp_now_register_send_cb(tx) == ESP_OK && esp_now_register_recv_cb(rx) == ESP_OK &&
+        esp_wifi_get_mac(WIFI_IF_STA, local.data()) == ESP_OK &&
+        esp_wifi_set_promiscuous_rx_cb(sniff) == ESP_OK;
+    wifi_promiscuous_filter_t capture{}; capture.filter_mask = WIFI_PROMIS_FILTER_MASK_MGMT;
+    const bool captureOk = ok && esp_wifi_set_promiscuous_filter(&capture) == ESP_OK && esp_wifi_set_promiscuous(true) == ESP_OK;
+    core.enable(captureOk); return captureOk;
 }
 void service(std::uint32_t now) {
     core.service(now);
     if (dropped.load()) { core.overflow(); return; }
     Event e{};
     for (unsigned n = 0; queue && n < 16 && xQueueReceive(queue, &e, 0) == pdTRUE; ++n) {
-        if (e.receipt) core.receive(e.peer, e.packet.data(), e.packet.size());
+        if (e.receipt) core.receive(e.peer, e.packet.data(), e.packet.size(), e.strength);
         else core.delivery(e.peer, e.ok);
     }
+    const auto state = core.snapshot();
+    if (state.received && state.rssiValid && state.token != sampled) {
+        sampled = state.token; filter.sample(state.rssi, now);
+    }
 }
-void cancel() { core.cancel(); }
-ledwire::EspNowSnapshot snapshot() { return core.snapshot(); }
-bool submit(const std::array<std::uint8_t, 6> &peer, std::uint32_t now) {
+void clearIntensity() { controlIntensity = false; appliedIntensity = 100; }
+void cancel() { core.cancel(); filter.clear(); sampled.fill(0); clearIntensity(); }
+unsigned intensity(std::uint32_t now) {
+    if (!controlIntensity) return 100;
+    if (now - lastIntensityAt >= 33U) {
+        lastIntensityAt = now; const auto target = filter.target(now);
+        if (appliedIntensity < target) appliedIntensity += std::min(3U, target - appliedIntensity);
+        else appliedIntensity -= std::min(3U, appliedIntensity - target);
+    }
+    return appliedIntensity;
+}
+ledwire::EspNowSnapshot snapshot() {
+    auto s = core.snapshot(); s.rssiSupported = true;
+    if (s.rssiValid) { s.filteredRssi = static_cast<std::int8_t>(filter.value()); s.intensity = filter.target(millis()); }
+    return s;
+}
+bool submit(const std::array<std::uint8_t, 6> &peer, std::uint32_t now, bool rssi, bool intensity) {
     Token token{}; esp_fill_random(token.data(), token.size());
-    return core.start(peer, token, now);
+    if (peer != selected) { filter.clear(); sampled.fill(0); }
+    if (!core.start(peer, token, now, rssi)) return false;
+    selected = peer; controlIntensity = rssi && intensity;
+    return true;
 }
 }}
 #endif
