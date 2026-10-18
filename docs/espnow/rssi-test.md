@@ -3,7 +3,8 @@
 Stand: 18. Oktober 2026. Beauftragt: gemeinsame Abstandsversuche mit RSSI und
 Funkelsteuerung. Basis `3ff7d11`; Arduino-ESP32 bleibt 2.0.14 / ESP-IDF 4.4.
 Die [Frameworkmigration](../../handoff/ARDUINO-ESP32-3-MIGRATION.md) bleibt
-separate zukünftige Arbeit. Neue Geräteabnahme noch offen.
+separate zukünftige Arbeit. [Prüfstand mit begrenztem Gerätelauf](rssi-result-2026-10-18.md);
+gemeinsame Abstands-/Lichtabnahme noch offen.
 
 ## Bedienung
 
