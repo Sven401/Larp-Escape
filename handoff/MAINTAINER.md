@@ -1,5 +1,7 @@
 # Maintainer-Einstieg
 
+**UI/UX-Entscheidung · 18. Oktober 2026:** [UX-01 und Projektreferenz](../docs/ui-ux/PROJEKTREFERENZ.md): Dev-App für Entwicklung/Tests/Experimente und Spielleiter-App für Endnutzer werden als zwei separate Apps ausgeliefert. Hauptabläufe für beide Apps sind ausgearbeitet; technische Trennung und native Abnahme bleiben offen. Der vorhandene Stationspilot aus PR #78 ist als noch nicht integrierte Quelle berücksichtigt.
+
 **Näheglut mit realem ESP-NOW geprüft · 18. Oktober 2026:** Drei Laborläufe
 belegen Funkanbindung, Veraltung/Wiederkehr und gezielten Stop ohne Wiederanlauf.
 Optische Dunkelprüfung und zwei Übergangsabweichungen bleiben offen;

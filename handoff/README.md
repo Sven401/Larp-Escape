@@ -1,5 +1,7 @@
 # Technische Projektübergabe
 
+**UI/UX · 18. Oktober 2026:** [Projektreferenz und bestätigte separate Appauslieferung](../docs/ui-ux/PROJEKTREFERENZ.md), [Dev-Hauptabläufe](../docs/ui-ux/DEV-APP-ABLAEUFE.md) und [Spielleitungs-Hauptabläufe](../docs/ui-ux/SPIELLEITER-APP-ABLAEUFE.md). Dokumentierter Designstand; keine native Apptrennung oder neue Geräteabnahme.
+
 **Näheglut mit realem ESP-NOW geprüft · 18. Oktober 2026:** Drei Laborläufe
 belegen Funkanbindung, Veraltung/Wiederkehr und gezielten Stop ohne Wiederanlauf.
 Optische Dunkelprüfung und zwei Übergangsabweichungen bleiben offen;

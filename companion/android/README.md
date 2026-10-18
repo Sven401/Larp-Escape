@@ -1,5 +1,7 @@
 # Larp-Escape: verbindliche Android-App
 
+**Apptrennung beschlossen · 18.10.2026:** [UX-01](../../docs/ui-ux/PROJEKTREFERENZ.md) legt zwei separat ausgelieferte Apps fest: Dev für Entwicklung/Tests/Experimente und Spielleitung für den Endnutzerstand. Die folgende bestehende Anwendung ist die Dev-Ausgangsbasis; die technische Trennung ist noch offen. [Dev-Abläufe](../../docs/ui-ux/DEV-APP-ABLAEUFE.md) und [Spielleitungs-Abläufe](../../docs/ui-ux/SPIELLEITER-APP-ABLAEUFE.md) beschreiben den weiteren Designumfang.
+
 **Verbindliches Zielbild · 18.10.2026:** [VA-01](../../docs/veranstaltungsarchitektur.md) und [Vertragsmatrix](../../docs/veranstaltungsarchitektur-umsetzung.md). Mehrere Spielleitungen bedienen gleichzeitig verschiedene Boxen per BLE; zunächst eine aktive Steuersitzung je Box. Gespeicherte Boxzuordnungen, Zielwechsel und getrennte Beobachtungen sind Folgearbeit. Ein Handy muss nicht gleichzeitig alle Boxen verbinden. Bestehende Funktionen und datierte Prüfaussagen bleiben vom noch offenen Veranstaltungsumfang getrennt.
 
 Die ESP-Seite enthält **ESP-NOW testen** mit Empfänger-MAC und bewusstem
