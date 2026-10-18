@@ -21,10 +21,11 @@ data class LedUiState(
     val wake: WakeUiState = WakeUiState(),
     val nfc: BoxNfcUiState = BoxNfcUiState(),
     val audio: AudioUiState = AudioUiState(),
+    val espNow: EspNowUiState = EspNowUiState(),
     val matrix: MatrixUiState = MatrixUiState(),
 ) {
     val canStart: Boolean get() = available && authenticated && current && ready && (ledOnly || gameStopped == true) && !busy
     val canStop: Boolean get() = available && authenticated && current && ready && (ledOnly || gameStopped == true) && !busy
     fun disconnected() = copy(available = false, authenticated = false, current = false, ready = false, gameStopped = null, ledOnly = false,
-        busy = false, active = null, message = "Getrennt · LED-Zustand nicht mehr bestätigt", wake = WakeUiState(), matrix = MatrixUiState(), audio = audio.disconnected(), nfc = BoxNfcUiState(message = if (nfc.busy) "Verbindung beendet · NFC-Ausgang unklar. Neu verbinden und zuerst lesen." else "Getrennt · Box erneut verbinden und Tag lesen"))
+        busy = false, active = null, message = "Getrennt · LED-Zustand nicht mehr bestätigt", wake = WakeUiState(), matrix = MatrixUiState(), audio = audio.disconnected(), espNow = espNow.disconnected(), nfc = BoxNfcUiState(message = if (nfc.busy) "Verbindung beendet · NFC-Ausgang unklar. Neu verbinden und zuerst lesen." else "Getrennt · Box erneut verbinden und Tag lesen"))
 }

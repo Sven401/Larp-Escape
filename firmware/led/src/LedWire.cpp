@@ -94,7 +94,7 @@ bool Session::beginConnection(const Nonce &boot, const Nonce &connection,
     lastReply_ = {};
     pendingCommand_ = {};
     pending_ = false; nfcPending_ = false;
-    pendingAudio_ = false;
+    pendingAudio_ = false; pendingEspNow_ = false;
     nextRequest_ = 1;
     statusSequence_ = lastRequest_ = 0;
     connectedAt_ = now;
@@ -156,7 +156,8 @@ bool Session::status(std::uint8_t type, std::uint32_t now, Message &out) noexcep
     out.bytes[36] = static_cast<std::uint8_t>(state.mode);
     out.bytes[37] = (state.wakeSupported ? 0x80 : 0) |
                     (state.wakeValid ? 0x40 : 0) | (state.nfcSupported ? 0x20 : 0) | state.wakeMask;
-    out.bytes[38] = audio.supported ? 1 : 0;
+    const auto esp = control_.espNowSnapshot();
+    out.bytes[38] = (audio.supported ? 1 : 0) | (esp.supported ? 2 : 0) | (esp.supported && esp.ready ? 4 : 0);
     if (audio.supported) writeAudio(out.bytes.data() + 39, audio);
     if (state.matrixSupported) {
         out.bytes[47] = 0x80 | (state.matrixValid ? 0x40 : 0) |
@@ -171,7 +172,7 @@ bool Session::status(std::uint8_t type, std::uint32_t now, Message &out) noexcep
     return true;
 }
 bool Session::result(Outcome outcome, std::uint32_t request, std::uint32_t now,
-                     Message &out, bool isAudio) noexcept {
+                     Message &out, bool isAudio, bool isEspNow) noexcept {
     out = {};
     const auto state = control_.snapshot();
     const auto audio = control_.audioSnapshot();
@@ -179,9 +180,9 @@ bool Session::result(Outcome outcome, std::uint32_t request, std::uint32_t now,
         statusSequence_ == std::numeric_limits<std::uint32_t>::max()) {
         disconnect(); return false;
     }
-    const std::size_t body = isAudio ? 50 : 42;
+    const std::size_t body = isEspNow ? 76 : isAudio ? 50 : 42;
     out.size = static_cast<std::uint16_t>(body + 32);
-    out.bytes[0] = 2; out.bytes[1] = isAudio ? 0x85 : 0x83;
+    out.bytes[0] = 2; out.bytes[1] = isEspNow ? 0x87 : isAudio ? 0x85 : 0x83;
     std::copy(session_.begin(), session_.end(), out.bytes.begin() + 2);
     write32(out.bytes.data() + 18, request);
     write32(out.bytes.data() + 22, nextRequest_);
@@ -193,8 +194,20 @@ bool Session::result(Outcome outcome, std::uint32_t request, std::uint32_t now,
     out.bytes[40] = state.flags;
     out.bytes[41] = static_cast<std::uint8_t>(state.mode);
     if (isAudio) writeAudio(out.bytes.data() + 42, audio);
+    if (isEspNow) {
+        EspNowSnapshot esp{};
+        const auto code = static_cast<unsigned>(outcome);
+        if (pendingEspNow_ && pendingRequest_ == request && (code == 0 || code == 10 || code == 12 || code == 13))
+            esp = control_.espNowSnapshot();
+        out.bytes[42] = esp.accepted ? 1 : 0;
+        out.bytes[43] = esp.link; out.bytes[44] = esp.received ? 1 : 0; out.bytes[45] = 1;
+        std::copy(esp.peer.begin(), esp.peer.end(), out.bytes.begin() + 46);
+        std::copy(esp.token.begin(), esp.token.end(), out.bytes.begin() + 52);
+        write32(out.bytes.data() + 68, esp.receiverCount);
+        write32(out.bytes.data() + 72, esp.receiverBoot);
+    }
     Secret mac = {};
-    if (!tag(isAudio ? AudioResultDomain : ResultDomain, out.bytes.data(), body, mac)) {
+    if (!tag(isEspNow ? "LARP-LED/2/espnow-result" : isAudio ? AudioResultDomain : ResultDomain, out.bytes.data(), body, mac)) {
         disconnect(); out.size = 0; return false;
     }
     std::copy(mac.begin(), mac.end(), out.bytes.begin() + body);
@@ -207,7 +220,7 @@ bool Session::finish(Outcome outcome, const Message &command, std::uint32_t now,
         return false;
     ++nextRequest_;
     pending_ = false;
-    if (!result(outcome, request, now, out, command.bytes[1] == 4)) return false;
+    if (!result(outcome, request, now, out, command.bytes[1] == 4, command.bytes[1] == 6)) return false;
     lastRequest_ = request;
     lastCommand_ = command;
     lastReply_ = out;
@@ -251,35 +264,54 @@ SessionResult Session::receive(const Message &m, std::uint32_t now, Message &out
         return status(0x82, now, out) ? SessionResult::Reply : SessionResult::Rejected;
     }
     const bool isAudio = m.bytes[1] == 4;
-    const auto body = isAudio ? 34U : 32U;
-    if (!authenticated() || (m.bytes[1] != 3 && !isAudio) || m.size != body + 32 ||
+    const bool isEspNow = m.bytes[1] == 6;
+    const auto body = isEspNow ? 38U : isAudio ? 34U : 32U;
+    if (!authenticated() || (m.bytes[1] != 3 && !isAudio && !isEspNow) || m.size != body + 32 ||
         !equal(session_.data(), m.bytes.data() + 2, 16) ||
-        !verify(isAudio ? AudioCommandDomain : CommandDomain, m, body)) return reject(out);
+        !verify(isEspNow ? "LARP-LED/2/espnow-command" : isAudio ? AudioCommandDomain : CommandDomain, m, body)) return reject(out);
     const auto request = read32(m.bytes.data() + 18);
     if (!request) return reject(out);
     if (lastRequest_ && request == lastRequest_) {
         if (same(m, lastCommand_)) { out = lastReply_; return SessionResult::Reply; }
-        return result(Outcome::Conflict, request, now, out, isAudio) ? SessionResult::Reply
+        return result(Outcome::Conflict, request, now, out, isAudio, isEspNow) ? SessionResult::Reply
                                                           : SessionResult::Rejected;
     }
     if (nfcPending_)
-        return result(Outcome::Busy, request, now, out, isAudio) ? SessionResult::Reply : SessionResult::Rejected;
+        return result(Outcome::Busy, request, now, out, isAudio, isEspNow) ? SessionResult::Reply : SessionResult::Rejected;
     if (pending_) {
         if (request == pendingRequest_ && same(m, pendingCommand_))
             return SessionResult::Accepted;
         return result(request == pendingRequest_ ? Outcome::Conflict : Outcome::Busy,
-                      request, now, out, isAudio) ? SessionResult::Reply : SessionResult::Rejected;
+                      request, now, out, isAudio, isEspNow) ? SessionResult::Reply : SessionResult::Rejected;
     }
     if (nextRequest_ == std::numeric_limits<std::uint32_t>::max())
-        return result(Outcome::Exhausted, request, now, out, isAudio) ? SessionResult::Reply
+        return result(Outcome::Exhausted, request, now, out, isAudio, isEspNow) ? SessionResult::Reply
                                                            : SessionResult::Rejected;
     if (request != nextRequest_)
-        return result(Outcome::OutOfOrder, request, now, out, isAudio) ? SessionResult::Reply
+        return result(Outcome::OutOfOrder, request, now, out, isAudio, isEspNow) ? SessionResult::Reply
                                                             : SessionResult::Rejected;
     const auto audio = control_.audioSnapshot();
     const auto state = commandState(control_.snapshot(), audio, isAudio);
     Outcome rejection = Outcome::Applied;
     const auto remaining = read32(m.bytes.data() + 26) - now;
+    if (isEspNow) {
+        const auto esp = control_.espNowSnapshot();
+        std::array<std::uint8_t, 6> peer{};
+        std::copy_n(m.bytes.data() + 32, 6, peer.begin());
+        std::uint8_t any = 0; for (auto b : peer) any |= b;
+        Outcome reason = Outcome::Applied;
+        if (!remaining || remaining > 3000U) reason = Outcome::Expired;
+        else if (read32(m.bytes.data() + 22) != 0 || m.bytes[30] != 1 || m.bytes[31] != 1 || !any || (peer[0] & 1)) reason = Outcome::InvalidCommand;
+        else if (!esp.supported || !esp.ready) reason = Outcome::Unavailable;
+        else if (state.mode != Mode::LedOnly && state.mode != Mode::Stopped) reason = Outcome::GameActive;
+        if (reason != Outcome::Applied) return finish(reason, m, now, out) ? SessionResult::Reply : SessionResult::Rejected;
+        pendingEspNow_ = true; pendingAudio_ = false; pendingRequest_ = request;
+        pendingCommand_ = m; pendingAt_ = now;
+        if (!control_.submitEspNow(peer, now))
+            return finish(Outcome::Unavailable, m, now, out) ? SessionResult::Reply : SessionResult::Rejected;
+        pending_ = true;
+        return SessionResult::Accepted;
+    }
     const auto operation = static_cast<Operation>(m.bytes[30]);
     const auto effect = static_cast<Effect>(m.bytes[31]);
     const auto track = isAudio ? read16(m.bytes.data() + 31) : 0;
@@ -310,6 +342,7 @@ SessionResult Session::receive(const Message &m, std::uint32_t now, Message &out
                                                         : SessionResult::Rejected;
     pending_ = true;
     pendingAudio_ = isAudio;
+    pendingEspNow_ = false;
     pendingRequest_ = request;
     pendingRevision_ = target;
     pendingAt_ = now;
@@ -322,6 +355,21 @@ bool Session::service(std::uint32_t now, Message &out) noexcept {
         disconnect(); return false;
     }
     if (!authenticated() || !pending_) return false;
+    if (pendingEspNow_) {
+        const auto esp = control_.espNowSnapshot();
+        const auto mode = control_.snapshot().mode;
+        if (mode != Mode::LedOnly && mode != Mode::Stopped) {
+            control_.stopOnDisconnect();
+            const auto command = pendingCommand_;
+            return finish(Outcome::GameActive, command, now, out);
+        }
+        if (!esp.pending || now - pendingAt_ >= 2500U) {
+            const auto command = pendingCommand_;
+            const auto outcome = esp.pending ? 10U : esp.outcome;
+            return finish(static_cast<Outcome>(outcome), command, now, out);
+        }
+        return false;
+    }
     const auto audio = control_.audioSnapshot();
     const auto state = commandState(control_.snapshot(), audio, pendingAudio_);
     if (!valid(state) || (pendingAudio_ && (!audio.supported || !valid(audio))) || (state.flags & Fault)) {

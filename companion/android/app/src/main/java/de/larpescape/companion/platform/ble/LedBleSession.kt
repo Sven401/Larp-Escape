@@ -42,6 +42,13 @@ internal class LedBleSession(
     private var lastMessage = "Box-Anmeldung wird geprüft …"
     private var lastAudioMessage = "Audio bereit · Start bewusst auslösen"
     private var expectedResult = 0
+    private var espSupported = false
+    private var espReady = false
+    private var espCapabilityAt = -1L
+    private var espWaiting = false
+    private var espPeer = byteArrayOf()
+    private var espResult: EspNowResult? = null
+    private var completedEspResult: EspNowResult? = null
     private data class Transfer(val frames: List<ByteArray>, val complete: () -> Unit, var index: Int = 0)
     private val outgoing = ArrayDeque<Transfer>()
     private var writing = false
@@ -106,18 +113,32 @@ internal class LedBleSession(
                 nfcState = nfcState.copy(busy = false, result = result, message = result.message)
                 publish()
             }
+            0x87 -> {
+                check(authenticated && expectedResult == 0x87 && espWaiting)
+                val result = protocol.espNowResult(message)
+                check(commands.request == result.led.request) { "ESP-NOW-Antwort gehört zu keinem offenen Test." }
+                if (result.accepted) check(result.peer.contentEquals(espPeer)) { "Falscher ESP-NOW-Empfänger in Boxantwort." }
+                espResult = result
+                accept(result.led.status)
+                commands.received(result.led)?.let(::completed)
+                publish()
+            }
             else -> error("Unbekannte LED-Nachricht.")
         }
     }
     private fun accept(value: LedStatus) {
         if (snapshot != null && value.statusSequence <= snapshot!!.statusSequence) return
         val now = SystemClock.elapsedRealtime()
+        if (value.espNowSupported != null) {
+            espSupported = value.espNowSupported == true; espReady = value.espNowReady == true; espCapabilityAt = now
+            handler.postDelayed({ if (alive) publish() }, 1000)
+        }
         val wakeChanged = wake.accept(value, now)
         val matrixChanged = matrix.accept(value, now)
         if (matrixChanged) matrixSample(matrix.state(now, true))
         val audioChanged = audio.accept(value, now)
         if (value.wake != null) nfcState = nfcState.copy(supported = value.nfcSupported)
-        snapshot = value; receivedAt = now
+        snapshot = value.copy(espNowSupported = espSupported, espNowReady = espReady); receivedAt = now
         // LED results can advance the shared sequence. Input expiry remains
         // scheduled independently, even when a result supersedes this status.
         if (wakeChanged || matrixChanged || audioChanged) handler.postDelayed({ if (alive) publish() }, 1000)
@@ -142,7 +163,21 @@ internal class LedBleSession(
             wake = wake.state(SystemClock.elapsedRealtime(), authenticated), nfc = nfcState, matrix = matrix.state(SystemClock.elapsedRealtime(), authenticated),
             audio = audio.state(SystemClock.elapsedRealtime(), authenticated, value.mode in 0..1,
                 nfcPending != null || commands.request != null || outgoing.isNotEmpty(), lastAudioMessage)
-                .copy(trackText = it.audio.trackText, volumeText = it.audio.volumeText)) }
+                .copy(trackText = it.audio.trackText, volumeText = it.audio.volumeText),
+            espNow = it.espNow.copy(supported = espSupported,
+                current = authenticated && fresh && SystemClock.elapsedRealtime() - espCapabilityAt in 0..999,
+                ready = espReady && value.mode in 0..1,
+                busy = nfcPending != null || commands.request != null || outgoing.isNotEmpty(), waiting = espWaiting,
+                result = completedEspResult?.takeIf { _ -> it.espNow.peer?.contentEquals(espPeer) == true },
+                message = when {
+                    !authenticated -> "Box-Zugang noch nicht bestätigt"
+                    !espSupported -> "Diese Firmware unterstützt den ESP-NOW-Test noch nicht"
+                    espWaiting -> "Test läuft · warte auf Empfangsbestätigung …"
+                    !fresh || SystemClock.elapsedRealtime() - espCapabilityAt !in 0..999 -> "Boxstatus überholt · auf neue Meldung warten"
+                    completedEspResult != null && it.espNow.peer?.contentEquals(espPeer) == true -> espNowResultMessage(completedEspResult!!)
+                    !espReady -> "ESP-NOW noch nicht bereit"
+                    else -> "Empfänger auswählen und Test bewusst starten"
+                })) }
     }
     fun command(effect: Int) = runSafely {
         check(authenticated && nfcPending == null && commands.request == null && outgoing.isEmpty()) { "Ein LED-Auftrag läuft bereits." }
@@ -162,6 +197,15 @@ internal class LedBleSession(
         lastAudioMessage = "Audio-Befehl gesendet · warte auf Boxbestätigung …"
         sendCommand(message, value.nextRequest, 0x85)
     }
+    fun espNowCommand(peer: ByteArray) = runSafely {
+        check(authenticated && nfcPending == null && commands.request == null && outgoing.isEmpty())
+        val now = SystemClock.elapsedRealtime()
+        check(now - receivedAt in 0..999 && now - espCapabilityAt in 0..999)
+        val value = snapshot ?: error("Frischer Boxstatus fehlt.")
+        val message = protocol.espNowCommand(value, peer)
+        espPeer = peer.copyOf(); espResult = null; completedEspResult = null; espWaiting = true
+        sendCommand(message, value.nextRequest, 0x87)
+    }
     fun audioAction(operation: Int, volume: Int) = runSafely {
         check(authenticated && nfcPending == null && commands.request == null && outgoing.isEmpty())
         val now = SystemClock.elapsedRealtime()
@@ -179,7 +223,7 @@ internal class LedBleSession(
         send(message) { commands.wrote()?.let(::completed); publish() }
         publish()
         handler.postDelayed({ if (alive && token == operation && commands.request != null)
-            failed("${if (resultType == 0x85) "Audio" else "LED"}-Ergebnis unbekannt · Verbindung beendet. Erneut verbinden und bewusst starten.") }, 5000)
+            failed("${when(resultType) { 0x85 -> "Audio"; 0x87 -> "ESP-NOW"; else -> "LED" }}-Ergebnis unbekannt · Verbindung beendet. Erneut verbinden und bewusst starten.") }, 5000)
     }
     fun nfcCommand(change: Boolean) = runSafely {
         check(authenticated && nfcState.supported && nfcPending == null && commands.request == null && outgoing.isEmpty()) { "Box ist noch beschäftigt oder unterstützt NFC nicht." }
@@ -199,7 +243,13 @@ internal class LedBleSession(
     }
     private fun completed(result: LedResult) {
         val isAudio = expectedResult == 0x85
+        val isEspNow = expectedResult == 0x87
         expectedResult = 0
+        if (isEspNow) {
+            completedEspResult = espResult ?: error("ESP-NOW-Ergebnis fehlt")
+            espWaiting = false
+            return
+        }
         if (isAudio) {
             lastAudioMessage = audioResultMessage(result.outcome)
             return

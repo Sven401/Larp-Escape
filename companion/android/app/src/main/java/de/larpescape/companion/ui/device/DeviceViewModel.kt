@@ -37,6 +37,8 @@ class DeviceViewModel(private val repository: DeviceRepository) : ViewModel() {
     fun startLedEffect() { if (foreground && permissionGranted && state.value.leds.canStart) repository.startLedEffect() }
     fun boxNfc(change: Boolean) { if (foreground && permissionGranted) repository.boxNfc(change) }
     fun stopLeds() { if (foreground && permissionGranted && state.value.leds.canStop) repository.stopLeds() }
+    fun selectEspNowPeer(value: String) = repository.selectEspNowPeer(value)
+    fun sendEspNowTest() { if (foreground && permissionGranted && state.value.leds.espNow.canSend) repository.sendEspNowTest() }
     fun selectAudioTrack(value: String) = repository.selectAudioTrack(value)
     fun selectAudioVolume(value: String) = repository.selectAudioVolume(value)
     fun startAudio() { if (foreground && permissionGranted && state.value.leds.audio.canStart) repository.startAudio() }

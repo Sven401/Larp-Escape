@@ -1,5 +1,12 @@
 # Eigenständige LED-Produktfunktion
 
+Die zusätzliche Variante `larp-espnow-test` ergänzt die bestehende
+Baugruppenbedienung um einen bewusst gesendeten ESP-NOW-Test mit korrelierter
+Empfangsbestätigung. Sie benötigt die neue App und den separaten
+`espnow-app-receiver` auf dem zweiten ESP.
+[Vertrag, Buildpaar und Handy-Testablauf](../../docs/espnow/app-test.md).
+Die bisherigen Varianten starten weiterhin kein WiFi.
+
 Aktueller konsolidierter Vertrag: [Baugruppen-Wire V2](../../docs/led/ble-wire-v2.md).
 Alle drei Varianten enthalten Audio; NFC-/Matrix-Tests bleiben getrennt.
 Ein gemeinsames App-/Firmwarepaar ist nötig; es wurde hier nicht installiert.

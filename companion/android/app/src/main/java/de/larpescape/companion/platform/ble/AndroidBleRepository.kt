@@ -270,6 +270,15 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
     override fun startLedEffect() = guarded { if (mutable.value.leds.canStart) ledSession?.command(mutable.value.leds.selected.wire) }
     override fun boxNfc(change: Boolean) = guarded { ledSession?.nfcCommand(change) }
     override fun stopLeds() = guarded { if (mutable.value.leds.canStop) ledSession?.command(0) }
+    override fun selectEspNowPeer(value: String) {
+        if (!mutable.value.leds.espNow.busy) mutable.value = mutable.value.copy(leds = mutable.value.leds.let {
+            it.copy(espNow = it.espNow.copy(peerText = value.take(17), result = null, message = "Empfänger auswählen und Test bewusst starten"))
+        })
+    }
+    override fun sendEspNowTest() = guarded {
+        val state = mutable.value.leds.espNow
+        if (state.canSend) ledSession?.espNowCommand(state.peer!!)
+    }
     override fun selectAudioTrack(value: String) {
         mutable.value = mutable.value.copy(leds = mutable.value.leds.let { it.copy(audio = it.audio.copy(trackText = value)) })
     }

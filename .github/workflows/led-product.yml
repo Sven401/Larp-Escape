@@ -69,7 +69,7 @@ jobs:
       - name: Record common firmware sources
         run: python scripts/quality_evidence.py init
       - name: Build all separate product variants and record resources
-        run: python scripts/quality_evidence.py run --name common-builds -- python -m platformio run -d firmware/led -e larp-led-product -e larp-nfc-test -e larp-matrix-test -j 2
+        run: python scripts/quality_evidence.py run --name common-builds -- python -m platformio run -d firmware/led -e larp-led-product -e larp-nfc-test -e larp-matrix-test -e larp-espnow-test -j 2
       - name: Summarize common firmware checks
         if: always()
         env:
