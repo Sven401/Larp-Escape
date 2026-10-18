@@ -1,6 +1,7 @@
 # Zwei Android-Apps mit Erhalt der Dev-Installation
 
-Stand: **18. Oktober 2026**. Nutzerauftrag zur direkten Umsetzung in Sitzung
+Stand: **19. Oktober 2026**. Ergänzung: [nativer Stationspilot mit echter Boxprüfung](spielleiter-stationspilot.md).
+Historische technische Trennung vom 18.10.2026: Nutzerauftrag zur direkten Umsetzung in Sitzung
 `01a150b6-981d-7791-a37d-34fac8dd18a3`; Grundlage [UX-01](../ui-ux/PROJEKTREFERENZ.md).
 Quellbasis vor Implementierung: `2c3964a662eff1498cc63eb089fd8f04f41a598e`.
 
@@ -10,20 +11,21 @@ Quellbasis vor Implementierung: `2c3964a662eff1498cc63eb089fd8f04f41a598e`.
 | --- | --- | --- |
 | Gradle-Modul | `:app` bleibt erhalten | `:gamemaster` |
 | applicationId / Namespace | `de.larpescape.companion` unverändert | `de.larpescape.gamemaster` |
-| App-Auswahl / Überschrift | Larp Dev / Larp Escape Dev | Larp GM / Larp Escape Spielleitung |
+| App-Auswahl / sichtbarer Kontext | Larp Dev / Larp Escape Dev | Larp GM / Veranstaltung und Station |
 | Symbol | GM-Companion-Motiv mit DEV-Badge | Originalmotiv von GM Companion |
-| Version | Code 2 / 0.2, vorher Code 1 / 0.1 | Code 1 / 0.1 |
-| Funktion | Alle bisherigen Baugruppen-, NFC- und Szenariowege | Eigenständiger Start mit ehrlichem Leerzustand ohne eingerichtete Veranstaltung |
-| Manifest | Bestehende BLE-/NFC-Berechtigungen und HCE-Testservice bleiben | Kein BLE-/NFC-/Internetzugriff, kein HCE-Testservice |
+| Version | Code 2 / 0.2, vorher Code 1 / 0.1 | Code 2 / 0.2; leerer Einstieg war Code 1 / 0.1 |
+| Funktion | Alle bisherigen Baugruppen-, NFC- und Szenariowege | Lokale Stationsvorbereitung, Auswahl, automatische BLE-Anmeldung und frischer bestätigter Zustand |
+| Manifest | Bestehende BLE-/NFC-Berechtigungen und HCE-Testservice bleiben | BLE Scan/Connect für Stationsprüfung; kein NFC/Internet oder HCE-Testservice |
 | Daten | Bisheriger Appbereich unverändert | Eigener isolierter Appbereich, keine Übernahme aus Dev |
 
 Die Apps sind technisch unabhängig installierbar. Installation, Dev-Update mit
 Datenerhalt und Appwechsel sind inzwischen am Moto G14 geprüft; siehe
 [Gerätebericht und Iconquelle](android-app-geraetepruefung-2026-10-18.md).
-Der unten datierte Erstprüfstand bleibt als historischer Beleg erhalten. Die Spielleiter-App besitzt in diesem Schnitt keine Stationsverwaltung,
-keine BLE-Steuerung und keine simulierten Teststationen. Der [Stationspilot](../ui-ux/BOX-PILOT.md)
-ist die Grundlage des nächsten Funktionsausbaus, nicht bereits nativ umgesetzt.
-Der Leerzustand enthält keine funktionslosen Einrichtungsbuttons.
+Der unten datierte Erstprüfstand bleibt als historischer Beleg erhalten.
+Der [native Stationspilot](spielleiter-stationspilot.md) ergänzt lokale Vorbereitung,
+Auswahl und lesenden BLE-Zustand; Licht-/Spielaktionen bleiben Folgearbeit.
+Der [Designpilot](../ui-ux/BOX-PILOT.md) ist die Grundlage des nativen Zustandsablaufs.
+Der ursprüngliche Leerzustand wurde durch die echte Stationsvorbereitung ergänzt.
 
 Die bestehende App wird nicht umbenannt im Sinne ihrer Android-Identität: allein
 Launchername, Icon, Kopfzeile und Versionsnummer ändern sich. Kein `applicationIdSuffix`
@@ -73,21 +75,22 @@ Quellordner und keine versteckte Entwicklermodus-Umschaltung. Beide nutzen die
 bereits gepinnten Compose-/Lifecycle-/Coroutine-Versionen aus dem Versionskatalog.
 
 `:core:protocol` bleibt der vorhandene gemeinsame reine Kotlin-Kern der Dev-App.
-Der funktionsarme Spielleitungsstart benötigt ihn noch nicht. Spätere Wiederverwendung
-von Protokoll-/Domänencode erfolgt über gezielte Bibliotheksabhängigkeiten; echte
-BLE-/Zugangsadapter erst mit eigener Zustandsbindung übernehmen. Kein Duplizieren
-der kompletten Dev-App als vermeintliches Endnutzerprodukt.
+Der native Stationspilot nutzt ihn jetzt ebenfalls, ohne Dev-Treiber oder -Speicher
+zu übernehmen. Sein BLE-/Zugangsadapter besitzt eine eigene Zustandsbindung.
+Weitere Wiederverwendung erfolgt über gezielte Bibliotheksabhängigkeiten; die
+komplette Dev-App wird nicht als vermeintliches Endnutzerprodukt dupliziert.
 
 Zwei installierte Apps bedeuten nicht zwei gleichzeitige Steuersitzungen derselben
-Box. Die Sitzungshoheit und Rechte nach VA-01 bleiben unverändert. Die neue App
-öffnet im jetzigen Stand keinerlei Geräteverbindung.
+Box. Die Sitzungshoheit und Rechte nach VA-01 bleiben unverändert. Der Stationspilot
+öffnet eine eigene authentisierte Verbindung zur ausgewählten Box; eine zweite
+gleichzeitige Boxsitzung wird nicht versprochen.
 
 ## Bauen und Artefakte
 
 Aus `companion/android`, mit JDK 17/21, SDK 35 und Build Tools 35.0.0:
 
 ```powershell
-./gradlew.bat :core:protocol:test :app:testDebugUnitTest :app:assembleDebug :app:assembleRelease :app:lintDebug :app:lintRelease :gamemaster:assembleDebug :gamemaster:assembleRelease :gamemaster:lintDebug :gamemaster:lintRelease --no-daemon --console=plain
+./gradlew.bat :core:protocol:test :app:testDebugUnitTest :app:assembleDebug :app:assembleRelease :app:lintDebug :app:lintRelease :gamemaster:testDebugUnitTest :gamemaster:assembleDebug :gamemaster:assembleRelease :gamemaster:lintDebug :gamemaster:lintRelease --no-daemon --console=plain
 ```
 
 | App | Debug | Release (unsigniert) |

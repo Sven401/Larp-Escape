@@ -36,6 +36,8 @@ Stand: **18. Oktober 2026**. Projektgebundene Referenz, keine Gerätefreigabe.
 
 **Technische Fortschreibung:** [Apptrennung im Android-Projekt](../companion/android-app-trennung.md) implementiert zwei Anwendungskennungen/Artefakte. Die Dev-App behält ihren Speicher; die Spielleiter-App beginnt mit einem eigenständigen Leerzustand. Die nachfolgende Bestandsanalyse bleibt auf ihre genannte Basis datiert.
 
+**Native Fortschreibung · 19.10.2026:** [Stationspilot in Larp GM](../companion/spielleiter-stationspilot.md): lokale Vorbereitung, Stationsklick, automatische gegenseitige Boxprüfung und frisch bestätigter Zustand; begrenzte reale Geräteprüfung erfolgreich. Dev-App und alle zehn vorhandenen Datenfiles unverändert. Licht-/Spielaktionen bleiben Folgearbeit.
+
 ## 1. Verbindliche Trennung und Auslieferung
 
 | | Dev-App | Spielleiter-/Nutzer-App |

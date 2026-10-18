@@ -99,7 +99,7 @@ Für Android JDK 17/21 und SDK 35 wie in der
 über `JAVA_HOME` und `ANDROID_HOME` bereitstellen. Aus `companion/android/`:
 
 ```powershell
-./gradlew.bat :core:protocol:test :app:testDebugUnitTest :app:assembleDebug :app:assembleRelease :app:lintDebug :app:lintRelease :gamemaster:assembleDebug :gamemaster:assembleRelease :gamemaster:lintDebug :gamemaster:lintRelease --no-daemon --console=plain --stacktrace --continue
+./gradlew.bat :core:protocol:test :app:testDebugUnitTest :app:assembleDebug :app:assembleRelease :app:lintDebug :app:lintRelease :gamemaster:testDebugUnitTest :gamemaster:assembleDebug :gamemaster:assembleRelease :gamemaster:lintDebug :gamemaster:lintRelease --no-daemon --console=plain --stacktrace --continue
 ```
 
 Danach aus dem Repository-Stamm `python -m unittest discover -s scripts/tests -p test_android_apps.py -v` und `python scripts/check_android_apps.py` ausführen. [Apptrennung und Datenerhalt](companion/android-app-trennung.md) beschreiben Paket-/Manifestprüfung und die weiterhin offene Geräteabnahme.
