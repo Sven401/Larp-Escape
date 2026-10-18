@@ -47,7 +47,7 @@ bestehender D0-/Wire-/Profil-/NFC-Formate oder des Frameworkpins.
 ## Lokale Prüfung und CI-Anschluss
 
 Verfahren: `python -m unittest discover -s scripts/tests -p test_d1_journal.py -v`.
-**Gemessen: 44 Tests erfolgreich**; der veröffentlichte Head und dessen CI stehen
+**Gemessen: 45 Tests erfolgreich**; der veröffentlichte Head und dessen CI stehen
 im PR. Die Suite enthält **36 tatsächlich beendete Kindprozesse** mit anschließendem
 Öffnen derselben Datenbank. Abbruchpunkte: Vergabe, Latch/Intent, Kompaktierung,
 vorbereiteter Zustand, geschriebener Snapshot, vor Commit und nach Commit.
@@ -63,6 +63,11 @@ Architekturguard (145 Dateien/302 direkte Includes). Neun Dateien auf UTF-8 und
 Python-Syntax sowie 121 relative Dateilinkziele und Diff geprüft.
 Der neue Quality-Schritt `d1-journal` führt die Referenzsuite auf frischem
 Windows-Runner aus; aktuelle PR-CI getrennt vom früheren grünen Merge `dead1204`.
+
+Schlussprüfung: Ablehnungsbelege bleiben auch über nachfolgende Zwischenmeldungen
+und Neustarts erhalten. Der neue Regressionstest zeigte zuvor einen verlorenen
+Konflikt; nach Korrektur bleibt die widersprüchliche Outbox vor Kompaktierung
+geschützt. Geprüfter Stand: der mit diesem Bericht veröffentlichte PR-Head.
 
 SQLite und komplette JSON-Zustandskopien dienen ausschließlich als Referenz auf
 dem Rechner. Policy-/Profilbeobachtungen, D0-Decodierung und Modelldigests sind

@@ -237,7 +237,8 @@ class Journal:
                 require(f["sequence"] <= s["issued"], "corrupt")
         for key, targets in s["outbox"].items():
             require(key in s["facts"] and len(targets) <= 8 and all(ident(t) for t in targets), "corrupt")
-            require(all(type(t["durable"]) is bool and type(t["conflict"]) is bool and
+            require(all(type(t["durable"]) is bool and type(t["rejected"]) is bool and
+                        type(t["conflict"]) is bool and
                         t["stage"] in ("none", "transport_received", "durable_received", "applied",
                                        "effect_observed", "rejected", "deferred", "effect_unknown")
                         for t in targets.values()), "corrupt")
@@ -356,7 +357,8 @@ class Journal:
         progress = ":".join(c[k] for k in ("event", "run", "station")) + ":" + subject
         s["localProgress"].setdefault(progress, dict(id=fact_id(f), digest=digest(f)))
         if targets:
-            s["outbox"][fact_id(f)] = {t: dict(durable=False, stage="none", conflict=False) for t in targets}
+            s["outbox"][fact_id(f)] = {t: dict(durable=False, rejected=False, stage="none", conflict=False)
+                                      for t in targets}
         self.hook("allocated")
         return fact_id(f)
 
@@ -468,9 +470,9 @@ class Journal:
                     s["facts"][reference]["digest"] == fact_digest, "receipt_binding")
             row = s["outbox"][reference][target]
             durable = stage in ("durable_received", "applied", "effect_observed")
-            row["conflict"] |= ((row["durable"] and stage == "rejected") or
-                                (row["stage"] == "rejected" and durable))
+            row["rejected"] |= stage == "rejected"
             row["durable"] |= durable
+            row["conflict"] |= row["rejected"] and row["durable"]
             row["stage"] = stage
             return "recorded"
         return self._transaction(action, verified)

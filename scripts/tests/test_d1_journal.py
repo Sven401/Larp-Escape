@@ -341,6 +341,17 @@ class JournalCases(unittest.TestCase):
         self.assertTrue(self.j.snapshot()["outbox"][fid][ident(42)]["conflict"])
         self.assertEqual(0, self.j.compact())
 
+    def test_intermediate_receipts_cannot_erase_rejection_across_reboot(self):
+        fid = publish(self.j); d = self.j.snapshot()["facts"][fid]["digest"]
+        self.j.acknowledge(fid, d, ident(42), ident(42), "rejected", yes)
+        for stage in ("transport_received", "deferred", "effect_unknown"):
+            self.j.acknowledge(fid, d, ident(42), ident(42), stage, yes)
+        self.reopen()
+        self.j.acknowledge(fid, d, ident(42), ident(42), "applied", yes)
+        self.reopen()
+        self.assertTrue(self.j.snapshot()["outbox"][fid][ident(42)]["conflict"])
+        self.assertEqual(0, self.j.compact())
+
     def test_revocation_at_last_precommit_boundary_is_still_effective(self):
         self.j.receive(fact(), active); old = self.j.snapshot(); permitted = [True]
         self.j.hook = lambda p: permitted.__setitem__(0, False) if p == "before_commit" else None

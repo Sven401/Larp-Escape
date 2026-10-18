@@ -148,6 +148,9 @@ verifizierten Bestätiger. Ein Relay/MAC-Erfolg befreit keine Outboxdaten.
 keine dauerhafte Zielannahme. Ein späteres niedrigeres Ergebnis nimmt einen
 bereits belegten dauerhaften Empfang nicht zurück. Widerspruch von Ablehnung und
 Erfolg wird in beiden Empfangsreihenfolgen sichtbar; Daten bleiben erhalten.
+Ablehnung und dauerhafte Annahme werden unabhängig von der jeweils letzten
+Zwischenmeldung behalten; auch nach Neustart darf keine spätere Meldung den
+Widerspruch verdecken.
 
 Kompaktierung ist eine eigene atomare Transaktion:
 
