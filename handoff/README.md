@@ -6,6 +6,11 @@
 
 **UI/UX · 18. Oktober 2026:** [Projektreferenz und bestätigte separate Appauslieferung](../docs/ui-ux/PROJEKTREFERENZ.md), [Dev-Hauptabläufe](../docs/ui-ux/DEV-APP-ABLAEUFE.md) und [Spielleitungs-Hauptabläufe](../docs/ui-ux/SPIELLEITER-APP-ABLAEUFE.md). Dokumentierter Designstand; Apptrennung samt begrenzter Geräteabnahme siehe Fortschreibung oben.
 
+**PR #84 abgeschlossen · Stand 19.10.2026:** Merge-Dokumentation von #83 nach
+9/9 grünen PR-Jobs bei `8af3ffaac7208ba3944b927bb472195e18b63510` integriert.
+[Belege und fachliche Restpunkte](NAEHEGLUT-STOP-SPIELANSCHLUSS-2026-10-18.md).
+Keine neue Produktimplementierung oder Geräteabnahme.
+
 **PR #83 abgeschlossen · 18.10.2026:** CI-Statusfortschreibung nach 9/9 grünen
 PR-Jobs bei `9d8bf44aff9da1d4c47f109c451cb251a9d626cd` integriert.
 [Mergebeleg, getrennte CI-Nachweise und offene fachliche Punkte](NAEHEGLUT-STOP-SPIELANSCHLUSS-2026-10-18.md).
