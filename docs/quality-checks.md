@@ -67,6 +67,13 @@ benötigt nur die Python-Standardbibliothek: `python scripts/check_d0_contract.p
 Es prüft die versionierten semantischen Gegenbeispiele, keine Signaturen,
 CBOR-Bytes, Flashdurabilität oder installierte Produktfunktionen.
 
+Die [D1-Rechnerreferenz](veranstaltung/d1-persistenz-v1.md) nutzt ebenfalls nur
+die Python-Standardbibliothek:
+`python -m unittest discover -s scripts/tests -p test_d1_journal.py -v`.
+Sie prüft dateibasierte Hosttransaktionen, Wiederaufnahme und echte Prozessabbrüche.
+SQLite ist dabei ein Rechnerbackend, keine Firmwareabhängigkeit. Kein Beleg
+für ESP-Flash, physische Stromausfälle, D0-Verifizierer oder Gerätewirkungen.
+
 Aus einem sauberen Checkout unter Windows mit Python und PlatformIO 6.2.0.
 Die folgenden Prüfungen laufen ohne angeschlossene Hardware. Alle nativen
 Befehle müssen mit Exitcode 0 enden; bei Fehlern nicht einfach den nächsten
