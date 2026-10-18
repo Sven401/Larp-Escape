@@ -132,6 +132,13 @@ USB-/Flashzugriff und die Einrichtungsdatei gehören zum vertrauenswürdigen Set
 
 ## Prüfwege und Geräteabnahme
 
+Für frühe Effektentwicklung ergänzt [LARP-LIVE/1](LIVE-NEARGLOW.md)
+serielle Liveparameter, zwei unabhängige Näheglut-Instanzen und parallele
+Kameraaufnahme. [Anleitung](../../docs/led/interactive-development.md) und
+[praktischer Iterationsbericht](../../docs/led/naeheglut-live-results-2026-10-18.md).
+Dieser Zugang existiert nur in der isolierten Laborfirmware; die produktiven
+Effekt-IDs und BLE-Nachrichten bleiben unverändert.
+
 Der [USB-Kamera-Messweg](../../docs/led/camera-measurement.md) ergänzt eine
 getrennte USB-Prüffirmware, automatische Index-/Farbkalibrierung und den
 optischen Vergleich mit der echten Effektengine. Der

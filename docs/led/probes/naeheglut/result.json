@@ -1,0 +1,571 @@
+{
+  "scope": "Entwurfs-Rechnerprobe; keine Firmware-, Queue-, Transport-, Geraete- oder optische Pruefung",
+  "run_at_utc": "2026-10-18T15:38:07.982659+00:00",
+  "python": "3.12.6",
+  "source_basis_commit": "dead12040c196ff74ab4be17ba71451a9351a676",
+  "model_sha256": "a19a3b1d3b4f894d1202209ca3f719eb4f3d7ff3d2e8588fa859a15297fce34d",
+  "tests_run": 23,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "successful": true,
+  "levels_enumerated": 1001,
+  "render_cadences_ms": [
+    17,
+    33,
+    67,
+    "skipped_between_observations"
+  ],
+  "constants": {
+    "duration_ms": 1000,
+    "scale": 1000000,
+    "pixels": 23,
+    "colour": [
+      24,
+      12,
+      2
+    ],
+    "background": [
+      4,
+      4,
+      4
+    ],
+    "blue": [
+      0,
+      0,
+      8
+    ],
+    "channel_limit": 32,
+    "active_capacity": 2
+  },
+  "test_names": [
+    "test_01_independent_full_lifecycle_vectors",
+    "test_02_all_1001_levels_range_mask_and_monotonicity",
+    "test_03_ramp_all_milliseconds_monotone_and_exact_end",
+    "test_04_mid_ramp_update_has_no_jump_and_uses_exact_scalar",
+    "test_05_repeated_equal_target_does_not_stall",
+    "test_06_repeated_invalid_does_not_restart_fade",
+    "test_07_render_cadences_and_skipped_frames_share_values",
+    "test_08_uint32_rollover_start_and_stop",
+    "test_09_malformed_levels_reject_atomically",
+    "test_10_duplicate_and_older_sequences_reject_atomically",
+    "test_11_old_generation_cannot_change_new_instance",
+    "test_12_two_simultaneous_instances_and_targeted_stop",
+    "test_13_clipping_uses_wide_sum_and_is_order_independent",
+    "test_14_capacity_and_rejected_start_are_atomic",
+    "test_15_repeated_stop_does_not_restart_tween",
+    "test_16_hard_reset_clears_layers_and_fences_old_epoch",
+    "test_17_zero_and_invalid_start_are_active_and_consume_capacity",
+    "test_18_frames_are_fresh_and_do_not_accumulate",
+    "test_19_service_across_long_uptime_preserves_completed_target",
+    "test_20_stop_dark_instance_still_needs_new_generation",
+    "test_21_exact_latest_duplicates_have_no_effect",
+    "test_22_continuously_changing_input_reaches_last_target_after_last_change",
+    "test_23_first_stop_during_invalid_fade_starts_own_duration"
+  ],
+  "unittest_output": "test_01_independent_full_lifecycle_vectors (__main__.DesignTests.test_01_independent_full_lifecycle_vectors) ... ok\ntest_02_all_1001_levels_range_mask_and_monotonicity (__main__.DesignTests.test_02_all_1001_levels_range_mask_and_monotonicity) ... ok\ntest_03_ramp_all_milliseconds_monotone_and_exact_end (__main__.DesignTests.test_03_ramp_all_milliseconds_monotone_and_exact_end) ... ok\ntest_04_mid_ramp_update_has_no_jump_and_uses_exact_scalar (__main__.DesignTests.test_04_mid_ramp_update_has_no_jump_and_uses_exact_scalar) ... ok\ntest_05_repeated_equal_target_does_not_stall (__main__.DesignTests.test_05_repeated_equal_target_does_not_stall) ... ok\ntest_06_repeated_invalid_does_not_restart_fade (__main__.DesignTests.test_06_repeated_invalid_does_not_restart_fade) ... ok\ntest_07_render_cadences_and_skipped_frames_share_values (__main__.DesignTests.test_07_render_cadences_and_skipped_frames_share_values) ... ok\ntest_08_uint32_rollover_start_and_stop (__main__.DesignTests.test_08_uint32_rollover_start_and_stop) ... ok\ntest_09_malformed_levels_reject_atomically (__main__.DesignTests.test_09_malformed_levels_reject_atomically) ... ok\ntest_10_duplicate_and_older_sequences_reject_atomically (__main__.DesignTests.test_10_duplicate_and_older_sequences_reject_atomically) ... ok\ntest_11_old_generation_cannot_change_new_instance (__main__.DesignTests.test_11_old_generation_cannot_change_new_instance) ... ok\ntest_12_two_simultaneous_instances_and_targeted_stop (__main__.DesignTests.test_12_two_simultaneous_instances_and_targeted_stop) ... ok\ntest_13_clipping_uses_wide_sum_and_is_order_independent (__main__.DesignTests.test_13_clipping_uses_wide_sum_and_is_order_independent) ... ok\ntest_14_capacity_and_rejected_start_are_atomic (__main__.DesignTests.test_14_capacity_and_rejected_start_are_atomic) ... ok\ntest_15_repeated_stop_does_not_restart_tween (__main__.DesignTests.test_15_repeated_stop_does_not_restart_tween) ... ok\ntest_16_hard_reset_clears_layers_and_fences_old_epoch (__main__.DesignTests.test_16_hard_reset_clears_layers_and_fences_old_epoch) ... ok\ntest_17_zero_and_invalid_start_are_active_and_consume_capacity (__main__.DesignTests.test_17_zero_and_invalid_start_are_active_and_consume_capacity) ... ok\ntest_18_frames_are_fresh_and_do_not_accumulate (__main__.DesignTests.test_18_frames_are_fresh_and_do_not_accumulate) ... ok\ntest_19_service_across_long_uptime_preserves_completed_target (__main__.DesignTests.test_19_service_across_long_uptime_preserves_completed_target) ... ok\ntest_20_stop_dark_instance_still_needs_new_generation (__main__.DesignTests.test_20_stop_dark_instance_still_needs_new_generation) ... ok\ntest_21_exact_latest_duplicates_have_no_effect (__main__.DesignTests.test_21_exact_latest_duplicates_have_no_effect) ... ok\ntest_22_continuously_changing_input_reaches_last_target_after_last_change (__main__.DesignTests.test_22_continuously_changing_input_reaches_last_target_after_last_change) ... ok\ntest_23_first_stop_during_invalid_fade_starts_own_duration (__main__.DesignTests.test_23_first_stop_during_invalid_fade_starts_own_duration) ... ok\n\n----------------------------------------------------------------------\nRan 23 tests in 0.032s\n\nOK\n",
+  "timeline": [
+    {
+      "t_ms": 0,
+      "x": 0,
+      "effect_rgb": [
+        0,
+        0,
+        0
+      ],
+      "mixed_rgb": [
+        4,
+        4,
+        12
+      ],
+      "state": "active"
+    },
+    {
+      "t_ms": 250,
+      "x": 250000,
+      "effect_rgb": [
+        6,
+        3,
+        0
+      ],
+      "mixed_rgb": [
+        10,
+        7,
+        12
+      ],
+      "state": "active"
+    },
+    {
+      "t_ms": 500,
+      "x": 500000,
+      "effect_rgb": [
+        12,
+        6,
+        1
+      ],
+      "mixed_rgb": [
+        16,
+        10,
+        13
+      ],
+      "state": "active"
+    },
+    {
+      "t_ms": 750,
+      "x": 750000,
+      "effect_rgb": [
+        18,
+        9,
+        1
+      ],
+      "mixed_rgb": [
+        22,
+        13,
+        13
+      ],
+      "state": "active"
+    },
+    {
+      "t_ms": 1000,
+      "x": 1000000,
+      "effect_rgb": [
+        24,
+        12,
+        2
+      ],
+      "mixed_rgb": [
+        28,
+        16,
+        14
+      ],
+      "state": "active"
+    },
+    {
+      "t_ms": 1250,
+      "x": 875000,
+      "effect_rgb": [
+        21,
+        10,
+        1
+      ],
+      "mixed_rgb": [
+        25,
+        14,
+        13
+      ],
+      "state": "active"
+    },
+    {
+      "t_ms": 1500,
+      "x": 750000,
+      "effect_rgb": [
+        18,
+        9,
+        1
+      ],
+      "mixed_rgb": [
+        22,
+        13,
+        13
+      ],
+      "state": "active"
+    },
+    {
+      "t_ms": 1750,
+      "x": 625000,
+      "effect_rgb": [
+        15,
+        7,
+        1
+      ],
+      "mixed_rgb": [
+        19,
+        11,
+        13
+      ],
+      "state": "active"
+    },
+    {
+      "t_ms": 2000,
+      "x": 500000,
+      "effect_rgb": [
+        12,
+        6,
+        1
+      ],
+      "mixed_rgb": [
+        16,
+        10,
+        13
+      ],
+      "state": "active"
+    },
+    {
+      "t_ms": 2250,
+      "x": 375000,
+      "effect_rgb": [
+        9,
+        4,
+        0
+      ],
+      "mixed_rgb": [
+        13,
+        8,
+        12
+      ],
+      "state": "active"
+    },
+    {
+      "t_ms": 2500,
+      "x": 250000,
+      "effect_rgb": [
+        6,
+        3,
+        0
+      ],
+      "mixed_rgb": [
+        10,
+        7,
+        12
+      ],
+      "state": "active"
+    },
+    {
+      "t_ms": 2750,
+      "x": 125000,
+      "effect_rgb": [
+        3,
+        1,
+        0
+      ],
+      "mixed_rgb": [
+        7,
+        5,
+        12
+      ],
+      "state": "active"
+    },
+    {
+      "t_ms": 3000,
+      "x": 0,
+      "effect_rgb": [
+        0,
+        0,
+        0
+      ],
+      "mixed_rgb": [
+        4,
+        4,
+        12
+      ],
+      "state": "active"
+    },
+    {
+      "t_ms": 3250,
+      "x": 0,
+      "effect_rgb": [
+        0,
+        0,
+        0
+      ],
+      "mixed_rgb": [
+        4,
+        4,
+        12
+      ],
+      "state": "active"
+    },
+    {
+      "t_ms": 3500,
+      "x": 0,
+      "effect_rgb": [
+        0,
+        0,
+        0
+      ],
+      "mixed_rgb": [
+        4,
+        4,
+        12
+      ],
+      "state": "active"
+    },
+    {
+      "t_ms": 3750,
+      "x": 250000,
+      "effect_rgb": [
+        6,
+        3,
+        0
+      ],
+      "mixed_rgb": [
+        10,
+        7,
+        12
+      ],
+      "state": "active"
+    },
+    {
+      "t_ms": 4000,
+      "x": 500000,
+      "effect_rgb": [
+        12,
+        6,
+        1
+      ],
+      "mixed_rgb": [
+        16,
+        10,
+        13
+      ],
+      "state": "active"
+    },
+    {
+      "t_ms": 4250,
+      "x": 750000,
+      "effect_rgb": [
+        18,
+        9,
+        1
+      ],
+      "mixed_rgb": [
+        22,
+        13,
+        13
+      ],
+      "state": "active"
+    },
+    {
+      "t_ms": 4500,
+      "x": 1000000,
+      "effect_rgb": [
+        24,
+        12,
+        2
+      ],
+      "mixed_rgb": [
+        28,
+        16,
+        14
+      ],
+      "state": "active"
+    },
+    {
+      "t_ms": 4750,
+      "x": 1000000,
+      "effect_rgb": [
+        24,
+        12,
+        2
+      ],
+      "mixed_rgb": [
+        28,
+        16,
+        14
+      ],
+      "state": "active"
+    },
+    {
+      "t_ms": 5000,
+      "x": 1000000,
+      "effect_rgb": [
+        24,
+        12,
+        2
+      ],
+      "mixed_rgb": [
+        28,
+        16,
+        14
+      ],
+      "state": "stopping"
+    },
+    {
+      "t_ms": 5250,
+      "x": 750000,
+      "effect_rgb": [
+        18,
+        9,
+        1
+      ],
+      "mixed_rgb": [
+        22,
+        13,
+        13
+      ],
+      "state": "stopping"
+    },
+    {
+      "t_ms": 5500,
+      "x": 500000,
+      "effect_rgb": [
+        12,
+        6,
+        1
+      ],
+      "mixed_rgb": [
+        16,
+        10,
+        13
+      ],
+      "state": "stopping"
+    },
+    {
+      "t_ms": 5750,
+      "x": 250000,
+      "effect_rgb": [
+        6,
+        3,
+        0
+      ],
+      "mixed_rgb": [
+        10,
+        7,
+        12
+      ],
+      "state": "stopping"
+    },
+    {
+      "t_ms": 6000,
+      "x": 0,
+      "effect_rgb": [
+        0,
+        0,
+        0
+      ],
+      "mixed_rgb": [
+        4,
+        4,
+        12
+      ],
+      "state": "stopped"
+    },
+    {
+      "t_ms": 6250,
+      "x": 0,
+      "effect_rgb": [
+        0,
+        0,
+        0
+      ],
+      "mixed_rgb": [
+        4,
+        4,
+        12
+      ],
+      "state": "stopped"
+    },
+    {
+      "t_ms": 6500,
+      "x": 0,
+      "effect_rgb": [
+        0,
+        0,
+        0
+      ],
+      "mixed_rgb": [
+        4,
+        4,
+        12
+      ],
+      "state": "stopped"
+    },
+    {
+      "t_ms": 6750,
+      "x": 0,
+      "effect_rgb": [
+        0,
+        0,
+        0
+      ],
+      "mixed_rgb": [
+        4,
+        4,
+        12
+      ],
+      "state": "stopped"
+    },
+    {
+      "t_ms": 7000,
+      "x": 0,
+      "effect_rgb": [
+        0,
+        0,
+        0
+      ],
+      "mixed_rgb": [
+        4,
+        4,
+        12
+      ],
+      "state": "active"
+    },
+    {
+      "t_ms": 7250,
+      "x": 125000,
+      "effect_rgb": [
+        3,
+        1,
+        0
+      ],
+      "mixed_rgb": [
+        7,
+        5,
+        12
+      ],
+      "state": "active"
+    },
+    {
+      "t_ms": 7500,
+      "x": 250000,
+      "effect_rgb": [
+        6,
+        3,
+        0
+      ],
+      "mixed_rgb": [
+        10,
+        7,
+        12
+      ],
+      "state": "active"
+    },
+    {
+      "t_ms": 7750,
+      "x": 375000,
+      "effect_rgb": [
+        9,
+        4,
+        0
+      ],
+      "mixed_rgb": [
+        13,
+        8,
+        12
+      ],
+      "state": "active"
+    },
+    {
+      "t_ms": 8000,
+      "x": 500000,
+      "effect_rgb": [
+        12,
+        6,
+        1
+      ],
+      "mixed_rgb": [
+        16,
+        10,
+        13
+      ],
+      "state": "active"
+    }
+  ],
+  "limitations": [
+    "Kein Import von Produktcode; Python-Ganzzahlen ersetzen nicht den C++-Typnachweis.",
+    "Zeitabstaende zwischen Service-Aufrufen muessen kleiner als 2**31 ms bleiben.",
+    "Besitzer-Epoch, Generation und Sequenz sind Entwurfsvertrag, kein bestehender Wire-Befehl.",
+    "Keine Aussage zur Originalpixelgleichheit, elektrischen Helligkeit, Gamma oder Goldwahrnehmung.",
+    "Mischgrenze32 und Kapazitaet2 sind isolierte Probeannahmen, keine globale Firmware-Freigabe."
+  ]
+}

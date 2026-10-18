@@ -1,5 +1,7 @@
 # Maintainer-Einstieg
 
+**LED-Effektentwicklung · 18. Oktober 2026:** [Architektenrolle 2.0](../docs/led/rollen/led-effekt-architekt.md) praktisch erweitert: gemeinsamer Effektkern, serielle Liveparameter und paralleles Kamerafeedback. [Näheglut-Versuchsbericht](../docs/led/naeheglut-live-results-2026-10-18.md) mit tatsächlicher Farb-/Kurveniteration, zwei vollständigen Folgeläufen und verifiziertem Flash-Rückweg. [Ausführbare Anleitung](../docs/led/interactive-development.md). Produktadapter, echte Nähequelle und optisches Nutzerurteil bleiben offen; die [Rechnerprobe 1.0](LED-EFFEKT-ARCHITEKT-ERPROBUNG-2026-10-18.md) bleibt historischer Beleg.
+
 **D0 integriert · 18. Oktober 2026:** [Vertrag zu #59](../docs/veranstaltung/d0-vertrag-v1.md)
 mit Ereignisidentitäten, Offline-/Replayregeln, Ursprungsvertrauen und Migration.
 [PR #72](https://github.com/Sven401/Larp-Escape/pull/72) übernimmt den fachlich

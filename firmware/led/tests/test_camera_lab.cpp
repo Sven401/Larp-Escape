@@ -9,7 +9,8 @@ using namespace larp::led;
 namespace {
 void check(bool value, const char *message) { if (!value) throw std::runtime_error(message); }
 struct FakeBus final : LedBus {
-    bool busy = false;
+    bool busy = false, stuck = false;
+    unsigned resets = 0;
     std::uint32_t completeAt = 0;
     std::vector<Frame> frames;
     bool begin() override { return true; }
@@ -19,10 +20,10 @@ struct FakeBus final : LedBus {
     }
     TxResult poll() override {
         check(busy, "poll without transfer");
-        if (testNow < completeAt) return TxResult::Busy;
+        if (stuck || testNow < completeAt) return TxResult::Busy;
         busy = false; return TxResult::Complete;
     }
-    bool reset() override { busy = false; return true; }
+    bool reset() override { busy = stuck = false; ++resets; return true; }
 } fake;
 bool black(const Frame &frame) {
     for (const auto &p : frame) if (p.red || p.green || p.blue) return false;
@@ -81,6 +82,39 @@ int main(int argc, char **argv) {
             }
             Serial.send("STOP"); for (unsigned i = 0; i < 10; ++i) loop();
             check(!stopPending && black(fake.frames.back()), "stop engine failed");
+        } else if (name == "live" || name == "live-watchdog" || name == "live-stop-timeout") {
+            Serial.send("STOP"); for(unsigned i=0;i<10;++i) loop();
+            Serial.send("LIVE 0123456789abcdef"); loop();
+            check(liveMode && running, "LIVE not entered");
+            Serial.send("GLOW 0123456789abcdef 1 0 1 start 1000 1 24 12 2 1000 1000 0");
+            for(unsigned i=0;i<4;++i) loop();
+            check(Serial.output.find("APPLIED 0123456789abcdef 1 2 ")!=std::string::npos,"full command not accepted");
+            if(name == "live-stop-timeout") {
+                while(!bus.inFlight) loop();
+                fake.stuck=true; Serial.send("STOP");
+                for(unsigned i=0;i<2050;++i) loop();
+                check(fake.resets==1 && !stopPending && black(fake.frames.back()),"stuck transfer prevented confirmed black stop");
+            } else if(name == "live-watchdog") {
+                for(unsigned i=0;i<1700;++i) loop();
+                check(!running && !stopPending && black(fake.frames.back()),"LIVE watchdog not dark");
+            } else {
+                // A pending frame must keep its submit-time revision when the config changes.
+                while(!bus.inFlight) loop();
+                const auto oldRevision=bus.pendingRevision; const auto oldFrame=bus.pendingNumber;
+                Serial.send("GLOW 0123456789abcdef 2 0 1 update 1000 1 0 32 16 500 1000 1");
+                for(unsigned i=0;i<4;++i) loop();
+                check(live.scene().revision()==3,"live update not applied");
+                check(Serial.output.find("L 0123456789abcdef "+std::to_string(oldRevision)+" "+std::to_string(oldFrame)+" ")!=std::string::npos,"inflight revision replaced");
+                for(unsigned i=0;i<1100;++i) { if(i%200==0) Serial.send("KEEP 0123456789abcdef"); loop(); }
+                check(fake.frames.back()[0].red==0 && fake.frames.back()[0].green==16 && fake.frames.back()[0].blue==8,"runtime params not reaching real loop frame");
+                Serial.send("GLOW 0123456789abcdef 3 1 1 start 1000 1 24 12 2 1000 1000 0");
+                for(unsigned i=0;i<1100;++i) { if(i%200==0) Serial.send("KEEP 0123456789abcdef"); loop(); }
+                check(fake.frames.back()[0].red==24 && fake.frames.back()[0].green==28 && fake.frames.back()[0].blue==10,"parallel scene wrong");
+                Serial.send("STOP"); for(unsigned i=0;i<10;++i) loop();
+                check(!stopPending && black(fake.frames.back()),"LIVE STOP not confirmed black");
+                check(Serial.output.find("DONE 0123456789abcdef")!=std::string::npos,"LIVE DONE absent");
+                check(Serial.output.find("L 0123456789abcdef 5 ")!=std::string::npos,"black reset revision absent");
+            }
         } else throw std::runtime_error("unknown case");
         check(!camera::validToken("bad") && !camera::validToken("0123456789abcdef0") &&
               camera::validToken("0123456789abcdef"), "token validation");

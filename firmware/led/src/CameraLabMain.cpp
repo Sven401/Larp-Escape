@@ -3,6 +3,7 @@
 #include <cstring>
 #include <cstdlib>
 #include "CameraSequence.h"
+#include "CameraLabController.h"
 
 namespace larp { namespace led { LedBus &cameraLabBus(); }}
 using namespace larp::led;
@@ -13,23 +14,36 @@ std::uint32_t lastKeep = 0, started = 0, appliedAt = 0;
 bool running = false, effectMode = false, waiting = false, stopPending = false;
 bool directOutstanding = false;
 Effect selected = Effect::Off;
+camera::LiveController live;
+bool liveMode = false, traceLive = false;
+std::uint32_t traceRevision = 0, lastLiveSubmit = 0;
+void liveState();
 
 struct TraceBus final : LedBus {
     LedBus &bus = cameraLabBus();
     Frame pending{};
     std::uint32_t submitted = 0;
-    bool inFlight = false;
+    bool inFlight = false, pendingLive = false;
+    char pendingToken[17] = {};
+    unsigned pendingStage = 0, pendingNumber = 0;
+    std::uint32_t pendingRevision = 0;
     bool begin() override { return bus.begin(); }
     bool submit(const Frame &frame) override {
         if (inFlight || !bus.submit(frame)) return false;
-        pending = frame; submitted = millis(); inFlight = true; return true;
+        pending = frame; submitted = millis(); inFlight = true;
+        pendingLive = traceLive; pendingRevision = traceRevision;
+        std::strcpy(pendingToken, token); pendingStage = stage; pendingNumber = frameNumber++;
+        return true;
     }
     TxResult poll() override {
         const auto result = bus.poll();
         if (result == TxResult::Complete && inFlight) {
             appliedAt = millis();
-            Serial.printf("F %s %u %u %lu %lu ", token, stage, frameNumber++,
-                          (unsigned long)submitted, (unsigned long)appliedAt);
+            if (pendingLive)
+                Serial.printf("L %s %lu %u %lu %lu ", pendingToken, (unsigned long)pendingRevision,
+                              pendingNumber, (unsigned long)submitted, (unsigned long)appliedAt);
+            else Serial.printf("F %s %u %u %lu %lu ", pendingToken, pendingStage, pendingNumber,
+                               (unsigned long)submitted, (unsigned long)appliedAt);
             const char *digits = "0123456789abcdef";
             for (const auto &p : pending) for (const auto c : {p.red, p.green, p.blue}) {
                 Serial.write(digits[c >> 4]); Serial.write(digits[c & 15]);
@@ -44,7 +58,23 @@ struct TraceBus final : LedBus {
 std::uint32_t clockNow() { return millis(); }
 LedOutput engine(bus, clockNow);
 
+void liveState() {
+    const auto bg = live.scene().background();
+    Serial.printf("STATE %s %lu %lu %u %u %u", token, (unsigned long)live.scene().revision(),
+                  (unsigned long)millis(), unsigned(bg.red), unsigned(bg.green), unsigned(bg.blue));
+    for (unsigned slot = 0; slot < near::Slots; ++slot) {
+        const auto &i = live.scene().instance(slot); const auto &p = i.parameters;
+        Serial.printf(" %u %lu %lu %u %u %u %u %u %u %u %u", unsigned(i.state),
+                      (unsigned long)i.generation, (unsigned long)i.sequence, unsigned(p.level),
+                      unsigned(p.valid), unsigned(p.colour.red), unsigned(p.colour.green),
+                      unsigned(p.colour.blue), unsigned(p.gain), unsigned(p.duration), unsigned(p.curve));
+    }
+    Serial.println();
+}
 void stop(const char *reason) {
+    if (liveMode) {
+        live.hardStop(); traceRevision = live.scene().revision(); liveState(); liveMode = false;
+    }
     running = false; waiting = false; effectMode = false;
     // Let the engine drain a prior direct transfer, then request a fresh black.
     engine.stop(); stopPending = true;
@@ -53,9 +83,25 @@ void stop(const char *reason) {
 void command(char *line) {
     if (std::strcmp(line, "HELLO") == 0) {
         Serial.printf("LARP-CAMERA/1 23 32 GPIO15 %lu %s\n",
-                      (unsigned long)ESP.getSketchSize(), ESP.getSketchMD5().c_str()); return;
+                      (unsigned long)ESP.getSketchSize(), ESP.getSketchMD5().c_str());
+        Serial.println("LARP-LIVE/1 2 23 32"); return;
     }
     if (std::strcmp(line, "STOP") == 0) { stop("host"); return; }
+    if (std::strncmp(line, "GLOW ", 5) == 0 || std::strncmp(line, "BG ", 3) == 0 ||
+        std::strncmp(line, "STATUS ", 7) == 0) {
+        if (!running || !liveMode) { Serial.printf("REJECT %s 0 inactive 0 %lu\n", token, (unsigned long)millis()); return; }
+        const auto reply = live.command(line, millis());
+        if (std::strcmp(reply.kind, "STATUS") == 0) { liveState(); return; }
+        if (std::strcmp(reply.kind, "REJECT") == 0)
+            Serial.printf("REJECT %s %lu %s %lu %lu\n", token, (unsigned long)reply.request,
+                          reply.reason, (unsigned long)live.scene().revision(), (unsigned long)millis());
+        else {
+            Serial.printf("%s %s %lu %lu %lu\n", reply.kind, token, (unsigned long)reply.request,
+                          (unsigned long)live.scene().revision(), (unsigned long)millis());
+            liveState();
+        }
+        return;
+    }
     char *context = nullptr;
     char *verb = strtok_r(line, " ", &context);
     char *id = strtok_r(nullptr, " ", &context);
@@ -66,6 +112,16 @@ void command(char *line) {
     }
     if (running || stopPending || bus.inFlight || !engine.snapshot().ready) {
         Serial.println("BUSY"); return;
+    }
+    if (std::strcmp(verb, "LIVE") == 0) {
+        if (strtok_r(nullptr, " ", &context) || (traceLive && std::strcmp(id, token) == 0)) return;
+        if (!live.begin(id)) return;
+        std::strcpy(token, id); frameNumber = stage = 0;
+        started = lastKeep = millis(); lastLiveSubmit = started - LedOutput::FrameMilliseconds;
+        running = liveMode = traceLive = true; waiting = effectMode = false;
+        traceRevision = live.scene().revision();
+        Serial.printf("LIVE %s %lu %lu\n", token, (unsigned long)traceRevision, (unsigned long)started);
+        liveState(); return;
     }
     if (std::strcmp(verb, "CAL") == 0) {
         if (strtok_r(nullptr, " ", &context)) return;
@@ -78,12 +134,13 @@ void command(char *line) {
                    std::strcmp(effect,"ripple") == 0 ? Effect::Ripple : Effect::Off;
         if (selected == Effect::Off) return;
     } else return;
+    traceLive = false;
     std::strcpy(token, id); frameNumber = stage = 0;
     started = lastKeep = millis(); running = true; waiting = effectMode = false;
     Serial.printf("BEGIN %s %lu\n", token, (unsigned long)started);
 }
 void usb() {
-    static char line[80]; static unsigned used = 0; static bool overflow = false;
+    static char line[192]; static unsigned used = 0; static bool overflow = false;
     for (unsigned i = 0; i < 96 && Serial.available(); ++i) {
         const char c = Serial.read();
         if (c == '\r') continue;
@@ -109,8 +166,8 @@ void loop() {
         // A direct lab frame is not owned by the engine. Drain it first.
         if (directOutstanding && bus.inFlight) {
             const auto result = bus.poll();
-            if (result == TxResult::Busy) { delay(1); return; }
-            if (result == TxResult::Failed) bus.reset();
+            if (result == TxResult::Busy && millis()-bus.submitted < LedOutput::TransferTimeoutMilliseconds) { delay(1); return; }
+            if (result == TxResult::Failed || result == TxResult::Busy) bus.reset();
             directOutstanding = false;
         }
         engine.service();
@@ -120,6 +177,21 @@ void loop() {
         delay(1); return;
     }
     if (!running) { delay(1); return; }
+    if (liveMode) {
+        const auto now = millis(); live.scene().service(now);
+        if (bus.inFlight) {
+            const auto result = bus.poll();
+            if (result == TxResult::Failed || (result == TxResult::Busy && now-bus.submitted >= 2000)) {
+                bus.reset(); directOutstanding = false; stop("live-bus-fault");
+            } else if (result == TxResult::Complete) directOutstanding = false;
+        }
+        if (liveMode && !bus.inFlight && now-lastLiveSubmit >= LedOutput::FrameMilliseconds) {
+            const Frame frame = live.scene().render(now); traceRevision = live.scene().revision();
+            if (!bus.submit(frame)) stop("live-submit");
+            else { directOutstanding = true; lastLiveSubmit = now; }
+        }
+        delay(1); return;
+    }
     if (effectMode) {
         engine.service();
         if (engine.snapshot().fault) stop("engine-fault");

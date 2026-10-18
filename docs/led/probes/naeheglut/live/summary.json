@@ -1,0 +1,2195 @@
+{
+  "schema": 1,
+  "scope": "Visual feedback and digital trace; no calibrated optical acceptance",
+  "analysis_source_sha256": "83141258e9b0387f17ed682f4fcaa91ab76fe03e21a2742354ec4166bc7a7935",
+  "runs": {
+    "v1": {
+      "status": "incomplete",
+      "error": "[WinError 5] Zugriff verweigert: 'C:\\\\Dev\\\\Larp Escape\\\\private\\\\led-live-20261018\\\\v1\\\\latest.tmp.png' -> 'C:\\\\Dev\\\\Larp Escape\\\\private\\\\led-live-20261018\\\\v1\\\\latest.png'",
+      "source_sha256": {
+        "capture.json": "6abb25f880f5deac6019a2ce607c80619590d8676e018db7c3e7b8c55c3a0147",
+        "camera.json": "a5cedc7ee45f7f9cc561bc6be532fe820e0fd60a84bf88bdda43385b21967f03",
+        "session.jsonl": "e931e7067738df85727b69d553c4b80ad4e3c5a9958d7465764e79cec7f02eab"
+      },
+      "firmware_sha256": "6cd465a1bf5c414e2aca0dca142cd0410f38b1c1a3738bae723cdb98e29b9e36",
+      "host_source_sha256": "6f81d26ffa2b4b1b8c6f93a4a60b83548be2a6d3e5a7d2a134602fe13568f140",
+      "frame_count": 672,
+      "digital_frame_count": 843,
+      "all_23_pixels_uniform": true,
+      "trace_sequence_contiguous": true,
+      "channel_max": 24,
+      "camera_settings": {
+        "width": {
+          "requested": 1280,
+          "accepted": true,
+          "readback": 1280.0
+        },
+        "height": {
+          "requested": 720,
+          "accepted": true,
+          "readback": 720.0
+        },
+        "fps": {
+          "requested": 30,
+          "accepted": true,
+          "readback": 30.00003000003
+        },
+        "auto_exposure": {
+          "requested": 0,
+          "accepted": true,
+          "readback": -1.0
+        },
+        "exposure": {
+          "requested": -7.0,
+          "accepted": true,
+          "readback": -7.0
+        },
+        "auto_wb": {
+          "requested": 0,
+          "accepted": true,
+          "readback": 0.0
+        },
+        "gain": {
+          "requested": 0,
+          "accepted": true,
+          "readback": 0.0
+        },
+        "backlight": {
+          "requested": 0,
+          "accepted": true,
+          "readback": 0.0
+        },
+        "sharpness": {
+          "requested": 0,
+          "accepted": true,
+          "readback": 0.0
+        },
+        "gamma": {
+          "requested": 100,
+          "accepted": true,
+          "readback": 100.0
+        },
+        "fourcc": {
+          "requested": 1196444237,
+          "accepted": true,
+          "readback": 1196444237.0
+        }
+      },
+      "camera_timing": null,
+      "writer_drops": 0,
+      "preview_warnings": null,
+      "final_black_confirmed": true,
+      "stop_to_done_ms": 35.36719997646287,
+      "stop_to_done_receive_ms": 32.90009999182075,
+      "latency_ms": {
+        "host_to_ack_ms": {
+          "min": 24.3934000027366,
+          "median": 24.683750001713634,
+          "max": 24.97410000069067
+        },
+        "applied_to_submitted_ms": {
+          "min": 11,
+          "median": 13.5,
+          "max": 16
+        },
+        "applied_to_completed_ms": {
+          "min": 12,
+          "median": 15.0,
+          "max": 18
+        },
+        "host_to_tx_event_ms": {
+          "min": 47.3146999720484,
+          "median": 51.05449998518452,
+          "max": 54.79429999832064
+        }
+      },
+      "commands": [
+        {
+          "req": 1,
+          "input": {
+            "op": "start",
+            "slot": 0,
+            "gen": 1,
+            "p": 1000,
+            "valid": 1,
+            "rgb": [
+              24,
+              12,
+              2
+            ],
+            "gain": 1000,
+            "duration_ms": 1000,
+            "curve": 0,
+            "label": "baseline-gold-linear"
+          },
+          "sent_ms": 8895.269700034987,
+          "result": "APPLIED",
+          "revision": 2,
+          "applied_device_ms": 25955,
+          "ack_host_ms": 8920.243800035678,
+          "active_state": {
+            "revision": 2,
+            "device_ms": 25955,
+            "background": [
+              0,
+              0,
+              0
+            ],
+            "slots": [
+              {
+                "state": 1,
+                "gen": 1,
+                "seq": 1,
+                "p": 1000,
+                "valid": 1,
+                "rgb": [
+                  24,
+                  12,
+                  2
+                ],
+                "gain": 1000,
+                "duration_ms": 1000,
+                "curve": 0
+              },
+              {
+                "state": 0,
+                "gen": 0,
+                "seq": 0,
+                "p": 0,
+                "valid": 0,
+                "rgb": [
+                  24,
+                  12,
+                  2
+                ],
+                "gain": 1000,
+                "duration_ms": 1000,
+                "curve": 0
+              }
+            ],
+            "host_ms": 8928.85380005464
+          },
+          "host_to_ack_ms": 24.97410000069067,
+          "first_frame": 1,
+          "applied_to_submitted_ms": 11,
+          "applied_to_completed_ms": 12,
+          "host_to_tx_event_ms": 47.3146999720484
+        },
+        {
+          "req": 2,
+          "input": {
+            "op": "update",
+            "slot": 0,
+            "gain": 350,
+            "label": "reduce-camera-clipping-after-white-centres"
+          },
+          "sent_ms": 25757.099600043148,
+          "result": "APPLIED",
+          "revision": 3,
+          "applied_device_ms": 42817,
+          "ack_host_ms": 25781.493000045884,
+          "active_state": {
+            "revision": 3,
+            "device_ms": 42817,
+            "background": [
+              0,
+              0,
+              0
+            ],
+            "slots": [
+              {
+                "state": 1,
+                "gen": 1,
+                "seq": 2,
+                "p": 1000,
+                "valid": 1,
+                "rgb": [
+                  24,
+                  12,
+                  2
+                ],
+                "gain": 350,
+                "duration_ms": 1000,
+                "curve": 0
+              },
+              {
+                "state": 0,
+                "gen": 0,
+                "seq": 0,
+                "p": 0,
+                "valid": 0,
+                "rgb": [
+                  24,
+                  12,
+                  2
+                ],
+                "gain": 1000,
+                "duration_ms": 1000,
+                "curve": 0
+              }
+            ],
+            "host_ms": 25791.637400048785
+          },
+          "host_to_ack_ms": 24.3934000027366,
+          "first_frame": 512,
+          "applied_to_submitted_ms": 16,
+          "applied_to_completed_ms": 18,
+          "host_to_tx_event_ms": 54.79429999832064
+        }
+      ]
+    },
+    "v2": {
+      "status": "recorded",
+      "error": null,
+      "source_sha256": {
+        "capture.json": "051211c24404724b5c3f33014a776c58a701348e950dcd6f9a00d79b5042118f",
+        "camera.json": "85617f48dbca3f04e2df0f6a3a42d22885fb6f3aa20929378a79727658e22a49",
+        "session.jsonl": "4569cc452224ef8d4c95c1e02bd724efa754059aef1b79393e8878833ad115da"
+      },
+      "firmware_sha256": "6cd465a1bf5c414e2aca0dca142cd0410f38b1c1a3738bae723cdb98e29b9e36",
+      "host_source_sha256": "07828d25f3199779a048f19a51d0d25e86c2298e06a92f94495c8b7b47802525",
+      "frame_count": 1266,
+      "digital_frame_count": 1341,
+      "all_23_pixels_uniform": true,
+      "trace_sequence_contiguous": true,
+      "channel_max": 24,
+      "camera_settings": {
+        "width": {
+          "requested": 1280,
+          "accepted": true,
+          "readback": 1280.0
+        },
+        "height": {
+          "requested": 720,
+          "accepted": true,
+          "readback": 720.0
+        },
+        "fps": {
+          "requested": 30,
+          "accepted": true,
+          "readback": 30.00003000003
+        },
+        "auto_exposure": {
+          "requested": 0,
+          "accepted": true,
+          "readback": -1.0
+        },
+        "exposure": {
+          "requested": -10.0,
+          "accepted": true,
+          "readback": -10.0
+        },
+        "auto_wb": {
+          "requested": 0,
+          "accepted": true,
+          "readback": 0.0
+        },
+        "gain": {
+          "requested": 0,
+          "accepted": true,
+          "readback": 0.0
+        },
+        "backlight": {
+          "requested": 0,
+          "accepted": true,
+          "readback": 0.0
+        },
+        "sharpness": {
+          "requested": 0,
+          "accepted": true,
+          "readback": 0.0
+        },
+        "gamma": {
+          "requested": 100,
+          "accepted": true,
+          "readback": 100.0
+        },
+        "fourcc": {
+          "requested": 1196444237,
+          "accepted": true,
+          "readback": 1196444237.0
+        }
+      },
+      "camera_timing": {
+        "received_fps": 28.273778452189216,
+        "max_gap_ms": 144.6655999752693,
+        "gaps_over_100ms": 2
+      },
+      "writer_drops": 0,
+      "preview_warnings": 1,
+      "final_black_confirmed": true,
+      "stop_to_done_ms": 33.604900003410876,
+      "stop_to_done_receive_ms": 31.036300002597272,
+      "latency_ms": {
+        "host_to_ack_ms": {
+          "min": 12.706900015473366,
+          "median": 13.965099991764873,
+          "max": 24.920199997723103
+        },
+        "applied_to_submitted_ms": {
+          "min": 11,
+          "median": 11.0,
+          "max": 16
+        },
+        "applied_to_completed_ms": {
+          "min": 12,
+          "median": 13.0,
+          "max": 18
+        },
+        "host_to_tx_event_ms": {
+          "min": 37.03900001710281,
+          "median": 39.499850012362,
+          "max": 47.02900000847876
+        }
+      },
+      "commands": [
+        {
+          "req": 1,
+          "input": {
+            "op": "start",
+            "slot": 0,
+            "gen": 1,
+            "p": 1000,
+            "valid": 1,
+            "rgb": [
+              24,
+              12,
+              2
+            ],
+            "gain": 1000,
+            "duration_ms": 1000,
+            "curve": 0,
+            "label": "baseline-under-reduced-exposure"
+          },
+          "sent_ms": 8929.223400016781,
+          "result": "APPLIED",
+          "revision": 2,
+          "applied_device_ms": 288883,
+          "ack_host_ms": 8954.143600014504,
+          "active_state": {
+            "revision": 2,
+            "device_ms": 288883,
+            "background": [
+              0,
+              0,
+              0
+            ],
+            "slots": [
+              {
+                "state": 1,
+                "gen": 1,
+                "seq": 1,
+                "p": 1000,
+                "valid": 1,
+                "rgb": [
+                  24,
+                  12,
+                  2
+                ],
+                "gain": 1000,
+                "duration_ms": 1000,
+                "curve": 0
+              },
+              {
+                "state": 0,
+                "gen": 0,
+                "seq": 0,
+                "p": 0,
+                "valid": 0,
+                "rgb": [
+                  24,
+                  12,
+                  2
+                ],
+                "gain": 1000,
+                "duration_ms": 1000,
+                "curve": 0
+              }
+            ],
+            "host_ms": 8961.928199976683
+          },
+          "host_to_ack_ms": 24.920199997723103,
+          "first_frame": 1,
+          "applied_to_submitted_ms": 11,
+          "applied_to_completed_ms": 12,
+          "host_to_tx_event_ms": 47.02900000847876
+        },
+        {
+          "req": 2,
+          "input": {
+            "op": "update",
+            "slot": 0,
+            "rgb": [
+              24,
+              8,
+              1
+            ],
+            "label": "warmer-amber-from-pale-yellow-observation"
+          },
+          "sent_ms": 24451.237500004936,
+          "result": "APPLIED",
+          "revision": 3,
+          "applied_device_ms": 304394,
+          "ack_host_ms": 24463.94440002041,
+          "active_state": {
+            "revision": 3,
+            "device_ms": 304394,
+            "background": [
+              0,
+              0,
+              0
+            ],
+            "slots": [
+              {
+                "state": 1,
+                "gen": 1,
+                "seq": 2,
+                "p": 1000,
+                "valid": 1,
+                "rgb": [
+                  24,
+                  8,
+                  1
+                ],
+                "gain": 1000,
+                "duration_ms": 1000,
+                "curve": 0
+              },
+              {
+                "state": 0,
+                "gen": 0,
+                "seq": 0,
+                "p": 0,
+                "valid": 0,
+                "rgb": [
+                  24,
+                  12,
+                  2
+                ],
+                "gain": 1000,
+                "duration_ms": 1000,
+                "curve": 0
+              }
+            ],
+            "host_ms": 24473.637100018095
+          },
+          "host_to_ack_ms": 12.706900015473366,
+          "first_frame": 471,
+          "applied_to_submitted_ms": 12,
+          "applied_to_completed_ms": 14,
+          "host_to_tx_event_ms": 38.8896000222303
+        },
+        {
+          "req": 3,
+          "input": {
+            "op": "update",
+            "slot": 0,
+            "p": 0,
+            "label": "linear-down"
+          },
+          "sent_ms": 43060.722000023816,
+          "result": "APPLIED",
+          "revision": 4,
+          "applied_device_ms": 323005,
+          "ack_host_ms": 43074.86870000139,
+          "active_state": {
+            "revision": 4,
+            "device_ms": 323005,
+            "background": [
+              0,
+              0,
+              0
+            ],
+            "slots": [
+              {
+                "state": 1,
+                "gen": 1,
+                "seq": 3,
+                "p": 0,
+                "valid": 1,
+                "rgb": [
+                  24,
+                  8,
+                  1
+                ],
+                "gain": 1000,
+                "duration_ms": 1000,
+                "curve": 0
+              },
+              {
+                "state": 0,
+                "gen": 0,
+                "seq": 0,
+                "p": 0,
+                "valid": 0,
+                "rgb": [
+                  24,
+                  12,
+                  2
+                ],
+                "gain": 1000,
+                "duration_ms": 1000,
+                "curve": 0
+              }
+            ],
+            "host_ms": 43083.40930001577
+          },
+          "host_to_ack_ms": 14.146699977573007,
+          "first_frame": 1035,
+          "applied_to_submitted_ms": 16,
+          "applied_to_completed_ms": 18,
+          "host_to_tx_event_ms": 44.49010000098497
+        },
+        {
+          "req": 4,
+          "input": {
+            "op": "update",
+            "slot": 0,
+            "p": 1000,
+            "label": "linear-up"
+          },
+          "sent_ms": 45112.19239997445,
+          "result": "APPLIED",
+          "revision": 5,
+          "applied_device_ms": 325058,
+          "ack_host_ms": 45128.20550001925,
+          "active_state": {
+            "revision": 5,
+            "device_ms": 325058,
+            "background": [
+              0,
+              0,
+              0
+            ],
+            "slots": [
+              {
+                "state": 1,
+                "gen": 1,
+                "seq": 4,
+                "p": 1000,
+                "valid": 1,
+                "rgb": [
+                  24,
+                  8,
+                  1
+                ],
+                "gain": 1000,
+                "duration_ms": 1000,
+                "curve": 0
+              },
+              {
+                "state": 0,
+                "gen": 0,
+                "seq": 0,
+                "p": 0,
+                "valid": 0,
+                "rgb": [
+                  24,
+                  12,
+                  2
+                ],
+                "gain": 1000,
+                "duration_ms": 1000,
+                "curve": 0
+              }
+            ],
+            "host_ms": 45136.05239999015
+          },
+          "host_to_ack_ms": 16.01310004480183,
+          "first_frame": 1097,
+          "applied_to_submitted_ms": 11,
+          "applied_to_completed_ms": 13,
+          "host_to_tx_event_ms": 40.035100013483316
+        },
+        {
+          "req": 5,
+          "input": {
+            "op": "update",
+            "slot": 0,
+            "p": 0,
+            "curve": 1,
+            "label": "smoothstep-down-comparison"
+          },
+          "sent_ms": 48124.242199992295,
+          "result": "APPLIED",
+          "revision": 6,
+          "applied_device_ms": 328068,
+          "ack_host_ms": 48138.02569999825,
+          "active_state": {
+            "revision": 6,
+            "device_ms": 328068,
+            "background": [
+              0,
+              0,
+              0
+            ],
+            "slots": [
+              {
+                "state": 1,
+                "gen": 1,
+                "seq": 5,
+                "p": 0,
+                "valid": 1,
+                "rgb": [
+                  24,
+                  8,
+                  1
+                ],
+                "gain": 1000,
+                "duration_ms": 1000,
+                "curve": 1
+              },
+              {
+                "state": 0,
+                "gen": 0,
+                "seq": 0,
+                "p": 0,
+                "valid": 0,
+                "rgb": [
+                  24,
+                  12,
+                  2
+                ],
+                "gain": 1000,
+                "duration_ms": 1000,
+                "curve": 0
+              }
+            ],
+            "host_ms": 48145.87539999047
+          },
+          "host_to_ack_ms": 13.78350000595674,
+          "first_frame": 1188,
+          "applied_to_submitted_ms": 11,
+          "applied_to_completed_ms": 13,
+          "host_to_tx_event_ms": 38.96460001124069
+        },
+        {
+          "req": 6,
+          "input": {
+            "op": "update",
+            "slot": 0,
+            "p": 1000,
+            "label": "smoothstep-up-comparison"
+          },
+          "sent_ms": 50138.002899999265,
+          "result": "APPLIED",
+          "revision": 7,
+          "applied_device_ms": 330082,
+          "ack_host_ms": 50150.805499986745,
+          "active_state": {
+            "revision": 7,
+            "device_ms": 330082,
+            "background": [
+              0,
+              0,
+              0
+            ],
+            "slots": [
+              {
+                "state": 1,
+                "gen": 1,
+                "seq": 6,
+                "p": 1000,
+                "valid": 1,
+                "rgb": [
+                  24,
+                  8,
+                  1
+                ],
+                "gain": 1000,
+                "duration_ms": 1000,
+                "curve": 1
+              },
+              {
+                "state": 0,
+                "gen": 0,
+                "seq": 0,
+                "p": 0,
+                "valid": 0,
+                "rgb": [
+                  24,
+                  12,
+                  2
+                ],
+                "gain": 1000,
+                "duration_ms": 1000,
+                "curve": 0
+              }
+            ],
+            "host_ms": 50158.424100023694
+          },
+          "host_to_ack_ms": 12.80259998748079,
+          "first_frame": 1249,
+          "applied_to_submitted_ms": 11,
+          "applied_to_completed_ms": 13,
+          "host_to_tx_event_ms": 37.03900001710281
+        }
+      ]
+    },
+    "v3": {
+      "status": "recorded",
+      "error": null,
+      "source_sha256": {
+        "capture.json": "b71818f14f83f594106d031f7403420d632294a2a3e8d27c82706069e6807c2e",
+        "camera.json": "83f8d5281f6c95b76a92d9bcc17cc92a8fc20d440c42f2a55d852d12aae4e98c",
+        "session.jsonl": "990048e572cd5f7993edd86db79973dd23fd75e7ebb19c2b7ffba92a1f32f6c5"
+      },
+      "firmware_sha256": "6cd465a1bf5c414e2aca0dca142cd0410f38b1c1a3738bae723cdb98e29b9e36",
+      "host_source_sha256": "07828d25f3199779a048f19a51d0d25e86c2298e06a92f94495c8b7b47802525",
+      "frame_count": 1463,
+      "digital_frame_count": 1482,
+      "all_23_pixels_uniform": true,
+      "trace_sequence_contiguous": true,
+      "channel_max": 26,
+      "camera_settings": {
+        "width": {
+          "requested": 1280,
+          "accepted": true,
+          "readback": 1280.0
+        },
+        "height": {
+          "requested": 720,
+          "accepted": true,
+          "readback": 720.0
+        },
+        "fps": {
+          "requested": 30,
+          "accepted": true,
+          "readback": 30.00003000003
+        },
+        "auto_exposure": {
+          "requested": 0,
+          "accepted": true,
+          "readback": -1.0
+        },
+        "exposure": {
+          "requested": -10.0,
+          "accepted": true,
+          "readback": -10.0
+        },
+        "auto_wb": {
+          "requested": 0,
+          "accepted": true,
+          "readback": 0.0
+        },
+        "gain": {
+          "requested": 0,
+          "accepted": true,
+          "readback": 0.0
+        },
+        "backlight": {
+          "requested": 0,
+          "accepted": true,
+          "readback": 0.0
+        },
+        "sharpness": {
+          "requested": 0,
+          "accepted": true,
+          "readback": 0.0
+        },
+        "gamma": {
+          "requested": 100,
+          "accepted": true,
+          "readback": 100.0
+        },
+        "fourcc": {
+          "requested": 1196444237,
+          "accepted": true,
+          "readback": 1196444237.0
+        }
+      },
+      "camera_timing": {
+        "received_fps": 29.600761051372793,
+        "max_gap_ms": 61.89080001786351,
+        "gaps_over_100ms": 0
+      },
+      "writer_drops": 0,
+      "preview_warnings": 0,
+      "final_black_confirmed": true,
+      "stop_to_done_ms": 36.37470002286136,
+      "stop_to_done_receive_ms": 34.080700017511845,
+      "latency_ms": {
+        "host_to_ack_ms": {
+          "min": 12.407100002747029,
+          "median": 14.718799968250096,
+          "max": 26.24390000710264
+        },
+        "applied_to_submitted_ms": {
+          "min": 11,
+          "median": 15.5,
+          "max": 31
+        },
+        "applied_to_completed_ms": {
+          "min": 12,
+          "median": 17.5,
+          "max": 33
+        },
+        "host_to_tx_event_ms": {
+          "min": 35.55089997826144,
+          "median": 44.32275003637187,
+          "max": 58.96070000017062
+        }
+      },
+      "commands": [
+        {
+          "req": 1,
+          "input": {
+            "op": "start",
+            "slot": 0,
+            "gen": 1,
+            "p": 1000,
+            "valid": 1,
+            "rgb": [
+              24,
+              8,
+              1
+            ],
+            "gain": 1000,
+            "duration_ms": 1000,
+            "curve": 1,
+            "label": "repeat-warm-smooth-candidate"
+          },
+          "sent_ms": 8751.394900027663,
+          "result": "APPLIED",
+          "revision": 2,
+          "applied_device_ms": 406017,
+          "ack_host_ms": 8775.43490001699,
+          "active_state": {
+            "revision": 2,
+            "device_ms": 406017,
+            "background": [
+              0,
+              0,
+              0
+            ],
+            "slots": [
+              {
+                "state": 1,
+                "gen": 1,
+                "seq": 1,
+                "p": 1000,
+                "valid": 1,
+                "rgb": [
+                  24,
+                  8,
+                  1
+                ],
+                "gain": 1000,
+                "duration_ms": 1000,
+                "curve": 1
+              },
+              {
+                "state": 0,
+                "gen": 0,
+                "seq": 0,
+                "p": 0,
+                "valid": 0,
+                "rgb": [
+                  24,
+                  12,
+                  2
+                ],
+                "gain": 1000,
+                "duration_ms": 1000,
+                "curve": 0
+              }
+            ],
+            "host_ms": 8785.775299998932
+          },
+          "host_to_ack_ms": 24.039999989327043,
+          "first_frame": 1,
+          "applied_to_submitted_ms": 11,
+          "applied_to_completed_ms": 12,
+          "host_to_tx_event_ms": 48.1774999643676
+        },
+        {
+          "req": 2,
+          "input": {
+            "op": "update",
+            "slot": 0,
+            "rgb": [
+              24,
+              8,
+              0
+            ],
+            "label": "remove-blue-step-at-full-endpoint"
+          },
+          "sent_ms": 15308.913099986967,
+          "result": "APPLIED",
+          "revision": 3,
+          "applied_device_ms": 412563,
+          "ack_host_ms": 15323.031100037042,
+          "active_state": {
+            "revision": 3,
+            "device_ms": 412563,
+            "background": [
+              0,
+              0,
+              0
+            ],
+            "slots": [
+              {
+                "state": 1,
+                "gen": 1,
+                "seq": 2,
+                "p": 1000,
+                "valid": 1,
+                "rgb": [
+                  24,
+                  8,
+                  0
+                ],
+                "gain": 1000,
+                "duration_ms": 1000,
+                "curve": 1
+              },
+              {
+                "state": 0,
+                "gen": 0,
+                "seq": 0,
+                "p": 0,
+                "valid": 0,
+                "rgb": [
+                  24,
+                  12,
+                  2
+                ],
+                "gain": 1000,
+                "duration_ms": 1000,
+                "curve": 0
+              }
+            ],
+            "host_ms": 15331.985199998599
+          },
+          "host_to_ack_ms": 14.118000050075352,
+          "first_frame": 200,
+          "applied_to_submitted_ms": 31,
+          "applied_to_completed_ms": 33,
+          "host_to_tx_event_ms": 58.96070000017062
+        },
+        {
+          "req": 3,
+          "input": {
+            "op": "update",
+            "slot": 0,
+            "p": 0,
+            "label": "final-colour-down"
+          },
+          "sent_ms": 40186.64329999592,
+          "result": "APPLIED",
+          "revision": 4,
+          "applied_device_ms": 437441,
+          "ack_host_ms": 40199.65680001769,
+          "active_state": {
+            "revision": 4,
+            "device_ms": 437441,
+            "background": [
+              0,
+              0,
+              0
+            ],
+            "slots": [
+              {
+                "state": 1,
+                "gen": 1,
+                "seq": 3,
+                "p": 0,
+                "valid": 1,
+                "rgb": [
+                  24,
+                  8,
+                  0
+                ],
+                "gain": 1000,
+                "duration_ms": 1000,
+                "curve": 1
+              },
+              {
+                "state": 0,
+                "gen": 0,
+                "seq": 0,
+                "p": 0,
+                "valid": 0,
+                "rgb": [
+                  24,
+                  12,
+                  2
+                ],
+                "gain": 1000,
+                "duration_ms": 1000,
+                "curve": 0
+              }
+            ],
+            "host_ms": 40207.232400018256
+          },
+          "host_to_ack_ms": 13.013500021770597,
+          "first_frame": 953,
+          "applied_to_submitted_ms": 11,
+          "applied_to_completed_ms": 12,
+          "host_to_tx_event_ms": 37.68360003596172
+        },
+        {
+          "req": 4,
+          "input": {
+            "op": "update",
+            "slot": 0,
+            "p": 1000,
+            "label": "final-colour-up"
+          },
+          "sent_ms": 42236.10139999073,
+          "result": "APPLIED",
+          "revision": 5,
+          "applied_device_ms": 439491,
+          "ack_host_ms": 42249.95800002944,
+          "active_state": {
+            "revision": 5,
+            "device_ms": 439491,
+            "background": [
+              0,
+              0,
+              0
+            ],
+            "slots": [
+              {
+                "state": 1,
+                "gen": 1,
+                "seq": 4,
+                "p": 1000,
+                "valid": 1,
+                "rgb": [
+                  24,
+                  8,
+                  0
+                ],
+                "gain": 1000,
+                "duration_ms": 1000,
+                "curve": 1
+              },
+              {
+                "state": 0,
+                "gen": 0,
+                "seq": 0,
+                "p": 0,
+                "valid": 0,
+                "rgb": [
+                  24,
+                  12,
+                  2
+                ],
+                "gain": 1000,
+                "duration_ms": 1000,
+                "curve": 0
+              }
+            ],
+            "host_ms": 42258.38940002723
+          },
+          "host_to_ack_ms": 13.856600038707256,
+          "first_frame": 1015,
+          "applied_to_submitted_ms": 11,
+          "applied_to_completed_ms": 12,
+          "host_to_tx_event_ms": 35.79140000510961
+        },
+        {
+          "req": 5,
+          "input": {
+            "op": "update",
+            "slot": 0,
+            "valid": 0,
+            "label": "invalid-fades"
+          },
+          "sent_ms": 44252.581600041594,
+          "result": "APPLIED",
+          "revision": 6,
+          "applied_device_ms": 441509,
+          "ack_host_ms": 44266.398300009314,
+          "active_state": {
+            "revision": 6,
+            "device_ms": 441509,
+            "background": [
+              0,
+              0,
+              0
+            ],
+            "slots": [
+              {
+                "state": 1,
+                "gen": 1,
+                "seq": 5,
+                "p": 1000,
+                "valid": 0,
+                "rgb": [
+                  24,
+                  8,
+                  0
+                ],
+                "gain": 1000,
+                "duration_ms": 1000,
+                "curve": 1
+              },
+              {
+                "state": 0,
+                "gen": 0,
+                "seq": 0,
+                "p": 0,
+                "valid": 0,
+                "rgb": [
+                  24,
+                  12,
+                  2
+                ],
+                "gain": 1000,
+                "duration_ms": 1000,
+                "curve": 0
+              }
+            ],
+            "host_ms": 44276.52400004445
+          },
+          "host_to_ack_ms": 13.816699967719615,
+          "first_frame": 1076,
+          "applied_to_submitted_ms": 11,
+          "applied_to_completed_ms": 13,
+          "host_to_tx_event_ms": 39.83849997166544
+        },
+        {
+          "req": 6,
+          "input": {
+            "op": "update",
+            "slot": 0,
+            "p": 100,
+            "label": "ignored-invalid-p-no-restart"
+          },
+          "sent_ms": 44764.94520000415,
+          "result": "APPLIED",
+          "revision": 7,
+          "applied_device_ms": 442032,
+          "ack_host_ms": 44789.162900007796,
+          "active_state": {
+            "revision": 7,
+            "device_ms": 442032,
+            "background": [
+              0,
+              0,
+              0
+            ],
+            "slots": [
+              {
+                "state": 1,
+                "gen": 1,
+                "seq": 6,
+                "p": 100,
+                "valid": 0,
+                "rgb": [
+                  24,
+                  8,
+                  0
+                ],
+                "gain": 1000,
+                "duration_ms": 1000,
+                "curve": 1
+              },
+              {
+                "state": 0,
+                "gen": 0,
+                "seq": 0,
+                "p": 0,
+                "valid": 0,
+                "rgb": [
+                  24,
+                  12,
+                  2
+                ],
+                "gain": 1000,
+                "duration_ms": 1000,
+                "curve": 0
+              }
+            ],
+            "host_ms": 44799.56910002511
+          },
+          "host_to_ack_ms": 24.217700003646314,
+          "first_frame": 1092,
+          "applied_to_submitted_ms": 16,
+          "applied_to_completed_ms": 18,
+          "host_to_tx_event_ms": 55.81160000292584
+        },
+        {
+          "req": 7,
+          "input": {
+            "op": "update",
+            "slot": 0,
+            "p": 500,
+            "valid": 1,
+            "label": "valid-recovery-half"
+          },
+          "sent_ms": 46279.51200003736,
+          "result": "APPLIED",
+          "revision": 8,
+          "applied_device_ms": 443534,
+          "ack_host_ms": 46291.919100040104,
+          "active_state": {
+            "revision": 8,
+            "device_ms": 443534,
+            "background": [
+              0,
+              0,
+              0
+            ],
+            "slots": [
+              {
+                "state": 1,
+                "gen": 1,
+                "seq": 7,
+                "p": 500,
+                "valid": 1,
+                "rgb": [
+                  24,
+                  8,
+                  0
+                ],
+                "gain": 1000,
+                "duration_ms": 1000,
+                "curve": 1
+              },
+              {
+                "state": 0,
+                "gen": 0,
+                "seq": 0,
+                "p": 0,
+                "valid": 0,
+                "rgb": [
+                  24,
+                  12,
+                  2
+                ],
+                "gain": 1000,
+                "duration_ms": 1000,
+                "curve": 0
+              }
+            ],
+            "host_ms": 46299.63000002317
+          },
+          "host_to_ack_ms": 12.407100002747029,
+          "first_frame": 1137,
+          "applied_to_submitted_ms": 11,
+          "applied_to_completed_ms": 12,
+          "host_to_tx_event_ms": 35.62459995737299
+        },
+        {
+          "req": 8,
+          "input": {
+            "op": "start",
+            "slot": 1,
+            "gen": 1,
+            "p": 1000,
+            "valid": 1,
+            "rgb": [
+              0,
+              0,
+              8
+            ],
+            "gain": 1000,
+            "duration_ms": 500,
+            "curve": 0,
+            "label": "parallel-blue-contribution"
+          },
+          "sent_ms": 48287.69030002877,
+          "result": "APPLIED",
+          "revision": 9,
+          "applied_device_ms": 445544,
+          "ack_host_ms": 48300.16520002391,
+          "active_state": {
+            "revision": 9,
+            "device_ms": 445544,
+            "background": [
+              0,
+              0,
+              0
+            ],
+            "slots": [
+              {
+                "state": 1,
+                "gen": 1,
+                "seq": 7,
+                "p": 500,
+                "valid": 1,
+                "rgb": [
+                  24,
+                  8,
+                  0
+                ],
+                "gain": 1000,
+                "duration_ms": 1000,
+                "curve": 1
+              },
+              {
+                "state": 1,
+                "gen": 1,
+                "seq": 8,
+                "p": 1000,
+                "valid": 1,
+                "rgb": [
+                  0,
+                  0,
+                  8
+                ],
+                "gain": 1000,
+                "duration_ms": 500,
+                "curve": 0
+              }
+            ],
+            "host_ms": 48310.93350000447
+          },
+          "host_to_ack_ms": 12.474899995140731,
+          "first_frame": 1198,
+          "applied_to_submitted_ms": 15,
+          "applied_to_completed_ms": 17,
+          "host_to_tx_event_ms": 43.11219998635352
+        },
+        {
+          "req": 9,
+          "input": {
+            "op": "background",
+            "rgb": [
+              2,
+              2,
+              2
+            ],
+            "label": "independent-background"
+          },
+          "sent_ms": 49505.664800002705,
+          "result": "APPLIED",
+          "revision": 10,
+          "applied_device_ms": 446764,
+          "ack_host_ms": 49522.97150000231,
+          "active_state": {
+            "revision": 10,
+            "device_ms": 446764,
+            "background": [
+              2,
+              2,
+              2
+            ],
+            "slots": [
+              {
+                "state": 1,
+                "gen": 1,
+                "seq": 7,
+                "p": 500,
+                "valid": 1,
+                "rgb": [
+                  24,
+                  8,
+                  0
+                ],
+                "gain": 1000,
+                "duration_ms": 1000,
+                "curve": 1
+              },
+              {
+                "state": 1,
+                "gen": 1,
+                "seq": 8,
+                "p": 1000,
+                "valid": 1,
+                "rgb": [
+                  0,
+                  0,
+                  8
+                ],
+                "gain": 1000,
+                "duration_ms": 500,
+                "curve": 0
+              }
+            ],
+            "host_ms": 49531.16990003036
+          },
+          "host_to_ack_ms": 17.3066999996081,
+          "first_frame": 1235,
+          "applied_to_submitted_ms": 16,
+          "applied_to_completed_ms": 18,
+          "host_to_tx_event_ms": 45.69830000400543
+        },
+        {
+          "req": 10,
+          "input": {
+            "op": "stop",
+            "slot": 0,
+            "label": "targeted-stop-retains-blue-and-background"
+          },
+          "sent_ms": 50325.013699999545,
+          "result": "APPLIED",
+          "revision": 11,
+          "applied_device_ms": 447590,
+          "ack_host_ms": 50348.0000999989,
+          "active_state": {
+            "revision": 11,
+            "device_ms": 447590,
+            "background": [
+              2,
+              2,
+              2
+            ],
+            "slots": [
+              {
+                "state": 2,
+                "gen": 1,
+                "seq": 10,
+                "p": 500,
+                "valid": 1,
+                "rgb": [
+                  24,
+                  8,
+                  0
+                ],
+                "gain": 1000,
+                "duration_ms": 1000,
+                "curve": 1
+              },
+              {
+                "state": 1,
+                "gen": 1,
+                "seq": 8,
+                "p": 1000,
+                "valid": 1,
+                "rgb": [
+                  0,
+                  0,
+                  8
+                ],
+                "gain": 1000,
+                "duration_ms": 500,
+                "curve": 0
+              }
+            ],
+            "host_ms": 50358.4353000042
+          },
+          "host_to_ack_ms": 22.986399999354035,
+          "first_frame": 1260,
+          "applied_to_submitted_ms": 16,
+          "applied_to_completed_ms": 18,
+          "host_to_tx_event_ms": 53.59450000105426
+        },
+        {
+          "req": 11,
+          "input": {
+            "op": "stop",
+            "slot": 0,
+            "label": "repeated-stop-no-extension"
+          },
+          "sent_ms": 50652.29180001188,
+          "result": "APPLIED",
+          "revision": 12,
+          "applied_device_ms": 447920,
+          "ack_host_ms": 50678.53570001898,
+          "active_state": {
+            "revision": 12,
+            "device_ms": 447920,
+            "background": [
+              2,
+              2,
+              2
+            ],
+            "slots": [
+              {
+                "state": 2,
+                "gen": 1,
+                "seq": 11,
+                "p": 500,
+                "valid": 1,
+                "rgb": [
+                  24,
+                  8,
+                  0
+                ],
+                "gain": 1000,
+                "duration_ms": 1000,
+                "curve": 1
+              },
+              {
+                "state": 1,
+                "gen": 1,
+                "seq": 8,
+                "p": 1000,
+                "valid": 1,
+                "rgb": [
+                  0,
+                  0,
+                  8
+                ],
+                "gain": 1000,
+                "duration_ms": 500,
+                "curve": 0
+              }
+            ],
+            "host_ms": 50686.63900002139
+          },
+          "host_to_ack_ms": 26.24390000710264,
+          "first_frame": 1270,
+          "applied_to_submitted_ms": 16,
+          "applied_to_completed_ms": 18,
+          "host_to_tx_event_ms": 55.689900007564574
+        },
+        {
+          "req": 12,
+          "input": {
+            "op": "update",
+            "slot": 0,
+            "p": 1000,
+            "label": "stopped-update-must-reject"
+          },
+          "sent_ms": 51779.69779999694,
+          "result": "REJECT",
+          "reason": "lifecycle",
+          "ack_host_ms": 51802.274900022894,
+          "host_to_ack_ms": 22.577100025955588
+        },
+        {
+          "req": 13,
+          "input": {
+            "op": "start",
+            "slot": 0,
+            "gen": 2,
+            "p": 1000,
+            "valid": 1,
+            "rgb": [
+              24,
+              8,
+              0
+            ],
+            "gain": 1000,
+            "duration_ms": 1000,
+            "curve": 1,
+            "label": "explicit-new-generation"
+          },
+          "sent_ms": 52412.049300037324,
+          "result": "APPLIED",
+          "revision": 13,
+          "applied_device_ms": 449669,
+          "ack_host_ms": 52427.58489999687,
+          "active_state": {
+            "revision": 13,
+            "device_ms": 449669,
+            "background": [
+              2,
+              2,
+              2
+            ],
+            "slots": [
+              {
+                "state": 1,
+                "gen": 2,
+                "seq": 13,
+                "p": 1000,
+                "valid": 1,
+                "rgb": [
+                  24,
+                  8,
+                  0
+                ],
+                "gain": 1000,
+                "duration_ms": 1000,
+                "curve": 1
+              },
+              {
+                "state": 1,
+                "gen": 1,
+                "seq": 8,
+                "p": 1000,
+                "valid": 1,
+                "rgb": [
+                  0,
+                  0,
+                  8
+                ],
+                "gain": 1000,
+                "duration_ms": 500,
+                "curve": 0
+              }
+            ],
+            "host_ms": 52436.22169998707
+          },
+          "host_to_ack_ms": 15.535599959548563,
+          "first_frame": 1323,
+          "applied_to_submitted_ms": 16,
+          "applied_to_completed_ms": 18,
+          "host_to_tx_event_ms": 45.28039996512234
+        },
+        {
+          "req": 14,
+          "input": {
+            "op": "update",
+            "slot": 0,
+            "p": 250,
+            "label": "interrupt-rising-transition"
+          },
+          "sent_ms": 52676.47639999632,
+          "result": "APPLIED",
+          "revision": 14,
+          "applied_device_ms": 449933,
+          "ack_host_ms": 52691.68889999855,
+          "active_state": {
+            "revision": 14,
+            "device_ms": 449933,
+            "background": [
+              2,
+              2,
+              2
+            ],
+            "slots": [
+              {
+                "state": 1,
+                "gen": 2,
+                "seq": 14,
+                "p": 250,
+                "valid": 1,
+                "rgb": [
+                  24,
+                  8,
+                  0
+                ],
+                "gain": 1000,
+                "duration_ms": 1000,
+                "curve": 1
+              },
+              {
+                "state": 1,
+                "gen": 1,
+                "seq": 8,
+                "p": 1000,
+                "valid": 1,
+                "rgb": [
+                  0,
+                  0,
+                  8
+                ],
+                "gain": 1000,
+                "duration_ms": 500,
+                "curve": 0
+              }
+            ],
+            "host_ms": 52699.524600000586
+          },
+          "host_to_ack_ms": 15.212500002235174,
+          "first_frame": 1331,
+          "applied_to_submitted_ms": 16,
+          "applied_to_completed_ms": 18,
+          "host_to_tx_event_ms": 45.05270003573969
+        },
+        {
+          "req": 15,
+          "input": {
+            "op": "update",
+            "slot": 0,
+            "p": 1000,
+            "label": "reverse-target-during-transition"
+          },
+          "sent_ms": 52990.18140003318,
+          "result": "APPLIED",
+          "revision": 15,
+          "applied_device_ms": 450245,
+          "ack_host_ms": 53003.37059999583,
+          "active_state": {
+            "revision": 15,
+            "device_ms": 450245,
+            "background": [
+              2,
+              2,
+              2
+            ],
+            "slots": [
+              {
+                "state": 1,
+                "gen": 2,
+                "seq": 15,
+                "p": 1000,
+                "valid": 1,
+                "rgb": [
+                  24,
+                  8,
+                  0
+                ],
+                "gain": 1000,
+                "duration_ms": 1000,
+                "curve": 1
+              },
+              {
+                "state": 1,
+                "gen": 1,
+                "seq": 8,
+                "p": 1000,
+                "valid": 1,
+                "rgb": [
+                  0,
+                  0,
+                  8
+                ],
+                "gain": 1000,
+                "duration_ms": 500,
+                "curve": 0
+              }
+            ],
+            "host_ms": 53011.12089998787
+          },
+          "host_to_ack_ms": 13.18919996265322,
+          "first_frame": 1340,
+          "applied_to_submitted_ms": 11,
+          "applied_to_completed_ms": 12,
+          "host_to_tx_event_ms": 35.765299980994314
+        },
+        {
+          "req": 16,
+          "input": {
+            "op": "stop",
+            "slot": 1,
+            "label": "only-blue-stop"
+          },
+          "sent_ms": 54807.41180002224,
+          "result": "APPLIED",
+          "revision": 16,
+          "applied_device_ms": 452062,
+          "ack_host_ms": 54822.13059999049,
+          "active_state": {
+            "revision": 16,
+            "device_ms": 452062,
+            "background": [
+              2,
+              2,
+              2
+            ],
+            "slots": [
+              {
+                "state": 1,
+                "gen": 2,
+                "seq": 15,
+                "p": 1000,
+                "valid": 1,
+                "rgb": [
+                  24,
+                  8,
+                  0
+                ],
+                "gain": 1000,
+                "duration_ms": 1000,
+                "curve": 1
+              },
+              {
+                "state": 2,
+                "gen": 1,
+                "seq": 16,
+                "p": 1000,
+                "valid": 1,
+                "rgb": [
+                  0,
+                  0,
+                  8
+                ],
+                "gain": 1000,
+                "duration_ms": 500,
+                "curve": 0
+              }
+            ],
+            "host_ms": 54830.64250001917
+          },
+          "host_to_ack_ms": 14.718799968250096,
+          "first_frame": 1395,
+          "applied_to_submitted_ms": 11,
+          "applied_to_completed_ms": 12,
+          "host_to_tx_event_ms": 35.55089997826144
+        },
+        {
+          "req": 17,
+          "input": {
+            "op": "background",
+            "rgb": [
+              0,
+              0,
+              0
+            ],
+            "label": "remove-background-final-gold"
+          },
+          "sent_ms": 55826.32829999784,
+          "result": "APPLIED",
+          "revision": 17,
+          "applied_device_ms": 453081,
+          "ack_host_ms": 55839.46270000888,
+          "active_state": {
+            "revision": 17,
+            "device_ms": 453081,
+            "background": [
+              0,
+              0,
+              0
+            ],
+            "slots": [
+              {
+                "state": 1,
+                "gen": 2,
+                "seq": 15,
+                "p": 1000,
+                "valid": 1,
+                "rgb": [
+                  24,
+                  8,
+                  0
+                ],
+                "gain": 1000,
+                "duration_ms": 1000,
+                "curve": 1
+              },
+              {
+                "state": 3,
+                "gen": 1,
+                "seq": 16,
+                "p": 1000,
+                "valid": 1,
+                "rgb": [
+                  0,
+                  0,
+                  8
+                ],
+                "gain": 1000,
+                "duration_ms": 500,
+                "curve": 0
+              }
+            ],
+            "host_ms": 55847.20960003324
+          },
+          "host_to_ack_ms": 13.13440001104027,
+          "first_frame": 1426,
+          "applied_to_submitted_ms": 16,
+          "applied_to_completed_ms": 18,
+          "host_to_tx_event_ms": 43.592800037004054
+        }
+      ]
+    }
+  },
+  "selected_frames": [
+    {
+      "run": "v1",
+      "request": 1,
+      "file": "frame-000046.png",
+      "t_ms": 10696.876100031659,
+      "sha256": "0e7821def65f20fd0911403049b0927db4169185ea6e64d7c393158e3f64a9a9"
+    },
+    {
+      "run": "v2",
+      "request": 1,
+      "file": "frame-000050.png",
+      "t_ms": 10723.295299976598,
+      "sha256": "4b85ee547ba86b613bc560adae0823d0fb6a4600228ed5f69d0d1a1dbbcf6161"
+    },
+    {
+      "run": "v2",
+      "request": 2,
+      "file": "frame-000459.png",
+      "t_ms": 26266.290800005663,
+      "sha256": "9fa39128fd45679c8184a42655366f63e143ce38b60990408e034eeed923b4b0"
+    },
+    {
+      "run": "v3",
+      "request": 2,
+      "file": "frame-000236.png",
+      "t_ms": 17116.120900027454,
+      "sha256": "e97cb468ae6e03b223840e7fafe0547256492683704d023bd5e85ed11511c875"
+    },
+    {
+      "run": "v2",
+      "request": 4,
+      "file": "frame-001008.png",
+      "t_ms": 45118.426800007,
+      "sha256": "06173b9f22d462af326516aa2ab92b6b036a3603f32f3815db711835673ec283"
+    },
+    {
+      "run": "v2",
+      "request": 4,
+      "file": "frame-001014.png",
+      "t_ms": 45324.253000027966,
+      "sha256": "19a615405ca4df23d5a9f0606a759eb5195a68f2456e821ad996c01dc2823e9b"
+    },
+    {
+      "run": "v2",
+      "request": 4,
+      "file": "frame-001020.png",
+      "t_ms": 45516.76869997755,
+      "sha256": "30da036c6dc06d596ef5cd93c1407ab5a5faf7ff8e7b02b19deb3ac05e23f11a"
+    },
+    {
+      "run": "v2",
+      "request": 4,
+      "file": "frame-001026.png",
+      "t_ms": 45716.66159998858,
+      "sha256": "d954c12e059a57c6e594bc4e29f712658619bf7dbb44642f5ee12f7823bb30f5"
+    },
+    {
+      "run": "v2",
+      "request": 4,
+      "file": "frame-001032.png",
+      "t_ms": 45916.63069999777,
+      "sha256": "931ce83a8b6435702292ed61e216df5d99d8710bcb18054cebc22bea885f64fc"
+    },
+    {
+      "run": "v2",
+      "request": 4,
+      "file": "frame-001038.png",
+      "t_ms": 46127.101799997035,
+      "sha256": "27f284ea8bff6ed6124626a8dddd46b3bb798662736aab046304f9c2ed59dab4"
+    },
+    {
+      "run": "v2",
+      "request": 4,
+      "file": "frame-001044.png",
+      "t_ms": 46324.24370001536,
+      "sha256": "e5c57a8cb8629a3e9a30c25779e1b77dadf5a348160f6eb7f7654e003a565914"
+    },
+    {
+      "run": "v2",
+      "request": 6,
+      "file": "frame-001158.png",
+      "t_ms": 50126.273899979424,
+      "sha256": "bbd79a90d407656e083c47b9d06a22e480c76d993bb3bbff9a737bd1cf41803c"
+    },
+    {
+      "run": "v2",
+      "request": 6,
+      "file": "frame-001165.png",
+      "t_ms": 50348.70520001277,
+      "sha256": "a9e58ae1dad7d726fe1e6d6d61ff32c00d5e0abd16b3368aa42c4e6e187e5847"
+    },
+    {
+      "run": "v2",
+      "request": 6,
+      "file": "frame-001171.png",
+      "t_ms": 50547.00469999807,
+      "sha256": "8979186379582b178bf66b567a78448bedcdc7305cefecaaa7fdc97a321ff91e"
+    },
+    {
+      "run": "v2",
+      "request": 6,
+      "file": "frame-001177.png",
+      "t_ms": 50747.32680001762,
+      "sha256": "55abd604a3ac5a7f2bca079fe0dee61712098dedfd8d04a6e85038a27bcb7146"
+    },
+    {
+      "run": "v2",
+      "request": 6,
+      "file": "frame-001183.png",
+      "t_ms": 50950.653499981854,
+      "sha256": "230b9e81bbc36fc10af8d62dbe98142755da843f822a5a858c469d23e0272009"
+    },
+    {
+      "run": "v2",
+      "request": 6,
+      "file": "frame-001189.png",
+      "t_ms": 51145.72129998123,
+      "sha256": "65d2524d3286537c7226956852ccf340dd4cbe17bb1b164ad2ddccc08af3a425"
+    },
+    {
+      "run": "v2",
+      "request": 6,
+      "file": "frame-001195.png",
+      "t_ms": 51344.20890000183,
+      "sha256": "68228531602d1a784f2cd1ad2240ba26efa5f114e2d3cdb8523bd7bccb47f890"
+    },
+    {
+      "run": "v3",
+      "request": 4,
+      "file": "frame-000987.png",
+      "t_ms": 42241.22990004253,
+      "sha256": "6006a7c2c0ada876d0a8ac1a611d07e2e0f5dac982ca29f30137dd531ed09cde"
+    },
+    {
+      "run": "v3",
+      "request": 4,
+      "file": "frame-000993.png",
+      "t_ms": 42443.1374000269,
+      "sha256": "371218fcc0d2d5408de1642ab1f1bbd9ce548de4f5ced1011247c32efb1665fa"
+    },
+    {
+      "run": "v3",
+      "request": 4,
+      "file": "frame-000999.png",
+      "t_ms": 42643.45360000152,
+      "sha256": "c85a66f3e334c4a6c75d8b5c974d33eb9e5ee51ada33b90c460c967cd96058ea"
+    },
+    {
+      "run": "v3",
+      "request": 4,
+      "file": "frame-001005.png",
+      "t_ms": 42849.29780004313,
+      "sha256": "8a4c2ad04837bd593d66dc4fbc977bad38bfd43b4d1bab5e50cb96ea7add0055"
+    },
+    {
+      "run": "v3",
+      "request": 4,
+      "file": "frame-001011.png",
+      "t_ms": 43040.41740001412,
+      "sha256": "e8fc9432f000cf0e27e1d40945d557e9653a57ebeb61cb320cdf5eaf3ceb2aaf"
+    },
+    {
+      "run": "v3",
+      "request": 4,
+      "file": "frame-001017.png",
+      "t_ms": 43240.71660003392,
+      "sha256": "1f8e40ff40fa94acedb1d5149e3239b04b93a27ca4d8dd11708400ea2d8d5ddc"
+    },
+    {
+      "run": "v3",
+      "request": 4,
+      "file": "frame-001023.png",
+      "t_ms": 43448.460999992676,
+      "sha256": "293cc30893c4eb2ea97e73f52337583ed22d70c0eb260187a3472371967b2e27"
+    },
+    {
+      "run": "v3",
+      "request": 4,
+      "file": "frame-001032.png",
+      "t_ms": 43739.86650002189,
+      "sha256": "98e02ccdda3c090c27e1cb9b918c2568b24b013554745aa2fef17f86d84d656f"
+    },
+    {
+      "run": "v3",
+      "request": 5,
+      "file": "frame-001092.png",
+      "t_ms": 45738.06220002007,
+      "sha256": "88b798be23aaf91a991368ea1cfb2c7e394192b960e7ac0e777b0e5d8f3b28b4"
+    },
+    {
+      "run": "v3",
+      "request": 7,
+      "file": "frame-001153.png",
+      "t_ms": 47770.70839999942,
+      "sha256": "d8dff444bca9cc432813606b372f42a92f7f7499acd6acd42b194d20f76ef512"
+    },
+    {
+      "run": "v3",
+      "request": 9,
+      "file": "frame-001220.png",
+      "t_ms": 50006.23820000328,
+      "sha256": "99a815ff3d46f47e417055510d45a24943d6877e3f08f63893a8b18e63e45d3d"
+    },
+    {
+      "run": "v3",
+      "request": 10,
+      "file": "frame-001278.png",
+      "t_ms": 51938.21880000178,
+      "sha256": "353bc7dd3cd688719729667d9d5ed12ce87de05620ed4a9c72e80af0def9f88c"
+    },
+    {
+      "run": "v3",
+      "request": null,
+      "file": "frame-001457.png",
+      "t_ms": 57994.44300000323,
+      "sha256": "35165006ba0894732bd57c76b128114ba9287de31ee9d525438d4a82a9ea4446"
+    }
+  ],
+  "backup.json": {
+    "chip_mac": "a8:42:e3:cd:4b:18",
+    "port": "COM3",
+    "bytes": 4194304,
+    "sha256": "b703f4b13aaaaa3e8c3bc68d8e8134b1cec0a77df957ea06175ac147d1d03c71",
+    "verified_on_chip": true,
+    "partitions": [
+      {
+        "kind": 1,
+        "subtype": 2,
+        "offset": 36864,
+        "size": 20480,
+        "label": "nvs"
+      },
+      {
+        "kind": 1,
+        "subtype": 0,
+        "offset": 57344,
+        "size": 8192,
+        "label": "otadata"
+      },
+      {
+        "kind": 0,
+        "subtype": 16,
+        "offset": 65536,
+        "size": 3145728,
+        "label": "app0"
+      },
+      {
+        "kind": 1,
+        "subtype": 2,
+        "offset": 3211264,
+        "size": 24576,
+        "label": "larpkeys"
+      },
+      {
+        "kind": 1,
+        "subtype": 130,
+        "offset": 3235840,
+        "size": 892928,
+        "label": "spiffs"
+      },
+      {
+        "kind": 1,
+        "subtype": 3,
+        "offset": 4128768,
+        "size": 65536,
+        "label": "coredump"
+      }
+    ],
+    "historical_keys_partitions_match": true
+  },
+  "install.json": {
+    "chip_mac": "a8:42:e3:cd:4b:18",
+    "artifact_sha256": "6cd465a1bf5c414e2aca0dca142cd0410f38b1c1a3738bae723cdb98e29b9e36",
+    "app_verified": true,
+    "keys_and_boot_unchanged": true,
+    "full_flash_verified": false,
+    "boot_observed": true
+  },
+  "restore.json": {
+    "chip_mac": "a8:42:e3:cd:4b:18",
+    "artifact_sha256": "ed333fb42af533453eafd30aa4032d56e372016b8a658baee00eab7d8b5ef177",
+    "app_verified": true,
+    "keys_and_boot_unchanged": true,
+    "full_flash_verified": true,
+    "boot_observed": true
+  },
+  "source-manifest.json": [
+    {
+      "path": "firmware/led/include/NearGlow.h",
+      "sha256": "52108b8244e017a457e69a23c94f34c0535edd9079cf931c26060b977395b45d"
+    },
+    {
+      "path": "firmware/led/src/NearGlow.cpp",
+      "sha256": "4d19df2999675c2b99bc55022714c203bc31e5d75bed568395641fab478368e0"
+    },
+    {
+      "path": "firmware/led/include/CameraLabController.h",
+      "sha256": "d1ecf7370b664888ec4079a253bd24bc39f986d0701a756c046a7787849082ff"
+    },
+    {
+      "path": "firmware/led/src/CameraLabController.cpp",
+      "sha256": "a04a7791581342d6b1aa59e94c02112bfad2079054d04269ef35d21d206d1d6f"
+    },
+    {
+      "path": "firmware/led/src/CameraLabMain.cpp",
+      "sha256": "4e98b9626f0bc2d649771a976274cd552a614d85dfc60d1bbd0f95bca52bdbd5"
+    },
+    {
+      "path": "firmware/led/src/LedOutput.cpp",
+      "sha256": "13f2f2f38c51ec92d4799ddb0a8ff907697a0c7658fc4fe0ed99196ae822b29b"
+    },
+    {
+      "path": "firmware/led/src/RmtLedBus.cpp",
+      "sha256": "5e2ca25b31c6d9cb72783ad08d6c3599e87341ff110019dfeff9e3e1f08e1ceb"
+    },
+    {
+      "path": "firmware/led/platformio.ini",
+      "sha256": "ce4305caa54d625eaa323cff7539c1fbe9d1c6d4897d04023e6a22c207cd6f73"
+    },
+    {
+      "path": "scripts/led_camera_interactive.py",
+      "sha256": "6f81d26ffa2b4b1b8c6f93a4a60b83548be2a6d3e5a7d2a134602fe13568f140"
+    }
+  ],
+  "output_sha256": {
+    "colour-iterations.png": "49e264e2372740841a789f1cab7e6502f63218e93e85ec09fb1752a938857296",
+    "lifecycle.png": "53db159bb898eb96be0899c389df43436388521f3b6c89935901a8a5f90e4cef",
+    "ramp-comparison.png": "50ba586fd5767038d0e860683395d6b4a34a8e66003f46ff0c8c4ae62f867e67"
+  }
+}
