@@ -2,6 +2,12 @@
 
 **Verbindliches Zielbild · 18.10.2026:** [VA-01](../../docs/veranstaltungsarchitektur.md) und [Vertragsmatrix](../../docs/veranstaltungsarchitektur-umsetzung.md). Mehrere Spielleitungen bedienen gleichzeitig verschiedene Boxen per BLE; zunächst eine aktive Steuersitzung je Box. Gespeicherte Boxzuordnungen, Zielwechsel und getrennte Beobachtungen sind Folgearbeit. Ein Handy muss nicht gleichzeitig alle Boxen verbinden. Bestehende Funktionen und datierte Prüfaussagen bleiben vom noch offenen Veranstaltungsumfang getrennt.
 
+Die ESP-Seite enthält **ESP-NOW testen** mit Empfänger-MAC und bewusstem
+Einzelsenden. Lokale Sendeannahme, MAC-Zustellung und korrelierte Rückantwort
+werden getrennt angezeigt. Ein Funk-ACK allein ist kein bestätigter Empfang.
+Benötigtes App-/Firmwarepaar und noch offene Handyabnahme:
+[ESP-NOW-Test](../../docs/espnow/app-test.md).
+
 Kotlin, Jetpack Compose und Material 3. Eigenständige App mit Paketname
 `de.larpescape.companion`, Mindestversion Android 13/API33. Bestehende
 Webprototypen und der .NET-Diagnoseclient bleiben separate Referenzen.

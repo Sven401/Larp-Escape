@@ -25,6 +25,7 @@ import de.larpescape.companion.platform.ble.AndroidBleRepository
 import de.larpescape.companion.ui.device.DeviceViewModel
 import de.larpescape.companion.ui.device.LedControls
 import de.larpescape.companion.ui.device.AudioControls
+import de.larpescape.companion.ui.device.EspNowControls
 
 import de.larpescape.companion.ui.device.MatrixControls
 import de.larpescape.companion.ui.device.WakeControls
@@ -163,6 +164,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             MaterialTheme(colorScheme = lightColorScheme()) {
                 val state by model.state.collectAsStateWithLifecycle()
+                DisposableEffect(state.leds.espNow.measuring) {
+                    val keep = state.leds.espNow.measuring
+                    if (keep) window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                    onDispose { if (keep) window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) }
+                }
                 if (showPermissionExplanation) {
                     AlertDialog(
                         onDismissRequest = { showPermissionExplanation = false },
@@ -233,6 +239,7 @@ class MainActivity : ComponentActivity() {
                             exportMatrix.launch("Tastenmatrix-Sammeldurchgang.txt")
                         })
                         WakeControls(state.leds.wake)
+                        EspNowControls(state.leds.espNow, model::selectEspNowPeer, model::sendEspNowTest, model::measureEspNow, model::stopEspNowMeasurement)
                         AudioControls(state.leds.audio, model::selectAudioTrack, model::selectAudioVolume,
                             model::startAudio, model::stopAudio, model::audioAction)
                         LedControls(state.leds, model::selectLedEffect, model::startLedEffect, model::stopLeds,

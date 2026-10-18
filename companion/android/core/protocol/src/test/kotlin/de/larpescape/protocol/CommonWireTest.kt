@@ -42,7 +42,7 @@ class CommonWireTest {
         val status = protocol.status(bytes("status_twinkle"))
         assertFalse(status.nfcSupported); assertFalse(status.wake!!.supported)
         assertFalse(status.audio!!.supported); assertFalse(status.matrix!!.supported)
-        for (flag in 2..255) rejects {
+        for (flag in 16..255) rejects {
             protocol.status(signed(bytes("status_all").copyOf(59).also { it[38] = flag.toByte() }))
         }
         rejects { protocol.status(signed(bytes("status_all").copyOf(59).also { it[38] = 0 })) }

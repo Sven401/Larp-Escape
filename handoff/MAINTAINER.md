@@ -53,6 +53,10 @@ abgeschlossene Softwarekonsolidierung und Integration durch #56.
   eigenständige Aufgaben; der Baugruppen-HMAC-Zugang ersetzt sie nicht.
 - **Spielintegration #31/#30:** zuerst F5a-Geräteausführung, dann reale
   Profilübernahme, anschließend F5b-Ressourcen-/Betriebsabnahme.
+- **Notwendige zukünftige Framework-Aktualisierung:**
+  [Arduino-ESP32 3.x](ARDUINO-ESP32-3-MIGRATION.md) am 18. Oktober 2026 vom
+  Nutzer zur Einplanung beauftragt. Umsetzung, Zielversion und Termin offen;
+  jetzt ausschließlich dokumentieren, keine Migrationsarbeiten beginnen.
 
 Softwareintegration, begrenzte historische Gerätebeobachtung und gemeinsame
 Produktabnahme sind getrennte Nachweise. Der Baugruppenstand ist kein

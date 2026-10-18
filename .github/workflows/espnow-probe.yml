@@ -1,0 +1,26 @@
+name: ESP-NOW probe
+
+on:
+  push:
+    paths: ['firmware/espnow-probe/**', 'firmware/led/include/EspNowTest.h', 'firmware/led/include/LedWire.h', 'firmware/nfc-probe/skip_arduino_start.py', 'lib/EspNowCommunicator/**', 'include/GamePorts/ICommunicator.h', '.github/workflows/espnow-probe.yml']
+  pull_request:
+    paths: ['firmware/espnow-probe/**', 'firmware/led/include/EspNowTest.h', 'firmware/led/include/LedWire.h', 'firmware/nfc-probe/skip_arduino_start.py', 'lib/EspNowCommunicator/**', 'include/GamePorts/ICommunicator.h', '.github/workflows/espnow-probe.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-2022
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.11'
+      - run: python -m pip install platformio==6.2.0
+      - run: python -m platformio run -d firmware/espnow-probe -e espnow-probe -e espnow-app-receiver -j 2
+      - run: python -m py_compile firmware/espnow-probe/run_device_test.py

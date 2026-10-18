@@ -2,6 +2,12 @@
 #include "LedWire.h"
 #include "LedOutput.h"
 #include "WakeInputs.h"
+#ifdef LARP_ESPNOW_TEST
+#include "EspNowRadio.h"
+#if defined(LARP_NFC_TEST) || defined(LARP_MATRIX_TEST)
+#error "ESP-NOW test uses its own hardware-test variant"
+#endif
+#endif
 #if defined(LARP_NFC_TEST) && defined(LARP_MATRIX_TEST)
 #error "NFC and matrix hardware tests require separate firmware variants"
 #endif
@@ -36,6 +42,15 @@ larp::matrix::MatrixInputs matrixInputs(larp::wake::mcpWakeBus());
 #endif
 class Control final : public wire::IControl {
  public:
+#ifdef LARP_ESPNOW_TEST
+  bool submitRssi(const std::array<uint8_t, 6> &peer, uint32_t now, bool intensity) noexcept override {
+    return larp::espnowradio::submit(peer, now, true, intensity);
+  }
+  wire::EspNowSnapshot espNowSnapshot() const noexcept override { return larp::espnowradio::snapshot(); }
+  bool submitEspNow(const std::array<uint8_t, 6> &peer, uint32_t now) noexcept override {
+    return larp::espnowradio::submit(peer, now);
+  }
+#endif
   wire::Snapshot snapshot() const noexcept override {
     const auto s = output.snapshot();
     wire::Snapshot out;
@@ -66,6 +81,9 @@ class Control final : public wire::IControl {
     if (larp::nfcble::busy()) return false;
 #endif
     if (expected != output.snapshot().revision) return false;
+    #ifdef LARP_ESPNOW_TEST
+    larp::espnowradio::clearIntensity();
+#endif
     const bool ok = op == wire::Operation::Stop ? output.stop() :
       output.start(static_cast<larp::led::Effect>(effect));
     revision = output.snapshot().revision;
@@ -94,6 +112,9 @@ class Control final : public wire::IControl {
     return ok;
   }
   void stopOnDisconnect() noexcept override { output.stop(); audioOutput.stop();
+#ifdef LARP_ESPNOW_TEST
+    larp::espnowradio::cancel();
+#endif
 #ifdef LARP_NFC_TEST
     larp::nfcble::box().cancel();
 #endif
@@ -369,6 +390,9 @@ void setup() {
   received = xQueueCreate(32, sizeof(Frame));
   if (!received) { Serial.println("LARP ERROR frame queue"); return; }
   BLEDevice::init("Larp LED"); // Active radio supplies entropy for hardware RNG.
+#ifdef LARP_ESPNOW_TEST
+  if (!larp::espnowradio::begin()) Serial.println("LARP ESP-NOW unavailable");
+#endif
   esp_fill_random(bootNonce.data(), bootNonce.size());
   provisioned = loadCredentials();
   if (!provisioned) { Serial.println("LARP ERROR credentials; USB recovery required"); return; }
@@ -390,6 +414,9 @@ void setup() {
 #endif
 }
 void loop() {
+#ifdef LARP_ESPNOW_TEST
+  larp::espnowradio::service(millis());
+#endif
 #ifdef LARP_MATRIX_TEST
   matrixInputs.service(millis());
 #endif
@@ -408,6 +435,9 @@ void loop() {
   // Boot/fault Stop still drains even when BLE initialization did not succeed.
   audioOutput.service();
   if (outputInitialized) {
+#ifdef LARP_ESPNOW_TEST
+    output.setTwinkleIntensity(larp::espnowradio::intensity(millis()));
+#endif
     output.service();
   }
   delay(1);
