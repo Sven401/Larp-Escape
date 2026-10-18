@@ -25,11 +25,34 @@ Produktadapter. Physische Dunkelursache, optische Freigabe, Pausenregel und
 Quellenzuordnung bleiben offen. Die Software-/Bildnachweise unten behalten
 ihre ursprüngliche Quellbasis; bei diesem Merge keine erneute Geräteprüfung.
 Eigene Push-Prüfungen des Mergecommits und nachfolgende Dokumentations-CI sind
-zusätzliche Nachweise, nicht die obigen PR-Läufe. Letzter Ablesestand und
-Dokumentationsabschluss stehen in #25.
+zusätzliche Nachweise, nicht die obigen PR-Läufe. Sie sind inzwischen wie folgt
+abgeschlossen; jeder Status wurde am 18.10.2026 erneut jobweise ausgelesen:
+
+| Prüfstand | Workflow | Ergebnis |
+| --- | --- | --- |
+| #81-Merge `c487021` | [LED product](https://github.com/Sven401/Larp-Escape/actions/runs/39166813494) | **4/4 erfolgreich** |
+| #81-Merge `c487021` | [Quality](https://github.com/Sven401/Larp-Escape/actions/runs/39166813499) | **Abgebrochen**: Hostprüfung erfolgreich, Android/ESP32 abgebrochen; kein grüner Gesamtlauf. Durch folgenden Dokumentationsmerge abgelöst. |
+| #82-PR-Head `edde13f` | [Quality](https://github.com/Sven401/Larp-Escape/actions/runs/39167013482) | **3/3 erfolgreich** |
+| #82-PR-Head `edde13f` | [LED/Android/Kamera](https://github.com/Sven401/Larp-Escape/actions/runs/39167013562) | **4/4 erfolgreich** |
+| #82-PR-Head `edde13f` | [NFC](https://github.com/Sven401/Larp-Escape/actions/runs/39167013658) | **2/2 erfolgreich** |
+| #82-Merge `8648f57` | [Quality](https://github.com/Sven401/Larp-Escape/actions/runs/39167029463) | **3/3 erfolgreich** |
+
+Damit sind die zuvor offenen zusätzlichen Prüfungen abgeschlossen: #82-PR-CI
+9/9 grün, Quality am tatsächlichen #82-Merge 3/3 grün und LED am #81-Merge 4/4
+grün. Der historische Abbruch bleibt ein Abbruch und wird nicht in Erfolg
+umbenannt. Kein fehlgeschlagener oder noch laufender Job in diesen sechs Läufen.
+
+Der Dokumentationsabschluss [PR #82](https://github.com/Sven401/Larp-Escape/pull/82)
+ist bei `8648f573ed7bbd2e76530b15d3f5883945b7c1a4` integriert; Eltern
+`c487021` und `edde13f`, vollständiger Dateibaum identisch zum Dokumentationshead
+(`4b8b66035af73d811c90f443f30e63ecd864f7a5`). Diese neue Statusfortschreibung
+ändert ausschließlich drei Übergabe-Markdown-Dateien. Deren eigene neue CI ist
+ein weiterer, unabhängiger Lauf und kein rückwirkender Bestandteil dieser Tabelle.
+Der operative Ablesestand steht ebenfalls in #25. Keine neue Softwareausführung,
+Geräteprüfung oder optische Freigabe durch diesen CI-Statusauftrag.
 
 Die folgende ursprüngliche Basis bezeichnet die Diagnose-/Entwurfssitzung.
-Dokumentationsfortschreibung auf `codex/naeheglut-stop-integrationsstand` im
+Aktuelle CI-Statusfortschreibung auf `codex/naeheglut-ci-abschluss` im
 Worktree `C:/Users/seide/Documents/Codex/2026-10-18/m/work/naeheglut`.
 Vor Fortsetzung aktuellen Integrationsbranch, #25 und Arbeitsbaum neu prüfen.
 

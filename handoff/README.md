@@ -3,6 +3,9 @@
 **Näheglut-Diagnose und Spielanschluss integriert · 18.10.2026:**
 [PR #81](https://github.com/Sven401/Larp-Escape/pull/81), Merge
 `c4870215a155b9abff2e36fccfe93d42e1a03043`, zuvor 9/9 PR-CI-Jobs erfolgreich.
+**Zusätzliche Prüfungen abgeschlossen:** #82-PR-CI 9/9, Quality am #82-Merge
+`8648f57` 3/3 und LED am #81-Merge 4/4 erfolgreich. Alter Quality-Abbruch bleibt
+historisch erhalten; siehe getrennte Laufbelege in der folgenden Übergabe.
 [Stopdiagnose und konkreter Spielanschluss](NAEHEGLUT-STOP-SPIELANSCHLUSS-2026-10-18.md).
 Digitaler Stop bestätigt; optischer Restpegel auch am Papierrand nachgewiesen,
 Ursache weiterhin ohne kontrollierten Gerätevergleich offen. Adapterentwurf

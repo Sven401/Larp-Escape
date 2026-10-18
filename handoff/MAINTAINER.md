@@ -3,6 +3,9 @@
 **Näheglut-Stopdiagnose und Spielanschluss integriert · 18.10.2026:**
 [PR #81](https://github.com/Sven401/Larp-Escape/pull/81) nach 9/9 erfolgreichen
 PR-CI-Jobs bei `c4870215a155b9abff2e36fccfe93d42e1a03043` übernommen.
+**Zusätzlicher CI-Abschluss geprüft:** #82-PR-CI 9/9 und Quality am tatsächlichen
+#82-Merge `8648f57` 3/3 erfolgreich; LED am #81-Merge 4/4 erfolgreich.
+Der durch den Folgemerge abgebrochene alte Quality-Lauf bleibt als solcher dokumentiert.
 [Befund, Spezifikation und nächste Schritte](NAEHEGLUT-STOP-SPIELANSCHLUSS-2026-10-18.md).
 650 Originalbilder erneut geprüft; digitaler Stop bestätigt, flächiger Anstieg
 auch außerhalb der CAL-Masken. Physische Ursache/optische Freigabe weiter offen.
