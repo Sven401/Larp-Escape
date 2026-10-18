@@ -1,5 +1,13 @@
 # Maintainer-Einstieg
 
+**Näheglut-Stopdiagnose und Spielanschluss · 18.10.2026:**
+[Befund, Spezifikation und nächste Schritte](NAEHEGLUT-STOP-SPIELANSCHLUSS-2026-10-18.md).
+650 Originalbilder erneut geprüft; digitaler Stop bestätigt, flächiger Anstieg
+auch außerhalb der CAL-Masken. Physische Ursache/optische Freigabe weiter offen.
+Konkreter Produktadaptervorschlag liegt vor; keine Produktimplementierung oder
+neue Geräteprüfung. Nutzerbestätigter Start: korrespondierende Station erkannt;
+Näheglut läuft durch wie Funkeln. Quellenzuordnung/Pausenregel bleiben offen.
+
 **UI/UX-Pilot integriert · 18. Oktober 2026:** [PR #78](https://github.com/Sven401/Larp-Escape/pull/78)
 ist bei `42853bc1aa93de23b5fcfc72e66d2c1a397361af` in den kuratierten
 Integrationsbranch übernommen. [Rolle](../docs/ui-ux/ROLLE.md),

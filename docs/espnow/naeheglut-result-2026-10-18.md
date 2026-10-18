@@ -1,5 +1,12 @@
 # Näheglut mit realen ESP-NOW-Messwerten · 18.10.2026
 
+**Spätere Offline-Diagnose, 18.10.2026:**
+[Stop-/Dunkelbefund](../led/naeheglut-stop-diagnose-2026-10-18.md) reproduziert
+die negativen Kriterien und untersucht zusätzliche Papierrandpixel.
+386 schwarze TX-Ereignisse in den Stopfenstern; flächiger Kamerapegelanstieg
+auch außerhalb der CAL-Masken. Physische Ursache und optische Freigabe bleiben
+offen; die folgenden ursprünglichen Ergebnisse werden nicht ersetzt.
+
 Status: **drei Laboraufnahmen abgeschlossen, digitaler Abschluss und Rückweg
 belegt; vollständige optische Abnahme und Nutzerurteil offen**.
 Auftrag: Geh- und Ausfallversuch mit dem bekannten Powerbank-ESP

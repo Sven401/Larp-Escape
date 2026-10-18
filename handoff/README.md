@@ -1,5 +1,11 @@
 # Technische Projektübergabe
 
+**Näheglut-Folgearbeit · 18.10.2026:**
+[Stopdiagnose und konkreter Spielanschluss](NAEHEGLUT-STOP-SPIELANSCHLUSS-2026-10-18.md).
+Digitaler Stop bestätigt; optischer Restpegel auch am Papierrand nachgewiesen,
+Ursache weiterhin ohne kontrollierten Gerätevergleich offen. Adapterentwurf
+mit Instanz-/Stop-/Frische-/Profilvertrag, noch keine Produktimplementierung.
+
 **UI/UX-Pilot integriert · 18. Oktober 2026:** [PR #78](https://github.com/Sven401/Larp-Escape/pull/78)
 ist bei `42853bc1aa93de23b5fcfc72e66d2c1a397361af` in den kuratierten
 Integrationsbranch übernommen. [Rolle](../docs/ui-ux/ROLLE.md),
