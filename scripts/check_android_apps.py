@@ -75,7 +75,7 @@ def main():
     aapt = sdk_tools / ("aapt2.exe" if os.name == "nt" else "aapt2")
     for variant in ("debug", "release"):
         manifests = []
-        for module, package, label in [("app", DEV, "Larp Escape Dev"), ("gamemaster", GAME, "Larp Escape Spielleitung")]:
+        for module, package, label in [("app", DEV, "Larp Dev"), ("gamemaster", GAME, "Larp GM")]:
             folder = ANDROID / module / "build"
             candidates = list((folder / "intermediates/merged_manifests" / variant).rglob("AndroidManifest.xml"))
             require(len(candidates) == 1, "Build one merged manifest first: " + module + "/" + variant)
