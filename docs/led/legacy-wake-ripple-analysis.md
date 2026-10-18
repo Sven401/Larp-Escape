@@ -1,5 +1,8 @@
 # Ursprüngliche Wake-Ripples: Analyse und Vorbereitung der Kameraprüfung
 
+Ergänzender Einzelbefund: [ursprünglicher Burst mit Spielauslösern,
+Startkonflikten und eigenem Kameraprüfplan](legacy-burst-analysis.md).
+
 Stand: **18. Oktober 2026**. Status: **Quellcodeanalyse und gezielte
 Rechnercharakterisierung belegt; ursprünglicher Ablauf noch nicht mit Kamera geprüft.**
 Referenz ist der vom Nutzer als letzter Live-Spielstand benannte Commit
