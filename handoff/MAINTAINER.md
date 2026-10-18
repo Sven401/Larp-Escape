@@ -1,9 +1,10 @@
 # Maintainer-Einstieg
 
-**Integrationsvorbereitung · 18. Oktober 2026:** [geprüfte PR-Stände,
+**Integration abgeschlossen · 18. Oktober 2026:** [geprüfte PR-Stände,
 Konfliktentscheidungen und Prüftore](INTEGRATION-2026-10-18.md).
-Dieser Arbeitsbranch bündelt #58/#64/#65/#66/#68 auf Zielbasis `fcb9121`.
-Das ist eine vorbereitete Zusammenführung; der Zielbranch wurde nicht aktualisiert.
+[PR #69](https://github.com/Sven401/Larp-Escape/pull/69) hat #58/#64/#65/#66/#68
+bei `0b0843d5fce475d14705c42c21f4f8bf4314df30` in den kuratierten Branch
+integriert. Alle fünf Original-PRs sind als gemergt geschlossen; ihre Heads erhalten.
 Der abgeschlossene [RSSI-Gehversuch](../docs/espnow/distance-camera-result-2026-10-18.md)
 und die [isolierte Kameraabnahme](../docs/led/camera-results-2026-10-18.md)
 ergänzen die bisherigen Teilbelege. Gesamtspiel, Reichweite und Dauerlast bleiben offen.
@@ -11,7 +12,8 @@ ergänzen die bisherigen Teilbelege. Gesamtspiel, Reichweite und Dauerlast bleib
 **Neue verbindliche Produktentscheidung · 18. Oktober 2026:** [VA-01](../docs/veranstaltungsarchitektur.md) legt autonome Boxen, BLE-Bedienung je Box, unterbrechbare ESP-NOW-/WLAN-Kommunikation und die Zentrale ohne Betriebszwang fest. [Vertrags-/Backlogmatrix](../docs/veranstaltungsarchitektur-umsetzung.md), neue Pakete #59–#63. Zugangskonzept PR #58 bleibt ergänzend maßgeblich. **Architektur-Soll; keine Implementierung oder neue Geräteabnahme.**
 
 Stand: **18. Oktober 2026**. Mandat: [AGENTS.md](../AGENTS.md).
-Quelle dieser Aktualisierung: beauftragte Repository-Hygiene;
+Quelle dieser Aktualisierung: beauftragter Merge von #69 und Planabgleich;
+[Integrationsabschluss](INTEGRATION-2026-10-18.md). Frühere Hygiene:
 [Prüfbericht und Bestandsaufnahme](REPOSITORY-HYGIENE-2026-10-18.md).
 
 Aktuelle fachliche Ergänzung vom **18. Oktober 2026**:
@@ -21,9 +23,9 @@ und offenen Abnahmekriterien. **Sollkonzept, keine Implementierung.**
 
 ## Aktuelle Arbeitsbasis
 
-- **Belegt:** Zielbasis nach frischem Fetch am 18.10.2026:
-  `fcb91216b335db77d07da702056d8b9b33969b9d`, einschließlich #56
-  (Baugruppenkonsolidierung), #57 (Hygiene) und #67 (Hardwareplanung).
+- **Belegt:** Zielbasis nach Merge und frischem Fetch am 18.10.2026:
+  `0b0843d5fce475d14705c42c21f4f8bf4314df30`, einschließlich #56
+  (Baugruppenkonsolidierung), #57 (Hygiene), #67 (Hardwareplanung) und #69.
   Die frühere #56-Basis `784984d` bleibt Bezug der historischen CI unten.
 - LED, Wake, Matrix, Audio und NFC sind auf dem
   [gemeinsamen V2-Vertrag](../docs/led/ble-wire-v2.md) zusammengeführt.
@@ -43,6 +45,11 @@ und offenen Abnahmekriterien. **Sollkonzept, keine Implementierung.**
 [Issue #25](https://github.com/Sven401/Larp-Escape/issues/25) führt die operative
 Planung. [#53](https://github.com/Sven401/Larp-Escape/issues/53) dokumentiert
 abgeschlossene Softwarekonsolidierung und Integration durch #56.
+
+- **Ohne Hardware nächster Architekturschritt #59 / D0:** Ereigniskennungen,
+  Offline-Regeln, Ursprung/Vertrauen und Migration konkretisieren, abgestimmt
+  mit #28. D1–D4 bleiben Folgearbeit; App-Messjournal und Funkprobe schließen
+  weder dauerhaften Box-Spielfortschritt noch Veranstaltungsbetrieb ab.
 
 - **Gemeinsame Geräteabnahme offen:** passendes V2-App-/Firmwarepaar gezielt
   prüfen. Zuletzt dokumentiert sind App-Journalstand `6e6f093` und

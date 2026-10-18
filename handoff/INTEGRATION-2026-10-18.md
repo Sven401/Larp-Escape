@@ -1,12 +1,15 @@
-# Integrationsvorbereitung der offenen PRs · 18. Oktober 2026
+# Integration der offenen PRs · 18. Oktober 2026
 
-Status: **zusammengeführt auf eigenem Vorbereitungsbranch; Zielintegration offen**.
-Auftrag: aktuelle Ergebnisse von PR #66 prüfen und offene PRs zur Integration
-vorbereiten. Sitzung `01a14e95-521b-7921-adb6-84bee3c776cf`.
-Zielbasis nach Fetch: `fcb91216b335db77d07da702056d8b9b33969b9d`,
-Branch `plan/projektuebergabe-kuratierter-stand`. Arbeitsbranch:
-`codex/integration-offene-prs-2026-10-18`. Kein Zielbranch-/Main-Merge,
-Gerätezugriff, Upload oder neue physische Abnahme in dieser Sitzung.
+Status: **PR #69 gemergt; Original-PRs und operative Planung abgeglichen**.
+Auftrag: nach Prüfung/Vorbereitung ausdrücklich #69 in den kuratierten
+Integrationsbranch mergen und Original-PRs sowie Plan abgleichen.
+Sitzung `01a14e95-521b-7921-adb6-84bee3c776cf`.
+Mergecommit: `0b0843d5fce475d14705c42c21f4f8bf4314df30`, Branch
+`plan/projektuebergabe-kuratierter-stand`. Eltern nach Fetch geprüft:
+Zielbasis `fcb91216b335db77d07da702056d8b9b33969b9d` und PR-Head
+`4e93343367e7fa5e8e456ce7e5cce645f6af38ff`; vollständiger Baum identisch
+mit dem geprüften Head. Kein Main-Merge, Gerätezugriff, Upload oder neue
+physische Abnahme durch den Integrationsabschluss.
 
 ## Eingänge und Erhaltung
 
@@ -18,8 +21,11 @@ Gerätezugriff, Upload oder neue physische Abnahme in dieser Sitzung.
 | [#66](https://github.com/Sven401/Larp-Escape/pull/66) | `1dbe2d1ccd4eef73cbb21a1df31ae79da53d4177` | ESP-NOW/RSSI, App-Journal und abgeschlossener Gehversuch |
 | [#68](https://github.com/Sven401/Larp-Escape/pull/68) | `1066b1878acaa01c3be3c0ced84c864dfce15b72` | Isolierter Kameramessweg, Quellen und Laborbelege |
 
-Die Heads sind durch echte Merge-Eltern im Vorbereitungsbranch erreichbar.
-Originalbranches und PRs werden nicht umgeschrieben oder geschlossen.
+Die Heads sind durch echte Merge-Eltern im kuratierten Zielbranch erreichbar.
+GitHub hat alle fünf Original-PRs durch den Merge automatisch als gemergt
+geschlossen. Ihre Beschreibungen nennen #69, Originalhead, Übernahmecommit
+und Aussagegrenzen; bisherige Beschreibungen bleiben als Historie erhalten.
+Die Originalbranches wurden nicht umgeschrieben oder gelöscht.
 Bei späteren neuen Heads oder geänderter Zielbasis Abgleich und Prüfung erneuern.
 
 ## Konfliktentscheidungen
@@ -82,17 +88,26 @@ außerhalb der Sandbox erfolgreich. Optische Pythonfälle sowie vollständige
 Builds/Androidprüfungen werden durch die gemeinsame PR-CI nachgewiesen;
 die Standard-Pythonumgebung enthält lokal kein OpenCV.
 
-Die vollständige CI des veröffentlichten Vorbereitungs-PRs muss den neuen Head
-und tatsächlichen Prüfmerge prüfen. Einzel-PR-Erfolge werden nicht darauf übertragen.
-Prüfresultate und konkrete Lauf-URLs stehen im Vorbereitungs-PR.
+Gemeinsame PR-CI am Head `4e93343`, tatsächlicher Prüfmerge
+`f30c8abaef9325d8a56dbd5053c06b2d89324053`: **10/10 Jobs erfolgreich**.
+[Quality](https://github.com/Sven401/Larp-Escape/actions/runs/39129515602),
+[Baugruppen/Kamera](https://github.com/Sven401/Larp-Escape/actions/runs/39129515651),
+[NFC](https://github.com/Sven401/Larp-Escape/actions/runs/39129515498),
+[ESP-NOW](https://github.com/Sven401/Larp-Escape/actions/runs/39129515475).
+Einzel-PR-Erfolge wurden nicht als gemeinsamer Nachweis ausgegeben.
+Push-CI am tatsächlichen Mergecommit separat im aktuellen Projektplan #25
+nachtragen; beim Start des Abschlussabgleichs liefen diese Prüfungen noch.
 
 ## Integrationsentscheidung und verbleibende Arbeit
 
-Empfohlen: den gemeinsamen Vorbereitungs-PR nach erfolgreicher gemeinsamer CI
-prüfen und ausdrücklich beauftragt in den kuratierten Branch übernehmen.
-Danach Original-PRs mit Übernahmebeleg abgleichen; #65 ist bereits in #66
-enthalten. Nicht zusätzlich die alten PRs als unbesehene Mergekette einspielen.
-Merges und Schließungen sind in dieser Vorbereitung nicht ausgeführt.
+Ausdrücklich beauftragter Merge von #69 ausgeführt und geprüft. #65 war bereits
+in #66 enthalten und wurde nicht doppelt eingespielt. Original-PRs #58/#64/#65/
+#66/#68 sind als gemergt geschlossen und mit Übernahmebelegen abgeglichen.
+[Projektplan #25](https://github.com/Sven401/Larp-Escape/issues/25) sowie #27/#28,
+#29/#37 und #59–#63 führen den Integrationsstatus und die nächsten Schritte.
+Kein offenes Abnahmekriterium wurde allein durch Integration abgeschlossen.
+D0 #59 ist der nächste neue Architektur-Schritt ohne Hardware; Zugang und
+vorhandene Geräte-Restabnahmen können unabhängig fortgesetzt werden.
 
 Hardware #39/#54, allgemeiner Zugang #27/#28, Geräteausführung #31 F5a,
 Profile #30, F5b und D0–D4 bleiben offen. Der zuletzt dokumentierte installierte

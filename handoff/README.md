@@ -1,21 +1,23 @@
 # Technische Projektübergabe
 
-Aktuell vorbereitete Zusammenführung von #58/#64/#65/#66/#68:
+Abgeschlossene Zusammenführung von #58/#64/#65/#66/#68 über PR #69,
+Mergecommit `0b0843d5fce475d14705c42c21f4f8bf4314df30`:
 [Integrationsprüfung vom 18. Oktober](INTEGRATION-2026-10-18.md).
 Der [abgeschlossene RSSI-Gehversuch](../docs/espnow/distance-camera-result-2026-10-18.md)
-ergänzt die älteren Gerätebelege; ein Update des Zielbranches bleibt offen.
+ergänzt die älteren Gerätebelege; die fünf Original-PRs sind als gemergt geschlossen.
 
 **Verbindlicher Architekturstand · 18. Oktober 2026:** [VA-01: dezentrale Veranstaltung](../docs/veranstaltungsarchitektur.md) und [Vertrags-/Arbeitspaketmatrix](../docs/veranstaltungsarchitektur-umsetzung.md). Kein vorausgesetztes gemeinsames WLAN, keine kontinuierliche Erreichbarkeit. Mehrere Handys bedienen verschiedene autonome Boxen; Zentrale sammelt und vermittelt bei Kontakt. Umsetzung und Abnahme bleiben offen.
 
 ## Aktueller Stand · 18. Oktober 2026
 
-- [ESP-NOW-Sitzungsabschluss: RSSI, Funkelsteuerung und vollständiger Kameravergleich](ESPNOW-UEBERGABE-2026-10-18.md); eigener PR #66, noch nicht integriert.
+- [ESP-NOW-Sitzungsabschluss: RSSI, Funkelsteuerung und vollständiger Kameravergleich](ESPNOW-UEBERGABE-2026-10-18.md); PR #66 ist über #69 integriert. Der Sitzungsabschluss bleibt der historische Beleg vor Integration.
 
-**Belegt:** [PR #56](https://github.com/Sven401/Larp-Escape/pull/56) ist in
-`plan/projektuebergabe-kuratierter-stand` bei
-`784984da05249c77525273c658405d2f3b8e8e24` integriert. LED, Wake, Matrix,
-Audio und NFC verwenden den [gemeinsamen V2-Vertrag](../docs/led/ble-wire-v2.md).
-Alle acht CI-Jobs am Mergecommit sind erfolgreich; Einzelheiten und Grenzen
+**Belegt:** [PR #69](https://github.com/Sven401/Larp-Escape/pull/69) ist in
+`plan/projektuebergabe-kuratierter-stand` bei `0b0843d` integriert, aufbauend
+auf #56/#57/#67. LED, Wake, Matrix, Audio, NFC und die explizite ESP-NOW-
+Testvariante verwenden den [gemeinsamen V2-Vertrag](../docs/led/ble-wire-v2.md).
+Alle zehn gemeinsamen PR-CI-Jobs erfolgreich; Merge-CI gesondert auslesen.
+Einzelheiten und Grenzen
 stehen im [Maintainer-Einstieg](MAINTAINER.md).
 
 - [Konsolidierung: Herkunft, Konfliktentscheidungen, acht Ergebnis-IDs](KONSOLIDIERUNG-2026-10-17.md).
