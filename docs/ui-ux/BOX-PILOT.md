@@ -1,6 +1,6 @@
 # UI/UX-Pilot: Box auswählen, verbinden und wieder aufnehmen
 
-**Status: Pilot gestartet; Designbrief und Zustandsentwurf, keine implementierte neue UI.**
+**Status: Designrichtung bestätigt, Figma und interaktiver Webprototyp ausgearbeitet; native Produktumsetzung und Geräteabnahme offen.**
 Datum: 18. Oktober 2026. Auftrag und Sitzung: siehe [Rollenvertrag](ROLLE.md).
 Geprüfte Quellbasis: `7e72411bb1c416b5864036c79a1e17d9cf46b5ac`.
 
@@ -9,7 +9,7 @@ Geprüfte Quellbasis: `7e72411bb1c416b5864036c79a1e17d9cf46b5ac`.
 Die Nutzerkorrektur zum Veranstaltungskontext und der überarbeitete Bildentwurf
 stehen in [Entwurf v2](REVISION-VERANSTALTUNG.md). Veranstaltung und Station
 stehen in der Produktbedienung im Vordergrund; die generischen Bestandsbegriffe
-unten bleiben technische Herkunft. Visuelle Bestätigung vor Figma/Prototyp offen.
+unten bleiben technische Herkunft. Die Richtung wurde bestätigt; [Figma und interaktiver Prototyp](../../design/box-pilot/README.md) sind ausgearbeitet. Native Abnahme bleibt offen.
 
 ## Brief
 
@@ -141,8 +141,9 @@ Designziele sind noch keine gemessene Zugänglichkeitsabnahme.
 5. **Separater Implementierungsschritt:** Compose-Komponenten, Semantik und
    Zustandsbindung; bestehende Protokollregeln erhalten, native Prüfungen durchführen.
 
-Offen: visuelle Auswahl, Figma-Datei, Prototyp, Nutzungsbewertung der Rolle,
-Android-Sichtprüfung, tatsächliche Geräte-/Funkabnahme. Der laufende Chat kann
+Erledigt: visuelle Auswahl, Figma-Datei mit 21 Screens, interaktiver Prototyp,
+Browserprüfung und erste Nutzungsbewertung. Offen: native Android-Sichtprüfung,
+Nutzertest und tatsächliche Geräte-/Funkabnahme. Der laufende Chat kann
 nach Auswahl fortsetzen; ein späterer Einstieg liest diese Datei und den PR.
 
 ## Prüfung dieser Rollenfassung
@@ -153,3 +154,13 @@ geprüft; `git diff --check` ohne Whitespacefehler. Der Validator benötigte ein
 lokal bereitgestellte YAML-Abhängigkeit; diese wurde anschließend entfernt.
 Keine App-/Firmwareänderung, daher kein neuer Build oder Produkttest.
 Keine Behauptung automatischer Agentenregistrierung im laufenden Desktop.
+
+## Ausarbeitung nach Nutzerfreigabe
+
+Am 18.10.2026 vom Nutzer zur Figma-/Prototypausarbeitung beauftragt.
+[Entwurf und Anleitung](../../design/box-pilot/README.md),
+[Designprüfung](../../design/box-pilot/design-qa.md),
+[Figma](https://www.figma.com/design/3uQpZfwREhQ9cHk80jMtRw?node-id=3-20).
+Neun Modellfälle, Typprüfung, Build, Runtimeintegrität und vier Packagingfälle
+erfolgreich. Tatsächliche Browserbedienung der Haupt- und Fehlerwege; kein
+Deployment und keine Änderung an Android-App oder Firmware.

@@ -89,3 +89,20 @@
 - **Einfacher Rückweg:** UI/UX-Verweis in AGENTS entfernen, Projektagent und
   projektspezifischen Skill deaktivieren/entfernen. Brief und Belege historisch
   erhalten. App-/Firmwarecode und persönliche Hooks wurden nicht verändert.
+
+## 18. Oktober 2026 — UI/UX-Pilot bis zum interaktiven Entwurf
+
+- **Beauftragt:** Nutzer bestätigt Veranstaltung/Station als Kontext und verlangt
+  Figma plus gesamten interaktiven Pilotablauf; gleiche UI/UX-Sitzung wie oben.
+- **Beobachtete Anwendung:** [Prototyp](design/box-pilot/README.md) mit getrennten
+  Zustandsregeln, 21 nativen Figma-Frames, Browserbedienung und gemeinsamem
+  Quellen-/Umsetzungsvergleich. Neun Regeltests und vier Packagingtests bestanden;
+  Typprüfung, Build und Integrität der 28 Vorlagendateien erfolgreich.
+- **Nutzungsbewertung:** Das Verfahren deckte einen Scroll-/Kopf-Überlauf und
+  überdeckende Teststeuerung auf; beide in der Appanbindung korrigiert.
+  Befehlsbestätigung und unklarer Ausgang sind sichtbar getrennt. Keine gemessene
+  langfristige Zeitersparnis und keine native Nutzer-/Geräteabnahme behauptet.
+- **Übernahmegrenze:** Kein Ausbau zum globalen Skill oder neuen allgemeinen
+  Werkzeugstandard. Simulationskontrollen bleiben außerhalb der Produktoberfläche.
+- **Rückweg:** Prototypordner separat entfernen/deaktivieren; Figma-Datei behalten
+  oder gesondert archivieren. Android und Firmware bleiben unverändert.
