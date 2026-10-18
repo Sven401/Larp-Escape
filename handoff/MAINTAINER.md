@@ -32,6 +32,10 @@ abgeschlossene Softwarekonsolidierung und Integration durch #56.
 - **Gemeinsame Geräteabnahme offen:** passendes V2-App-/Firmwarepaar gezielt
   prüfen; zunächst tatsächliches installiertes Paar feststellen. Ein Upload
   braucht eigenen Auftrag und chipgebundenen Flash-Rückweg.
+- **Hardwareplanung fortgeschrieben, 18.10.2026:** [Übernahme aller acht
+  Ergebnis-IDs](../Hardware/HARDWAREPLANUNG.md) mit bestätigten As-built-Pins,
+  zusätzlicher Audioversorgung und gezielten Restnachweisen. Teilbefunde sind
+  erhalten; elektrische/CAD-Freigabe und gemeinsamer Gerätelauf bleiben offen.
 - **Matrix #54 / Hardware #39:** C3, G3, H3 und A8 im erhaltenen Sammellauf
   nachprüfen; 68 Koordinaten/110 Beobachtungen, neun unbestückte Felder und
   vier Problemstellen erhalten. Chip/B7 und räumliche Zuordnung bleiben offen.
@@ -42,6 +46,10 @@ abgeschlossene Softwarekonsolidierung und Integration durch #56.
   eigenständige Aufgaben; der Baugruppen-HMAC-Zugang ersetzt sie nicht.
 - **Spielintegration #31/#30:** zuerst F5a-Geräteausführung, dann reale
   Profilübernahme, anschließend F5b-Ressourcen-/Betriebsabnahme.
+- **Notwendige zukünftige Framework-Aktualisierung:**
+  [Arduino-ESP32 3.x](ARDUINO-ESP32-3-MIGRATION.md) am 18. Oktober 2026 vom
+  Nutzer zur Einplanung beauftragt. Umsetzung, Zielversion und Termin offen;
+  jetzt ausschließlich dokumentieren, keine Migrationsarbeiten beginnen.
 
 Softwareintegration, begrenzte historische Gerätebeobachtung und gemeinsame
 Produktabnahme sind getrennte Nachweise. Der Baugruppenstand ist kein
