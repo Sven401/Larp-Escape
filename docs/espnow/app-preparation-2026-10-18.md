@@ -1,5 +1,10 @@
 # ESP-NOW-Appbedienung: Softwareprüfstand
 
+**Fortsetzung:** Die danach beauftragte Installation und dabei gefundenen
+Korrekturen stehen im [Geräte-Installationsbericht](app-installation-2026-10-18.md).
+Dieser Bericht beschreibt den historischen Vorbereitungsstand; dessen erste
+Box-Binärdatei wurde durch die dort dokumentierte Koexistenzkorrektur ersetzt.
+
 Stand: **18. Oktober 2026**. **Status: implementiert, lokal softwareseitig
 geprüft und als Artefakt bereitgestellt; neue Geräteinstallation und
 gemeinsame Handyabnahme noch offen.**
