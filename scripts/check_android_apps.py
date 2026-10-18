@@ -39,9 +39,10 @@ def validate_pair(dev, game):
                 for node in dev.findall("application/service")), "Dev NFC test service was removed")
     require(not any(DEV in str(node.attrib) for node in game.iter()), "Dev component leaked into Spielleitung")
     permissions = {node.get(ATTR + "name", "") for node in game.findall("uses-permission")}
-    require(not any(p.startswith("android.permission.BLUETOOTH") or p in
-                    {"android.permission.NFC", "android.permission.INTERNET"} for p in permissions),
-            "The empty product entry point must not request hardware/network access")
+    allowed = {"android.permission.BLUETOOTH_SCAN", "android.permission.BLUETOOTH_CONNECT"}
+    require(allowed <= permissions, "Required product Bluetooth permission missing")
+    require(not any(p.startswith("android.permission.") and p not in allowed for p in permissions),
+            "Unexpected product hardware/network permission")
     require(not any(node.get(ATTR + "name") == "android.nfc.cardemulation.action.HOST_APDU_SERVICE"
                     for node in game.iter("action")), "HCE test service leaked into Spielleitung")
 

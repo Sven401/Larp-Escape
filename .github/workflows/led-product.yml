@@ -119,7 +119,7 @@ jobs:
         run: '"$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-35" "build-tools;35.0.0" < /dev/null'
       - name: Test and build both Android applications
         working-directory: companion/android
-        run: bash gradlew :core:protocol:test :app:testDebugUnitTest :app:lintDebug :app:assembleDebug :app:assembleRelease :app:lintRelease :gamemaster:assembleDebug :gamemaster:assembleRelease :gamemaster:lintDebug :gamemaster:lintRelease --no-daemon
+        run: bash gradlew :core:protocol:test :app:testDebugUnitTest :app:lintDebug :app:assembleDebug :app:assembleRelease :app:lintRelease :gamemaster:testDebugUnitTest :gamemaster:assembleDebug :gamemaster:assembleRelease :gamemaster:lintDebug :gamemaster:lintRelease --no-daemon
       - name: Verify app separation guard
         run: python3 -m unittest discover -s scripts/tests -p test_android_apps.py -v
       - name: Verify both packaged applications

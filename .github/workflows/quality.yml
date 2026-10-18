@@ -151,7 +151,7 @@ jobs:
       - name: Record Gradle version
         run: python scripts/quality_evidence.py run --name gradle-version --cwd companion/android -- cmd /d /c gradlew.bat --version --no-daemon --console=plain
       - name: Test, build and lint Android using the project wrapper
-        run: python scripts/quality_evidence.py run --name android-checks --cwd companion/android -- cmd /d /c gradlew.bat :core:protocol:test :app:testDebugUnitTest :app:assembleDebug :app:assembleRelease :app:lintDebug :app:lintRelease :gamemaster:assembleDebug :gamemaster:assembleRelease :gamemaster:lintDebug :gamemaster:lintRelease --no-daemon --console=plain --stacktrace --continue
+        run: python scripts/quality_evidence.py run --name android-checks --cwd companion/android -- cmd /d /c gradlew.bat :core:protocol:test :app:testDebugUnitTest :app:assembleDebug :app:assembleRelease :app:lintDebug :app:lintRelease :gamemaster:testDebugUnitTest :gamemaster:assembleDebug :gamemaster:assembleRelease :gamemaster:lintDebug :gamemaster:lintRelease --no-daemon --console=plain --stacktrace --continue
       - name: Verify app separation guard
         run: python scripts/quality_evidence.py run --name android-separation-tests -- python -m unittest discover -s scripts/tests -p test_android_apps.py -v
       - name: Verify both packaged applications
@@ -182,4 +182,6 @@ jobs:
             companion/android/app/build/reports/tests/
             companion/android/app/build/reports/lint-results-*
             companion/android/gamemaster/build/reports/lint-results-*
+            companion/android/gamemaster/build/test-results/**/*.xml
+            companion/android/gamemaster/build/reports/tests/
           if-no-files-found: warn

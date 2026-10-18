@@ -11,14 +11,16 @@ android {
         applicationId = "de.larpescape.gamemaster"
         minSdk = 33
         targetSdk = 35
-        versionCode = 1
-        versionName = "0.1"
+        versionCode = 2
+        versionName = "0.2"
     }
     buildFeatures { compose = true }
     compileOptions { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }
     kotlinOptions { jvmTarget = "17" }
 }
 dependencies {
+    implementation(project(":core:protocol"))
+    testImplementation(libs.junit)
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.material3)
     implementation(libs.activity.compose)
@@ -26,3 +28,5 @@ dependencies {
     implementation(libs.lifecycle.viewmodel)
     implementation(libs.coroutines)
 }
+
+tasks.withType<Test>().configureEach { systemProperty("ledFixtures", rootProject.file("../../docs/led/fixtures").absolutePath) }

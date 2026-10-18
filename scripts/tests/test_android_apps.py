@@ -19,6 +19,8 @@ def manifest(package):
 class AndroidAppSeparationTest(unittest.TestCase):
     def setUp(self):
         self.dev, self.game = manifest(DEV), manifest(GAME)
+        for permission in ["android.permission.BLUETOOTH_SCAN", "android.permission.BLUETOOTH_CONNECT"]:
+            ET.SubElement(self.game, "uses-permission", {ATTR + "name": permission})
         ET.SubElement(self.dev.find("application"), "service", {ATTR + "name": DEV + ".platform.nfc.PhoneNfcTestService"})
 
     def test_independent_apps(self):
@@ -51,6 +53,16 @@ class AndroidAppSeparationTest(unittest.TestCase):
 
     def test_unnecessary_permission_rejected(self):
         ET.SubElement(self.game, "uses-permission", {ATTR + "name": "android.permission.NFC"})
+        with self.assertRaisesRegex(ValueError, "hardware/network"):
+            validate_pair(self.dev, self.game)
+
+    def test_missing_bluetooth_permission_rejected(self):
+        self.game.remove(self.game.find("uses-permission"))
+        with self.assertRaisesRegex(ValueError, "Bluetooth permission missing"):
+            validate_pair(self.dev, self.game)
+
+    def test_advertising_permission_rejected(self):
+        ET.SubElement(self.game, "uses-permission", {ATTR + "name": "android.permission.BLUETOOTH_ADVERTISE"})
         with self.assertRaisesRegex(ValueError, "hardware/network"):
             validate_pair(self.dev, self.game)
 
