@@ -34,22 +34,23 @@ Bei schmaler Vorschau „Testfälle“ öffnen. Verbindungsverlust wird nach ein
 kurzen sichtbaren Unterbrechungszustand automatisch erneut geprüft. Ein erfolgloser
 Versuch endet in einem sichtbaren Fehler statt einer endlosen Suchschleife.
 
-## Editierbarer Figma-Ausgangsentwurf
+## Editierbarer Figma-Entwurf
 
-Die PO-Korrektur ergänzt den Browser um Einrichtungshilfe und beide Auftragsausgänge.
-Diese Ergänzung ist in Figma noch nicht nachgeführt. Aktuelle Umsetzungsvorgabe:
-[Zustandsvertrag](../../docs/ui-ux/BOX-PILOT.md), [PO-Nachprüfung](po-review.md).
+Einrichtungshilfe und beide Auftragsausgänge sind auf Prototypstand `1dc9227`
+nachgeführt. [Startscreen](https://www.figma.com/design/3uQpZfwREhQ9cHk80jMtRw?node-id=3-20),
+[Testfälle](https://www.figma.com/design/3uQpZfwREhQ9cHk80jMtRw?node-id=16-1057).
+56 aktuelle Stationsscreens, separater Simulationsbereich und drei frühere
+technische Screens auf der Archivseite. 148 aktive Navigationsverbindungen mit
+gültigen Zielen. Roboto, gebundene Farbvariablen, bestehende Button-Komponenten,
+Auto Layout und editierbare Texte; keine flachen Screenshot-Screens.
 
-[Datei und Startscreen](https://www.figma.com/design/3uQpZfwREhQ9cHk80jMtRw?node-id=3-20)
-
-19 aktuelle Frames mit Normal-, Wiederaufnahme- und Ausnahmezuständen; drei
-frühere technische Einzelschritte auf eigener Archivseite. 40 aktive
-Zielverknüpfungen strukturell geprüft. Roboto, gebundene
-Farbvariablen und drei wiederverwendbare Button-Komponenten; Auto Layout und
-editierbare Texte. Quelle ist keine flache Screenshotablage. Figma-Präsentation
-wurde nicht vollständig durchgespielt; der browsergeprüfte Ablauf ist maßgeblich.
-Funkunterbrechung und andere Fehler werden im Browser über die getrennte
-Teststeuerung ausgelöst. Figma bildet diese Zustände als separat erreichbare Frames ab.
+Fehlgeschlagene Wiederholung, Hilfe/Rückkehr und separat simulierte externe
+Korrektur sind getrennt. Start und Stop haben je eigene Pfade für ausgeführt /
+nicht angekommen. Abbrechen führt zu einer pausierten Stationsverbindung.
+Figma-Presentation: Hilfe → Rückkehr → erfolglose Wiederholung sowie automatische
+Wiederaufnahme eines nicht angekommenen Stops im Browser bedient. Weitere
+Verknüpfungen strukturell geprüft; nicht alle Screens einzeln durchgespielt.
+[Vergleichsbilder und PR-Nachprüfung](figma-sync-review.md).
 
 Figma-Raster: 390×844; Browser standardmäßig Pixel 10 mit geschützter
 427×952-Runtime. Diese Unterschiede sind keine echte Android-App-Ausführung.
@@ -60,7 +61,8 @@ Figma-Raster: 390×844; Browser standardmäßig Pixel 10 mit geschützter
 - `npm run check:runtime`: alle 28 geschützten Dateien unverändert.
 - `npm run build`: Typprüfung und Vite-Produktionsbuild.
 - `npm run test:sites`: vier Verpackungs-/Workerfälle; kein Deployment beauftragt.
-- Tatsächlicher Browservergleich und Grenzen: [design-qa.md](design-qa.md).
+- Aktueller Vergleich und Grenzen: [figma-sync-review.md](figma-sync-review.md).
+- Historische Prüfungen: [PO](po-review.md), [Design-QA](design-qa.md).
 - Screenshots und gemeinsame Vergleichsbilder: `evidence/`.
 - Ausgewähltes Bild und Designbrief: `../../docs/ui-ux/`.
 

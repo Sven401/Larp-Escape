@@ -1,5 +1,10 @@
 # PO-Nachprüfung zu PR #78
 
+Historischer Prüfstand der ersten P2-Korrektur. Figma ist inzwischen nachgeführt;
+aktueller Abgleich: [figma-sync-review.md](figma-sync-review.md). Die folgenden
+Figma-Einschränkungen gelten nur für diesen früheren Lauf. Das dortige Manifest
+bezieht sich auf die Dateien bei Commit `1dc9227`, einschließlich des damaligen Pilotbriefs.
+
 Datum: 18. Oktober 2026. Auftrag: drei P2-Befunde aus der PO-Bewertung beheben
 und den überarbeiteten Prototyp erneut prüfen. Ausgangscommit `c04a540bfebb1a633f104232ee4eb9d57996d4eb`.
 Geprüfter Code: die mit diesem Bericht versionierten `src/Prototype.tsx`,

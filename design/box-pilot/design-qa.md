@@ -1,7 +1,8 @@
 # Design QA · automatische Stationsverbindung
 
 Historischer Ergebnisstand: passed auf c04a540.
-Die aktuelle PO-Korrektur und ihre neuen Browserbelege stehen in [po-review.md](po-review.md).
+Die erste PO-Korrektur steht in [po-review.md](po-review.md); der aktuelle
+Figma-Abgleich und PR-Review in [figma-sync-review.md](figma-sync-review.md).
 Dieser frühere Figma-/Browservergleich belegt die neue Einrichtungshilfe nicht.
 
 18. Oktober 2026; Änderung auf Basis e03da1e nach konkretem Nutzerfeedback.

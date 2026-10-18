@@ -132,11 +132,11 @@ Designziele sind noch keine gemessene Zugänglichkeitsabnahme.
 
 ## Umsetzung und Abnahmegrenze
 
-Rolle, visuelle Auswahl, Figma-Ausgangsentwurf und interaktiver Prototyp sind vorhanden.
-Diese PO-Korrektur erweitert den Browser um Einrichtungshilfe und beide Auftragsausgänge.
-Figma ist hierfür noch der vorherige Entwurfsstand, keine vollständige aktuelle
-Implementierungsvorgabe. Maßgeblich sind diese Tabelle, der aktuelle Browser und
-[PO-Nachprüfung](../../design/box-pilot/po-review.md).
+Rolle, visuelle Auswahl, editierbarer Figma-Entwurf und interaktiver Prototyp sind vorhanden.
+Einrichtungshilfe und beide Auftragsausgänge sind auch in Figma nachgeführt.
+Maßgeblich sind diese Tabelle, der aktuelle Browser und die
+[Figma-/PR-Nachprüfung](../../design/box-pilot/figma-sync-review.md).
+Die [erste PO-Nachprüfung](../../design/box-pilot/po-review.md) bleibt historischer Beleg.
 Die frühere manuelle Verbindung ist ausschließlich [historisch](BOX-PILOT-HISTORIE.md).
 Native Android-Umsetzung, mehrere Stationen, reale Einrichtung, BLE, TalkBack und
 Nutzerabnahme bleiben separate Schritte.
