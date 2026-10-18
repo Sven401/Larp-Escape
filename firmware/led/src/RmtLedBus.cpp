@@ -86,4 +86,9 @@ std::uint32_t productMillis() { return millis(); }
 
 LedOutput::LedOutput() : LedOutput(productBus(), productMillis) {}
 
+#ifdef LARP_LED_CAMERA_LAB
+// Available only in the isolated USB lab image; one owner, no BLE product loop.
+LedBus &cameraLabBus() { return productBus(); }
+#endif
+
 }} // namespace larp::led

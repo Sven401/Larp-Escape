@@ -40,7 +40,10 @@ jobs:
       - name: Record PlatformIO version
         run: python scripts/quality_evidence.py run --name platformio-version -- python -m platformio --version
       - name: Test the evidence and source preparation helpers
-        run: python scripts/quality_evidence.py run --name ci-helpers -- python -m unittest discover -s scripts/tests -v
+        run: |
+          python scripts/quality_evidence.py run --name ci-helpers -- python -m unittest discover -s scripts/tests -p test_quality_evidence.py -v
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python scripts/quality_evidence.py run --name source-helper-tests -- python -m unittest discover -s scripts/tests -p test_prepare_peer_mbedtls.py -v
       - name: Prepare and audit the pinned real Mbed TLS sources
         run: python scripts/quality_evidence.py run --name mbedtls-source -- python scripts/prepare_peer_mbedtls.py --directory "$env:RUNNER_TEMP/peer-mbedtls"
       - name: Check the architecture guard fixtures
