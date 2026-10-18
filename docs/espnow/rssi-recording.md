@@ -1,5 +1,29 @@
 # Vollständiges Messprotokoll und geplanter Kameravergleich
 
+## Geprüfter Stand
+
+Code `6e6f09326ba9dda2136674de7300fe7eafc605b3`: 76 App-JVM-Tests ohne Fehler
+oder ausgelassene Fälle, Debug-Build und Debug-Lint erfolgreich (bestehende drei
+Warnungen/eine Info, null Fehler). Neue Journalfälle prüfen 201 Ergebnisse
+einschließlich Fehlern/später Antwort, Wiederöffnung/neuen Lauf und Speicherfehler.
+Keine Firmwareänderung in diesem Schritt.
+
+APK SHA-256 `80a24cad9b0d3e7e91b6bd29b00fdbad1cd4ff4c5f8d4a4405438823329f999b`
+nach frischer APK-/Datensicherung mit gleicher Signatur installiert und
+zurückgelesen; alle acht vorherigen Dateien unverändert. APK/Manifest:
+`outputs/espnow-rssi-journal-20261018/` im Hauptcheckout.
+
+Begrenzter Gerätelauf: reine Messung bewusst gestartet/beendet, UI meldet
+25 gespeicherte Punkte. Private CSV vollständig ausgelesen: 25 eindeutige
+Anfragen, 25 Ergebnisse mit Ausgang 0, keine offenen Anfragen, 52 Ereignisse
+einschließlich Start und Stop-Anforderung. CSV SHA-256
+`b2d7a08ae3277b5f97dd963adf4269706fe9ed9fa38c6b46c1c19afd06e55c6b`.
+Belege: `private/espnow-app/journal-install-20261018/`, CSV/Prüfsumme unter
+`exports/123917-386726/`. Neuer Nutzerlauf und Kameraaufnahme noch offen.
+Nächster Start erzeugt eine eigene Datei; der technische Probelauf bleibt erhalten.
+
+## Auftrag und Ablauf
+
 Stand: 18. Oktober 2026. Nutzer bestätigt: Funkeln wurde beim vorherigen
 Bewegungstest sichtbar schwächer und anschließend wieder heller. Das ist eine
 Sichtbestätigung relativer Änderung, keine kalibrierte Abstandsmessung.
