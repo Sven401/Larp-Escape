@@ -164,6 +164,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             MaterialTheme(colorScheme = lightColorScheme()) {
                 val state by model.state.collectAsStateWithLifecycle()
+                DisposableEffect(state.leds.espNow.measuring) {
+                    val keep = state.leds.espNow.measuring
+                    if (keep) window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                    onDispose { if (keep) window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) }
+                }
                 if (showPermissionExplanation) {
                     AlertDialog(
                         onDismissRequest = { showPermissionExplanation = false },

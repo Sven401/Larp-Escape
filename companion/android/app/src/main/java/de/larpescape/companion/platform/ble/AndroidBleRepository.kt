@@ -39,6 +39,7 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
     private var scanCallback: ScanCallback? = null
     private var gatt: BluetoothGatt? = null
     private var ledSession: LedBleSession? = null
+    private val rssiJournal = RssiJournal(java.io.File(context.filesDir, "rssi-runs"), System::currentTimeMillis, SystemClock::elapsedRealtime)
     private val accessStore = LedAccessStore(context)
     private var access: LedAccess? = null
     private val matrixRecorder = MatrixCollectionRecorder(AndroidMatrixCollectionStore(context))
@@ -200,7 +201,8 @@ class AndroidBleRepository(private val context: Context) : DeviceRepository {
                                 publishCollection()
                             },
                             failed = { message -> disconnect(); report(message); mutable.value = mutable.value.copy(leds = mutable.value.leds.copy(message = message)) },
-                            matrixSample = { sample -> matrixRecorder.observe(sample, System.currentTimeMillis()); publishCollection() })
+                            matrixSample = { sample -> matrixRecorder.observe(sample, System.currentTimeMillis()); publishCollection() },
+                            journal = rssiJournal)
                         ledSession!!.start()
                     }
                     return@dispatch

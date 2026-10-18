@@ -29,6 +29,7 @@ fun EspNowControls(state: EspNowUiState, selectPeer: (String) -> Unit, send: () 
             Button(onClick = { measure(true) }, enabled = state.canSend && state.rssiSupported) { Text("Messen und Funkeln steuern") }
             Button(onClick = stop, enabled = state.measuring) { Text("Messung beenden") }
             if (!state.rssiSupported) Text("Für RSSI wird die passende neue Box-Firmware benötigt.")
+            if (state.hasJournal) Text("Gespeicherte Messpunkte: ${state.savedSamples} · Protokoll bleibt auf dem Handy erhalten")
             if (state.measuring) Text("Messung läuft · neue Probe etwa alle 0,5 Sekunden")
             state.rssiResult?.let { result ->
                 if (state.rssiCurrent && result.rssi != null) {

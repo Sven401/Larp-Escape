@@ -19,6 +19,7 @@ internal class LedBleSession(
     private val update: ((LedUiState) -> LedUiState) -> Unit,
     private val failed: (String) -> Unit,
     private val matrixSample: (MatrixUiState) -> Unit = {},
+    private val journal: RssiJournal? = null,
 ) {
     private val protocol = LedProtocol(access, ByteArray(16).also { SecureRandom().nextBytes(it) })
     private val assembler = LedFrameAssembler()
@@ -174,7 +175,7 @@ internal class LedBleSession(
             audio = audio.state(SystemClock.elapsedRealtime(), authenticated, value.mode in 0..1,
                 nfcPending != null || commands.request != null || outgoing.isNotEmpty(), lastAudioMessage)
                 .copy(trackText = it.audio.trackText, volumeText = it.audio.volumeText),
-            espNow = it.espNow.copy(supported = espSupported, rssiSupported = rssiSupported, measuring = measuring,
+            espNow = it.espNow.copy(savedSamples = journal?.samples ?: 0, hasJournal = journal?.latest != null, supported = espSupported, rssiSupported = rssiSupported, measuring = measuring,
                 rssiResult = rssiResult?.takeIf { result -> it.espNow.peer?.contentEquals(result.peer) == true },
                 rssiCurrent = authenticated && fresh && SystemClock.elapsedRealtime() - rssiAt in 0..2999,
                 rssiAgeMillis = if (rssiAt >= 0) SystemClock.elapsedRealtime() - rssiAt else null,
@@ -217,11 +218,13 @@ internal class LedBleSession(
         check(now - receivedAt in 0..999 && now - espCapabilityAt in 0..999)
         val value = snapshot ?: error("Frischer Boxstatus fehlt.")
         val message = protocol.espNowCommand(value, peer, rssi, rssi && measureTwinkle)
+        if (rssi) journal?.event("request", value.nextRequest)
         espPeer = peer.copyOf(); espResult = null; if (!rssi) completedEspResult = null; espWaiting = true
         sendCommand(message, value.nextRequest, if (rssi) 0x88 else 0x87)
     }
     fun startMeasurement(peer: ByteArray, twinkle: Boolean) = runSafely {
         check(!measuring && !stopTwinkle && rssiSupported)
+        journal?.begin(peer, twinkle)
         measurementGeneration++
         measuring = true; measureTwinkle = twinkle; measurePeer = peer.copyOf(); rssiResult = null; rssiAt = -1
         if (twinkle) command(1)
@@ -236,7 +239,8 @@ internal class LedBleSession(
             now - receivedAt in 0..999 && now - espCapabilityAt in 0..999) espNowCommand(measurePeer, true)
         handler.postDelayed({ if (generation == measurementGeneration) measurementTick() }, 500)
     }
-    fun stopMeasurement() {
+    fun stopMeasurement() = runSafely {
+        journal?.event("stop_requested")
         measuring = false
         measurementGeneration++
         if (measureTwinkle) { stopTwinkle = true; drainMeasurementStop() }
@@ -293,6 +297,7 @@ internal class LedBleSession(
         if (isEspNow) {
             val result = espResult ?: error("ESP-NOW-Ergebnis fehlt")
             if (isRssi) {
+                journal?.sample(result)
                 rssiResult = result; rssiAt = if (result.rssi != null) SystemClock.elapsedRealtime() else -1L
                 handler.postDelayed({ if (alive) publish() }, 3000)
                 if (result.led.outcome !in listOf(0,12,13)) stopMeasurement()
@@ -304,6 +309,7 @@ internal class LedBleSession(
             lastAudioMessage = audioResultMessage(result.outcome)
             return
         }
+        journal?.led(result)
         lastMessage = when (result.outcome) {
             0 -> if (result.status.off) "Box bestätigt: LEDs aus" else "Box bestätigt: ${LedEffect.entries.single { it.wire == result.status.effect }.label} gestartet"
             1 -> "Box lehnt ab: Spiel ist nicht gestoppt"
@@ -328,7 +334,7 @@ internal class LedBleSession(
         writing = true
         check(connection.writeCharacteristic(input!!, frame, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT) == BluetoothStatusCodes.SUCCESS) { "LED-Nachricht konnte nicht gesendet werden." }
     }
-    fun close() { if (!alive) return; alive = false; measuring = false; protocol.close(); wake.clear(); audio.clear(); matrix.clear(); outgoing.clear(); input = null; output = null }
+    fun close() { if (!alive) return; alive = false; measuring = false; runCatching { journal?.close() }; protocol.close(); wake.clear(); audio.clear(); matrix.clear(); outgoing.clear(); input = null; output = null }
     companion object {
         val SERVICE: UUID = UUID.fromString("6c790001-2f50-4d5a-a7f4-35a478c4b101")
         val COMMAND: UUID = UUID.fromString("6c790002-2f50-4d5a-a7f4-35a478c4b101")

@@ -1,5 +1,8 @@
 # RSSI-Anzeige und Funkelintensität
 
+[Vollständige Aufzeichnung und geplanter Kameravergleich](rssi-recording.md)
+ergänzen den folgenden Testablauf.
+
 Stand: 18. Oktober 2026. Beauftragt: gemeinsame Abstandsversuche mit RSSI und
 Funkelsteuerung. Basis `3ff7d11`; Arduino-ESP32 bleibt 2.0.14 / ESP-IDF 4.4.
 Die [Frameworkmigration](../../handoff/ARDUINO-ESP32-3-MIGRATION.md) bleibt

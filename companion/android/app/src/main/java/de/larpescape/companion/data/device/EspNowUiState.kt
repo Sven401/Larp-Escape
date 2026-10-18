@@ -10,6 +10,8 @@ data class EspNowUiState(
     val ready: Boolean = false,
     val busy: Boolean = false,
     val waiting: Boolean = false,
+    val savedSamples: Long = 0,
+    val hasJournal: Boolean = false,
     val rssiSupported: Boolean = false,
     val measuring: Boolean = false,
     val rssiResult: EspNowResult? = null,
@@ -20,7 +22,7 @@ data class EspNowUiState(
 ) {
     val peer get() = espNowPeer(peerText)
     val canSend get() = supported && current && ready && !busy && !measuring && peer != null
-    fun disconnected() = EspNowUiState(peerText = peerText,
+    fun disconnected() = EspNowUiState(peerText = peerText, savedSamples = savedSamples, hasJournal = hasJournal,
         message = if (waiting) "Verbindung beendet · Empfang unbekannt. Erneut verbinden und bewusst testen."
         else "Getrennt · Empfang nicht bestätigt")
 }
