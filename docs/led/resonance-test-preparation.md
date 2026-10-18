@@ -6,7 +6,10 @@ Für den endgültigen Prüfstand wurde der inzwischen integrierte Stand
 `0b0843d5fce475d14705c42c21f4f8bf4314df30` ausschließlich in den eigenen
 Arbeitsbranch übernommen; ESP-NOW/RSSI und Kameraprüfung bleiben erhalten.
 **Implementiert; Softwareprüfstand siehe [Prüfbericht](resonance-test-results-2026-10-18.md).
-Installation und Sichtabnahme sind offen.**
+Produktinstallation und gemeinsame Sichtabnahme sind offen.**
+Die [isolierte Kameraprüfung](resonance-camera-results-2026-10-18.md) ergänzt
+inzwischen optische Belege mit synthetischen Eingängen; reale Wake-Betätigung
+und das neue BLE-App-/Firmwarepaar bleiben getrennt offen.
 
 ## Verhalten
 

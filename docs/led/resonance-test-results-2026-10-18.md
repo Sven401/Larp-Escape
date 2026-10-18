@@ -1,5 +1,10 @@
 # Resonanzkreis: Softwareprüfstand · 18. Oktober 2026
 
+Nachfolgender Gerätebeleg: [selbständiger Kameralauf mit synthetischen
+Wake-Eingängen](resonance-camera-results-2026-10-18.md). Dieser Bericht bewahrt
+den früheren Softwareprüfstand; Produktinstallation und gemeinsame Sensor-/BLE-
+Abnahme bleiben offen.
+
 **Belegt:** Produktquellen und Tests bei
 `11da7fc9f05147d504ea51edc3219e0c5cdc2c7f` auf
 `codex/led-resonanzkreis`. Dieser Stand enthält die ausdrücklich freigegebene

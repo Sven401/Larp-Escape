@@ -4,7 +4,9 @@
 
 Stand: **18. Oktober 2026; ESP-NOW-Erweiterung implementiert, begrenzter App-/Geräte-Gehversuch abgeschlossen.**
 [Ergebnis und Grenzen](../espnow/distance-camera-result-2026-10-18.md): keine gemeinsame Gesamtspielabnahme.
-Resonanzkreis als neuer Wake-gesteuerter Effekt ergänzt; dessen Sichtabnahme ist offen.
+Resonanzkreis als neuer Wake-gesteuerter Effekt ergänzt; die
+[isolierte Kameraprüfung](resonance-camera-results-2026-10-18.md) ist belegt,
+seine gemeinsame Sensor-/BLE-Sichtabnahme bleibt offen.
 Quellen: [Firmware-Session](../../firmware/led/src/LedWire.cpp),
 [NFC-Session](../../firmware/led/src/NfcBleWire.cpp),
 [Android-Decoder](../../companion/android/core/protocol/src/main/kotlin/de/larpescape/protocol/LedProtocol.kt),
@@ -118,7 +120,9 @@ Eingängen darf einen schwarzen Frame ausgeben, bleibt aber Effekt 4 ohne
 Duplikate, Ausgabequittung und Trennverhalten folgen dem bestehenden Vertrag.
 
 Alle vier BLE-Baugruppenvarianten unterstützen den Effekt; der isolierte
-Kameralaborbuild bietet weiterhin nur seinen bisherigen USB-Prüfumfang. Kein neuer Spielmodus,
+Kameralaborbuild ergänzt synthetische Wake-Szenarien und eine eigene
+Blau-/Cyan-Farbreferenz für den [optischen Prüfweg](resonance-camera-measurement.md).
+Er startet weiterhin kein BLE und liest keine realen Wake-Eingänge. Kein neuer Spielmodus,
 keine automatische Spielaktivierung und keine neue Geräteabnahme folgen daraus.
 Verhalten, Herkunft der Bereiche und Sichtprüfung:
 [Resonanzkreis-Prüfplan](resonance-test-preparation.md).

@@ -11,6 +11,9 @@ Aktueller konsolidierter Vertrag: [Baugruppen-Wire V2](../../docs/led/ble-wire-v
 Seit **18. Oktober 2026** ergänzt **Resonanzkreis** als vierter Effekt die
 manuelle Bedienung mit echter Wake-Reaktion. Verhalten, Upgrade-Paar und
 gezielter Sichtlauf: [Resonanzkreis-Prüfplan](../../docs/led/resonance-test-preparation.md).
+Die [isolierte Kameraprüfung](../../docs/led/resonance-camera-results-2026-10-18.md)
+belegt die optische Ausgabe mit synthetischen Eingängen; reale Sensor-/BLE-
+Abnahme und Spielnutzung bleiben offen.
 Die folgenden drei Effekte und Gerätebelege bleiben der historische Umfang.
 Alle drei Varianten enthalten Audio; NFC-/Matrix-Tests bleiben getrennt.
 Ein gemeinsames App-/Firmwarepaar ist nötig; es wurde hier nicht installiert.
