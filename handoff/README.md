@@ -1,5 +1,11 @@
 # Technische Projektübergabe
 
+[D1-Ausarbeitung zu #60](../docs/veranstaltung/d1-persistenz-v1.md) auf Basis
+`dead1204`: Transaktionen, dauerhafte Vergabe/Replay/Outbox, Wiederanlauf,
+Kompaktierung und getrennte Effekte, mit ausführbarer Rechnerreferenz.
+[Prüfstand und offene Firmware-/Gerätetore](D1-AUSARBEITUNG-2026-10-18.md).
+Vorschlag, noch nicht integriert; keine Produkt-/Flash-/Stromausfallabnahme.
+
 [D0-Vertrag zu #59](../docs/veranstaltung/d0-vertrag-v1.md) über
 [PR #72](https://github.com/Sven401/Larp-Escape/pull/72) integriert:
 Identitäten, Ereignisse, Ausfallregeln, Vertrauen und Migration, einschließlich

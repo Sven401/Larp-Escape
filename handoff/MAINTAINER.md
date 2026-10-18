@@ -1,5 +1,12 @@
 # Maintainer-Einstieg
 
+**D1 ausgearbeitet · 18. Oktober 2026:** [Speicher-/Wiederanlaufvorschlag zu #60](../docs/veranstaltung/d1-persistenz-v1.md)
+auf integriertem D0-Stand `dead1204`, mit dateibasierter Rechnerreferenz und
+[getrennten Nachweisgrenzen](D1-AUSARBEITUNG-2026-10-18.md).
+Vergabe pro Fakt, atomare Anwendung/Outbox, Latches, Konflikte, Kompaktierung
+und unklare physische Wirkungen sind konkretisiert. Kein Firmwareanschluss,
+Gerätezugriff oder Merge; #60 bleibt bis zu D1-B/D1-C offen.
+
 **D0 integriert · 18. Oktober 2026:** [Vertrag zu #59](../docs/veranstaltung/d0-vertrag-v1.md)
 mit Ereignisidentitäten, Offline-/Replayregeln, Ursprungsvertrauen und Migration.
 [PR #72](https://github.com/Sven401/Larp-Escape/pull/72) übernimmt den fachlich
@@ -62,7 +69,9 @@ abgeschlossene Softwarekonsolidierung und Integration durch #56.
   D0-G1–G5 in #28/D1/D2/#30/#31/D3/D4 erfüllen. D1/D2 können nun gegen den
   integrierten Vertrag konkretisiert werden; die Zugangsspur #27 → #28 → #37
   bleibt eigenständig. Kein Beginn dieser Folgearbeiten durch den Mergeauftrag.
-  D1–D4 bleiben offen; App-Messjournal und Funkprobe schließen
+  Für D1 liegt jetzt die oben verlinkte Ausarbeitung samt Rechnerreferenz vor;
+  Firmware-/F5a-Anschluss und physische Abnahme sind offen. D2–D4 bleiben offen;
+  App-Messjournal und Funkprobe schließen
   weder dauerhaften Box-Spielfortschritt noch Veranstaltungsbetrieb ab.
 
 - **Gemeinsame Geräteabnahme offen:** passendes V2-App-/Firmwarepaar gezielt
