@@ -47,7 +47,7 @@ fun EspNowControls(state: EspNowUiState, selectPeer: (String) -> Unit, send: () 
                 Text("Empfang: ${if (result.received) "passende Rückantwort erhalten" else "nicht bestätigt"}")
                 if (result.received) Text("Empfangszähler des zweiten ESP: ${result.receiverCount}")
             }
-            Text("Jeder Tastendruck startet genau einen Test. Keine automatische Wiederholung.",
+            Text("Die Einzelsendetaste sendet genau ein Testpaket. Eine laufende Messung sendet weitere Proben bis zum Beenden.",
                 style = MaterialTheme.typography.bodySmall)
         }
     }
