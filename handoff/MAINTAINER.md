@@ -1,6 +1,18 @@
 # Maintainer-Einstieg
 
-**LED-Effektentwicklung · 18. Oktober 2026:** [Architektenrolle 2.0](../docs/led/rollen/led-effekt-architekt.md) praktisch erweitert: gemeinsamer Effektkern, serielle Liveparameter und paralleles Kamerafeedback. [Näheglut-Versuchsbericht](../docs/led/naeheglut-live-results-2026-10-18.md) mit tatsächlicher Farb-/Kurveniteration, zwei vollständigen Folgeläufen und verifiziertem Flash-Rückweg. [Ausführbare Anleitung](../docs/led/interactive-development.md). Produktadapter, echte Nähequelle und optisches Nutzerurteil bleiben offen; die [Rechnerprobe 1.0](LED-EFFEKT-ARCHITEKT-ERPROBUNG-2026-10-18.md) bleibt historischer Beleg.
+**LED-Effektentwicklung integriert · 18. Oktober 2026:**
+[PR #74](https://github.com/Sven401/Larp-Escape/pull/74) ist bei
+`d4dd7c67cd6ba0e1903d8bf6c5df256c49fe5c3e` in
+`plan/projektuebergabe-kuratierter-stand` gemergt.
+[Mergebeleg, Prüfstand und offene Folgearbeit](LED-EFFEKT-ARCHITEKT-INTEGRATION-2026-10-18.md).
+Die [Architektenrolle 2.0](../docs/led/rollen/led-effekt-architekt.md) wurde mit
+gemeinsamem Effektkern, seriellen Liveparametern und parallelem Kamerafeedback
+praktisch erprobt. [Näheglut-Versuchsbericht](../docs/led/naeheglut-live-results-2026-10-18.md):
+Farb-/Kurveniteration, zwei vollständige Folgeläufe und verifizierter Flash-Rückweg.
+[Ausführbare Anleitung](../docs/led/interactive-development.md).
+Produktadapter, echte Nähequelle und optisches Nutzerurteil bleiben offen;
+die [Rechnerprobe 1.0](LED-EFFEKT-ARCHITEKT-ERPROBUNG-2026-10-18.md) bleibt
+historischer Beleg.
 
 **D0 integriert · 18. Oktober 2026:** [Vertrag zu #59](../docs/veranstaltung/d0-vertrag-v1.md)
 mit Ereignisidentitäten, Offline-/Replayregeln, Ursprungsvertrauen und Migration.
@@ -23,7 +35,8 @@ ergänzen die bisherigen Teilbelege. Gesamtspiel, Reichweite und Dauerlast bleib
 **Neue verbindliche Produktentscheidung · 18. Oktober 2026:** [VA-01](../docs/veranstaltungsarchitektur.md) legt autonome Boxen, BLE-Bedienung je Box, unterbrechbare ESP-NOW-/WLAN-Kommunikation und die Zentrale ohne Betriebszwang fest. [Vertrags-/Backlogmatrix](../docs/veranstaltungsarchitektur-umsetzung.md), neue Pakete #59–#63. Zugangskonzept PR #58 bleibt ergänzend maßgeblich. **Architektur-Soll; keine Implementierung oder neue Geräteabnahme.**
 
 Stand: **18. Oktober 2026**. Mandat: [AGENTS.md](../AGENTS.md).
-Quelle dieser Aktualisierung: beauftragter Merge von #72 und Projektstandsabgleich.
+Quelle dieser Aktualisierung: beauftragter Merge von #74 sowie Fortschreibung
+von Projektstand und Übergabe am 18.10.2026. D0-Merge #72 bleibt erhalten.
 Vorheriger Integrationsabschluss: beauftragter Merge von #69 und Planabgleich;
 [Integrationsabschluss](INTEGRATION-2026-10-18.md). Frühere Hygiene:
 [Prüfbericht und Bestandsaufnahme](REPOSITORY-HYGIENE-2026-10-18.md).
@@ -35,12 +48,13 @@ und offenen Abnahmekriterien. **Sollkonzept, keine Implementierung.**
 
 ## Aktuelle Arbeitsbasis
 
-- **Belegt:** PR #72 übernimmt D0 einschließlich fachlicher Korrekturen
-  (Inhaltsstand `a9481e0`) in den kuratierten Integrationsbranch. Ausgangsbasis
-  nach frischem Fetch am 18.10.2026: `5f90d109e3589d74d73ac26f859dcd76c2902439`,
-  einschließlich #56 (Baugruppenkonsolidierung), #57 (Hygiene), #67
-  (Hardwareplanung), #69 und #70. Konkreter Merge-/CI-Beleg im Projektplan #25.
-  Die frühere #56-Basis `784984d` bleibt Bezug der historischen CI unten.
+- **Belegt:** PR #74 ist bei `d4dd7c67cd6ba0e1903d8bf6c5df256c49fe5c3e`
+  im kuratierten Integrationsbranch angekommen. Eltern: `dead1204` (D0/#72)
+  und `40d9621` (geprüfter #74-Head); vollständige Dateibäume von Merge und
+  PR-Head sind identisch. [Integrationsbeleg und neue Merge-CI](LED-EFFEKT-ARCHITEKT-INTEGRATION-2026-10-18.md).
+  Die bisherigen Integrationen #56/#57/#67/#69/#70/#72 bleiben enthalten.
+  Die folgende Dokumentationsfortschreibung ändert keine Produktquellen;
+  ihren Abschluss führt [Projektplan #25](https://github.com/Sven401/Larp-Escape/issues/25).
 - LED, Wake, Matrix, Audio und NFC sind auf dem
   [gemeinsamen V2-Vertrag](../docs/led/ble-wire-v2.md) zusammengeführt.
   [Herkunft und Erhaltung aller acht Ergebnis-IDs](KONSOLIDIERUNG-2026-10-17.md)
@@ -66,6 +80,16 @@ abgeschlossene Softwarekonsolidierung und Integration durch #56.
   bleibt eigenständig. Kein Beginn dieser Folgearbeiten durch den Mergeauftrag.
   D1–D4 bleiben offen; App-Messjournal und Funkprobe schließen
   weder dauerhaften Box-Spielfortschritt noch Veranstaltungsbetrieb ab.
+
+- **LED-Architektenrolle 2.0 erprobt und integriert:** Für weitere Effektarbeit
+  [Rolle](../docs/led/rollen/led-effekt-architekt.md), [Live-Anleitung](../docs/led/interactive-development.md)
+  und [Näheglut-Bericht](../docs/led/naeheglut-live-results-2026-10-18.md) wiederverwenden.
+  Konkreter Spieleinsatz/Nähequelle, Produktadapter mit Epochen-/Profilgrenzen,
+  produktseitige Mischung sowie Nutzerurteil am realen Licht bleiben offen.
+  Der Laborprototyp schließt #29/#31/#37 oder die optische Abnahme nicht ab.
+- **D1-A separat in Review:** [PR #73](https://github.com/Sven401/Larp-Escape/pull/73)
+  ist weiterhin offen; vor einer eigenen Integration gegen die dann aktuelle
+  Basis prüfen. D1-B/C und #60 bleiben offene Folgearbeit.
 
 - **Gemeinsame Geräteabnahme offen:** passendes V2-App-/Firmwarepaar gezielt
   prüfen. Zuletzt dokumentiert sind App-Journalstand `6e6f093` und
@@ -105,7 +129,15 @@ LED/Wake/Matrix/Audio/NFC/ESP-NOW, vier getrennte Produktvarianten und die
 isolierte Kamera-Laborfirmware sowie die [unabhängige NFC-Probe](../.github/workflows/nfc-probe.yml)
 und [ESP-NOW-Probe](../.github/workflows/espnow-probe.yml).
 
-**Ausgelesen am Zielcommit `784984d`: alle acht Push-Jobs erfolgreich.**
+**Merge #74, `d4dd7c6`:** Eigene Push-Prüfungen sind
+[Quality, drei Jobs](https://github.com/Sven401/Larp-Escape/actions/runs/39145590308)
+und [LED/Baugruppen, vier Jobs](https://github.com/Sven401/Larp-Escape/actions/runs/39145590228).
+Den abschließend ausgelesenen Status und den anschließenden Dokumentationsstand
+führt [Projektplan #25](https://github.com/Sven401/Larp-Escape/issues/25).
+[Integrationsbeleg mit getrennten PR-Nachweisen](LED-EFFEKT-ARCHITEKT-INTEGRATION-2026-10-18.md).
+Es gab bei diesem Merge-/Dokumentationsauftrag keinen Gerätezugriff oder Upload.
+
+**Historisch am Zielcommit `784984d`: alle acht Push-Jobs erfolgreich.**
 [Quality](https://github.com/Sven401/Larp-Escape/actions/runs/38980094469),
 [Baugruppen](https://github.com/Sven401/Larp-Escape/actions/runs/38980094470),
 [NFC-Probe](https://github.com/Sven401/Larp-Escape/actions/runs/38980094423).
