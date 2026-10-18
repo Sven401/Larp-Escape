@@ -1,5 +1,7 @@
 # Companion-Status v1
 
+**Transportentscheidung ersetzt · 18.10.2026:** [VA-01](../veranstaltungsarchitektur.md) legt Handy–Box über BLE fest; ESP-NOW und verfügbares WLAN/IP dienen Box–Box. Die unten beschriebene WLAN-App/HTTP-Anbindung ist ein historischer Entwurf, keine aktuelle Produktvorgabe. [Anpassungsbedarf](../veranstaltungsarchitektur-umsetzung.md); implementierte Status-v1-Bytes bleiben unverändert.
+
 **Status:** Protokollkern implementiert und hostprüfbar. Ein Transport und die Android-App folgen später. **Stand:** 5. Oktober 2026.
 
 ## Zuständigkeit

@@ -21,6 +21,10 @@ interface DeviceRepository {
     fun startLedEffect()
     fun boxNfc(change: Boolean) {}
     fun stopLeds()
+    fun selectEspNowPeer(value: String) {}
+    fun sendEspNowTest() {}
+    fun measureEspNow(twinkle: Boolean) {}
+    fun stopEspNowMeasurement() {}
     fun selectAudioTrack(value: String)
     fun selectAudioVolume(value: String)
     fun startAudio()

@@ -39,6 +39,7 @@ public:
     bool start(Effect effect);
     bool stop();
     void service();
+    void setTwinkleIntensity(unsigned percent) { twinkleIntensity_ = percent > 100 ? 100 : percent; }
     void tick() { service(); }
     OutputSnapshot snapshot() const { return status_; }
 
@@ -56,6 +57,7 @@ private:
     Clock clock_;
     OutputSnapshot status_;
     Frame frame_{};
+    unsigned twinkleIntensity_ = 100;
     bool initialized_ = false, dirty_ = false, inFlight_ = false, active_ = false;
     bool completionPending_ = false, txCompletion_ = false, txBlack_ = true;
     bool recoveryNeeded_ = false, recoveryAttempted_ = false;

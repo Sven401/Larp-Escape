@@ -18,6 +18,24 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  camera-tools:
+    name: Camera measurement tools (synthetic inputs)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r scripts/requirements-led-camera.txt
+      - run: python -m unittest discover -s scripts/tests -p 'test_led_camera*.py'
+      - run: python firmware/led/tests/run_camera_tests.py
+      - name: Export all actual effect references
+        run: |
+          python scripts/led_camera_reference.py twinkle --output "$RUNNER_TEMP/twinkle.csv"
+          python scripts/led_camera_reference.py burst --output "$RUNNER_TEMP/burst.csv"
+          python scripts/led_camera_reference.py ripple --output "$RUNNER_TEMP/ripple.csv"
+
   protocol-output:
     name: LED protocol and output tests
     runs-on: ubuntu-24.04
@@ -69,7 +87,9 @@ jobs:
       - name: Record common firmware sources
         run: python scripts/quality_evidence.py init
       - name: Build all separate product variants and record resources
-        run: python scripts/quality_evidence.py run --name common-builds -- python -m platformio run -d firmware/led -e larp-led-product -e larp-nfc-test -e larp-matrix-test -j 2
+        run: python scripts/quality_evidence.py run --name common-builds -- python -m platformio run -d firmware/led -e larp-led-product -e larp-nfc-test -e larp-matrix-test -e larp-espnow-test -j 2
+      - name: Build isolated USB camera calibration firmware
+        run: python -m platformio run -d firmware/led -e larp-led-camera-lab -j 2
       - name: Summarize common firmware checks
         if: always()
         env:

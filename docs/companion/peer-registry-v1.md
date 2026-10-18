@@ -1,5 +1,11 @@
 # Öffentliches Peer- und Spielleiterregister v1
 
+**Abgestimmtes Produkt-Soll, 18. Oktober 2026:**
+[Veranstaltungszugang, Schlüsselwechsel und Wiederherstellung](veranstaltungszugang.md).
+Keine fachliche Vier-Handy-Grenze; notwendige technische Grenzen sind zu begründen.
+Das folgende Vier-Plätze-/404-Byte-Format und der lokale Administrationsport
+bleiben bestehender Implementierungsstand, kein Nachweis des neuen Konzepts.
+
 Status: schmaler Firmware-/Host-/CLIpfad. Kein Produktionszugang und keine Geräteabnahme. Datum: 2026-10-07; Basis ac59465, neuer Registerschnitt.
 
 ## Zweck und Vertrauensgrenze
