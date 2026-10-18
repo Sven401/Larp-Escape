@@ -1,5 +1,38 @@
 # Näheglut: Stopklärung und Spielanschluss
 
+**Status: PR #81 integriert · 18.10.2026.** Auf ausdrücklichen Folgeauftrag
+nach vollständig grüner CI in `plan/projektuebergabe-kuratierter-stand` gemergt.
+Operativer Projektstand: [Issue #25](https://github.com/Sven401/Larp-Escape/issues/25).
+
+## Integration und Prüfstand
+
+[PR #81](https://github.com/Sven401/Larp-Escape/pull/81) ist bei
+[`c4870215a155b9abff2e36fccfe93d42e1a03043`](https://github.com/Sven401/Larp-Escape/commit/c4870215a155b9abff2e36fccfe93d42e1a03043)
+übernommen. Nach Merge frisch gefetcht und geprüft:
+
+- Eltern: Zielbasis `7e5f4f38e88ed76358e31dc66d267da9cb0fbc1f` und geprüfter
+  PR-Head `9114ff89863501809e06f65892ec6948342eecb6`.
+- Vollständiger Git-Dateibaum von PR-Head und Merge identisch:
+  `94b3e371dc0349a8d822e6213a3b614a57630610`; kein Integrationsdiff.
+- **PR-CI am unveränderten Head: 9/9 Jobs erfolgreich**, unmittelbar vor Merge
+  frisch bestätigt: [Quality, 3/3](https://github.com/Sven401/Larp-Escape/actions/runs/39166174771),
+  [LED/Android/Kamera, 4/4](https://github.com/Sven401/Larp-Escape/actions/runs/39166174805),
+  [NFC, 2/2](https://github.com/Sven401/Larp-Escape/actions/runs/39166174773).
+  Keine offenen Reviewthreads oder Änderungsforderungen bei dieser Abfrage.
+
+Der Merge integriert Diagnose und technische Spezifikation, keinen ausführbaren
+Produktadapter. Physische Dunkelursache, optische Freigabe, Pausenregel und
+Quellenzuordnung bleiben offen. Die Software-/Bildnachweise unten behalten
+ihre ursprüngliche Quellbasis; bei diesem Merge keine erneute Geräteprüfung.
+Eigene Push-Prüfungen des Mergecommits und nachfolgende Dokumentations-CI sind
+zusätzliche Nachweise, nicht die obigen PR-Läufe. Letzter Ablesestand und
+Dokumentationsabschluss stehen in #25.
+
+Die folgende ursprüngliche Basis bezeichnet die Diagnose-/Entwurfssitzung.
+Dokumentationsfortschreibung auf `codex/naeheglut-stop-integrationsstand` im
+Worktree `C:/Users/seide/Documents/Codex/2026-10-18/m/work/naeheglut`.
+Vor Fortsetzung aktuellen Integrationsbranch, #25 und Arbeitsbaum neu prüfen.
+
 18.10.2026 · Sitzung `01a150c8-48be-7362-acef-143e74396303`.
 Nutzerauftrag: zuerst Stop-/Dunkelbefund klären, anschließend Spielanschluss
 konkretisieren. Basis `7e5f4f38e88ed76358e31dc66d267da9cb0fbc1f`, eigener Branch

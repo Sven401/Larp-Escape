@@ -1,6 +1,8 @@
 # Technische Projektübergabe
 
-**Näheglut-Folgearbeit · 18.10.2026:**
+**Näheglut-Diagnose und Spielanschluss integriert · 18.10.2026:**
+[PR #81](https://github.com/Sven401/Larp-Escape/pull/81), Merge
+`c4870215a155b9abff2e36fccfe93d42e1a03043`, zuvor 9/9 PR-CI-Jobs erfolgreich.
 [Stopdiagnose und konkreter Spielanschluss](NAEHEGLUT-STOP-SPIELANSCHLUSS-2026-10-18.md).
 Digitaler Stop bestätigt; optischer Restpegel auch am Papierrand nachgewiesen,
 Ursache weiterhin ohne kontrollierten Gerätevergleich offen. Adapterentwurf
