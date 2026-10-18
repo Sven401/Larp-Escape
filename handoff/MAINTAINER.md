@@ -1,5 +1,7 @@
 # Maintainer-Einstieg
 
+**LED-Effektentwürfe · 18. Oktober 2026:** [Erprobte Architektenrolle](../docs/led/rollen/led-effekt-architekt.md) für sichtbares Verhalten, Berechnung, Prüfplanung und den fachlichen Spiel-/Effektvertrag. [Näheglut-Entwurf](../docs/led/naeheglut-design.md) und [Rollenprobe](LED-EFFEKT-ARCHITEKT-ERPROBUNG-2026-10-18.md) mit 23 bestandenen Modelltests. Produktanbindung und optische Abnahme bleiben offen; keine Firmwareimplementierung.
+
 **D0 integriert · 18. Oktober 2026:** [Vertrag zu #59](../docs/veranstaltung/d0-vertrag-v1.md)
 mit Ereignisidentitäten, Offline-/Replayregeln, Ursprungsvertrauen und Migration.
 [PR #72](https://github.com/Sven401/Larp-Escape/pull/72) übernimmt den fachlich

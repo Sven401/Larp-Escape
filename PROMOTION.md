@@ -1,5 +1,28 @@
 # Projektfestlegungen: Übernahme und Korrektur
 
+## 18. Oktober 2026 — LED-Effekt-Architektenrolle nach erster Anwendung
+
+- **Beauftragt und angewandt:** Projektgebundenes
+  [Rollenprofil 1.0](docs/led/rollen/led-effekt-architekt.md) für Verhalten,
+  Berechnung, Prüfplanung und den fachlichen Spiel-/Effektvertrag.
+  Quelle: Nutzerauftrag und Antworten in Sitzung
+  `01a14f9a-35fb-72e1-9acb-132b0d16599d`; Ausgangsbasis `dead12040c196ff74ab4be17ba71451a9351a676`.
+- **Beobachteter Einsatz:** Kandidat 0.1 auf den neuen Näheglut-Entwurf angewandt;
+  [Erprobungsbericht](handoff/LED-EFFEKT-ARCHITEKT-ERPROBUNG-2026-10-18.md)
+  belegt 23 Modelltests und unabhängigen Review. Stop während Ausblenden,
+  fortlaufende Zieländerungen, Gesamt-Aus und Ticket-/Instanzleben präzisiert.
+- **Bewertung:** Quellenrouter und Pflichtfragen deckten konkrete
+  Mehrdeutigkeiten auf; erste nützliche Anwendung, keine gemessene langfristige
+  Zeitersparnis oder optische Freigabe.
+- **Übernahme:** Rollenprofil bei beauftragter LED-Effektentwurfsarbeit als
+  Einstieg nutzen. Keine Änderung an AGENTS, globalen Skills oder Hooks.
+  Fachvertrag bleibt Entwurf; die einmalige Python-Probe wird nicht zum
+  allgemeinen Produktwerkzeug oder CI-Standard befördert.
+- **Einfacher Rückweg:** Verweise auf das Rollenprofil aus den beiden
+  Maintainer-/Übergabeeinstiegen entfernen und Profil als inaktiv markieren.
+  Fachquellen, Entwurf und Prüfbelege bleiben erhalten; keine Firmwareänderung
+  muss rückgängig gemacht werden.
+
 ## 15. Oktober 2026 — Fehlinterpretation zur LED-Grundlage zurückgenommen
 
 - **Bestätigt:** Der Projekt-Owner hat klargestellt, dass WLED ausschließlich
