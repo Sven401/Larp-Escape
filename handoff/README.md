@@ -2,6 +2,16 @@
 
 **UI/UX · 18. Oktober 2026:** [Projektreferenz und bestätigte separate Appauslieferung](../docs/ui-ux/PROJEKTREFERENZ.md), [Dev-Hauptabläufe](../docs/ui-ux/DEV-APP-ABLAEUFE.md) und [Spielleitungs-Hauptabläufe](../docs/ui-ux/SPIELLEITER-APP-ABLAEUFE.md). Dokumentierter Designstand; keine native Apptrennung oder neue Geräteabnahme.
 
+**UI/UX-Pilot integriert · 18. Oktober 2026:** [PR #78](https://github.com/Sven401/Larp-Escape/pull/78)
+ist bei `42853bc1aa93de23b5fcfc72e66d2c1a397361af` in den kuratierten
+Integrationsbranch übernommen. [Rolle](../docs/ui-ux/ROLLE.md),
+[aktueller Zustandsvertrag](../docs/ui-ux/BOX-PILOT.md),
+[Prototyp/Figma](../design/box-pilot/README.md) und
+[PO-/Figma-Nachprüfung](../design/box-pilot/figma-sync-review.md) sind integriert.
+Drei P2-Punkte behoben; 56 editierbare Figma-Screens, 148 geprüfte Verknüpfungen.
+**Design-/Prototyppaket, keine native Produktumsetzung oder Geräteabnahme.**
+[Mergebeleg, Prüfnachweise und konkrete Fortsetzung](UI-UX-INTEGRATION-2026-10-18.md).
+
 **Näheglut mit realem ESP-NOW geprüft · 18. Oktober 2026:** Drei Laborläufe
 belegen Funkanbindung, Veraltung/Wiederkehr und gezielten Stop ohne Wiederanlauf.
 Optische Dunkelprüfung und zwei Übergangsabweichungen bleiben offen;
@@ -48,15 +58,15 @@ ergänzt die älteren Gerätebelege; die fünf Original-PRs sind als gemergt ges
 
 - [ESP-NOW-Sitzungsabschluss: RSSI, Funkelsteuerung und vollständiger Kameravergleich](ESPNOW-UEBERGABE-2026-10-18.md); PR #66 ist über #69 integriert. Der Sitzungsabschluss bleibt der historische Beleg vor Integration.
 
-**Belegt:** [PR #74](https://github.com/Sven401/Larp-Escape/pull/74) ist in
-`plan/projektuebergabe-kuratierter-stand` bei `d4dd7c6` integriert; Eltern
-`dead1204` + `40d9621`, vollständiger Dateibaum identisch zum geprüften PR-Head.
-[Merge-Nachweis, aktuelle CI und konkrete Fortsetzung](LED-EFFEKT-ARCHITEKT-INTEGRATION-2026-10-18.md).
-Die Integrationen #56/#57/#67/#69/#70/#72 bleiben enthalten. LED, Wake, Matrix,
-Audio, NFC und die explizite ESP-NOW-Testvariante verwenden weiterhin den
-[gemeinsamen V2-Vertrag](../docs/led/ble-wire-v2.md). Das Näheglut-Labor ergänzt
-diesen Stand; sein LIVE-Protokoll ist kein neuer Produkt-USB-/BLE-Vertrag.
-Einzelheiten und Grenzen stehen im [Maintainer-Einstieg](MAINTAINER.md).
+**Belegt:** [PR #78](https://github.com/Sven401/Larp-Escape/pull/78) ist bei
+`42853bc1aa93de23b5fcfc72e66d2c1a397361af` integriert; Eltern `7e72411` +
+`3b2f6b4`, vollständiger Dateibaum identisch zum geprüften Head. Drei PR-Workflows
+erfolgreich; eigene Merge-/Dokumentations-CI getrennt in
+[Integrationsbeleg und Fortsetzung](UI-UX-INTEGRATION-2026-10-18.md) und #25.
+Frühere Integrationen #56/#57/#67/#69/#70/#72/#74/#76/#77 bleiben erhalten.
+LED/Wake/Matrix/Audio/NFC/ESP-NOW verwenden weiterhin den
+[gemeinsamen V2-Vertrag](../docs/led/ble-wire-v2.md); der isolierte Webpilot ersetzt
+keine Android-App oder Gerätefunktion. Weitere Nachweise im [Maintainer-Einstieg](MAINTAINER.md).
 
 - [Konsolidierung: Herkunft, Konfliktentscheidungen, acht Ergebnis-IDs](KONSOLIDIERUNG-2026-10-17.md).
 - [Nachweisregister: historische Gerätebelege und Sicherungsreferenzen](BAUGRUPPEN-NACHWEISE.md).
@@ -64,7 +74,9 @@ Einzelheiten und Grenzen stehen im [Maintainer-Einstieg](MAINTAINER.md).
 - [Operative Planung #25](https://github.com/Sven401/Larp-Escape/issues/25)
   und [abgeschlossene Softwarekonsolidierung #53](https://github.com/Sven401/Larp-Escape/issues/53).
 
-**Offen:** gemeinsames V2-Paar am Gerät, Matrixproblemstellen #54,
+**Offen:** native Umsetzung des Stationspiloten, reale Einrichtung, Mehrstations-,
+Android-/BLE-/TalkBack-/Lifecycle- und Nutzerabnahme; außerdem gemeinsames V2-Paar
+am Gerät, Matrixproblemstellen #54,
 LED-/NFC-/Sitzungsfehlerfälle sowie allgemeiner Spielzugang und Profilbetrieb.
 Für Näheglut fehlen echter Spieleinsatz/Nähequelle, Produktadapter und optisches
 Nutzerurteil. D1-A/PR #73 bleibt gesondert in Review; #60/D1-B/C bleibt offen.

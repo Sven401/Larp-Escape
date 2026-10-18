@@ -23,7 +23,9 @@ Stand: **18. Oktober 2026**. Projektgebundene Referenz, keine Gerätefreigabe.
   dokumentieren bestätigte Nutzerkorrekturen. Diese Referenz erhält den dortigen
   Stationsbediengrundsatz. Während der Erstellung wurde #78 bei
   `42853bc1aa93de23b5fcfc72e66d2c1a397361af` in den Zielbranch integriert; der
-  eigene Dokumentationsbranch wurde damit abgeglichen. Android-/Firmwarequellen
+  eigene Dokumentationsbranch wurde damit und mit dem anschließenden
+  Projektstandsabschluss #80 bei `7e5f4f38e88ed76358e31dc66d267da9cb0fbc1f`
+  abgeglichen. Android-/Firmwarequellen
   sind gegenüber `7e72411` unverändert. Der Pilot wird nicht erneut implementiert.
 - **Abgeleitet:** die Hauptabläufe sind ausgearbeitete Designvorgaben zur weiteren
   Umsetzung. Neue Detailentscheidungen sind als Vorschlag/offen gekennzeichnet.
