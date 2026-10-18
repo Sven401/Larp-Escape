@@ -131,5 +131,6 @@ sperren neue Tests bis zum Neustart. BLE-Abbruch verwirft den offenen Versuch.
 7. LED und Audio danach bewusst prüfen; deren Wirkung und Funk-/BLE-Koexistenz
    am tatsächlichen Paar getrennt dokumentieren.
 
-Noch kein Handy-Gerätelauf dieses Paars. Der Softwareprüfbericht und der PR
-führen den konkret geprüften Quellstand und verbleibende Abnahmen.
+Noch kein Handy-Gerätelauf dieses Paars. Der
+[Softwareprüfbericht](app-preparation-2026-10-18.md) führt den konkret geprüften
+Quellstand, Artefakte und verbleibende Abnahmen.
