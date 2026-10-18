@@ -1,6 +1,8 @@
 # Design QA · automatische Stationsverbindung
 
-final result: passed
+Historischer Ergebnisstand: passed auf c04a540.
+Die aktuelle PO-Korrektur und ihre neuen Browserbelege stehen in [po-review.md](po-review.md).
+Dieser frühere Figma-/Browservergleich belegt die neue Einrichtungshilfe nicht.
 
 18. Oktober 2026; Änderung auf Basis e03da1e nach konkretem Nutzerfeedback.
 Die Spielleitung wählt eine Station. Bei vorbereiteter Veranstaltung erledigt

@@ -1,6 +1,7 @@
 # Überarbeiteter Entwurf: Veranstaltung und Station
 
-**Status: Bildentwurf zur Nutzerprüfung; keine Figma- oder Prototypausarbeitung.**
+**Status: historischer Bildentwurf; durch [aktuellen Pilotvertrag](BOX-PILOT.md) ersetzt.**
+Manuelle Such-/Wiederaufnahmeregeln und der Prompt unten sind ausschließlich Herkunft.
 Datum: 18. Oktober 2026. Sitzung: `01a1505d-dfd4-7ad2-89cf-8d7be1b02240`.
 Basis: Rollen-/Pilotcommit `74ab53085da289bb8988362c6feda9eee90c1434`.
 

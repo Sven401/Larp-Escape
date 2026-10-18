@@ -20,25 +20,21 @@ zugeordneten Geräts, Zugang und Wiederverbindung automatisch. Technische
 Hinweistexte über Versand, Geräteantwort und physische Sichtprüfung gehören
 in Diagnose/Abnahme, nicht in die Spielleitungsbedienung.
 
-Der Prototyp setzt dies um; die nachfolgende Bestandsanalyse und ursprüngliche
-Zustandstabelle dokumentieren weiterhin den früheren Stand beziehungsweise die
-native Android-Basis. Sie sind keine Vorgabe manueller Schritte im neuen Entwurf.
 Aktueller Normalweg: Station auswählen → automatisch verbinden → bedienen.
 Bei Unterbrechung: Zustand entwerten → automatisch neu verbinden und prüfen →
 weiter bedienen. Lichtaufträge werden nicht wiederholt. Fehlende/mehrdeutige
-Zuordnung und fehlender Zugang bleiben gezielte Ausnahmen. Veranstaltungseinrichtung
-ist ein eigener Bereich; ihre reale Implementierung wird hier nicht behauptet.
+Zuordnung und fehlender Zugang bleiben gezielte Ausnahmen mit konkreter Hilfe.
 
 ## Brief
 
-Nutzer: Spielleitung mit Android-Handy an einer lokalen Box. Ziel: eine gefundene
-Box bewusst auswählen, ihren Zugang prüfen, eine einfache Lichtaktion ausführen
-und nach Funkverlust verständlich weiterarbeiten. Android/Compose und Material 3
+Nutzer: Spielleitung mit Android-Handy an einer lokalen Station. Ziel: die Station
+auswählen, automatisch verbinden, Licht bewusst bedienen und nach Funkverlust
+mit frisch geprüftem Zustand weiterarbeiten. Android/Compose und Material 3
 sind die vorhandene Plattform. Der Pilot benötigt weder Internet noch Zentrale.
 Demodaten bleiben ausdrücklich als Entwurf gekennzeichnet.
 
-Umfang: Suche → Auswahl → Verbindung/Zugangsprüfung → LED-Bedienung → Abbruch →
-bewusste erneute Suche/Verbindung → frischen Stand prüfen. Allgemeine
+Umfang: Stationsauswahl → automatische Verbindung/Zugangsprüfung → Lichtbedienung →
+Unterbrechung → automatische Wiederverbindung und frischen Stand prüfen. Allgemeine
 Veranstaltungsverwaltung, neue Rechtevergabe, NFC-Schreiben, Boxwechsel mit
 Schlüsselverwaltung und echte Spielsteuerung gehören nicht in diesen Pilot.
 Als vorhandene Bedienaktion dient **Funkeln**, mit bewusstem Start und Stop.
@@ -81,44 +77,32 @@ Gestaltungshypothesen. Vorhandene Hardwarediagramme sind keine UI-Referenzen.
 Product-Design-Kontextprüfung: keine gespeicherte Kontextdatei vorhanden.
 Projektkontext bleibt in diesem Repository.
 
-## Zustands- und Übergangsentwurf
+## Verbindlicher Zustands- und Übergangsvertrag
 
-| ID | Auslöser/Zustand | Sichtbare Rückmeldung und Aktion | Übergang/Bedingung |
-| --- | --- | --- | --- |
-| B0 | Einstieg, keine Sitzung | „Box verbinden“; „Boxen suchen“ | Bewusster Suchstart prüft Bluetooth und Rechte |
-| B1 | Bluetooth aus oder Rechte fehlen | Konkreter Grund und passende Systemaktion; keine scheinbar leere Ergebnisliste | Nach Behebung bewusst erneut suchen; keine Startanfrage beim Appstart |
-| B2 | Suche läuft | Fortschritt „Suche läuft …“; entdeckte Kandidaten | Bestand beendet nach 10 s; früheres Antippen wählt Kandidat |
-| B3 | Ergebnisse / keine Ergebnisse | Namen als unbestätigte Kandidaten; „Erneut suchen“ bei leerer Liste | Auswahl beginnt frische Prüfung; keine vertraute Identität aus Werbenamen |
-| B4 | Verbinden, Dienste/Zugang prüfen | Gewählter Kandidat; „Box-Zugang wird geprüft …“; „Abbrechen“ als zu implementierende UI-Aktion auf vorhandenes Trennen | Bedienung gesperrt; Authentisierung und aktueller Status erforderlich |
-| B5 | Zugang fehlt/falsch oder ungeeigneter Dienst | Grund, „Box-Zugang importieren“ bzw. zurück zur Suche | Import ist keine neue Rechtevergabe; danach erneut verbinden |
-| B6 | Authentisiert und bedienbereit | Geprüfter Boxbezug soweit verfügbar; „Lichtsteuerung“; Funkeln auswählen, „Start“, „Stop · LEDs aus“ | Auswahl sendet nichts; Start nur nach bestehenden Freigaberegeln |
-| B7 | Auftrag offen | „Start angefragt · warte auf Box“; weitere Aufträge gesperrt | Erst passende authentisierte Antwort bestätigt; Write-ACK allein genügt nicht |
-| B8 | Antwort bestätigt | „Box meldet: Funkeln“; sichtbares Licht separat prüfen | Keine Aussage über optische Wirkung ohne Beobachtung |
-| B9 | Status veraltet, BLE noch vorhanden | „Status nicht aktuell“ und Grund für gesperrte Bedienung | LED-Befehle nach bestehender 1-s-Frischegrenze gesperrt; keine erfundene neue Frist |
-| B10 | Funkverlust / Auftrag ohne Ergebnis | „Verbindung unterbrochen“; „Aktueller Boxzustand unbekannt“; bei offenem Auftrag „Ausgang unklar“; „Erneut suchen“ | Keine aktive/grüne Altanzeige; kein automatischer Retry; LED-Auftragsfrist 5 s im Bestand |
-| B11 | Wiederaufnahme | Neu suchen, Kandidat wählen, Zugang und frischen Zustand prüfen | Erst dann B6/B8; alte Auswahl darf als Entwurf erhalten bleiben, führt aber keinen Auftrag aus |
-| B12 | App im Hintergrund / Prozessneustart / bewusste Trennung | Sitzung geschlossen, keine Wiederaufnahmebehauptung | Bewusster Neustart des Suchwegs; Rotation erhält bestehendes ViewModel gemäß Bestand |
+Stand: PO-Korrektur vom 18.10.2026 auf Basis `c04a540`.
+Diese Tabelle und der folgende Prüfplan sind die aktuelle Umsetzungsvorgabe.
+Die [frühere Analyse](BOX-PILOT-HISTORIE.md) bleibt ausschließlich Herkunft.
 
-Wichtige Produktgrenze: Die Formulierung „Boxzustand unbekannt“ darf weder
-„Box aus“ noch „Spiel gestoppt“ suggerieren. Das bestehende LED-Testverhalten bei
-Verbindungsverlust ist nicht auf autonome Spiele verallgemeinerbar.
+| Zustand | Sichtbare Rückmeldung / Aktion | Übergang und Sperren |
+| --- | --- | --- |
+| Stationsliste | Veranstaltung, Station; Station antippen | Automatische Suche und eindeutige Zuordnung, keine Kandidatenwahl |
+| Verbinden / Prüfen | „Station wird verbunden …“, Abbrechen | Bedienung gesperrt bis Zugang und frischer Gerätestand bestätigt; Abbrechen pausiert |
+| Zugriff fehlt / Bluetooth aus | Ursache und passende Systemaktion | Nach Erlaubnis/Einschalten automatisch prüfen; keine Lichtaktion |
+| Nicht erreichbar | Näher an Station gehen; Erneut versuchen | Ein neuer Verbindungsversuch; kein endloser automatischer Suchlauf |
+| Zuordnung unklar | Verantwortliche Person um Prüfung der Gerätezuordnung bitten; Hilfe zur Einrichtung, Erneut prüfen | Keine beliebige Gerätewahl; erneute Prüfung verändert die Konfiguration nicht |
+| Stationszugang fehlt | Verantwortliche Person um Prüfung des Stationszugangs bitten; Hilfe zur Einrichtung, Erneut prüfen | Kein erfundener Import oder Rechtegewinn durch Wiederholen |
+| Einrichtungshilfe | Veranstaltung, Station, konkreter Fehler, zuständige Person und Prüfschritte; Zur Stationsbedienung | Nur Anleitung; außerhalb liegende Einrichtung explizit benannt; Rückkehr behält den Fehler |
+| Bereit | „Bereit“, „Licht aus“ oder bestätigter Effekt; Auswahl, Start, Stop | Auswahl lokal; nur bewusster Start/Stop sendet einen Auftrag |
+| Auftrag offen | „… wird gestartet“ / „Licht wird gestoppt“ | Auswahl und Befehle gesperrt; tatsächlicher Gerätezustand noch nicht behauptet |
+| Unterbrochen | „Aktueller Zustand unbekannt“, bei offenem Auftrag Ergebnis offen | Alte Anzeige entwertet; Auswahl bleibt; automatischer Verbindungsversuch ohne Lichtauftrag |
+| Status veraltet / Rückkehr | Ursache; automatische erneute Prüfung | Zugang und frischen Gerätestand erneut prüfen; keine Befehlswiederholung |
+| Wieder verbunden | Frisch gelesener Gerätestand | Ausgeführter Auftrag sichtbar oder unveränderter Zustand bei nicht angekommenem Auftrag; kein Erfolgsbeleg für den alten Auftrag allein aus Reconnect |
+| Bewusst pausiert / zurück zur Liste | Erneut verbinden / Station wählen | Kein automatischer Verbindungsstart nach bewusstem Abbrechen; Stationsöffnung prüft neu |
+| Prozessneustart | Stationsliste, keine wiederhergestellte Sitzung behaupten | Native Umsetzung separat prüfen; der Pilot speichert keinen Auftrag zum Wiederholen |
 
-## Erste Hypothesen und Vorschläge
-
-- **H1, P2:** Lange Baugruppenseite erschwert den schnellen Wechsel zwischen
-  Verbinden und der gewünschten Aktion. Vorschlag: klarer Verbindungsabschnitt
-  und fokussierte Lichtbedienung, weitere Baugruppen außerhalb des Pilotpfads.
-  Quellbeleg: Reihenfolge der Controls in `MainActivity`; Sicht-/Nutzungsprüfung offen.
-- **H2, P1:** `connected` bedeutet noch nicht bedienberechtigt. Gestaltung muss
-  Transport, Zugangsprüfung und Bereitschaft unterscheidbar machen. Keine
-  Behauptung eines vorhandenen visuellen Fehlers; UI-Vorschlag gegen echte Zustände prüfen.
-- **H3, P1:** Abbruchnachricht „Getrennt“ allein erklärt unklaren Befehlsausgang
-  und Wiederaufnahme nicht. Vorschlag: Grund, entwerteter Status und expliziter
-  Suchweg am selben Ort. Tatsächliche Wahrnehmung noch ungeprüft.
-- **H4, P2:** Bisher generische Bezeichnung „LED-Box“ hilft mehreren ähnlichen
-  Kandidaten wenig. Keine erfundene Stationszuordnung: verlässliche Kurzkennung
-  oder physischer Identifikationsweg benötigt eigenen technischen Vertrag.
-  Pilot zeigt deshalb keine zugesagte Mehrbox-Identifizierung.
+Verbindung ist keine Licht-/Spielaktion. „Zustand unbekannt“ bedeutet weder
+„Licht aus“ noch „Spiel gestoppt“. Der Prototyp verwendet verkürzte Simulationszeiten;
+Protokollfristen und Android-Lebenszyklus bleiben durch ihre Verträge festgelegt.
 
 ## Vorgeschlagene Designregeln
 
@@ -130,41 +114,34 @@ kleine Breite und Screenreader werden im nativen Review geprüft. Platz für
 systemseitige Insets, keine schwebenden Elemente über wichtigen Aktionen.
 Designziele sind noch keine gemessene Zugänglichkeitsabnahme.
 
-## Akzeptanz- und Prüfplan
+## Verbindlicher Akzeptanz- und Prüfplan
 
-| Fall | Erwartung | Geeigneter Nachweis |
+| Fall | Erwartung | Nachweis |
 | --- | --- | --- |
-| Normalweg | Gewählte Box, Prüfung, Bedienbereitschaft und bestätigter Auftrag sind unterscheidbar | Erst Prototypablauf, später Compose/Android |
-| Bluetooth aus / Rechte abgelehnt | Verständliche Ursache und kontrollierter Rückweg | Android-Systemdialoge auf Emulator/Gerät |
-| Keine Ergebnisse / falscher Zugang | Kein Erfolg, keine automatische Einrichtung; erneute Suche möglich | Prototyp und native Integration |
-| Abbruch vor Start | Zustand entwertet, Bedienung gesperrt, explizite Wiederaufnahme | Zustandsprüfung + Android/Funk |
-| Abbruch nach Versand, vor Antwort | „Ausgang unklar“; kein erneuter Start beim Reconnect | Fake-/Integrationstest + reale Funkprobe |
-| Veralteter Status | Bestehende Sperre sichtbar, keine aktuelle Wirkung behauptet | Frischetests + UI-Zustandsvorschau |
-| Wiederaufnahme | Zugang und frischer Status geprüft; bewusster neuer Start nötig | Prototyp + native Integration |
-| Hintergrund / Rotation / Neustart | Bestehende Lebenszyklusregeln korrekt sichtbar | Android-Laufzeittest |
-| Kleine Breite / große Schrift | Kein abgeschnittener Status, wesentliche Aktionen erreichbar | Native Vorschauen, 320 dp und 200 % Schrift |
-| Screenreader / Farbe | Zustand und Aktionen ohne alleinige Farbcodierung verständlich | Semantikprüfung + TalkBack |
+| Normalweg | Ein Stationsklick bis Bereit; keine Suche-/Kandidatenwahl | Browser, später Android |
+| Einrichtungsfehler, jeweils Zuordnung und Zugang | Hilfe nennt zuständige Person, Kontext und passende Schritte; Rückkehr erhält Fehler | Browser |
+| Erneut prüfen ohne externe Korrektur | Derselbe Fehler bleibt; Start/Stop gesperrt | Browser + Modelltest |
+| Externe Korrektur | Nur Teststeuerung simuliert Korrektur; erst erneute Suche/Auth/Status ermöglicht Bedienung | Browser + Modelltest |
+| Auftrag ausgeführt, Antwort verloren | Zunächst unbekannt, nach automatischer Prüfung tatsächlicher neuer Zustand; kein Retry | Browser + Modelltest, später BLE |
+| Auftrag nicht angekommen | Zunächst unbekannt, danach alter Gerätestand; kein Retry, neuer Auftrag nur bewusst | Browser + Modelltest, später BLE |
+| Stop mit / ohne Zustellung | Analog beide Ausgänge; bei nicht zugestelltem Stop läuft der Effekt weiter | Modelltest + Browser, später BLE |
+| Status veraltet / Hintergrund und Rückkehr | Alte Anzeige entwertet, automatisch neu prüfen, keine Lichtaktion | Modell + Browser; echter Lebenszyklus separat Android |
+| Abbrechen / Stationsliste | Keine späten Erfolgsmeldungen, keine selbstständige neue Lichtaktion | Modell + Browser |
+| Große Schrift | 200 %, Inhalt scrollbar, Hilfe/Rückkehr/Start/Stop erreichbar | Browser; 320 dp und native Schrift separat |
+| Screenreader / Rotation / Neustart | Semantik, Fokus und Sitzungsregeln tatsächlich prüfen | Android/TalkBack offen |
 
-## Umsetzungspakete und aktueller Stand
+## Umsetzung und Abnahmegrenze
 
-1. **Erledigt:** Rollenvertrag, Quellen-/Zustandsanalyse, Brief und Prüfplan.
-2. **Erzeugt, Auswahl offen:** [drei visuelle Material-nahe Alternativen](EXPLORATION.md) für B10
-   (Unterbrechung/Wiederaufnahme); gleiche Inhalte, andere Hierarchie/Interaktion.
-   Bildgenerierung erhält die obigen Code-/Designregeln, keine angeblich vorhandenen
-   Screenshots. Nutzer wählt die Richtung vor dem Bau.
-3. **Nach Auswahl:** editierbare Figma-Frames für B0/B3/B4/B6/B7/B10/B11 und
-   Kernkomponenten/Zustände; Vorlagenherkunft und Texte im Repository festhalten.
-4. **Danach:** bedienbarer Prototyp mit ausdrücklich simuliertem Verbindungsverlust
-   und Befehlsausgang; kein BLE-Scheinbetrieb. Review gegen obige Akzeptanzfälle.
-5. **Separater Implementierungsschritt:** Compose-Komponenten, Semantik und
-   Zustandsbindung; bestehende Protokollregeln erhalten, native Prüfungen durchführen.
+Rolle, visuelle Auswahl, Figma-Ausgangsentwurf und interaktiver Prototyp sind vorhanden.
+Diese PO-Korrektur erweitert den Browser um Einrichtungshilfe und beide Auftragsausgänge.
+Figma ist hierfür noch der vorherige Entwurfsstand, keine vollständige aktuelle
+Implementierungsvorgabe. Maßgeblich sind diese Tabelle, der aktuelle Browser und
+[PO-Nachprüfung](../../design/box-pilot/po-review.md).
+Die frühere manuelle Verbindung ist ausschließlich [historisch](BOX-PILOT-HISTORIE.md).
+Native Android-Umsetzung, mehrere Stationen, reale Einrichtung, BLE, TalkBack und
+Nutzerabnahme bleiben separate Schritte.
 
-Erledigt: visuelle Auswahl, Figma-Datei mit 19 aktuellen Screens, interaktiver Prototyp,
-Browserprüfung und erste Nutzungsbewertung. Offen: native Android-Sichtprüfung,
-Nutzertest und tatsächliche Geräte-/Funkabnahme. Der laufende Chat kann
-nach Auswahl fortsetzen; ein späterer Einstieg liest diese Datei und den PR.
-
-## Prüfung dieser Rollenfassung
+## Historischer Prüfstand der ersten Rollenfassung
 
 Am 18.10.2026: Skill-Creator-Validator bestanden, Agenten-TOML syntaktisch und
 auf Pflichtfelder geprüft, lokale Markdownverweise und alle drei Bildhashes
@@ -173,7 +150,7 @@ lokal bereitgestellte YAML-Abhängigkeit; diese wurde anschließend entfernt.
 Keine App-/Firmwareänderung, daher kein neuer Build oder Produkttest.
 Keine Behauptung automatischer Agentenregistrierung im laufenden Desktop.
 
-## Ausarbeitung nach Nutzerfreigabe
+## Historische erste Ausarbeitung nach Nutzerfreigabe
 
 Am 18.10.2026 vom Nutzer zur Figma-/Prototypausarbeitung beauftragt.
 [Entwurf und Anleitung](../../design/box-pilot/README.md),

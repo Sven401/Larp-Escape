@@ -11,6 +11,7 @@ import "@fontsource/roboto/700.css";
 export default function Prototype() {
   const [state, send] = useReducer(reducer, initial);
   const [scenario, setScenario] = useState("normal");
+  const [helpOpen, setHelpOpen] = useState(false);
   const [size, setSize] = useState("normal");
   const [toolsOpen, setToolsOpen] = useState(false);
   const { setDeviceId } = useMobileDevice();
@@ -20,7 +21,7 @@ export default function Prototype() {
     if (state.phase === "scanning") action = {type:"FOUND", empty:scenario === "empty", matches:scenario === "ambiguous"?2:1};
     if (["lost","stale","background"].includes(state.phase)) action = scenario === "bluetooth" ? {type:"BLUETOOTH"} : {type:"SCAN"};
     if (state.phase === "verifying") action = {type:"VERIFIED", denied:scenario === "access"};
-    if (state.phase === "pending") action = scenario === "loss" ? {type:"LOST"} : {type:"ACK"};
+    if (state.phase === "pending") action = scenario.startsWith("loss") ? {type:"LOST", delivered:scenario === "loss"} : {type:"ACK"};
     if (!action) return;
     const timer = window.setTimeout(() => send(action!), state.phase === "pending" ? 1700 : ["lost","stale","background"].includes(state.phase) ? 2400 : 900);
     return () => window.clearTimeout(timer);
@@ -34,8 +35,8 @@ export default function Prototype() {
     scanning:[state.reconnected ? "Verbindung wird wiederhergestellt …" : "Station wird verbunden …", ""],
     empty:["Station nicht erreichbar", "Gehe näher an die Station und versuche es erneut."],
     verifying:[state.reconnected ? "Verbindung wird wiederhergestellt …" : "Station wird verbunden …", ""],
-    access:["Stationszugang fehlt", "Die Einrichtung für diese Veranstaltung muss geprüft werden."],
-    assignment:["Stationszuordnung unklar", "Die Einrichtung für diese Veranstaltung muss geprüft werden."],
+    access:["Stationszugang fehlt", "Bitte die verantwortliche Person für die Veranstaltung, deinen Stationszugang zu prüfen."],
+    assignment:["Stationszuordnung unklar", "Bitte die verantwortliche Person für die Veranstaltung, die Gerätezuordnung dieser Station zu prüfen."],
     stale:["Status nicht aktuell", "Die Verbindung besteht, aber der Gerätestand ist nicht mehr bestätigt."],
     background:["Verbindung beendet", "Nach der Rückkehr werden Zugang und Gerätestand erneut geprüft."],
   };
@@ -53,14 +54,15 @@ export default function Prototype() {
       <h2>Den Ablauf ausprobieren</h2>
       <p>Beispielveranstaltung · simulierte Geräte.<br/>Es werden keine echten Befehle gesendet.</p>
       <label>Testfall<select value={scenario} onChange={e=>{setScenario(e.target.value);e.target.blur();}}>
-        <option value="normal">Normaler Ablauf</option><option value="loss">Abbruch vor Befehlsantwort</option>
+        <option value="normal">Normaler Ablauf</option><option value="loss">Antwort verloren · Auftrag ausgeführt</option><option value="loss-undelivered">Auftrag nicht angekommen</option>
         <option value="empty">Keine Suchergebnisse</option><option value="access">Falscher Zugang</option><option value="bluetooth">Bluetooth ausgeschaltet</option><option value="permission">Gerätezugriff fehlt</option><option value="ambiguous">Zuordnung nicht eindeutig</option>
       </select></label>
       <div className="tool-actions">
         <button onClick={()=>send({type:"LOST"})} disabled={!connected}>Verbindung unterbrechen</button>
         <button onClick={()=>send({type:"STALE"})} disabled={state.phase!=="ready"}>Status veralten lassen</button>
         <button onClick={()=>send({type:"BACKGROUND"})} disabled={state.screen!=="station"}>Hintergrund & Rückkehr</button>
-        <button onClick={()=>send({type:"RESET"})}>Pilot zurücksetzen</button>
+        <button onClick={()=>setScenario("normal")} disabled={!["access","ambiguous"].includes(scenario)}>Einrichtung korrigiert simulieren</button>
+        <button onClick={()=>{setHelpOpen(false);send({type:"RESET"});}}>Pilot zurücksetzen</button>
       </div>
       <label>Schriftgröße<select value={size} onChange={e=>{setSize(e.target.value);e.target.blur();}}><option value="normal">100 %</option><option value="large">200 %</option></select></label>
       <p className="tool-note">Vorbereitete Veranstaltung: Stationsverbindung und Wiederaufnahme laufen automatisch. Lichtaufträge werden nicht wiederholt.</p>
@@ -68,7 +70,7 @@ export default function Prototype() {
     </aside>, document.body)}
     <div className={`pilot-app ${size === "large" ? "large-type" : ""}`} style={{"--pilot-scale":size==="large"?2:1} as CSSProperties}>
       <header className="pilot-header">
-        {state.screen === "station" ? <button className="back" onClick={()=>send({type:"BACK"})}><ArrowLeftIcon/>Stationen</button> : <div className="back context-label">Spielleitung</div>}
+        {state.screen === "station" ? <button className="back" onClick={()=>{setHelpOpen(false);send({type:"BACK"});}}><ArrowLeftIcon/>Stationen</button> : <div className="back context-label">Spielleitung</div>}
         <p className="event-name">Nacht der Siegel</p>
         <h1>{state.screen === "station" ? "Altes Tor" : "Stationen"}</h1>
       </header>
@@ -77,7 +79,14 @@ export default function Prototype() {
           <p className="intro">Wähle die Station, die du vor Ort bedienen möchtest.</p>
           <button className="station-row" onClick={()=>send({type:"OPEN",blocked:scenario==="bluetooth"?"bluetooth":scenario==="permission"?"permission":undefined})}><span><strong>Altes Tor</strong><small>Licht und Stationsbedienung</small></span><ChevronRightIcon/></button>
 
-        </> : <>
+        </> : helpOpen ? <section className="setup-help" aria-labelledby="setup-title">
+          <h2 id="setup-title" tabIndex={-1} ref={node=>node?.focus()}>Einrichtung prüfen lassen</h2>
+          <p>Wende dich an die Person, die die Veranstaltung eingerichtet hat. Nenne ihr:</p>
+          <p><strong>Nacht der Siegel · Altes Tor</strong><br/>{state.phase === "assignment" ? "Stationszuordnung unklar" : "Stationszugang fehlt"}</p>
+          <ol>{state.phase === "assignment" ? <><li>Prüfen, welches Gerät zur Station „Altes Tor“ gehört.</li><li>In der Veranstaltungseinrichtung genau dieses Gerät zuordnen und doppelte Zuordnungen entfernen.</li></> : <><li>Prüfen, ob dein Zugang für diese Veranstaltung und Station gültig ist.</li><li>Den passenden Stationszugang über den vorgesehenen Einrichtungsweg bereitstellen.</li></>}<li>Nach der Korrektur hierher zurückkehren und „Erneut prüfen“ wählen.</li></ol>
+          <p>Die Veranstaltungseinrichtung liegt außerhalb dieses Piloten.</p>
+          <button className="primary" onClick={()=>setHelpOpen(false)}>Zur Stationsbedienung</button>
+        </section> : <>
           <section className={`connection ${isLost ? "warning" : ""}`} aria-label="Verbindungsstatus" aria-live="polite" aria-atomic="true" data-testid="connection-status">
             {isLost ? <>
               <h2><ExclamationTriangleIcon/>Verbindung unterbrochen</h2>
@@ -95,7 +104,7 @@ export default function Prototype() {
               {["permission","denied"].includes(state.phase) && <div className="action-stack"><button className="primary" onClick={()=>send({type:"ALLOW"})}>Zugriff erlauben</button><button className="text-button" onClick={()=>send({type:"DENY"})}>Jetzt nicht</button></div>}
               {state.phase === "bluetooth" && <button className="primary" onClick={()=>{setScenario("normal");send({type:"ENABLE_BT"});}}>Bluetooth einschalten</button>}
               {["empty","background","stale"].includes(state.phase) && <button className="primary" onClick={scan}>Erneut versuchen</button>}
-              {["access","assignment"].includes(state.phase) && <button className="primary" onClick={()=>{setScenario("normal");send({type:"ACCESS_FIXED"});}}>Nach Einrichtung erneut versuchen</button>}
+              {["access","assignment"].includes(state.phase) && <div className="action-stack"><button className="primary" onClick={()=>setHelpOpen(true)}>Hilfe zur Einrichtung</button><button className="text-button" onClick={scan}>Erneut prüfen</button></div>}
               {["scanning","verifying"].includes(state.phase) && <button className="text-button" onClick={()=>send({type:"CANCEL"})}>Abbrechen</button>}
             </>}
           </section>

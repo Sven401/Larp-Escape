@@ -6,7 +6,7 @@ Unterbrechungsanzeige vor räumlich erhaltener Lichtauswahl. Nutzerfreigabe am
 
 ## Öffnen und ausprobieren
 
-Lokale Vorschau der laufenden Sitzung: http://127.0.0.1:4173/
+Lokale Vorschau der laufenden Sitzung: http://127.0.0.1:4174/
 
 Für einen frischen Klon mit Node.js 24 und npm: `npm ci`, anschließend `npm run dev`.
 Die Laufzeit prüft sich vor Start/Build. Befehle aus diesem Ordner ausführen.
@@ -26,11 +26,19 @@ entsprechende Testfall simuliert einen fehlenden OS-Zugriff.
 
 Testfälle außerhalb des Telefons: Abbruch vor Antwort, keine Ergebnisse,
 Zugangsfehler, Bluetooth aus, fehlender Gerätezugriff und unklare Zuordnung.
+Antwortverlust lässt sich mit ausgeführtem oder nicht angekommenem Auftrag prüfen,
+auch für Stop. Einrichtungshilfe nennt Kontext, zuständige Person und Prüfschritte.
+„Erneut prüfen“ korrigiert keine Konfiguration; dafür gibt es ausschließlich außerhalb
+des Telefons „Einrichtung korrigiert simulieren“. Danach bewusst erneut prüfen.
 Bei schmaler Vorschau „Testfälle“ öffnen. Verbindungsverlust wird nach einem
 kurzen sichtbaren Unterbrechungszustand automatisch erneut geprüft. Ein erfolgloser
 Versuch endet in einem sichtbaren Fehler statt einer endlosen Suchschleife.
 
-## Editierbarer Figma-Entwurf
+## Editierbarer Figma-Ausgangsentwurf
+
+Die PO-Korrektur ergänzt den Browser um Einrichtungshilfe und beide Auftragsausgänge.
+Diese Ergänzung ist in Figma noch nicht nachgeführt. Aktuelle Umsetzungsvorgabe:
+[Zustandsvertrag](../../docs/ui-ux/BOX-PILOT.md), [PO-Nachprüfung](po-review.md).
 
 [Datei und Startscreen](https://www.figma.com/design/3uQpZfwREhQ9cHk80jMtRw?node-id=3-20)
 
@@ -48,7 +56,7 @@ Figma-Raster: 390×844; Browser standardmäßig Pixel 10 mit geschützter
 
 ## Prüfung und Herkunft
 
-- `npm run test:pilot`: 14 Zustands-/Befehlsregelfälle.
+- `npm run test:pilot`: 19 Zustands-/Befehlsregelfälle.
 - `npm run check:runtime`: alle 28 geschützten Dateien unverändert.
 - `npm run build`: Typprüfung und Vite-Produktionsbuild.
 - `npm run test:sites`: vier Verpackungs-/Workerfälle; kein Deployment beauftragt.

@@ -62,3 +62,6 @@
 
 .tool-toggle { display:none; }
 @media(max-width:1000px) { .pilot-tools {width:190px; max-height:45vh;} .tool-toggle {display:block;border:0;background:white;color:#6750a4;padding:6px;font-weight:500;cursor:pointer;} .tool-body {display:none;} .is-open .tool-body {display:block;} }
+
+.setup-help ol { padding-left:24px; line-height:1.5; }
+.setup-help li { margin-bottom:16px; }
