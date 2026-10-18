@@ -1,5 +1,10 @@
 # LED-Effekt-Architekt: Erprobung und Abschluss
 
+> Historischer Abschluss der Rollenfassung 1.0. Der danach ausdrücklich erweiterte
+> Auftrag wird durch [Rolle 2.0 und reale Lichtversuche](../docs/led/naeheglut-live-results-2026-10-18.md)
+> erfüllt. Die folgenden Aussagen zu reinem Entwurf und fehlenden Geräteversuchen
+> gelten nur für diesen früheren Bearbeitungsstand.
+
 Datum: **18. Oktober 2026**. Sitzung:
 `01a14f9a-35fb-72e1-9acb-132b0d16599d`.
 Status: **Rollenfassung 1.0 erstellt, angewandt, geprüft und verbessert**.

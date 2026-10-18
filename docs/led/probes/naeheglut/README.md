@@ -1,6 +1,10 @@
 # Näheglut: ausführbare Entwurfs-Rechnerprobe
 
-**Status:** Entwurfsbeleg vom 18. Oktober 2026; keine Produktimplementierung.
+**Status:** Historische skalare Entwurfsprobe 1.0 vom 18. Oktober 2026.
+Der aktuelle gemeinsame C++-Kern und die reale Iteration sind im
+[Livebericht](../../naeheglut-live-results-2026-10-18.md) belegt.
+`collect_live_evidence.py` erzeugt die Auszüge unter `live/` aus privaten
+Rohaufnahmen. Die folgende Python-Modellprobe prüft nicht den C++-Kern.
 
 Die Probe wendet die [LED-Effekt-Architektenrolle](../../rollen/led-effekt-architekt.md)
 auf den [Näheglut-Entwurf](../../naeheglut-design.md) an. Verbindlich für die

@@ -1,16 +1,21 @@
 # Fachlicher Vertrag: Spielaufträge und LED-Beiträge
 
-Stand: **18. Oktober 2026**. **Entwurf**, keine implementierte API oder neue
-Wire-Version. Für die [LED-Effekt-Architektenrolle](rollen/led-effekt-architekt.md).
+Stand: **18. Oktober 2026**. **Entwurf des Produktvertrags**, keine implementierte Produkt-API
+oder neue Produkt-Wire-Version. Für die [LED-Effekt-Architektenrolle](rollen/led-effekt-architekt.md).
 Nutzerauftrag: Effekte parallel beauftragen, ändern, stoppen und lesbar mischen.
 Produktbasis geprüft: `dead12040c196ff74ab4be17ba71451a9351a676`.
 Historische Quellen: Rollenrouter, Original `a40365d`, Analysen bei `e7ec0f9`.
+
+Eine begrenzte Teilmenge ist inzwischen im [isolierten LIVE-Labor](../../firmware/led/LIVE-NEARGLOW.md)
+ausführbar: zwei Instanzen, RGB-Festkomma, ADD32 und gezielter Stop.
+Dessen Session-Token ersetzt keine produktive Epochen-/Profilintegration.
+[Praktischer Nachweis](naeheglut-live-results-2026-10-18.md).
 
 ## Iststand und Anschluss
 
 | Vorhandener Pfad | Belegt im Code | Fehlender Anschluss / Folgearbeit |
 | --- | --- | --- |
-| Festes Spiel | `ReichstagGame → ILightEffects → GameLightEffects`; Wertqueue 32, LED-Besitzer, Funkeln → Burst → 4 Ripples → FastLED | Allgemeine Instanzidentität, gezielter Stop, Einzelfehlerrückmeldung fehlen. Firmware-Maintainer erweitert Port/Adapter separat. |
+| Festes Spiel | `ReichstagGame → ILightEffects → GameLightEffects`; Wertqueue 32, LED-Besitzer, Funkeln → Burst → 4 Ripples → FastLED | Allgemeine Instanzidentität, gezielter Stop, Einzelfehlerrückmeldung fehlen. Port/Adapter vor Produktintegration ergänzen. |
 | Profilspiel | `Engine/Session → IProfileDevices → Broker::applyEffect → Owner::Led`; kopierte Effektwerte und Tickets | Reale Adapter und Instanz-/Mixvertrag offen. Kurzen Auftragsabschluss von lang lebendem Effekt trennen; Profilbarrieren müssen beide berücksichtigen. |
 | Manuelle Baugruppe | `ProductMain → LedOutput::start/stop → RMT`; ein angeforderter Effekt, Start ersetzt ihn, Stop fordert Schwarz | Kein Mixer; V2 meldet eine Effekt-ID. Neue Semantik benötigt eigenen API-/Wire-/App-Auftrag, keine Umdeutung vorhandener Nachrichten. |
 

@@ -1,0 +1,55 @@
+{
+  "date": "2026-10-18",
+  "source_base": "aa887f56c428f02a4adbad55e1e0fea78e09f12f",
+  "source_manifest": "firmware-source-hashes.json",
+  "source_files": 55,
+  "changed_during_verification": [
+    "firmware/led\\README.md"
+  ],
+  "camera_tests_exit": 0,
+  "output_tests_exit": 0,
+  "product_builds_exit": 0,
+  "platformio": "6.2.0",
+  "product_sizes": {
+    "larp-nfc-test": {
+      "flash": 1147193,
+      "ram": 47272
+    },
+    "larp-espnow-test": {
+      "flash": 1491489,
+      "ram": 59472
+    },
+    "larp-matrix-test": {
+      "flash": 1138153,
+      "ram": 42560
+    },
+    "larp-led-product": {
+      "flash": 1136045,
+      "ram": 42512
+    }
+  },
+  "hardware_access": false,
+  "source_changes": false,
+  "warning": "Existing framework-arduinoespressif32/cores/esp32/esp32-hal-uart.c:153 return without value",
+  "camera_python_tests": {
+    "count": 20,
+    "exit_code": 0,
+    "duration_seconds": 19.488
+  },
+  "checks": {
+    "lab_loops": 9,
+    "core_groups": 7,
+    "level_curve_subcases": 2002,
+    "led_output_cases": 17,
+    "rmt_sdk_cases": 4,
+    "wake_i2c_matrix": "passed"
+  },
+  "log_sha256": {
+    "camera-tests.log": "62e62b3160926233471482eb9c1b70e155927106d6d1103f0d27edc9267daf63",
+    "output-tests.log": "dab4504e52836eceec9912884ef1439af5727f8edeedf8564428af9eaea316f1",
+    "product-builds.log": "eb26a44c3333a08d46b7c12beda99cfba683fd11f6fa4cfe57ddaf8d2de417e1",
+    "host-camera-tests-review.log": "389ebc654181ac57ef873646337bafc4d2f25e4b447aeea89b8f47c757cc821b",
+    "structure-scope-review.log": "0371088f377736fb823d0cf9d8ac6bcf1ae9b3d25771492b6dc9f928683dc59c",
+    "firmware-source-hashes.json": "e29ae10cc5deff4171419a5e0d5e23a59fa87f1e534d09431844d3372f9d5a69"
+  }
+}
