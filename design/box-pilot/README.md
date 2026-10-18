@@ -12,25 +12,31 @@ Für einen frischen Klon mit Node.js 24 und npm: `npm ci`, anschließend `npm ru
 Die Laufzeit prüft sich vor Start/Build. Befehle aus diesem Ordner ausführen.
 Der Entwurf ist ein isoliertes Web-Prüfartefakt, keine zusätzliche Produktplattform.
 
-Die Stationsauswahl führt über Suche, simulierte Zugriffserlaubnis, Kandidat und
-Zugangsprüfung zur Lichtbedienung. Auswahl allein sendet nichts; Start/Stop zeigen
-einen offenen Auftrag und anschließend eine simulierte Antwort. Testfälle lassen
-sich außerhalb des Telefons wählen; bei schmaler Vorschau „Testfälle“ öffnen.
-„Abbruch vor Befehlsantwort“ wählen und Start drücken: Ausgang unklar, neue Suche,
-frische Prüfung, kein erneutes Senden. Die simulierte Station kann den ersten
-Auftrag bereits ausgeführt haben; Wiederverbinden liest diesen Stand neu.
+Im vorbereiteten Veranstaltungskontext genügt die Stationsauswahl: Suche,
+Auswahl des eindeutig zugeordneten Geräts, Zugangsprüfung und frischer Status
+laufen automatisch. Fehlende oder mehrdeutige Zuordnung wird nicht geraten.
+Auch die Wiederverbindung nach Unterbrechung oder Rückkehr erfolgt automatisch.
+Ein erneuter Verbindungsversuch ist kein erneuter Lichtauftrag.
 
-Zusätzlich: keine Suchergebnisse, falscher Zugang, Bluetooth aus, verweigerter
-Zugriff, veralteter Status, Hintergrund/Rückkehr und Schriftvergrößerung.
-Die Schalter bedienen keine echten Betriebssystemrechte oder Bluetoothgeräte.
-Keine Schlüsseldatei nötig; keine Erlaubnis oder Firmwareänderung wird ausgeführt.
+In der Spielleitungsansicht stehen Zustand und Aktionen. Technische Hinweise
+über Versand, Geräteantwort oder Sichtprüfung gehören in Diagnose und Abnahme.
+Ausnahmen wie fehlender Zugang oder nicht erreichbare Station bleiben sichtbar.
+Die vorbereitete Beispielkonfiguration hat bereits Gerätezugriff; nur der
+entsprechende Testfall simuliert einen fehlenden OS-Zugriff.
+
+Testfälle außerhalb des Telefons: Abbruch vor Antwort, keine Ergebnisse,
+Zugangsfehler, Bluetooth aus, fehlender Gerätezugriff und unklare Zuordnung.
+Bei schmaler Vorschau „Testfälle“ öffnen. Verbindungsverlust wird nach einem
+kurzen sichtbaren Unterbrechungszustand automatisch erneut geprüft. Ein erfolgloser
+Versuch endet in einem sichtbaren Fehler statt einer endlosen Suchschleife.
 
 ## Editierbarer Figma-Entwurf
 
 [Datei und Startscreen](https://www.figma.com/design/3uQpZfwREhQ9cHk80jMtRw?node-id=3-20)
 
-21 native Frames: B0–B12, vier Fehlerzustände, drei Wiederaufnahmescreens und
-Stop-Auftrag. 45 Zielverknüpfungen strukturell geprüft. Roboto, gebundene
+19 aktuelle Frames mit Normal-, Wiederaufnahme- und Ausnahmezuständen; drei
+frühere technische Einzelschritte auf eigener Archivseite. 40 aktive
+Zielverknüpfungen strukturell geprüft. Roboto, gebundene
 Farbvariablen und drei wiederverwendbare Button-Komponenten; Auto Layout und
 editierbare Texte. Quelle ist keine flache Screenshotablage. Figma-Präsentation
 wurde nicht vollständig durchgespielt; der browsergeprüfte Ablauf ist maßgeblich.
@@ -42,7 +48,7 @@ Figma-Raster: 390×844; Browser standardmäßig Pixel 10 mit geschützter
 
 ## Prüfung und Herkunft
 
-- `npm run test:pilot`: neun Zustands-/Befehlsregelfälle.
+- `npm run test:pilot`: 14 Zustands-/Befehlsregelfälle.
 - `npm run check:runtime`: alle 28 geschützten Dateien unverändert.
 - `npm run build`: Typprüfung und Vite-Produktionsbuild.
 - `npm run test:sites`: vier Verpackungs-/Workerfälle; kein Deployment beauftragt.

@@ -12,7 +12,7 @@
 .connection h2 svg { width:24px; height:24px; flex:none; }
 .connection.warning h2 svg { color:#ac6200; }
 .connection .primary { margin-top:18px; }
-.connection { border-bottom:1px solid #dcdce4; padding:0 0 23px; min-height:210px; }
+.connection { border-bottom:1px solid #dcdce4; padding:0 0 23px; min-height:160px; }
 .connection p { margin-bottom:0; }
 .connection p.quiet { margin-top:0; }
 .pilot-content button { font:500 1em/1.25 Roboto,Arial,sans-serif; min-height:50px; cursor:pointer; border-radius:8px; padding:14px 18px; transition:background-color .12s, transform .1s; }

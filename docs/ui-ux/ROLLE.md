@@ -31,6 +31,15 @@ Bis dahin lässt sich der Rollenvertrag direkt im Hauptchat anwenden.
 - Boxbeobachtung, Appentwurf, Simulationszustand und physische Wirkung bleiben
   getrennt. Kein allgemeiner Funk-Not-Aus und kein automatischer Wiederanlauf.
 
+## Spielleitungsbedienung nach bestätigter Nutzerkorrektur
+
+Bei vorbereiteter Veranstaltung genügt die Stationsauswahl. Suche, eindeutige
+Gerätezuordnung, Zugangsprüfung und Wiederverbindung sind Aufgaben der App.
+Technische Vertrags-/Abnahmehinweise nicht als ständige Bedienhinweise zeigen.
+Relevante Zustände und konkrete Ausnahmen bleiben sichtbar. Automatische
+Verbindung wiederholt keine Spiel-/Lichtaktion. Quelle: Nutzerfeedback vom
+18.10.2026, dieselbe UI/UX-Sitzung; Umsetzung zunächst im Prototyp.
+
 ## Ergebnisse und Arbeitsgang
 
 1. Brief: Nutzer, Ziel, Plattform, bestehende Verträge, offene Annahmen, Umfang.

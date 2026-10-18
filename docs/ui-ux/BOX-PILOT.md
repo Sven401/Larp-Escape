@@ -11,6 +11,24 @@ stehen in [Entwurf v2](REVISION-VERANSTALTUNG.md). Veranstaltung und Station
 stehen in der Produktbedienung im Vordergrund; die generischen Bestandsbegriffe
 unten bleiben technische Herkunft. Die Richtung wurde bestätigt; [Figma und interaktiver Prototyp](../../design/box-pilot/README.md) sind ausgearbeitet. Native Abnahme bleibt offen.
 
+## Aktueller Bediengrundsatz · ersetzt manuelle Verbindung im Entwurf
+
+**Bestätigt, 18.10.2026:** Nutzerfeedback nach Ausprobieren des Prototyps.
+Im konkreten Veranstaltungskontext wählt die Spielleitung die Station; bei
+funktionierender Vorbereitung laufen Gerätesuche, Auswahl des eindeutig
+zugeordneten Geräts, Zugang und Wiederverbindung automatisch. Technische
+Hinweistexte über Versand, Geräteantwort und physische Sichtprüfung gehören
+in Diagnose/Abnahme, nicht in die Spielleitungsbedienung.
+
+Der Prototyp setzt dies um; die nachfolgende Bestandsanalyse und ursprüngliche
+Zustandstabelle dokumentieren weiterhin den früheren Stand beziehungsweise die
+native Android-Basis. Sie sind keine Vorgabe manueller Schritte im neuen Entwurf.
+Aktueller Normalweg: Station auswählen → automatisch verbinden → bedienen.
+Bei Unterbrechung: Zustand entwerten → automatisch neu verbinden und prüfen →
+weiter bedienen. Lichtaufträge werden nicht wiederholt. Fehlende/mehrdeutige
+Zuordnung und fehlender Zugang bleiben gezielte Ausnahmen. Veranstaltungseinrichtung
+ist ein eigener Bereich; ihre reale Implementierung wird hier nicht behauptet.
+
 ## Brief
 
 Nutzer: Spielleitung mit Android-Handy an einer lokalen Box. Ziel: eine gefundene
@@ -141,7 +159,7 @@ Designziele sind noch keine gemessene Zugänglichkeitsabnahme.
 5. **Separater Implementierungsschritt:** Compose-Komponenten, Semantik und
    Zustandsbindung; bestehende Protokollregeln erhalten, native Prüfungen durchführen.
 
-Erledigt: visuelle Auswahl, Figma-Datei mit 21 Screens, interaktiver Prototyp,
+Erledigt: visuelle Auswahl, Figma-Datei mit 19 aktuellen Screens, interaktiver Prototyp,
 Browserprüfung und erste Nutzungsbewertung. Offen: native Android-Sichtprüfung,
 Nutzertest und tatsächliche Geräte-/Funkabnahme. Der laufende Chat kann
 nach Auswahl fortsetzen; ein späterer Einstieg liest diese Datei und den PR.

@@ -78,3 +78,12 @@ Verwaltung gehören außerhalb dieses Stationsablaufs. Die bestätigte Vorlage i
 `../../docs/ui-ux/concepts/veranstaltung-station-v2.png`. Nur Beispielkontext und
 simulierte Geräte, keine echte BLE-Verbindung. Simulationssteuerung bleibt
 außerhalb des Telefonbildschirms. Kein automatisches Wiederholen von Befehlen.
+
+## Bediengrundsatz nach Nutzerfeedback vom 18.10.2026
+
+Stationsauswahl genügt bei vorbereiteter Veranstaltung und eindeutiger Zuordnung.
+Suche, Auswahl des konfigurierten Geräts, Zugang und Wiederverbindung automatisch.
+Keine manuelle Kandidatenauswahl im Normalweg. Technische Erklärungen über
+Auftragsversand, Antwort und Sichtprüfung gehören außerhalb der Spielleitungs-UI.
+Nur relevante Zustände und gezielte Ausnahmen zeigen. Automatische Verbindung
+wiederholt niemals einen Lichtauftrag. Fehlende Zuordnung oder Rechte nicht raten.
