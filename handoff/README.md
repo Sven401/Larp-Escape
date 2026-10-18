@@ -9,6 +9,7 @@ ergänzt die älteren Gerätebelege; ein Update des Zielbranches bleibt offen.
 
 ## Aktueller Stand · 18. Oktober 2026
 
+- [Übergabe: spezialisierte LED-Effekt-Architektenrolle erstellen](LED-EFFEKT-ARCHITEKT-2026-10-18.md): bestätigter Schwerpunkt Verhalten/Berechnung/Prüfplanung; Rolle an einem neuen Effektentwurf erproben. Rolle und Entwurf noch offen.
 - [ESP-NOW-Sitzungsabschluss: RSSI, Funkelsteuerung und vollständiger Kameravergleich](ESPNOW-UEBERGABE-2026-10-18.md); eigener PR #66, noch nicht integriert.
 
 **Belegt:** [PR #56](https://github.com/Sven401/Larp-Escape/pull/56) ist in
