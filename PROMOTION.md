@@ -67,3 +67,42 @@
   folgt keine Freigabe zur Nutzung als Projektkomponente. Abweichende
   Implementierungsbranches und installierte Software benötigen eine eigene
   Korrektur; dieser Eintrag behauptet deren Bereinigung nicht.
+
+## 18. Oktober 2026 — UI/UX-Rolle und erster Box-Pilot
+
+- **Ausdrücklich beauftragt:** Nutzer verlangt Einrichtung der vorgeschlagenen
+  UI/UX-Rolle und Start des Box-Piloten, Sitzung
+  `01a1505d-dfd4-7ad2-89cf-8d7be1b02240`. Die explizite Rollenübernahme ist die
+  genehmigte Ausnahme vom vorherigen Erprobungstor; keine allgemeine Hookänderung.
+- **Übernahme:** [Rollenvertrag](docs/ui-ux/ROLLE.md), Projektagent und
+  projektgebundener Skill mit AGENTS-Verweis. Keine persönlichen globalen
+  Projektfakten; kein neuer MCP-Server und keine Modellfestlegung.
+- **Erste Anwendung:** [Brief und Zustandsmodell](docs/ui-ux/BOX-PILOT.md) auf
+  `7e72411bb1c416b5864036c79a1e17d9cf46b5ac` gegen MainActivity, Repository,
+  ViewModel, LED-Zustand und BLE-Sitzung geprüft. Zugangsprüfung, Frische,
+  unklarer Ausgang und bewusste Wiederaufnahme getrennt. Kein verbundenes
+  Android-Gerät, keine sichtgeprüfte App und kein Gerätetest.
+- **Vorläufige Nutzungsbewertung:** Rollenverfahren macht Unterschiede zwischen
+  Bestand, Architektur-Soll und Gestaltungsvorschlag prüfbar. Optische Qualität,
+  Bedienbarkeit und dauerhafte Zeitersparnis sind noch offen; Nutzerbewertung
+  folgt erst nach gewähltem Entwurf und Prototyp.
+- **Einfacher Rückweg:** UI/UX-Verweis in AGENTS entfernen, Projektagent und
+  projektspezifischen Skill deaktivieren/entfernen. Brief und Belege historisch
+  erhalten. App-/Firmwarecode und persönliche Hooks wurden nicht verändert.
+
+## 18. Oktober 2026 — UI/UX-Pilot bis zum interaktiven Entwurf
+
+- **Beauftragt:** Nutzer bestätigt Veranstaltung/Station als Kontext und verlangt
+  Figma plus gesamten interaktiven Pilotablauf; gleiche UI/UX-Sitzung wie oben.
+- **Beobachtete Anwendung:** [Prototyp](design/box-pilot/README.md) mit getrennten
+  Zustandsregeln, 21 nativen Figma-Frames, Browserbedienung und gemeinsamem
+  Quellen-/Umsetzungsvergleich. Neun Regeltests und vier Packagingtests bestanden;
+  Typprüfung, Build und Integrität der 28 Vorlagendateien erfolgreich.
+- **Nutzungsbewertung:** Das Verfahren deckte einen Scroll-/Kopf-Überlauf und
+  überdeckende Teststeuerung auf; beide in der Appanbindung korrigiert.
+  Befehlsbestätigung und unklarer Ausgang sind sichtbar getrennt. Keine gemessene
+  langfristige Zeitersparnis und keine native Nutzer-/Geräteabnahme behauptet.
+- **Übernahmegrenze:** Kein Ausbau zum globalen Skill oder neuen allgemeinen
+  Werkzeugstandard. Simulationskontrollen bleiben außerhalb der Produktoberfläche.
+- **Rückweg:** Prototypordner separat entfernen/deaktivieren; Figma-Datei behalten
+  oder gesondert archivieren. Android und Firmware bleiben unverändert.

@@ -41,3 +41,12 @@ Eine regelmäßige Hintergrundüberwachung ist gesondert zu vereinbaren.
   Flash-Rückweg abgleichen. Die Maintainer-Übernahme selbst beauftragt keinen Upload.
 - Abschlussberichte nennen Änderungen, geprüften Commit, Prüfergebnisse und
   verbleibende Einschränkungen sowie bei Veröffentlichung den PR-Link.
+
+## UI/UX-Arbeit
+
+Bei beauftragtem UI/UX-Entwurf, Bedienablaufplanung oder UI-Review den
+[Rollenvertrag](docs/ui-ux/ROLLE.md) und den projektgebundenen Skill
+`.agents/skills/ui-ux-design/SKILL.md` nutzen. Projektagent: `ui_ux_designer`
+unter `.codex/agents/`. Der [Box-Pilot](docs/ui-ux/BOX-PILOT.md) ist der
+erste Anwendungsfall. Sichtprüfung, Softwaretests und Geräteabnahme getrennt
+belegen; Grundsatzentscheidungen bleiben beim Nutzer.

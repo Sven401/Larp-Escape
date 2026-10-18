@@ -16,12 +16,15 @@ Stand: **18. Oktober 2026**. Projektgebundene Referenz, keine Gerätefreigabe.
   `7e72411bb1c416b5864036c79a1e17d9cf46b5ac`, Branch
   `plan/projektuebergabe-kuratierter-stand`, nach Fetch am 18.10.2026 geprüft.
   Der erste Überblick auf `e7ec0f9` wurde dagegen abgeglichen.
-- **Ausgelesen, nicht integriert:** [UI/UX-Pilot PR #78](https://github.com/Sven401/Larp-Escape/pull/78)
+- **Ausgelesen, inzwischen integriert:** [UI/UX-Pilot PR #78](https://github.com/Sven401/Larp-Escape/pull/78)
   am veröffentlichten Head `3b2f6b4ffd561681dc5b14d13d2f0225eb640cd4`.
   Sein [Rollenvertrag](https://github.com/Sven401/Larp-Escape/blob/3b2f6b4ffd561681dc5b14d13d2f0225eb640cd4/docs/ui-ux/ROLLE.md)
   und [Stationsablauf](https://github.com/Sven401/Larp-Escape/blob/3b2f6b4ffd561681dc5b14d13d2f0225eb640cd4/docs/ui-ux/BOX-PILOT.md)
   dokumentieren bestätigte Nutzerkorrekturen. Diese Referenz erhält den dortigen
-  Stationsbediengrundsatz; sie übernimmt weder den gesamten PR noch dessen Code.
+  Stationsbediengrundsatz. Während der Erstellung wurde #78 bei
+  `42853bc1aa93de23b5fcfc72e66d2c1a397361af` in den Zielbranch integriert; der
+  eigene Dokumentationsbranch wurde damit abgeglichen. Android-/Firmwarequellen
+  sind gegenüber `7e72411` unverändert. Der Pilot wird nicht erneut implementiert.
 - **Abgeleitet:** die Hauptabläufe sind ausgearbeitete Designvorgaben zur weiteren
   Umsetzung. Neue Detailentscheidungen sind als Vorschlag/offen gekennzeichnet.
 - **Offen:** native Apptrennung, Sicht-/Nutzerprüfung und Geräteabnahme. Hier nur
@@ -104,7 +107,7 @@ Szenario-Wechsel kann eine unerwartete Trennung verursachen. Strukturbeobachtung
 keine gemessenen Nutzungsprobleme; im nativen Review überprüfen.
 
 **Korrektur des ersten Überblicks:** ein visueller Stationsentwurf mit Figma und
-Websimulation existiert bereits in PR #78. Die Aussage zum Material-Standardschema
+Websimulation ist über PR #78 inzwischen integriert. Die Aussage zum Material-Standardschema
 beschreibt ausschließlich die integrierte Android-App, nicht den gesamten
 Designbestand. Verworfene Diagnose-App und historischer Webeditor werden damit
 nicht als aktuelle Produkte wiederbelebt.
@@ -131,7 +134,9 @@ verschiedene Abbruchregeln; kein globaler Funk-Not-Aus wird versprochen.
 UI/UX verantwortet Aufgabenstruktur, Navigation, Interaktion, Sprache, visuelle
 Hierarchie, Komponenten und Zugänglichkeit beider Apps. Technische Verträge bleiben
 maßgeblich; grundlegende Produktentscheidungen beim Nutzer. Diese Referenz ergänzt
-PR #78, ohne einen zweiten Agenten, globalen Skill oder neue Arbeitsregeln einzuführen.
+den [integrierten Rollenvertrag](ROLLE.md), ohne einen zweiten Agenten, globalen
+Skill oder neue Arbeitsregeln einzuführen. Der [Stationspilot](BOX-PILOT.md) bleibt
+die konkrete Gestaltungsgrundlage für die Spielleiter-App.
 
 Vorgeschlagene Reihenfolge, keine Terminzusage:
 
