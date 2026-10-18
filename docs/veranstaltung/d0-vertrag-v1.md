@@ -1,13 +1,16 @@
 # D0 v1: Veranstaltung, Identität und Ereignisse
 
-**Status: ausgearbeiteter technischer Vertragsvorschlag zu #59; nicht implementiert.**
+**Status: durch PR #72 übernommener technischer D0-Vertrag zu #59; nicht implementiert.**
 Stand 18.10.2026, Basis `5f90d109e3589d74d73ac26f859dcd76c2902439`
 nach Fetch. Auftrag: D0 auf aktuellem Integrationsstand ausarbeiten.
 Maßgeblich bleiben [VA-01](../veranstaltungsarchitektur.md),
 [Vertragsmatrix](../veranstaltungsarchitektur-umsetzung.md) und
 [Veranstaltungszugang](../companion/veranstaltungszugang.md).
-Dieser Vorschlag konkretisiert diese Entscheidungen, ändert sie aber nicht.
-Erst ein ausdrücklich beauftragter Merge übernimmt den Vorschlag ins Soll.
+Dieser Vertrag konkretisiert diese Entscheidungen, ändert sie aber nicht.
+Der Nutzer hat am 18.10.2026 nach fachlicher Prüfung die Übernahme von
+[PR #72](https://github.com/Sven401/Larp-Escape/pull/72) in den kuratierten
+Integrationsbranch und die Fortschreibung des Projektstands beauftragt.
+Damit ist D0 als Spezifikationspaket abgeschlossen; D0-G1–G5 bleiben offen.
 
 `MUSS` bezeichnet eine Bedingung der späteren Implementierung; keine Aussage
 über vorhandenen Code. D0 liefert Begriffe, Übernahmeregeln, ein neues Format
@@ -311,7 +314,7 @@ Annahmeentscheidungen, keine Kryptografie, Flashdurabilität oder Funk.
 | Vertrauen über Vermittler, Einführung/Entzug | Sicherheitsvertrag Abschnitte 2–3, Fälle TRUST; echte Verifizierer/Schlüsselabläufe #28/D2 |
 | Version/Fähigkeit/Migration und Negative | Sicherheitsvertrag Abschnitte 1/4, Fälle FORMAT/MIG; bestehende Bytes unverändert |
 
-Die Kriterien sind damit **als Spezifikationsvorschlag abgedeckt**, nicht als
+Die Kriterien sind damit **als integrierte Spezifikation abgedeckt**, nicht als
 implementierte Funktion abgenommen. Offene Implementierungstore sind ausdrücklich
 dem Folgepaket zugeordnet; unbekannte Speicher-/Funkkapazität ist keine Zusage.
 Das Modell ist absichtlich eine dekodierte Projektion: Verifizierer-/Rechte-/

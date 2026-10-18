@@ -1,8 +1,13 @@
 # Technische Projektübergabe
 
-[D0-Vertragsvorschlag zu #59](../docs/veranstaltung/d0-vertrag-v1.md) auf Basis
-`5f90d10`: Identitäten, Ereignisse, Ausfallregeln, Vertrauen und Migration.
-Noch keine neue Produktfunktion oder verteilte Abnahme.
+[D0-Vertrag zu #59](../docs/veranstaltung/d0-vertrag-v1.md) über
+[PR #72](https://github.com/Sven401/Larp-Escape/pull/72) integriert:
+Identitäten, Ereignisse, Ausfallregeln, Vertrauen und Migration, einschließlich
+[fachlicher Korrekturen und 111 Modellfälle](D0-REVIEW-2026-10-18.md).
+Ausgangsbasis `5f90d10`, fachlicher Inhaltsstand `a9481e0`; tatsächlicher
+Merge-/CI-Beleg im [Projektplan #25](https://github.com/Sven401/Larp-Escape/issues/25).
+D0 ist als Spezifikationspaket abgeschlossen. D0-G1–G5, D1–D4 und die allgemeine
+Zugangsspur bleiben offen; keine neue Produktfunktion oder verteilte Abnahme.
 
 Abgeschlossene Zusammenführung von #58/#64/#65/#66/#68 über PR #69,
 Mergecommit `0b0843d5fce475d14705c42c21f4f8bf4314df30`:

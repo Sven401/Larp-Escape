@@ -1,6 +1,6 @@
 # D0 v1: Format, Ursprung, Rechte und Migration
 
-**Status: technischer Vertragsvorschlag; keine neue Firmware-/App-Funktion.**
+**Status: mit PR #72 übernommener D0-Vertrag; keine neue Firmware-/App-Funktion.**
 Stand/Basis/Auftrag wie im [D0-Hauptvertrag](d0-vertrag-v1.md).
 Bestehende [Wire v2](../led/ble-wire-v2.md), Profil-v1-Schemata, BLE-Requests,
 HMAC-Domänen und NFC-Testfixtures bleiben bytegleich.
@@ -13,7 +13,7 @@ COSE_Sign1-Nachricht mit eingebettetem CBOR-Payload. Dieselben vollständigen By
 Hoplimit und Transportkennung gehören zu einer separaten D2-Hülle. Sie sind
 keine Ereignis-ID und verleihen keine Autorität. D0 definiert keine neue BLE-ID.
 
-Technische Auswahl für diesen Vorschlag: **COSE_Sign1 mit ES256/P-256/SHA-256**,
+Technische Auswahl für diesen Vertrag: **COSE_Sign1 mit ES256/P-256/SHA-256**,
 keine Algorithmusverhandlung oder Rückfall auf unsignierte/Gruppenschlüssel-
 Nachrichten. Grundlage: [RFC 9052 §4.2/4.4](https://www.rfc-editor.org/rfc/rfc9052.html#section-4.2),
 [RFC 9053 §2.1](https://www.rfc-editor.org/rfc/rfc9053.html#section-2.1)
