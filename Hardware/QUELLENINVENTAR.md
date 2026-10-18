@@ -1,5 +1,14 @@
 # Hardware-Quelleninventar vom 10. Oktober 2026
 
+**Fortschreibung vom 18. Oktober 2026:** Dieser Bericht bewahrt den Quellen-
+und Prüfstand vom 10. Oktober. Spätere funktionale LED-/Wake-/Matrix-/Audio-/NFC-
+Ergebnisse und die bestätigten As-built-Pins stehen in der
+[Hardwareplanung](HARDWAREPLANUNG.md) und im
+[fortgeschriebenen Hardwarevertrag](HARDWAREVERTRAG-V0.1-2026-10-11.md).
+Frühere Fehlversuche und offene Funktionsangaben unten sind historische Befunde;
+sie setzen die späteren Teilnachweise nicht zurück. CAD-Eingangsdateien und
+Hashes bleiben unverändert; elektrische und Fertigungsfreigabe bleiben offen.
+
 Status: unverändertes Quellen- und Exportpaket, keine freigegebene Hardware-Revision.
 Basis: Produktcommit `29da937c4309beddfd45c5dd0fbf84fdf853d8e4` (`main`).
 Paketbranch: `plan/hardware-revision-quelleninventar`.

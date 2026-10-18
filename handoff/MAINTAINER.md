@@ -32,6 +32,10 @@ abgeschlossene Softwarekonsolidierung und Integration durch #56.
 - **Gemeinsame Geräteabnahme offen:** passendes V2-App-/Firmwarepaar gezielt
   prüfen; zunächst tatsächliches installiertes Paar feststellen. Ein Upload
   braucht eigenen Auftrag und chipgebundenen Flash-Rückweg.
+- **Hardwareplanung fortgeschrieben, 18.10.2026:** [Übernahme aller acht
+  Ergebnis-IDs](../Hardware/HARDWAREPLANUNG.md) mit bestätigten As-built-Pins,
+  zusätzlicher Audioversorgung und gezielten Restnachweisen. Teilbefunde sind
+  erhalten; elektrische/CAD-Freigabe und gemeinsamer Gerätelauf bleiben offen.
 - **Matrix #54 / Hardware #39:** C3, G3, H3 und A8 im erhaltenen Sammellauf
   nachprüfen; 68 Koordinaten/110 Beobachtungen, neun unbestückte Felder und
   vier Problemstellen erhalten. Chip/B7 und räumliche Zuordnung bleiben offen.
