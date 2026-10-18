@@ -5,7 +5,7 @@
 
 namespace larp { namespace led {
 
-enum class Effect : std::uint8_t { Off = 0, Twinkle = 1, Burst = 2, Ripple = 3 };
+enum class Effect : std::uint8_t { Off = 0, Twinkle = 1, Burst = 2, Ripple = 3, Resonance = 4 };
 struct Pixel { std::uint8_t red = 0, green = 0, blue = 0; };
 constexpr std::size_t PixelCount = 23;
 using Frame = std::array<Pixel, PixelCount>;
@@ -38,6 +38,8 @@ public:
     bool begin();
     bool start(Effect effect);
     bool stop();
+    // Owner supplies the current raw Wake observation; unknown never retains light.
+    void updateWake(bool valid, std::uint8_t mask);
     void service();
     void tick() { service(); }
     OutputSnapshot snapshot() const { return status_; }
@@ -47,6 +49,7 @@ public:
     static constexpr std::uint16_t Milliamps = 1000;
     static constexpr std::uint32_t BurstMilliseconds = 1600, RippleMilliseconds = 1400;
     static constexpr std::uint32_t FrameMilliseconds = 33, TransferTimeoutMilliseconds = 2000;
+    static constexpr std::uint32_t ResonancePeriodMilliseconds = 2400, ResonanceMergeMilliseconds = 800;
 private:
     bool accept(Effect effect);
     void fail();
@@ -62,6 +65,9 @@ private:
     std::uint32_t startedAt_ = 0, lastSubmit_ = 0, txStartedAt_ = 0, recoveryAt_ = 0;
     std::uint32_t txRevision_ = 0;
     Effect txEffect_ = Effect::Off;
+    std::uint8_t wakeMask_ = 0;
+    bool wakeValid_ = false, resonanceTogether_ = false, resonanceMerged_ = false;
+    std::uint32_t resonanceTogetherAt_ = 0;
 };
 
 // Worst case all channels at the allowed maximum, plus 1 mA idle per pixel.

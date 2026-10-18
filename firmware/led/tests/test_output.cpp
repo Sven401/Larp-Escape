@@ -228,6 +228,72 @@ void frame_rate() {
     check(f.bus.frames.size() == count, "effect ignored frame budget");
     f.output.service(); check(f.bus.frames.size() == count + 1, "effect missed next frame");
 }
+void resonance_masks() {
+    // Explicit physical partition expected from the existing Wake origins.
+    const unsigned zones[PixelCount] = {1,1,1,1,1,1,1,3,3,3,3,3,3,2,2,2,2,2,2,0,0,0,0};
+    for (unsigned mask = 0; mask < 16; ++mask) {
+        Fixture f; f.boot(); f.output.updateWake(true, static_cast<std::uint8_t>(mask));
+        const auto count = f.bus.frames.size(); f.at(33);
+        check(f.bus.frames.size() == count, "Wake started light without explicit Start");
+        f.start(Effect::Resonance);
+        const auto initial = f.bus.frames.back();
+        f.at(633);
+        const auto &frame = f.bus.frames.back();
+        for (unsigned i = 0; i < PixelCount; ++i) {
+            const bool active = (mask & (1U << zones[i])) != 0;
+            check((frame[i].blue > 0) == active, "Wake mask lit the wrong physical zone");
+            if (active && mask != 15) check(frame[i].blue != initial[i].blue, "active zone did not breathe");
+        }
+        check(f.output.snapshot().applied == Effect::Resonance && !f.output.snapshot().completed,
+              "resonance must remain an active effect even with no inputs");
+    }
+}
+void resonance_join_release_unknown() {
+    Fixture f; f.boot(); f.output.updateWake(true, 7); f.start(Effect::Resonance);
+    f.at(600); f.output.updateWake(true, 15); f.at(633);
+    check(f.bus.frames.back()[2].blue != f.bus.frames.back()[22].blue, "all-four merge skipped its transition");
+    f.at(1400);
+    const auto together = f.bus.frames.back();
+    for (const auto &p : together) check(p.blue == 24 && p.green == 16 && p.red == 4, "all-four did not settle together");
+    f.at(2000); check(equal(together, f.bus.frames.back()), "settled light kept breathing");
+    const auto revision = f.output.snapshot().revision;
+    f.output.updateWake(true, 14); f.at(2033);
+    check(f.bus.frames.back()[22].blue == 0 && f.bus.frames.back()[2].blue > 0, "release kept a missing Wake lit");
+    f.output.updateWake(false, 15); f.at(2066);
+    check(black(f.bus.frames.back()), "unknown Wake reused an old success mask");
+    check(f.output.snapshot().revision == revision && !f.output.snapshot().completed,
+          "input updates changed command revision or falsely completed the effect");
+    f.output.updateWake(true, 0xff); f.at(2099);
+    check(black(f.bus.frames.back()), "invalid mask produced light");
+    f.output.updateWake(true, 15); f.at(2132);
+    check(!equal(together, f.bus.frames.back()), "recovered all-four reused old settled state");
+    f.at(2900); check(equal(together, f.bus.frames.back()), "all-four did not recover after valid reading");
+}
+void resonance_stop_restart_inflight() {
+    Fixture f; f.boot(); f.output.updateWake(true, 15); f.start(Effect::Resonance); f.at(800);
+    const auto settled = f.bus.frames.back();
+    check(f.output.start(Effect::Resonance), "resonance restart rejected"); f.output.service();
+    f.output.updateWake(false, 15); // Must not mutate a frame still retained by the bus.
+    f.finish(); f.at(833); check(black(f.bus.frames.back()), "unknown during TX was not applied on next frame");
+    f.output.updateWake(true, 15); f.at(866);
+    check(!equal(settled, f.bus.frames.back()), "restart did not reset merge");
+    check(f.output.stop(), "resonance stop rejected"); f.output.service();
+    check(f.output.snapshot().pending && black(f.bus.frames.back()), "stop must submit and await black");
+    f.finish(); check(f.output.snapshot().off && f.output.snapshot().applied == Effect::Off, "resonance Stop not confirmed");
+    const auto count = f.bus.frames.size(); f.output.updateWake(true, 1); f.at(2000);
+    check(f.bus.frames.size() == count, "Wake restarted a stopped effect");
+    f.start(Effect::Ripple); check(f.bus.frames.back()[11].blue == 32, "switch from resonance broke Ripple");
+}
+void resonance_clock_wrap() {
+    Fixture f; f.boot(); now = 0xffffff00U;
+    f.output.updateWake(true, 15); f.start(Effect::Resonance);
+    now += 800; f.output.service(); f.finish();
+    const auto together = f.bus.frames.back();
+    check(together[0].blue == 24 && together[22].blue == 24, "resonance merge failed across wrap");
+    // A later full clock cycle must not restart an already settled merge.
+    now = 0xffffff00U; f.output.service(); f.finish();
+    check(equal(together, f.bus.frames.back()), "settled resonance replayed merge after wrap");
+}
 }
 int main(int argc, char **argv) {
     const struct { const char *name; void (*run)(); } cases[] = {
@@ -237,6 +303,8 @@ int main(int argc, char **argv) {
         {"replace_automatic_off", replace_automatic_off}, {"submit_failure", submit_failure},
         {"failed_completion", failed_completion}, {"timeout", timeout}, {"clock_wrap", clock_wrap},
         {"invalid_effect", invalid_effect}, {"frame_rate", frame_rate},
+        {"resonance_masks", resonance_masks}, {"resonance_join_release_unknown", resonance_join_release_unknown},
+        {"resonance_stop_restart_inflight", resonance_stop_restart_inflight}, {"resonance_clock_wrap", resonance_clock_wrap},
     };
     try {
         for (const auto &test : cases) if (argc == 1 || std::string(argv[1]) == test.name) {

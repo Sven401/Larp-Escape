@@ -117,7 +117,9 @@ internal class LedBleSession(
         if (matrixChanged) matrixSample(matrix.state(now, true))
         val audioChanged = audio.accept(value, now)
         if (value.wake != null) nfcState = nfcState.copy(supported = value.nfcSupported)
-        snapshot = value; receivedAt = now
+        // Command results carry no capability fields; retain the latest full status.
+        snapshot = if (value.wake == null) value.copy(resonanceSupported = snapshot?.resonanceSupported ?: false) else value
+        receivedAt = now
         // LED results can advance the shared sequence. Input expiry remains
         // scheduled independently, even when a result supersedes this status.
         if (wakeChanged || matrixChanged || audioChanged) handler.postDelayed({ if (alive) publish() }, 1000)
@@ -139,6 +141,7 @@ internal class LedBleSession(
             gameStopped = if (value.mode == 0 || value.mode == 4) null else value.mode == 1,
             ledOnly = value.mode == 0, busy = nfcPending != null || commands.request != null || value.pending || outgoing.isNotEmpty(),
             active = LedEffect.entries.singleOrNull { effect -> effect.wire == value.effect }, message = notice,
+            resonanceSupported = value.resonanceSupported,
             wake = wake.state(SystemClock.elapsedRealtime(), authenticated), nfc = nfcState, matrix = matrix.state(SystemClock.elapsedRealtime(), authenticated),
             audio = audio.state(SystemClock.elapsedRealtime(), authenticated, value.mode in 0..1,
                 nfcPending != null || commands.request != null || outgoing.isNotEmpty(), lastAudioMessage)

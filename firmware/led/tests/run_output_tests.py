@@ -63,7 +63,7 @@ def main():
                 *(str(ROOT / source) for source in sources), "-o", str(wake_executable),
             ], check=True, env=environment)
             subprocess.run([str(wake_executable)], check=True, env=environment)
-    print("16 LED engine cases, 4 SDK cases and Wake/Matrix reader/I2C cases passed")
+    print("20 LED engine cases, 4 SDK cases and Wake/Matrix reader/I2C cases passed")
 
 
 if __name__ == "__main__":

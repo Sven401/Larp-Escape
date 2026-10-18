@@ -124,6 +124,23 @@ class DeviceViewModelTest {
         repo.state.value = repo.state.value.copy(leds = base.copy(ledOnly = true)); model.startLedEffect()
         assertEquals(2, repo.starts)
     }
+    @Test fun resonanceIsDeliberateAndRequiresAdvertisedSupportButStopRemainsAvailable() {
+        val repo = FakeRepository(); val model = DeviceViewModel(repo)
+        model.foregroundStarted(true)
+        val connected = LedUiState(available = true, authenticated = true, current = true, ready = true, ledOnly = true)
+        repo.state.value = repo.state.value.copy(leds = connected)
+        model.selectLedEffect(LedEffect.RESONANCE); model.startLedEffect()
+        assertEquals(0, repo.starts); assertTrue(model.state.value.leds.canStop)
+        repo.state.value = repo.state.value.copy(leds = model.state.value.leds.copy(resonanceSupported = true))
+        assertEquals(0, repo.starts)
+        model.startLedEffect(); model.stopLeds()
+        assertEquals(1, repo.starts); assertEquals(1, repo.stops)
+        model.foregroundEnded(); model.foregroundStarted(true); model.startLedEffect()
+        assertFalse(model.state.value.leds.resonanceSupported); assertEquals(1, repo.starts)
+        repo.state.value = repo.state.value.copy(leds = connected)
+        model.selectLedEffect(LedEffect.TWINKLE); model.startLedEffect()
+        assertEquals(2, repo.starts)
+    }
     @Test fun closingConnectionInvalidatesLedsWithoutRestartOnReturn() {
         val repo = FakeRepository(); val model = DeviceViewModel(repo)
         model.foregroundStarted(true)

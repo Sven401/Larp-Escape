@@ -135,12 +135,12 @@ struct Harness {
         check(session.configure(fixed<16>("device"), key), "configure");
         check(session.beginConnection(fixed<16>("boot"), fixed<16>("connection"), 1000), "connect");
     }
-    void auth() {
+    void auth(const char *grant = "granted") {
         Message out;
         check(session.receive(get("hello"), 1001, out) == SessionResult::Reply, "challenge reply");
         check(same(out, get("challenge")), "C++/Python challenge bytes");
         check(session.receive(get("proof"), 1002, out) == SessionResult::Reply, "grant reply");
-        check(same(out, get("granted")), "C++/Python granted bytes");
+        check(same(out, get(grant)), "C++/Python granted bytes");
         check(session.authenticated(), "authenticated");
     }
     Message command(std::uint32_t request = 1, std::uint32_t revision = 0,
@@ -342,7 +342,7 @@ static void admission() {
         {1, 4002, 1, 1, Outcome::StaleRevision}, {0, 1010, 1, 1, Outcome::Expired},
         {0, 1009, 1, 1, Outcome::Expired}, {0, 4011, 1, 1, Outcome::Expired},
         {0, 4002, 1, 0, Outcome::InvalidCommand}, {0, 4002, 2, 1, Outcome::InvalidCommand},
-        {0, 4002, 9, 1, Outcome::InvalidCommand}, {0, 4002, 1, 4, Outcome::InvalidCommand}};
+        {0, 4002, 9, 1, Outcome::InvalidCommand}, {0, 4002, 1, 5, Outcome::InvalidCommand}};
     for (const auto &c : cases) {
         Harness h; h.auth(); Message out;
         check(h.session.receive(h.command(1, c.revision, c.expires, c.op, c.effect), 1010, out) ==
@@ -636,13 +636,33 @@ static void combinedContract() {
               "misrouted command has no side effect");
     }
 }
+static void resonanceContract() {
+    Harness h;
+    h.control.value.wakeSupported = h.control.value.wakeValid = h.control.value.resonanceSupported = true;
+    h.control.value.wakeMask = 15;
+    h.auth("granted_resonance"); Message out;
+    check(h.session.receive(get("command_start_resonance"), 1003, out) == SessionResult::Accepted,
+          "resonance Start not accepted");
+    check(h.control.requested == Effect::Resonance, "resonance lost at owner boundary");
+    check(!h.session.service(1004, out), "resonance acknowledged before owner completion");
+    h.control.apply();
+    check(h.session.service(1011, out) && same(out, get("result_resonance")), "resonance result golden bytes");
+    check(h.session.publishStatus(1250, out) && same(out, get("status_resonance")), "resonance capability golden bytes");
+    check(h.session.receive(get("command_start_resonance"), 1251, out) == SessionResult::Reply &&
+          h.control.submissions == 1, "duplicate resonance replayed output");
+    h.session.disconnect(); check(h.control.value.effect == Effect::Off, "disconnect did not stop resonance");
+    Harness old; old.auth();
+    check(old.session.receive(get("command_start_resonance"), 1003, out) == SessionResult::Reply &&
+          out.bytes[38] == static_cast<unsigned>(Outcome::Unavailable) && old.control.submissions == 0,
+          "unsupported resonance reached owner");
+}
 int main(int argc, char **argv) {
     try {
         check(argc == 2, "fixture path argument");
         std::ifstream source(argv[1]);
         check(source.good(), "fixture exists");
         fixture.assign(std::istreambuf_iterator<char>(source), std::istreambuf_iterator<char>());
-        happyPath(); wakeStatus(); matrixStatus(); authentication(); admission(); receiptsAndDriver(); framing(); audioProtocol(); audioActions(); nfcWire(); combinedContract();
+        happyPath(); wakeStatus(); matrixStatus(); authentication(); admission(); receiptsAndDriver(); framing(); audioProtocol(); audioActions(); nfcWire(); combinedContract(); resonanceContract();
         std::cout << "PASS: " << assertions << " assertions; real host HMAC, Python golden bytes, auth/replay/owner/framing.\n";
         return 0;
     } catch (const std::exception &error) {
