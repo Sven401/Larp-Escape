@@ -58,7 +58,8 @@ bool begin() {
     const bool ok = esp_wifi_init(&config) == ESP_OK &&
         esp_wifi_set_storage(WIFI_STORAGE_RAM) == ESP_OK &&
         esp_wifi_set_mode(WIFI_MODE_STA) == ESP_OK && esp_wifi_start() == ESP_OK &&
-        esp_wifi_set_channel(1, WIFI_SECOND_CHAN_NONE) == ESP_OK && esp_wifi_set_ps(WIFI_PS_NONE) == ESP_OK &&
+        // ESP-IDF 4.4 requires modem sleep for WiFi/Bluetooth coexistence.
+        esp_wifi_set_channel(1, WIFI_SECOND_CHAN_NONE) == ESP_OK && esp_wifi_set_ps(WIFI_PS_MIN_MODEM) == ESP_OK &&
         esp_now_init() == ESP_OK && esp_now_register_send_cb(tx) == ESP_OK && esp_now_register_recv_cb(rx) == ESP_OK;
     core.enable(ok); return ok;
 }
