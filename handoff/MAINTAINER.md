@@ -1,15 +1,30 @@
 # Maintainer-Einstieg
 
+**Integrationsvorbereitung · 18. Oktober 2026:** [geprüfte PR-Stände,
+Konfliktentscheidungen und Prüftore](INTEGRATION-2026-10-18.md).
+Dieser Arbeitsbranch bündelt #58/#64/#65/#66/#68 auf Zielbasis `fcb9121`.
+Das ist eine vorbereitete Zusammenführung; der Zielbranch wurde nicht aktualisiert.
+Der abgeschlossene [RSSI-Gehversuch](../docs/espnow/distance-camera-result-2026-10-18.md)
+und die [isolierte Kameraabnahme](../docs/led/camera-results-2026-10-18.md)
+ergänzen die bisherigen Teilbelege. Gesamtspiel, Reichweite und Dauerlast bleiben offen.
+
+**Neue verbindliche Produktentscheidung · 18. Oktober 2026:** [VA-01](../docs/veranstaltungsarchitektur.md) legt autonome Boxen, BLE-Bedienung je Box, unterbrechbare ESP-NOW-/WLAN-Kommunikation und die Zentrale ohne Betriebszwang fest. [Vertrags-/Backlogmatrix](../docs/veranstaltungsarchitektur-umsetzung.md), neue Pakete #59–#63. Zugangskonzept PR #58 bleibt ergänzend maßgeblich. **Architektur-Soll; keine Implementierung oder neue Geräteabnahme.**
+
 Stand: **18. Oktober 2026**. Mandat: [AGENTS.md](../AGENTS.md).
 Quelle dieser Aktualisierung: beauftragte Repository-Hygiene;
 [Prüfbericht und Bestandsaufnahme](REPOSITORY-HYGIENE-2026-10-18.md).
 
+Aktuelle fachliche Ergänzung vom **18. Oktober 2026**:
+[abgestimmtes veranstaltungsbezogenes Zugangskonzept](../docs/companion/veranstaltungszugang.md)
+mit Rechteverwaltung, Schlüsselwechsel, Wiederherstellung, Unterbrechungspunkten
+und offenen Abnahmekriterien. **Sollkonzept, keine Implementierung.**
+
 ## Aktuelle Arbeitsbasis
 
-- **Belegt:** [PR #56](https://github.com/Sven401/Larp-Escape/pull/56) ist
-  gemergt. Zielbranch `plan/projektuebergabe-kuratierter-stand` steht bei
-  `784984da05249c77525273c658405d2f3b8e8e24`; Remote-Branch, frischer Fetch,
-  Merge-Eltern und gleicher Baum wie Konsolidierungshead `c03c490` geprüft.
+- **Belegt:** Zielbasis nach frischem Fetch am 18.10.2026:
+  `fcb91216b335db77d07da702056d8b9b33969b9d`, einschließlich #56
+  (Baugruppenkonsolidierung), #57 (Hygiene) und #67 (Hardwareplanung).
+  Die frühere #56-Basis `784984d` bleibt Bezug der historischen CI unten.
 - LED, Wake, Matrix, Audio und NFC sind auf dem
   [gemeinsamen V2-Vertrag](../docs/led/ble-wire-v2.md) zusammengeführt.
   [Herkunft und Erhaltung aller acht Ergebnis-IDs](KONSOLIDIERUNG-2026-10-17.md)
@@ -30,7 +45,9 @@ Planung. [#53](https://github.com/Sven401/Larp-Escape/issues/53) dokumentiert
 abgeschlossene Softwarekonsolidierung und Integration durch #56.
 
 - **Gemeinsame Geräteabnahme offen:** passendes V2-App-/Firmwarepaar gezielt
-  prüfen; zunächst tatsächliches installiertes Paar feststellen. Ein Upload
+  prüfen. Zuletzt dokumentiert sind App-Journalstand `6e6f093` und
+  RSSI-Firmware `e012314`; [Installation und Gehversuch](ESPNOW-UEBERGABE-2026-10-18.md).
+  Vor erneutem Gerätezugriff tatsächliches Paar feststellen. Ein Upload
   braucht eigenen Auftrag und chipgebundenen Flash-Rückweg.
 - **Hardwareplanung fortgeschrieben, 18.10.2026:** [Übernahme aller acht
   Ergebnis-IDs](../Hardware/HARDWAREPLANUNG.md) mit bestätigten As-built-Pins,
@@ -46,6 +63,10 @@ abgeschlossene Softwarekonsolidierung und Integration durch #56.
   eigenständige Aufgaben; der Baugruppen-HMAC-Zugang ersetzt sie nicht.
 - **Spielintegration #31/#30:** zuerst F5a-Geräteausführung, dann reale
   Profilübernahme, anschließend F5b-Ressourcen-/Betriebsabnahme.
+- **Notwendige zukünftige Framework-Aktualisierung:**
+  [Arduino-ESP32 3.x](ARDUINO-ESP32-3-MIGRATION.md) am 18. Oktober 2026 vom
+  Nutzer zur Einplanung beauftragt. Umsetzung, Zielversion und Termin offen;
+  jetzt ausschließlich dokumentieren, keine Migrationsarbeiten beginnen.
 
 Softwareintegration, begrenzte historische Gerätebeobachtung und gemeinsame
 Produktabnahme sind getrennte Nachweise. Der Baugruppenstand ist kein
@@ -57,8 +78,9 @@ Der [vollständige B0-Prüfweg](../docs/quality-checks.md) enthält echte
 Kryptografie, konfigurierte Hosttests, vier Legacy-/ABI-Firmwareziele,
 Android Debug/Release und Quellen-/Fehlerbelege. Dazu kommen die
 [gemeinsame Baugruppen-CI](../.github/workflows/led-product.yml) für Wire,
-LED/Wake/Matrix/Audio/NFC und drei getrennte Firmwarevarianten sowie die
-[unabhängige NFC-Probe](../.github/workflows/nfc-probe.yml).
+LED/Wake/Matrix/Audio/NFC/ESP-NOW, vier getrennte Produktvarianten und die
+isolierte Kamera-Laborfirmware sowie die [unabhängige NFC-Probe](../.github/workflows/nfc-probe.yml)
+und [ESP-NOW-Probe](../.github/workflows/espnow-probe.yml).
 
 **Ausgelesen am Zielcommit `784984d`: alle acht Push-Jobs erfolgreich.**
 [Quality](https://github.com/Sven401/Larp-Escape/actions/runs/38980094469),

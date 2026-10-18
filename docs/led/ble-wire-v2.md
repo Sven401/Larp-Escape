@@ -1,7 +1,10 @@
 # Gemeinsamer Baugruppenvertrag, Version 2
 
-Stand: **18. Oktober 2026; Resonanzkreis ergänzt.** Basisvertrag vom
-17. Oktober; dessen Softwareprüfung steht im Konsolidierungsbericht.
+**Architekturanschluss · 18.10.2026:** [VA-01](../veranstaltungsarchitektur.md) erhält diesen lokalen Baugruppenvertrag einschließlich Bytes, Fristen und manueller Abbruchregeln. BLE-Abbruch manueller Ausgaben ist kein pauschaler Stop des autonomen Spiels. Boxübergreifende Ereignisse bekommen einen eigenen Vertrag; siehe [Änderungsmatrix](../veranstaltungsarchitektur-umsetzung.md).
+
+Stand: **18. Oktober 2026; ESP-NOW-Erweiterung implementiert, begrenzter App-/Geräte-Gehversuch abgeschlossen.**
+[Ergebnis und Grenzen](../espnow/distance-camera-result-2026-10-18.md): keine gemeinsame Gesamtspielabnahme.
+Resonanzkreis als neuer Wake-gesteuerter Effekt ergänzt; dessen Sichtabnahme ist offen.
 Quellen: [Firmware-Session](../../firmware/led/src/LedWire.cpp),
 [NFC-Session](../../firmware/led/src/NfcBleWire.cpp),
 [Android-Decoder](../../companion/android/core/protocol/src/main/kotlin/de/larpescape/protocol/LedProtocol.kt),
@@ -50,12 +53,16 @@ unveränderter Statuspfad und nicht diese Baugruppen-Protokollversion.
 | `0x03` | LED-Auftrag | 64 | `LARP-LED/2/command`, Body 32 |
 | `0x04` | Audio-Auftrag | 66 | `LARP-LED/2/audio-command`, Body 34 |
 | `0x05` | NFC-Auftrag | 70 | `LARP-NFC/2/command`, Body 38 |
+| `0x06` | ESP-NOW-Testauftrag | 70 | `LARP-LED/2/espnow-command`, Body 38 |
+| `0x07` | RSSI-Messauftrag | 70 | `LARP-LED/2/rssi-command`, Body 38 |
 | `0x81` | Challenge | 98 | `LARP-LED/2/challenge`, Body 66 |
 | `0x82` | Granted/Gesamtstatus | 91 | `LARP-LED/2/status`, Body 59 |
 | `0x83` | LED-Ergebnis | 74 | `LARP-LED/2/result`, Body 42 |
 | `0x84` | laufender Gesamtstatus | 91 | `LARP-LED/2/status`, Body 59 |
 | `0x85` | Audio-Ergebnis | 82 | `LARP-LED/2/audio-result`, Body 50 |
 | `0x86` | NFC-Ergebnis | 105 | `LARP-NFC/2/result`, Body 73 |
+| `0x87` | ESP-NOW-Testergebnis | 108 | `LARP-LED/2/espnow-result`, Body 76 |
+| `0x88` | RSSI-Messergebnis | 112 | `LARP-LED/2/rssi-result`, Body 80 |
 
 Mehrbytezahlen sind little endian. Außer Hello/Proof enthalten Nachrichten
 nach dem Header die 16-Byte-Session-ID. Typ, exakte Länge, Sitzung und
@@ -79,7 +86,7 @@ Baugruppen. Fähigkeiten werden nicht mehr aus der Nachrichtenlänge abgeleitet.
 | 30–33 | gemeinsame LED-/Audio-/Gesamtstatussequenz |
 | 34–36 | LED-Effekt, LED-Flags, Modus; Semantik aus V1 |
 | 37 | Wake: Bit 7 unterstützt, Bit 6 gültig, Bits 0–3 Rohmaske; NFC: Bit 5 unterstützt; Resonanzkreis: Bit 4 unterstützt |
-| 38 | Audio unterstützt: genau 0 oder 1; andere Werte ungültig |
+| 38 | Fähigkeiten: Bit 0 Audio unterstützt, Bit 1 ESP-NOW unterstützt, Bit 2 ESP-NOW bereit, Bit 3 RSSI unterstützt; Bits 4–7 null; bereit/RSSI verlangen ESP-NOW-Unterstützung |
 | 39–46 | Audio-Snapshot: LE32 Revision, LE16 Titel, Lautstärke, Flags |
 | 47 | Matrix: Bit 7 unterstützt, Bit 6 gültig, Bit 5 mehrdeutig; Bits 0–4 null |
 | 48–58 | Matrixkontakte 0–80, zeilenweise; nur Bit 0 des letzten Bytes verwendet |
@@ -110,7 +117,8 @@ Eingängen darf einen schwarzen Frame ausgeben, bleibt aber Effekt 4 ohne
 `Off`- oder `Completed`-Flag. Nur Stop meldet Effekt 0. Start/Stop, Revisionen,
 Duplikate, Ausgabequittung und Trennverhalten folgen dem bestehenden Vertrag.
 
-Alle drei Baugruppenvarianten unterstützen den Effekt. Kein neuer Spielmodus,
+Alle vier BLE-Baugruppenvarianten unterstützen den Effekt; der isolierte
+Kameralaborbuild bietet weiterhin nur seinen bisherigen USB-Prüfumfang. Kein neuer Spielmodus,
 keine automatische Spielaktivierung und keine neue Geräteabnahme folgen daraus.
 Verhalten, Herkunft der Bereiche und Sichtprüfung:
 [Resonanzkreis-Prüfplan](resonance-test-preparation.md).
@@ -121,6 +129,16 @@ Verhalten, Herkunft der Bereiche und Sichtprüfung:
 | `larp-nfc-test` | ja | ja | ja | ja | nein |
 | `larp-matrix-test` | ja | ja | ja | nein | ja |
 
+Ergänzung vom 18. Oktober: `larp-espnow-test` enthält LED/Wake/Audio und den
+bewusst auslösbaren Funkversuch. Nur diese Variante startet zusätzlich WiFi.
+Die neue App zeigt ESP-NOW bei bisherigen V2-Firmwares als nicht unterstützt;
+alte V2-Apps lehnen die neuen Fähigkeitsbits ab und benötigen ein Update.
+[ESP-NOW-Vertrag und Testablauf](../espnow/app-test.md) definieren die neuen
+Typen, Korrelation, Fristen und das erforderliche Empfängerpaar. Der folgende
+ursprüngliche Umfang wird um ESP-NOW als vierte gemeinsame Auftragsart ergänzt.
+Die [RSSI-Erweiterung](../espnow/rssi-test.md) ergänzt Messwerte und optionale
+Funkelmodulation mit eigenen Typen/Domänen; kein automatischer Einzelteststart.
+
 NFC und Matrix bleiben bewusst getrennte Prüfvarianten. Gleichzeitige
 Testmakros sind ein Buildfehler. Der gemeinsame Decoder kann alle Felder
 gleichzeitig verarbeiten; die entsprechende Goldenfixture ist ein
@@ -129,7 +147,7 @@ behauptet weiterhin keinen gestoppten realen Spielcontroller.
 
 ## Gemeinsame Auftragsfolge und getrennte Beobachtungen
 
-LED, Audio und NFC verwenden eine gemeinsame, nicht umlaufende Folge ab 1.
+LED, Audio, NFC und ESP-NOW verwenden eine gemeinsame, nicht umlaufende Folge ab 1.
 Ein angenommener Auftrag reserviert den Slot bis zur korrelierten Antwort.
 Andere Baugruppen erhalten Busy und führen nichts aus. Verbrauchte
 Aufträge zählen auch bei fachlicher Ablehnung weiter; Busy, OutOfOrder und

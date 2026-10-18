@@ -1,5 +1,6 @@
 #include "../../firmware/led/include/LedWire.h"
 #include "../../firmware/led/include/NfcBleWire.h"
+#include "../../firmware/led/include/EspNowTest.h"
 #include <algorithm>
 #include <cstdio>
 #include <fstream>
@@ -56,6 +57,15 @@ class Control : public IControl {
     Effect requested = Effect::Off;
     AudioSnapshot audio;
     unsigned audioSubmissions = 0;
+    EspNowSnapshot esp;
+    unsigned espSubmissions = 0;
+    EspNowSnapshot espNowSnapshot() const noexcept override { return esp; }
+    bool submitRssi(const std::array<std::uint8_t,6> &peer, std::uint32_t now, bool) noexcept override {
+        return submitEspNow(peer, now);
+    }
+    bool submitEspNow(const std::array<std::uint8_t,6> &peer, std::uint32_t) noexcept override {
+        ++espSubmissions; esp.peer = peer; esp.token.fill(7); esp.pending = true; esp.accepted = true; return true;
+    }
     AudioSnapshot audioSnapshot() const noexcept override { return audio; }
     bool submitAudio(Operation operation, std::uint16_t track, std::uint8_t volume,
                      std::uint32_t revision, std::uint32_t &target) noexcept override {
@@ -152,6 +162,7 @@ struct Harness {
         return m;
     }
 };
+#include "EspNowCases.h"
 static void happyPath() {
     Harness h; h.auth();
     Message out;
@@ -662,7 +673,7 @@ int main(int argc, char **argv) {
         std::ifstream source(argv[1]);
         check(source.good(), "fixture exists");
         fixture.assign(std::istreambuf_iterator<char>(source), std::istreambuf_iterator<char>());
-        happyPath(); wakeStatus(); matrixStatus(); authentication(); admission(); receiptsAndDriver(); framing(); audioProtocol(); audioActions(); nfcWire(); combinedContract(); resonanceContract();
+        happyPath(); wakeStatus(); matrixStatus(); authentication(); admission(); receiptsAndDriver(); framing(); audioProtocol(); audioActions(); nfcWire(); combinedContract(); resonanceContract(); espNowCases();
         std::cout << "PASS: " << assertions << " assertions; real host HMAC, Python golden bytes, auth/replay/owner/framing.\n";
         return 0;
     } catch (const std::exception &error) {

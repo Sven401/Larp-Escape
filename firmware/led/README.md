@@ -1,5 +1,12 @@
 # Eigenständige LED-Produktfunktion
 
+Die zusätzliche Variante `larp-espnow-test` ergänzt die bestehende
+Baugruppenbedienung um einen bewusst gesendeten ESP-NOW-Test mit korrelierter
+Empfangsbestätigung. Sie benötigt die neue App und den separaten
+`espnow-app-receiver` auf dem zweiten ESP.
+[Vertrag, Buildpaar und Handy-Testablauf](../../docs/espnow/app-test.md).
+Die bisherigen Varianten starten weiterhin kein WiFi.
+
 Aktueller konsolidierter Vertrag: [Baugruppen-Wire V2](../../docs/led/ble-wire-v2.md).
 Seit **18. Oktober 2026** ergänzt **Resonanzkreis** als vierter Effekt die
 manuelle Bedienung mit echter Wake-Reaktion. Verhalten, Upgrade-Paar und
@@ -128,6 +135,14 @@ keine zusätzliche BLE-Linkverschlüsselung oder Live-Relay-Erkennung. Physische
 USB-/Flashzugriff und die Einrichtungsdatei gehören zum vertrauenswürdigen Setup.
 
 ## Prüfwege und Geräteabnahme
+
+Der [USB-Kamera-Messweg](../../docs/led/camera-measurement.md) ergänzt eine
+getrennte USB-Prüffirmware, automatische Index-/Farbkalibrierung und den
+optischen Vergleich mit der echten Effektengine. Der
+[Laborlauf vom 18.10.2026](../../docs/led/camera-results-2026-10-18.md)
+bestätigt 23/23 Zuordnungen und alle drei Effekte. Das ist keine gemeinsame
+BLE-App-/Produktabnahme; der ursprüngliche Flash wurde danach verifiziert
+wiederhergestellt.
 
 ```powershell
 python test/test_led_ble_wire/run.py

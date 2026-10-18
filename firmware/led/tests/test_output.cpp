@@ -273,6 +273,7 @@ void resonance_stop_restart_inflight() {
     Fixture f; f.boot(); f.output.updateWake(true, 15); f.start(Effect::Resonance); f.at(800);
     const auto settled = f.bus.frames.back();
     check(f.output.start(Effect::Resonance), "resonance restart rejected"); f.output.service();
+    check(!equal(settled, f.bus.frames.back()), "explicit restart retained settled light");
     f.output.updateWake(false, 15); // Must not mutate a frame still retained by the bus.
     f.finish(); f.at(833); check(black(f.bus.frames.back()), "unknown during TX was not applied on next frame");
     f.output.updateWake(true, 15); f.at(866);
@@ -294,6 +295,21 @@ void resonance_clock_wrap() {
     now = 0xffffff00U; f.output.service(); f.finish();
     check(equal(together, f.bus.frames.back()), "settled resonance replayed merge after wrap");
 }
+void twinkle_intensity() {
+    Fixture full; full.boot(); full.start(Effect::Twinkle); full.at(330);
+    const auto reference = full.bus.frames.back();
+    Fixture dim; dim.boot(); dim.output.setTwinkleIntensity(20); dim.start(Effect::Twinkle); dim.at(330);
+    const auto revision = dim.output.snapshot().revision;
+    for (std::size_t i=0;i<PixelCount;++i)
+        check(dim.bus.frames.back()[i].red == reference[i].red * 20U / 100U, "twinkle modulation lost original phase");
+    dim.output.setTwinkleIntensity(1000); dim.at(363);
+    check(dim.output.snapshot().revision == revision, "intensity restarted effect or incremented command revision");
+    bounded(dim.bus.frames.back());
+    dim.output.setTwinkleIntensity(0); dim.at(396); check(black(dim.bus.frames.back()), "zero intensity not dark");
+    dim.start(Effect::Burst); check(!black(dim.bus.frames.back()), "twinkle intensity leaked into other effect");
+    dim.output.updateWake(true, 15); dim.start(Effect::Resonance);
+    check(!black(dim.bus.frames.back()), "RSSI twinkle intensity leaked into resonance");
+}
 }
 int main(int argc, char **argv) {
     const struct { const char *name; void (*run)(); } cases[] = {
@@ -305,6 +321,7 @@ int main(int argc, char **argv) {
         {"invalid_effect", invalid_effect}, {"frame_rate", frame_rate},
         {"resonance_masks", resonance_masks}, {"resonance_join_release_unknown", resonance_join_release_unknown},
         {"resonance_stop_restart_inflight", resonance_stop_restart_inflight}, {"resonance_clock_wrap", resonance_clock_wrap},
+        {"twinkle_intensity", twinkle_intensity},
     };
     try {
         for (const auto &test : cases) if (argc == 1 || std::string(argv[1]) == test.name) {

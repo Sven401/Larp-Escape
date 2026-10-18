@@ -2,6 +2,9 @@
 
 Stand: **18. Oktober 2026**. Auftrag: erster neuer LED-Effekt aus dem gemeinsam
 geschärften Entwurf. Basis: `fcb91216b335db77d07da702056d8b9b33969b9d`.
+Für den endgültigen Prüfstand wurde der inzwischen integrierte Stand
+`0b0843d5fce475d14705c42c21f4f8bf4314df30` ausschließlich in den eigenen
+Arbeitsbranch übernommen; ESP-NOW/RSSI und Kameraprüfung bleiben erhalten.
 **Implementiert; Softwareprüfstand siehe [Prüfbericht](resonance-test-results-2026-10-18.md).
 Installation und Sichtabnahme sind offen.**
 
@@ -71,7 +74,8 @@ Builds aus dem Repository-Stamm:
 ```powershell
 python test/test_led_ble_wire/run.py
 python firmware/led/tests/run_output_tests.py
-python -m platformio run -d firmware/led -e larp-led-product -e larp-nfc-test -e larp-matrix-test -j 2
+python firmware/led/tests/run_camera_tests.py
+python -m platformio run -d firmware/led -e larp-led-product -e larp-nfc-test -e larp-matrix-test -e larp-espnow-test -e larp-led-camera-lab -j 2
 cd companion/android
 ./gradlew.bat :core:protocol:test :app:testDebugUnitTest :app:lintDebug :app:lintRelease :app:assembleDebug :app:assembleRelease --no-daemon
 ```

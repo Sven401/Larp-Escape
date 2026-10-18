@@ -1,5 +1,7 @@
 # Vollständiger Prüfweg der kuratierten Produktbasis
 
+**Zusätzlicher Abnahmeumfang · 18.10.2026:** [VA-01](veranstaltungsarchitektur.md) und [VA-T01–VA-T12](veranstaltungsarchitektur-umsetzung.md#4-gemeinsame-offene-abnahmekriterien) ergänzen dezentrale Ausfall-/Abgleich-/Funkfälle (#63). Bestehende B0-/Baugruppenprüfungen bleiben erhalten; diese Dokumentation führt keinen neuen Test aus und weist keine verteilte Abnahme nach.
+
 Stand des B0-Verfahrens: **16. Oktober 2026**, Aufgabe [B0 / #38](https://github.com/Sven401/Larp-Escape/issues/38).
 Entwicklungsbasis ist `plan/projektuebergabe-kuratierter-stand`, Ausgangscommit
 `42610abfef07c971d9902ea6ca5a350ed68981bf`. Neue Änderungen auf einem eigenen
