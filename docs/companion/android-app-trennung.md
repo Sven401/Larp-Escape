@@ -10,16 +10,17 @@ Quellbasis vor Implementierung: `2c3964a662eff1498cc63eb089fd8f04f41a598e`.
 | --- | --- | --- |
 | Gradle-Modul | `:app` bleibt erhalten | `:gamemaster` |
 | applicationId / Namespace | `de.larpescape.companion` unverändert | `de.larpescape.gamemaster` |
-| Anzeigename | Larp Escape Dev | Larp Escape Spielleitung |
-| Symbol | Werkzeug auf grauem Grund | Fahne auf grünem Grund |
+| App-Auswahl / Überschrift | Larp Dev / Larp Escape Dev | Larp GM / Larp Escape Spielleitung |
+| Symbol | GM-Companion-Motiv mit DEV-Badge | Originalmotiv von GM Companion |
 | Version | Code 2 / 0.2, vorher Code 1 / 0.1 | Code 1 / 0.1 |
 | Funktion | Alle bisherigen Baugruppen-, NFC- und Szenariowege | Eigenständiger Start mit ehrlichem Leerzustand ohne eingerichtete Veranstaltung |
 | Manifest | Bestehende BLE-/NFC-Berechtigungen und HCE-Testservice bleiben | Kein BLE-/NFC-/Internetzugriff, kein HCE-Testservice |
 | Daten | Bisheriger Appbereich unverändert | Eigener isolierter Appbereich, keine Übernahme aus Dev |
 
-Die Apps sind technisch unabhängig installierbar. Android-Geräteinstallation,
-Datenerhalt am echten Handy und native Sichtprüfung sind getrennte, noch offene
-Abnahmen. Die Spielleiter-App besitzt in diesem Schnitt keine Stationsverwaltung,
+Die Apps sind technisch unabhängig installierbar. Installation, Dev-Update mit
+Datenerhalt und Appwechsel sind inzwischen am Moto G14 geprüft; siehe
+[Gerätebericht und Iconquelle](android-app-geraetepruefung-2026-10-18.md).
+Der unten datierte Erstprüfstand bleibt als historischer Beleg erhalten. Die Spielleiter-App besitzt in diesem Schnitt keine Stationsverwaltung,
 keine BLE-Steuerung und keine simulierten Teststationen. Der [Stationspilot](../ui-ux/BOX-PILOT.md)
 ist die Grundlage des nächsten Funktionsausbaus, nicht bereits nativ umgesetzt.
 Der Leerzustand enthält keine funktionslosen Einrichtungsbuttons.
@@ -152,7 +153,7 @@ SHA-256 der lokal geprüften neuen Artefakte (kein reproduzierbarer Build zugesa
 | Dev Release, unsigniert | `ad316b937dd7681a505526b6671849fac42d166dcea5bf5207a390ff506ad245` |
 | Spielleitung Release, unsigniert | `b547d879512807ae84253de11ce90389e81c01be9b3d3581fef341f0a2a68dd1` |
 
-## Geräteabnahme vor einem beauftragten Update
+## Geräteprüfweg für weitere Updates
 
 1. Tatsächlich installiertes Dev-Paket, Version und öffentliches Signaturzertifikat
    feststellen; Baseline-APK erhalten. Keine Zugangsdaten in Prüfberichte aufnehmen.
@@ -168,6 +169,7 @@ SHA-256 der lokal geprüften neuen Artefakte (kein reproduzierbarer Build zugesa
    Spielleitung enthält weder Dev-Daten noch Testtag-/Funksteuerung.
 7. Unabhängiges Update der Spielleiter-App prüfen. Dev bleibt unverändert.
 
-Diese Gerätefälle sind offen; in der Umsetzung wurde keine App installiert oder aktualisiert,
-keine Box angesprochen und keine Firmware hochgeladen. Fehlender Gerätezugriff
-wird nicht durch Rechner-/Buildtests als erledigt gewertet.
+Der ursprüngliche reine Buildprüfstand wurde durch die beauftragte
+[Geräteprüfung](android-app-geraetepruefung-2026-10-18.md) ergänzt: beide Apps
+installiert, Dev ohne Deinstallation aktualisiert und Datenerhalt geprüft.
+Die Abnahmegrenzen für Gerätefunktionen und Accessibility stehen im Bericht.

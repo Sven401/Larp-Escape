@@ -57,7 +57,7 @@ getrennte Repositories sind nicht beschlossen. Debug/Release ist eine Bauart,
 Dev/Spielleiter ein Produktzweck: ein Release-Build der Dev-App wird dadurch nicht
 zur Spielleiter-App. Die vorhandene Debug-Laborfreigabe ersetzt die Produkttrennung nicht.
 
-**Umgesetzt im technischen Folgeschritt:** Dev bleibt `de.larpescape.companion` im Modul `:app`; Spielleitung erhält `de.larpescape.gamemaster` in `:gamemaster`. Sichtbare Namen sind „Larp Escape Dev“ und „Larp Escape Spielleitung“. Bestehende Dev-Daten werden nicht migriert. [Details und Updatebedingungen](../companion/android-app-trennung.md). Produktionssignierung/Verteilungsweg, spätere Inhaltsimporte und echte Geräteabnahme bleiben offen.
+**Umgesetzt im technischen Folgeschritt:** Dev bleibt `de.larpescape.companion` im Modul `:app`; Spielleitung erhält `de.larpescape.gamemaster` in `:gamemaster`. In der App-Auswahl heißen sie „Larp Dev“ und „Larp GM“, innerhalb der Apps „Larp Escape Dev“ und „Larp Escape Spielleitung“. Bestehende Dev-Daten werden nicht migriert. [Details und Updatebedingungen](../companion/android-app-trennung.md). [Installation, Dev-Datenerhalt und paralleler Appbetrieb](../companion/android-app-geraetepruefung-2026-10-18.md) sind am Moto G14 geprüft. Produktionssignierung/Verteilungsweg, spätere Inhaltsimporte und fachliche Gerätefunktionen bleiben offen.
 
 ## 2. Produktverständnis und Zuständigkeiten
 
