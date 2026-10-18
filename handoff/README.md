@@ -1,6 +1,8 @@
 # Technische Projektübergabe
 
-**UI/UX · 18. Oktober 2026:** [Projektreferenz und bestätigte separate Appauslieferung](../docs/ui-ux/PROJEKTREFERENZ.md), [Dev-Hauptabläufe](../docs/ui-ux/DEV-APP-ABLAEUFE.md) und [Spielleitungs-Hauptabläufe](../docs/ui-ux/SPIELLEITER-APP-ABLAEUFE.md). Dokumentierter Designstand; keine native Apptrennung oder neue Geräteabnahme.
+**Android-Apptrennung · 18. Oktober 2026:** [Zwei Anwendungsprojekte und Erhalt der Dev-Daten](../docs/companion/android-app-trennung.md): Dev behält Paketkennung/Speicher; Spielleitung erhält eine eigene Kennung und einen leeren Veranstaltungseinstieg. Keine neue Spielsteuerung oder Geräteinstallation; Signatur-/Updatebedingungen und offene Geräteabnahme sind benannt.
+
+**UI/UX · 18. Oktober 2026:** [Projektreferenz und bestätigte separate Appauslieferung](../docs/ui-ux/PROJEKTREFERENZ.md), [Dev-Hauptabläufe](../docs/ui-ux/DEV-APP-ABLAEUFE.md) und [Spielleitungs-Hauptabläufe](../docs/ui-ux/SPIELLEITER-APP-ABLAEUFE.md). Dokumentierter Designstand; Apptrennung siehe technische Fortschreibung oben; keine neue Geräteabnahme.
 
 **UI/UX-Pilot integriert · 18. Oktober 2026:** [PR #78](https://github.com/Sven401/Larp-Escape/pull/78)
 ist bei `42853bc1aa93de23b5fcfc72e66d2c1a397361af` in den kuratierten

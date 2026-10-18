@@ -29,10 +29,12 @@ Stand: **18. Oktober 2026**. Projektgebundene Referenz, keine Gerätefreigabe.
   sind gegenüber `7e72411` unverändert. Der Pilot wird nicht erneut implementiert.
 - **Abgeleitet:** die Hauptabläufe sind ausgearbeitete Designvorgaben zur weiteren
   Umsetzung. Neue Detailentscheidungen sind als Vorschlag/offen gekennzeichnet.
-- **Offen:** native Apptrennung, Sicht-/Nutzerprüfung und Geräteabnahme. Hier nur
+- **Historischer Umfang dieser Referenz:** Apptrennung, Sicht-/Nutzerprüfung und Geräteabnahme waren offen. Hier zunächst nur
   Quellen-/Dokumentprüfung; im ersten Überblick war kein Android-Gerät erreichbar.
   Keine neue Prüfung des Webprototyps oder der Figma-Datei; fremde Testerfolge
   werden nicht auf diese Referenz oder neue Apps übertragen.
+
+**Technische Fortschreibung:** [Apptrennung im Android-Projekt](../companion/android-app-trennung.md) implementiert zwei Anwendungskennungen/Artefakte. Die Dev-App behält ihren Speicher; die Spielleiter-App beginnt mit einem eigenständigen Leerzustand. Die nachfolgende Bestandsanalyse bleibt auf ihre genannte Basis datiert.
 
 ## 1. Verbindliche Trennung und Auslieferung
 
@@ -55,11 +57,7 @@ getrennte Repositories sind nicht beschlossen. Debug/Release ist eine Bauart,
 Dev/Spielleiter ein Produktzweck: ein Release-Build der Dev-App wird dadurch nicht
 zur Spielleiter-App. Die vorhandene Debug-Laborfreigabe ersetzt die Produkttrennung nicht.
 
-**Offen:** endgültige Namen, Paketkennungen, Modul-/Flavoraufteilung, Signierung,
-Verteilungs-/Updateweg und künftige Zuordnung der bisherigen Paketkennung.
-Bestandsdaten und Zugänge vor dieser Zuordnung inventarisieren. Keine automatische
-Übernahme privater Schlüssel oder Testdaten in die neue App. Eine Migration braucht
-einen beschriebenen, überprüfbaren Importweg; die bestehende Dev-Installation erhalten.
+**Umgesetzt im technischen Folgeschritt:** Dev bleibt `de.larpescape.companion` im Modul `:app`; Spielleitung erhält `de.larpescape.gamemaster` in `:gamemaster`. Sichtbare Namen sind „Larp Escape Dev“ und „Larp Escape Spielleitung“. Bestehende Dev-Daten werden nicht migriert. [Details und Updatebedingungen](../companion/android-app-trennung.md). Produktionssignierung/Verteilungsweg, spätere Inhaltsimporte und echte Geräteabnahme bleiben offen.
 
 ## 2. Produktverständnis und Zuständigkeiten
 

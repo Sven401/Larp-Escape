@@ -2,7 +2,7 @@ name: LED product
 
 on:
   push:
-    paths: ['firmware/led/**', 'companion/android/**', 'docs/led/**', 'docs/audio/**', 'docs/matrix/**', 'docs/nfc/**', 'scripts/quality_evidence.py', 'test/test_led*/**', 'scripts/*led*', '.github/workflows/led-product.yml']
+    paths: ['firmware/led/**', 'companion/android/**', 'docs/led/**', 'docs/audio/**', 'docs/matrix/**', 'docs/nfc/**', 'scripts/quality_evidence.py', 'scripts/check_android_apps.py', 'scripts/tests/test_android_apps.py', 'test/test_led*/**', 'scripts/*led*', '.github/workflows/led-product.yml']
   pull_request:
   workflow_dispatch:
 
@@ -117,6 +117,10 @@ jobs:
           java-version: '21'
       - name: Install the requested Android SDK
         run: '"$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-35" "build-tools;35.0.0" < /dev/null'
-      - name: Test and build the real companion app
+      - name: Test and build both Android applications
         working-directory: companion/android
-        run: bash gradlew :core:protocol:test :app:testDebugUnitTest :app:lintDebug :app:assembleDebug :app:assembleRelease --no-daemon
+        run: bash gradlew :core:protocol:test :app:testDebugUnitTest :app:lintDebug :app:assembleDebug :app:assembleRelease :app:lintRelease :gamemaster:assembleDebug :gamemaster:assembleRelease :gamemaster:lintDebug :gamemaster:lintRelease --no-daemon
+      - name: Verify app separation guard
+        run: python3 -m unittest discover -s scripts/tests -p test_android_apps.py -v
+      - name: Verify both packaged applications
+        run: python3 scripts/check_android_apps.py

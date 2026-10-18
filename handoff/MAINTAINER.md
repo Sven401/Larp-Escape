@@ -1,6 +1,8 @@
 # Maintainer-Einstieg
 
-**UI/UX-Entscheidung · 18. Oktober 2026:** [UX-01 und Projektreferenz](../docs/ui-ux/PROJEKTREFERENZ.md): Dev-App für Entwicklung/Tests/Experimente und Spielleiter-App für Endnutzer werden als zwei separate Apps ausgeliefert. Hauptabläufe für beide Apps sind ausgearbeitet; technische Trennung und native Abnahme bleiben offen. Der über PR #78 integrierte Stationspilot bleibt die Grundlage der Spielleitungsbedienung.
+**Android-Apptrennung · 18. Oktober 2026:** [Zwei Anwendungsprojekte und Erhalt der Dev-Daten](../docs/companion/android-app-trennung.md): Dev behält Paketkennung/Speicher; Spielleitung erhält eine eigene Kennung und einen leeren Veranstaltungseinstieg. Keine neue Spielsteuerung oder Geräteinstallation; Signatur-/Updatebedingungen und offene Geräteabnahme sind benannt.
+
+**UI/UX-Entscheidung · 18. Oktober 2026:** [UX-01 und Projektreferenz](../docs/ui-ux/PROJEKTREFERENZ.md): Dev-App für Entwicklung/Tests/Experimente und Spielleiter-App für Endnutzer werden als zwei separate Apps ausgeliefert. Hauptabläufe für beide Apps sind ausgearbeitet; technische Trennung ist im oben verlinkten Folgeschritt umgesetzt; native Bedien-/Datenabnahme bleibt offen. Der über PR #78 integrierte Stationspilot bleibt die Grundlage der Spielleitungsbedienung.
 
 **UI/UX-Pilot integriert · 18. Oktober 2026:** [PR #78](https://github.com/Sven401/Larp-Escape/pull/78)
 ist bei `42853bc1aa93de23b5fcfc72e66d2c1a397361af` in den kuratierten

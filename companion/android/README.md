@@ -1,6 +1,6 @@
-# Larp-Escape: verbindliche Android-App
+# Larp-Escape: Android-Apps
 
-**Apptrennung beschlossen · 18.10.2026:** [UX-01](../../docs/ui-ux/PROJEKTREFERENZ.md) legt zwei separat ausgelieferte Apps fest: Dev für Entwicklung/Tests/Experimente und Spielleitung für den Endnutzerstand. Die folgende bestehende Anwendung ist die Dev-Ausgangsbasis; die technische Trennung ist noch offen. [Dev-Abläufe](../../docs/ui-ux/DEV-APP-ABLAEUFE.md) und [Spielleitungs-Abläufe](../../docs/ui-ux/SPIELLEITER-APP-ABLAEUFE.md) beschreiben den weiteren Designumfang.
+**Zwei Apps · 18.10.2026:** `:app` bleibt die Dev-App mit unveränderter Kennung `de.larpescape.companion` und bisherigen Datenspeichern. `:gamemaster` erzeugt separat `de.larpescape.gamemaster` mit eigenem Start ohne eingerichtete Veranstaltung. [Technische Trennung, Datenerhalt und Prüfweg](../../docs/companion/android-app-trennung.md). Native Stationsbedienung und Geräteabnahme bleiben offen. [UX-01](../../docs/ui-ux/PROJEKTREFERENZ.md), [Dev-Abläufe](../../docs/ui-ux/DEV-APP-ABLAEUFE.md) und [Spielleitungs-Abläufe](../../docs/ui-ux/SPIELLEITER-APP-ABLAEUFE.md) führen die Designgrundlage.
 
 **Verbindliches Zielbild · 18.10.2026:** [VA-01](../../docs/veranstaltungsarchitektur.md) und [Vertragsmatrix](../../docs/veranstaltungsarchitektur-umsetzung.md). Mehrere Spielleitungen bedienen gleichzeitig verschiedene Boxen per BLE; zunächst eine aktive Steuersitzung je Box. Gespeicherte Boxzuordnungen, Zielwechsel und getrennte Beobachtungen sind Folgearbeit. Ein Handy muss nicht gleichzeitig alle Boxen verbinden. Bestehende Funktionen und datierte Prüfaussagen bleiben vom noch offenen Veranstaltungsumfang getrennt.
 

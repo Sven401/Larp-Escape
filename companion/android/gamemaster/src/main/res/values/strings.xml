@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Larp Escape Spielleitung</string>
+    <string name="event_title">Deine Veranstaltung</string>
+    <string name="no_event">Auf diesem Handy ist noch keine Veranstaltung eingerichtet.</string>
+    <color name="launcher_background">#174E43</color>
+</resources>
