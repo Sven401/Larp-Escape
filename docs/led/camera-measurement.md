@@ -1,113 +1,172 @@
 # USB-Kamera als LED-Messinstrument
 
-Status, 18.10.2026: **Messwerkzeug-Prototyp; reale Bildaufnahme belegt,
-vollständige automatische Geräteabnahme offen.** Quellbasis `fcb9121` plus
-die Dateien dieses PRs. Kein Firmwareupload und keine neue Appinstallation.
+Stand: 18.10.2026. Implementierter Laborprüfweg für die 23 LEDs und die drei
+Produkt-Effekte. [Gerätebefunde und Grenzen](camera-results-2026-10-18.md).
+Quellbasis: `fcb9121` plus der Kamera-PR. Die ursprüngliche reine
+Aufnahmevorbereitung steht in der Historie bei `fa878d9`.
 
-## Messkette
+## Aufbau und Zuständigkeit
 
-1. Die echte Engine [LedOutput.cpp](../../firmware/led/src/LedOutput.cpp)
-   exportiert auf dem Host ihre eingereichten RGB-Frames. Keine zweite
-   Effektimplementierung als vermeintlich unabhängige Referenz.
-2. `record` speichert verlustfreie PNGs, SHA-256, Kameraeinstellungen und
-   monotone Empfangszeiten. Zeitstempel bezeichnen den Empfang am Rechner,
-   **nicht** die Belichtung oder den tatsächlichen Firmwarestart.
-3. `locate` findet helle Bildregionen in einem zeitlichen Maximum und erstellt
-   ein beschriftetes Bild. Kandidat C0 ist **kein** Firmwareindex 0.
-4. Nach unabhängig geprüfter Indexzuordnung liefert `extract` je LED und Bild
-   RGB-Mittelwerte aus einer Kreisregion sowie den Anteil gesättigter Pixel.
-5. `compare` vergleicht mit explizit vorgegebenem Startzeitversatz die zeitliche
-   Helligkeitsform je LED. Ergebnis: Korrelation oder unbewertbar bei zu geringer
-   Änderung. Keine automatische Gut-/Schlecht-Freigabe, kein Farb- oder
-   absoluter Helligkeitsnachweis; Dunkel-/Stopnachweise sind noch zu ergänzen.
+`larp-led-camera-lab` ist eine getrennte USB-Prüffirmware. Sie verwendet die
+**echte** [Effektengine](../../firmware/led/src/LedOutput.cpp) und den tatsächlichen
+[RMT-Adapter](../../firmware/led/src/RmtLedBus.cpp): GPIO15, 23 Pixel, GRB und
+maximal 32/255 pro Farbkanal. Sie enthält keinen BLE-Zugang und keine
+Audio-/Matrix-/NFC-Steuerung. Die Produktfirmware bekommt keine zusätzlichen
+USB-Steuerbefehle. Ein Laborergebnis ersetzt keine Abnahme des kombinierten
+App-/Produktfirmware-Paars, elektrischer Signale oder Versorgung.
 
-Für einen belastbaren Gesamtvergleich fehlen noch: installierter Firmwarehash,
-geprüfte Zuordnung, Dunkel-/Farb-/Helligkeitskalibrierung, synchronisierte
-Auftrags-/Antwortspur und validierte Fehlertoleranzen. Ein Transport-ACK oder
-RMT-Abschluss ersetzt kein Kamerabild; siehe [Wire V2](ble-wire-v2.md).
+Kamera und Box fixieren. Alle 23 Lichtflächen müssen getrennt sichtbar sein.
+Bei Bewegung, anderer Kamera, geändertem Bildformat oder geänderter Optik neu
+kalibrieren. Native Kameraindizes können sich nach Umstecken ändern.
 
 ## Wiederholen
 
 Gemessene Umgebung: Windows, Python 3.12, DirectShow, OpenCV 4.13.0.
-Abhängigkeiten in einer eigenen lokalen Umgebung installieren:
+Abhängigkeiten in einer eigenen lokalen Python-Umgebung installieren:
 
 ```powershell
 python -m pip install -r scripts/requirements-led-camera.txt
-python scripts/led_camera.py record --output private/camera/run-001 --seconds 6 --camera 0 --backend dshow --auto-exposure 0.25 --exposure -8 --auto-wb 0
-python scripts/led_camera.py locate --capture private/camera/run-001 --output private/camera/candidates-001.json
-python scripts/led_camera_reference.py ripple --output private/camera/ripple.csv
+python -m platformio run -d firmware/led -e larp-led-camera-lab -j 2
 ```
 
-Zielverzeichnisse und Ergebnisdateien dürfen noch nicht existieren; übergeordnete
-Ordner bei CSV-/JSON-Ausgaben vorher anlegen. Rohbilder bleiben unter dem
-ignorierten `private/` oder außerhalb Git. Skripte steuern keine LEDs und öffnen
-keinen seriellen Port. Kamera indexbasiert: nach Umstecken oder Gerätewechsel
-Identität und Bildausschnitt erneut prüfen. Unter Windows kann die Sandbox
-DirectShow sperren; dieser Lauf brauchte genehmigten Zugriff außerhalb davon.
+Ein Geräteupload benötigt den konkreten Auftrag und einen vorher geprüften,
+chipgebundenen Rückweg. Vorher **aktuellen** vollständigen Flash sichern und am
+Chip verifizieren; Partitionstabelle und Anwendungsgrenze abgleichen. Nur die
+Anwendung ab `0x10000` schreiben und verifizieren. Nach dem Versuch bisherige
+Anwendung wiederherstellen und vollständigen 4-MiB-Flash gegen die frische
+Sicherung verifizieren. Firmwaredatei, ELF, Quellstand und private Installations-
+/Restoreprotokolle erhalten. [Historischer Rückwegbeleg](install-2026-10-15.md)
+ist keine Bestätigung des heute angeschlossenen Chips.
 
-Aufbau fixieren: Kamera und Box markieren, Umgebungslicht konstant halten,
-Fokus fest einstellen, alle LEDs getrennt sichtbar halten. Bei Bewegung oder
-geändertem Bildformat neu kalibrieren. Die Kameraeinstellungen sind
-treiberabhängig: akzeptiertes `set()` allein bestätigt keine manuelle Belichtung.
-Readback und Referenzaufnahme gemeinsam prüfen. Gesättigte LED-Kerne erlauben
-keinen belastbaren Helligkeitsvergleich; Belichtung weiter reduzieren und
-erneut prüfen. Kamera-RGB ist durch Gamma, Weißabgleich, Optik und Sensor geprägt.
-
-Kalibrierdatei: `schema: 1`, `mapping_status: "verified"`, `image_size: [640,480]`,
-`leds` mit **23** Einträgen `{ "index": 0, "x": 100, "y": 100, "radius": 3 }`,
-geordnet von Index 0 bis 22. Die Beispielkoordinate ist kein gemessener Index.
-Quelle und unabhängigen Prüfweg der Zuordnung zusätzlich in dieser Datei nennen.
-Eine Kandidatenliste wird vom Extraktor ausdrücklich nicht als Zuordnung akzeptiert.
+Nach beauftragter Installation der Laborfirmware führt ein Befehl den ganzen
+Messlauf aus; das Zielverzeichnis darf noch nicht existieren:
 
 ```powershell
-python scripts/led_camera.py extract --capture private/camera/run-001 --calibration private/camera/calibration.json --output private/camera/samples.csv
-python scripts/led_camera.py compare --samples private/camera/samples.csv --reference private/camera/ripple.csv --offset-ms 1000 --output private/camera/comparison.json
+python scripts/led_camera_suite.py --port COM3 --firmware .pio/led-product/larp-led-camera-lab/firmware.bin --output private/camera/run-001
 ```
 
-`1000` ist ausschließlich ein Syntaxbeispiel: Der Versatz muss aus einer
-unabhängigen Zeitzuordnung stammen. Positive Werte bedeuten Start nach Beginn
-der Kameraaufnahme. Keine nachträgliche freie Phasenoptimierung als Zeitnachweis.
-Die Referenz simuliert 6 s, 1-ms-Service und sofortigen Busabschluss. Vergleich
-verwendet gehaltene Frames bis 6000 ms; echte Scheduling-/USB-/Kameralatenz ist
-separat zu berücksichtigen. Bei 30 Bildern/s lässt sich der 33-ms-Firmwaretakt
-nicht lückenlos beobachten; PWM, kurze Aussetzer und elektrische Signale brauchen
-andere Messmittel. `max_gap_ms` ist ein Empfangsabstand, keine sichere Anzahl
-verlorener Sensorbilder.
+Die Suite startet Übersicht, Regionssuche, Kalibrierung sowie Funkeln,
+Lichtimpuls und Ripple **nacheinander**. Sie speichert Quellfingerabdrücke,
+Kalibrierung, Einzelurteile und `suite.json`; ein negatives Urteil liefert
+Exitcode 1. Keine Geräteuploads, automatischen Wiederholungen oder Überschreibungen.
+Keine Builds oder Bildtests parallel zur Kameramessung ausführen. Unter Windows
+benötigte dieser Aufbau genehmigten Zugriff außerhalb der Sandbox für Kamera,
+seriellen Port und lokale Buildwerkzeuge.
 
-## Beobachteter Kameralauf
-
-Quelle: vom Nutzer gestartetes Funkeln; private Rohbelege unter
-`private/led-camera-probe/` im Hauptcheckout. Keine Firmwareidentität aus dem
-sichtbaren Muster abgeleitet.
-
-| Lauf | Befund |
-| --- | --- |
-| Erste Aufnahme, 640×480 | 124 Bilder in rund 5 s; 24,80 empfangene Bilder/s; größter Abstand 40,65 ms. |
-| Angeforderte manuelle Belichtung −8, automatischer Weißabgleich aus | 90 Bilder in rund 3 s; 30,03 Bilder/s; größter Abstand 33,64 ms. Belichtung −8 und Auto-WB 0 zurückgelesen; Auto-Exposure bleibt −1 trotz akzeptiertem Auftrag: manuelle Automatikabschaltung nicht bestätigt. |
-| Regionensuche im zweiten Lauf | 23 helle Kandidaten mit Schwelle 160 auf dem Minimum der drei Kanalmaxima, Flächenfilter 2–150 Pixel. Das ist eine Kandidatenzählung, noch kein Vollständigkeits-/Indexnachweis. Helle Kerne bleiben teilweise gesättigt. |
-
-## Prüfungen und nächster Abnahmeschritt
+Bei vorhandenem unverändertem Aufbau kann ein einzelner Effekt mit dem
+passenden Regionslayout und der passenden Kalibrierung wiederholt werden:
 
 ```powershell
-python -m unittest discover -s scripts/tests -p test_led_camera.py
-python scripts/led_camera_reference.py twinkle --output private/camera/twinkle.csv
-python scripts/led_camera_reference.py burst --output private/camera/burst.csv
-python scripts/led_camera_reference.py ripple --output private/camera/ripple.csv
+python scripts/led_camera_lab.py ripple --port COM3 --firmware .pio/led-product/larp-led-camera-lab/firmware.bin --rois private/camera/run-001/rois.json --output private/camera/ripple-002
+python scripts/led_camera_assess.py assess --capture private/camera/ripple-002 --calibration private/camera/run-001/calibration.json --output private/camera/ripple-002-result.json
 ```
 
-Drei Hosttests prüfen: ungültige Zuordnung/Format/Grenzen; Kanalreihenfolge,
-Sättigung und manipulierte Rohbilder; positive/invertierte/dunkle Messkurven
-und fehlende Zeitüberlappung. Alle drei Referenzexporte lokal kompiliert und
-ausgeführt. Das ersetzt keinen Vergleich einer realen Messung mit Sollframes.
+Standard: 1280×720, MJPG-Kameraformat, angeforderte 30 Bilder/s, Belichtung −7,
+Verstärkung 0, automatische Belichtung/Weißabgleich aus, Gegenlichtkorrektur 0,
+Schärfung 0 und Gamma 100. Angeforderte, akzeptierte und **nach allen Änderungen**
+zurückgelesene Werte werden protokolliert und beim Vergleich abgeglichen.
+DirectShow setzt beim Ändern der Bildrate den Stream neu auf; FourCC muss deshalb
+zuletzt gesetzt werden. Der Getter für Auto-Exposure ist dort nicht implementiert
+und liefert −1; daraus allein keinen Automatikzustand ableiten.
+[OpenCV-4.13-Quelle](https://github.com/opencv/opencv/blob/4.13.0/modules/videoio/src/cap_dshow.cpp).
+Belichtung −7 entspricht im Windows-Vertrag 1/128 s; die Zeitunsicherheit enthält
+zusätzlich zur Abtastung eine halbe Belichtungsdauer als Schutzabstand.
+[Microsoft CameraControl](https://learn.microsoft.com/en-us/windows/win32/api/strmif/ne-strmif-cameracontrolproperty).
 
-Nächster konkreter Schritt: Belichtung ohne Clipping festlegen, anschließend
-eine einzeln adressierbare Index-/Farbsequenz mit Dunkelpausen und korrelierter
-Startmarkierung vorbereiten. Damit 23 Positionen sowie Kamerareaktion eindeutig
-kalibrieren und an einem getrennten Wiederholungslauf prüfen. Der aktuelle
-Produktvertrag bietet nur Funkeln/Lichtimpuls/Ripple/Stop, keine Einzelpixel.
-Ein zusätzlicher begrenzter Kalibrierpfad ist deshalb erst zu implementieren
-und zu prüfen; ein Geräteupload benötigt den gesonderten Auftrag und den
-chipgebundenen Rückweg aus der Hardwaredokumentation. Danach kontrollierte
-Effektstarts und Fehlerbilder (falscher Index, fehlende LED, falsches Timing,
-fehlendes Aus) verwenden, um Toleranzen zu validieren. Erst dann automatische
-Abnahmeurteile freischalten.
+## Messkette und Daten
+
+1. `pilot` zeichnet einen Lichtimpuls mit absichtlich auf 5 Bilder/s reduzierter
+   **Speicherung** der Gesamtbilder auf. Die Kamera wird durchgehend gelesen.
+   `led_camera_rois.py` findet 23 Aufnahmebereiche. Lokale Reflexfragmente werden
+   zusammengefasst; daraus folgt noch **keine** Firmwareindexzuordnung.
+2. Für die Messung werden dekodierte Kamerapixel in 23 Kacheln verlustfrei erhalten.
+   Feste kreisförmige Blenden aus den Nachbarabständen verhindern die doppelte
+   Abbildung benachbarter LEDs. Außerhalb der Aufnahmefläche steht Schwarz.
+   Regelmäßige vollständige Kontextbilder erhalten die räumliche Herkunft.
+   So blockiert die Speicherung großer Vollbilder nicht die Messung.
+   Die Kamera selbst liefert MJPG; die PNGs sind kein Sensor-RAW und fügen den
+   dekodierten RGB-Pixeln innerhalb der Aufnahmefläche keine weiteren Verluste hinzu.
+3. Die Kalibrierung zeigt drei optische Zeitmarker, dann jeden Index 0–22
+   einzeln mit Weiß 16 und in umgekehrter Reihenfolge mit Weiß 8. Die Gegenfolge
+   darf die zuvor gefundenen Koordinaten nicht anpassen: Sie bestätigt Lage,
+   ausreichenden Eigenpegel und geringe Fremdreaktion.
+4. Weiß und Blau mit R=G=B/4 werden bei 1/2/4/8/16/24/32 gemessen. Eine feste
+   Messfläche je LED wird nur aus Kalibrierdaten gewählt: ausreichendes Signal,
+   mindestens fünf nicht gesättigte Pixel und Eigenlicht statt Nachbarlicht.
+   Überstrahlte Kerne werden ausgeschlossen; die Flächen bleiben bei späteren
+   Effekttests unverändert. Alle drei Grundfarben müssen in ihrem tatsächlichen
+   Kamera-RGB-Kanal dominieren, damit ein Kanaltausch nicht eingelernt wird.
+5. Jeder Effektlauf hat eigene dedizierte optische Zeitmarker mit unterschiedlich
+   langen Phasen und eine
+   Dunkelpause **vor** dem Effekt. Die Auswertung verwendet nur diese Marker zur
+   Zeitzuordnung, niemals eine nachträgliche freie Phasenanpassung an den Effekt.
+   Ansprechkurven und Messflächen stammen aus der getrennten Kalibrierung.
+6. Die Firmware meldet jeden eingereichten RGB-Frame erst nach TX_DONE mit
+   Laufkennung, Schritt, Sequenz sowie Submit-/Complete-Millisekunden. Das ist
+   die Sollspur am tatsächlichen Ausgabeadapter; die Kamera liefert separat die
+   sichtbare Wirkung. Ein USB-Schreib-ACK ist keine Lichtbeobachtung.
+
+Bildempfang und USB-Empfang verwenden dieselbe monotone Hostzeit. Die tatsächlichen
+TX_DONE-Abstände aus der Geräteuhr ersetzen die durch USB-Abfragen gerasterten
+Empfangsabstände; ein konstanter Host-Anker wird durch die optischen Marker
+kompensiert. Zeitmarker werden je LED zwischen tatsächlich empfangenen Bildern
+eingegrenzt. Unterschiedliche Phasen verhindern eine Kopplung an das 30-Hz-Raster.
+Die Schnittmenge der Markerintervalle einschließlich Belichtungs-/Millisekunden-
+Schutzabstand bestimmt die geschätzte Unsicherheit; widersprüchliche Marker
+werden verworfen. Es gibt keine Optimierung anhand des getesteten Effekts.
+Kameraempfang ist
+kein Sensor-Belichtungszeitstempel. Pixel-RGB sind Kameracodes, keine lineare
+Radiometrie. Die stückweise interpolierten Kurven berücksichtigen das gemessene
+Ansprechverhalten beider tatsächlichen Effektfarbfamilien, ohne gleiche Zahlen
+von Firmware und Kamera zu unterstellen.
+
+## Urteil und Grenzen
+
+Voraussetzungen: vollständige Firmwarefolge, unveränderte Bild-/Ereignisdateien,
+passende Firmwarebinärdatei und Kalibrierung, gleiches Regionslayout und gleiche
+protokollierte Kameraeinstellungen. Maximal 80 ms Bildempfangslücke und 60 ms
+**geschätzte** Zeitunsicherheit. Fehlerhafte oder unvollständige Aufnahmen werden
+verworfen. Laufzeit-Imagegröße und Image-MD5 müssen zur Binärdatei passen; deren
+SHA-256 bindet das Artefakt im Messmanifest. MD5 dient dem Abgleich mit der
+ESP-Imagefunktion, nicht der Authentifizierung eines untrusted Geräts.
+
+Nach festem Drei-Bild-Mittel müssen pro LED Helligkeitskorrelation ≥0,90,
+mittlerer RGB-Absolutfehler ≤12 % und dessen 95. Perzentil ≤25 % der Weiß-32-
+Referenz gelten. Sichtbare Spitze ≥10 %, finales Dunkel ≤5 %, keine gesättigten
+Pixel innerhalb der festen Messfläche. Zeitmarker fließen nicht in das
+Effekturteil ein. Diese Kriterien sind technische Laborkriterien, keine
+absolute photometrische Kalibrierung oder vollständige Fehlerabdeckung.
+
+Bei 30 Bildern/s bleibt ein 33-ms-Firmwaretakt nicht lückenlos beobachtbar.
+PWM, elektrische Flanken, kurze Aussetzer und Gesamtspielbetrieb benötigen
+andere bzw. zusätzliche Nachweise. Unterstützt sind die drei aktuellen Effekte;
+andere Farbfamilien werden nicht stillschweigend durch diese Kalibrierung bewertet.
+
+Der USB-Host sendet alle 200 ms ein sitzungsgebundenes Lebenszeichen. Nach
+1500 ms ohne Lebenszeichen oder 90 s fordert die Laborfirmware einen frischen
+Schwarzframe an. Auch bei Stop und regulärem Abschluss wird dessen Übertragung
+abgewartet. Hardwarestörungen können das angeforderte Aus verhindern; ein
+fehlerhafter Transfer ist kein bestätigtes Dunkel.
+
+## Softwareprüfung
+
+```powershell
+python firmware/led/tests/run_camera_tests.py
+python -m unittest discover -s scripts/tests -p 'test_led_camera*.py'
+python firmware/led/tests/run_output_tests.py
+```
+
+Die tatsächliche USB-Steuerschleife wird mit verzögertem Bus geprüft: vollständige
+Sequenz, Verbindungswächter, Stop bei direkter/Engine-Übertragung und natürliche
+Laufzeit aller drei Effekte. Unabhängige optische Fixtures prüfen Indexzuordnung,
+Kameraverzögerung, unveränderte Pixel der Aufnahmeflächen und Ablehnung fehlender
+LEDs, falscher Farbe, ausbleibenden Aus und tatsächlich verschobener Effekte.
+Reine Kameraverzögerung und unterschiedliche Zeilen-/LED-Abtastzeiten werden anhand
+der eigenen Marker kompensiert; ein gesonderter Test erhält die Geräteintervalle
+trotz gerastertem USB-Empfang. Der CI-Job
+prüft diese Tests und Referenzexporte; der Firmwarejob baut auch den Laborzweig.
+
+Die ursprünglichen Werkzeuge `record`, `locate`, `extract`, `compare` und
+`led_camera_reference.py` bleiben für freie Aufnahmen und CSV-Analysen verfügbar.
+Ihr einfacher Korrelationsbericht ist ausdrücklich kein automatisches
+Geräteabnahmeurteil; dafür dient der oben beschriebene kalibrierte Laborprüfweg.

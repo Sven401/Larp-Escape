@@ -85,7 +85,7 @@ def record(args):
 def regions(config, width, height):
     if config.get("mapping_status") != "verified":
         raise ValueError("LED-index mapping must be independently verified")
-    if config.get("schema") != 1 or config.get("image_size") != [width, height]:
+    if config.get("schema") not in (1, 2) or config.get("image_size") != [width, height]:
         raise ValueError("Calibration schema/image dimensions do not match")
     leds = config.get("leds", [])
     if [led.get("index") for led in leds] != list(range(23)):
@@ -97,6 +97,15 @@ def regions(config, width, height):
             raise ValueError("Regions require integer x/y and positive integer radius")
         if x - radius < 0 or y - radius < 0 or x + radius >= width or y + radius >= height:
             raise ValueError("LED region extends outside image")
+        if "offsets" in led:
+            offsets = led["offsets"]
+            if not isinstance(offsets,list) or not 5 <= len(offsets) <= (2*radius+1)**2:
+                raise ValueError("Invalid measured footprint")
+            if any(not isinstance(p,list) or len(p)!=2 or any(type(v) is not int for v in p)
+                   or p[0]**2+p[1]**2 > radius**2 for p in offsets):
+                raise ValueError("Footprint outside region")
+            if len({tuple(p) for p in offsets}) != len(offsets):
+                raise ValueError("Duplicate footprint pixels")
         result.append((x, y, radius))
     return result
 
@@ -164,9 +173,13 @@ def extract(args):
             if frame is None or frame.shape[:2] != (first["height"], first["width"]):
                 raise ValueError("Unreadable image or changing resolution")
             for index, (x, y, radius) in enumerate(rois):
-                patch = frame[y-radius:y+radius+1, x-radius:x+radius+1]
-                yy, xx = np.ogrid[-radius:radius+1, -radius:radius+1]
-                pixels = patch[xx*xx + yy*yy <= radius*radius]
+                if "offsets" in config["leds"][index]:
+                    offsets=np.array(config["leds"][index]["offsets"])
+                    pixels=frame[y+offsets[:,1],x+offsets[:,0]]
+                else:
+                    patch = frame[y-radius:y+radius+1, x-radius:x+radius+1]
+                    yy, xx = np.ogrid[-radius:radius+1, -radius:radius+1]
+                    pixels = patch[xx*xx + yy*yy <= radius*radius]
                 blue, green, red = np.mean(pixels, axis=0)
                 writer.writerow([number, entry["t_ms"], index, red, green, blue,
                                  float(np.mean(np.any(pixels >= 250, axis=1)))])

@@ -125,10 +125,13 @@ USB-/Flashzugriff und die Einrichtungsdatei gehören zum vertrauenswürdigen Set
 
 ## Prüfwege und Geräteabnahme
 
-Der [USB-Kamera-Messweg](../../docs/led/camera-measurement.md) ergänzt
-reproduzierbare Bildaufnahmen, Regionsmessungen und Referenzframes aus der
-echten Effektengine. Er ist ein Prototyp; Index-/Farbkalibrierung und
-automatische Geräteabnahme bleiben offen.
+Der [USB-Kamera-Messweg](../../docs/led/camera-measurement.md) ergänzt eine
+getrennte USB-Prüffirmware, automatische Index-/Farbkalibrierung und den
+optischen Vergleich mit der echten Effektengine. Der
+[Laborlauf vom 18.10.2026](../../docs/led/camera-results-2026-10-18.md)
+bestätigt 23/23 Zuordnungen und alle drei Effekte. Das ist keine gemeinsame
+BLE-App-/Produktabnahme; der ursprüngliche Flash wurde danach verifiziert
+wiederhergestellt.
 
 ```powershell
 python test/test_led_ble_wire/run.py
