@@ -76,7 +76,8 @@ int main(int argc, char **argv) {
             check(!stopPending && black(fake.frames.back()), "stop direct failed");
             Serial.send("RUN 0123456789abcdef burst");
             for (unsigned i = 0; i < 4300; ++i) {
-                if (i % 200 == 0) Serial.send("KEEP 0123456789abcdef"); loop();
+                if (i % 200 == 0) Serial.send("KEEP 0123456789abcdef");
+                loop();
             }
             Serial.send("STOP"); for (unsigned i = 0; i < 10; ++i) loop();
             check(!stopPending && black(fake.frames.back()), "stop engine failed");
