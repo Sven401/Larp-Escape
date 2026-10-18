@@ -1,5 +1,9 @@
 # ESP-NOW: Gerätezuordnung und vorbereiteter Funkversuch
 
+**Historischer Vorbereitungsstand:** Inzwischen ausdrücklich freigegeben,
+ausgeführt und die Box vollständig verifiziert wiederhergestellt.
+Aktueller Nachweis: [Gerätebericht](device-test-2026-10-18.md).
+
 Stand: **18. Oktober 2026**. Basis `d61f77fe753c1a837c13a67edb282d6a79610a30`.
 **Status: USB-Zuordnung geprüft; Funkversuch vorbereitet, noch nicht installiert.**
 

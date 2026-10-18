@@ -1,7 +1,9 @@
 # Begrenzter ESP-NOW-Baugruppentest
 
-**Vorbereitet, noch kein Funknachweis.** Aktueller Ablauf und Gerätefreigabe:
-[Prüfstand vom 18. Oktober 2026](../../docs/espnow/preparation-2026-10-18.md).
+**Begrenzter Gerätelauf bestanden:** 34 rückbestätigte Transfers und zwei
+beabsichtigte negative Sendefälle. Die Box wurde anschließend vollständig
+gegen ihre Vorab-Sicherung verifiziert wiederhergestellt.
+[Gerätebericht vom 18. Oktober 2026](../../docs/espnow/device-test-2026-10-18.md).
 
 Diese bewusst eigenständige Prüffirmware verwendet den unveränderten
 [`EspNowCommunicator`](../../lib/EspNowCommunicator/EspNowCommunicator.cpp).
@@ -71,12 +73,13 @@ Ports und MACs frisch ablesen; COM-Nummern sind keine Geräteidentität.
 python firmware/espnow-probe/run_device_test.py --box COM3 --receiver COM4 --box-mac <BOX-MAC> --receiver-mac <TEST-ESP-MAC> --output <PRIVATER-NEUER-ORDNER>
 ```
 
-Geplanter Lauf: zwei Sekunden Ruhezustand ohne Aktivierung, je zehn einzelne
+Prüfablauf: zwei Sekunden Ruhezustand ohne Aktivierung, je zehn einzelne
 Sendungen in beide Richtungen, erfolgreicher Link-ACK bei absichtlich
 abgewiesener Absender-MAC ohne Anwendungsbestätigung, Gegenradio aus/an,
 separate Neustarts beider ESPs und je drei Sendungen pro Richtung danach.
 Gesamt: 34 positiv rückbestätigte Transfers plus zwei negative Sendefälle.
-Die tatsächlichen Ergebnisse stehen erst nach einem ausgeführten Lauf fest.
+Der verlinkte Gerätebericht hält den tatsächlich ausgeführten Lauf fest;
+ein neuer Aufruf benötigt seine eigenen Rohbelege.
 Keine Warteschlangenverluste sind zulässig; Fehler und Teilergebnisse bleiben
 in `serial.jsonl` und `report.json`. Das Hostwerkzeug führt keinen Upload aus.
 
