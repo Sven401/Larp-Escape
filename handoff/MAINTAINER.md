@@ -1,12 +1,16 @@
 # Maintainer-Einstieg
 
-**Setup-Bestandsaufnahme · 20.10.2026:** [Projekt, Werkzeuge, Prüfwege und Werkbank-Automatik](PROJEKT-SETUP.md). Basis `a4c83cb`; der aktive GitHub-Heartbeat verweist noch auf die historische KI-Werkbank. Korrektur vorgeschlagen, Automatisierung unverändert.
+**Setup-Bestandsaufnahme · 20.10.2026:** [Projekt, Werkzeuge, Prüfwege und Werkbank-Automatik](PROJEKT-SETUP.md). Gegen Integrationsbasis `5b85965` einschließlich #86/#87 geprüft; der aktive GitHub-Heartbeat verweist noch auf die historische KI-Werkbank. Korrektur vorgeschlagen, Automatisierung unverändert.
+
+**Stationspilot #79 integriert · 19.10.2026:** Merge `7e19c95` in den kuratierten Integrationsbranch; Dateibaum identisch zum geprüften Head `98488ea`. [Mergebeleg, getrennte CI und offene Geräteabnahmen](STATIONSPILOT-INTEGRATION-2026-10-19.md). Der lesende native Pilot und die Apptrennung sind integriert; TalkBack, Mehrstationsbetrieb, echter Funkverlust und Langzeitbetrieb bleiben offen. Keine neue Geräteprüfung durch den Merge.
+
+**Wartung #87 integriert · 20.10.2026:** Aktuelle Integrationsbasis `a4c83cb`; der Dokumentationsmerge erhält die Produktquellen von `7e19c95`. [Frische lokale Tests/Builds und korrigierte Prüfanleitungen](WARTUNG-PRUEFSTAND-2026-10-20.md) ergänzen die historischen Stationsbelege. Neun PR-Jobs am Wartungshead `44e7098` erfolgreich; eigene Merge-CI und die CI dieser Maintainer-Fortschreibung bleiben getrennte Nachweise.
 
 **Nativer Stationspilot · 19. Oktober 2026:** [Lokale Vorbereitung, Stationsauswahl, automatische BLE-Anmeldung und bestätigter Zustand](../docs/companion/spielleiter-stationspilot.md) in Larp GM implementiert und an der lokalen Box/Moto G14 geprüft. Bluetooth-Wiederkehr, Hintergrund/Rückkehr, bewusste Pause, Prozessneustart, große Schrift und Rotation geprüft. Dev-Quellen und alle zehn erfassten Dev-Dateien unverändert; Licht-/Spielaktionen sind Folgearbeit.
 
 **Android-Apptrennung · 18. Oktober 2026:** [Zwei Anwendungsprojekte und Erhalt der Dev-Daten](../docs/companion/android-app-trennung.md): Dev behält Paketkennung/Speicher; Spielleitung erhält eine eigene Kennung und einen leeren Veranstaltungseinstieg. [Beide Apps am Moto G14 installiert, Dev ohne Deinstallation aktualisiert und Daten erhalten](../docs/companion/android-app-geraetepruefung-2026-10-18.md). App-Auswahl: Larp Dev mit DEV-Badge und Larp GM mit übernommenem GM-Companion-Icon. Neue Spielsteuerung bleibt Folgearbeit.
 
-**UI/UX-Entscheidung · 18. Oktober 2026:** [UX-01 und Projektreferenz](../docs/ui-ux/PROJEKTREFERENZ.md): Dev-App für Entwicklung/Tests/Experimente und Spielleiter-App für Endnutzer werden als zwei separate Apps ausgeliefert. Hauptabläufe für beide Apps sind ausgearbeitet; technische Trennung ist im oben verlinkten Folgeschritt umgesetzt; Installation/Datenerhalt sind oben geprüft; fachliche native Stationsbedienung bleibt offen. Der über PR #78 integrierte Stationspilot bleibt die Grundlage der Spielleitungsbedienung.
+**UI/UX-Entscheidung · 18. Oktober 2026:** [UX-01 und Projektreferenz](../docs/ui-ux/PROJEKTREFERENZ.md): Dev-App für Entwicklung/Tests/Experimente und Spielleiter-App für Endnutzer werden als zwei separate Apps ausgeliefert. Hauptabläufe für beide Apps sind ausgearbeitet; technische Trennung ist im oben verlinkten Folgeschritt umgesetzt; Installation/Datenerhalt sind oben geprüft; der lesende native Stationspilot ist über #79 umgesetzt; Licht-/Spielaktionen bleiben offen. Der über PR #78 integrierte Stationspilot bleibt die Grundlage der Spielleitungsbedienung.
 
 **Merge-Dokumentation #84 integriert · Stand 19.10.2026:**
 [PR #84](https://github.com/Sven401/Larp-Escape/pull/84) nach 9/9 grünen PR-Jobs
@@ -88,9 +92,9 @@ ergänzen die bisherigen Teilbelege. Gesamtspiel, Reichweite und Dauerlast bleib
 
 **Neue verbindliche Produktentscheidung · 18. Oktober 2026:** [VA-01](../docs/veranstaltungsarchitektur.md) legt autonome Boxen, BLE-Bedienung je Box, unterbrechbare ESP-NOW-/WLAN-Kommunikation und die Zentrale ohne Betriebszwang fest. [Vertrags-/Backlogmatrix](../docs/veranstaltungsarchitektur-umsetzung.md), neue Pakete #59–#63. Zugangskonzept PR #58 bleibt ergänzend maßgeblich. **Architektur-Soll; keine Implementierung oder neue Geräteabnahme.**
 
-Stand: **18. Oktober 2026**. Mandat: [AGENTS.md](../AGENTS.md).
-Quelle dieser Aktualisierung: beauftragter Merge von #78 und Projektstands-/
-Übergabeabschluss am 18.10.2026. Frühere Integrationen #74/#76/#77 und D0/#72 bleiben erhalten.
+Stand: **20. Oktober 2026**. Mandat: [AGENTS.md](../AGENTS.md).
+Quelle: vorbereiteter #79-Abschluss vom 19.10.2026 und beauftragte Nachprüfung
+gegen den um #87 fortgeschriebenen Zielstand am 20.10.2026. Frühere Integrationen bleiben erhalten.
 Vorheriger Integrationsabschluss: beauftragter Merge von #69 und Planabgleich;
 [Integrationsabschluss](INTEGRATION-2026-10-18.md). Frühere Hygiene:
 [Prüfbericht und Bestandsaufnahme](REPOSITORY-HYGIENE-2026-10-18.md).
@@ -102,13 +106,14 @@ und offenen Abnahmekriterien. **Sollkonzept, keine Implementierung.**
 
 ## Aktuelle Arbeitsbasis
 
-- **Belegt:** PR #78 ist bei `42853bc1aa93de23b5fcfc72e66d2c1a397361af`
-  angekommen. Frischer Fetch: Eltern `7e72411` (#77) + `3b2f6b4` (geprüfter #78-Head).
-  Vollständiger Dateibaum identisch zum PR-Head; alle drei PR-Workflows erfolgreich.
-  [Integrationsbeleg und getrennte Merge-CI](UI-UX-INTEGRATION-2026-10-18.md).
-  Die bisherigen Integrationen einschließlich #74/#76/#77 bleiben enthalten.
-  Der anschließende Dokumentationsabschluss ändert keine Produktquellen;
-  seinen tatsächlichen Merge und Prüfstatus führt [Projektplan #25](https://github.com/Sven401/Larp-Escape/issues/25).
+- **Dokumentationsbasis:** PR #87 ist bei `a4c83cb7351759808f85ede612abc7c2280212fc`
+  integriert; Dateibaum identisch zum geprüften Wartungshead `44e7098`.
+  [Wartungsprüfstand](WARTUNG-PRUEFSTAND-2026-10-20.md). Diese Maintainer-Fortschreibung
+  führt den vorbereiteten Inhalt `499ec94` auf dieser Basis weiter; ihr PR ist noch keine Integration.
+- **Belegt:** PR #79 ist bei `7e19c955aaa54bcc7ed318d594a6f69476de4aa9`
+  integriert. Frischer Fetch bestätigt Zielbasis `494f1c4` und Head `98488ea`
+  als Eltern sowie identischen vollständigen Dateibaum zum geprüften Head.
+  [Integrationsbeleg und eigene Merge-CI](STATIONSPILOT-INTEGRATION-2026-10-19.md).
 - LED, Wake, Matrix, Audio und NFC sind auf dem
   [gemeinsamen V2-Vertrag](../docs/led/ble-wire-v2.md) zusammengeführt.
   [Herkunft und Erhaltung aller acht Ergebnis-IDs](KONSOLIDIERUNG-2026-10-17.md)
@@ -128,14 +133,11 @@ und offenen Abnahmekriterien. **Sollkonzept, keine Implementierung.**
 Planung. [#53](https://github.com/Sven401/Larp-Escape/issues/53) dokumentiert
 abgeschlossene Softwarekonsolidierung und Integration durch #56.
 
-- **UI/UX-Pilot als Entwurfsgrundlage integriert:** Bei einem gesonderten
-  Folgeauftrag zuerst [Rollenvertrag](../docs/ui-ux/ROLLE.md),
-  [aktuellen Zustands-/Akzeptanzvertrag](../docs/ui-ux/BOX-PILOT.md) und
-  [Fortsetzung](UI-UX-INTEGRATION-2026-10-18.md) lesen. Nächster möglicher Schritt:
-  Stationsansicht und Zustandsbindung in Compose auf den bestehenden BLE-/Rechte-
-  verträgen planen; reale Stationszuordnung und Mehrstationswechsel als offene
-  Abhängigkeiten behandeln. Native Android-/BLE-, TalkBack-/Lifecycle- und
-  Nutzerabnahme bleiben offen. Dieser Merge startet diese Folgearbeit nicht.
+- **Nativer Stationspilot integriert:** Lokale Vorbereitung, automatische
+  Anmeldung und bestätigter Zustand sind implementiert und begrenzt am Gerät
+  belegt. [Gerätefolgeprüfungen und Fortsetzung](STATIONSPILOT-INTEGRATION-2026-10-19.md):
+  TalkBack, mehrere reale Stationen, Funkverlust bei Bluetooth an und Dauerlauf.
+  Licht-/Spielaktionen und allgemeine Spielleitungsrechte bleiben Folgearbeit.
 
 - **D0 #59 abgeschlossen als Spezifikationspaket:** Nach Übernahme von #72
   D0-G1–G5 in #28/D1/D2/#30/#31/D3/D4 erfüllen. D1/D2 können nun gegen den
@@ -155,8 +157,10 @@ abgeschlossene Softwarekonsolidierung und Integration durch #56.
   Basis prüfen. D1-B/C und #60 bleiben offene Folgearbeit.
 
 - **Gemeinsame Geräteabnahme offen:** passendes V2-App-/Firmwarepaar gezielt
-  prüfen. Zuletzt dokumentiert sind App-Journalstand `6e6f093` und
-  RSSI-Firmware `e012314`; [Installation und Gehversuch](ESPNOW-UEBERGABE-2026-10-18.md).
+  prüfen. Historischer RSSI-Beleg: App-Journalstand `6e6f093` und
+  Firmware `e012314`; der neuere GM-Pilot hat einen eigenen
+  [begrenzten Gerätenachweis](../docs/companion/spielleiter-stationspilot.md).
+  Historische [Installation und Gehversuch](ESPNOW-UEBERGABE-2026-10-18.md).
   Vor erneutem Gerätezugriff tatsächliches Paar feststellen. Ein Upload
   braucht eigenen Auftrag und chipgebundenen Flash-Rückweg.
 - **Hardwareplanung fortgeschrieben, 18.10.2026:** [Übernahme aller acht
@@ -183,6 +187,9 @@ Produktabnahme sind getrennte Nachweise. Der Baugruppenstand ist kein
 abgenommenes Gesamtspiel. Keine neue Geräteprüfung in der Hygienesitzung.
 
 ## Aktuelle Prüfwege und CI
+
+**PR #79:** 9/9 PR-Jobs erfolgreich; eigene Push-CI am Merge `7e19c95`
+mit 7/7 Jobs ebenfalls erfolgreich. Getrennte Belege im [Integrationsbericht](STATIONSPILOT-INTEGRATION-2026-10-19.md) und #25.
 
 **UI/UX #78, Head `3b2f6b4`: alle drei PR-Workflows erfolgreich.**
 [Quality](https://github.com/Sven401/Larp-Escape/actions/runs/39164422680),

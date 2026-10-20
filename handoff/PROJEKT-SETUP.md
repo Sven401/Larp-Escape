@@ -7,6 +7,11 @@ Geprüfte Produktbasis nach erfolgreichem Fetch:
 `origin/plan/projektuebergabe-kuratierter-stand` (Merge von PR #79). Abschließend mit Integrationsstand
 `a4c83cb7351759808f85ede612abc7c2280212fc` abgeglichen: PR #87 ergänzt
 ausschließlich Wartungsdokumentation, die Produktquellen sind unverändert.
+**Integrationsnachprüfung vom 20.10.2026:** Zielbasis jetzt
+`5b8596591cf6657c65d99fc20a70e5334264b368` einschließlich Maintainer-PR #86.
+Dieser ergänzt ausschließlich Übergabedokumentation. Die beiden
+Einstiegsverweise dieses Pakets erhalten seine Stations-/Wartungsfortschreibung;
+Produktquellen, Hooks und Automatisierung bleiben unverändert.
 Dieser Bereich ordnet Quellen und Arbeitsumgebung ein; technische Einzelverträge
 bleiben an ihren verlinkten Stellen maßgeblich.
 
@@ -28,11 +33,12 @@ Baugruppen sind noch kein gemeinsam abgenommenes Veranstaltungssystem.
 | Näheglut | **ausgelesene Laborbelege:** Effektentwicklung, ESP-NOW und Stopdiagnose; Produktadapter und optische Freigabe offen | [Näheglut-Fortsetzung](NAEHEGLUT-STOP-SPIELANSCHLUSS-2026-10-18.md) |
 | Dezentrale Fortschrittsdaten | **belegt:** D0-Spezifikation integriert; Implementierungs-/Gerätetore bleiben eigenständig | [D0-Vertrag](../docs/veranstaltung/d0-vertrag-v1.md), [D0-Review](D0-REVIEW-2026-10-18.md) |
 
-Ältere Absätze in README und Übergaben enthalten frühere Aussagen wie „native
-Stationsbedienung offen“. Für den heute integrierten begrenzten Lesepiloten gilt
-der datierte Stationsbericht zusammen mit den Quellen in `gamemaster`.
-Die Android-README wurde durch den inzwischen integrierten Wartungsbericht bereits berichtigt.
-Daraus folgt keine Freigabe der weiterhin offenen Spielsteuerung.
+Historische Absätze in README und Übergaben können frühere Aussagen wie „native
+Stationsbedienung offen“ enthalten. Die aktuellen Einstiege sind durch #86 und
+die Android-README durch #87 berichtigt. Für den heute integrierten begrenzten
+Lesepiloten gelten der [Stationsintegrationsbericht](STATIONSPILOT-INTEGRATION-2026-10-19.md)
+und der datierte Stationsbericht zusammen mit den Quellen in `gamemaster`.
+Die weiterhin offene Spielsteuerung ist dadurch nicht freigegeben.
 
 ## 2. Kanonische Ablage und Einstieg
 
@@ -63,7 +69,9 @@ Der bei Sitzungsbeginn geöffnete Checkout stand auf `codex/led-resonanzkreis`
 bei `e7ec0f94de8abdc525e7cf5bdf7e049831dc7782`. Dort lagen eine Änderung an
 `.vscode/extensions.json` und unversionierte `.tmp/`-Inhalte. Sie wurden nicht
 übernommen. Ein frischer Fetch ergab die oben genannte neuere Integrationsbasis.
-Diese Dokumentation entsteht isoliert auf `codex/werkbank-projektsetup`.
+Diese Dokumentation entsteht auf `codex/werkbank-projektsetup`. Die
+Integrationsnachprüfung erfolgt isoliert auf `codex/pr88-integration-review`;
+der ursprüngliche Arbeitsbereich bleibt erhalten.
 
 Für eine Fortsetzung zuerst im tatsächlich verwendeten Arbeitsbereich prüfen:
 
@@ -303,6 +311,19 @@ und die [Live-Anleitung](../docs/led/interactive-development.md).
 **Prüfweg der Bestandsaufnahme:** frischer Git-Fetch und Commitabgleich;
 Konfigurationen und verlinkte Projektquellen gelesen; Hookdefinition und
 Hookcode gelesen; vorhandene Automation angesehen; lokale Werkzeugversionen
-abgefragt. Dokumentationsprüfung: 42 relative Linkziele und drei Einstiegslinks vorhanden; elf Abschnitte und der ausdrücklich benannte Änderungsumfang geprüft.
+abgefragt. Dokumentationsprüfung nach Integrationsnachprüfung: 43 relative
+Linkziele dieser Übersicht und die drei Einstiegslinks vorhanden. Insgesamt 180
+lokale Dateiverweise der vier betroffenen Dokumente sowie der vorhandene
+Abschnittsanker geprüft; keine fehlenden Ziele, unausgeglichenen Codeblöcke oder
+Konfliktmarker. Elf Abschnitte und der ausdrücklich benannte Änderungsumfang geprüft.
 Keine neuen Firmware-/Android-Builds, Geräteprüfungen oder externen
 Statussynchronisierungen sind Bestandteil dieses Nachweises.
+
+**Integrationsreview, 20.10.2026:** Die beiden Textkonflikte mit #86 wurden unter
+vollständigem Erhalt der Zielbranch-Fortschreibung aufgelöst; hinzu kommen nur
+die Setup-Verweise. Quellkonfigurationen, Hardwareplanung, Hookcode einschließlich
+SHA-256 und der ausgelesene Heartbeat-Auftrag wurden erneut abgeglichen.
+Gegen Zielbasis `5b85965` bleiben ausschließlich diese Übersicht und drei
+Einstiegsverweise geändert. Die zuvor grünen PR-Läufe am Head `03f9aeb` gelten
+als historische Vorprüfung; der aktualisierte Head benötigt vor dem beauftragten
+Merge eine eigene vollständig erfolgreiche PR-CI.
