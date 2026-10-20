@@ -1,5 +1,10 @@
 # Technische Projektübergabe
 
+**Integration und Bereinigung · 21.10.2026:** [PR #91 integriert, lokaler
+Entwicklungsstart, Quellen-/Belegsicherung und erhaltene offene Arbeit](BEREINIGUNG-2026-10-20.md).
+Integrierter Ausgangspunkt `f174cee`; die datierten Bestandsaufnahmen unten
+beschreiben ihren jeweiligen damaligen Prüfstand.
+
 **Entwicklungsstart · 20.10.2026:** Der [Maintainer-Einstieg](MAINTAINER.md#start-für-weitere-app--und-firmwarearbeit)
 ordnet Dev-App, GM-Pilot, Baugruppen-/Spiel-Firmware und Laborarbeit dem
 kanonischen Integrationsstand `97a2584` zu. Die
