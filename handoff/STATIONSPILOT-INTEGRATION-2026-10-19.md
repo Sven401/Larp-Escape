@@ -80,3 +80,43 @@ Paar; Mehrstationsprüfung nach Bereitstellung weiterer zugeordneter Boxen.
 Neue Licht-/Spielaktionen sind ein eigener Implementierungsauftrag. Der
 [Projektplan #25](https://github.com/Sven401/Larp-Escape/issues/25) führt den
 operativen Status; kein Gesamtissue wird allein durch diesen Merge geschlossen.
+
+## Nachprüfung und PR-Vorbereitung · 20. Oktober 2026
+
+**Status: vorbereitete Fortschreibung fachlich bestätigt und auf aktuelle Zielbasis übernommen.**
+Quelle: Nutzerauftrag in Sitzung `01a15add-4ca0-7c12-9db7-c42e4c87d633`.
+Der erhaltene Vorbereitungscommit `499ec949177b9fb1836bcf2dd1d5304847a59029`
+liegt bereits in [PR #86](https://github.com/Sven401/Larp-Escape/pull/86).
+Der saubere vorhandene Worktree wurde wiederverwendet und Zielbasis
+`a4c83cb7351759808f85ede612abc7c2280212fc` ohne Umschreiben des Ausgangscommits
+übernommen. Diese Basis enthält den inzwischen gemergten Wartungs-PR #87.
+
+Erneut geprüft am 20.10.2026:
+
+- Eltern und identischer vollständiger Dateibaum von `7e19c95` und `98488ea`
+  durch Git geprüft; Baum-ID `448887f8e32ad44f241460323ac57a412c500331` bestätigt.
+- Alle fünf oben verlinkten historischen Läufe über ihre Jobs erneut abgefragt:
+  neun PR-Jobs und sieben ausgelöste Merge-Jobs erfolgreich. Die beiden
+  PR-Android-Checkoutlogs bestätigen `4989efd` mit Head `98488ea` und Basis
+  `494f1c4`; der Windows-Android-Checkoutlog am tatsächlichen Merge bestätigt
+  `7e19c95`. Historische Belege werden nicht als neue Builds ausgegeben.
+- Nutzbarer Pilotumfang und die vier Gerätefolgeprüfungen mit dem
+  [Stationsvertrag](../docs/companion/spielleiter-stationspilot.md) abgeglichen.
+  D1-A/#73 und Resonanzkreis/#71 sind weiterhin offene PRs.
+- Wartung #87: [Quality 3/3](https://github.com/Sven401/Larp-Escape/actions/runs/39489965753),
+  [LED/Android/Kamera 4/4](https://github.com/Sven401/Larp-Escape/actions/runs/39489965803)
+  und [NFC 2/2](https://github.com/Sven401/Larp-Escape/actions/runs/39489965993)
+  am Wartungshead `44e7098` erfolgreich, danach Merge `a4c83cb`.
+  [Lokale Wartungsprüfung und verbleibende Grenzen](WARTUNG-PRUEFSTAND-2026-10-20.md).
+
+Die Einstiege nennen nun sowohl die Produktintegration #79 als auch die spätere
+Dokumentationsbasis #87. Die frühere pauschale Aussage zur noch fehlenden nativen
+Stationsbedienung ist durch den tatsächlich vorhandenen lesenden Pilotumfang und
+seine offenen Folgeprüfungen ersetzt. Inhalt aus parallelem PR #88 wird nicht
+übernommen; dessen ergänzende Einstiegsverweise bleiben eigenständige Arbeit.
+
+Dieses Paket ändert nur drei Übergabedokumente. UTF-8, 116 lokale Dateiverweise,
+der neue Markdown-Anker, ausgeglichene Codeblöcke und Diff am neuen
+Dokumentationsstand geprüft; keine fehlenden Ziele oder Whitespacefehler. Kein neuer
+lokaler Firmware-/Android-Build, Upload oder Gerätelauf. Die neue PR-CI von #86
+ist nach dem Push separat zu bewerten; ein Merge dieses PRs ist nicht beauftragt.

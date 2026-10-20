@@ -2,6 +2,8 @@
 
 **Stationspilot #79 integriert · 19.10.2026:** Merge `7e19c95` in den kuratierten Integrationsbranch; Dateibaum identisch zum geprüften Head `98488ea`. [Mergebeleg, getrennte CI und offene Geräteabnahmen](STATIONSPILOT-INTEGRATION-2026-10-19.md). Der lesende native Pilot und die Apptrennung sind integriert; TalkBack, Mehrstationsbetrieb, echter Funkverlust und Langzeitbetrieb bleiben offen. Keine neue Geräteprüfung durch den Merge.
 
+**Wartung #87 integriert · 20.10.2026:** Aktuelle Integrationsbasis `a4c83cb`; der Dokumentationsmerge erhält die Produktquellen von `7e19c95`. [Frische lokale Tests/Builds und korrigierte Prüfanleitungen](WARTUNG-PRUEFSTAND-2026-10-20.md) ergänzen die historischen Stationsbelege. Neun PR-Jobs am Wartungshead `44e7098` erfolgreich; eigene Merge-CI und die CI dieser Maintainer-Fortschreibung bleiben getrennte Nachweise.
+
 **Nativer Stationspilot · 19. Oktober 2026:** [Lokale Vorbereitung, Stationsauswahl, automatische BLE-Anmeldung und bestätigter Zustand](../docs/companion/spielleiter-stationspilot.md) in Larp GM implementiert und an der lokalen Box/Moto G14 geprüft. Bluetooth-Wiederkehr, Hintergrund/Rückkehr, bewusste Pause, Prozessneustart, große Schrift und Rotation geprüft. Dev-Quellen und alle zehn erfassten Dev-Dateien unverändert; Licht-/Spielaktionen sind Folgearbeit.
 
 **Android-Apptrennung · 18. Oktober 2026:** [Zwei Anwendungsprojekte und Erhalt der Dev-Daten](../docs/companion/android-app-trennung.md): Dev behält Paketkennung/Speicher; Spielleitung erhält eine eigene Kennung und einen leeren Veranstaltungseinstieg. [Beide Apps am Moto G14 installiert, Dev ohne Deinstallation aktualisiert und Daten erhalten](../docs/companion/android-app-geraetepruefung-2026-10-18.md). App-Auswahl: Larp Dev mit DEV-Badge und Larp GM mit übernommenem GM-Companion-Icon. Neue Spielsteuerung bleibt Folgearbeit.
@@ -88,9 +90,9 @@ ergänzen die bisherigen Teilbelege. Gesamtspiel, Reichweite und Dauerlast bleib
 
 **Neue verbindliche Produktentscheidung · 18. Oktober 2026:** [VA-01](../docs/veranstaltungsarchitektur.md) legt autonome Boxen, BLE-Bedienung je Box, unterbrechbare ESP-NOW-/WLAN-Kommunikation und die Zentrale ohne Betriebszwang fest. [Vertrags-/Backlogmatrix](../docs/veranstaltungsarchitektur-umsetzung.md), neue Pakete #59–#63. Zugangskonzept PR #58 bleibt ergänzend maßgeblich. **Architektur-Soll; keine Implementierung oder neue Geräteabnahme.**
 
-Stand: **19. Oktober 2026**. Mandat: [AGENTS.md](../AGENTS.md).
-Quelle dieser Aktualisierung: beauftragter Merge von #79, CI-Nachprüfung und
-Projektstandsabgleich am 19.10.2026. Frühere Integrationen bleiben erhalten.
+Stand: **20. Oktober 2026**. Mandat: [AGENTS.md](../AGENTS.md).
+Quelle: vorbereiteter #79-Abschluss vom 19.10.2026 und beauftragte Nachprüfung
+gegen den um #87 fortgeschriebenen Zielstand am 20.10.2026. Frühere Integrationen bleiben erhalten.
 Vorheriger Integrationsabschluss: beauftragter Merge von #69 und Planabgleich;
 [Integrationsabschluss](INTEGRATION-2026-10-18.md). Frühere Hygiene:
 [Prüfbericht und Bestandsaufnahme](REPOSITORY-HYGIENE-2026-10-18.md).
@@ -102,6 +104,10 @@ und offenen Abnahmekriterien. **Sollkonzept, keine Implementierung.**
 
 ## Aktuelle Arbeitsbasis
 
+- **Dokumentationsbasis:** PR #87 ist bei `a4c83cb7351759808f85ede612abc7c2280212fc`
+  integriert; Dateibaum identisch zum geprüften Wartungshead `44e7098`.
+  [Wartungsprüfstand](WARTUNG-PRUEFSTAND-2026-10-20.md). Diese Maintainer-Fortschreibung
+  führt den vorbereiteten Inhalt `499ec94` auf dieser Basis weiter; ihr PR ist noch keine Integration.
 - **Belegt:** PR #79 ist bei `7e19c955aaa54bcc7ed318d594a6f69476de4aa9`
   integriert. Frischer Fetch bestätigt Zielbasis `494f1c4` und Head `98488ea`
   als Eltern sowie identischen vollständigen Dateibaum zum geprüften Head.
