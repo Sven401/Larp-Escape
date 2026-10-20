@@ -2,6 +2,13 @@
 
 ## Start für weitere App- und Firmwarearbeit
 
+**Integration und Bereinigung · 21.10.2026:** #91 ist bei `f174cee` integriert,
+mit neun erfolgreichen PR-Prüfungen und sieben erfolgreichen Prüfungen auf dem
+Mergecommit. Der lokale Checkout `.worktrees/kanonischer-start` liegt sauber
+auf diesem Stand. [Abschlussbeleg, private Sicherung und erhaltene Arbeit](BEREINIGUNG-2026-10-20.md).
+Die folgenden Angaben bewahren den fachlichen Prüfstand der ursprünglichen
+Bestandsaufnahme; für neue Arbeit weiterhin den Remote-Head prüfen.
+
 **Ausgelesen und am Code abgeglichen · 20.10.2026:** Kanonischer Ausgangspunkt
 ist `origin/plan/projektuebergabe-kuratierter-stand`, in dieser Bestandsaufnahme
 bei `97a2584cc108ebb9c0f667fc46f898d163e00144` einschließlich #86/#87/#88.
