@@ -2,10 +2,11 @@
 
 **Projekt und Setup · 20.10.2026:** [Detaillierter Überblick mit Werkbank-/Automationsprüfung](PROJEKT-SETUP.md), gegen Integrationsbasis `5b85965` einschließlich #86/#87 geprüft.
 
-**Neuer LED-Entwurf · 20.10.2026:** [Kristallsiegel](../docs/led/kristallsiegel-design.md)
+**Kristallsiegel-Prototyp · 20.10.2026:** [Entwurf](../docs/led/kristallsiegel-design.md)
 zeigt bestätigte Kristalle als drei bleibende Lichtabschnitte mit einmaligem
-Schlusspuls. Gestaltungsvorschlag mit editierbarer Bildschirmvorschau und
-Prüfplan; Spielbedeutung/Farbwahl noch offen, keine Produkt- oder Geräteänderung.
+Schlusspuls. [Gemeinsamer C++-Kern und vorhandener USB-/Kameraweg](../firmware/led/LIVE-CRYSTALSEAL.md)
+erlauben Liveparameter, gezielten Stop und getrennte Framebelege. Spieladapter,
+optische Wirkung und Geräteabnahme bleiben offen.
 
 **Stationspilot #79 integriert · 19.10.2026:** Merge `7e19c95` in den kuratierten Integrationsbranch; Dateibaum identisch zum geprüften Head `98488ea`. [Mergebeleg, getrennte CI und offene Geräteabnahmen](STATIONSPILOT-INTEGRATION-2026-10-19.md). Der lesende native Pilot und die Apptrennung sind integriert; TalkBack, Mehrstationsbetrieb, echter Funkverlust und Langzeitbetrieb bleiben offen. Keine neue Geräteprüfung durch den Merge.
 

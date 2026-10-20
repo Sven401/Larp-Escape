@@ -1,13 +1,20 @@
 # Kristallsiegel als sichtbarer Kristallfortschritt
 
+**Ausführbarer Folgestand · 20.10.2026:** Auf den Auftrag „Als Led Architekt
+arbeite an diesem Effekt“ folgen ein gemeinsamer C++-Kern und die Erweiterung
+des bestehenden USB-/Kameralabors. [Kern, Liveparameter, Rundenvertrag und
+Prüfweg](../../firmware/led/LIVE-CRYSTALSEAL.md). Das folgende Soll bleibt die
+gestalterische Grundlage. Spieladapter und reale Lichtbeurteilung sind offen.
+
 Stand: **20. Oktober 2026**. Status: **Gestaltungsvorschlag zur Entscheidung**.
 Auftrag: „entwerfe den nächsten sinnvollen LED Effekt“. Geprüfte Projektbasis:
 `5b8596591cf6657c65d99fc20a70e5334264b368` nach frischem Fetch.
 PR-Basis nach parallel erfolgter Dokumentationsintegration #88:
 `97a2584cc108ebb9c0f667fc46f898d163e00144`; Produktquellen unverändert.
-Spielbedeutung, Farbe und Einsatz dieses Vorschlags sind noch nicht vom Nutzer
-bestätigt. Dieses Paket enthält Entwurf und Bildschirmvorschau; keine Änderung
-an Firmware, Spiel, App oder Geräteinstallation.
+Der Nutzer hat die Weiterentwicklung dieses Effekts beauftragt; die endgültige
+Farbwirkung, Spielbindung und Überlagerungspriorität bleiben offen. Der ursprüngliche
+Entwurfsumfang war Bildschirmvorschau ohne Firmwareänderung; den ausführbaren
+Folgestand führt der verlinkte Laborvertrag.
 
 ## Idee und Nutzen
 
