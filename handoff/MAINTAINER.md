@@ -1,5 +1,7 @@
 # Maintainer-Einstieg
 
+**Setup-Bestandsaufnahme · 20.10.2026:** [Projekt, Werkzeuge, Prüfwege und Werkbank-Automatik](PROJEKT-SETUP.md). Gegen Integrationsbasis `5b85965` einschließlich #86/#87 geprüft; der aktive GitHub-Heartbeat verweist noch auf die historische KI-Werkbank. Korrektur vorgeschlagen, Automatisierung unverändert.
+
 **Stationspilot #79 integriert · 19.10.2026:** Merge `7e19c95` in den kuratierten Integrationsbranch; Dateibaum identisch zum geprüften Head `98488ea`. [Mergebeleg, getrennte CI und offene Geräteabnahmen](STATIONSPILOT-INTEGRATION-2026-10-19.md). Der lesende native Pilot und die Apptrennung sind integriert; TalkBack, Mehrstationsbetrieb, echter Funkverlust und Langzeitbetrieb bleiben offen. Keine neue Geräteprüfung durch den Merge.
 
 **Wartung #87 integriert · 20.10.2026:** Aktuelle Integrationsbasis `a4c83cb`; der Dokumentationsmerge erhält die Produktquellen von `7e19c95`. [Frische lokale Tests/Builds und korrigierte Prüfanleitungen](WARTUNG-PRUEFSTAND-2026-10-20.md) ergänzen die historischen Stationsbelege. Neun PR-Jobs am Wartungshead `44e7098` erfolgreich; eigene Merge-CI und die CI dieser Maintainer-Fortschreibung bleiben getrennte Nachweise.
