@@ -4,9 +4,11 @@
 arbeite an diesem Effekt“ folgen ein gemeinsamer C++-Kern und die Erweiterung
 des bestehenden USB-/Kameralabors. [Kern, Liveparameter, Rundenvertrag und
 Prüfweg](../../firmware/led/LIVE-CRYSTALSEAL.md). Das folgende Soll bleibt die
-gestalterische Grundlage. Spieladapter und reale Lichtbeurteilung sind offen.
+gestalterische Grundlage. [Reale Lichtversuche, Parametervergleich und verifizierter
+Rückweg](kristallsiegel-live-results-2026-10-20.md) ergänzen den ausführbaren Stand.
+Spieladapter und abschließendes Nutzerurteil sind offen.
 
-Stand: **20. Oktober 2026**. Status: **Gestaltungsvorschlag zur Entscheidung**.
+Stand: **20. Oktober 2026**. Status: **am Gerät erprobter Gestaltungsvorschlag**.
 Auftrag: „entwerfe den nächsten sinnvollen LED Effekt“. Geprüfte Projektbasis:
 `5b8596591cf6657c65d99fc20a70e5334264b368` nach frischem Fetch.
 PR-Basis nach parallel erfolgter Dokumentationsintegration #88:
@@ -47,6 +49,12 @@ keine neu vermessene Hardwareanordnung. Vor einem Lichtversuch muss eine feste,
 vollständige Abbildung der logischen Indizes auf die tatsächlichen LEDs stehen.
 Die Abschnittsnummer bezeichnet den Fortschritt, keine Kristallidentität,
 Rolle, Sensorposition oder Himmelsrichtung.
+
+**Realer Prüfstand vom 20.10.:** Alle 23 Indizes wurden vor dem Effektlauf
+frisch zugeordnet und in Gegenfolge bestätigt. Die vorhandene Kette bildet drei
+räumliche Gruppen mit unregelmäßiger, teils zickzackförmiger Indexfolge. Die
+Kreisvorschau bleibt schematisch; der [Versuchsbericht](kristallsiegel-live-results-2026-10-20.md)
+zeigt die echte Geometrie sowie die langsamere Arbeitsvariante 900/250 ms.
 
 | Eigenschaft | Vorschlag |
 | --- | --- |

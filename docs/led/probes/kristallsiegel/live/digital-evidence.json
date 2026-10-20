@@ -1,0 +1,2091 @@
+{
+  "schema": 1,
+  "scope": "Digital trace checks only. Camera manifest hash checked, image bytes not read. Firmware, camera and optical judgments remain separate.",
+  "generator_sha256": "32bef150006f6a43b5ec641a9d7088ee5bced2b895fb07b06d4f122c35489d67",
+  "runs": [
+    {
+      "scope": "Recorded digital output trace and metadata only; not optical acceptance or full independent formula simulation",
+      "source_capture_sha256": "71a5d68b2b612d7a1ddb75966e39fe06012f265245105c1d1c946e286fca0625",
+      "camera_manifest_sha256": "f53ce2a10b6f210deb5482e32271fcc416d86df68f44bc09ca3c10e0894b0fde",
+      "generator_sha256": "32bef150006f6a43b5ec641a9d7088ee5bced2b895fb07b06d4f122c35489d67",
+      "firmware_sha256": "577d0b5a97e28f5a2c267aee0daf5a7bf34169a139b8baafbbafc27cd8c20ea3",
+      "run": "v1b",
+      "events": 1153,
+      "commands": 9,
+      "checks": {
+        "recorded": true,
+        "consecutive_sequences": true,
+        "all_23_rgb_and_bounded": true,
+        "monotonic_submit": true,
+        "monotonic_revision": true,
+        "all_commands_applied": true,
+        "complete_paired_ack": true,
+        "fresh_final_black": true,
+        "at_most_one_elevated_interval_per_round_in_isolated_segments": true
+      },
+      "failures": [],
+      "observed_maximum_rgb": [
+        3,
+        17,
+        23
+      ],
+      "digital_submit_gaps_ms": {
+        "median": 33.0,
+        "max": 44
+      },
+      "transfer_duration_max_ms": 3,
+      "command_groups": [
+        {
+          "req": 1,
+          "revision": 2,
+          "label": "Dunkler Start",
+          "op": "seal-start",
+          "count": 0,
+          "valid": 1,
+          "consumed": 0,
+          "pending_at_ack": 0,
+          "frames": 83,
+          "applied_device_ms": 242276,
+          "isolated_seal": true,
+          "checks": {
+            "has_transfer": true,
+            "transfer_after_application": true,
+            "settled_mixture_matches_contributions": true,
+            "all_settled_frames_equal_snapshot": true
+          },
+          "first_submit_age_ms": 11,
+          "settled_mixture_pixel0": [
+            0,
+            0,
+            0
+          ],
+          "settled_mixture_all_pixels_uniform": true,
+          "settled_horizon_ms": 300,
+          "settled_frames": 74,
+          "settled_lit_pixels": 0,
+          "first_sampled_snapshot_target_age_ms": 11,
+          "elevated_frames": 0
+        },
+        {
+          "req": 2,
+          "revision": 3,
+          "label": "Erster Abschnitt",
+          "op": "seal-update",
+          "count": 1,
+          "valid": 1,
+          "consumed": 0,
+          "pending_at_ack": 0,
+          "frames": 121,
+          "applied_device_ms": 245018,
+          "isolated_seal": true,
+          "checks": {
+            "has_transfer": true,
+            "transfer_after_application": true,
+            "settled_mixture_matches_contributions": true,
+            "all_settled_frames_equal_snapshot": true,
+            "independent_pixel_full_times": true
+          },
+          "first_submit_age_ms": 11,
+          "settled_mixture_pixel0": [
+            0,
+            8,
+            12
+          ],
+          "settled_mixture_all_pixels_uniform": false,
+          "settled_horizon_ms": 600,
+          "settled_frames": 103,
+          "settled_lit_pixels": 8,
+          "elevated_frames": 0
+        },
+        {
+          "req": 3,
+          "revision": 4,
+          "label": "Zweiter Abschnitt",
+          "op": "seal-update",
+          "count": 2,
+          "valid": 1,
+          "consumed": 0,
+          "pending_at_ack": 0,
+          "frames": 121,
+          "applied_device_ms": 249011,
+          "isolated_seal": true,
+          "checks": {
+            "has_transfer": true,
+            "transfer_after_application": true,
+            "settled_mixture_matches_contributions": true,
+            "all_settled_frames_equal_snapshot": true,
+            "independent_pixel_full_times": true
+          },
+          "first_submit_age_ms": 11,
+          "settled_mixture_pixel0": [
+            0,
+            8,
+            12
+          ],
+          "settled_mixture_all_pixels_uniform": false,
+          "settled_horizon_ms": 600,
+          "settled_frames": 103,
+          "settled_lit_pixels": 15,
+          "elevated_frames": 0
+        },
+        {
+          "req": 4,
+          "revision": 5,
+          "label": "Dritter und einmaliger Puls",
+          "op": "seal-update",
+          "count": 3,
+          "valid": 1,
+          "consumed": 1,
+          "pending_at_ack": 1,
+          "frames": 212,
+          "applied_device_ms": 253000,
+          "isolated_seal": true,
+          "checks": {
+            "has_transfer": true,
+            "transfer_after_application": true,
+            "settled_mixture_matches_contributions": true,
+            "all_settled_frames_equal_snapshot": true,
+            "elevation_uniform_all_23": true,
+            "elevation_only_when_pending_at_ack": true,
+            "elevation_within_peak_bounds": true,
+            "one_contiguous_elevation": true,
+            "independent_pixel_full_times": true
+          },
+          "first_submit_age_ms": 16,
+          "settled_mixture_pixel0": [
+            0,
+            8,
+            12
+          ],
+          "settled_mixture_all_pixels_uniform": true,
+          "settled_horizon_ms": 1400,
+          "settled_frames": 170,
+          "settled_lit_pixels": 23,
+          "elevated_frames": 20,
+          "elevation_submit_ages_ms": [
+            676,
+            1303
+          ],
+          "observed_peak_rgb": [
+            3,
+            17,
+            23
+          ]
+        },
+        {
+          "req": 5,
+          "revision": 6,
+          "label": "Korrektur auf zwei",
+          "op": "seal-update",
+          "count": 2,
+          "valid": 1,
+          "consumed": 1,
+          "pending_at_ack": 0,
+          "frames": 93,
+          "applied_device_ms": 260020,
+          "isolated_seal": true,
+          "checks": {
+            "has_transfer": true,
+            "transfer_after_application": true,
+            "settled_mixture_matches_contributions": true,
+            "all_settled_frames_equal_snapshot": true
+          },
+          "first_submit_age_ms": 11,
+          "settled_mixture_pixel0": [
+            0,
+            8,
+            12
+          ],
+          "settled_mixture_all_pixels_uniform": false,
+          "settled_horizon_ms": 300,
+          "settled_frames": 84,
+          "settled_lit_pixels": 15,
+          "first_sampled_snapshot_target_age_ms": 274,
+          "elevated_frames": 0
+        },
+        {
+          "req": 6,
+          "revision": 7,
+          "label": "Zurueck auf drei ohne Wiederholung",
+          "op": "seal-update",
+          "count": 3,
+          "valid": 1,
+          "consumed": 1,
+          "pending_at_ack": 0,
+          "frames": 88,
+          "applied_device_ms": 263083,
+          "isolated_seal": true,
+          "checks": {
+            "has_transfer": true,
+            "transfer_after_application": true,
+            "settled_mixture_matches_contributions": true,
+            "all_settled_frames_equal_snapshot": true,
+            "independent_pixel_full_times": true
+          },
+          "first_submit_age_ms": 16,
+          "settled_mixture_pixel0": [
+            0,
+            8,
+            12
+          ],
+          "settled_mixture_all_pixels_uniform": true,
+          "settled_horizon_ms": 600,
+          "settled_frames": 70,
+          "settled_lit_pixels": 23,
+          "elevated_frames": 0
+        },
+        {
+          "req": 7,
+          "revision": 8,
+          "label": "Ungueltig ausblenden",
+          "op": "seal-update",
+          "count": 3,
+          "valid": 0,
+          "consumed": 1,
+          "pending_at_ack": 0,
+          "frames": 91,
+          "applied_device_ms": 265995,
+          "isolated_seal": true,
+          "checks": {
+            "has_transfer": true,
+            "transfer_after_application": true,
+            "settled_mixture_matches_contributions": true,
+            "all_settled_frames_equal_snapshot": true,
+            "fade_monotonic": true
+          },
+          "first_submit_age_ms": 11,
+          "settled_mixture_pixel0": [
+            0,
+            0,
+            0
+          ],
+          "settled_mixture_all_pixels_uniform": true,
+          "settled_horizon_ms": 300,
+          "settled_frames": 82,
+          "settled_lit_pixels": 0,
+          "first_sampled_snapshot_target_age_ms": 274,
+          "first_sampled_black_age_ms": 274,
+          "black_age_note": "RGB8 quantization may reach zero before the internal 300 ms fade completes",
+          "elevated_frames": 0
+        },
+        {
+          "req": 8,
+          "revision": 9,
+          "label": "Gueltig als ruhiger Snapshot",
+          "op": "seal-update",
+          "count": 3,
+          "valid": 1,
+          "consumed": 1,
+          "pending_at_ack": 0,
+          "frames": 97,
+          "applied_device_ms": 268998,
+          "isolated_seal": true,
+          "checks": {
+            "has_transfer": true,
+            "transfer_after_application": true,
+            "settled_mixture_matches_contributions": true,
+            "all_settled_frames_equal_snapshot": true
+          },
+          "first_submit_age_ms": 11,
+          "settled_mixture_pixel0": [
+            0,
+            8,
+            12
+          ],
+          "settled_mixture_all_pixels_uniform": true,
+          "settled_horizon_ms": 300,
+          "settled_frames": 88,
+          "settled_lit_pixels": 23,
+          "first_sampled_snapshot_target_age_ms": 307,
+          "elevated_frames": 0
+        },
+        {
+          "req": 9,
+          "revision": 10,
+          "label": "Effekt ausblenden",
+          "op": "seal-stop",
+          "count": 3,
+          "valid": 1,
+          "consumed": 1,
+          "pending_at_ack": 0,
+          "frames": 176,
+          "applied_device_ms": 272203,
+          "isolated_seal": true,
+          "checks": {
+            "has_transfer": true,
+            "transfer_after_application": true,
+            "settled_mixture_matches_contributions": true,
+            "mixed_stop_target_after_declared_duration": true,
+            "mixed_stop_monotonic_to_target": true,
+            "all_settled_frames_equal_snapshot": true,
+            "fade_monotonic": true
+          },
+          "first_submit_age_ms": 11,
+          "settled_mixture_pixel0": [
+            0,
+            0,
+            0
+          ],
+          "settled_mixture_all_pixels_uniform": true,
+          "mixed_stop_duration_ms": 300,
+          "first_sampled_mixed_stop_target_age_ms": 275,
+          "settled_horizon_ms": 300,
+          "settled_frames": 167,
+          "settled_lit_pixels": 0,
+          "first_sampled_snapshot_target_age_ms": 275,
+          "first_sampled_black_age_ms": 275,
+          "black_age_note": "RGB8 quantization may reach zero before the internal 300 ms fade completes",
+          "elevated_frames": 0
+        }
+      ],
+      "pulse_intervals": [
+        {
+          "req": 4,
+          "round": 1,
+          "revision": 5,
+          "submit_ages_ms": [
+            676,
+            1303
+          ]
+        }
+      ],
+      "section_progression": [
+        {
+          "req": 2,
+          "round": 1,
+          "count": 1,
+          "applied_device_ms": 245018,
+          "pixels": [
+            {
+              "index": 0,
+              "expected_full_ms": 150,
+              "first_sampled_full_ms": 175
+            },
+            {
+              "index": 1,
+              "expected_full_ms": 214,
+              "first_sampled_full_ms": 241
+            },
+            {
+              "index": 2,
+              "expected_full_ms": 278,
+              "first_sampled_full_ms": 307
+            },
+            {
+              "index": 3,
+              "expected_full_ms": 342,
+              "first_sampled_full_ms": 373
+            },
+            {
+              "index": 4,
+              "expected_full_ms": 407,
+              "first_sampled_full_ms": 439
+            },
+            {
+              "index": 5,
+              "expected_full_ms": 471,
+              "first_sampled_full_ms": 472
+            },
+            {
+              "index": 6,
+              "expected_full_ms": 535,
+              "first_sampled_full_ms": 538
+            },
+            {
+              "index": 7,
+              "expected_full_ms": 600,
+              "first_sampled_full_ms": 604
+            }
+          ],
+          "sample_tolerance_ms": 46,
+          "observation_end_age_ms": 20977,
+          "interrupted_before_full_duration": false,
+          "complete": true,
+          "full_time_checks_pass": true
+        },
+        {
+          "req": 3,
+          "round": 1,
+          "count": 2,
+          "applied_device_ms": 249011,
+          "pixels": [
+            {
+              "index": 8,
+              "expected_full_ms": 150,
+              "first_sampled_full_ms": 176
+            },
+            {
+              "index": 9,
+              "expected_full_ms": 225,
+              "first_sampled_full_ms": 242
+            },
+            {
+              "index": 10,
+              "expected_full_ms": 300,
+              "first_sampled_full_ms": 308
+            },
+            {
+              "index": 11,
+              "expected_full_ms": 375,
+              "first_sampled_full_ms": 407
+            },
+            {
+              "index": 12,
+              "expected_full_ms": 450,
+              "first_sampled_full_ms": 473
+            },
+            {
+              "index": 13,
+              "expected_full_ms": 525,
+              "first_sampled_full_ms": 539
+            },
+            {
+              "index": 14,
+              "expected_full_ms": 600,
+              "first_sampled_full_ms": 606
+            }
+          ],
+          "sample_tolerance_ms": 46,
+          "observation_end_age_ms": 16984,
+          "interrupted_before_full_duration": false,
+          "complete": true,
+          "full_time_checks_pass": true
+        },
+        {
+          "req": 4,
+          "round": 1,
+          "count": 3,
+          "applied_device_ms": 253000,
+          "pixels": [
+            {
+              "index": 15,
+              "expected_full_ms": 150,
+              "first_sampled_full_ms": 181
+            },
+            {
+              "index": 16,
+              "expected_full_ms": 214,
+              "first_sampled_full_ms": 214
+            },
+            {
+              "index": 17,
+              "expected_full_ms": 278,
+              "first_sampled_full_ms": 280
+            },
+            {
+              "index": 18,
+              "expected_full_ms": 342,
+              "first_sampled_full_ms": 346
+            },
+            {
+              "index": 19,
+              "expected_full_ms": 407,
+              "first_sampled_full_ms": 412
+            },
+            {
+              "index": 20,
+              "expected_full_ms": 471,
+              "first_sampled_full_ms": 478
+            },
+            {
+              "index": 21,
+              "expected_full_ms": 535,
+              "first_sampled_full_ms": 544
+            },
+            {
+              "index": 22,
+              "expected_full_ms": 600,
+              "first_sampled_full_ms": 610
+            }
+          ],
+          "sample_tolerance_ms": 41,
+          "observation_end_age_ms": 7020,
+          "interrupted_before_full_duration": false,
+          "complete": true,
+          "full_time_checks_pass": true
+        },
+        {
+          "req": 6,
+          "round": 1,
+          "count": 3,
+          "applied_device_ms": 263083,
+          "pixels": [
+            {
+              "index": 15,
+              "expected_full_ms": 150,
+              "first_sampled_full_ms": 181
+            },
+            {
+              "index": 16,
+              "expected_full_ms": 214,
+              "first_sampled_full_ms": 214
+            },
+            {
+              "index": 17,
+              "expected_full_ms": 278,
+              "first_sampled_full_ms": 280
+            },
+            {
+              "index": 18,
+              "expected_full_ms": 342,
+              "first_sampled_full_ms": 346
+            },
+            {
+              "index": 19,
+              "expected_full_ms": 407,
+              "first_sampled_full_ms": 412
+            },
+            {
+              "index": 20,
+              "expected_full_ms": 471,
+              "first_sampled_full_ms": 478
+            },
+            {
+              "index": 21,
+              "expected_full_ms": 535,
+              "first_sampled_full_ms": 544
+            },
+            {
+              "index": 22,
+              "expected_full_ms": 600,
+              "first_sampled_full_ms": 610
+            }
+          ],
+          "sample_tolerance_ms": 36,
+          "observation_end_age_ms": 2912,
+          "interrupted_before_full_duration": false,
+          "complete": true,
+          "full_time_checks_pass": true
+        }
+      ],
+      "camera": {
+        "frames": 914,
+        "timing": {
+          "received_fps": 23.574327929716013,
+          "max_gap_ms": 1146.5627999277785,
+          "gaps_over_100ms": 22
+        },
+        "dropped_for_writer_backlog": 0,
+        "meets_existing_80ms_gap_bound": false
+      }
+    },
+    {
+      "scope": "Recorded digital output trace and metadata only; not optical acceptance or full independent formula simulation",
+      "source_capture_sha256": "29a28c0ee222f3a5b0f02f9a52af490c06946f98d0597e42a4a7cb9bec2ecf6c",
+      "camera_manifest_sha256": "8e989e15a3faabc352798b75cd7e682df94d21f239bb6ab067acca46e79e4c7c",
+      "generator_sha256": "32bef150006f6a43b5ec641a9d7088ee5bced2b895fb07b06d4f122c35489d67",
+      "firmware_sha256": "577d0b5a97e28f5a2c267aee0daf5a7bf34169a139b8baafbbafc27cd8c20ea3",
+      "run": "v2",
+      "events": 1122,
+      "commands": 15,
+      "checks": {
+        "recorded": true,
+        "consecutive_sequences": true,
+        "all_23_rgb_and_bounded": true,
+        "monotonic_submit": true,
+        "monotonic_revision": true,
+        "all_commands_applied": true,
+        "complete_paired_ack": true,
+        "fresh_final_black": true,
+        "at_most_one_elevated_interval_per_round_in_isolated_segments": true
+      },
+      "failures": [],
+      "observed_maximum_rgb": [
+        3,
+        17,
+        23
+      ],
+      "digital_submit_gaps_ms": {
+        "median": 33,
+        "max": 42
+      },
+      "transfer_duration_max_ms": 14,
+      "command_groups": [
+        {
+          "req": 1,
+          "revision": 2,
+          "label": "Langsamere Variante 900/250",
+          "op": "seal-start",
+          "count": 0,
+          "valid": 1,
+          "consumed": 0,
+          "pending_at_ack": 0,
+          "frames": 90,
+          "applied_device_ms": 337890,
+          "isolated_seal": true,
+          "checks": {
+            "has_transfer": true,
+            "transfer_after_application": true,
+            "settled_mixture_matches_contributions": true,
+            "all_settled_frames_equal_snapshot": true
+          },
+          "first_submit_age_ms": 17,
+          "settled_mixture_pixel0": [
+            0,
+            0,
+            0
+          ],
+          "settled_mixture_all_pixels_uniform": true,
+          "settled_horizon_ms": 300,
+          "settled_frames": 81,
+          "settled_lit_pixels": 0,
+          "first_sampled_snapshot_target_age_ms": 17,
+          "elevated_frames": 0
+        },
+        {
+          "req": 2,
+          "revision": 3,
+          "label": "Langsam erster Abschnitt",
+          "op": "seal-update",
+          "count": 1,
+          "valid": 1,
+          "consumed": 0,
+          "pending_at_ack": 0,
+          "frames": 91,
+          "applied_device_ms": 340875,
+          "isolated_seal": true,
+          "checks": {
+            "has_transfer": true,
+            "transfer_after_application": true,
+            "settled_mixture_matches_contributions": true,
+            "all_settled_frames_equal_snapshot": true,
+            "independent_pixel_full_times": true
+          },
+          "first_submit_age_ms": 11,
+          "settled_mixture_pixel0": [
+            0,
+            8,
+            12
+          ],
+          "settled_mixture_all_pixels_uniform": false,
+          "settled_horizon_ms": 900,
+          "settled_frames": 64,
+          "settled_lit_pixels": 8,
+          "elevated_frames": 0
+        },
+        {
+          "req": 3,
+          "revision": 4,
+          "label": "Langsam zweiter Abschnitt",
+          "op": "seal-update",
+          "count": 2,
+          "valid": 1,
+          "consumed": 0,
+          "pending_at_ack": 0,
+          "frames": 91,
+          "applied_device_ms": 343881,
+          "isolated_seal": true,
+          "checks": {
+            "has_transfer": true,
+            "transfer_after_application": true,
+            "settled_mixture_matches_contributions": true,
+            "all_settled_frames_equal_snapshot": true,
+            "independent_pixel_full_times": true
+          },
+          "first_submit_age_ms": 11,
+          "settled_mixture_pixel0": [
+            0,
+            8,
+            12
+          ],
+          "settled_mixture_all_pixels_uniform": false,
+          "settled_horizon_ms": 900,
+          "settled_frames": 64,
+          "settled_lit_pixels": 15,
+          "elevated_frames": 0
+        },
+        {
+          "req": 4,
+          "revision": 5,
+          "label": "Langsam dritter und Puls",
+          "op": "seal-update",
+          "count": 3,
+          "valid": 1,
+          "consumed": 1,
+          "pending_at_ack": 1,
+          "frames": 122,
+          "applied_device_ms": 346884,
+          "isolated_seal": true,
+          "checks": {
+            "has_transfer": true,
+            "transfer_after_application": true,
+            "settled_mixture_matches_contributions": true,
+            "all_settled_frames_equal_snapshot": true,
+            "elevation_uniform_all_23": true,
+            "elevation_only_when_pending_at_ack": true,
+            "elevation_within_peak_bounds": true,
+            "one_contiguous_elevation": true,
+            "independent_pixel_full_times": true
+          },
+          "first_submit_age_ms": 11,
+          "settled_mixture_pixel0": [
+            0,
+            8,
+            12
+          ],
+          "settled_mixture_all_pixels_uniform": true,
+          "settled_horizon_ms": 1700,
+          "settled_frames": 70,
+          "settled_lit_pixels": 23,
+          "elevated_frames": 20,
+          "elevation_submit_ages_ms": [
+            1001,
+            1628
+          ],
+          "observed_peak_rgb": [
+            3,
+            17,
+            23
+          ]
+        },
+        {
+          "req": 5,
+          "revision": 6,
+          "label": "Schnell eintreffender Fortschritt",
+          "op": "seal-start",
+          "count": 0,
+          "valid": 1,
+          "consumed": 0,
+          "pending_at_ack": 0,
+          "frames": 60,
+          "applied_device_ms": 350906,
+          "isolated_seal": true,
+          "checks": {
+            "has_transfer": true,
+            "transfer_after_application": true,
+            "settled_mixture_matches_contributions": true,
+            "all_settled_frames_equal_snapshot": true
+          },
+          "first_submit_age_ms": 16,
+          "settled_mixture_pixel0": [
+            0,
+            0,
+            0
+          ],
+          "settled_mixture_all_pixels_uniform": true,
+          "settled_horizon_ms": 300,
+          "settled_frames": 51,
+          "settled_lit_pixels": 0,
+          "first_sampled_snapshot_target_age_ms": 16,
+          "elevated_frames": 0
+        },
+        {
+          "req": 6,
+          "revision": 7,
+          "label": "Schnell eins",
+          "op": "seal-update",
+          "count": 1,
+          "valid": 1,
+          "consumed": 0,
+          "pending_at_ack": 0,
+          "frames": 3,
+          "applied_device_ms": 352888,
+          "isolated_seal": true,
+          "checks": {
+            "has_transfer": true,
+            "transfer_after_application": true,
+            "independent_pixel_full_times": true
+          },
+          "first_submit_age_ms": 14,
+          "settled_horizon_ms": 900,
+          "settled_frames": 0,
+          "elevated_frames": 0
+        },
+        {
+          "req": 7,
+          "revision": 8,
+          "label": "Schnell zwei",
+          "op": "seal-update",
+          "count": 2,
+          "valid": 1,
+          "consumed": 0,
+          "pending_at_ack": 0,
+          "frames": 3,
+          "applied_device_ms": 352985,
+          "isolated_seal": true,
+          "checks": {
+            "has_transfer": true,
+            "transfer_after_application": true,
+            "independent_pixel_full_times": true
+          },
+          "first_submit_age_ms": 16,
+          "settled_horizon_ms": 900,
+          "settled_frames": 0,
+          "elevated_frames": 0
+        },
+        {
+          "req": 8,
+          "revision": 9,
+          "label": "Schnell drei",
+          "op": "seal-update",
+          "count": 3,
+          "valid": 1,
+          "consumed": 1,
+          "pending_at_ack": 1,
+          "frames": 115,
+          "applied_device_ms": 353090,
+          "isolated_seal": true,
+          "checks": {
+            "has_transfer": true,
+            "transfer_after_application": true,
+            "settled_mixture_matches_contributions": true,
+            "all_settled_frames_equal_snapshot": true,
+            "elevation_uniform_all_23": true,
+            "elevation_only_when_pending_at_ack": true,
+            "elevation_within_peak_bounds": true,
+            "one_contiguous_elevation": true,
+            "independent_pixel_full_times": true
+          },
+          "first_submit_age_ms": 11,
+          "settled_mixture_pixel0": [
+            0,
+            8,
+            12
+          ],
+          "settled_mixture_all_pixels_uniform": true,
+          "settled_horizon_ms": 1700,
+          "settled_frames": 63,
+          "settled_lit_pixels": 23,
+          "elevated_frames": 20,
+          "elevation_submit_ages_ms": [
+            1000,
+            1627
+          ],
+          "observed_peak_rgb": [
+            3,
+            17,
+            23
+          ]
+        },
+        {
+          "req": 9,
+          "revision": 10,
+          "label": "Snapshot drei ohne Puls",
+          "op": "seal-start",
+          "count": 3,
+          "valid": 1,
+          "consumed": 1,
+          "pending_at_ack": 0,
+          "frames": 91,
+          "applied_device_ms": 356887,
+          "isolated_seal": true,
+          "checks": {
+            "has_transfer": true,
+            "transfer_after_application": true,
+            "settled_mixture_matches_contributions": true,
+            "all_settled_frames_equal_snapshot": true
+          },
+          "first_submit_age_ms": 11,
+          "settled_mixture_pixel0": [
+            0,
+            8,
+            12
+          ],
+          "settled_mixture_all_pixels_uniform": true,
+          "settled_horizon_ms": 300,
+          "settled_frames": 82,
+          "settled_lit_pixels": 23,
+          "first_sampled_snapshot_target_age_ms": 307,
+          "elevated_frames": 0
+        },
+        {
+          "req": 10,
+          "revision": 11,
+          "label": "Stop im Aufbau vorbereiten",
+          "op": "seal-start",
+          "count": 0,
+          "valid": 1,
+          "consumed": 0,
+          "pending_at_ack": 0,
+          "frames": 60,
+          "applied_device_ms": 359897,
+          "isolated_seal": true,
+          "checks": {
+            "has_transfer": true,
+            "transfer_after_application": true,
+            "settled_mixture_matches_contributions": true,
+            "all_settled_frames_equal_snapshot": true
+          },
+          "first_submit_age_ms": 11,
+          "settled_mixture_pixel0": [
+            0,
+            0,
+            0
+          ],
+          "settled_mixture_all_pixels_uniform": true,
+          "settled_horizon_ms": 300,
+          "settled_frames": 51,
+          "settled_lit_pixels": 0,
+          "first_sampled_snapshot_target_age_ms": 11,
+          "elevated_frames": 0
+        },
+        {
+          "req": 11,
+          "revision": 12,
+          "label": "Aufbau fuer Stop",
+          "op": "seal-update",
+          "count": 1,
+          "valid": 1,
+          "consumed": 0,
+          "pending_at_ack": 0,
+          "frames": 11,
+          "applied_device_ms": 361879,
+          "isolated_seal": true,
+          "checks": {
+            "has_transfer": true,
+            "transfer_after_application": true
+          },
+          "first_submit_age_ms": 11,
+          "settled_horizon_ms": 900,
+          "settled_frames": 0,
+          "elevated_frames": 0
+        },
+        {
+          "req": 12,
+          "revision": 13,
+          "label": "Stop mitten im Aufbau",
+          "op": "seal-stop",
+          "count": 1,
+          "valid": 1,
+          "consumed": 0,
+          "pending_at_ack": 0,
+          "frames": 82,
+          "applied_device_ms": 362236,
+          "isolated_seal": true,
+          "checks": {
+            "has_transfer": true,
+            "transfer_after_application": true,
+            "settled_mixture_matches_contributions": true,
+            "mixed_stop_target_after_declared_duration": true,
+            "mixed_stop_monotonic_to_target": true,
+            "all_settled_frames_equal_snapshot": true,
+            "fade_monotonic": true
+          },
+          "first_submit_age_ms": 16,
+          "settled_mixture_pixel0": [
+            0,
+            0,
+            0
+          ],
+          "settled_mixture_all_pixels_uniform": true,
+          "mixed_stop_duration_ms": 300,
+          "first_sampled_mixed_stop_target_age_ms": 247,
+          "settled_horizon_ms": 300,
+          "settled_frames": 73,
+          "settled_lit_pixels": 0,
+          "first_sampled_snapshot_target_age_ms": 247,
+          "first_sampled_black_age_ms": 247,
+          "black_age_note": "RGB8 quantization may reach zero before the internal 300 ms fade completes",
+          "elevated_frames": 0
+        },
+        {
+          "req": 13,
+          "revision": 14,
+          "label": "Stop im Puls vorbereiten",
+          "op": "seal-start",
+          "count": 2,
+          "valid": 1,
+          "consumed": 0,
+          "pending_at_ack": 0,
+          "frames": 59,
+          "applied_device_ms": 364928,
+          "isolated_seal": true,
+          "checks": {
+            "has_transfer": true,
+            "transfer_after_application": true,
+            "settled_mixture_matches_contributions": true,
+            "all_settled_frames_equal_snapshot": true
+          },
+          "first_submit_age_ms": 34,
+          "settled_mixture_pixel0": [
+            0,
+            8,
+            12
+          ],
+          "settled_mixture_all_pixels_uniform": false,
+          "settled_horizon_ms": 300,
+          "settled_frames": 50,
+          "settled_lit_pixels": 15,
+          "first_sampled_snapshot_target_age_ms": 331,
+          "elevated_frames": 0
+        },
+        {
+          "req": 14,
+          "revision": 15,
+          "label": "Puls fuer Stop",
+          "op": "seal-update",
+          "count": 3,
+          "valid": 1,
+          "consumed": 1,
+          "pending_at_ack": 1,
+          "frames": 33,
+          "applied_device_ms": 366893,
+          "isolated_seal": true,
+          "checks": {
+            "has_transfer": true,
+            "transfer_after_application": true,
+            "elevation_uniform_all_23": true,
+            "elevation_only_when_pending_at_ack": true,
+            "elevation_within_peak_bounds": true,
+            "one_contiguous_elevation": true,
+            "independent_pixel_full_times": true
+          },
+          "first_submit_age_ms": 16,
+          "settled_horizon_ms": 1700,
+          "settled_frames": 0,
+          "elevated_frames": 4,
+          "elevation_submit_ages_ms": [
+            973,
+            1072
+          ],
+          "observed_peak_rgb": [
+            1,
+            11,
+            16
+          ]
+        },
+        {
+          "req": 15,
+          "revision": 16,
+          "label": "Stop mitten im Puls",
+          "op": "seal-stop",
+          "count": 3,
+          "valid": 1,
+          "consumed": 1,
+          "pending_at_ack": 0,
+          "frames": 148,
+          "applied_device_ms": 367984,
+          "isolated_seal": true,
+          "checks": {
+            "has_transfer": true,
+            "transfer_after_application": true,
+            "settled_mixture_matches_contributions": true,
+            "mixed_stop_target_after_declared_duration": true,
+            "mixed_stop_monotonic_to_target": true,
+            "all_settled_frames_equal_snapshot": true,
+            "fade_monotonic": true
+          },
+          "first_submit_age_ms": 14,
+          "settled_mixture_pixel0": [
+            0,
+            0,
+            0
+          ],
+          "settled_mixture_all_pixels_uniform": true,
+          "mixed_stop_duration_ms": 300,
+          "first_sampled_mixed_stop_target_age_ms": 278,
+          "settled_horizon_ms": 300,
+          "settled_frames": 139,
+          "settled_lit_pixels": 0,
+          "first_sampled_snapshot_target_age_ms": 278,
+          "first_sampled_black_age_ms": 278,
+          "black_age_note": "RGB8 quantization may reach zero before the internal 300 ms fade completes",
+          "elevated_frames": 0
+        }
+      ],
+      "pulse_intervals": [
+        {
+          "req": 4,
+          "round": 2,
+          "revision": 5,
+          "submit_ages_ms": [
+            1001,
+            1628
+          ]
+        },
+        {
+          "req": 8,
+          "round": 3,
+          "revision": 9,
+          "submit_ages_ms": [
+            1000,
+            1627
+          ]
+        },
+        {
+          "req": 14,
+          "round": 6,
+          "revision": 15,
+          "submit_ages_ms": [
+            973,
+            1072
+          ]
+        }
+      ],
+      "section_progression": [
+        {
+          "req": 2,
+          "round": 2,
+          "count": 1,
+          "applied_device_ms": 340875,
+          "pixels": [
+            {
+              "index": 0,
+              "expected_full_ms": 250,
+              "first_sampled_full_ms": 274
+            },
+            {
+              "index": 1,
+              "expected_full_ms": 342,
+              "first_sampled_full_ms": 373
+            },
+            {
+              "index": 2,
+              "expected_full_ms": 435,
+              "first_sampled_full_ms": 440
+            },
+            {
+              "index": 3,
+              "expected_full_ms": 528,
+              "first_sampled_full_ms": 539
+            },
+            {
+              "index": 4,
+              "expected_full_ms": 621,
+              "first_sampled_full_ms": 638
+            },
+            {
+              "index": 5,
+              "expected_full_ms": 714,
+              "first_sampled_full_ms": 737
+            },
+            {
+              "index": 6,
+              "expected_full_ms": 807,
+              "first_sampled_full_ms": 836
+            },
+            {
+              "index": 7,
+              "expected_full_ms": 900,
+              "first_sampled_full_ms": 902
+            }
+          ],
+          "sample_tolerance_ms": 38,
+          "observation_end_age_ms": 10031,
+          "interrupted_before_full_duration": false,
+          "complete": true,
+          "full_time_checks_pass": true
+        },
+        {
+          "req": 3,
+          "round": 2,
+          "count": 2,
+          "applied_device_ms": 343881,
+          "pixels": [
+            {
+              "index": 8,
+              "expected_full_ms": 250,
+              "first_sampled_full_ms": 274
+            },
+            {
+              "index": 9,
+              "expected_full_ms": 358,
+              "first_sampled_full_ms": 373
+            },
+            {
+              "index": 10,
+              "expected_full_ms": 466,
+              "first_sampled_full_ms": 472
+            },
+            {
+              "index": 11,
+              "expected_full_ms": 575,
+              "first_sampled_full_ms": 604
+            },
+            {
+              "index": 12,
+              "expected_full_ms": 683,
+              "first_sampled_full_ms": 703
+            },
+            {
+              "index": 13,
+              "expected_full_ms": 791,
+              "first_sampled_full_ms": 802
+            },
+            {
+              "index": 14,
+              "expected_full_ms": 900,
+              "first_sampled_full_ms": 901
+            }
+          ],
+          "sample_tolerance_ms": 36,
+          "observation_end_age_ms": 7025,
+          "interrupted_before_full_duration": false,
+          "complete": true,
+          "full_time_checks_pass": true
+        },
+        {
+          "req": 4,
+          "round": 2,
+          "count": 3,
+          "applied_device_ms": 346884,
+          "pixels": [
+            {
+              "index": 15,
+              "expected_full_ms": 250,
+              "first_sampled_full_ms": 275
+            },
+            {
+              "index": 16,
+              "expected_full_ms": 342,
+              "first_sampled_full_ms": 374
+            },
+            {
+              "index": 17,
+              "expected_full_ms": 435,
+              "first_sampled_full_ms": 440
+            },
+            {
+              "index": 18,
+              "expected_full_ms": 528,
+              "first_sampled_full_ms": 539
+            },
+            {
+              "index": 19,
+              "expected_full_ms": 621,
+              "first_sampled_full_ms": 638
+            },
+            {
+              "index": 20,
+              "expected_full_ms": 714,
+              "first_sampled_full_ms": 737
+            },
+            {
+              "index": 21,
+              "expected_full_ms": 807,
+              "first_sampled_full_ms": 836
+            },
+            {
+              "index": 22,
+              "expected_full_ms": 900,
+              "first_sampled_full_ms": 902
+            }
+          ],
+          "sample_tolerance_ms": 36,
+          "observation_end_age_ms": 4022,
+          "interrupted_before_full_duration": false,
+          "complete": true,
+          "full_time_checks_pass": true
+        },
+        {
+          "req": 6,
+          "round": 3,
+          "count": 1,
+          "applied_device_ms": 352888,
+          "pixels": [
+            {
+              "index": 0,
+              "expected_full_ms": 250,
+              "first_sampled_full_ms": 278
+            },
+            {
+              "index": 1,
+              "expected_full_ms": 342,
+              "first_sampled_full_ms": 344
+            },
+            {
+              "index": 2,
+              "expected_full_ms": 435,
+              "first_sampled_full_ms": 443
+            },
+            {
+              "index": 3,
+              "expected_full_ms": 528,
+              "first_sampled_full_ms": 542
+            },
+            {
+              "index": 4,
+              "expected_full_ms": 621,
+              "first_sampled_full_ms": 641
+            },
+            {
+              "index": 5,
+              "expected_full_ms": 714,
+              "first_sampled_full_ms": 740
+            },
+            {
+              "index": 6,
+              "expected_full_ms": 807,
+              "first_sampled_full_ms": 839
+            },
+            {
+              "index": 7,
+              "expected_full_ms": 900,
+              "first_sampled_full_ms": 905
+            }
+          ],
+          "sample_tolerance_ms": 36,
+          "observation_end_age_ms": 3999,
+          "interrupted_before_full_duration": false,
+          "complete": true,
+          "full_time_checks_pass": true
+        },
+        {
+          "req": 7,
+          "round": 3,
+          "count": 2,
+          "applied_device_ms": 352985,
+          "pixels": [
+            {
+              "index": 8,
+              "expected_full_ms": 250,
+              "first_sampled_full_ms": 280
+            },
+            {
+              "index": 9,
+              "expected_full_ms": 358,
+              "first_sampled_full_ms": 379
+            },
+            {
+              "index": 10,
+              "expected_full_ms": 466,
+              "first_sampled_full_ms": 478
+            },
+            {
+              "index": 11,
+              "expected_full_ms": 575,
+              "first_sampled_full_ms": 577
+            },
+            {
+              "index": 12,
+              "expected_full_ms": 683,
+              "first_sampled_full_ms": 709
+            },
+            {
+              "index": 13,
+              "expected_full_ms": 791,
+              "first_sampled_full_ms": 808
+            },
+            {
+              "index": 14,
+              "expected_full_ms": 900,
+              "first_sampled_full_ms": 907
+            }
+          ],
+          "sample_tolerance_ms": 36,
+          "observation_end_age_ms": 3902,
+          "interrupted_before_full_duration": false,
+          "complete": true,
+          "full_time_checks_pass": true
+        },
+        {
+          "req": 8,
+          "round": 3,
+          "count": 3,
+          "applied_device_ms": 353090,
+          "pixels": [
+            {
+              "index": 15,
+              "expected_full_ms": 250,
+              "first_sampled_full_ms": 274
+            },
+            {
+              "index": 16,
+              "expected_full_ms": 342,
+              "first_sampled_full_ms": 373
+            },
+            {
+              "index": 17,
+              "expected_full_ms": 435,
+              "first_sampled_full_ms": 439
+            },
+            {
+              "index": 18,
+              "expected_full_ms": 528,
+              "first_sampled_full_ms": 538
+            },
+            {
+              "index": 19,
+              "expected_full_ms": 621,
+              "first_sampled_full_ms": 637
+            },
+            {
+              "index": 20,
+              "expected_full_ms": 714,
+              "first_sampled_full_ms": 736
+            },
+            {
+              "index": 21,
+              "expected_full_ms": 807,
+              "first_sampled_full_ms": 835
+            },
+            {
+              "index": 22,
+              "expected_full_ms": 900,
+              "first_sampled_full_ms": 901
+            }
+          ],
+          "sample_tolerance_ms": 36,
+          "observation_end_age_ms": 3797,
+          "interrupted_before_full_duration": false,
+          "complete": true,
+          "full_time_checks_pass": true
+        },
+        {
+          "req": 11,
+          "round": 5,
+          "count": 1,
+          "applied_device_ms": 361879,
+          "pixels": [
+            {
+              "index": 0,
+              "expected_full_ms": 250,
+              "first_sampled_full_ms": 274
+            },
+            {
+              "index": 1,
+              "expected_full_ms": 342,
+              "first_sampled_full_ms": null
+            },
+            {
+              "index": 2,
+              "expected_full_ms": 435,
+              "first_sampled_full_ms": null
+            },
+            {
+              "index": 3,
+              "expected_full_ms": 528,
+              "first_sampled_full_ms": null
+            },
+            {
+              "index": 4,
+              "expected_full_ms": 621,
+              "first_sampled_full_ms": null
+            },
+            {
+              "index": 5,
+              "expected_full_ms": 714,
+              "first_sampled_full_ms": null
+            },
+            {
+              "index": 6,
+              "expected_full_ms": 807,
+              "first_sampled_full_ms": null
+            },
+            {
+              "index": 7,
+              "expected_full_ms": 900,
+              "first_sampled_full_ms": null
+            }
+          ],
+          "sample_tolerance_ms": 35,
+          "observation_end_age_ms": 357,
+          "interrupted_before_full_duration": true,
+          "complete": false
+        },
+        {
+          "req": 14,
+          "round": 6,
+          "count": 3,
+          "applied_device_ms": 366893,
+          "pixels": [
+            {
+              "index": 15,
+              "expected_full_ms": 250,
+              "first_sampled_full_ms": 280
+            },
+            {
+              "index": 16,
+              "expected_full_ms": 342,
+              "first_sampled_full_ms": 346
+            },
+            {
+              "index": 17,
+              "expected_full_ms": 435,
+              "first_sampled_full_ms": 445
+            },
+            {
+              "index": 18,
+              "expected_full_ms": 528,
+              "first_sampled_full_ms": 544
+            },
+            {
+              "index": 19,
+              "expected_full_ms": 621,
+              "first_sampled_full_ms": 643
+            },
+            {
+              "index": 20,
+              "expected_full_ms": 714,
+              "first_sampled_full_ms": 742
+            },
+            {
+              "index": 21,
+              "expected_full_ms": 807,
+              "first_sampled_full_ms": 808
+            },
+            {
+              "index": 22,
+              "expected_full_ms": 900,
+              "first_sampled_full_ms": 907
+            }
+          ],
+          "sample_tolerance_ms": 35,
+          "observation_end_age_ms": 1091,
+          "interrupted_before_full_duration": false,
+          "complete": true,
+          "full_time_checks_pass": true
+        }
+      ],
+      "camera": {
+        "frames": 1125,
+        "timing": {
+          "received_fps": 29.920262367725687,
+          "max_gap_ms": 104.20390008948743,
+          "gaps_over_100ms": 1
+        },
+        "dropped_for_writer_backlog": 0,
+        "meets_existing_80ms_gap_bound": false
+      }
+    },
+    {
+      "scope": "Recorded digital output trace and metadata only; not optical acceptance or full independent formula simulation",
+      "source_capture_sha256": "ceedf7d4856a5e1c9f6282a7dedfe00f898dd0094d7efa6962c3a141fde6d0f3",
+      "camera_manifest_sha256": "05c5d5193ec83f4aaaff884cf05c61e1b647eed8b1c6635fbe217587f99e3177",
+      "generator_sha256": "32bef150006f6a43b5ec641a9d7088ee5bced2b895fb07b06d4f122c35489d67",
+      "firmware_sha256": "577d0b5a97e28f5a2c267aee0daf5a7bf34169a139b8baafbbafc27cd8c20ea3",
+      "run": "v3",
+      "events": 1094,
+      "commands": 11,
+      "checks": {
+        "recorded": true,
+        "consecutive_sequences": true,
+        "all_23_rgb_and_bounded": true,
+        "monotonic_submit": true,
+        "monotonic_revision": true,
+        "all_commands_applied": true,
+        "complete_paired_ack": true,
+        "fresh_final_black": true,
+        "at_most_one_elevated_interval_per_round_in_isolated_segments": true
+      },
+      "failures": [],
+      "observed_maximum_rgb": [
+        7,
+        17,
+        23
+      ],
+      "digital_submit_gaps_ms": {
+        "median": 33,
+        "max": 43
+      },
+      "transfer_duration_max_ms": 14,
+      "command_groups": [
+        {
+          "req": 1,
+          "revision": 2,
+          "label": "Defaultvergleich mit LED-Bildausschnitten",
+          "op": "seal-start",
+          "count": 0,
+          "valid": 1,
+          "consumed": 0,
+          "pending_at_ack": 0,
+          "frames": 61,
+          "applied_device_ms": 401094,
+          "isolated_seal": true,
+          "checks": {
+            "has_transfer": true,
+            "transfer_after_application": true,
+            "settled_mixture_matches_contributions": true,
+            "all_settled_frames_equal_snapshot": true
+          },
+          "first_submit_age_ms": 11,
+          "settled_mixture_pixel0": [
+            0,
+            0,
+            0
+          ],
+          "settled_mixture_all_pixels_uniform": true,
+          "settled_horizon_ms": 300,
+          "settled_frames": 52,
+          "settled_lit_pixels": 0,
+          "first_sampled_snapshot_target_age_ms": 11,
+          "elevated_frames": 0
+        },
+        {
+          "req": 2,
+          "revision": 3,
+          "label": "Default erster Abschnitt",
+          "op": "seal-update",
+          "count": 1,
+          "valid": 1,
+          "consumed": 0,
+          "pending_at_ack": 0,
+          "frames": 90,
+          "applied_device_ms": 403102,
+          "isolated_seal": true,
+          "checks": {
+            "has_transfer": true,
+            "transfer_after_application": true,
+            "settled_mixture_matches_contributions": true,
+            "all_settled_frames_equal_snapshot": true,
+            "independent_pixel_full_times": true
+          },
+          "first_submit_age_ms": 16,
+          "settled_mixture_pixel0": [
+            0,
+            8,
+            12
+          ],
+          "settled_mixture_all_pixels_uniform": false,
+          "settled_horizon_ms": 600,
+          "settled_frames": 72,
+          "settled_lit_pixels": 8,
+          "elevated_frames": 0
+        },
+        {
+          "req": 3,
+          "revision": 4,
+          "label": "Default zweiter Abschnitt",
+          "op": "seal-update",
+          "count": 2,
+          "valid": 1,
+          "consumed": 0,
+          "pending_at_ack": 0,
+          "frames": 92,
+          "applied_device_ms": 406077,
+          "isolated_seal": true,
+          "checks": {
+            "has_transfer": true,
+            "transfer_after_application": true,
+            "settled_mixture_matches_contributions": true,
+            "all_settled_frames_equal_snapshot": true,
+            "independent_pixel_full_times": true
+          },
+          "first_submit_age_ms": 11,
+          "settled_mixture_pixel0": [
+            0,
+            8,
+            12
+          ],
+          "settled_mixture_all_pixels_uniform": false,
+          "settled_horizon_ms": 600,
+          "settled_frames": 74,
+          "settled_lit_pixels": 15,
+          "elevated_frames": 0
+        },
+        {
+          "req": 4,
+          "revision": 5,
+          "label": "Default dritter und Puls",
+          "op": "seal-update",
+          "count": 3,
+          "valid": 1,
+          "consumed": 1,
+          "pending_at_ack": 1,
+          "frames": 181,
+          "applied_device_ms": 409108,
+          "isolated_seal": true,
+          "checks": {
+            "has_transfer": true,
+            "transfer_after_application": true,
+            "settled_mixture_matches_contributions": true,
+            "all_settled_frames_equal_snapshot": true,
+            "elevation_uniform_all_23": true,
+            "elevation_only_when_pending_at_ack": true,
+            "elevation_within_peak_bounds": true,
+            "one_contiguous_elevation": true,
+            "independent_pixel_full_times": true
+          },
+          "first_submit_age_ms": 16,
+          "settled_mixture_pixel0": [
+            0,
+            8,
+            12
+          ],
+          "settled_mixture_all_pixels_uniform": true,
+          "settled_horizon_ms": 1400,
+          "settled_frames": 139,
+          "settled_lit_pixels": 23,
+          "elevated_frames": 20,
+          "elevation_submit_ages_ms": [
+            676,
+            1303
+          ],
+          "observed_peak_rgb": [
+            3,
+            17,
+            23
+          ]
+        },
+        {
+          "req": 5,
+          "revision": 6,
+          "label": "Roter Hintergrund",
+          "op": "background",
+          "count": 3,
+          "valid": 1,
+          "consumed": 1,
+          "pending_at_ack": 0,
+          "frames": 61,
+          "applied_device_ms": 415081,
+          "isolated_seal": false,
+          "checks": {
+            "has_transfer": true,
+            "transfer_after_application": true,
+            "settled_mixture_matches_contributions": true
+          },
+          "first_submit_age_ms": 17,
+          "settled_mixture_pixel0": [
+            1,
+            8,
+            12
+          ],
+          "settled_mixture_all_pixels_uniform": true
+        },
+        {
+          "req": 6,
+          "revision": 7,
+          "label": "Warme Naeheglut dazu",
+          "op": "start",
+          "count": 3,
+          "valid": 1,
+          "consumed": 1,
+          "pending_at_ack": 0,
+          "frames": 91,
+          "applied_device_ms": 417095,
+          "isolated_seal": false,
+          "checks": {
+            "has_transfer": true,
+            "transfer_after_application": true,
+            "settled_mixture_matches_contributions": true
+          },
+          "first_submit_age_ms": 17,
+          "settled_mixture_pixel0": [
+            7,
+            10,
+            12
+          ],
+          "settled_mixture_all_pixels_uniform": true
+        },
+        {
+          "req": 7,
+          "revision": 8,
+          "label": "Zweiter Beitrag dazu",
+          "op": "start",
+          "count": 3,
+          "valid": 1,
+          "consumed": 1,
+          "pending_at_ack": 0,
+          "frames": 91,
+          "applied_device_ms": 420098,
+          "isolated_seal": false,
+          "checks": {
+            "has_transfer": true,
+            "transfer_after_application": true,
+            "settled_mixture_matches_contributions": true
+          },
+          "first_submit_age_ms": 17,
+          "settled_mixture_pixel0": [
+            7,
+            10,
+            15
+          ],
+          "settled_mixture_all_pixels_uniform": true
+        },
+        {
+          "req": 8,
+          "revision": 9,
+          "label": "Nur Siegel stoppen",
+          "op": "seal-stop",
+          "count": 3,
+          "valid": 1,
+          "consumed": 1,
+          "pending_at_ack": 0,
+          "frames": 90,
+          "applied_device_ms": 423090,
+          "isolated_seal": false,
+          "checks": {
+            "has_transfer": true,
+            "transfer_after_application": true,
+            "settled_mixture_matches_contributions": true,
+            "mixed_stop_target_after_declared_duration": true,
+            "mixed_stop_monotonic_to_target": true
+          },
+          "first_submit_age_ms": 34,
+          "settled_mixture_pixel0": [
+            7,
+            2,
+            3
+          ],
+          "settled_mixture_all_pixels_uniform": true,
+          "mixed_stop_duration_ms": 300,
+          "first_sampled_mixed_stop_target_age_ms": 265
+        },
+        {
+          "req": 9,
+          "revision": 10,
+          "label": "Nur warme Naeheglut stoppen",
+          "op": "stop",
+          "count": 3,
+          "valid": 1,
+          "consumed": 1,
+          "pending_at_ack": 0,
+          "frames": 91,
+          "applied_device_ms": 426089,
+          "isolated_seal": false,
+          "checks": {
+            "has_transfer": true,
+            "transfer_after_application": true,
+            "settled_mixture_matches_contributions": true,
+            "mixed_stop_target_after_declared_duration": true,
+            "mixed_stop_monotonic_to_target": true
+          },
+          "first_submit_age_ms": 11,
+          "settled_mixture_pixel0": [
+            1,
+            0,
+            3
+          ],
+          "settled_mixture_all_pixels_uniform": true,
+          "mixed_stop_duration_ms": 300,
+          "first_sampled_mixed_stop_target_age_ms": 242
+        },
+        {
+          "req": 10,
+          "revision": 11,
+          "label": "Nur zweiten Beitrag stoppen",
+          "op": "stop",
+          "count": 3,
+          "valid": 1,
+          "consumed": 1,
+          "pending_at_ack": 0,
+          "frames": 61,
+          "applied_device_ms": 429091,
+          "isolated_seal": false,
+          "checks": {
+            "has_transfer": true,
+            "transfer_after_application": true,
+            "settled_mixture_matches_contributions": true,
+            "mixed_stop_target_after_declared_duration": true,
+            "mixed_stop_monotonic_to_target": true
+          },
+          "first_submit_age_ms": 12,
+          "settled_mixture_pixel0": [
+            1,
+            0,
+            0
+          ],
+          "settled_mixture_all_pixels_uniform": true,
+          "mixed_stop_duration_ms": 300,
+          "first_sampled_mixed_stop_target_age_ms": 210
+        },
+        {
+          "req": 11,
+          "revision": 12,
+          "label": "Hintergrund aus",
+          "op": "background",
+          "count": 3,
+          "valid": 1,
+          "consumed": 1,
+          "pending_at_ack": 0,
+          "frames": 120,
+          "applied_device_ms": 431099,
+          "isolated_seal": true,
+          "checks": {
+            "has_transfer": true,
+            "transfer_after_application": true,
+            "settled_mixture_matches_contributions": true
+          },
+          "first_submit_age_ms": 17,
+          "settled_mixture_pixel0": [
+            0,
+            0,
+            0
+          ],
+          "settled_mixture_all_pixels_uniform": true
+        }
+      ],
+      "pulse_intervals": [
+        {
+          "req": 4,
+          "round": 7,
+          "revision": 5,
+          "submit_ages_ms": [
+            676,
+            1303
+          ]
+        }
+      ],
+      "section_progression": [
+        {
+          "req": 2,
+          "round": 7,
+          "count": 1,
+          "applied_device_ms": 403102,
+          "pixels": [
+            {
+              "index": 0,
+              "expected_full_ms": 150,
+              "first_sampled_full_ms": 181
+            },
+            {
+              "index": 1,
+              "expected_full_ms": 214,
+              "first_sampled_full_ms": 214
+            },
+            {
+              "index": 2,
+              "expected_full_ms": 278,
+              "first_sampled_full_ms": 280
+            },
+            {
+              "index": 3,
+              "expected_full_ms": 342,
+              "first_sampled_full_ms": 346
+            },
+            {
+              "index": 4,
+              "expected_full_ms": 407,
+              "first_sampled_full_ms": 412
+            },
+            {
+              "index": 5,
+              "expected_full_ms": 471,
+              "first_sampled_full_ms": 478
+            },
+            {
+              "index": 6,
+              "expected_full_ms": 535,
+              "first_sampled_full_ms": 544
+            },
+            {
+              "index": 7,
+              "expected_full_ms": 600,
+              "first_sampled_full_ms": 610
+            }
+          ],
+          "sample_tolerance_ms": 36,
+          "observation_end_age_ms": 11979,
+          "interrupted_before_full_duration": false,
+          "complete": true,
+          "full_time_checks_pass": true
+        },
+        {
+          "req": 3,
+          "round": 7,
+          "count": 2,
+          "applied_device_ms": 406077,
+          "pixels": [
+            {
+              "index": 8,
+              "expected_full_ms": 150,
+              "first_sampled_full_ms": 176
+            },
+            {
+              "index": 9,
+              "expected_full_ms": 225,
+              "first_sampled_full_ms": 242
+            },
+            {
+              "index": 10,
+              "expected_full_ms": 300,
+              "first_sampled_full_ms": 308
+            },
+            {
+              "index": 11,
+              "expected_full_ms": 375,
+              "first_sampled_full_ms": 407
+            },
+            {
+              "index": 12,
+              "expected_full_ms": 450,
+              "first_sampled_full_ms": 473
+            },
+            {
+              "index": 13,
+              "expected_full_ms": 525,
+              "first_sampled_full_ms": 539
+            },
+            {
+              "index": 14,
+              "expected_full_ms": 600,
+              "first_sampled_full_ms": 605
+            }
+          ],
+          "sample_tolerance_ms": 36,
+          "observation_end_age_ms": 9004,
+          "interrupted_before_full_duration": false,
+          "complete": true,
+          "full_time_checks_pass": true
+        },
+        {
+          "req": 4,
+          "round": 7,
+          "count": 3,
+          "applied_device_ms": 409108,
+          "pixels": [
+            {
+              "index": 15,
+              "expected_full_ms": 150,
+              "first_sampled_full_ms": 181
+            },
+            {
+              "index": 16,
+              "expected_full_ms": 214,
+              "first_sampled_full_ms": 214
+            },
+            {
+              "index": 17,
+              "expected_full_ms": 278,
+              "first_sampled_full_ms": 280
+            },
+            {
+              "index": 18,
+              "expected_full_ms": 342,
+              "first_sampled_full_ms": 346
+            },
+            {
+              "index": 19,
+              "expected_full_ms": 407,
+              "first_sampled_full_ms": 412
+            },
+            {
+              "index": 20,
+              "expected_full_ms": 471,
+              "first_sampled_full_ms": 478
+            },
+            {
+              "index": 21,
+              "expected_full_ms": 535,
+              "first_sampled_full_ms": 544
+            },
+            {
+              "index": 22,
+              "expected_full_ms": 600,
+              "first_sampled_full_ms": 610
+            }
+          ],
+          "sample_tolerance_ms": 36,
+          "observation_end_age_ms": 5973,
+          "interrupted_before_full_duration": false,
+          "complete": true,
+          "full_time_checks_pass": true
+        }
+      ],
+      "camera": {
+        "frames": 1094,
+        "timing": {
+          "received_fps": 29.836578752284844,
+          "max_gap_ms": 169.8212999617681,
+          "gaps_over_100ms": 1
+        },
+        "dropped_for_writer_backlog": 0,
+        "meets_existing_80ms_gap_bound": false
+      }
+    }
+  ],
+  "aborted_runs": [
+    {
+      "run": "v1",
+      "status": "incomplete",
+      "error_category": "watchdog",
+      "source_capture_sha256": "90ef2b25934c785031f077aadd81b1a63c5e6f56cc05b3b64badc632ff65249f",
+      "commands_applied": 5,
+      "unresolved_requests": [
+        6
+      ],
+      "final_black_confirmed": true,
+      "not_used_for_effect_acceptance": true
+    }
+  ]
+}

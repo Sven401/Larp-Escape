@@ -6,6 +6,12 @@ die sichtbare Absicht und festen Sollpunkte. [CrystalSeal.cpp](src/CrystalSeal.c
 wird sowohl von den Hosttests als auch von der Laborfirmware verwendet.
 Das feste Spiel, Profile und BLE-V2 rufen den neuen Kern noch nicht auf.
 
+**Geräteversuche 20.10.2026:** [Drei vollständige Sichtläufe, Parametervergleich,
+digitale Transferprüfung und vollständige Wiederherstellung](../../docs/led/kristallsiegel-live-results-2026-10-20.md).
+600/150 und 900/250 ms sind am unveränderten Kern erprobt; die Defaults bleiben
+600/150 ms. Die reale Kette bildet drei unregelmäßige Bereiche, keinen gleichmäßigen
+Kreis. Bildlücken begrenzen die Kameraaussage auf gestalterisches Feedback.
+
 ## Kern und Berechnung
 
 Eine Instanz mit 23 unabhängig zeitgesteuerten Pixelrampen, aufgeteilt in
@@ -171,7 +177,7 @@ Es liegt lokal unter `.pio/led-product/larp-led-camera-lab/firmware.bin` zusamme
 mit dem ELF. Ein erneuter Build kann einen anderen Binaryhash erzeugen;
 vor jedem späteren Versuch die tatsächlich verwendete Datei erneut zuordnen.
 
-Ein erfolgreicher Softwarelauf ist keine Geräteübertragung. Frühes Kamerafeedback,
-optische Abnahme, Spielbindung, Bedienung in Dev/GM und elektrischer Nachweis
-bleiben eigene Schritte. Es wurde keine neue universelle Misch- oder Spielregel
-eingeführt.
+Ein erfolgreicher Softwarelauf ist keine Geräteübertragung. Der verlinkte
+Gerätebericht belegt Upload, frühes Kamerafeedback und Rückweg separat.
+Optische Abnahme, Spielbindung, Bedienung in Dev/GM und elektrischer Nachweis
+bleiben eigene Schritte. Es wurde keine neue universelle Misch- oder Spielregel eingeführt.
