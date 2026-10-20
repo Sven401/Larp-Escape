@@ -32,7 +32,7 @@ nicht vorhanden; die Nachweise werden nicht gleichgesetzt.
 Die folgenden Einträge beschreiben den jeweiligen damaligen Stand.
 Für neue Arbeit gilt der Einstieg oben zusammen mit den aktuellen Fachquellen.
 
-**Setup-Bestandsaufnahme · 20.10.2026:** [Projekt, Werkzeuge, Prüfwege und Werkbank-Automatik](PROJEKT-SETUP.md). Gegen Integrationsbasis `5b85965` einschließlich #86/#87 geprüft; der aktive GitHub-Heartbeat verweist noch auf die historische KI-Werkbank. Korrektur vorgeschlagen, Automatisierung unverändert.
+**Setup und GitHub-Abgleich · 20.10.2026:** [Projekt, Werkzeuge, Prüfwege und Werkbank-Automatik](PROJEKT-SETUP.md). Die anschließende [beauftragte Umstellung mit Verlaufsaudit und Lese-Probelauf](GITHUB-AUTOMATISIERUNG-2026-10-20.md) löst den alten KI-Werkbank-Bezug ab. Bestehender Heartbeat wieder aktiv; 23 Issues und 16 Schutzfälle geprüft, keine Issue-/Boardänderung im Probelauf. Fachlicher Konflikt #34 bleibt offen.
 
 **Stationspilot #79 integriert · 19.10.2026:** Merge `7e19c95` in den kuratierten Integrationsbranch; Dateibaum identisch zum geprüften Head `98488ea`. [Mergebeleg, getrennte CI und offene Geräteabnahmen](STATIONSPILOT-INTEGRATION-2026-10-19.md). Der lesende native Pilot und die Apptrennung sind integriert; TalkBack, Mehrstationsbetrieb, echter Funkverlust und Langzeitbetrieb bleiben offen. Keine neue Geräteprüfung durch den Merge.
 
