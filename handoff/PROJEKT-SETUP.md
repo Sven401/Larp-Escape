@@ -4,7 +4,9 @@ Stand: **20. Oktober 2026**, Zeitzone Europe/Berlin.
 **Status: belegt gegen Quellstand und lokal ausgelesene Konfiguration.**
 Geprüfte Produktbasis nach erfolgreichem Fetch:
 `7e19c955aaa54bcc7ed318d594a6f69476de4aa9` auf
-`origin/plan/projektuebergabe-kuratierter-stand` (Merge von PR #79).
+`origin/plan/projektuebergabe-kuratierter-stand` (Merge von PR #79). Abschließend mit Integrationsstand
+`a4c83cb7351759808f85ede612abc7c2280212fc` abgeglichen: PR #87 ergänzt
+ausschließlich Wartungsdokumentation, die Produktquellen sind unverändert.
 Dieser Bereich ordnet Quellen und Arbeitsumgebung ein; technische Einzelverträge
 bleiben an ihren verlinkten Stellen maßgeblich.
 
@@ -29,6 +31,7 @@ Baugruppen sind noch kein gemeinsam abgenommenes Veranstaltungssystem.
 Ältere Absätze in README und Übergaben enthalten frühere Aussagen wie „native
 Stationsbedienung offen“. Für den heute integrierten begrenzten Lesepiloten gilt
 der datierte Stationsbericht zusammen mit den Quellen in `gamemaster`.
+Die Android-README wurde durch den inzwischen integrierten Wartungsbericht bereits berichtigt.
 Daraus folgt keine Freigabe der weiterhin offenen Spielsteuerung.
 
 ## 2. Kanonische Ablage und Einstieg
@@ -192,6 +195,13 @@ Der [vollständige B0-Prüfweg](../docs/quality-checks.md) bleibt für Host,
 Kryptografie, Firmware, Header und Format maßgeblich. Die Workflows an der
 geprüften Basis ergänzen inzwischen beide Android-Apps und separate Labortests:
 
+**Ausgelesener zusätzlicher Prüfstand vom 20.10.2026:** Der integrierte
+[Wartungsbericht](WARTUNG-PRUEFSTAND-2026-10-20.md) dokumentiert frische lokale
+Host-/Kryptografie-/Android-/Firmwareprüfungen auf Produktbasis `7e19c95`.
+Er nennt auch den vollständigen Python-Testlauf mit Python 3.12 und gepinnten
+Kamera-Abhängigkeiten sowie die geringe Flashreserve des Legacy-Produktbuilds.
+Dies sind Belege der separaten Wartungssitzung, keine hier wiederholten Tests.
+
 | Workflow | Prüfbereich |
 | --- | --- |
 | [Quality](../.github/workflows/quality.yml) | Windows-Hostprüfungen, echte Kryptografie, Legacy-/ABI-Builds und Android beider Apps |
@@ -293,6 +303,6 @@ und die [Live-Anleitung](../docs/led/interactive-development.md).
 **Prüfweg der Bestandsaufnahme:** frischer Git-Fetch und Commitabgleich;
 Konfigurationen und verlinkte Projektquellen gelesen; Hookdefinition und
 Hookcode gelesen; vorhandene Automation angesehen; lokale Werkzeugversionen
-abgefragt. Dokumentationsprüfung: 41 relative Linkziele und drei Einstiegslinks vorhanden; elf Abschnitte und der ausdrücklich benannte Änderungsumfang geprüft.
+abgefragt. Dokumentationsprüfung: 42 relative Linkziele und drei Einstiegslinks vorhanden; elf Abschnitte und der ausdrücklich benannte Änderungsumfang geprüft.
 Keine neuen Firmware-/Android-Builds, Geräteprüfungen oder externen
 Statussynchronisierungen sind Bestandteil dieses Nachweises.

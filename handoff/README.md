@@ -1,6 +1,6 @@
 # Technische Projektübergabe
 
-**Projekt und Setup · 20.10.2026:** [Detaillierter Überblick mit Werkbank-/Automationsprüfung](PROJEKT-SETUP.md), geprüft an Integrationsbasis `7e19c95`.
+**Projekt und Setup · 20.10.2026:** [Detaillierter Überblick mit Werkbank-/Automationsprüfung](PROJEKT-SETUP.md), geprüft an Integrationsbasis `a4c83cb`.
 
 **Nativer Stationspilot · 19. Oktober 2026:** [Lokale Vorbereitung, Stationsauswahl, automatische BLE-Anmeldung und bestätigter Zustand](../docs/companion/spielleiter-stationspilot.md) in Larp GM implementiert und an der lokalen Box/Moto G14 geprüft. Bluetooth-Wiederkehr, Hintergrund/Rückkehr, bewusste Pause, Prozessneustart, große Schrift und Rotation geprüft. Dev-Quellen und alle zehn erfassten Dev-Dateien unverändert; Licht-/Spielaktionen sind Folgearbeit.
 

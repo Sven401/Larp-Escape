@@ -1,6 +1,6 @@
 # Larp-Escape
 
-**Projekt und Arbeitsumgebung · 20.10.2026:** [Setup, Quellstruktur, Prüfwege und Werkbank-Automatik](handoff/PROJEKT-SETUP.md), geprüft an Integrationsbasis `7e19c95`.
+**Projekt und Arbeitsumgebung · 20.10.2026:** [Setup, Quellstruktur, Prüfwege und Werkbank-Automatik](handoff/PROJEKT-SETUP.md), geprüft an Integrationsbasis `a4c83cb`.
 
 **Verbindliche Architektur · 18. Oktober 2026:** [Dezentrale Veranstaltung (VA-01)](docs/veranstaltungsarchitektur.md): autonome Boxen, mehrere BLE-Spielleitungen, ESP-NOW/WLAN bei Kontakt und eine zeitweise erreichbare Zentrale. [Verträge und Folgepakete](docs/veranstaltungsarchitektur-umsetzung.md). **Bestätigtes Soll; Umsetzung und Abnahme offen.**
 
