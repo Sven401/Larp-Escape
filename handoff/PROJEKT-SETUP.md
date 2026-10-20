@@ -257,7 +257,14 @@ einen neuen Hook-Test nachgewiesen. Keine Hookdefinition wurde geändert oder
 manuell ausgeführt. Vor einer ersten Ausführung einer neuen Definition gilt
 die persönliche Prüfung und Vertrauensfreigabe unter `/hooks`.
 
-## 10. Geplante GitHub-Automatisierung: Bestandsaufnahme
+## 10. GitHub-Automatisierung: ursprüngliche Bestandsaufnahme und Fortschreibung
+
+**Anschließend beauftragt und umgesetzt, 20.10.2026:** Der bestehende Heartbeat
+wurde pausiert, seine letzten Läufe geprüft und auf dieses Repository
+umgestellt. Nach erfolgreichem ausschließlich lesendem Probelauf wieder aktiv;
+[Verlaufsaudit, installierter Auftrag, Prüfergebnis und Grenzen](GITHUB-AUTOMATISIERUNG-2026-10-20.md).
+Die folgenden Angaben dokumentieren die frühere Bestandsaufnahme vor diesem
+Änderungsauftrag und sind keine aktuelle Betriebskonfiguration.
 
 **Ausgelesen am 20.10.2026** aus
 `~/.codex/automations/larp-escape-github-projektstand/automation.toml`;

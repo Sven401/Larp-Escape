@@ -1,5 +1,23 @@
 # Projektfestlegungen: Übernahme und Korrektur
 
+## 20. Oktober 2026 — GitHub-Abgleich auf aktuelle Projektquellen umgestellt
+
+- **Ausdrücklich beauftragt:** bestehenden Heartbeat pausieren, letzte Änderungen
+  prüfen, Quellen umstellen, lesend testen und danach wieder aktivieren.
+- **Beobachtete Anwendung:** [Audit und Probelauf](handoff/GITHUB-AUTOMATISIERUNG-2026-10-20.md)
+  an Integrationsbasis `97a2584cc108ebb9c0f667fc46f898d163e00144`;
+  23 Issues verglichen, 16 Schutzfälle bestanden, keine Issue-/Boardmutation.
+  Wechsel der Quellbasis während der Prüfung erkannt und neu abgeglichen.
+- **Bewertung/Übernahme:** neue Quellenführung liefert aktuelle Teilfortschritte,
+  bewahrt Alttext und isoliert den fachlichen Widerspruch #34. Der bestehende
+  lokale Auftrag ist nach der Leseprobe wieder aktiv. Keine bewiesene
+  langfristige Zuverlässigkeit; geplanter Lauf und produktiver Schreibweg
+  bleiben unbeobachtet. Das Prüfprogramm bleibt datierter Nachweis und wird
+  weder allgemeiner Standard noch ausführender Sync-Client.
+- **Einfacher Rückweg:** denselben Auftrag pausieren, Konfiguration/Belege
+  erhalten und betroffene Ergebnisse prüfen. Alte KI-Werkbank-Anweisungen
+  nicht reaktivieren. Keine persönlichen Skills oder Hooks geändert.
+
 ## 18. Oktober 2026 — LED-Rolle 2.0 nach realer Iteration
 
 - **Auftrag erweitert:** Nutzer verlangt Idee bis praktisch verfeinerte Umsetzung
