@@ -26,7 +26,13 @@ werden mit kopierten Bytes auf dem Hauptthread verarbeitet und an die jeweilige
 Verbindungsgeneration gebunden. Ein ViewModel besitzt die Sitzung auch bei
 Rotation. Verlassen der App beendet die Sitzung; kein Hintergrundservice.
 
-## Tastenmatrix im nächsten gemeinsamen Test
+## Tastenmatrix: gespeicherter Sammellauf und Nachprüfung
+
+Der [Sammeldurchgang vom 16.10.2026](../../docs/matrix/collection-result-2026-10-16.md)
+ist abgeschlossen: 68 Koordinaten, 110 registrierte Kontaktfolgen, neun
+nutzerbestätigt unbestückte Felder und vier offene Problemstellen (C3, G3, H3, A8).
+Der gespeicherte Lauf bleibt die Grundlage der gezielten Nachprüfung nach #54;
+die gemeinsame V2-Geräteabnahme und elektrische/räumliche Zuordnung bleiben offen.
 
 Die ESP-Seite zeigt vor Wake und LEDs ein 9×9-Raster mit elektrischen
 Koordinaten A–I/1–9. Ein Kontakt trägt ein sichtbares Symbol und erscheint
@@ -41,11 +47,11 @@ halten die Anzeige für weniger als eine Sekunde aktuell. Lesefehler,
 Verbindungsende und veraltete Werte zeigen unbekannt. LED-Antworten und
 einzelne BLE-Fragmente verlängern die Frische nicht. Bei Mehrfachkontakt
 zeigt die App die beobachteten Kontaktkoordinaten ausdrücklich als mehrdeutig;
-ihre Zuordnung zu tatsächlich gedrückten Tasten bleibt unklar. Die bestehende LED-/Wake-Firmware
-bleibt verbindbar und zeigt sichtbar, dass sie noch keine Matrixdaten liefert.
-Die neue Matrix-Prüffirmware und der [gemeinsame Testablauf](../../docs/matrix/test-preparation.md)
-werden vor der Geräteprüfung zusammen bereitgestellt. Die Appanzeige selbst
-bestätigt noch keine physische Taste.
+ihre Zuordnung zu tatsächlich gedrückten Tasten bleibt unklar. Firmwarevarianten
+ohne Matrixscan bleiben verbindbar und liefern keine Matrixdaten. Für weitere
+Prüfungen gelten der [Sammellauf mit Wiederaufnahme](../../docs/matrix/collection-run-2026-10-16.md)
+und die [Hardwaregrenzen](../../docs/matrix/test-preparation.md).
+Die Appanzeige selbst bestätigt noch keine physische Taste.
 
 ## Wake-Inputs
 
@@ -184,9 +190,11 @@ LED-Firmware behauptet keinen geprüften Zustand eines nicht vorhandenen Spiels.
 Appwechsel, Rechteentzug, Bluetooth-Aus und bewusste Trennung entwerten den
 Appzustand; die Box schaltet bei erkanntem Verbindungsverlust aus.
 
-Hosttests und Builds prüfen Protokoll, Bedienregeln und Kompilierbarkeit. Der
-LED-Produktpfad wurde dadurch nicht auf Handy/Box physisch abgenommen; der
-frühere isolierte Rot-an/aus-Versuch war ein anderer Firmware- und Appstand.
+Hosttests und Builds prüfen Protokoll, Bedienregeln und Kompilierbarkeit.
+Die [Geräteprüfung vom 15.10.2026](../../docs/led/device-test-2026-10-15.md)
+belegt Funkeln, Stop und das automatische Ende von Lichtimpuls/Ripple am damals
+installierten eigenen Paar. Die gemeinsame V2-Abnahme und weitere Fehlerfälle
+bleiben offen; der frühere isolierte Rot-an/aus-Versuch ist ein eigener Beleg.
 
 ## Handyprobe
 

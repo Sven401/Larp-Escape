@@ -1,5 +1,12 @@
 # Technische Projektübergabe
 
+**Entwicklungsstart · 20.10.2026:** Der [Maintainer-Einstieg](MAINTAINER.md#start-für-weitere-app--und-firmwarearbeit)
+ordnet Dev-App, GM-Pilot, Baugruppen-/Spiel-Firmware und Laborarbeit dem
+kanonischen Integrationsstand `97a2584` zu. Die
+[Bestandsaufnahme](ENTWICKLUNGSSTART-2026-10-20.md) bewertet Worktrees, Chats,
+offene PRs und Archivquellen. Die datierten Einträge unten bewahren ihre
+Herkunft; frühere Fortsetzungsaufträge werden dadurch nicht erneut aktiv.
+
 **Projekt und Setup · 20.10.2026:** [Detaillierter Überblick mit Werkbank-/Automationsprüfung](PROJEKT-SETUP.md), gegen Integrationsbasis `5b85965` einschließlich #86/#87 geprüft. Anschließend [GitHub-Abgleich geprüft, umgestellt und nach Lese-Probelauf reaktiviert](GITHUB-AUTOMATISIERUNG-2026-10-20.md); abschließende Quellbasis `97a2584`, Konflikt #34 bleibt offen.
 
 **Stationspilot #79 integriert · 19.10.2026:** Merge `7e19c95` in den kuratierten Integrationsbranch; Dateibaum identisch zum geprüften Head `98488ea`. [Mergebeleg, getrennte CI und offene Geräteabnahmen](STATIONSPILOT-INTEGRATION-2026-10-19.md). Der lesende native Pilot und die Apptrennung sind integriert; TalkBack, Mehrstationsbetrieb, echter Funkverlust und Langzeitbetrieb bleiben offen. Keine neue Geräteprüfung durch den Merge.

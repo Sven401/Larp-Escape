@@ -1,11 +1,15 @@
 # Visuelle Exploration: Herkunft und Prompts
 
-Status: geplante Bildentwürfe, keine App-Screenshots oder implementierte UI.
+**Status: historische Bildexploration; durch den [aktuellen Pilotvertrag](BOX-PILOT.md)
+und [Figma/Webprototyp](../../design/box-pilot/README.md) ersetzt.**
+Die Auswahl-/Fortsetzungsangaben und manuellen Suchregeln unten bewahren den
+damaligen Entwurfsstand. Für native Weiterarbeit gilt der
+[Stationspilot](../companion/spielleiter-stationspilot.md).
 Datum: 18. Oktober 2026. Basis und Designbrief: [Box-Pilot](BOX-PILOT.md).
 Werkzeug: eingebaute Bildgenerierung über Product Design / ideate.
 Drei unabhängige Bilder, je ein B10-Screen. Zuordnung zur Auswahl folgt der
 Anzeigereihenfolge im Chat; Richtungsnamen sind keine festen Optionsnummern.
-Auswahl, Figma-Übernahme und visuelle Qualitätsprüfung bleiben offen.
+Auswahl, Figma-Übernahme und visuelle Qualitätsprüfung waren zu diesem Zeitpunkt offen.
 
 ## Status im Mittelpunkt
 
