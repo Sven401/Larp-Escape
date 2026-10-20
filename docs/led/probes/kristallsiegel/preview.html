@@ -1,0 +1,225 @@
+<div id="kristallsiegel-preview">
+  <style>
+    #kristallsiegel-preview { color: var(--foreground); --ks-led-base: #14bfc6; --ks-led-peak: #72edf0; }
+    #kristallsiegel-preview .ks-heading { margin: 0; padding-right: 96px; }
+    #kristallsiegel-preview .ks-ring { position: relative; width: min(100%, 300px); aspect-ratio: 1; margin: 12px auto; }
+    #kristallsiegel-preview .ks-led { position: absolute; inset: 8%; transform: rotate(var(--angle)); pointer-events: none; --level: 0; --peak: 0%; --glow: 5px; }
+    #kristallsiegel-preview .ks-led.lit { --level: 1; }
+    #kristallsiegel-preview .ks-led::before,
+    #kristallsiegel-preview .ks-led::after { content: ""; position: absolute; left: 50%; top: 0; width: 15px; height: 15px; border-radius: 50%; transform: translate(-50%, -50%); }
+    #kristallsiegel-preview .ks-led::before { background: var(--muted); }
+    #kristallsiegel-preview .ks-led::after { background: color-mix(in srgb, var(--ks-led-peak) var(--peak), var(--ks-led-base)); opacity: var(--level); box-shadow: 0 0 var(--glow) color-mix(in srgb, var(--ks-led-base) 55%, transparent); }
+    #kristallsiegel-preview .ks-center { position: absolute; inset: 25%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 4px; }
+    #kristallsiegel-preview .ks-count { margin: 0; }
+    #kristallsiegel-preview .ks-state { margin: 0; }
+    #kristallsiegel-preview .ks-controls { justify-content: center; }
+    #kristallsiegel-preview .ks-caption { text-align: center; margin: 14px 0 0; }
+  </style>
+  <p class="ks-heading">Kristallsiegel · Entwurf</p>
+  <div class="ks-ring" role="img" aria-label="Schematischer Ring aus 23 LEDs in drei Abschnitten; ein Kristall bestätigt.">
+    <span class="ks-led lit" data-led="0" style="--angle: 0deg"></span>
+    <span class="ks-led lit" data-led="1" style="--angle: 15.714deg"></span>
+    <span class="ks-led lit" data-led="2" style="--angle: 31.429deg"></span>
+    <span class="ks-led lit" data-led="3" style="--angle: 47.143deg"></span>
+    <span class="ks-led lit" data-led="4" style="--angle: 62.857deg"></span>
+    <span class="ks-led lit" data-led="5" style="--angle: 78.571deg"></span>
+    <span class="ks-led lit" data-led="6" style="--angle: 94.286deg"></span>
+    <span class="ks-led lit" data-led="7" style="--angle: 110deg"></span>
+    <span class="ks-led" data-led="8" style="--angle: 120deg"></span>
+    <span class="ks-led" data-led="9" style="--angle: 138.333deg"></span>
+    <span class="ks-led" data-led="10" style="--angle: 156.667deg"></span>
+    <span class="ks-led" data-led="11" style="--angle: 175deg"></span>
+    <span class="ks-led" data-led="12" style="--angle: 193.333deg"></span>
+    <span class="ks-led" data-led="13" style="--angle: 211.667deg"></span>
+    <span class="ks-led" data-led="14" style="--angle: 230deg"></span>
+    <span class="ks-led" data-led="15" style="--angle: 240deg"></span>
+    <span class="ks-led" data-led="16" style="--angle: 255.714deg"></span>
+    <span class="ks-led" data-led="17" style="--angle: 271.429deg"></span>
+    <span class="ks-led" data-led="18" style="--angle: 287.143deg"></span>
+    <span class="ks-led" data-led="19" style="--angle: 302.857deg"></span>
+    <span class="ks-led" data-led="20" style="--angle: 318.571deg"></span>
+    <span class="ks-led" data-led="21" style="--angle: 334.286deg"></span>
+    <span class="ks-led" data-led="22" style="--angle: 350deg"></span>
+    <div class="ks-center" aria-hidden="true">
+      <h2 class="ks-count tabular-nums">1/3</h2>
+      <p class="ks-state text-small">Kristalle bestätigt</p>
+    </div>
+  </div>
+  <p class="sr-only ks-announcement" aria-live="polite">1 von 3 Kristallen bestätigt.</p>
+  <div class="viz-controls ks-controls">
+    <button class="btn btn-primary" type="button" data-action="confirm">Kristall bestätigen</button>
+    <button class="btn" type="button" data-action="reset">Neue Runde</button>
+    <button class="btn btn-ghost" type="button" data-action="stop">Stop</button>
+  </div>
+  <p class="ks-caption text-small text-muted">Schematisch · keine gemessene Lichtfarbe</p>
+  <script>
+    (() => {
+      const root = document.getElementById('kristallsiegel-preview');
+      const leds = Array.from(root.querySelectorAll('[data-led]'));
+      const ring = root.querySelector('.ks-ring');
+      const countLabel = root.querySelector('.ks-count');
+      const stateLabel = root.querySelector('.ks-state');
+      const announcement = root.querySelector('.ks-announcement');
+      const confirmButton = root.querySelector('[data-action="confirm"]');
+      const resetButton = root.querySelector('[data-action="reset"]');
+      const stopButton = root.querySelector('[data-action="stop"]');
+      const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const segments = [[0, 8], [8, 7], [15, 8]];
+      const base = [0, 8, 12];
+      const peak = [4, 18, 24];
+      let confirmed = 1;
+      let starts = [-Infinity, null, null];
+      let pulseAt = null;
+      let stopped = false;
+      let stopAt = null;
+      let stopColors = null;
+      let frame = null;
+      const clamp = value => Math.max(0, Math.min(1, value));
+      const smooth = value => { const t = clamp(value); return t * t * (3 - 2 * t); };
+
+      function cancelFrame() {
+        if (frame !== null) cancelAnimationFrame(frame);
+        frame = null;
+      }
+
+      function colorsAt(now) {
+        if (stopped) {
+          const level = motionPreference.matches || stopAt === null ? 0 : 1 - smooth((now - stopAt) / 300);
+          return (stopColors || leds.map(() => [0, 0, 0])).map(rgb => rgb.map(channel => channel * level));
+        }
+        let pulse = 0;
+        if (pulseAt !== null && now >= pulseAt && !motionPreference.matches) {
+          const elapsed = now - pulseAt;
+          pulse = elapsed <= 400 ? smooth(elapsed / 400) : 1 - smooth((elapsed - 400) / 400);
+        }
+        const colors = leds.map(() => [0, 0, 0]);
+        segments.forEach(([offset, length], segment) => {
+          const started = starts[segment];
+          if (started === null) return;
+          for (let j = 0; j < length; j++) {
+            const delay = Math.floor(450 * j / (length - 1));
+            const level = motionPreference.matches ? 1 : smooth((now - started - delay) / 150);
+            colors[offset + j] = base.map((channel, i) => level * (channel + pulse * (peak[i] - channel)));
+          }
+        });
+        return colors;
+      }
+
+      function moving(now) {
+        if (motionPreference.matches) return false;
+        if (stopped) return stopAt !== null && now < stopAt + 300;
+        return starts.some(start => start !== null && Number.isFinite(start) && now < start + 600) ||
+          (pulseAt !== null && now < pulseAt + 800);
+      }
+
+      function labels(now) {
+        countLabel.textContent = confirmed + '/3';
+        const text = stopped ? 'Gestoppt' : confirmed === 3 ?
+          (pulseAt !== null && now < pulseAt + 800 && !motionPreference.matches ? 'Siegel schließt' : 'Siegel hält') :
+          confirmed === 0 ? 'Bereit' : 'Kristalle bestätigt';
+        stateLabel.textContent = text;
+        confirmButton.disabled = stopped || confirmed === 3;
+        stopButton.disabled = stopped;
+        const description = stopped ? 'Vorschau gestoppt. ' + confirmed + ' von 3 Kristallen bestätigt.' :
+          confirmed + ' von 3 Kristallen bestätigt. ' + text + '.';
+        ring.setAttribute('aria-label', 'Schematischer Ring aus 23 LEDs in drei Abschnitten. ' + description);
+        if (announcement.textContent !== description) announcement.textContent = description;
+      }
+
+      function draw(now) {
+        colorsAt(now).forEach((rgb, index) => {
+          const bright = clamp((rgb[1] - base[1]) / (peak[1] - base[1]));
+          leds[index].style.setProperty('--level', String(clamp(rgb[1] / base[1])));
+          leds[index].style.setProperty('--peak', (bright * 100).toFixed(2) + '%');
+          leds[index].style.setProperty('--glow', (5 + bright * 8).toFixed(2) + 'px');
+          leds[index].dataset.rgb = rgb.map(channel => Number(channel.toFixed(4))).join(',');
+        });
+        labels(now);
+      }
+
+      function animate(now) {
+        frame = null;
+        draw(now);
+        if (moving(now)) frame = requestAnimationFrame(animate);
+      }
+
+      function render(now) {
+        draw(now);
+        if (frame === null && moving(now)) frame = requestAnimationFrame(animate);
+      }
+
+      function save() {
+        if (!window.openai?.setWidgetState) return;
+        window.openai.setWidgetState({
+          modelContent: { effect: 'Kristallsiegel', confirmed, stopped },
+          privateContent: { version: 1, confirmed, stopped }
+        }).catch(() => {});
+      }
+
+      function restore(snapshot) {
+        const saved = snapshot?.privateContent;
+        if (!saved || saved.version !== 1 || !Number.isInteger(saved.confirmed) || saved.confirmed < 0 || saved.confirmed > 3 || typeof saved.stopped !== 'boolean') return false;
+        cancelFrame();
+        confirmed = saved.confirmed;
+        stopped = saved.stopped;
+        starts = segments.map((_, i) => i < confirmed ? -Infinity : null);
+        pulseAt = null;
+        stopAt = null;
+        stopColors = null;
+        draw(performance.now());
+        return true;
+      }
+
+      confirmButton.addEventListener('click', () => {
+        if (stopped || confirmed >= 3) return;
+        const now = performance.now();
+        starts[confirmed] = motionPreference.matches ? -Infinity : now;
+        confirmed += 1;
+        if (confirmed === 3 && !motionPreference.matches) pulseAt = now + 600;
+        render(now);
+        save();
+      });
+
+      resetButton.addEventListener('click', () => {
+        cancelFrame();
+        confirmed = 0;
+        starts = [null, null, null];
+        pulseAt = null;
+        stopped = false;
+        stopAt = null;
+        stopColors = null;
+        draw(performance.now());
+        save();
+      });
+
+      stopButton.addEventListener('click', () => {
+        if (stopped) return;
+        const now = performance.now();
+        stopColors = colorsAt(now);
+        stopAt = now;
+        pulseAt = null;
+        stopped = true;
+        cancelFrame();
+        render(now);
+        save();
+      });
+
+      motionPreference.addEventListener('change', () => {
+        if (motionPreference.matches) {
+          cancelFrame();
+          starts = starts.map(start => start === null ? null : -Infinity);
+          pulseAt = null;
+          stopAt = null;
+        }
+        render(performance.now());
+      });
+
+      window.addEventListener('openai:set_globals', event => {
+        const snapshot = event.detail?.globals?.widgetState;
+        const saved = snapshot?.privateContent;
+        if (saved && (saved.confirmed !== confirmed || saved.stopped !== stopped)) restore(snapshot);
+      });
+      if (!restore(window.openai?.widgetState)) draw(performance.now());
+    })();
+  </script>
+</div>

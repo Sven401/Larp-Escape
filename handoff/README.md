@@ -2,6 +2,11 @@
 
 **Projekt und Setup · 20.10.2026:** [Detaillierter Überblick mit Werkbank-/Automationsprüfung](PROJEKT-SETUP.md), gegen Integrationsbasis `5b85965` einschließlich #86/#87 geprüft.
 
+**Neuer LED-Entwurf · 20.10.2026:** [Kristallsiegel](../docs/led/kristallsiegel-design.md)
+zeigt bestätigte Kristalle als drei bleibende Lichtabschnitte mit einmaligem
+Schlusspuls. Gestaltungsvorschlag mit editierbarer Bildschirmvorschau und
+Prüfplan; Spielbedeutung/Farbwahl noch offen, keine Produkt- oder Geräteänderung.
+
 **Stationspilot #79 integriert · 19.10.2026:** Merge `7e19c95` in den kuratierten Integrationsbranch; Dateibaum identisch zum geprüften Head `98488ea`. [Mergebeleg, getrennte CI und offene Geräteabnahmen](STATIONSPILOT-INTEGRATION-2026-10-19.md). Der lesende native Pilot und die Apptrennung sind integriert; TalkBack, Mehrstationsbetrieb, echter Funkverlust und Langzeitbetrieb bleiben offen. Keine neue Geräteprüfung durch den Merge.
 
 **Wartung #87 integriert · 20.10.2026:** Aktuelle Integrationsbasis `a4c83cb`; unveränderte Produktquellen gegenüber `7e19c95`. [Lokaler Prüfstand und korrigierte Android-/Python-Prüfanleitungen](WARTUNG-PRUEFSTAND-2026-10-20.md). Die [Nachprüfung dieser vorbereiteten Maintainer-Fortschreibung](STATIONSPILOT-INTEGRATION-2026-10-19.md#nachprüfung-und-pr-vorbereitung--20-oktober-2026) erhält die getrennten CI- und Gerätebelege.
