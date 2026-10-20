@@ -19,6 +19,11 @@ innerhalb des Auftrags. Offene Produktentscheidungen gezielt klären, bereits
 erteilte Freigaben nicht erneut verlangen. Merges, Releases und zusätzliche
 Geräteeingriffe richten sich weiterhin nach Projektmandat und aktuellem Auftrag.
 
+Die am 20.10.2026 wiedergebundene [Nutzerentscheidung zur Spielinformation](../spielinformation-2026-10-18.md)
+legt atmosphärischen Kristallfortschritt und eine allgemeine Störung ohne
+Ursachenhinweis fest. Sie ist eine fachliche Eingabe für neue Entwürfe;
+die Rollenfassung und ihr Arbeitsverfahren bleiben unverändert.
+
 Der erweiterte Nutzerauftrag ersetzt die Beschränkung auf Verhalten, Berechnung und Prüfplanung. Die [frühere Übergabe][handoff] bleibt
 Herkunft. Effekte verändern keine Spielzustände, Sensoren oder Audio direkt:
 Das Spiel liefert bewertete Eingänge; unabhängig beauftragbare Instanzen

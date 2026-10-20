@@ -1,5 +1,37 @@
 # Maintainer-Einstieg
 
+## Start für weitere App- und Firmwarearbeit
+
+**Ausgelesen und am Code abgeglichen · 20.10.2026:** Kanonischer Ausgangspunkt
+ist `origin/plan/projektuebergabe-kuratierter-stand`, in dieser Bestandsaufnahme
+bei `97a2584cc108ebb9c0f667fc46f898d163e00144` einschließlich #86/#87/#88.
+Vor neuer Arbeit den Remote-Stand und den tatsächlich geöffneten Checkout prüfen.
+Der Hauptordner stand beim Audit auf dem älteren Resonanzkreis-Branch;
+auch der gleichnamige lokale Integrationsbranch war zurückgeblieben.
+[Bestandsaufnahme, Quellenzuordnung und Aufräumvorschlag](ENTWICKLUNGSSTART-2026-10-20.md).
+
+| Arbeit | Einstieg | Noch offene Grenze |
+| --- | --- | --- |
+| Dev-App und Baugruppen | [Android-Anleitung](../companion/android/README.md), Modul `app`; [Baugruppenfirmware](../firmware/led/README.md), [Wire-V2](../docs/led/ble-wire-v2.md) | Einzeln belegte Funktionen sind keine gemeinsame Geräte-/Spielabnahme |
+| Spielleiter-App | Modul `gamemaster`; [Stationspilot](../docs/companion/spielleiter-stationspilot.md), [UI/UX-Vertrag](../docs/ui-ux/BOX-PILOT.md) | Lesender Pilot vorhanden; Licht-/Spielaktionen und allgemeine Rechte fehlen |
+| Spiel-/Profilfirmware | [Profilmodell](../docs/configuration/profile-model.md), [Geräteausführung](../docs/configuration/device-runtime.md), `src/main.cpp` und getrennte Profilprobe | F5a-Ausführung, reale Profilübernahme, F5b-Betrieb nicht abgeschlossen |
+| Dezentrale Veranstaltung | [VA-01](../docs/veranstaltungsarchitektur.md), [D0](../docs/veranstaltung/d0-vertrag-v1.md), [Plan #25](https://github.com/Sven401/Larp-Escape/issues/25) | D1-A in PR #73 separat bewerten; D1-B/C und D2–D4 bleiben offen |
+| LED-Effektentwicklung | [Rolle](../docs/led/rollen/led-effekt-architekt.md), [Spielinformation](../docs/led/spielinformation-2026-10-18.md), [Live-Anleitung](../docs/led/interactive-development.md), [Näheglut-Fortsetzung](NAEHEGLUT-STOP-SPIELANSCHLUSS-2026-10-18.md) | Labor, Produktadapter und optische Freigabe getrennt; offene Entwürfe nicht automatisch integrieren |
+
+Die [Prüfanleitung](../docs/quality-checks.md) und der
+[Wartungsprüfstand](WARTUNG-PRUEFSTAND-2026-10-20.md) ermöglichen den Start ohne
+Hardware. Der Audit prüft Git, Quellen, Dokumentation und vorhandene CI-Belege;
+er ist kein neuer Firmware-/Android- oder Gerätetest. Die Produktquellen an
+`97a2584` sind gegenüber dem Stationspilot-Merge `7e19c95` unverändert.
+PR #88 hatte neun erfolgreiche PR-Jobs; sein Merge hat denselben Git-Baum wie
+der geprüfte Head `a23ecd1`. Ein eigener CI-Lauf auf `97a2584` war beim Audit
+nicht vorhanden; die Nachweise werden nicht gleichgesetzt.
+
+## Datierte Fortschritte und Herkunft
+
+Die folgenden Einträge beschreiben den jeweiligen damaligen Stand.
+Für neue Arbeit gilt der Einstieg oben zusammen mit den aktuellen Fachquellen.
+
 **Setup-Bestandsaufnahme · 20.10.2026:** [Projekt, Werkzeuge, Prüfwege und Werkbank-Automatik](PROJEKT-SETUP.md). Gegen Integrationsbasis `5b85965` einschließlich #86/#87 geprüft; der aktive GitHub-Heartbeat verweist noch auf die historische KI-Werkbank. Korrektur vorgeschlagen, Automatisierung unverändert.
 
 **Stationspilot #79 integriert · 19.10.2026:** Merge `7e19c95` in den kuratierten Integrationsbranch; Dateibaum identisch zum geprüften Head `98488ea`. [Mergebeleg, getrennte CI und offene Geräteabnahmen](STATIONSPILOT-INTEGRATION-2026-10-19.md). Der lesende native Pilot und die Apptrennung sind integriert; TalkBack, Mehrstationsbetrieb, echter Funkverlust und Langzeitbetrieb bleiben offen. Keine neue Geräteprüfung durch den Merge.
@@ -108,8 +140,9 @@ und offenen Abnahmekriterien. **Sollkonzept, keine Implementierung.**
 
 - **Dokumentationsbasis:** PR #87 ist bei `a4c83cb7351759808f85ede612abc7c2280212fc`
   integriert; Dateibaum identisch zum geprüften Wartungshead `44e7098`.
-  [Wartungsprüfstand](WARTUNG-PRUEFSTAND-2026-10-20.md). Diese Maintainer-Fortschreibung
-  führt den vorbereiteten Inhalt `499ec94` auf dieser Basis weiter; ihr PR ist noch keine Integration.
+  [Wartungsprüfstand](WARTUNG-PRUEFSTAND-2026-10-20.md). Die damalige Maintainer-Fortschreibung
+  aus `499ec94` ist inzwischen durch #86 bei `5b85965` integriert; #88 ergänzt
+  bei `97a2584` die Setup-Dokumentation. Beide ändern keine Produktquellen.
 - **Belegt:** PR #79 ist bei `7e19c955aaa54bcc7ed318d594a6f69476de4aa9`
   integriert. Frischer Fetch bestätigt Zielbasis `494f1c4` und Head `98488ea`
   als Eltern sowie identischen vollständigen Dateibaum zum geprüften Head.
