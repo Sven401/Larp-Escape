@@ -1,5 +1,7 @@
 # Vollständiger Prüfweg der kuratierten Produktbasis
 
+**Wartungsprüfung · 20.10.2026:** [Frische lokale Tests/Builds und Dokumentationsabgleich](../handoff/WARTUNG-PRUEFSTAND-2026-10-20.md) auf Integrationsstand `7e19c95`. Die historischen CI-Belege unten behalten ihren jeweiligen Commitbezug.
+
 **Zusätzlicher Abnahmeumfang · 18.10.2026:** [VA-01](veranstaltungsarchitektur.md) und [VA-T01–VA-T12](veranstaltungsarchitektur-umsetzung.md#4-gemeinsame-offene-abnahmekriterien) ergänzen dezentrale Ausfall-/Abgleich-/Funkfälle (#63). Bestehende B0-/Baugruppenprüfungen bleiben erhalten; diese Dokumentation führt keinen neuen Test aus und weist keine verteilte Abnahme nach.
 
 Stand des B0-Verfahrens: **16. Oktober 2026**, Aufgabe [B0 / #38](https://github.com/Sven401/Larp-Escape/issues/38).
@@ -34,7 +36,7 @@ wiederhergestellt. Der erste Lauf braucht Netzwerk.
 
 | Eingang | Festlegung und Herkunft |
 | --- | --- |
-| Python / PlatformIO | CI: Python 3.11, PlatformIO Core 6.2.0; Plattformen und Bibliotheken unverändert in [platformio.ini](../platformio.ini) gepinnt |
+| Python / PlatformIO | B0-CI: Python 3.11; Kamera-CI und vollständiger lokaler Python-Testlauf: Python 3.12 (NumPy-Pin benötigt mindestens 3.12). PlatformIO Core 6.2.0; Plattformen und Bibliotheken unverändert in [platformio.ini](../platformio.ini) gepinnt |
 | C++-Formatprüfung | clang-format 19.1.7, bestehende Formatbaseline |
 | Mbed TLS | offizielles 2.28.4-Quellarchiv, URL und SHA-256 im [bestehenden Kryptografievertrag](companion/peer-proof-v1.md#reproduzierbare-belege); SHA-256 `504bd29af6e7f9f3de1f0f7b7e16c73987a4194338681acd72b82383a49d55d5` |
 | ESP32-ABI | espressif32 6.6.0; unveränderte SHA-256-Pins für `libbt.a` und `libmbedcrypto.a` in [pin_gatt_source_sdk.py](../scripts/pin_gatt_source_sdk.py) |
@@ -68,11 +70,15 @@ Es prüft die versionierten semantischen Gegenbeispiele, keine Signaturen,
 CBOR-Bytes, Flashdurabilität oder installierte Produktfunktionen.
 
 Aus einem sauberen Checkout unter Windows mit Python und PlatformIO 6.2.0.
+Für den vollständigen Python-Testlauf unten Python 3.12 und die gepinnten
+Kamera-Abhängigkeiten verwenden, wie im Kamera-Job der Baugruppen-CI.
+Eine virtuelle Python-Umgebung kann diese Testabhängigkeiten isolieren.
 Die folgenden Prüfungen laufen ohne angeschlossene Hardware. Alle nativen
 Befehle müssen mit Exitcode 0 enden; bei Fehlern nicht einfach den nächsten
 Befehl als erfolgreichen Gesamtnachweis werten.
 
 ```powershell
+python -m pip install -r scripts/requirements-led-camera.txt
 python -m unittest discover -s scripts/tests -v
 python scripts/prepare_peer_mbedtls.py --directory .pio/peer-mbedtls
 $env:LARP_PEER_MBEDTLS_DIR = (Resolve-Path .pio/peer-mbedtls/source).Path
@@ -102,7 +108,7 @@ Für Android JDK 17/21 und SDK 35 wie in der
 ./gradlew.bat :core:protocol:test :app:testDebugUnitTest :app:assembleDebug :app:assembleRelease :app:lintDebug :app:lintRelease :gamemaster:testDebugUnitTest :gamemaster:assembleDebug :gamemaster:assembleRelease :gamemaster:lintDebug :gamemaster:lintRelease --no-daemon --console=plain --stacktrace --continue
 ```
 
-Danach aus dem Repository-Stamm `python -m unittest discover -s scripts/tests -p test_android_apps.py -v` und `python scripts/check_android_apps.py` ausführen. [Apptrennung und Datenerhalt](companion/android-app-trennung.md) beschreiben Paket-/Manifestprüfung und die weiterhin offene Geräteabnahme.
+Danach aus dem Repository-Stamm `python -m unittest discover -s scripts/tests -p test_android_apps.py -v` und `python scripts/check_android_apps.py` ausführen. [Apptrennung und Datenerhalt](companion/android-app-trennung.md) beschreiben die Paket-/Manifestprüfung. [Installation und Dev-Datenerhalt](companion/android-app-geraetepruefung-2026-10-18.md) sowie der [lesende Stationspilot](companion/spielleiter-stationspilot.md) sind begrenzt am Gerät geprüft; Mehrstationsbetrieb und Licht-/Spielaktionen bleiben offen.
 
 `--offline` funktioniert nur bei vollständigen lokalen Downloads. CI verwendet
 den Projektwrapper mit Netzwerk; weder ein globales Gradle noch lokale
@@ -126,7 +132,7 @@ bereits bestandenen Lauf.
 | Echte Kryptografie | `host-peer-proof` mit erfolgreichem Quellaudit, echten Mbed-TLS-Fällen und eigenem JUnit-Bericht |
 | Herkunftsprüfungen | beide SDK-Binärpins im ABI-Build; acht native und zwei SDK-Kryptografie-Negativfälle aus `check_peer_crypto_sources.py` |
 | Firmware | Produkt, beide Runtime-Proben und GATTS-ABI erfolgreich; Produkt-Flash/RAM aus dem Buildlog |
-| Android | Protokoll-/App-JUnit-Berichte, erfolgreicher Debug-Build, APK-SHA-256 im Log und Debug-Lint mit Fehler-/Warnungszahl |
+| Android | JUnit-Berichte für Protokollkern, Dev und GM; Debug-/Release-Builds beider Apps, vier APK-SHA-256 und Debug-/Release-Lint mit Fehler-/Warnungszahl; Paket-/Manifestprüfung mit `check_android_apps.py` |
 | Bestehende Qualitätsprüfungen | Architektur samt Fixtures, Profilwerkzeug, unabhängige C++11-Header und Formatbaseline erfolgreich |
 
 Die drei Artefakte `quality-hardware-independent-<run>-<attempt>`,
