@@ -1,5 +1,12 @@
 # UI/UX-Projektreferenz: Dev-App und Spielleiter-App
 
+**Verbindliches ergänzendes Architekturziel · 21.10.2026:**
+[SP-01](../spielpakete-architektur.md) macht Larp GM zur Oberfläche für
+nachladbare Spiel-/Regelpakete einschließlich generischer Bausteinbearbeitung
+und Vorschau. Mehrboxbetrieb und Drittspiel-Nachweis gehören zur ersten
+Produktversion. UX-01 mit getrennten Dev-/GM-Apps bleibt bestehen.
+Dies ist ein neuer Auftrag an den späteren Editorentwurf, keine fertige UI.
+
 Stand: **18. Oktober 2026**. Projektgebundene Referenz, keine Gerätefreigabe.
 
 ## Status und Herkunft
