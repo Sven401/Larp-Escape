@@ -106,6 +106,14 @@ auf demselben Handy erhalten keine Ausnahme von einer aktiven Steuersitzung je B
 
 ## S5 – Inhalte vorbereiten und je Box aktivieren
 
+**Verbindliche Fortschreibung · 21.10.2026:** [SP-01](../spielpakete-architektur.md)
+fordert ausführbare Spiel-/Regelpakete mit nachladbaren Bausteinen und
+Bearbeitungsbeschreibung. Allgemeiner Editor, passende Vorschau und bestätigte
+Verteilung an mehrere Boxen sind Ziel der ersten Produktversion. Die folgende
+Trennung von Textentwurf, Paket und aktiver Konfiguration bleibt bestehen;
+neue Editorabläufe sind noch auszuarbeiten. Die optionale Zentrale blockiert
+diese Arbeit nicht. [Prioritäten und Prüftore](../veranstaltungsarchitektur-umsetzung.md#0-produktpriorität-ab-21102026).
+
 **Ziel:** lokalen Entwurf, veröffentlichtes Paket und aktive Konfiguration unterscheiden.
 
 1. Lokalen Szenariotext bearbeiten/importieren und als Leseprobe prüfen.

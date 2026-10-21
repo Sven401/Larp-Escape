@@ -1,5 +1,12 @@
 # Vollständiger Prüfweg der kuratierten Produktbasis
 
+**Verbindliches Produkt-Prüftor · 21.10.2026:** [SP-01](spielpakete-architektur.md)
+ergänzt Mehrboxbetrieb in der ersten Produktversion und ein nach dem Einfrieren
+der App-/Firmwarebinärdateien neu entworfenes drittes Spiel. Nachweis über
+unveränderte Hashes, ausschließlich neue Pakete/Inhalte und getrennte
+Vorschau-/Software-/Gerätebelege. Alle SP-T-Kriterien sind offen; bestehende
+B0-, Baugruppen- und VA-Prüfungen bleiben erforderlich für ihren jeweiligen Umfang.
+
 **Wartungsprüfung · 20.10.2026:** [Frische lokale Tests/Builds und Dokumentationsabgleich](../handoff/WARTUNG-PRUEFSTAND-2026-10-20.md) auf Integrationsstand `7e19c95`. Die historischen CI-Belege unten behalten ihren jeweiligen Commitbezug.
 
 **Zusätzlicher Abnahmeumfang · 18.10.2026:** [VA-01](veranstaltungsarchitektur.md) und [VA-T01–VA-T12](veranstaltungsarchitektur-umsetzung.md#4-gemeinsame-offene-abnahmekriterien) ergänzen dezentrale Ausfall-/Abgleich-/Funkfälle (#63). Bestehende B0-/Baugruppenprüfungen bleiben erhalten; diese Dokumentation führt keinen neuen Test aus und weist keine verteilte Abnahme nach.

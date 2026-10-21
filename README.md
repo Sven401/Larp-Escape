@@ -1,6 +1,15 @@
 # Larp-Escape
 
-ESP32-Steuerung des Reichstag-Spiels: Rollenkarten, Kristallmatrix, Audio, LEDs und ESP-NOW-Aktivierung.
+**Verbindliches Architekturziel · 21.10.2026:** [SP-01: nachladbare Spiel- und
+Regelpakete](docs/spielpakete-architektur.md). Nutzer erstellen eigene Spiele
+in Larp GM; kooperierende Boxen gehören bereits zur ersten Produktversion.
+Ein nach dem Einfrieren von App und Firmware neu entworfenes drittes Spiel
+muss ausschließlich durch Pakete, Ressourcen und Zuordnungen hinzukommen.
+[Prioritäten und Prüftore](docs/veranstaltungsarchitektur-umsetzung.md#0-produktpriorität-ab-21102026).
+**Bestätigtes Soll; Umsetzung und Nachweise offen.**
+
+Bisherige Referenzimplementierung: ESP32-Steuerung des Reichstag-Spiels mit
+Rollenkarten, Kristallmatrix, Audio, LEDs und ESP-NOW-Aktivierung.
 
 **Entwicklungseinstieg · 20.10.2026:** Kanonische Basis ist
 `plan/projektuebergabe-kuratierter-stand`, hier gegen `97a2584` geprüft.

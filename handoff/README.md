@@ -1,5 +1,13 @@
 # Technische Projektübergabe
 
+**Architekturziel bestätigt · 21.10.2026:** [SP-01: nachladbare Spiel- und
+Regelpakete](../docs/spielpakete-architektur.md), [neue Prioritäten und
+Arbeitspakete](../docs/veranstaltungsarchitektur-umsetzung.md#0-produktpriorität-ab-21102026).
+Mehrboxbetrieb ist Voraussetzung der ersten Produktversion; ein drittes,
+nach dem Einfrieren der Software entworfenes Spiel muss ohne Änderungen an
+App oder Firmware funktionieren. Beschluss dokumentiert, Umsetzung und
+Abnahme offen; die folgenden datierten Belege behalten ihren ursprünglichen Umfang.
+
 **Integration und Bereinigung · 21.10.2026:** [PR #91 integriert, lokaler
 Entwicklungsstart, Quellen-/Belegsicherung und erhaltene offene Arbeit](BEREINIGUNG-2026-10-20.md).
 Integrierter Ausgangspunkt `f174cee`; die datierten Bestandsaufnahmen unten
