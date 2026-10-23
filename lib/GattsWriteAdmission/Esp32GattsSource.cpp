@@ -222,11 +222,12 @@ Esp32GattsSource::peerRoleState(const PeerRegistryRoleJob &caller,
     const auto value = caller;
     if (!roleOriginalCurrent(value.original))
         return PeerRegistryRoleState::Unavailable;
+    const auto currentTask = xTaskGetCurrentTaskHandle();
     portENTER_CRITICAL(&mutex_);
     const auto state = role_.state;
     const bool match = state && role_.value == value;
     const auto ack = role_.ack;
-    const bool worker = roleWorker_ == xTaskGetCurrentTaskHandle();
+    const bool worker = roleWorker_ == currentTask;
     portEXIT_CRITICAL(&mutex_);
     if (!match || !worker)
         return PeerRegistryRoleState::Unavailable;
@@ -545,8 +546,9 @@ PeerProofGrantPost Esp32GattsSource::postPeerProofGrant(const PeerProofGrantJob 
 PeerProofGrantState Esp32GattsSource::peerProofGrantState(const PeerProofGrantJob &caller,
                                                           TrustedAuthority &out) noexcept {
     const auto value = caller;
+    const auto currentTask = xTaskGetCurrentTaskHandle();
     portENTER_CRITICAL(&mutex_);
-    const bool match = grant_.value == value && proofWorker_ == xTaskGetCurrentTaskHandle();
+    const bool match = grant_.value == value && proofWorker_ == currentTask;
     const auto state = grant_.state;
     const auto ack = grant_.ack;
     portEXIT_CRITICAL(&mutex_);
@@ -606,10 +608,10 @@ PeerProofGrantState Esp32GattsSource::peerProofGrantState(const PeerProofGrantJo
 }
 void Esp32GattsSource::cancelPeerProofGrant(const PeerProofGrantJob &caller) noexcept {
     const auto value = caller;
+    const auto currentTask = xTaskGetCurrentTaskHandle();
     TrustedAuthority expected;
     portENTER_CRITICAL(&mutex_);
-    const bool match =
-        proofWorker_ == xTaskGetCurrentTaskHandle() && grant_.value == value && grant_.state;
+    const bool match = proofWorker_ == currentTask && grant_.value == value && grant_.state;
     if (match) {
         const bool applied = grant_.state == 3 || grant_.state == 6;
         grant_.state = 5;

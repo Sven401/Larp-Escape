@@ -1,5 +1,7 @@
 # Maintainer-Einstieg
 
+**Fachaudit und verbindliche Übernahme · 24.10.2026:** Die [Fachmandate unter dem Maintainer](../docs/quality/verantwortlichkeiten.md) sind auf ausdrücklichen Nutzerauftrag übernommen. PR #95 ergänzt die PN532-Prüfungen und behebt die A1-/A2-Softwarefehler; [Korrekturen, Prüfbericht und Grenzen](../docs/quality/runtime-fixes-2026-10-24.md). Der [Pilot](../docs/quality/audits/2026-10-24-pilot/README.md) bewahrt die ursprünglichen Fehlerbelege auf technischer Basis `e61d7642`. Hardwareabnahme, ESP32-SMP-/Timingnachweise und IDF-4.4-Supportentscheidung bleiben offen. [Automationsbestand](AUTOMATISIERUNGSINVENTAR-2026-10-23.md) und [Koordinatorentwurf](../docs/quality/fachaudit-entwurf.md) bleiben abgegrenzt; kein neuer Scheduler aktiviert.
+
 ## Start für weitere App- und Firmwarearbeit
 
 **Integration und Bereinigung · 21.10.2026:** #91 ist bei `f174cee` integriert,

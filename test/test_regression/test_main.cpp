@@ -91,6 +91,22 @@ void test_state_transition_target_can_be_reconfigured()
     TEST_ASSERT_EQUAL_INT(1, newTargetCalls);
 }
 
+void test_pn532_fixed_four_and_seven_byte_uids();
+void test_pn532_fixed_optional_ats_preserves_uid();
+void test_pn532_no_target_clears_previous_result();
+void test_pn532_null_and_every_truncated_prefix_clear_result();
+void test_pn532_corrupt_framing_and_checksums_clear_result();
+void test_pn532_wrong_direction_and_response_code_clear_result();
+void test_pn532_short_declared_payloads_clear_result();
+void test_pn532_nonminimal_no_target_and_multiple_targets_clear_result();
+void test_pn532_invalid_target_reference_clears_result();
+void test_pn532_unsupported_uid_lengths_clear_result();
+void test_pn532_uid_cannot_extend_beyond_declared_payload();
+void test_pn532_inconsistent_ats_length_clears_result();
+void test_pn532_declared_length_57_boundary_and_58_rejection();
+void test_pn532_ack_nack_extended_and_error_frames_clear_result();
+void test_pn532_available_read_padding_does_not_change_declared_frame();
+
 void setUp() {}
 void tearDown() {}
 
@@ -116,6 +132,21 @@ int runUnityTests()
     RUN_TEST(test_game_reset_clears_rounds_keystones_seen_tags_and_errors);
     RUN_TEST(test_error_transition_waits_for_audio_then_consumes_crystal_before_keystone_error);
     RUN_TEST(test_transition_wait_is_nonblocking_and_resets_after_elapsed);
+    RUN_TEST(test_pn532_fixed_four_and_seven_byte_uids);
+    RUN_TEST(test_pn532_fixed_optional_ats_preserves_uid);
+    RUN_TEST(test_pn532_no_target_clears_previous_result);
+    RUN_TEST(test_pn532_null_and_every_truncated_prefix_clear_result);
+    RUN_TEST(test_pn532_corrupt_framing_and_checksums_clear_result);
+    RUN_TEST(test_pn532_wrong_direction_and_response_code_clear_result);
+    RUN_TEST(test_pn532_short_declared_payloads_clear_result);
+    RUN_TEST(test_pn532_nonminimal_no_target_and_multiple_targets_clear_result);
+    RUN_TEST(test_pn532_invalid_target_reference_clears_result);
+    RUN_TEST(test_pn532_unsupported_uid_lengths_clear_result);
+    RUN_TEST(test_pn532_uid_cannot_extend_beyond_declared_payload);
+    RUN_TEST(test_pn532_inconsistent_ats_length_clears_result);
+    RUN_TEST(test_pn532_declared_length_57_boundary_and_58_rejection);
+    RUN_TEST(test_pn532_ack_nack_extended_and_error_frames_clear_result);
+    RUN_TEST(test_pn532_available_read_padding_does_not_change_declared_frame);
     return UNITY_END();
 }
 

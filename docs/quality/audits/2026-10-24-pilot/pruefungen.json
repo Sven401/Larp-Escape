@@ -1,0 +1,31 @@
+{
+  "date": "2026-10-24",
+  "timezone": "Europe/Berlin",
+  "product_code_base": "e61d7642d035ccdcf8eca689d6c50a82bcf1560b",
+  "checkout_base": "200eea6e0d7110b76065b86887b18bdfa1fb25ef",
+  "scope": "Working-tree test additions before final commit; normalized LF source hashes",
+  "input_sha256_normalized_lf": {
+    "include/GameRuntime/Pn532PassiveFrame.h": "4e04760404d76f24d174da74cdc7edd04dd733f4817d0db3cb6ed2db37e6e4b6",
+    "scripts/patch_pn532.py": "c9b4c74c44cb23e464485b44808405b7350b63771f5ce77af2ffbc0bb2aec2e2",
+    "scripts/patches/pn532-1.3.4/read_detected.cpp": "dcd589ec3d12219c507aced942437b2cf1602eabf316dfa19192aefddcc6e8f4",
+    "test/test_regression/test_pn532_passive_frame.cpp": "6c6d715218a9b9a225ed1b1e52597707e84f3a844605e9466fa94efe806755f2",
+    "test/test_regression/test_main.cpp": "6dcc85d10bc7470bca317f98e39017bc79812d5196dd533504df9697e5d8e538",
+    "scripts/tests/test_patch_pn532.py": "2c7bfb85876fd2e6b1f25b2bd25785a2010302cabd745ad36abb28ddc257c60e"
+  },
+  "junit": {
+    "host-regression.xml": {
+      "sha256": "4b8a23aa7e3bb26e309bedd8cb9ffa437fe6e7720697f6c6f7bf8c328ea3f5a3",
+      "tests": "120",
+      "errors": "0",
+      "failures": "0",
+      "time": "44.85835886001587"
+    },
+    "host-configured-control.xml": {
+      "sha256": "4e45c60d9728dec302fad03f7e4d17bf4aa6d778fad2629f9b7adc45a3c1cf21",
+      "tests": "509",
+      "errors": "0",
+      "failures": "0",
+      "time": "19.898072004318237"
+    }
+  }
+}

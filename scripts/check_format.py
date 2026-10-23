@@ -136,6 +136,7 @@ TEST_ROOTS = (
     "test/test_game_history",
     "test/test_led_runtime",
     "test/test_machine_lifecycle",
+    "test/test_mcp_adapter",
 )
 
 

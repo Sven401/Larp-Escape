@@ -302,10 +302,19 @@ void test_registry_actor_role_slot_duplicate_full_and_wrong_worker_preserve_pend
     other.sequence = 2;
     TEST_ASSERT_EQUAL(static_cast<unsigned>(PeerRegistryRolePost::Busy),
                       static_cast<unsigned>(fixture.source.postPeerRoleJob(other)));
+    TrustedAuthority destination = authority(99);
+    TEST_ASSERT_EQUAL(static_cast<unsigned>(PeerRegistryRoleState::Pending),
+                      static_cast<unsigned>(fixture.source.peerRoleState(first, destination)));
+    TEST_ASSERT_EQUAL_UINT32(99, destination.epoch);
     host_sdk_source::currentTask = reinterpret_cast<TaskHandle_t>(3);
+    TEST_ASSERT_EQUAL(static_cast<unsigned>(PeerRegistryRoleState::Unavailable),
+                      static_cast<unsigned>(fixture.source.peerRoleState(first, destination)));
+    TEST_ASSERT_EQUAL_UINT32(99, destination.epoch);
     TEST_ASSERT_EQUAL(static_cast<unsigned>(PeerRegistryRolePost::Rejected),
                       static_cast<unsigned>(fixture.source.postPeerRoleJob(first)));
     fixture.io();
+    TEST_ASSERT_EQUAL(static_cast<unsigned>(PeerRegistryRoleState::Pending),
+                      static_cast<unsigned>(fixture.source.peerRoleState(first, destination)));
     fixture.ready();
     TEST_ASSERT_EQUAL(2, host_sdk_source::posts);
 }

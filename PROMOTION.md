@@ -1,5 +1,59 @@
 # Projektfestlegungen: Übernahme und Korrektur
 
+## 24. Oktober 2026 — Fachmandate und Prüfpflichten verbindlich übernommen
+
+- **Bestätigt:** Nach dem unten dokumentierten A1/A2-Pilot hat der Nutzer die
+  Übernahme der Mandate und verbindlichen Prüfpflichten ausdrücklich beauftragt;
+  anschließend sollen die Laufzeitbefunde korrigiert werden. Quelle: Folgeauftrag
+  in Sitzung `01a16ab1-34d7-73b0-924a-fc2d245b9027`, Dokumentationsbasis
+  `dc0e3f12b571c534ef258300a47eab8a917387df`.
+- **Beobachtete Anwendung und Bewertung:** Der
+  [Pilot](docs/quality/audits/2026-10-24-pilot/README.md) ordnete RTOS-Kontext-
+  und Gerätefehlergrenzen konkreten Fachmandaten zu. Getrennte Gegenprüfung,
+  Hostdiagnose und PN532-Regressionen lieferten überprüfbare Folgen. Das belegt
+  einen nützlichen Einsatz, keine langfristige Effizienz oder Geräteabnahme.
+- **Übernommen:** [Fachverantwortung](docs/quality/verantwortlichkeiten.md)
+  mit Plattform/Systemintegration, Geräteintegration/Hardwarevertrag und
+  unabhängiger Nachweisprüfung. [AGENTS.md](AGENTS.md) verlangt ihre Anwendung,
+  benannte Verantwortliche/Gegenprüfer und passende Nachweise je Auftrag.
+  Die LED- und UI/UX-Rollen behalten ihren vollständigen Auftrag; gemeinsame
+  technische Grenzen erhalten gezielte Fachreviews. Security-Expertise wird
+  für tatsächlich betroffene Fragen ausdrücklich zugeordnet.
+- **Grenze:** Kein neuer Scheduler, dauerhafter Agent, globaler Skill oder Hook.
+  Der Koordinator-/Automationsentwurf bleibt für Hintergrundbetrieb offen.
+  Diese Übernahme schließt A1-01/A2-01 nicht ab; Laufzeitkorrekturen, aktueller
+  Prüflauf und deren Review folgen gesondert. Historische Pilotbelege bleiben erhalten.
+- **Einfacher Rückweg:** Die verbindliche Verankerung in AGENTS und die neuen
+  Rollenanschlüsse nach ausdrücklicher Änderung des Auftrags zurücknehmen,
+  Fachmandate als inaktiv kennzeichnen und Pilot-/Entscheidungshistorie erhalten.
+  Rücknahme der Rollen aktiviert keine alte Automatisierung und entfernt keine
+  fachlich weiterhin nötigen Tests. Änderungen an Prüfschritten oder Produktcode
+  sind getrennt zu begründen und zu prüfen.
+
+
+## 24. Oktober 2026 — Historischer Übernahmevorschlag nach dem A1/A2-Pilot
+
+- **Ausdrücklich beauftragt:** Verantwortlichkeiten hinterfragen, ESP32/FreeRTOS
+  und Adafruit manuell auditieren und konkrete Rollen-/Prüffolgen zeigen.
+  Sitzung `01a16ab1-34d7-73b0-924a-fc2d245b9027`.
+- **Beobachtete Anwendung:** [Pilot](docs/quality/audits/2026-10-24-pilot/README.md)
+  auf Codebasis `e61d7642d035ccdcf8eca689d6c50a82bcf1560b`. Zwei Fachaufträge,
+  getrennte Rollenprüfung, reale RTOS-Hostdiagnose, neue PN532-Regressionen.
+- **Bewertung:** Plattform- und Geräteintegrationsmandat ordnen zwei konkrete
+  Grenzprobleme zu; eine bekannte Parser-/Patch-Prüflücke wird geschlossen.
+  Supportstatus und SPI-Bool-Grenze aktualisieren bestehende Fachreferenzen.
+  Kein Nachweis langfristiger Zeitersparnis, keine externe Zertifizierung.
+- **Übernahmevorschlag:** [Fachmandate](docs/quality/verantwortlichkeiten.md)
+  bei passender beauftragter Arbeit nutzen; PR #95 enthält prüfbare Dokumente
+  und Tests. Bestehende LED-/UI-Rollen bleiben durchgängig verantwortlich.
+  Kein neuer Agentenprozess, Zeitplan, globaler Skill oder Hook eingerichtet.
+  Die Diagnose ist ein datierter Befundbeleg und kein allgemeines CI-Gate.
+- **Einfacher Rückweg:** neue Rollenverweise inaktiv setzen, Vorschlag und
+  Befundhistorie erhalten. Neue PN532-Tests und einzelnen CI-Schritt getrennt
+  zurücknehmen; dann Prüflücke ausdrücklich wieder öffnen. Firmwarecode,
+  Bibliothekspins, bestehender Codex-Heartbeat und persönliche Hooks sind unverändert.
+
+
 ## 20. Oktober 2026 — GitHub-Abgleich auf aktuelle Projektquellen umgestellt
 
 - **Ausdrücklich beauftragt:** bestehenden Heartbeat pausieren, letzte Änderungen

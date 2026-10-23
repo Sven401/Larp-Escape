@@ -10,10 +10,12 @@ extern bool failCreate, forceBusy;
 extern unsigned takes, gives, creates;
 } // namespace host_mutex
 inline SemaphoreHandle_t xSemaphoreCreateMutexStatic(StaticSemaphore_t *storage) {
+    host_rtos::noteApiCall();
     ++host_mutex::creates;
     return host_mutex::failCreate ? nullptr : storage;
 }
 inline int xSemaphoreTake(SemaphoreHandle_t handle, unsigned wait) {
+    host_rtos::noteApiCall();
     ++host_mutex::takes;
     if (wait)
         host_rtos::nonzeroWait = true;
@@ -23,6 +25,7 @@ inline int xSemaphoreTake(SemaphoreHandle_t handle, unsigned wait) {
     return pdTRUE;
 }
 inline int xSemaphoreGive(SemaphoreHandle_t handle) {
+    host_rtos::noteApiCall();
     ++host_mutex::gives;
     if (!handle || !handle->taken)
         return pdFALSE;

@@ -1,0 +1,28 @@
+{
+  "observed_at_utc": "2026-10-23T22:01:40.406397+00:00",
+  "repository": "C:\\Users\\seide\\.codex\\worktrees\\fachaudit-entwurf\\Larp Escape",
+  "source_sha256": {
+    "lib/FreeRtosGameControlChannel/FreeRtosGameControlChannel.cpp": "fba3b1db14e28757ea8d48a96e7ea1748d0dbe0dd92aea383e8374671adefbc8",
+    "lib/FreeRtosGameControlChannel/FreeRtosGameControlChannel.h": "3a44ad5e054ad7b796c54a8626223f4b18cd6eafc6dbe4c0ff22061c1c775ffd",
+    "src/Companion/AuthorityState.cpp": "1563380187e280170ec2f1a404de0074af6b88291b69428df2a9700a962c7e3d",
+    "src/Companion/GameCommandReader.cpp": "6af369c68c0833b958ade4b4450e033a53ff9b0e6e7e0bb3e00537fc115ef6e0",
+    "test/test_configured_control/host_stubs/freertos/FreeRTOS.h": "5d9c11b7848d039b8b289a32273f1379e77903c739359a304b3014d90f6954de",
+    "test/test_configured_control/host_stubs/freertos/queue.h": "06a9ec6458b10622189fd57a8c243ab5da68a5fa3bfa16c3cca93d1d3e830196"
+  },
+  "compiler": "C:\\Users\\seide\\.platformio\\packages\\toolchain-gccmingw32\\bin\\g++.exe",
+  "compile_exit": 0,
+  "compile_output": "",
+  "limits": "Deterministic single-thread RTOS model; no SMP, deadlock or timing proof",
+  "run_exit": 0,
+  "run_output": "{\"locked_send\":1,\"locked_receive\":1,\"locked_peek\":1,\"total_send\":2,\"total_receive\":2,\"total_peek\":1,\"nonzero_wait\":false,\"final_lock_depth\":0}\n",
+  "observations": {
+    "locked_send": 1,
+    "locked_receive": 1,
+    "locked_peek": 1,
+    "total_send": 2,
+    "total_receive": 2,
+    "total_peek": 1,
+    "nonzero_wait": false,
+    "final_lock_depth": 0
+  }
+}

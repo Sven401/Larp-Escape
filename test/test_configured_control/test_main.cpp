@@ -952,6 +952,7 @@ void test_profile_capability_fixture_matches_firmware_encoder() {
 #include "JournalFaultCases.h"
 #include "ReplyFrameCases.h"
 // Uses the stream/queue/bearer helpers defined above; preserve this order.
+#include "ChannelStorageCases.h"
 #include "CommandReceiptCases.h"
 #include "StatusRoutingCases.h"
 // Depends on the real bearer and routing helpers above.
@@ -997,10 +998,12 @@ void setUp() {
     host_rtos::depth = 0;
     host_rtos::beforeEnter = nullptr;
     host_rtos::nonzeroWait = false;
+    host_rtos::callsInsideCritical() = 0;
     f.reset(new Fixture);
     f->ready();
 }
 void tearDown() {
+    TEST_ASSERT_EQUAL_UINT32(0, host_rtos::callsInsideCritical());
     TEST_ASSERT_EQUAL_UINT32(0, host_rtos::depth);
     TEST_ASSERT_FALSE(host_rtos::nonzeroWait);
     host_rtos::beforeEnter = nullptr;
@@ -1008,6 +1011,9 @@ void tearDown() {
 }
 int main() {
     UNITY_BEGIN();
+    RUN_TEST(test_channel_fifo_wrap_full_copies_and_empty_preserve_output);
+    RUN_TEST(test_channel_status_empty_overwrite_copy_and_repeated_begin);
+    RUN_TEST(test_rtos_api_guard_counts_every_modeled_api_separately_from_wait);
     RUN_TEST(test_codec_roundtrip_boundaries_and_capacity);
     RUN_TEST(test_codec_reordered_escaped_keys_and_values);
     RUN_TEST(test_codec_rejections_preserve_destination);
@@ -1478,6 +1484,7 @@ int main() {
     RUN_TEST(test_grant_queue_and_proof_deadlines_expire_without_refresh_across_wrap);
     RUN_TEST(test_grant_new_connection_and_foreign_publisher_survive_old_cancel);
     RUN_TEST(test_grant_worker_binding_wrong_actor_sdk_and_full_slot_are_closed);
+    RUN_TEST(test_source_grant_foreign_task_cannot_poll_or_cancel_current_job);
     RUN_TEST(test_grant_expiry_during_sdk_read_is_rechecked_before_authentication);
     RUN_TEST(test_grant_credential_revocation_during_metadata_never_authenticates);
     RUN_TEST(test_grant_immutable_context_wrong_boot_scope_and_record_fail_closed);
