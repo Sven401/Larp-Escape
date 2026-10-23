@@ -1,5 +1,28 @@
 # Projektfestlegungen: Übernahme und Korrektur
 
+## 24. Oktober 2026 — Fachmandate im A1/A2-Pilot erprobt
+
+- **Ausdrücklich beauftragt:** Verantwortlichkeiten hinterfragen, ESP32/FreeRTOS
+  und Adafruit manuell auditieren und konkrete Rollen-/Prüffolgen zeigen.
+  Sitzung `01a16ab1-34d7-73b0-924a-fc2d245b9027`.
+- **Beobachtete Anwendung:** [Pilot](docs/quality/audits/2026-10-24-pilot/README.md)
+  auf Codebasis `e61d7642d035ccdcf8eca689d6c50a82bcf1560b`. Zwei Fachaufträge,
+  getrennte Rollenprüfung, reale RTOS-Hostdiagnose, neue PN532-Regressionen.
+- **Bewertung:** Plattform- und Geräteintegrationsmandat ordnen zwei konkrete
+  Grenzprobleme zu; eine bekannte Parser-/Patch-Prüflücke wird geschlossen.
+  Supportstatus und SPI-Bool-Grenze aktualisieren bestehende Fachreferenzen.
+  Kein Nachweis langfristiger Zeitersparnis, keine externe Zertifizierung.
+- **Übernahmevorschlag:** [Fachmandate](docs/quality/verantwortlichkeiten.md)
+  bei passender beauftragter Arbeit nutzen; PR #95 enthält prüfbare Dokumente
+  und Tests. Bestehende LED-/UI-Rollen bleiben durchgängig verantwortlich.
+  Kein neuer Agentenprozess, Zeitplan, globaler Skill oder Hook eingerichtet.
+  Die Diagnose ist ein datierter Befundbeleg und kein allgemeines CI-Gate.
+- **Einfacher Rückweg:** neue Rollenverweise inaktiv setzen, Vorschlag und
+  Befundhistorie erhalten. Neue PN532-Tests und einzelnen CI-Schritt getrennt
+  zurücknehmen; dann Prüflücke ausdrücklich wieder öffnen. Firmwarecode,
+  Bibliothekspins, bestehender Codex-Heartbeat und persönliche Hooks sind unverändert.
+
+
 ## 20. Oktober 2026 — GitHub-Abgleich auf aktuelle Projektquellen umgestellt
 
 - **Ausdrücklich beauftragt:** bestehenden Heartbeat pausieren, letzte Änderungen

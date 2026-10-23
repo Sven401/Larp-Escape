@@ -20,6 +20,28 @@ Der Windows-Androidjob baut inzwischen zusätzlich `:app:assembleRelease`.
 Die Baugruppen-CI ergänzt gemeinsame Wire-/Adaptertests und getrennte
 LED-/NFC-/Matrix-Firmwarevarianten. Ein Softwarelauf ist keine Geräteabnahme.
 
+## Aus dem Fachaudit abgeleitete Prüfungen · 24.10.2026
+
+[Fachmandate](quality/verantwortlichkeiten.md) und
+[Pilot mit Nachweisen](quality/audits/2026-10-24-pilot/README.md) ordnen Quelle,
+Variante und prüfbaren Verbraucher zu. Neu in der bestehenden CI:
+
+- `host-regression` enthält 15 PN532-Parserfälle mit unabhängigen festen
+  Frames, Verkürzungen, ungültigen Feldern und leerem Ergebnis bei Ablehnung.
+- `python -m unittest discover -s scripts/tests -p test_patch_pn532.py -v`
+  prüft zehn Fälle des Patchschutzes mit temporären synthetischen Quellen.
+  Reale Upstream-/Patchhashes werden damit nicht zertifiziert.
+
+Vor produktiver Kanalübernahme bleibt A1-01 zu beheben: Nullwartezeit ist
+kein Nachweis zulässiger Queueaufrufe im ESP32-Spinlock. Die datierte
+RTOS-Diagnose reproduziert den Fund und ist kein grünes CI-Regelgate.
+Vor nächster Legacy-Wake-Freigabe fehlt A2-01: Busfehler nach erfolgreichem
+Start müssen durch den tatsächlichen Adafruit-/Adapterpfad bis zur
+Standby-Entscheidung geprüft werden. Die vorhandenen Baugruppen-MCP-Tests
+decken einen anderen Adapter ab. Hosttests ersetzen weder SMP-/Zeitmessung
+noch Chip-/Bus-/Kartenabnahme. Die Supportentscheidung zu IDF 4.4 bleibt
+eine zusätzliche fachliche Voraussetzung der weiteren Planung.
+
 ## Reproduzierbare Eingänge
 
 Der [Quality-Workflow](../.github/workflows/quality.yml) führt drei unabhängige
@@ -128,6 +150,7 @@ bereits bestandenen Lauf.
 | Bereich | Erforderlicher Beleg |
 | --- | --- |
 | CI-Helfer | 20 Offlinefälle: 12 für Archivprüfung und Erhalt vorhandener Eingaben, 8 für echte Kindprozesse, Windows-Batchargumente, Exitcodes und Belegschutz; Windows-Batchfall nur unter Windows |
+| PN532-Patchschutz | zehn Offlinefälle mit synthetischen Quellen; eigener CI-Schritt und Log, keine Aussage über Geräteverhalten |
 | Hostregression / konfigurierte Steuerung | separate bestandene Läufe und JUnit-Dateien für `host-regression` und `host-configured-control` |
 | Echte Kryptografie | `host-peer-proof` mit erfolgreichem Quellaudit, echten Mbed-TLS-Fällen und eigenem JUnit-Bericht |
 | Herkunftsprüfungen | beide SDK-Binärpins im ABI-Build; acht native und zwei SDK-Kryptografie-Negativfälle aus `check_peer_crypto_sources.py` |

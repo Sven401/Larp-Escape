@@ -1,0 +1,9 @@
+{
+  "observed_at_utc": "2026-10-23T22:09:36.351836+00:00",
+  "input_normalized_sha256": "dff799bcb2237543bcfa875a28489b85da00c9ca8193e93f10fd734ca1a04bc3",
+  "original_normalized_sha256": "9c6c93f6b1e4aac0f03394058c46673a0ff178e4c9fea0a80d0f9ceab53192f4",
+  "patched_normalized_sha256": "dff799bcb2237543bcfa875a28489b85da00c9ca8193e93f10fd734ca1a04bc3",
+  "verify_restore_reapply": "passed",
+  "original_cache_unchanged": true,
+  "limits": "Local cached source with real pins; no fresh download, adapter execution or hardware test"
+}

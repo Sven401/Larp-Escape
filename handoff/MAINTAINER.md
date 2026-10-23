@@ -1,6 +1,6 @@
 # Maintainer-Einstieg
 
-**Entwurf zur Prüfung · 23.10.2026:** [Bestandsaufnahme der Automatisierungen](AUTOMATISIERUNGSINVENTAR-2026-10-23.md) und [Fachaudit-Koordinator zur Aktualisierung der Expertise](../docs/quality/fachaudit-entwurf.md). Quellen-/Rollenabgleich auf `e61d7642`; Pilot, Einrichtung und Zeitplan bleiben offen.
+**Fachaudit-Pilot · 24.10.2026:** [A1/A2-Ergebnis und Folgearbeit](../docs/quality/audits/2026-10-24-pilot/README.md), [erprobte Fachmandate unter dem Maintainer](../docs/quality/verantwortlichkeiten.md) und neue PN532-Prüfungen in PR #95. Technische Basis `e61d7642`; RTOS-/Legacy-Wake-Korrekturen und Supportentscheidung offen. [Automationsbestand](AUTOMATISIERUNGSINVENTAR-2026-10-23.md) und [Koordinatorentwurf](../docs/quality/fachaudit-entwurf.md); Rollenübernahme zur Prüfung, kein neuer Zeitplan aktiviert.
 
 ## Start für weitere App- und Firmwarearbeit
 

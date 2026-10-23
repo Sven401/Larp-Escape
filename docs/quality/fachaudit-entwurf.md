@@ -1,6 +1,9 @@
 # Entwurf: Fachwissen durch gezielte Audits aktuell halten
 
-**Status: Entwurf zur Ergänzung; nicht eingerichtet oder aktiviert.**
+**Status: Koordinator-/Automationsentwurf; manueller A1/A2-Pilot durchgeführt.**
+Ergänzung 24.10.2026: [Pilot, konkrete Funde und neue Prüfungen](audits/2026-10-24-pilot/README.md),
+[erprobte Verantwortungsstruktur zur Übernahme](verantwortlichkeiten.md).
+Keine neue Automatisierung eingerichtet oder aktiviert.
 Datum: 23.10.2026, Europe/Berlin. Auftrag: Automatisierungen untersuchen und
 einen dedizierten Audit-Agenten für die bestehenden Verantwortlichkeiten entwerfen.
 Technische Basis: `e61d7642d035ccdcf8eca689d6c50a82bcf1560b`, am 23.10.2026
@@ -33,27 +36,21 @@ Versionsnummer allein begründet weder einen Defekt noch eine Updatepflicht.
 
 ## 2. Verantwortlichkeiten
 
-**Ausgelesen:** Formalisiert sind Maintainer, LED-Effekt-Architekt und UI/UX Designer.
-Die übrigen Fachgebiete besitzen Verträge und Arbeitspakete, aber keine im
-untersuchten Stand eingerichteten eigenen Agentenprofile. Ein technischer
-Owner im Firmwarecode bezeichnet häufig einen Task/Ressourcenbesitzer und
-damit noch keinen fachlichen Reviewverantwortlichen.
+Die erste Bestandsaufnahme fand formalisierte LED- und UI/UX-Rollen;
+die übrigen Gebiete waren dem Maintainer mit ad hoc zugeordnetem Fachreview
+zugewiesen. Der vom Nutzer beauftragte Pilot hinterfragte zuerst diese
+Struktur. Ergebnis: zwei zusammenhängende Mandate unter dem Maintainer,
+**Plattform und Systemintegration** sowie **Geräteintegration und
+Hardwarevertrag**, ergänzt um **Qualität und Nachweise** als unabhängige
+Prüffunktion. Der [Rollenvertrag](verantwortlichkeiten.md) benennt konkrete
+Auslöser, Ergebnisse, Entscheidungsgrenzen und kanonische Referenzen.
 
-| Fachgebiet | Empfänger des Audits | Kanonischer Anschluss und Prüffragen |
-| --- | --- | --- |
-| LED-Effekte und Lichtausgabe | Bestehender [LED-Effekt-Architekt 2.0](../led/rollen/led-effekt-architekt.md); Maintainer bei gemeinsamen Ressourcen | [Effektvertrag](../led/effect-command-contract.md), [Laufzeit](../runtime.md): Instanzleben, Mischung, Stop, Zeitbasis, RMT-Puffer, sichtbare Wirkung. WLED nur als Verhaltensvergleich. |
-| UI/UX und Zugänglichkeit | Bestehender [UI/UX Designer](../ui-ux/ROLLE.md); Android-Umsetzung durch Maintainer zuordnen | [Projektreferenz](../ui-ux/PROJEKTREFERENZ.md), [Stationspilot](../companion/spielleiter-stationspilot.md): Zustände, Unterbrechung, TalkBack, Schrift und bewusste Aktionen. Quellenarbeit ist kein visueller Review. |
-| ESP32, FreeRTOS und Frameworkmigration | Maintainer benennt einen Firmware-Fachreview | [Device Runtime](../configuration/device-runtime.md), [Migration](../../handoff/ARDUINO-ESP32-3-MIGRATION.md): konkreter Espressif-Port, Stackeinheiten, Task-/ISR-Kontexte, Queues, Fristen, ABI. |
-| NFC, Wake, Matrix und elektrische Grenzen | Maintainer mit zugeordnetem Firmware- und Hardware-Fachreview | [NFC-Vertrag](../nfc-packet-contract.md), [Hardwareplanung](../../Hardware/HARDWAREPLANUNG.md): Version/Patch, Busbesitz, Fehlerpfade, Chipidentität und IO7/B7. |
-| BLE, Zugang, Kryptografie und verteilte Zustände | Maintainer mit Security-/Protokoll-Fachreview | [Zugang](../companion/veranstaltungszugang.md), [Peer Proof](../companion/peer-proof-v1.md), [D0](../veranstaltung/d0-vertrag-v1.md): Support, Advisories, private ABI, Replay, Sitzungen und lokale Autorität. |
-| Abhängigkeiten, CI und Lieferkette | Maintainer | [Prüfwege](../quality-checks.md), Manifeste und Workflows: Herkunft, Pins, Support, Prüfabdeckung, reproduzierbare Eingänge und Aussagegrenzen. |
-| Spielpakete, Mehrboxbetrieb und Produktqualität | Maintainer; Produktentscheidungen beim Nutzer | Live-Plan [#25](https://github.com/Sven401/Larp-Escape/issues/25). SP-01 ist beschlossen; Dokumentation in [#94](https://github.com/Sven401/Larp-Escape/pull/94) war beim Lesen noch nicht integriert. Entscheidung, Quellintegration und Abnahme trennen. |
-
-Die zusätzlichen Fachreviews in der Tabelle sind **vorgeschlagen**, keine
-Behauptung bereits eingerichteter Rollen. Ein Auftrag ohne Empfänger geht
-zunächst an den Maintainer. Der Auditor kann seine eigenen Befunde nicht
-allein als unabhängig gegengeprüft freigeben. Ein separater Reviewdurchgang
-ohne organisatorische Unabhängigkeit muss diese Grenze ausdrücklich nennen.
+Der Fachaudit-Koordinator ist Teil dieser Qualitätsfunktion, keine zusätzliche
+technische Führungsebene. Je Auftrag werden Verantwortlicher und Gegenprüfer
+benannt; kein eigener permanenter Agent je Bibliothek. LED behält seine
+vollständige Umsetzungsverantwortung, UI/UX seinen Rollenvertrag. Security-
+Expertise bei entsprechender Frage ausdrücklich zuordnen. Produktentscheidungen
+und Releases bleiben beim Nutzer, technische Integration beim Maintainer.
 
 ## 3. Quellen und Maßstäbe
 
@@ -99,7 +96,7 @@ Unity, OpenCV, NumPy, pyserial und transitive Abhängigkeiten gehören hinein.
 Manifestlistung allein belegt keinen Einsatz in jedem Produktbild. Aktiver
 Einsatz, Fehlerrisiko, Supporthinweis und anstehende Änderung bestimmen die Tiefe.
 
-Empfohlener Pilot: **A1 und A2**. Port-/Versionsverwechslung, private ABI,
+**A1 und A2 wurden am 23./24.10.2026 manuell ausgeführt**; [Ergebnis](audits/2026-10-24-pilot/README.md). Port-/Versionsverwechslung, private ABI,
 PN532-Patch und Chipkonflikt bieten konkrete Anschlüsse. A3 prüft anschließend,
 ob der Ablauf auch gestalterische Expertise aktualisiert, ohne Referenz und
 Qualitätsnorm zu vermischen.
@@ -197,12 +194,13 @@ notwendigem Nutzereingriff.
 
 ## 8. Dateien, Pilotauftrag und Rückweg
 
-Nach Annahme klein anfangen; folgende Dateien sind **vorgesehen, noch nicht angelegt**:
+Im Pilot angelegt: `docs/quality/verantwortlichkeiten.md` und
+`docs/quality/audits/2026-10-24-pilot/` mit Befunden und editierbarer Diagnose.
+Übernahmen stehen direkt in den kanonischen Fachreferenzen. Folgende weitere
+Dateien bleiben **optional und nicht angelegt**; erst bei beobachtetem Bedarf:
 
-- `docs/quality/ROLLE.md`: Rollenvertrag und Auditumfang.
 - `docs/quality/fachgebiete.yaml`: Komponenten, Versionen, Empfänger, Quellen,
   Gültigkeit und letzte Prüfung; keine Backlogkopie.
-- `docs/quality/audits/<lauf-id>/`: Auftrag, Quellenbelege, Findings und Review.
 - `docs/quality/entscheidungen/`: Übernahme/Ablehnung mit kanonischem Ziel.
 - `.codex/agents/quality_auditor.toml` und optional ein kleiner Projekt-Skill
   nach manueller Erprobung; beide verweisen auf denselben Rollenvertrag.
@@ -213,7 +211,7 @@ ist der lokale Bericht sichtbar, aber nicht dauerhaft integriert. Rückweg:
 neuen Zeitplan pausieren, Rollenaktivierung zurücknehmen, Berichte/Entscheidungen
 erhalten; bestehende CI und GitHub-Sync weiterführen.
 
-**Textentwurf für den ersten manuellen Auditauftrag:**
+**Wiederverwendbarer Text des manuellen Auditauftrags:**
 
 > Prüfe für Sven401/Larp-Escape ESP32/FreeRTOS und Adafruit-NFC/GPIO gegen
 > offizielle Quellen. Ermittle zuerst den tatsächlichen Remote-Head von
@@ -249,6 +247,7 @@ Ein niedriger Finding-Zähler ist kein Erfolgskriterium. Nach vier geplanten
 Läufen Nutzen/Takt prüfen; dauerhafte Regeln erst mit Bewertung und Rückweg
 in PROMOTION übernehmen.
 
-**Offen:** Annahme des Entwurfs, Fachreviewbesetzung für bisher nicht
-formalisierte Gebiete, Pilot, eventuell benötigte Normvolltexte und gesonderte
-Zeitplanaktivierung. Dieser Entwurf führt diese Schritte nicht selbst aus.
+**Offen:** Übernahme der erprobten Fachmandate, dauerhafte Besetzung pro
+Arbeitspaket, technische Folgearbeit aus dem Pilot, zweiter unveränderter
+Probelauf, gegebenenfalls Normvolltexte und gesonderte Zeitplanaktivierung.
+Ein erfolgreicher manueller Pilot richtet keinen Hintergrundbetrieb ein.

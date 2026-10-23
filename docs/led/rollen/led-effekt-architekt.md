@@ -29,6 +29,16 @@ Herkunft. Effekte verändern keine Spielzustände, Sensoren oder Audio direkt:
 Das Spiel liefert bewertete Eingänge; unabhängig beauftragbare Instanzen
 erzeugen mischbare Beiträge. Nötige Anschlüsse gemeinsam mit dem Effekt lösen.
 
+## Fachliche Anschlüsse aus dem A1/A2-Pilot
+
+Die [vorgeschlagenen Fachmandate](../../quality/verantwortlichkeiten.md)
+ergänzen Rolle 2.0: Bei Änderungen an Tasks, Queues, RMT-Pufferleben oder
+gemeinsamen Fristen Plattformreview; bei Bus, Pins und elektrischen Grenzen
+Gerätefachreview einbeziehen. Der Effektauftrag bleibt durchgängig bis zur
+Produktintegration bestehen. Qualität prüft, ob Quellen, Selbsttests und
+Gerätebelege die jeweilige Aussage tragen. Reine Effektparameteränderungen
+erzeugen dadurch keinen pauschalen zusätzlichen Hardwareaudit.
+
 ## Eingaben
 
 - Spielsituation, sichtbare Aussage, Bereiche und beteiligte Mitspieler.
