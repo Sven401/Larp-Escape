@@ -22,25 +22,49 @@ LED-/NFC-/Matrix-Firmwarevarianten. Ein Softwarelauf ist keine Geräteabnahme.
 
 ## Aus dem Fachaudit abgeleitete Prüfungen · 24.10.2026
 
-[Fachmandate](quality/verantwortlichkeiten.md) und
-[Pilot mit Nachweisen](quality/audits/2026-10-24-pilot/README.md) ordnen Quelle,
-Variante und prüfbaren Verbraucher zu. Neu in der bestehenden CI:
+Die am 24.10.2026 übernommenen [Fachmandate](quality/verantwortlichkeiten.md)
+sind verbindlich. Vor Änderungen benennt der Maintainer je Auftrag den
+fachlich Verantwortlichen, einen anderen Gegenprüfer, betroffene Varianten
+und erforderliche Nachweise. Plattform prüft Task-/Queue-/Spinlock-/Callback-/
+ISR- sowie SDK-/Versionsgrenzen; Geräteintegration prüft Bus-, Adapter-,
+Fehler-, Parser- und Recoveryverträge bis zum Verbraucher. Qualität prüft
+Behauptung, Gegenfälle und ausgeführte Nachweise unabhängig vom Autor.
+Security-Expertise wird bei konkreten Advisories, Zugang, Kryptografie oder
+geänderten Vertrauensgrenzen gezielt einbezogen. Die vollständigen LED- und
+UI/UX-Aufträge bleiben erhalten; daraus entsteht kein neuer Scheduler.
 
+Der [Pilot](quality/audits/2026-10-24-pilot/README.md) bewahrt die ursprünglichen
+Fehlerbelege. Die [Softwarekorrekturen mit Prüfbericht](quality/runtime-fixes-2026-10-24.md)
+in PR #95 beheben A1-01 durch feste Wert-FIFOs und Statusmailbox unter derselben
+Authority-Sperre ohne RTOS-Aufrufe sowie A2-01 durch geprüfte I2C-Operationen,
+explizit gültige Eingaben und bestätigte Spaltenfreigabe vor erneuter Auswahl.
+Die bestehenden CI-Prüfungen werden dafür erweitert:
+
+- `host-configured-control` prüft zusätzlich volle/leere und umlaufende FIFOs,
+  kopierte Statuswerte sowie sämtliche modellierten RTOS-Aufrufe unter Sperre;
+  Nullwartezeit allein genügt nicht als Kontextnachweis.
+- `python test/test_configured_control/run_channel_checks.py` prüft den echten
+  Kanal mit Host-Mutex/Threads, erzwungenem Berechtigungsentzug und parallelen
+  FIFO-/Statuszugriffen. Der separate CI-Schritt erhält ein eigenes Befehlslog.
+- `host-mcp` führt elf Fälle mit tatsächlichen Quellen von Adafruit MCP23017
+  2.3.2 und BusIO 1.17.4 über ein Wire-/Registermodell aus: NACK, Null-/Teilantwort,
+  Teilbatchverwerfung, fehlgeschlagene Auswahl/Freigabe und frische Recovery
+  bis zur Spiellogik. Die bisherigen Baugruppen-MCP-Tests bleiben ein eigener
+  Adapterpfad. Explizit ungültige Wake-/Kristallwerte werden zusätzlich in den
+  GameApplication-Fällen von `host-regression` geprüft.
 - `host-regression` enthält 15 PN532-Parserfälle mit unabhängigen festen
   Frames, Verkürzungen, ungültigen Feldern und leerem Ergebnis bei Ablehnung.
 - `python -m unittest discover -s scripts/tests -p test_patch_pn532.py -v`
   prüft zehn Fälle des Patchschutzes mit temporären synthetischen Quellen.
   Reale Upstream-/Patchhashes werden damit nicht zertifiziert.
 
-Vor produktiver Kanalübernahme bleibt A1-01 zu beheben: Nullwartezeit ist
-kein Nachweis zulässiger Queueaufrufe im ESP32-Spinlock. Die datierte
-RTOS-Diagnose reproduziert den Fund und ist kein grünes CI-Regelgate.
-Vor nächster Legacy-Wake-Freigabe fehlt A2-01: Busfehler nach erfolgreichem
-Start müssen durch den tatsächlichen Adafruit-/Adapterpfad bis zur
-Standby-Entscheidung geprüft werden. Die vorhandenen Baugruppen-MCP-Tests
-decken einen anderen Adapter ab. Hosttests ersetzen weder SMP-/Zeitmessung
-noch Chip-/Bus-/Kartenabnahme. Die Supportentscheidung zu IDF 4.4 bleibt
-eine zusätzliche fachliche Voraussetzung der weiteren Planung.
+Ausgeführte Ergebnisse und Quellenstand stehen im datierten Prüfbericht;
+diese Anleitung nimmt keine späteren lokalen oder CI-Buildresultate vorweg.
+Host-Mutex/Threads belegen keine ESP32-SMP-, ISR- oder Timing-Eigenschaften.
+Das Wire-Modell belegt keine elektrischen Pegel, Chipidentität oder realen
+Bus-/Kartenbetrieb. Betroffene SDK-/ABI-Builds und erforderliche Gerätemessungen
+sind getrennt nachzuweisen. Die IDF-4.4-Supportentscheidung sowie bestehende
+Hardware- und End-to-End-Timeoutgrenzen bleiben offen.
 
 ## Reproduzierbare Eingänge
 
@@ -109,7 +133,9 @@ $env:LARP_PEER_MBEDTLS_ARCHIVE = (Resolve-Path .pio/peer-mbedtls/mbedtls-2.28.4.
 python scripts/check_architecture.py --self-test
 python scripts/check_architecture.py
 python -m platformio test -e host-regression -v
+python -m platformio test -e host-mcp -v
 python -m platformio test -e host-configured-control -v
+python test/test_configured_control/run_channel_checks.py
 python -m platformio test -e host-peer-proof -v
 python -m platformio run -e profile-tools
 python -m platformio run -e az-delivery-devkit-v4 -e esp32-runtime-probe -e esp32-profile-runtime-probe -e esp32-gatts-abi-probe -j 2
@@ -121,6 +147,13 @@ python -m pip install clang-format==19.1.7
 python scripts/check_headers.py
 python scripts/check_format.py
 ```
+
+Der [Kanalprüfer](../test/test_configured_control/run_channel_checks.py) benötigt
+einen G++ mit C++11-Threadunterstützung. Er nutzt `g++` aus `PATH` oder die von
+PlatformIO installierte MinGW-Toolchain; mit `--compiler` lässt sich der Pfad
+angeben. Kompilierung und Ausführung erfolgen in einem temporären Ordner.
+[Legacy-MCP-Prüfung und Grenzen](../test/test_mcp_adapter/README.md) beschreiben
+die echten Bibliotheksquellen, das Transportmodell und die historische Rotprobe.
 
 Für Android JDK 17/21 und SDK 35 wie in der
 [Android-Anleitung](../companion/android/README.md#bauen-und-installieren)
@@ -151,7 +184,9 @@ bereits bestandenen Lauf.
 | --- | --- |
 | CI-Helfer | 20 Offlinefälle: 12 für Archivprüfung und Erhalt vorhandener Eingaben, 8 für echte Kindprozesse, Windows-Batchargumente, Exitcodes und Belegschutz; Windows-Batchfall nur unter Windows |
 | PN532-Patchschutz | zehn Offlinefälle mit synthetischen Quellen; eigener CI-Schritt und Log, keine Aussage über Geräteverhalten |
-| Hostregression / konfigurierte Steuerung | separate bestandene Läufe und JUnit-Dateien für `host-regression` und `host-configured-control` |
+| Hostregression / konfigurierte Steuerung | separate bestandene Läufe und JUnit-Dateien für `host-regression` und `host-configured-control`; letzterer umfasst den RTOS-Kontextguard und FIFO-/Mailboxgegenfälle |
+| Kanal: Kontext und Hostthreads | eigener bestandener Aufruf von `run_channel_checks.py` mit Compiler-/Exitcodes, Kanalquellenhashes und Threadergebnis im Befehlslog; kein zusätzlicher JUnit-Bericht und kein ESP32-SMP-/Timingnachweis |
+| Legacy-MCP / Adafruit | `host-mcp`: elf Fälle gegen MCP23017 2.3.2 und BusIO 1.17.4 mit eigenem JUnit-Bericht; Wire-/Registermodell und Consumerwirkung, keine elektrische Geräteabnahme |
 | Echte Kryptografie | `host-peer-proof` mit erfolgreichem Quellaudit, echten Mbed-TLS-Fällen und eigenem JUnit-Bericht |
 | Herkunftsprüfungen | beide SDK-Binärpins im ABI-Build; acht native und zwei SDK-Kryptografie-Negativfälle aus `check_peer_crypto_sources.py` |
 | Firmware | Produkt, beide Runtime-Proben und GATTS-ABI erfolgreich; Produkt-Flash/RAM aus dem Buildlog |
@@ -164,7 +199,8 @@ enthalten jeweils `provenance.json`, Aufruf und Exitcode je ausgeführtem
 Prüfschritt, vollständige kombinierte Standard-/Fehlerausgabe sowie
 `summary.md`. Die Provenienz nennt auch Runner-Image, Python und Lauf-URL.
 Werkzeugversionen, Quellaudit, Ressourcenwerte und APK-Prüfsumme stehen in den
-jeweiligen Befehlslogs. Die drei Host-JUnit-Dateien liegen im Host-Artefakt;
+jeweiligen Befehlslogs. Die vier Host-JUnit-Dateien (`host-regression`, `host-mcp`,
+`host-configured-control`, `host-peer-proof`) liegen im Host-Artefakt;
 `android-reports-<run>-<attempt>` bewahrt zusätzlich Android-JUnit, HTML-Testberichte
 und Lintberichte.
 

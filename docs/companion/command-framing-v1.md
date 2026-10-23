@@ -50,7 +50,14 @@ Kein Frame-CRC ersetzt sichere Anmeldung/Transportintegrität. Ein verifizierter
 
 ## Tatsächlicher vertikaler Pfad und Nachprüfung
 
-pio test -e host-configured-control: tatsächlicher Encoder → Rahmen → CommandStream → JSONdecoder → tatsächlicher FreeRtosGameControlChannel gegen kopierende RTOS-Fakes → GameControl → gespeicherte ProfileApplication → Engine → kopierte Spielantwort. Frühe lokale Queued-Bestätigung und spätere tatsächliche Executed-Antwort werden getrennt geprüft. Synthetische Besitzer und MemoryStore sind keine Hardware-/SMP-/Dauerhaftigkeitsabnahme.
+pio test -e host-configured-control: tatsächlicher Encoder → Rahmen → CommandStream → JSONdecoder → tatsächlicher FreeRtosGameControlChannel mit begrenzten Wert-Ringen gegen den deterministischen Lock-Port → GameControl → gespeicherte ProfileApplication → Engine → kopierte Spielantwort. Frühe lokale Queued-Bestätigung und spätere tatsächliche Executed-Antwort werden getrennt geprüft. Synthetische Besitzer und MemoryStore sind keine Hardware-/SMP-/Dauerhaftigkeitsabnahme.
+
+**Fortschreibung 24.10.2026:** Der nachgelagerte Spielkanal hat eigene
+Wert-Ringe mit gemeinsamer Authoritysperre. Die vorgelagerte
+FreeRtosCommandFrameQueue bleibt eine FreeRTOS-Queue; ihr Aufrufkontext wird
+durch die globalen Stub-Wächter mitgeprüft. Der separate
+[Host-Threadlauf](../../test/test_configured_control/run_channel_checks.py)
+betrifft den Spielkanal, nicht den gesamten Framing-/SDK-/Funkpfad.
 
 14 zusätzliche Framing-Testfunktionen (39 insgesamt) umfassen Bytefolge/Decoderzielerhalt, Grenzlängen, Eingabepuffer-Wiederverwendung, partielle/duplizierte/widersprüchliche Stücke, Lücken/Überlappung, Busy/Timeout/Uhrumlauf, Reconnect, Rechteentzug bei QueueFull und nach letzter Rahmenbeobachtung, kontrollierten Retry/Antwortverlust, malformed JSON ohne Verbrauch, 1024 Bytes und 1-/120-Byte-Nutzstücke.
 

@@ -2,9 +2,32 @@
 
 Ausführen: `pio test -e host-configured-control` (Unity 2.6.1, C++11, Werror).
 
-Tatsächliche reine Firmwarequellen, tatsächlicher FreeRtosGameControlChannel, ProfileApplication mit privaten Profilen, eigener MemoryStore und synthetische kopierte Gerätebesitzer (aus src/ProfileTool/Activation.cpp abgeleitet). RTOS-Stubs kopieren die statischen FIFO-/Mailboxbytes und protokollieren Warteargumente/Sperrtiefe. Sie prüfen keine SMP-Zeitplanung, ESP32-Sperren oder physische Wirkung. Keine Test-API in privaten Controllern.
+Tatsächliche reine Firmwarequellen, tatsächlicher FreeRtosGameControlChannel, ProfileApplication mit privaten Profilen, eigener MemoryStore und synthetische kopierte Gerätebesitzer (aus src/ProfileTool/Activation.cpp abgeleitet). Der Spielkanal verwendet feste Wert-Ringe und eine Statuskopie unter der gemeinsamen Authoritysperre. RTOS-Stubs modellieren die Queues anderer Adapter und protokollieren Warteargumente, Sperrtiefe sowie jeden modellierten Queue-/Semaphore-/Task-Aufruf innerhalb kritischer Sektionen. Sie prüfen keine SMP-Zeitplanung, ESP32-Sperren oder physische Wirkung. Keine Test-API in privaten Controllern.
 
 Beobachtungshooks setzen Rechtewechsel vor/nach dem letzten synchronisierten Read bzw. vor Admission. Das prüft die definierte Entscheidungsreihenfolge und ausdrücklich auch die zulässige einzelne beanspruchte Operation nach späterem Entzug. Es ist keine atomare Abbruchgarantie. MemoryStore bestätigt ausschließlich modellierte Bytes, keine Stromausfall-/Dateisystem-Synchronisierungsabnahme.
+
+**Ergänzung 24.10.2026:** Die Suite prüft im gemeinsamen `tearDown`, dass kein
+modellierter RTOS-API-Aufruf unter einer kritischen Sektion stattfand. Dieser
+Kontextzähler ist von Nullwartezeit getrennt; ein gezielter Guard-Selbsttest
+weist alle neun modellierten APIs nach. Neue Kanalfälle prüfen FIFO-Reihenfolge,
+mehrfachen Indexumlauf, Vollgrenze, kopierte Werte, Zielerhalt bei leerer FIFO,
+Statusüberschreiben und wiederholtes `begin()` ohne Datenverlust. Bestehende
+Entzugs-, Epoch-, QueueFull-/Retry-, Reply-/Status- und Authority-Grenzfälle
+bleiben aktiv. Die folgenden alten Fallzahlen bleiben historische Belege.
+
+Zusätzlich: `python test/test_configured_control/run_channel_checks.py`
+(vorhandenes `g++`, optional `--compiler <Pfad>`). Der Runner kompiliert dieselben
+Kanalquellen mit einem echten `std::mutex`-Port und `std::thread`: drei erzwungene
+Lock-Konflikte zwischen Entzug und Admission/Reply-/Statusauswahl sowie
+20.000 Command-/Replykopien mit paralleler kohärenter Statusbeobachtung.
+Keine Sleeps bestimmen die Konfliktreihenfolge. Ein fehlender gemeinsamer Lock
+führt zum fehlgeschlagenen Lauf/Timeout. Der Hostmutex belegt keine ESP32-
+Interruptsperre, SMP-Latenz, ISR-Eignung oder Gerätewirkung.
+
+Der Kontext-Regressionsnachweis kann mit `--baseline-ref <Commit>` gegen eine
+temporäre Kopie des alten Kanalheaders und der Implementierung wiederholt
+werden. Der Checkout wird nicht zurückgesetzt; ein Verstoß bleibt Exitcode 1.
+`--result <Datei>` sichert Compiler-/Laufresultat und Kanalquellhashes.
 
 87 gezielte Fälle; keine vollständige JSON-/Profil-Fuzzing-/Ausfallsuite, keine vollständige Lease-/Request-/Sampleerschöpfung. Queuevoll/Reconnect/Entzug/Retry/Replyverlust sowie Start durch Codec bis StoredReady-Engine/Status sind enthalten. Historische Nicht-Prüfungen bleiben im Projektgedächtnis datiert; dieser neue Nachweis ersetzt sie nur für die genannten Fälle.
 

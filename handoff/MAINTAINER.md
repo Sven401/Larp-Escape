@@ -1,6 +1,6 @@
 # Maintainer-Einstieg
 
-**Fachaudit-Pilot · 24.10.2026:** [A1/A2-Ergebnis und Folgearbeit](../docs/quality/audits/2026-10-24-pilot/README.md), [erprobte Fachmandate unter dem Maintainer](../docs/quality/verantwortlichkeiten.md) und neue PN532-Prüfungen in PR #95. Technische Basis `e61d7642`; RTOS-/Legacy-Wake-Korrekturen und Supportentscheidung offen. [Automationsbestand](AUTOMATISIERUNGSINVENTAR-2026-10-23.md) und [Koordinatorentwurf](../docs/quality/fachaudit-entwurf.md); Rollenübernahme zur Prüfung, kein neuer Zeitplan aktiviert.
+**Fachaudit und verbindliche Übernahme · 24.10.2026:** Die [Fachmandate unter dem Maintainer](../docs/quality/verantwortlichkeiten.md) sind auf ausdrücklichen Nutzerauftrag übernommen. PR #95 ergänzt die PN532-Prüfungen und behebt die A1-/A2-Softwarefehler; [Korrekturen, Prüfbericht und Grenzen](../docs/quality/runtime-fixes-2026-10-24.md). Der [Pilot](../docs/quality/audits/2026-10-24-pilot/README.md) bewahrt die ursprünglichen Fehlerbelege auf technischer Basis `e61d7642`. Hardwareabnahme, ESP32-SMP-/Timingnachweise und IDF-4.4-Supportentscheidung bleiben offen. [Automationsbestand](AUTOMATISIERUNGSINVENTAR-2026-10-23.md) und [Koordinatorentwurf](../docs/quality/fachaudit-entwurf.md) bleiben abgegrenzt; kein neuer Scheduler aktiviert.
 
 ## Start für weitere App- und Firmwarearbeit
 
