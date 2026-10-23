@@ -1,0 +1,236 @@
+{
+  "status": "passed software checks; device acceptance remains open",
+  "recorded_at_utc": "2026-10-23T22:41:09.838996+00:00",
+  "checked_out_commit": "c4b84fca18b0732201fe39ec54e8a1482046600b",
+  "clean_at_start": true,
+  "integration_base": "e61d7642d035ccdcf8eca689d6c50a82bcf1560b",
+  "local_log_directory": "outputs/fachaudit-fixes-2026-10-24/verified",
+  "command_path_normalization": "Absolute executable/evidence paths replaced by named placeholders; other arguments retained.",
+  "python": "3.12.6 (tags/v3.12.6:a4a2d2b, Sep  6 2024, 20:11:23) [MSC v.1940 64 bit (AMD64)]",
+  "checks": [
+    {
+      "name": "host-regression",
+      "started_at_utc": "2026-10-23T22:32:36.867852+00:00",
+      "duration_seconds": 31.687,
+      "exit_code": 0,
+      "command": [
+        "<PLATFORMIO_6.2.0>",
+        "test",
+        "-e",
+        "host-regression",
+        "-v",
+        "--junit-output-path",
+        "<EVIDENCE_DIR>/host-regression.xml"
+      ],
+      "log_sha256": "c54a8573a45c5f240a16075d5539beb910a701227c44417dd4679adbe4571991"
+    },
+    {
+      "name": "host-mcp",
+      "started_at_utc": "2026-10-23T22:33:08.702318+00:00",
+      "duration_seconds": 4.828,
+      "exit_code": 0,
+      "command": [
+        "<PLATFORMIO_6.2.0>",
+        "test",
+        "-e",
+        "host-mcp",
+        "-v",
+        "--junit-output-path",
+        "<EVIDENCE_DIR>/host-mcp.xml"
+      ],
+      "log_sha256": "c8dc8ef8bd28a33881ea169577b4e8e72bac0d37bd59d69b76e9499b85cfa1ae"
+    },
+    {
+      "name": "host-configured-control",
+      "started_at_utc": "2026-10-23T22:33:13.732846+00:00",
+      "duration_seconds": 6.969,
+      "exit_code": 0,
+      "command": [
+        "<PLATFORMIO_6.2.0>",
+        "test",
+        "-e",
+        "host-configured-control",
+        "-v",
+        "--junit-output-path",
+        "<EVIDENCE_DIR>/host-configured-control.xml"
+      ],
+      "log_sha256": "1291abc7339b8853d773c30687e566a1d72b26924073c261730c6b47569f4cbc"
+    },
+    {
+      "name": "host-peer-proof",
+      "started_at_utc": "2026-10-23T22:33:21.408871+00:00",
+      "duration_seconds": 27.953,
+      "exit_code": 0,
+      "command": [
+        "<PLATFORMIO_6.2.0>",
+        "test",
+        "-e",
+        "host-peer-proof",
+        "-v",
+        "--junit-output-path",
+        "<EVIDENCE_DIR>/host-peer-proof.xml"
+      ],
+      "log_sha256": "45bfea5102f5d35e465b771807d84d6923ec63e6a275d8d80b0bbb12600ce88c"
+    },
+    {
+      "name": "channel-context-threads",
+      "started_at_utc": "2026-10-23T22:32:39.966852+00:00",
+      "duration_seconds": 4.922,
+      "exit_code": 0,
+      "command": [
+        "python",
+        "test/test_configured_control/run_channel_checks.py"
+      ],
+      "log_sha256": "51d8a7777b6714dead5ccd239c20ca3ed027be907b0bf7b39f72d0de206d3b95"
+    },
+    {
+      "name": "esp32-builds",
+      "started_at_utc": "2026-10-23T22:32:36.364852+00:00",
+      "duration_seconds": 504.859,
+      "exit_code": 0,
+      "command": [
+        "<PLATFORMIO_6.2.0>",
+        "run",
+        "-e",
+        "az-delivery-devkit-v4",
+        "-e",
+        "esp32-runtime-probe",
+        "-e",
+        "esp32-profile-runtime-probe",
+        "-e",
+        "esp32-gatts-abi-probe",
+        "-j",
+        "2"
+      ],
+      "log_sha256": "d256cd3cfe53126526fcdf2102d063a5411060241cd89f6a17b9fcb3c4ba01b7"
+    },
+    {
+      "name": "architecture-fixtures",
+      "started_at_utc": "2026-10-23T22:32:37.320851+00:00",
+      "duration_seconds": 0.406,
+      "exit_code": 0,
+      "command": [
+        "python",
+        "scripts/check_architecture.py",
+        "--self-test"
+      ],
+      "log_sha256": "0d19766671b54d36bbdf5efe458f76ad466d4fd2dc7ba32a5302edcf3ab35ff9"
+    },
+    {
+      "name": "architecture",
+      "started_at_utc": "2026-10-23T22:32:37.866851+00:00",
+      "duration_seconds": 1.984,
+      "exit_code": 0,
+      "command": [
+        "python",
+        "scripts/check_architecture.py"
+      ],
+      "log_sha256": "ab6958b4f1e52534e64d8e8d6988ddfab0caf82147602cda683c4e78772a9bf8"
+    },
+    {
+      "name": "pn532-repair-tests",
+      "started_at_utc": "2026-10-23T22:32:45.005852+00:00",
+      "duration_seconds": 0.39,
+      "exit_code": 0,
+      "command": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests",
+        "-p",
+        "test_patch_pn532.py",
+        "-v"
+      ],
+      "log_sha256": "1f5e794e038d9f408042a9d1b3e87d8df9d935871a4fff40172d4fef597a2d7a"
+    },
+    {
+      "name": "headers",
+      "started_at_utc": "2026-10-23T22:32:45.512852+00:00",
+      "duration_seconds": 17.641,
+      "exit_code": 0,
+      "command": [
+        "python",
+        "scripts/check_headers.py"
+      ],
+      "log_sha256": "dcd0991b2192206fa708da0f8deac4592deff5e53e22cc2c95985f0522dbb29a"
+    },
+    {
+      "name": "format",
+      "started_at_utc": "2026-10-23T22:33:03.272754+00:00",
+      "duration_seconds": 10.656,
+      "exit_code": 0,
+      "command": [
+        "python",
+        "scripts/check_format.py",
+        "--formatter",
+        "<CLANG_FORMAT_19.1.7>"
+      ],
+      "log_sha256": "4b7d6991e9e674ec62be93d0004f068d1c28d3fb237068d514021558782ea8b9"
+    }
+  ],
+  "junit_test_counts": {
+    "host-regression": 122,
+    "host-mcp": 11,
+    "host-configured-control": 513,
+    "host-peer-proof": 523
+  },
+  "firmware_build_resources": {
+    "az-delivery-devkit-v4": {
+      "ram_bytes": 55188,
+      "flash_bytes": 1229369
+    },
+    "esp32-runtime-probe": {
+      "ram_bytes": 21480,
+      "flash_bytes": 291989
+    },
+    "esp32-profile-runtime-probe": {
+      "ram_bytes": 107320,
+      "flash_bytes": 406073
+    },
+    "esp32-gatts-abi-probe": {
+      "ram_bytes": 50672,
+      "flash_bytes": 1091713
+    }
+  },
+  "channel_corrected": {
+    "observed_at_utc": "2026-10-23T22:32:40.088854+00:00",
+    "channel_ref": "working tree",
+    "limits": "Host std::mutex/std::thread; no ESP32 SMP, ISR, latency or device proof",
+    "channel_sha256": {
+      "FreeRtosGameControlChannel.cpp": "20d3adf77ac38e29885a6e5f9a4d5df2f1c4bab5f0ad4a201e788e45b87ac37b",
+      "FreeRtosGameControlChannel.h": "1323c3fd7ee7c46c40a4adf59815019cd827e493fa18e6ef284f4735f9cfb49d"
+    },
+    "compile_exit": 0,
+    "compile_output": "",
+    "run_exit": 0,
+    "run_output": "RTOS calls under lock: 0; nonzero wait: false\nPASS: 3 forced authority-lock contentions; 20000 FIFO commands/replies; concurrent coherent status copies. Host mutex only, no ESP32 timing proof.\n"
+  },
+  "channel_baseline_red": {
+    "observed_at_utc": "2026-10-23T22:27:30.315678+00:00",
+    "channel_ref": "dc0e3f12b571c534ef258300a47eab8a917387df",
+    "limits": "Host std::mutex/std::thread; no ESP32 SMP, ISR, latency or device proof",
+    "channel_sha256": {
+      "FreeRtosGameControlChannel.cpp": "680e9e08c5eedb39ef2eb1d698cb11c3dbfa6c93ca785e3ae8e5066218c342fe",
+      "FreeRtosGameControlChannel.h": "eaaf9ccce94d733b1a4879e1398d95d5dc8c8f9024c40cd0dc44cce5b8914e51"
+    },
+    "compile_exit": 0,
+    "compile_output": "",
+    "run_exit": 1,
+    "run_output": "RTOS calls under lock: 3; nonzero wait: false\n"
+  },
+  "mcp_baseline_red": {
+    "commit": "dc0e3f12b571c534ef258300a47eab8a917387df",
+    "compile_exit": 0,
+    "tests": 3,
+    "failed_assertions": 3,
+    "reproduction": "test/test_mcp_adapter/README.md",
+    "log_sha256": "c938795658232861ccfd5a9c3e8ec46c68db2afe632ddd9ef1f73524a73ce88f"
+  },
+  "limits": [
+    "Host threads are not an ESP32 SMP/ISR/timing measurement",
+    "Wire model is not electrical or chip acceptance",
+    "No device upload, release or merge"
+  ]
+}

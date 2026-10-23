@@ -66,9 +66,10 @@ Ein positiver Hosttest ersetzt weder SDK-/ABI-Build noch echte Nebenläufigkeits
 oder Hardwarebelege. Technische Integration führt der Maintainer bis PR;
 Merge, Release und grundlegende Produktentscheidungen bleiben beim Nutzer.
 
-Die Übernahme schließt die Pilotbefunde A1-01 und A2-01 nicht ab. Beauftragte
-Laufzeitkorrekturen erhalten einen eigenen Prüfstand; die historischen
-Fehlerbelege und ihre Aussagegrenzen bleiben im Pilotbericht erhalten.
+Die Rollenübernahme allein schließt keinen technischen Befund ab. Die danach
+beauftragten A1-/A2-Korrekturen sind mit [eigenem Prüfstand](runtime-fixes-2026-10-24.md)
+umgesetzt; historische Fehlerbelege bleiben im Pilotbericht erhalten.
+Die dort getrennt benannten Geräte-/Supportgrenzen bleiben offen.
 
 ## Verbindliche Prüfpflichten aus dem Pilot
 

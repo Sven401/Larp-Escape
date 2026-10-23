@@ -253,8 +253,9 @@ Läufen Nutzen/Takt prüfen; zusätzliche dauerhafte Automationsregeln erst mit
 Bewertung und Rückweg in PROMOTION übernehmen. Die bereits übernommenen
 Fachmandate und Prüfpflichten gelten unabhängig von einem Zeitplan.
 
-**Offen:** jeweilige Besetzung neuer Arbeitspakete, Laufzeitkorrekturen und
-technische Folgearbeit aus dem Pilot, zweiter unveränderter Probelauf,
-gegebenenfalls Normvolltexte und gesonderte Zeitplanaktivierung.
-Die aktuelle Rollenübernahme richtet keinen Hintergrundbetrieb ein und
-behauptet keinen Abschluss der Laufzeitbefunde.
+**Umgesetzt:** verbindliche Fachmandate und anschließend die
+[A1-/A2-Softwarekorrekturen mit Regressionen](runtime-fixes-2026-10-24.md).
+**Offen:** jeweilige Besetzung neuer Arbeitspakete, Geräte-/Zeitmessungen,
+Supportentscheidung und weitere technische Folgearbeit aus dem Pilot,
+zweiter unveränderter Probelauf, gegebenenfalls Normvolltexte und
+gesonderte Zeitplanaktivierung. Kein neuer Hintergrundbetrieb eingerichtet.

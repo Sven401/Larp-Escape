@@ -1,6 +1,10 @@
 # Manueller Fachaudit-Pilot: ESP32/FreeRTOS und Adafruit
 
-**Status: durchgeführt; Rollen-/Prüfergänzung in PR #95, Laufzeitkorrekturen offen.**
+**Historischer Pilotstand: durchgeführt; damalige Laufzeitbefunde unten erhalten.**
+Fortschreibung 24.10.2026: Fachmandate ausdrücklich übernommen und A1-01/A2-01
+[in der Software korrigiert und geprüft](../../runtime-fixes-2026-10-24.md).
+Die folgenden Befundbeschreibungen beziehen sich auf den damaligen Code,
+nicht auf die korrigierte Implementation. Geräte-/Supportgrenzen bleiben offen.
 Zeitraum 23.–24.10.2026, Europe/Berlin. Technische Integrationsbasis:
 `e61d7642d035ccdcf8eca689d6c50a82bcf1560b`; Ausgangscheckout des Pilots:
 `200eea6e0d7110b76065b86887b18bdfa1fb25ef` mit demselben Produktcode.
