@@ -1,5 +1,32 @@
 # Projektfestlegungen: Übernahme und Korrektur
 
+## 24. Oktober 2026 — Zweitlauf geprüft, Fachaudit-Auftrag pausiert vorbereitet
+
+- **Beauftragt:** Zweiten unveränderten Audit-Probelauf am integrierten Stand
+  durchführen, Dubletten/Zuständigkeiten/Wiedervorlagen prüfen und danach den
+  regelmäßigen Betrieb vorbereiten. Keine Aktivierung beauftragt.
+- **Beobachtete Anwendung:** [Zweitlauf mit eingefrorenem 2A/2B-Vergleich](docs/quality/audits/2026-10-24-probelauf-2/README.md)
+  auf `cee968a7bf4c97eb68c9fe6f705bb5a06eef76b0`; fünf vorhandene Finding-IDs
+  und #39/B7 wiedererkannt, keine neue/doppelte Finding-ID. 14 Quellenhashes,
+  Auftragshash, Zuständigkeiten und sieben manuelle Gegenfälle gegengeprüft.
+- **Nutzungsbewertung:** Historische offene Pilottexte öffnen korrigierte
+  Software nicht erneut. Quellenzugang und Hardwaregrenze bleiben getrennt.
+  Die ausdrücklich fehlende Geräte-Wiedervorlage von A2-02 wird in der
+  Vorbereitung an das vorhandene A2-03-Adapterfreigabetor angeschlossen.
+  Keine neue Frist oder physische Abnahme behauptet.
+- **Vorbereitung nach Anwendung:** [Betriebsentwurf](docs/quality/fachaudit-betrieb.md)
+  und [Prompt](docs/quality/fachaudit-automation-prompt.md) unabhängig geprüft.
+  Datierter Startstatus und stille unveränderte Laufabschlüsse präzisiert.
+  Genau eine chatgebundene Automation `larp-escape-fachaudit` mit **PAUSED**
+  angelegt und Prompt zurückgelesen; bestehender GitHub-Abgleich unverändert.
+- **Übernahmegrenze:** Kein neuer allgemeiner Skill, Hook oder Agentenstandard;
+  Fachmandate unverändert. Manueller Replay ist keine automatische
+  Dublettengarantie und kein Scheduler-/Sandbox-/Gerätenachweis. Vor Aktivierung
+  Vorbereitung integrieren und nächsten Termin/Zeitzone prüfen. Nach vier
+  geplanten abgeschlossenen Läufen Nutzen und Takt neu bewerten.
+- **Einfacher Rückweg:** Denselben Auftrag pausieren; Entwürfe und Belege
+  erhalten. Mandate, Produktprüfungen und GitHub-Abgleich bleiben bestehen.
+
 ## 24. Oktober 2026 — Fachmandate und Prüfpflichten verbindlich übernommen
 
 - **Bestätigt:** Nach dem unten dokumentierten A1/A2-Pilot hat der Nutzer die

@@ -1,0 +1,294 @@
+{
+  "schema_version": 1,
+  "kind": "frozen-manual-audit-input",
+  "run": "2026-10-24-probelauf-2",
+  "commit": "cee968a7bf4c97eb68c9fe6f705bb5a06eef76b0",
+  "tree": "6c5529feaec6a9d8eddd3985bfbc73dc9096545c",
+  "remote_ref": "refs/heads/plan/projektuebergabe-kuratierter-stand",
+  "audit_started_at_utc": "2026-10-23T23:24:25Z",
+  "instruction": {
+    "path": "docs/quality/fachaudit-entwurf.md",
+    "section": 8,
+    "sha256_lf": "3845018f2c35ff046a8c11a0f33f0619709e483a25ccdb3eb7238c04841965c9",
+    "change": "none"
+  },
+  "scope": [
+    "A1",
+    "A2"
+  ],
+  "historical_pilot_basis": "e61d7642d035ccdcf8eca689d6c50a82bcf1560b",
+  "comparison_limit": "Gleicher Auditauftrag, fortgeschriebene Projektbasis. 2A/2B vergleichen zusätzlich identische eingefrorene Eingänge dieses Laufs, nicht den alten fehlerhaften Pilotcode.",
+  "assignments": {
+    "coordinator": "Maintainer / root",
+    "A1": "Plattform und Systemintegration / official_sources",
+    "A2": "Geräteintegration und Hardwarevertrag / repo_automation",
+    "independent_review": "Qualität und Nachweise / responsibility_map"
+  },
+  "known_ids": [
+    "A1-01",
+    "A1-02",
+    "A2-01",
+    "A2-02",
+    "A2-03"
+  ],
+  "known_hardware_case": {
+    "issue": 39,
+    "endpoints": [
+      "0x20/B7",
+      "0x21/B7"
+    ],
+    "separate_matrix_issue": 54
+  },
+  "sources": [
+    {
+      "id": "A1-S1",
+      "url": "https://docs.espressif.com/projects/esp-idf/en/v4.4.6/esp32/api-guides/freertos-smp.html",
+      "revision": "IDF 4.4.6",
+      "access": "gelesen",
+      "accessed_on": "2026-10-24",
+      "timezone": "Europe/Berlin",
+      "observation": "Keine RTOS-API in kritischen Sektionen; Stackeinheiten Bytes."
+    },
+    {
+      "id": "A1-S2",
+      "url": "https://github.com/platformio/platform-espressif32/releases/tag/v6.6.0",
+      "revision": "v6.6.0",
+      "access": "gelesen",
+      "accessed_on": "2026-10-24",
+      "timezone": "Europe/Berlin",
+      "observation": "Arduino 2.0.14 und eigenständige IDF-Option 5.2.1 sind getrennte Frameworkpfade."
+    },
+    {
+      "id": "A1-S3",
+      "url": "https://www.espressif.com/sites/default/files/advisory_downloads/AR2024-008%20End-of-Life%20Advisory%20for%20ESP-IDF%20v4.4%20Release%20Branch%20EN.pdf",
+      "revision": "AR2024-008 V1.0, 2024-07-02",
+      "access": "gelesen",
+      "accessed_on": "2026-10-24",
+      "timezone": "Europe/Berlin",
+      "observation": "IDF 4.4 regulär EOL seit Juli 2024; bestehender Fall A1-02."
+    },
+    {
+      "id": "A1-S4",
+      "url": "https://github.com/espressif/esp-idf/security/advisories/GHSA-v335-fxwc-rc44",
+      "revision": "2026-09-03",
+      "access": "gelesen",
+      "accessed_on": "2026-10-24",
+      "timezone": "Europe/Berlin",
+      "observation": "Classic-L2CAP; Konfiguration und tatsächlicher Binarypfad getrennt, Betroffenheit von 4.4.6 offen."
+    },
+    {
+      "id": "A1-S5",
+      "url": "https://github.com/espressif/esp-idf/security/advisories/GHSA-h7r3-gmg9-xjmg",
+      "revision": "2026-02-03",
+      "access": "gelesen",
+      "accessed_on": "2026-10-24",
+      "timezone": "Europe/Berlin",
+      "observation": "protocomm_ble/keep_ble_on; kein Projektaufruf gefunden, transitiver Ausschluss fehlt."
+    },
+    {
+      "id": "A1-S6",
+      "url": "https://github.com/espressif/esp-idf/security/advisories/GHSA-xcpr-5mqp-9qvv",
+      "revision": "2026-09-03",
+      "access": "gelesen",
+      "accessed_on": "2026-10-24",
+      "timezone": "Europe/Berlin",
+      "observation": "A2DP-Sinkpfad erforderlich; SDK-Konfiguration allein belegt keine Erreichbarkeit. Quellenhinweis zu A1-02."
+    },
+    {
+      "id": "A1-S7",
+      "url": "https://github.com/espressif/esp-idf/security/advisories",
+      "revision": "Index, Abruf 2026-10-24",
+      "access": "gelesen",
+      "accessed_on": "2026-10-24",
+      "timezone": "Europe/Berlin",
+      "observation": "Begrenzter Feedabgleich, keine vollständige Advisorybewertung."
+    },
+    {
+      "id": "A1-S8",
+      "url": "https://github.com/espressif/arduino-esp32/releases",
+      "revision": "Abruf 2026-10-24",
+      "access": "gelesen",
+      "accessed_on": "2026-10-24",
+      "timezone": "Europe/Berlin",
+      "observation": "Latest 3.3.12/IDF 5.5.5 (2026-09-18), Pre-release 4.0.0-RC1/IDF 6.1 (2026-09-23); keine Migrationszielwahl."
+    },
+    {
+      "id": "A2-S1",
+      "url": "https://github.com/adafruit/Adafruit-PN532/releases/tag/1.3.4",
+      "revision": "1.3.4, 2025-02-18",
+      "access": "gelesen",
+      "accessed_on": "2026-10-24",
+      "timezone": "Europe/Berlin",
+      "observation": "Latest-Abgleich unverändert zum Projektpin."
+    },
+    {
+      "id": "A2-S2",
+      "url": "https://github.com/adafruit/Adafruit-MCP23017-Arduino-Library/releases/tag/2.3.2",
+      "revision": "2.3.2, 2023-11-15",
+      "access": "gelesen",
+      "accessed_on": "2026-10-24",
+      "timezone": "Europe/Berlin",
+      "observation": "Latest-Abgleich unverändert zum Projektpin."
+    },
+    {
+      "id": "A2-S3",
+      "url": "https://github.com/adafruit/Adafruit_BusIO/releases/tag/1.17.4",
+      "revision": "1.17.4, 2025-09-22",
+      "access": "gelesen",
+      "accessed_on": "2026-10-24",
+      "timezone": "Europe/Berlin",
+      "observation": "Latest-Abgleich unverändert zum Projektpin."
+    },
+    {
+      "id": "A2-S4",
+      "url": "https://github.com/adafruit/Adafruit-MCP23017-Arduino-Library/blob/2.3.2/src/Adafruit_MCP23XXX.cpp",
+      "revision": "2.3.2",
+      "access": "gelesen",
+      "accessed_on": "2026-10-24",
+      "timezone": "Europe/Berlin",
+      "observation": "Skalarer digitalRead-Pfad bleibt; Projekt nutzt geprüfte Bool-Operationen."
+    },
+    {
+      "id": "A2-S5",
+      "url": "https://github.com/adafruit/Adafruit_BusIO/blob/1.17.4/Adafruit_BusIO_Register.cpp",
+      "revision": "1.17.4",
+      "access": "gelesen",
+      "accessed_on": "2026-10-24",
+      "timezone": "Europe/Berlin",
+      "observation": "Fehlersentinel im skalaren Read; expliziter Bool-Pfad separat."
+    },
+    {
+      "id": "A2-S6",
+      "url": "https://github.com/adafruit/Adafruit-PN532/blob/1.3.4/Adafruit_PN532.cpp",
+      "revision": "1.3.4",
+      "access": "gelesen",
+      "accessed_on": "2026-10-24",
+      "timezone": "Europe/Berlin",
+      "observation": "Aktiver UID-Aufruf erreicht gepatchte Methode; ACK-/Antwortwartezeiten getrennt."
+    },
+    {
+      "id": "A2-S7",
+      "url": "https://github.com/adafruit/Adafruit_BusIO/blob/1.17.4/Adafruit_SPIDevice.cpp",
+      "revision": "1.17.4",
+      "access": "gelesen",
+      "accessed_on": "2026-10-24",
+      "timezone": "Europe/Berlin",
+      "observation": "SPI-Bool liefert keine Gerätequittung."
+    },
+    {
+      "id": "A2-S8",
+      "url": "https://www.nxp.com/docs/en/user-guide/141520.pdf",
+      "revision": "UM0701-02 Rev.02, 2007-11-05, Abschnitte 6.2.1.1 und 7.3.5",
+      "access": "gelesen",
+      "accessed_on": "2026-10-24",
+      "timezone": "Europe/Berlin",
+      "observation": "Versionsgebundener Framemaßstab."
+    },
+    {
+      "id": "A2-S9",
+      "url": "https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/MCP23017-Data-Sheet-DS20001952.pdf",
+      "revision": "DS20001952D, 2005–2022, Seite 1",
+      "access": "gelesen",
+      "accessed_on": "2026-10-24",
+      "timezone": "Europe/Berlin",
+      "observation": "PDF jetzt zugänglich, GPA7/GPB7 beim MCP23017 output-only; physische Chipzuordnung offen."
+    },
+    {
+      "id": "A2-S10",
+      "url": "https://support.microchip.com/s/article/GPA7---GPB7-Cannot-Be-Used-as-Inputs-In-MCP23017",
+      "revision": "Abruf 2026-10-24",
+      "access": "nicht lesbar",
+      "accessed_on": "2026-10-24",
+      "timezone": "Europe/Berlin",
+      "observation": "Loading/CSS Error; keine aktuelle Volltextaussage aus diesem Artikel."
+    }
+  ],
+  "github": {
+    "plan_issue": 25,
+    "plan_updated_at": "2026-10-21T22:03:07Z",
+    "plan_boundary": "SP-01 beschlossen; Dokumentations-PR94 weiter offen, keine daraus abgeleitete Produktintegration.",
+    "pr94": {
+      "state": "open",
+      "head": "c70a22f38d2dcd50d267fc07bcbbade528e9f0b6"
+    },
+    "pr95": {
+      "merged": true,
+      "merge": "882c9d613ed6e63b33b8e4dffcd2b207ea4d66d3"
+    },
+    "pr96": {
+      "merged": true,
+      "merge": "cee968a7bf4c97eb68c9fe6f705bb5a06eef76b0"
+    },
+    "ci": {
+      "run": 40038277888,
+      "status": "success",
+      "jobs": 3,
+      "url": "https://github.com/Sven401/Larp-Escape/actions/runs/40038277888",
+      "note": "Vorhandener Merge-Nachweis aus vorigem Auftrag; im Audit nicht erneut ausgeführt."
+    }
+  },
+  "existing_automation": {
+    "id": "larp-escape-github-projektstand",
+    "status": "ACTIVE",
+    "prompt_sha256": "ed34b0a306432fef0b2500f31e6e43a5904bb6c42094183a5a7072f9d35cf9a0",
+    "change": "none"
+  },
+  "source_files": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "59b227d03626c66728e8f092583ce4bfe12254aa908ab1996a5ccec49e282729"
+    },
+    {
+      "path": "docs/quality/fachaudit-entwurf.md",
+      "sha256": "5482d4c7cd20aa3b89158d9e86ed71ec1109b71a90d7e20630be7dc574c7e402"
+    },
+    {
+      "path": "docs/quality/verantwortlichkeiten.md",
+      "sha256": "dcf07bf918d8840453f004c8c0907b7ecbc669d4a49746c65c0029f09f71ee6b"
+    },
+    {
+      "path": "docs/quality/audits/2026-10-24-pilot/README.md",
+      "sha256": "cb1f6769c6446483f519b4e79be282039d5ec8a70252502c0c54fb50e8c7c33b"
+    },
+    {
+      "path": "docs/quality/runtime-fixes-2026-10-24.md",
+      "sha256": "8386a2d5b71f2ea4c83273b0effca4c8fb096849f36760f86667705df38ab43a"
+    },
+    {
+      "path": "docs/quality-checks.md",
+      "sha256": "9165205c23d095a78e577eebf279bbc60f9c25454d6f3dc407734ce74bfe2f13"
+    },
+    {
+      "path": "handoff/ARDUINO-ESP32-3-MIGRATION.md",
+      "sha256": "36fe93effa64154224c5c7de71f02f007038a37349a55cbed13ba98db71e4879"
+    },
+    {
+      "path": "docs/nfc-packet-contract.md",
+      "sha256": "47be6aea9ff91508899cd8b266cf58b088363b484a644e6627cf80d43bf99dee"
+    },
+    {
+      "path": "Hardware/HARDWAREPLANUNG.md",
+      "sha256": "6f3b24cf68a21ff5be8d7a9126cef1d025cd56f9ddabdbeba3e5e12c537a8aa0"
+    },
+    {
+      "path": "platformio.ini",
+      "sha256": "ab9e062b1af78398a3bb52c47c9c7590c1d3c6fc52c28e11f0681ed9ea753101"
+    },
+    {
+      "path": "lib/FreeRtosGameControlChannel/FreeRtosGameControlChannel.cpp",
+      "sha256": "20d3adf77ac38e29885a6e5f9a4d5df2f1c4bab5f0ad4a201e788e45b87ac37b"
+    },
+    {
+      "path": "lib/MCPHandler/MCPHandler.cpp",
+      "sha256": "8641949d4ed49206d16d58ce865b6fe5756a6e711a18038563c46f3c15854837"
+    },
+    {
+      "path": "lib/Keymatrixwrapper/Keymatrix.cpp",
+      "sha256": "611cecbc10e64e7c86edfc4d4c65ffdb48069ea6fc0f6c35b3e01649f585f6fb"
+    },
+    {
+      "path": "lib/NFCReader/NFCReader.cpp",
+      "sha256": "57b9841bf2569849dea8693f7ee563c4a44036b79d7e50f2ca6e0623912a2ea9"
+    }
+  ]
+}
