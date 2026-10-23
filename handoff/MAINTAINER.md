@@ -1,5 +1,15 @@
 # Maintainer-Einstieg
 
+**Zweitlauf und Automationsvorbereitung · 24.10.2026:** Auf Integrationscommit
+`cee968a7bf4c97eb68c9fe6f705bb5a06eef76b0` wurde der
+[zweite Audit-Probelauf mit unabhängigem Wiederholungsabgleich](../docs/quality/audits/2026-10-24-probelauf-2/README.md)
+durchgeführt. Fünf Findings und #39/B7 wiedererkannt, keine Dubletten; offene
+A2-02-Gerätewiedervorlage dem bestehenden Adapterfreigabetor zugeordnet.
+[Fachaudit-Wochenauftrag](../docs/quality/fachaudit-betrieb.md) **pausiert vorbereitet**,
+nicht aktiviert. Die [eigene CI von PR #96 am tatsächlichen Merge](https://github.com/Sven401/Larp-Escape/actions/runs/40038277888)
+ist mit Quality 3/3 erfolgreich; andere Push-Workflows wurden durch ihre
+Pfadfilter nicht gestartet. Kein neuer Geräte- oder Gesamtproduktnachweis.
+
 **Fachaudit integriert · 24.10.2026:** [PR #95](https://github.com/Sven401/Larp-Escape/pull/95)
 ist in `plan/projektuebergabe-kuratierter-stand` übernommen, tatsächlicher
 Mergecommit [`882c9d613ed6e63b33b8e4dffcd2b207ea4d66d3`](https://github.com/Sven401/Larp-Escape/commit/882c9d613ed6e63b33b8e4dffcd2b207ea4d66d3).

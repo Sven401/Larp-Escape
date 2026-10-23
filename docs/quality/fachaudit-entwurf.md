@@ -1,9 +1,11 @@
 # Entwurf: Fachwissen durch gezielte Audits aktuell halten
 
-**Status: Fachmandate und Prüfpflichten verbindlich übernommen; Automationsbetrieb bleibt Entwurf.**
+**Status: Fachmandate verbindlich; zweiter Probelauf abgeschlossen, Wochenauftrag pausiert vorbereitet.**
 Ergänzung 24.10.2026: [Pilot, konkrete Funde und neue Prüfungen](audits/2026-10-24-pilot/README.md),
 [nach dem Pilot ausdrücklich übernommene Verantwortungsstruktur](verantwortlichkeiten.md).
-Keine neue Automatisierung eingerichtet oder aktiviert.
+Fortschreibung: [Zweitlauf](audits/2026-10-24-probelauf-2/README.md) und
+[Betriebsvorbereitung](fachaudit-betrieb.md) am Integrationsstand `cee968a7`.
+Eine chatgebundene Automatisierung ist pausiert angelegt; kein aktiver Wochenbetrieb.
 Datum: 23.10.2026, Europe/Berlin. Auftrag: Automatisierungen untersuchen und
 einen dedizierten Audit-Agenten für die bestehenden Verantwortlichkeiten entwerfen.
 Technische Basis: `e61d7642d035ccdcf8eca689d6c50a82bcf1560b`, am 23.10.2026
@@ -257,5 +259,6 @@ Fachmandate und Prüfpflichten gelten unabhängig von einem Zeitplan.
 [A1-/A2-Softwarekorrekturen mit Regressionen](runtime-fixes-2026-10-24.md).
 **Offen:** jeweilige Besetzung neuer Arbeitspakete, Geräte-/Zeitmessungen,
 Supportentscheidung und weitere technische Folgearbeit aus dem Pilot,
-zweiter unveränderter Probelauf, gegebenenfalls Normvolltexte und
-gesonderte Zeitplanaktivierung. Kein neuer Hintergrundbetrieb eingerichtet.
+operative Erprobung des pausierten Wochenauftrags, gegebenenfalls Normvolltexte
+und gesonderte Zeitplanaktivierung. Der begrenzte manuelle Zweitlauf ist belegt;
+eine zuverlässige regelmäßige Ausführung noch nicht.
