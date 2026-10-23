@@ -1,5 +1,7 @@
 # Maintainer-Einstieg
 
+**Entwurf zur Prüfung · 23.10.2026:** [Bestandsaufnahme der Automatisierungen](AUTOMATISIERUNGSINVENTAR-2026-10-23.md) und [Fachaudit-Koordinator zur Aktualisierung der Expertise](../docs/quality/fachaudit-entwurf.md). Quellen-/Rollenabgleich auf `e61d7642`; Pilot, Einrichtung und Zeitplan bleiben offen.
+
 ## Start für weitere App- und Firmwarearbeit
 
 **Integration und Bereinigung · 21.10.2026:** #91 ist bei `f174cee` integriert,
