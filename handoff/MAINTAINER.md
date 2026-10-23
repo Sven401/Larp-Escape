@@ -1,6 +1,37 @@
 # Maintainer-Einstieg
 
-**Fachaudit und verbindliche Übernahme · 24.10.2026:** Die [Fachmandate unter dem Maintainer](../docs/quality/verantwortlichkeiten.md) sind auf ausdrücklichen Nutzerauftrag übernommen. PR #95 ergänzt die PN532-Prüfungen und behebt die A1-/A2-Softwarefehler; [Korrekturen, Prüfbericht und Grenzen](../docs/quality/runtime-fixes-2026-10-24.md). Der [Pilot](../docs/quality/audits/2026-10-24-pilot/README.md) bewahrt die ursprünglichen Fehlerbelege auf technischer Basis `e61d7642`. Hardwareabnahme, ESP32-SMP-/Timingnachweise und IDF-4.4-Supportentscheidung bleiben offen. [Automationsbestand](AUTOMATISIERUNGSINVENTAR-2026-10-23.md) und [Koordinatorentwurf](../docs/quality/fachaudit-entwurf.md) bleiben abgegrenzt; kein neuer Scheduler aktiviert.
+**Fachaudit integriert · 24.10.2026:** [PR #95](https://github.com/Sven401/Larp-Escape/pull/95)
+ist in `plan/projektuebergabe-kuratierter-stand` übernommen, tatsächlicher
+Mergecommit [`882c9d613ed6e63b33b8e4dffcd2b207ea4d66d3`](https://github.com/Sven401/Larp-Escape/commit/882c9d613ed6e63b33b8e4dffcd2b207ea4d66d3).
+Der vollständige Dateibaum ist identisch mit dem geprüften PR-Head
+`d17e699e548346051f0777a022171be545e76b9b`; lokal mit `git diff --exit-code`
+und gleicher Git-Baum-ID `1cb1bf53e280881ae203be4c44aefbd4d9c56800` verifiziert.
+
+- **PR-Prüfstand:** neun erfolgreiche Jobs am PR-Zusammenführungsstand
+  `a4957905ba4081c28256230c05ebab6f2c6de229`, Head `d17e699e` gegen Basis
+  `e61d7642`: [Quality 3/3](https://github.com/Sven401/Larp-Escape/actions/runs/40035232919),
+  [LED/Baugruppen 4/4](https://github.com/Sven401/Larp-Escape/actions/runs/40035232741),
+  [NFC 2/2](https://github.com/Sven401/Larp-Escape/actions/runs/40035232726).
+- **Eigener Merge-Prüfstand:** sieben erfolgreiche Jobs (Quality 3/3, LED/Baugruppen 4/4).
+  [Quality](https://github.com/Sven401/Larp-Escape/actions/runs/40036526891) und
+  [LED/Baugruppen](https://github.com/Sven401/Larp-Escape/actions/runs/40036526833)
+  prüfen den tatsächlichen Mergecommit `882c9d6` über das Push-Ereignis.
+  Der separate NFC-Workflow wurde wegen seines Pfadfilters nicht neu gestartet;
+  sein grüner PR-Lauf bleibt ein eigener Nachweis. Die CI dieser reinen
+  Maintainer-Fortschreibung ist wiederum davon getrennt.
+- **Lokaler Softwareprüfstand vor dem Merge:** Codecommit `c4b84fc`, 122 allgemeine,
+  513 Steuerungs-, elf MCP- und 523 Kryptografiefälle, Kanalprüfung mit echten
+  Hostthreads und vier erfolgreiche ESP32-Buildvarianten;
+  [vollständige Befehle, Commitbezug und Grenzen](../docs/quality/runtime-fixes-2026-10-24.md).
+
+Damit sind die [Fachmandate unter dem Maintainer](../docs/quality/verantwortlichkeiten.md),
+die FreeRTOS-/MCP-Softwarekorrekturen und die zusätzlichen PN532-/MCP-/
+Kontextprüfungen integriert. Der [Pilot](../docs/quality/audits/2026-10-24-pilot/README.md)
+bewahrt die ursprünglichen Fehlerbelege. Hardwareabnahme, ESP32-SMP-/Timingnachweise,
+IDF-4.4-Supportentscheidung und bestehende Chip-/Fristgrenzen bleiben offen.
+[Automationsbestand](AUTOMATISIERUNGSINVENTAR-2026-10-23.md) und
+[Koordinatorentwurf](../docs/quality/fachaudit-entwurf.md) bleiben abgegrenzt;
+kein neuer Scheduler, kein Geräteupload und keine Übernahme nach `main`.
 
 ## Start für weitere App- und Firmwarearbeit
 
