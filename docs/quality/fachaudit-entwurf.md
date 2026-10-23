@@ -1,8 +1,8 @@
 # Entwurf: Fachwissen durch gezielte Audits aktuell halten
 
-**Status: Koordinator-/Automationsentwurf; manueller A1/A2-Pilot durchgeführt.**
+**Status: Fachmandate und Prüfpflichten verbindlich übernommen; Automationsbetrieb bleibt Entwurf.**
 Ergänzung 24.10.2026: [Pilot, konkrete Funde und neue Prüfungen](audits/2026-10-24-pilot/README.md),
-[erprobte Verantwortungsstruktur zur Übernahme](verantwortlichkeiten.md).
+[nach dem Pilot ausdrücklich übernommene Verantwortungsstruktur](verantwortlichkeiten.md).
 Keine neue Automatisierung eingerichtet oder aktiviert.
 Datum: 23.10.2026, Europe/Berlin. Auftrag: Automatisierungen untersuchen und
 einen dedizierten Audit-Agenten für die bestehenden Verantwortlichkeiten entwerfen.
@@ -42,8 +42,11 @@ zugewiesen. Der vom Nutzer beauftragte Pilot hinterfragte zuerst diese
 Struktur. Ergebnis: zwei zusammenhängende Mandate unter dem Maintainer,
 **Plattform und Systemintegration** sowie **Geräteintegration und
 Hardwarevertrag**, ergänzt um **Qualität und Nachweise** als unabhängige
-Prüffunktion. Der [Rollenvertrag](verantwortlichkeiten.md) benennt konkrete
-Auslöser, Ergebnisse, Entscheidungsgrenzen und kanonische Referenzen.
+Prüffunktion. Der Nutzer hat diese Fachmandate und ihre Prüfpflichten am
+24.10.2026 ausdrücklich übernommen. Der [verbindliche Rollenvertrag](verantwortlichkeiten.md)
+benennt Auslöser, Verantwortliche, Gegenprüfung, Nachweise und Entscheidungsgrenzen;
+[AGENTS.md](../../AGENTS.md) bindet ihn in beauftragte Projektarbeit ein.
+Die Übernahme ist keine Einrichtung des unten vorgeschlagenen Wochenlaufs.
 
 Der Fachaudit-Koordinator ist Teil dieser Qualitätsfunktion, keine zusätzliche
 technische Führungsebene. Je Auftrag werden Verantwortlicher und Gegenprüfer
@@ -97,7 +100,7 @@ Manifestlistung allein belegt keinen Einsatz in jedem Produktbild. Aktiver
 Einsatz, Fehlerrisiko, Supporthinweis und anstehende Änderung bestimmen die Tiefe.
 
 **A1 und A2 wurden am 23./24.10.2026 manuell ausgeführt**; [Ergebnis](audits/2026-10-24-pilot/README.md). Port-/Versionsverwechslung, private ABI,
-PN532-Patch und Chipkonflikt bieten konkrete Anschlüsse. A3 prüft anschließend,
+PN532-Patch und Chipkonflikt bieten konkrete Anschlüsse. A3 bleibt ein möglicher weiterer Pilot, um zu prüfen,
 ob der Ablauf auch gestalterische Expertise aktualisiert, ohne Referenz und
 Qualitätsnorm zu vermischen.
 
@@ -207,9 +210,11 @@ Dateien bleiben **optional und nicht angelegt**; erst bei beobachtetem Bedarf:
 
 Laufentwürfe erhalten einzigartige Pfade. Der Maintainer übernimmt relevante
 Ergebnisse und Entscheidungen per benannten Dateipfaden in Git. Bis dahin
-ist der lokale Bericht sichtbar, aber nicht dauerhaft integriert. Rückweg:
-neuen Zeitplan pausieren, Rollenaktivierung zurücknehmen, Berichte/Entscheidungen
-erhalten; bestehende CI und GitHub-Sync weiterführen.
+ist der lokale Bericht sichtbar, aber nicht dauerhaft integriert.
+Für die übernommenen Mandate gilt der dokumentierte Rückweg in
+[PROMOTION.md](../../PROMOTION.md). Ein später eingerichteter Auditzeitplan
+kann unabhängig davon pausiert werden; Berichte und Entscheidungen bleiben
+erhalten. Bestehende CI und GitHub-Sync laufen in ihrem jeweiligen Auftrag weiter.
 
 **Wiederverwendbarer Text des manuellen Auditauftrags:**
 
@@ -229,9 +234,9 @@ erhalten; bestehende CI und GitHub-Sync weiterführen.
 > externe Funktionsreferenz. Fehlende Quellen/Volltexte bleiben offen. Lege
 > das Ergebnis dem Fachreview vor; behaupte keine Übernahme oder Produktabnahme.
 
-## 9. Erprobung und Erfolgskriterien
+## 9. Erprobung eines künftigen Automationsbetriebs
 
-Vor Aktivierung zwei manuelle Läufe an benannten Commits vergleichen. Jeder
+Vor einer gesondert beauftragten Zeitplanaktivierung zwei manuelle Läufe an benannten Commits vergleichen. Jeder
 relevante Befund braucht Quelle, Anwendbarkeit, Empfänger und überprüfbare
 Folge. Der unveränderte zweite Lauf erzeugt keine Dubletten. Mindestens eine
 fachliche Entscheidung endet nachvollziehbar in der richtigen Referenz oder
@@ -244,10 +249,12 @@ und fehlende Gerätemessung. Diese Unterschiede müssen erhalten bleiben.
 Bewerten: Aufwand pro nützlichem Befund, Fehlalarme, überfällige Gebiete,
 Zeit bis Fachentscheidung und tatsächlich geschlossene Nachweislücken.
 Ein niedriger Finding-Zähler ist kein Erfolgskriterium. Nach vier geplanten
-Läufen Nutzen/Takt prüfen; dauerhafte Regeln erst mit Bewertung und Rückweg
-in PROMOTION übernehmen.
+Läufen Nutzen/Takt prüfen; zusätzliche dauerhafte Automationsregeln erst mit
+Bewertung und Rückweg in PROMOTION übernehmen. Die bereits übernommenen
+Fachmandate und Prüfpflichten gelten unabhängig von einem Zeitplan.
 
-**Offen:** Übernahme der erprobten Fachmandate, dauerhafte Besetzung pro
-Arbeitspaket, technische Folgearbeit aus dem Pilot, zweiter unveränderter
-Probelauf, gegebenenfalls Normvolltexte und gesonderte Zeitplanaktivierung.
-Ein erfolgreicher manueller Pilot richtet keinen Hintergrundbetrieb ein.
+**Offen:** jeweilige Besetzung neuer Arbeitspakete, Laufzeitkorrekturen und
+technische Folgearbeit aus dem Pilot, zweiter unveränderter Probelauf,
+gegebenenfalls Normvolltexte und gesonderte Zeitplanaktivierung.
+Die aktuelle Rollenübernahme richtet keinen Hintergrundbetrieb ein und
+behauptet keinen Abschluss der Laufzeitbefunde.

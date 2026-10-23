@@ -1,6 +1,37 @@
 # Projektfestlegungen: Übernahme und Korrektur
 
-## 24. Oktober 2026 — Fachmandate im A1/A2-Pilot erprobt
+## 24. Oktober 2026 — Fachmandate und Prüfpflichten verbindlich übernommen
+
+- **Bestätigt:** Nach dem unten dokumentierten A1/A2-Pilot hat der Nutzer die
+  Übernahme der Mandate und verbindlichen Prüfpflichten ausdrücklich beauftragt;
+  anschließend sollen die Laufzeitbefunde korrigiert werden. Quelle: Folgeauftrag
+  in Sitzung `01a16ab1-34d7-73b0-924a-fc2d245b9027`, Dokumentationsbasis
+  `dc0e3f12b571c534ef258300a47eab8a917387df`.
+- **Beobachtete Anwendung und Bewertung:** Der
+  [Pilot](docs/quality/audits/2026-10-24-pilot/README.md) ordnete RTOS-Kontext-
+  und Gerätefehlergrenzen konkreten Fachmandaten zu. Getrennte Gegenprüfung,
+  Hostdiagnose und PN532-Regressionen lieferten überprüfbare Folgen. Das belegt
+  einen nützlichen Einsatz, keine langfristige Effizienz oder Geräteabnahme.
+- **Übernommen:** [Fachverantwortung](docs/quality/verantwortlichkeiten.md)
+  mit Plattform/Systemintegration, Geräteintegration/Hardwarevertrag und
+  unabhängiger Nachweisprüfung. [AGENTS.md](AGENTS.md) verlangt ihre Anwendung,
+  benannte Verantwortliche/Gegenprüfer und passende Nachweise je Auftrag.
+  Die LED- und UI/UX-Rollen behalten ihren vollständigen Auftrag; gemeinsame
+  technische Grenzen erhalten gezielte Fachreviews. Security-Expertise wird
+  für tatsächlich betroffene Fragen ausdrücklich zugeordnet.
+- **Grenze:** Kein neuer Scheduler, dauerhafter Agent, globaler Skill oder Hook.
+  Der Koordinator-/Automationsentwurf bleibt für Hintergrundbetrieb offen.
+  Diese Übernahme schließt A1-01/A2-01 nicht ab; Laufzeitkorrekturen, aktueller
+  Prüflauf und deren Review folgen gesondert. Historische Pilotbelege bleiben erhalten.
+- **Einfacher Rückweg:** Die verbindliche Verankerung in AGENTS und die neuen
+  Rollenanschlüsse nach ausdrücklicher Änderung des Auftrags zurücknehmen,
+  Fachmandate als inaktiv kennzeichnen und Pilot-/Entscheidungshistorie erhalten.
+  Rücknahme der Rollen aktiviert keine alte Automatisierung und entfernt keine
+  fachlich weiterhin nötigen Tests. Änderungen an Prüfschritten oder Produktcode
+  sind getrennt zu begründen und zu prüfen.
+
+
+## 24. Oktober 2026 — Historischer Übernahmevorschlag nach dem A1/A2-Pilot
 
 - **Ausdrücklich beauftragt:** Verantwortlichkeiten hinterfragen, ESP32/FreeRTOS
   und Adafruit manuell auditieren und konkrete Rollen-/Prüffolgen zeigen.

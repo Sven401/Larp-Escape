@@ -1,8 +1,12 @@
 # Fachverantwortung unter dem Maintainer
 
-Stand: **24.10.2026; im manuellen A1/A2-Pilot erprobt, Übernahmevorschlag in PR #95.**
-Geltung: beauftragte Projektarbeit. Keine neue Automatisierung, kein dauerhaft
-laufender Agent und keine zusätzliche Freigabestufe für jede kleine Änderung.
+Stand: **24.10.2026; nach dem manuellen A1/A2-Pilot vom Nutzer bestätigt
+und verbindlich übernommen.** Geltung: beauftragte Projektarbeit.
+Quelle: ausdrücklicher Folgeauftrag zur Übernahme der Mandate und Prüfpflichten
+in Sitzung `01a16ab1-34d7-73b0-924a-fc2d245b9027`; Dokumentationsbasis
+`dc0e3f12b571c534ef258300a47eab8a917387df` in PR #95.
+Keine neue Automatisierung, kein dauerhaft laufender Agent und keine zusätzliche
+Freigabestufe für jede kleine Änderung.
 [Pilot und Nachweise](audits/2026-10-24-pilot/README.md),
 [Nutzungsbewertung und Rückweg](../../PROMOTION.md).
 
@@ -39,22 +43,49 @@ Der **Fachaudit-Koordinator** organisiert zeitlich begrenzte Quellenaufträge,
 Anwendbarkeit und Befundverfolgung innerhalb der Qualitätsfunktion. Er hat
 keine zusätzliche Weisungsbefugnis über die Fachrollen.
 
-## Konkrete Pflichten aus dem Pilot
+## Auftrag, Gegenprüfung und Abschluss
+
+Vor Änderungen hält der Maintainer je Arbeitspaket den fachlich Verantwortlichen
+und einen anderen Gegenprüfer sowie Ziel, Codebasis, betroffene Varianten und
+erforderliche Nachweise im Auftrag oder Arbeitsbericht fest. Für gemeinsame
+Grenzen wird ein führendes Mandat benannt; die andere Fachfunktion wird gezielt
+einbezogen. Ein passender unabhängiger Review kann mehrere Prüffragen abdecken;
+es entstehen keine zusätzlichen Gremien oder separaten Freigaben je Tabelle.
+
+Der Verantwortliche begründet die technische Lösung und führt die passenden
+Prüfungen aus. Der Gegenprüfer bewertet die geänderten Pfade, Gegenfälle und
+Nachweise gegen den Vertrag; er darf seine eigene Implementierung nicht als
+unabhängig geprüft bestätigen. Bei Zugang, Kryptografie, konkreten Advisories
+oder geänderten Vertrauensgrenzen benennt der Maintainer zusätzlich die nötige
+Security-Expertise; ein Plattformtitel allein genügt dafür nicht.
+
+Der Abschluss nennt geänderte Quelle/Commit, tatsächlich ausgeführte Prüfschritte,
+Ergebnisse, Reviewbefunde und verbleibende Grenzen. Für erforderliche, aber nicht
+ausgeführte Geräte- oder Lastmessungen bleibt die entsprechende Abnahme offen.
+Ein positiver Hosttest ersetzt weder SDK-/ABI-Build noch echte Nebenläufigkeits-
+oder Hardwarebelege. Technische Integration führt der Maintainer bis PR;
+Merge, Release und grundlegende Produktentscheidungen bleiben beim Nutzer.
+
+Die Übernahme schließt die Pilotbefunde A1-01 und A2-01 nicht ab. Beauftragte
+Laufzeitkorrekturen erhalten einen eigenen Prüfstand; die historischen
+Fehlerbelege und ihre Aussagegrenzen bleiben im Pilotbericht erhalten.
+
+## Verbindliche Prüfpflichten aus dem Pilot
 
 | Auslöser | Verantwortlicher und nötige Gegenprüfung | Mindestnachweis |
 | --- | --- | --- |
-| Task, Queue, Spinlock, Callback oder ISR geändert | Plattform; Qualität prüft Kontextabdeckung | Für den tatsächlich eingebetteten Espressif-Port Regeln belegen. Keine FreeRTOS-API in Spinlock-Kritischen Sektionen; Nullwartezeit allein genügt nicht. Autorität/Generation beim Umbau weiter atomar behandeln; Racefälle und Gerätelauf getrennt nachweisen. A1-01 bleibt offen. |
+| Task, Queue, Spinlock, Callback oder ISR geändert | Plattform; Qualität prüft Kontextabdeckung | Für den tatsächlich eingebetteten Espressif-Port Regeln belegen. Keine FreeRTOS-API in Spinlock-Kritischen Sektionen; Nullwartezeit allein genügt nicht. Autorität/Generation beim Umbau weiter atomar behandeln; volle/leere Queue, konkurrierender Producer/Consumer, Entzug/Generationswechsel und verspätete Antwort gezielt prüfen. Hostmodell, betroffene SDK-Builds und Gerätelauf getrennt nachweisen. Herkunft: A1-01. |
 | Bibliotheks-/Versionspin, Framework, SDK-Binärpin oder Migration geändert; Support endet | Plattform, bei Security zusätzlich gezielter Fachreview; Maintainer entscheidet Folge | Plattform, Arduino-Version und eingebettetes IDF getrennt; Nutzungs-/Buildvarianten und Supportstatus erfassen. Bei EOL Ausnahme mit Grund, Verantwortlichem und Wiedervorlage oder Migrationsauftrag. Fehlende Advisory-Versionsangabe ist keine Entwarnung. A1-02. |
-| Sensorwert oder Gerätefehler über Adaptergrenze geführt | Geräteintegration; Verbraucher und Qualität prüfen Wirkung | Wert, gültig/unbekannt, Alter und Fehler getrennt. NACK, Kurzantwort und Ausfall nach gesundem Start bis zur Spiellogik prüfen. Fehler darf keine positive Spielaktion erzeugen. Adafruit- und eigene Adapter getrennt. A2-01 bleibt offen. |
+| Sensorwert oder Gerätefehler über Adaptergrenze geführt | Geräteintegration; Verbraucher und Qualität prüfen Wirkung | Wert, gültig/unbekannt, Alter und Fehler getrennt. NACK, Kurzantwort und Ausfall nach gesundem Start bis zur Spiellogik prüfen. Fehler darf keine positive Spielaktion erzeugen; Wiederkehr nach dem Fehler mit frischer Beobachtung prüfen. Adafruit- und eigene Adapter sowie betroffene Firmwarevarianten getrennt nachweisen. Herkunft: A2-01. |
 | Externe Bytes geparst oder Quellpatch geändert | Geräteintegration; Qualität prüft unabhängige Gegenbeispiele | Feste externe Framebeispiele, Verkürzungen, Längen-/Prüfsummenfehler; Patch-Erhalt, Ablehnung fremder Änderungen und Rückweg. Synthetische Testpins und reale Quellenhashprüfung getrennt ausweisen. A2-02. |
-| Bool-Erfolg oder Timeout als Zusage weitergegeben | Geräteintegration und Plattform | Pro Bus Bedeutung von Erfolg festhalten; vollständigen Aufrufpfad und Deadline messen. SPI-Bool ist hier keine Gerätequittung, `readCard(100)` kein End-to-End-Budget. A2-03. |
+| Bool-Erfolg oder Timeout als Zusage weitergegeben | Geräteintegration führt; Plattform prüft Frist/Taskkontext, Qualität den Nachweis | Pro Bus Bedeutung von Erfolg festhalten; vollständigen Aufrufpfad und Deadline messen. SPI-Bool ist hier keine Gerätequittung, `readCard(100)` kein End-to-End-Budget. A2-03. |
 
 Der Reviewumfang wächst mit der berührten Grenze. Eine reine Effektfarbe
 braucht keinen neuen Hardwareaudit; eine RMT-/Taskänderung schon. Ein Befund
 braucht einen Verantwortlichen und ein überprüfbares Ziel, keine neue Rolle
 mit dem Namen der jeweiligen Bibliothek.
 
-## Kanonische Einstiege und Übernahme
+## Kanonische Einstiege und Pflege
 
 - Plattform: [Geräteausführung](../configuration/device-runtime.md),
   [Laufzeit](../runtime.md), [Migration](../../handoff/ARDUINO-ESP32-3-MIGRATION.md).
