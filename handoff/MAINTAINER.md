@@ -1,6 +1,45 @@
 # Maintainer-Einstieg
 
-**Zweitlauf und Automationsvorbereitung · 24.10.2026:** Auf Integrationscommit
+**Geprüfte Integration und aktiver Fachaudit · 24.10.2026:**
+[PR #97](https://github.com/Sven401/Larp-Escape/pull/97) ist in
+`plan/projektuebergabe-kuratierter-stand` integriert. Remote-Head und geprüfter
+Mergecommit: [`c582ed7048cf7c386f240eca20e09142b86c7e00`](https://github.com/Sven401/Larp-Escape/commit/c582ed7048cf7c386f240eca20e09142b86c7e00).
+Der Dateibaum ist identisch zum PR-Head `a8f5ec45dccf6a2d83347bb503c70e8e9255a755`
+(Baum-ID `9154e19bd36c6d222a037c596e875c10a7951ba7`, lokal erneut verglichen).
+Vor dem Merge waren zwölf Checks erfolgreich: neun PR-Jobs und drei
+Quality-Jobs des Pushes auf den Arbeitsbranch. Davon getrennt ist die eigene
+[Merge-CI, Quality-Lauf 40042256785](https://github.com/Sven401/Larp-Escape/actions/runs/40042256785)
+jetzt **3/3 erfolgreich** (Push-Ereignis, abgeschlossen am 24.10.2026).
+
+| Prüfung auf dem tatsächlichen Merge | Ergebnis aus dem aktuellen Jobprotokoll |
+| --- | --- |
+| [Hardwareunabhängige Prüfungen](https://github.com/Sven401/Larp-Escape/actions/runs/40042256785/job/120715805046) | 122 allgemeine, 11 MCP-, 513 Steuerungs- und 523 Kryptografiefälle erfolgreich; 10 PN532-Patchtests, RTOS-Kontextprüfung und 20.000 FIFO-Befehle/-Antworten mit Hostthreads; Architektur-, 86 Header- und Formatprüfung erfolgreich |
+| [ESP32-Builds](https://github.com/Sven401/Larp-Escape/actions/runs/40042256785/job/120715805025) | Spiel-Firmware, Runtime-, Profil-Runtime- und GATTS-ABI-Probe erfolgreich; acht native und zwei SDK-Negativfälle der Kryptografie-Quellenprüfung abgewiesen |
+| [Android](https://github.com/Sven401/Larp-Escape/actions/runs/40042256785/job/120715804818) | Protokoll-/Unit-Tests, Debug-/Release-Builds und Lint für Dev und GM erfolgreich; zehn Trennungsregressionen und Prüfung beider App-Pakete erfolgreich |
+
+Alle drei Protokolle nennen `c582ed7` als tatsächlich ausgecheckten Commit;
+vier nicht abgelaufene Belegartefakte sind vorhanden. LED-, NFC- und
+ESP-NOW-Push-Workflows wurden durch ihre Pfadfilter bei diesen reinen
+Dokumentänderungen nicht ausgelöst. Das sind keine zusätzlichen grünen
+Merge-Läufe. Diese Fortschreibung wertet vorhandene CI aus; lokal wurden
+keine Produkt-, Build- oder Gerätetests erneut ausgeführt.
+
+**Automationsstand:** Der [Fachaudit-Wochenauftrag](../docs/quality/fachaudit-betrieb.md)
+`larp-escape-fachaudit` ist nach ausdrücklichem Folgeauftrag **ACTIVE**.
+Prompt und Zielchat wurden zurückgelesen; der bestehende GitHub-Abgleich ist
+unverändert. Nächster Solltermin: **26.10.2026, 10:00 MEZ / 09:00 UTC**,
+wöchentlich Montag in Europe/Berlin. Tatsächliche Scheduler-Vormerkung,
+Startversatz und Prüfweg stehen im Betriebsbeleg. Eine erste geplante
+Ausführung ist noch nicht erfasst; nach vier abgeschlossenen Wochenläufen
+folgt die Nutzungsbewertung.
+
+**Offen bleiben:** Geräte-/SMP-/Zeitnachweise, IDF-4.4-Supportentscheidung,
+Chipzuordnung #39/B7, Adapterabnahmen und die operative Bewährung des Audits.
+Fachmandate und Prüfpflichten gelten weiter. CI und Aktivierung sind keine
+Geräte- oder Gesamtproduktabnahme. Die folgenden Einträge bewahren die
+jeweiligen früheren Prüfstände.
+
+**Zweitlauf und Automationsvorbereitung · früherer Stand vom 24.10.2026:** Auf Integrationscommit
 `cee968a7bf4c97eb68c9fe6f705bb5a06eef76b0` wurde der
 [zweite Audit-Probelauf mit unabhängigem Wiederholungsabgleich](../docs/quality/audits/2026-10-24-probelauf-2/README.md)
 durchgeführt. Fünf Findings und #39/B7 wiedererkannt, keine Dubletten; offene
@@ -40,8 +79,9 @@ Kontextprüfungen integriert. Der [Pilot](../docs/quality/audits/2026-10-24-pilo
 bewahrt die ursprünglichen Fehlerbelege. Hardwareabnahme, ESP32-SMP-/Timingnachweise,
 IDF-4.4-Supportentscheidung und bestehende Chip-/Fristgrenzen bleiben offen.
 [Automationsbestand](AUTOMATISIERUNGSINVENTAR-2026-10-23.md) und
-[Koordinatorentwurf](../docs/quality/fachaudit-entwurf.md) bleiben abgegrenzt;
-kein neuer Scheduler, kein Geräteupload und keine Übernahme nach `main`.
+[Koordinatorentwurf](../docs/quality/fachaudit-entwurf.md) bleiben abgegrenzt.
+Dieser Übernahmeschritt richtete keinen Scheduler ein; die spätere Aktivierung
+ist oben dokumentiert. Kein Geräteupload und keine Übernahme nach `main`.
 
 ## Start für weitere App- und Firmwarearbeit
 

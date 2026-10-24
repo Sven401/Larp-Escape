@@ -1,14 +1,17 @@
-# Fachaudit-Betrieb: vorbereiteter Wochenlauf
+# Fachaudit-Betrieb: aktivierter Wochenlauf
 
-**Status: vorbereitet und pausiert angelegt; keine Aktivierung beauftragt.** 24.10.2026, Europe/Berlin.
-Auftrag: zweiter unveränderter Audit-Probelauf auf integriertem Stand, danach
-regelmäßige Automatisierung vorbereiten. Die Ausführung des Probelaufs und
-die anschließende Vorbereitung sind getrennte Arbeitsschritte.
-[Zweitlauf und Wiederholungsnachweis](audits/2026-10-24-probelauf-2/README.md).
+**Status: nach ausdrücklichem Folgeauftrag aktiviert; erste geplante Ausführung offen.**
+24.10.2026, Europe/Berlin. Die zuvor pausierte Vorbereitung ist über
+[PR #97](https://github.com/Sven401/Larp-Escape/pull/97) am Mergecommit
+`c582ed7048cf7c386f240eca20e09142b86c7e00` integriert;
+[geprüfter Integrationsstand und eigene Merge-CI](../../handoff/MAINTAINER.md).
+Der [Zweitlauf](audits/2026-10-24-probelauf-2/README.md) bleibt ein eigener
+manueller Nachweis mit damaligem Vorbereitungsstatus.
 
 Automation: **Larp-Escape Fachaudit**, ID `larp-escape-fachaudit`, Typ Heartbeat,
-Status **PAUSED**, gebunden an diesen Audit-Chat. Anlage und exakter
-Promptvergleich wurden am 24.10.2026 zurückgelesen. Der bestehende aktive
+Status **ACTIVE**, Zielchat `01a16ab1-34d7-73b0-924a-fc2d245b9027`.
+Aktivierung am 24.10.2026 um 01:55:42 MESZ; Status, Zielchat und exakter
+Promptvergleich danach erneut zurückgelesen. Der bestehende aktive
 GitHub-Abgleich bleibt unverändert.
 
 ## Inhalt und Zuständigkeit
@@ -20,15 +23,15 @@ Qualitätsgegenprüfer. Bei konkreten Security-Fragen ist passende Expertise
 gezielt nötig; ein Titel ersetzt sie nicht. Der separat beauftragte Maintainer
 entscheidet über angenommene Folgearbeit und führt sie bis PR.
 
-Der [vollständige gespeicherte Auftragsentwurf](fachaudit-automation-prompt.md)
+Der [vollständige gespeicherte Auftrag](fachaudit-automation-prompt.md)
 enthält Auswahl, Quellenprüfung, Deduplizierung, Bericht und Grenzen. Ein
 Schedulerlauf ist hier noch nicht nachgewiesen. Die 30 Minuten sind ein
 Arbeitsbudget im Auftrag, keine technisch erzwungene Abschaltung.
 
-## Vorbereitete Terminierung
+## Aktivierte Terminierung und Rücklesebeleg
 
 - Eine chatgebundene Automatisierung; kein dauerhafter Agent je Bibliothek.
-- Vorschlag aus dem bestehenden Entwurf: Montag 10:00, Europe/Berlin.
+- Aktivierter Takt: Montag 10:00, Europe/Berlin.
 - Maximal 30 Minuten und zwei vertiefte Fragen je Lauf.
 - Standardmodell und Berechtigungen des Chats beibehalten.
 - Erste Rotationsfolge nach Aktivierung: A3, A4, A5, A6, A1, A2.
@@ -40,12 +43,29 @@ Arbeitsbudget im Auftrag, keine technisch erzwungene Abschaltung.
 - Nach vier tatsächlich abgeschlossenen geplanten Läufen Nutzen und Takt
   bewerten. Manuelle Probeläufe zählen dafür nicht.
 
-Die am 24.10. gelesene Windows-Zone ist `W. Europe Standard Time`
-(Berlin, Sommer-/Winterzeit). Bei unveränderter Zone wäre der nächste
-Montagstermin **26.10.2026 10:00 MEZ / 09:00 UTC**. Ein pausierter Auftrag
-hat noch keinen ausgeführten Termin. Vor Aktivierung den vom Scheduler
-angezeigten nächsten Termin und die Zeitzone abgleichen; eine Regel ohne
-explizites TZ-Feld beweist diese Zuordnung nicht.
+Am 24.10.2026 wurden Automations-TOML und ausschließlich die beiden
+zugehörigen Einträge der lokalen Scheduler-Datenbank lesend abgeglichen.
+Die Windows-Zone `W. Europe Standard Time` umfasst Berlin einschließlich
+Sommer-/Winterzeit. Der Sommerzeitwechsel am 25.10. ist berücksichtigt:
+
+- Nächster Solltermin: **26.10.2026 10:00 MEZ / 09:00 UTC**;
+  `next_run_nominal_at = 1793005200000`.
+- Vorgemerkter Start: **26.10.2026 09:58:11 MEZ / 08:58:11 UTC**;
+  `next_run_at = 1793005091000`.
+- `last_run_at = null`: noch kein Laufzeitpunkt erfasst, keine Zustellung behauptet.
+
+Der lokale App-Code (Version 26.1016.6573) erlaubt bei dieser Wochenregel
+einen Startversatz von bis zu fünf Minuten in beide Richtungen. Die
+beobachteten minus 109 Sekunden passen dazu; Solltermin und Vormerkung
+wurden getrennt geprüft. Das ist keine minutengenaue Ausführungsgarantie.
+
+Der gespeicherte Prompt stimmt exakt mit der verlinkten Projektdatei überein:
+SHA256 `84216bd07c59a4912903a4829bbe44d6e6a3a5ae62a835beb00af51635de1943`
+(UTF-8, ohne abschließenden Dokument-Zeilenumbruch). Der bestehende
+GitHub-Abgleich bleibt ACTIVE, täglich 09:00, mit unverändertem Zielchat,
+Änderungszeitpunkt und Prompt-Hash
+`ed34b0a306432fef0b2500f31e6e43a5904bb6c42094183a5a7072f9d35cf9a0`.
+In dieser Fortschreibung wurde kein Zeitplan oder Prompt geändert.
 
 Lokale Aufgaben brauchen laufenden Rechner, App und zugängliche Quellen.
 Die offizielle Dokumentation empfiehlt den manuellen Probelauf und die
@@ -99,10 +119,12 @@ werden gemeldet.
 
 ## Aktivierung und einfacher Rückweg
 
-Vor einer gesonderten Aktivierung die Vorbereitung integrieren, gespeicherten
-Prompt gegen die geprüfte Fassung lesen und nächsten Termin/Zeitzone prüfen.
-Die ersten geplanten Läufe kontrollieren; Sandbox-/Netzzugriff und tatsächliche
-Schedulerzustellung sind durch den manuellen Zweitlauf nicht bewiesen.
+Die beauftragte Aktivierung ist nach Integration, Promptvergleich und
+Termin-/Zeitzonenprüfung erfolgt. Die erste geplante Ausführung und ihre
+Ergebnisse bleiben zu kontrollieren; Sandbox-/Netzzugriff und tatsächliche
+Schedulerzustellung sind durch den manuellen Zweitlauf oder ACTIVE allein
+nicht bewiesen. Nach vier tatsächlich abgeschlossenen geplanten Läufen
+Nutzen und Takt bewerten; keine zusätzliche Überwachung wurde eingerichtet.
 
 Rückweg: denselben Auditauftrag pausieren; Quellenberichte und Entscheidungen
 erhalten. Die verbindlichen Fachmandate, vorhandene CI und der separate
