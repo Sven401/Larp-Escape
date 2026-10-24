@@ -1,5 +1,59 @@
 # Maintainer-Einstieg
 
+**Erstlaufkontrolle eingerichtet · 24.10.2026:** Dokumentationsbasis ist
+`f81956faffa4d4c6b0198fdbd0c626b21e137cd4` im Integrationsbranch
+`plan/projektuebergabe-kuratierter-stand`. Die einmalige Nachkontrolle
+**„Larp-Escape Fachaudit Erstlaufkontrolle“**
+(`larp-escape-fachaudit-erstlaufkontrolle`) ist **ACTIVE** und für
+**Montag, 26.10.2026, 11:00 MEZ / 10:00 UTC, Europe/Berlin** vorgemerkt.
+Sie kontrolliert den ersten regulären [Fachaudit-Wochenlauf](../docs/quality/fachaudit-betrieb.md)
+mit Solltermin **26.10.2026, 10:00 MEZ** im selben Audit-Chat. Das Zeitfenster
+berücksichtigt dessen 30-Minuten-Budget und möglichen Startversatz.
+
+**Prüfumfang:** Grundlage sind die tatsächlichen Lauf-/Chatbelege und
+`outputs/fachaudit/<Lauf>/README.md` sowie `lauf.json`, bezogen auf den
+vollständigen Auditcommit und einschlägige neuere integrierte Entscheidungen.
+Ein Scheduler-Zeitstempel allein belegt keinen erfolgreichen Lauf. Manuelle
+Probeläufe, Nachholversuche und diese Nachkontrolle werden vom geplanten
+Audit getrennt. Kontrollschlüssel ist Zielautomation plus Solltermin;
+eine bereits gemeldete Kontrolle dieses Termins wird nicht wiederholt.
+
+| Bereich | Maßstab der Erstlaufkontrolle |
+| --- | --- |
+| Dubletten | Bestehende fünf Finding-IDs und #39/B7 anhand von Komponente, Regel und Variante wiedererkennen; #54 getrennt halten. Neue Quelle oder Überschrift allein erzeugt keine neue ID; alte Pilottexte öffnen korrigierte Software nicht wieder. Belegte Regressionen bleiben möglich. |
+| Zuständigkeiten | Führendes [Fachmandat](../docs/quality/verantwortlichkeiten.md), tatsächlich belegte unabhängige Gegenprüfung und kanonisches Ziel je bearbeiteter Frage; gezielte Security-Expertise bei Bedarf. Fachreview und Maintainerentscheidung bleiben getrennt. |
+| Wiedervorlagen | Vorhandene Auslöser und Fristen erhalten; A2-02-Geräterest dem A2-03-Adapterfreigabetor zuordnen. Keine erfundenen Termine und kein „ohne Datum = erledigt/überfällig“. Maßstab ist das [Startregister](../docs/quality/audits/2026-10-24-probelauf-2/register.json) mit späteren integrierten Entscheidungen. |
+
+Themenwahl (bei unverändertem Ausgangspunkt A3 oder begründete dringende
+Abweichung), Quellenfehler, Abdeckungslücken, Commitwechsel sowie getrennte Software-/Gerätenachweise
+werden mitgeprüft. Ein leerer Finding-Zähler allein belegt weder Erfolg noch Fehler.
+Für den Kontrollbericht wird, soweit verfügbar, ein anderer Qualitätsprüfer
+hinzugezogen; fehlende unabhängige Prüfung bleibt ausdrücklich sichtbar.
+
+**Ergebnis oder Ausfallmeldung:** Einmalige Meldung im bestehenden Audit-Chat mit
+Zeit, Quellcommit, Belegpfaden und Urteil je Prüfbereich: bestanden, konkrete
+Mängel oder nur teilweise prüfbar. Bei lesbaren Laufdaten gelten ein nach dem
+Zeitfenster nicht nachweisbarer regulärer Lauf, Abbruch, fehlender/inkonsistenter
+Abschlussbericht oder ein noch laufender Audit über seinem Arbeitsbudget als
+Ausfall beziehungsweise Betriebsstörung. Laufend, verspätet und abgebrochen
+werden unterschieden; Ursachen werden nur mit Beleg benannt. Nicht lesbare
+Scheduler-/Laufdaten bedeuten eine eingeschränkte Nachkontrolle und werden
+nicht automatisch als Audit-Ausfall ausgegeben. Es wird kein Ersatz-Audit gestartet.
+
+Sobald der Bericht feststeht, pausiert die Kontrolle ausschließlich ihren
+eigenen Auftrag, sofern er noch aktiv ist, und meldet das Ergebnis.
+Wochenaudit und GitHub-Abgleich bleiben unverändert. Rechner, App und Projekt
+müssen verfügbar sein; bei deren Ausfall ist keine pünktliche Meldung zugesichert.
+Eine verspätete Kontrolle prüft weiterhin den Solltermin vom 26.10.
+
+**Rücklesebeleg vom 24.10.2026:** Automations-TOML und zugehöriger Scheduler-Eintrag
+bestätigen ACTIVE, denselben Zielchat und genau einen vorgesehenen Termin.
+Solltermin und Startvormerkung sind beide `1793008800000` (11:00 MEZ);
+`last_run_at = null`. Die erste Ausführung und Zustellung sind noch offen.
+Prompt-SHA256: `1c488c86ffc81b2103525fe5ddf9b8ef2e2d33b0960a6b1e241aa3d9e6bea19d`.
+Diese Dokumentation ändert keinen Auftrag oder Zeitplan. Die folgenden
+Einträge bewahren ihre jeweiligen früheren Integrations- und Prüfstände.
+
 **Geprüfte Integration und aktiver Fachaudit · 24.10.2026:**
 [PR #97](https://github.com/Sven401/Larp-Escape/pull/97) ist in
 `plan/projektuebergabe-kuratierter-stand` integriert. Remote-Head und geprüfter
