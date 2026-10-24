@@ -14,6 +14,15 @@ Herkunft; frühere Fortsetzungsaufträge werden dadurch nicht erneut aktiv.
 
 **Projekt und Setup · 20.10.2026:** [Detaillierter Überblick mit Werkbank-/Automationsprüfung](PROJEKT-SETUP.md), gegen Integrationsbasis `5b85965` einschließlich #86/#87 geprüft. Anschließend [GitHub-Abgleich geprüft, umgestellt und nach Lese-Probelauf reaktiviert](GITHUB-AUTOMATISIERUNG-2026-10-20.md); abschließende Quellbasis `97a2584`, Konflikt #34 bleibt offen.
 
+**Kristallsiegel-Prototyp · 20.10.2026:** [Entwurf](../docs/led/kristallsiegel-design.md)
+zeigt bestätigte Kristalle als drei bleibende Lichtabschnitte mit einmaligem
+Schlusspuls. [Gemeinsamer C++-Kern und vorhandener USB-/Kameraweg](../firmware/led/LIVE-CRYSTALSEAL.md)
+erlauben Liveparameter, gezielten Stop und getrennte Framebelege.
+[Drei vollständige reale Lichtversuche](../docs/led/kristallsiegel-live-results-2026-10-20.md)
+belegen Fortschrittsgruppen, Parametervergleich, getrennte Stops und vollständigen
+Flash-Rückweg bei `dc8c5d2`. Die reale Anordnung ist unregelmäßig; Kamera-Zeitabnahme,
+Spieladapter und abschließendes Nutzerurteil bleiben offen.
+
 **Stationspilot #79 integriert · 19.10.2026:** Merge `7e19c95` in den kuratierten Integrationsbranch; Dateibaum identisch zum geprüften Head `98488ea`. [Mergebeleg, getrennte CI und offene Geräteabnahmen](STATIONSPILOT-INTEGRATION-2026-10-19.md). Der lesende native Pilot und die Apptrennung sind integriert; TalkBack, Mehrstationsbetrieb, echter Funkverlust und Langzeitbetrieb bleiben offen. Keine neue Geräteprüfung durch den Merge.
 
 **Wartung #87 integriert · 20.10.2026:** Aktuelle Integrationsbasis `a4c83cb`; unveränderte Produktquellen gegenüber `7e19c95`. [Lokaler Prüfstand und korrigierte Android-/Python-Prüfanleitungen](WARTUNG-PRUEFSTAND-2026-10-20.md). Die [Nachprüfung dieser vorbereiteten Maintainer-Fortschreibung](STATIONSPILOT-INTEGRATION-2026-10-19.md#nachprüfung-und-pr-vorbereitung--20-oktober-2026) erhält die getrennten CI- und Gerätebelege.

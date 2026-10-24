@@ -1,0 +1,512 @@
+{
+  "schema": 1,
+  "mapping_status": "verified atlas positions, coordinate conversion only",
+  "radiometry_status": "unassessed",
+  "image_size": [
+    1280,
+    720
+  ],
+  "coordinate_system": "full decoded camera frame: x right, y down, origin upper left",
+  "transform": "tile=floor(atlas_y/tile_size)*columns+floor(atlas_x/tile_size); camera_xy=region_xy-tile_size/2+(atlas_xy mod tile_size)",
+  "source_commit": "dc8c5d2358ffc4d5753b21c8806261046b4788d3",
+  "firmware_sha256": "577d0b5a97e28f5a2c267aee0daf5a7bf34169a139b8baafbbafc27cd8c20ea3",
+  "settings": {
+    "width": {
+      "requested": 1280,
+      "driver_accepted": true,
+      "readback": 1280.0
+    },
+    "height": {
+      "requested": 720,
+      "driver_accepted": true,
+      "readback": 720.0
+    },
+    "fps": {
+      "requested": 30,
+      "driver_accepted": true,
+      "readback": 30.00003000003
+    },
+    "auto_exposure": {
+      "requested": 0,
+      "driver_accepted": true,
+      "readback": -1.0
+    },
+    "exposure": {
+      "requested": -10.0,
+      "driver_accepted": true,
+      "readback": -10.0
+    },
+    "auto_wb": {
+      "requested": 0,
+      "driver_accepted": true,
+      "readback": 0.0
+    },
+    "gain": {
+      "requested": 0,
+      "driver_accepted": true,
+      "readback": 0.0
+    },
+    "backlight": {
+      "requested": 0,
+      "driver_accepted": true,
+      "readback": 0.0
+    },
+    "sharpness": {
+      "requested": 0,
+      "driver_accepted": true,
+      "readback": 0.0
+    },
+    "gamma": {
+      "requested": 100,
+      "driver_accepted": true,
+      "readback": 100.0
+    },
+    "fourcc": {
+      "requested": 1196444237,
+      "driver_accepted": true,
+      "readback": 1196444237.0
+    }
+  },
+  "provenance": {
+    "atlas_map": {
+      "file": "index-map.json",
+      "sha256": "66612b18a527cb39a5087f6f9ed495bf64a0cb2ff4a59284ecb298b87ad5022b"
+    },
+    "acquisition_rois": {
+      "file": "mapping-rois.json",
+      "sha256": "d4fdb0451e57d5f920c45efc85015d5353c7bd02b34689bc5389db3d1c918d32"
+    },
+    "capture": {
+      "file": "mapping-cal/capture.json",
+      "sha256": "2a337a9f9c93e8da67522c406189d62790b004d4534979c1a3820fa105df811b"
+    },
+    "events": {
+      "file": "mapping-cal/events.json",
+      "sha256": "b2e8fae969409f2dae38f9e02df43bb2af0b251e8f7dee3dbd16fdb2e2c6aa41"
+    },
+    "context": {
+      "file": "mapping-cal/context-001021.png",
+      "sha256": "6315b2107d1f0110fdc9b7459eb584a044325d7b734084e10967f211a78e7a18",
+      "t_ms": 33999.91749995388,
+      "stage": 106
+    },
+    "generator": {
+      "file": "derive_index_map.py",
+      "sha256": "d3e611b33a334f3e9c0c7f8d0c33bef8b884e9390a798ae19fa5ff73f1d59690"
+    }
+  },
+  "timing": {
+    "delay_ms": -5.920400003902614,
+    "uncertainty_ms": 2.762981264386326,
+    "correlation": 0.9902901521046625,
+    "edge_delay_intervals_ms": [
+      [
+        -7.19510001828894,
+        25.97810007398948
+      ],
+      [
+        -29.57209995528683,
+        4.154500043485314
+      ],
+      [
+        -22.781899977009743,
+        10.362000008579344
+      ],
+      [
+        -17.04189997771755,
+        15.339100019540638
+      ],
+      [
+        -10.974599924404174,
+        22.396900048013777
+      ],
+      [
+        -38.188299984205514,
+        -4.645699989516288
+      ]
+    ],
+    "half_exposure_guard_ms": 0.48828125,
+    "delay_bounds_ms": [
+      -8.68338126828894,
+      -3.157418739516288
+    ],
+    "clock": "relative device TX_DONE intervals, constant host anchor",
+    "method": "dedicated markers of this transaction; no fit to the tested effect"
+  },
+  "verification": [
+    {
+      "index": 22,
+      "signal": 81.38703155517578,
+      "maximum_other": 0.036381497979164124,
+      "center_error_px": 0.18214683884055663
+    },
+    {
+      "index": 21,
+      "signal": 91.81417083740234,
+      "maximum_other": 0.029006896540522575,
+      "center_error_px": 0.10794914286386059
+    },
+    {
+      "index": 20,
+      "signal": 129.05210876464844,
+      "maximum_other": 0.05408072471618652,
+      "center_error_px": 0.20182117742752326
+    },
+    {
+      "index": 19,
+      "signal": 103.33512115478516,
+      "maximum_other": 0.0029498524963855743,
+      "center_error_px": 0.3020235763091679
+    },
+    {
+      "index": 18,
+      "signal": 115.9009017944336,
+      "maximum_other": 0.09675510972738266,
+      "center_error_px": 0.47181078011291594
+    },
+    {
+      "index": 17,
+      "signal": 83.9604721069336,
+      "maximum_other": 0.027531951665878296,
+      "center_error_px": 0.3318750578064474
+    },
+    {
+      "index": 16,
+      "signal": 121.0584945678711,
+      "maximum_other": 0.027531951665878296,
+      "center_error_px": 0.4168214443198845
+    },
+    {
+      "index": 15,
+      "signal": 153.69371032714844,
+      "maximum_other": 0.02654866687953472,
+      "center_error_px": 0.4939716998116322
+    },
+    {
+      "index": 14,
+      "signal": 165.7233123779297,
+      "maximum_other": 0.02507375180721283,
+      "center_error_px": 0.4655297039693806
+    },
+    {
+      "index": 13,
+      "signal": 198.817138671875,
+      "maximum_other": 0.03441493958234787,
+      "center_error_px": 0.4484847297770016
+    },
+    {
+      "index": 12,
+      "signal": 190.9699249267578,
+      "maximum_other": 3.973643103449831e-08,
+      "center_error_px": 0.3285544299266965
+    },
+    {
+      "index": 11,
+      "signal": 175.818603515625,
+      "maximum_other": 6.457170087514896e-08,
+      "center_error_px": 0.5550651912375766
+    },
+    {
+      "index": 10,
+      "signal": 182.76548767089844,
+      "maximum_other": 0.061946969479322433,
+      "center_error_px": 0.4658693725258845
+    },
+    {
+      "index": 9,
+      "signal": 155.71209716796875,
+      "maximum_other": 0.03244837746024132,
+      "center_error_px": 0.36525881342470273
+    },
+    {
+      "index": 8,
+      "signal": 123.13570404052734,
+      "maximum_other": 0.19882017374038696,
+      "center_error_px": 0.3362318738995292
+    },
+    {
+      "index": 7,
+      "signal": 135.03126525878906,
+      "maximum_other": 0.1671583652496338,
+      "center_error_px": 0.16608303477320951
+    },
+    {
+      "index": 6,
+      "signal": 98.36822509765625,
+      "maximum_other": 0.0004915220779366791,
+      "center_error_px": 0.2206506922670529
+    },
+    {
+      "index": 5,
+      "signal": 101.7669448852539,
+      "maximum_other": 0.042281221598386765,
+      "center_error_px": 0.19756562357747665
+    },
+    {
+      "index": 4,
+      "signal": 87.57405853271484,
+      "maximum_other": 0.06047197803854942,
+      "center_error_px": 0.17620875013609494
+    },
+    {
+      "index": 3,
+      "signal": 94.65604400634766,
+      "maximum_other": 0.0471976213157177,
+      "center_error_px": 0.22923862244091633
+    },
+    {
+      "index": 2,
+      "signal": 55.706787109375,
+      "maximum_other": 0.0005899704992771149,
+      "center_error_px": 0.13870372156275998
+    },
+    {
+      "index": 1,
+      "signal": 58.40952682495117,
+      "maximum_other": 0.0550638772547245,
+      "center_error_px": 0.10809553151083028
+    },
+    {
+      "index": 0,
+      "signal": 60.29745864868164,
+      "maximum_other": 0.01229103934019804,
+      "center_error_px": 0.23133747582615732
+    }
+  ],
+  "leds": [
+    {
+      "index": 0,
+      "sector": 1,
+      "x": 751,
+      "y": 565,
+      "radius": 6,
+      "atlas_x": 119,
+      "atlas_y": 360,
+      "acquisition_tile": 21
+    },
+    {
+      "index": 1,
+      "sector": 1,
+      "x": 800,
+      "y": 572,
+      "radius": 6,
+      "atlas_x": 199,
+      "atlas_y": 360,
+      "acquisition_tile": 22
+    },
+    {
+      "index": 2,
+      "sector": 1,
+      "x": 848,
+      "y": 556,
+      "radius": 6,
+      "atlas_x": 40,
+      "atlas_y": 361,
+      "acquisition_tile": 20
+    },
+    {
+      "index": 3,
+      "sector": 1,
+      "x": 816,
+      "y": 535,
+      "radius": 6,
+      "atlas_x": 359,
+      "atlas_y": 280,
+      "acquisition_tile": 19
+    },
+    {
+      "index": 4,
+      "sector": 1,
+      "x": 770,
+      "y": 520,
+      "radius": 6,
+      "atlas_x": 279,
+      "atlas_y": 280,
+      "acquisition_tile": 18
+    },
+    {
+      "index": 5,
+      "sector": 1,
+      "x": 769,
+      "y": 472,
+      "radius": 6,
+      "atlas_x": 40,
+      "atlas_y": 280,
+      "acquisition_tile": 15
+    },
+    {
+      "index": 6,
+      "sector": 1,
+      "x": 864,
+      "y": 481,
+      "radius": 6,
+      "atlas_x": 120,
+      "atlas_y": 280,
+      "acquisition_tile": 16
+    },
+    {
+      "index": 7,
+      "sector": 1,
+      "x": 819,
+      "y": 446,
+      "radius": 6,
+      "atlas_x": 280,
+      "atlas_y": 199,
+      "acquisition_tile": 13
+    },
+    {
+      "index": 8,
+      "sector": 2,
+      "x": 863,
+      "y": 385,
+      "radius": 6,
+      "atlas_x": 119,
+      "atlas_y": 200,
+      "acquisition_tile": 11
+    },
+    {
+      "index": 9,
+      "sector": 2,
+      "x": 857,
+      "y": 313,
+      "radius": 6,
+      "atlas_x": 40,
+      "atlas_y": 199,
+      "acquisition_tile": 10
+    },
+    {
+      "index": 10,
+      "sector": 2,
+      "x": 879,
+      "y": 189,
+      "radius": 6,
+      "atlas_x": 360,
+      "atlas_y": 40,
+      "acquisition_tile": 4
+    },
+    {
+      "index": 11,
+      "sector": 2,
+      "x": 758,
+      "y": 222,
+      "radius": 6,
+      "atlas_x": 200,
+      "atlas_y": 120,
+      "acquisition_tile": 7
+    },
+    {
+      "index": 12,
+      "sector": 2,
+      "x": 713,
+      "y": 255,
+      "radius": 6,
+      "atlas_x": 280,
+      "atlas_y": 120,
+      "acquisition_tile": 8
+    },
+    {
+      "index": 13,
+      "sector": 2,
+      "x": 574,
+      "y": 153,
+      "radius": 6,
+      "atlas_x": 200,
+      "atlas_y": 40,
+      "acquisition_tile": 2
+    },
+    {
+      "index": 14,
+      "sector": 2,
+      "x": 432,
+      "y": 167,
+      "radius": 6,
+      "atlas_x": 280,
+      "atlas_y": 40,
+      "acquisition_tile": 3
+    },
+    {
+      "index": 15,
+      "sector": 3,
+      "x": 371,
+      "y": 189,
+      "radius": 6,
+      "atlas_x": 40,
+      "atlas_y": 119,
+      "acquisition_tile": 5
+    },
+    {
+      "index": 16,
+      "sector": 3,
+      "x": 368,
+      "y": 136,
+      "radius": 6,
+      "atlas_x": 40,
+      "atlas_y": 40,
+      "acquisition_tile": 0
+    },
+    {
+      "index": 17,
+      "sector": 3,
+      "x": 272,
+      "y": 143,
+      "radius": 6,
+      "atlas_x": 121,
+      "atlas_y": 40,
+      "acquisition_tile": 1
+    },
+    {
+      "index": 18,
+      "sector": 3,
+      "x": 299,
+      "y": 193,
+      "radius": 6,
+      "atlas_x": 120,
+      "atlas_y": 120,
+      "acquisition_tile": 6
+    },
+    {
+      "index": 19,
+      "sector": 3,
+      "x": 293,
+      "y": 301,
+      "radius": 6,
+      "atlas_x": 361,
+      "atlas_y": 120,
+      "acquisition_tile": 9
+    },
+    {
+      "index": 20,
+      "sector": 3,
+      "x": 366,
+      "y": 394,
+      "radius": 6,
+      "atlas_x": 200,
+      "atlas_y": 200,
+      "acquisition_tile": 12
+    },
+    {
+      "index": 21,
+      "sector": 3,
+      "x": 457,
+      "y": 469,
+      "radius": 6,
+      "atlas_x": 360,
+      "atlas_y": 200,
+      "acquisition_tile": 14
+    },
+    {
+      "index": 22,
+      "sector": 3,
+      "x": 397,
+      "y": 507,
+      "radius": 6,
+      "atlas_x": 200,
+      "atlas_y": 280,
+      "acquisition_tile": 17
+    }
+  ],
+  "annotated_context": {
+    "file": "index-map-camera.png",
+    "sha256": "4075b34f0f733cdd0eb900d3527a8046ec344124f8b46a2db6b5290d6ac588b3"
+  }
+}
