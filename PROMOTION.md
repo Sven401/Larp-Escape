@@ -1,5 +1,23 @@
 # Projektfestlegungen: Übernahme und Korrektur
 
+## 24. Oktober 2026 — Integration geprüft und Fachaudit aktiviert
+
+- **Beauftragt und erfolgt:** PR #97 nach zwölf erfolgreichen Checks in den
+  Integrationsbranch übernommen; anschließend den vorhandenen Fachaudit nach
+  Termin-/Zeitzonenprüfung aktiviert. Eigene Merge-CI auf `c582ed7` jetzt
+  Quality 3/3 erfolgreich; [Prüfstand und Grenzen](handoff/MAINTAINER.md).
+- **Rückgelesen:** `larp-escape-fachaudit` ACTIVE, geprüfter Prompt und Zielchat
+  unverändert. Montag 10:00 Europe/Berlin; erster Solltermin 26.10.2026
+  10:00 MEZ, vorgemerkter Start 09:58:11 MEZ. [Betriebsbeleg](docs/quality/fachaudit-betrieb.md)
+  trennt Solltermin, Startversatz und noch nicht nachgewiesene Ausführung.
+  Der bestehende GitHub-Abgleich bleibt unverändert.
+- **Nutzungsbewertung bleibt offen:** Keine zusätzliche manuelle Auditprüfung
+  durch die Aktivierung. Erste Ausführung kontrollieren, nach vier tatsächlich
+  abgeschlossenen geplanten Läufen Nutzen/Takt bewerten. Befugnisse, Fachmandate
+  und Geräte-/Security-Nachweisgrenzen bleiben unverändert.
+- **Einfacher Rückweg:** Auf Nutzerauftrag denselben Wochenauftrag pausieren;
+  Quellenberichte und Entscheidungen erhalten. Keine Ersatzautomation.
+
 ## 24. Oktober 2026 — Zweitlauf geprüft, Fachaudit-Auftrag pausiert vorbereitet
 
 - **Beauftragt:** Zweiten unveränderten Audit-Probelauf am integrierten Stand
