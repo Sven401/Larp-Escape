@@ -1,5 +1,10 @@
 # USB-Kamera als LED-Messinstrument
 
+Für frühes gestalterisches Feedback gibt es zusätzlich die
+[interaktive Entwicklung mit seriellen Liveparametern](interactive-development.md).
+Die folgende vollständige Mess-/Kalibrierroute bleibt für ihre eigenen
+Abnahmekriterien maßgeblich; sie ist keine Vorbedingung jeder Gestaltungsprobe.
+
 Stand: 18.10.2026. Implementierter Laborprüfweg für die 23 LEDs und die drei
 Produkt-Effekte. [Gerätebefunde und Grenzen](camera-results-2026-10-18.md).
 Quellbasis: `fcb9121` plus der Kamera-PR. Die ursprüngliche reine

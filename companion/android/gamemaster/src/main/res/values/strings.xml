@@ -1,0 +1,5 @@
+<resources>
+    <string name="launcher_name">Larp GM</string>
+    <string name="app_name">Larp Escape Spielleitung</string>
+    <color name="launcher_background">#E2D6D4</color>
+</resources>

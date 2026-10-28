@@ -1,0 +1,25 @@
+{
+  "date": "2026-10-18",
+  "sourceCommit": "1dc92278501e0362774dee8cd589bce65e62852e",
+  "figmaFileKey": "3uQpZfwREhQ9cHk80jMtRw",
+  "evidence": {
+    "design/box-pilot/evidence/figma-sync/browser-assignment-error.png": "682d3f84e8260c2194f2e9596facf7aa21f02faa732a5b68eeb936de7480f22f",
+    "design/box-pilot/evidence/figma-sync/browser-help-assignment.png": "5c1c02d2d552b26e73c6654b63c4a21bb4b9a6f4fb47d63454179abee4fc1a6c",
+    "design/box-pilot/evidence/figma-sync/comparison-assignment-error.png": "b4e61f6158c883b8a8c52a62b68d7ce97d70cd41cccc724c3f7bb612b3d185e6",
+    "design/box-pilot/evidence/figma-sync/comparison-help-assignment.png": "ebc25276b17fefbefd2f98f4eb4ce1bbd6a7fa4075868a52164277982f0bf8ee",
+    "design/box-pilot/evidence/figma-sync/figma-assignment-error.png": "3a486a50ac6e0908ba6471cf300a50fb94cc4221fe217aebb67e3a00a76b878f",
+    "design/box-pilot/evidence/figma-sync/figma-help-access.png": "8552cd4db6a3d56c3e17f7eba2977ffdf7b530926797a5cdbb054351fe8c5c28",
+    "design/box-pilot/evidence/figma-sync/figma-help-assignment.png": "99f0da814d33515cb2d5bed7b0867a933f13bca47521cd78621c4166f4a02417",
+    "design/box-pilot/evidence/figma-sync/figma-stop-undelivered.png": "272de2876c1d9f28cc859f573d0a898704abc7281fdd83c6546f7a1ed9ae0ec9",
+    "design/box-pilot/evidence/figma-sync/navigation.json": "067f98476f15ff06924e0893a2f03c463513ef6878c010a7305baf905af5a569",
+    "design/box-pilot/evidence/figma-sync/presentation-error.png": "7c91342d2bf46783d07d31450ab12c741428dbddf812fc71a3bed60487a9b3ff",
+    "design/box-pilot/evidence/figma-sync/presentation-help.png": "e0d184e9036a35a1183bbf6ddeeebc2d7e4e2d07e848a7553ae247e92a5b50cd",
+    "design/box-pilot/evidence/figma-sync/presentation-retry-remains-error.png": "7c91342d2bf46783d07d31450ab12c741428dbddf812fc71a3bed60487a9b3ff",
+    "design/box-pilot/evidence/figma-sync/presentation-stop-undelivered.png": "4ca1bc170cc3531cd587623223f7e84ebaa17703ab83a29c3c30fe08945cced5"
+  },
+  "sourceFilesAtCommit": {
+    "design/box-pilot/src/Prototype.tsx": "b2e5ec49ccfcf11bf3f4546d00b4812545957d46147e24c935a482d3a636f28a",
+    "design/box-pilot/src/pilot.ts": "dc0171aa69a0787113b88e5f92cdf6194c1f43c31008d8b0c0c0d66b8dd26ea5",
+    "design/box-pilot/src/prototype.css": "f55f15701f0686203da89199f771374e4982cdc43afc8e1549f70ac3e3ec72f7"
+  }
+}

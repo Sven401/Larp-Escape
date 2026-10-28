@@ -9,6 +9,15 @@ Zugangskonzept PR #58 am selben Tag gelesen. Keine Laufzeitprüfung.
 
 ## 1. Vertragsmatrix
 
+Für D0 ist jetzt der [versionierte Vertrag](veranstaltung/d0-vertrag-v1.md)
+mit [Format-/Sicherheits-/Migrationsprofil](veranstaltung/d0-sicherheit-migration-v1.md)
+und [negativen Modellfixtures](veranstaltung/fixtures/d0-v1.json) über
+[PR #72](https://github.com/Sven401/Larp-Escape/pull/72) integriert, Ausgangsbasis
+`5f90d10`, fachlich korrigierter Inhaltsstand `a9481e0`, 111 Modellfälle.
+D0 #59 ist als Spezifikationspaket abgeschlossen. Implementierungs-/Geräteabnahme
+bleiben getrennt. D0-G1–G5 weisen die Nachweise D1/D2/#28/#30/#31/D3/D4 zu;
+die offenen VA-T01–VA-T12 werden dadurch nicht als bestanden markiert.
+
 | Bestehender Vertrag / Einstieg | Beibehalten | Erforderliche Anpassung / neues Anschlussdokument | Paket |
 | --- | --- | --- | --- |
 | [Identität/Zugang](companion/identity-access.md), [Register](companion/peer-registry-v1.md), [Geräteidentität](companion/device-identity-store-v1.md) | Stabile Boxidentität, ausdrückliche lokale Rechte; zunächst eine aktive Steuerverbindung je Box | Veranstaltung, Station, Zuordnungsgeneration und Durchlauf trennen; BLE-Übergabe; Rechtekapazität von Gleichzeitigkeit trennen. Boxereignisvertrauen ist eigener Vertrag, kein automatisches GM-Recht. PR #58 berücksichtigen. | #27/#28, D0 |
@@ -52,13 +61,13 @@ GitHub #25 und die verlinkten Issues führen Status und operative Priorität.
 
 | Paket | Ergebnis / Abschlusskriterium | Voraussetzung |
 | --- | --- | --- |
-| **[D0 / #59](https://github.com/Sven401/Larp-Escape/issues/59) – Veranstaltungs- und Ereignisverträge** | Versionierte Identitäts-/Durchlauf-/Zuordnungsbegriffe, Nachrichtenarten und Ursprungsvertrauen; Regeln für Trennung und verspätete Daten. Gegenbeispiele/Fixtures, Format-/Fähigkeits-/Migrationsplan und offene technische Entscheidungen vor Umsetzung geklärt. | VA-01 und #28/#58; Konzeptarbeit ohne Hardware möglich |
+| **[D0 / #59](https://github.com/Sven401/Larp-Escape/issues/59) – Veranstaltungs- und Ereignisverträge** | **Spezifikationspaket durch #72 abgeschlossen.** Versionierte Identitäts-/Durchlauf-/Zuordnungsbegriffe, Nachrichtenarten und Ursprungsvertrauen; Regeln für Trennung und verspätete Daten. Gegenbeispiele/Fixtures, Format-/Fähigkeits-/Migrationsplan und offene technische Entscheidungen vor Umsetzung geklärt. | VA-01 und #28/#58; Konzeptarbeit ohne Hardware möglich |
 | **[D1 / #60](https://github.com/Sven401/Larp-Escape/issues/60) – Dauerhafter Fortschritt und Ereignisabgleich** | Begrenztes Journal/Outbox, stabile IDs, Eingangslücken, dauerhafte Wiederholungserkennung und geordnete lokale Anwendung. Unterbrechungen zwischen Speichern/Anwenden/Quittieren; voller/beschädigter Speicher und Kompaktierung geprüft. | D0; Integration in #31 F5a, eigener Fortschrittsspeicher statt Umdeuten von #30 |
 | **[D2 / #61](https://github.com/Sven401/Larp-Escape/issues/61) – ESP-NOW-/WLAN-Transport und Kontakte** | Gemeinsamer Vertrag über beide Wege; zuerst Direktkontakte, dann begrenzte Vermittlung. Peer-/Kanal-/Transferlimits, Quittierung, Lastkontrolle und BLE-Koexistenz aus gepinntem SDK ableiten und messen. | D0; Abgleich aus D1, Ressourcenbesitzer #31 F5a |
 | **[D3 / #62](https://github.com/Sven401/Larp-Escape/issues/62) – Zentrale und Veranstaltungsansicht** | Eigenständiger persistenter Knoten mit zeitweise vollständiger Sicht, bestätigten Einzelaufträgen und Paketverteilung; getrennte lokale Handyzugänge. Hardwarewahl und Bedienvertrag vor Umsetzung konkretisieren. Ausfall blockiert keine Box. | D0; D1/D2 für tatsächlichen Abgleich, #30/#33/#34/#37 für Anschluss |
 | **[D4 / #63](https://github.com/Sven401/Larp-Escape/issues/63) – Verteilte Referenz- und Betriebsabnahme** | Zwei Boxen, zwei BLE-Handys, zeitweise getrennte Zentrale; nachvollziehbarer Offline-/Neustart-/Wiederholungs-/Transportwechselablauf und Last-/Funkmessung. Softwaremodell und physische Nachweise getrennt. | D1/D2, #27/#28/#31; D3 für Zentralenanteil, geklärter Prüfaufbau #39 |
 
-**Ausführungsfolge:** zunächst D0 spezifizieren; technische Zugangsklärung #27/#28
+**Ausführungsfolge:** D0 ist über #72 spezifiziert und integriert; technische Zugangsklärung #27/#28
 und bestehende Baugruppenrestabnahme laufen als getrennte Stränge weiter.
 Anschließend D1 und D2 vertikal mit zwei Boxen anschließen, D3 darauf aufbauen
 und D4 gestuft abnehmen. Die bestehende lokale Folge #31 F5a → #30 → #31 F5b

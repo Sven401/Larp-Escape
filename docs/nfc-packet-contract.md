@@ -2,6 +2,10 @@
 
 Stand: 6. Oktober 2026. Scope: der aktive UID-Lesepfad mit Adafruit PN532 **1.3.4**, keine Freigabe aller Bibliotheksmethoden und kein Hardwaretest. Die Produktion verwendet Software-SPI; das Profilmodell beschreibt ebenfalls NFC/SPI. Reale profilabhängige NFC-Besitzer fehlen noch.
 
+**Ergänzung 24.10.2026:** Der [A1/A2-Pilot](quality/audits/2026-10-24-pilot/README.md)
+ergänzt ausführbare Parser- und Patchschutztests sowie die Grenze des SPI-Bools.
+Historische Prüfaussagen vom 6. Oktober behalten ihren Datum-/Commitbezug.
+
 ## Bestätigter ursprünglicher Befund
 
 Die unveränderte Bibliothek liest in `readDetectedPassiveTargetID` zunächst 20 Byte in den globalen 64-Byte-Puffer und kopiert danach `packetbuffer[12]` UID-Bytes ab Index 13. Gemeldete Längen über 7 lesen alte, nicht neu gelesene Bytes; über 51 lesen außerhalb des Puffers. Header, deklarierte Framelänge und Prüfsumme werden an dieser Stelle nicht geprüft. Der 256-Byte-Zielpuffer im NFCReader schützt dessen Zielbereich, behebt diesen Quellbereichsbefund jedoch nicht.
@@ -31,6 +35,12 @@ Nur `readDetectedPassiveTargetID` wird ersetzt; der übrige Adafruit-Code und de
 
 Die Ersetzung liest einen lokalen initialisierten 64-Byte-Puffer. SPI übernimmt den Rückgabewert der BusIO-Übertragung; I2C prüft zusätzlich das Ready-Byte. HSU liest zuerst fünf Headerbytes und dann die exakte begrenzte Restlänge; dadurch wird eine kurze gültige Antwort nicht als auf 64 Byte gepolstert vorausgesetzt. Bestehende Stream-Zeitlimits gelten weiter. Erst nach vollständiger Parserfreigabe werden UID und Länge publiziert. Nullzeiger werden abgewiesen und die Länge bei lesbarer Längenadresse zunächst auf null gesetzt.
 
+Für die gepinnte BusIO-Version 1.17.4 liefert
+[`write_then_read` auf SPI stets true](https://github.com/adafruit/Adafruit_BusIO/blob/1.17.4/Adafruit_SPIDevice.cpp#L403).
+Die Bool-Prüfung ist auf dem tatsächlichen Software-SPI-Pfad keine
+Gerätequittung. ACK/Ready und vollständige Framevalidierung liefern andere,
+getrennt zu prüfende Aussagen. I2C-/HSU-Fehlerkanäle sind gesondert zu testen.
+
 Die ursprüngliche öffentliche API besitzt weiterhin keinen Parameter für die Zielkapazität und setzt einen Aufruferpuffer von sieben Byte voraus. Der NFCReader behält deshalb zusätzlich seinen bisherigen defensiven 256-Byte-Puffer. Die boolesche Bibliotheks-/Legacy-Portantwort unterscheidet noch nicht zwischen keinem Ausweis und Kommunikationsfehler; ein neuer profilabhängiger Besitzer benötigt diesen ausdrücklichen Verfügbarkeitsvertrag.
 
 Die originale Datei wird vor Erständerung als `_larp_pn532_original_1_3_4.txt` im ignorierten, umgebungseigenen Abhängigkeitsordner abgelegt, nach geprüftem Hash. Gepatchter CPP-Hash: `dff799bcb2237543bcfa875a28489b85da00c9ca8193e93f10fd734ca1a04bc3`. Der Patchhelper berücksichtigt Zeilenenden; ohne passende Originalkopie wird eine vorhandene Änderung nicht als geprüft anerkannt.
@@ -49,7 +59,13 @@ Der nächste normale Build wendet die konfigurierte Korrektur wieder an. Ein dau
 - Software-SPI, I2C und HSU-Zweige sind übersetzt, keine davon in diesem Schnitt praktisch am Leser geprüft. HSU-/I2C-Profiltypen sind nicht dadurch eingeführt. Bestehende ACK-/Ready-Wartezeiten sowie SAM-/Target-Moduswechsel sind unverändert und keine 100-ms-End-to-End-Garantie.
 - Andere Bibliotheksmethoden, insbesondere Daten-/Target-/Authentifizierungsfunktionen, wurden nicht umfassend gehärtet. Der globale Bibliothekspuffer bleibt für diese Funktionen gemeinsam; alle PN532-Instanzen müssen weiterhin einem eindeutigen Worker gehören.
 - Sichere physische Stilllegung, Treiberressourcen/Lebensdauer, RF-Verhalten, Fehlerdiagnose, Sample-Alter, Recovery und Profilwechsel mit NFC sind offen. Bestehendes `AsTarget` ist keine bestätigte Park-Abnahme.
-- Parser-Randfälle, beschädigte/verkürzte Pakete und tatsächliche UID-Karten wurden nicht ausgeführt. Keine neue Testsuite/Assertions ergänzt oder ausgeführt. Kompilierung und Quellenaudit ersetzen diese Abnahme nicht.
+- Die historische Lücke bei Parser-Randfällen und Patchschutz wird durch die
+  [Pilotprüfungen](quality/audits/2026-10-24-pilot/pruefungen.md) bearbeitet:
+  15 neue Parserfälle und 10 Patchhelpertests. Synthetische Schutztests,
+  echte Quellhashprüfung und Bus-/Geräteabnahme bleiben getrennte Nachweise.
+  Tatsächliche UID-Karten, gepatchter Transportadapter und Zeitverhalten sind
+  damit weiterhin nicht geprüft. Patchtests beweisen keine atomare Änderung
+  bei konkurrierenden Schreibern; Bibliotheksverzeichnis nur exklusiv bearbeiten.
 
 
 ## Beobachteter Prüfstand

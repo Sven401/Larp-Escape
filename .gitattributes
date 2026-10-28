@@ -21,3 +21,6 @@ docs/companion/fixtures/peer-challenge-issue/*.json text eol=lf
 docs/companion/fixtures/peer-auth/*.json text eol=lf
 
 docs/companion/fixtures/peer-proof/*.json text eol=lf
+
+# Preserve the source fingerprint of the LED design probe across checkouts.
+docs/led/probes/naeheglut/model.py text eol=lf

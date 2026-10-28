@@ -1,23 +1,112 @@
 # Technische Projektübergabe
 
-Aktuell vorbereitete Zusammenführung von #58/#64/#65/#66/#68:
+**Integration und Bereinigung · 21.10.2026:** [PR #91 integriert, lokaler
+Entwicklungsstart, Quellen-/Belegsicherung und erhaltene offene Arbeit](BEREINIGUNG-2026-10-20.md).
+Integrierter Ausgangspunkt `f174cee`; die datierten Bestandsaufnahmen unten
+beschreiben ihren jeweiligen damaligen Prüfstand.
+
+**Entwicklungsstart · 20.10.2026:** Der [Maintainer-Einstieg](MAINTAINER.md#start-für-weitere-app--und-firmwarearbeit)
+ordnet Dev-App, GM-Pilot, Baugruppen-/Spiel-Firmware und Laborarbeit dem
+kanonischen Integrationsstand `97a2584` zu. Die
+[Bestandsaufnahme](ENTWICKLUNGSSTART-2026-10-20.md) bewertet Worktrees, Chats,
+offene PRs und Archivquellen. Die datierten Einträge unten bewahren ihre
+Herkunft; frühere Fortsetzungsaufträge werden dadurch nicht erneut aktiv.
+
+**Projekt und Setup · 20.10.2026:** [Detaillierter Überblick mit Werkbank-/Automationsprüfung](PROJEKT-SETUP.md), gegen Integrationsbasis `5b85965` einschließlich #86/#87 geprüft. Anschließend [GitHub-Abgleich geprüft, umgestellt und nach Lese-Probelauf reaktiviert](GITHUB-AUTOMATISIERUNG-2026-10-20.md); abschließende Quellbasis `97a2584`, Konflikt #34 bleibt offen.
+
+**Stationspilot #79 integriert · 19.10.2026:** Merge `7e19c95` in den kuratierten Integrationsbranch; Dateibaum identisch zum geprüften Head `98488ea`. [Mergebeleg, getrennte CI und offene Geräteabnahmen](STATIONSPILOT-INTEGRATION-2026-10-19.md). Der lesende native Pilot und die Apptrennung sind integriert; TalkBack, Mehrstationsbetrieb, echter Funkverlust und Langzeitbetrieb bleiben offen. Keine neue Geräteprüfung durch den Merge.
+
+**Wartung #87 integriert · 20.10.2026:** Aktuelle Integrationsbasis `a4c83cb`; unveränderte Produktquellen gegenüber `7e19c95`. [Lokaler Prüfstand und korrigierte Android-/Python-Prüfanleitungen](WARTUNG-PRUEFSTAND-2026-10-20.md). Die [Nachprüfung dieser vorbereiteten Maintainer-Fortschreibung](STATIONSPILOT-INTEGRATION-2026-10-19.md#nachprüfung-und-pr-vorbereitung--20-oktober-2026) erhält die getrennten CI- und Gerätebelege.
+
+**Nativer Stationspilot · 19. Oktober 2026:** [Lokale Vorbereitung, Stationsauswahl, automatische BLE-Anmeldung und bestätigter Zustand](../docs/companion/spielleiter-stationspilot.md) in Larp GM implementiert und an der lokalen Box/Moto G14 geprüft. Bluetooth-Wiederkehr, Hintergrund/Rückkehr, bewusste Pause, Prozessneustart, große Schrift und Rotation geprüft. Dev-Quellen und alle zehn erfassten Dev-Dateien unverändert; Licht-/Spielaktionen sind Folgearbeit.
+
+**Android-Apptrennung · 18. Oktober 2026:** [Zwei Anwendungsprojekte und Erhalt der Dev-Daten](../docs/companion/android-app-trennung.md): Dev behält Paketkennung/Speicher; Spielleitung erhält eine eigene Kennung und einen leeren Veranstaltungseinstieg. [Beide Apps am Moto G14 installiert, Dev ohne Deinstallation aktualisiert und Daten erhalten](../docs/companion/android-app-geraetepruefung-2026-10-18.md). App-Auswahl: Larp Dev mit DEV-Badge und Larp GM mit übernommenem GM-Companion-Icon. Neue Spielsteuerung bleibt Folgearbeit.
+
+**UI/UX · 18. Oktober 2026:** [Projektreferenz und bestätigte separate Appauslieferung](../docs/ui-ux/PROJEKTREFERENZ.md), [Dev-Hauptabläufe](../docs/ui-ux/DEV-APP-ABLAEUFE.md) und [Spielleitungs-Hauptabläufe](../docs/ui-ux/SPIELLEITER-APP-ABLAEUFE.md). Dokumentierter Designstand; Apptrennung samt begrenzter Geräteabnahme siehe Fortschreibung oben.
+
+**PR #84 abgeschlossen · Stand 19.10.2026:** Merge-Dokumentation von #83 nach
+9/9 grünen PR-Jobs bei `8af3ffaac7208ba3944b927bb472195e18b63510` integriert.
+[Belege und fachliche Restpunkte](NAEHEGLUT-STOP-SPIELANSCHLUSS-2026-10-18.md).
+Keine neue Produktimplementierung oder Geräteabnahme.
+
+**PR #83 abgeschlossen · 18.10.2026:** CI-Statusfortschreibung nach 9/9 grünen
+PR-Jobs bei `9d8bf44aff9da1d4c47f109c451cb251a9d626cd` integriert.
+[Mergebeleg, getrennte CI-Nachweise und offene fachliche Punkte](NAEHEGLUT-STOP-SPIELANSCHLUSS-2026-10-18.md).
+Keine neue Produktimplementierung oder Geräteabnahme.
+
+**Näheglut-Diagnose und Spielanschluss integriert · 18.10.2026:**
+[PR #81](https://github.com/Sven401/Larp-Escape/pull/81), Merge
+`c4870215a155b9abff2e36fccfe93d42e1a03043`, zuvor 9/9 PR-CI-Jobs erfolgreich.
+**Zusätzliche Prüfungen abgeschlossen:** #82-PR-CI 9/9, Quality am #82-Merge
+`8648f57` 3/3 und LED am #81-Merge 4/4 erfolgreich. Alter Quality-Abbruch bleibt
+historisch erhalten; siehe getrennte Laufbelege in der folgenden Übergabe.
+[Stopdiagnose und konkreter Spielanschluss](NAEHEGLUT-STOP-SPIELANSCHLUSS-2026-10-18.md).
+Digitaler Stop bestätigt; optischer Restpegel auch am Papierrand nachgewiesen,
+Ursache weiterhin ohne kontrollierten Gerätevergleich offen. Adapterentwurf
+mit Instanz-/Stop-/Frische-/Profilvertrag, noch keine Produktimplementierung.
+
+**UI/UX-Pilot integriert · 18. Oktober 2026:** [PR #78](https://github.com/Sven401/Larp-Escape/pull/78)
+ist bei `42853bc1aa93de23b5fcfc72e66d2c1a397361af` in den kuratierten
+Integrationsbranch übernommen. [Rolle](../docs/ui-ux/ROLLE.md),
+[aktueller Zustandsvertrag](../docs/ui-ux/BOX-PILOT.md),
+[Prototyp/Figma](../design/box-pilot/README.md) und
+[PO-/Figma-Nachprüfung](../design/box-pilot/figma-sync-review.md) sind integriert.
+Drei P2-Punkte behoben; 56 editierbare Figma-Screens, 148 geprüfte Verknüpfungen.
+**Design-/Prototyppaket, keine native Produktumsetzung oder Geräteabnahme.**
+[Mergebeleg, Prüfnachweise und konkrete Fortsetzung](UI-UX-INTEGRATION-2026-10-18.md).
+
+**Näheglut mit realem ESP-NOW geprüft · 18. Oktober 2026:** Drei Laborläufe
+belegen Funkanbindung, Veraltung/Wiederkehr und gezielten Stop ohne Wiederanlauf.
+Optische Dunkelprüfung und zwei Übergangsabweichungen bleiben offen;
+[Ergebnis und Diagramm](../docs/espnow/naeheglut-result-2026-10-18.md).
+Originalinstallation vollständig wiederhergestellt und verifiziert.
+[Arbeitsstand, Belege und Grenzen](NAEHEGLUT-ESPNOW-2026-10-18.md);
+keine Produkt- oder Gesamtspielabnahme.
+[PR #76](https://github.com/Sven401/Larp-Escape/pull/76) ist nach grüner CI
+bei `1646bc37d43f29f0fb48b3cf13adf597dfdc2cf4` im kuratierten Integrationsbranch gemergt.
+[Integrationsbeleg und Fortsetzung](NAEHEGLUT-ESPNOW-INTEGRATION-2026-10-18.md).
+
+**LED-Effektentwicklung integriert · 18. Oktober 2026:**
+[PR #74](https://github.com/Sven401/Larp-Escape/pull/74) ist bei
+`d4dd7c67cd6ba0e1903d8bf6c5df256c49fe5c3e` in
+`plan/projektuebergabe-kuratierter-stand` gemergt.
+[Mergebeleg, Prüfstand und offene Folgearbeit](LED-EFFEKT-ARCHITEKT-INTEGRATION-2026-10-18.md).
+Die [Architektenrolle 2.0](../docs/led/rollen/led-effekt-architekt.md) wurde mit
+gemeinsamem Effektkern, seriellen Liveparametern und parallelem Kamerafeedback
+praktisch erprobt. [Näheglut-Versuchsbericht](../docs/led/naeheglut-live-results-2026-10-18.md):
+Farb-/Kurveniteration, zwei vollständige Folgeläufe und verifizierter Flash-Rückweg.
+[Ausführbare Anleitung](../docs/led/interactive-development.md).
+Produktadapter, produktseitiger Nähe-/Spielwertvertrag und optisches Nutzerurteil bleiben offen;
+die [Rechnerprobe 1.0](LED-EFFEKT-ARCHITEKT-ERPROBUNG-2026-10-18.md) bleibt
+historischer Beleg.
+
+[D0-Vertrag zu #59](../docs/veranstaltung/d0-vertrag-v1.md) über
+[PR #72](https://github.com/Sven401/Larp-Escape/pull/72) integriert:
+Identitäten, Ereignisse, Ausfallregeln, Vertrauen und Migration, einschließlich
+[fachlicher Korrekturen und 111 Modellfälle](D0-REVIEW-2026-10-18.md).
+Ausgangsbasis `5f90d10`, fachlicher Inhaltsstand `a9481e0`; tatsächlicher
+Merge-/CI-Beleg im [Projektplan #25](https://github.com/Sven401/Larp-Escape/issues/25).
+D0 ist als Spezifikationspaket abgeschlossen. D0-G1–G5, D1–D4 und die allgemeine
+Zugangsspur bleiben offen; keine neue Produktfunktion oder verteilte Abnahme.
+
+Abgeschlossene Zusammenführung von #58/#64/#65/#66/#68 über PR #69,
+Mergecommit `0b0843d5fce475d14705c42c21f4f8bf4314df30`:
 [Integrationsprüfung vom 18. Oktober](INTEGRATION-2026-10-18.md).
 Der [abgeschlossene RSSI-Gehversuch](../docs/espnow/distance-camera-result-2026-10-18.md)
-ergänzt die älteren Gerätebelege; ein Update des Zielbranches bleibt offen.
+ergänzt die älteren Gerätebelege; die fünf Original-PRs sind als gemergt geschlossen.
 
 **Verbindlicher Architekturstand · 18. Oktober 2026:** [VA-01: dezentrale Veranstaltung](../docs/veranstaltungsarchitektur.md) und [Vertrags-/Arbeitspaketmatrix](../docs/veranstaltungsarchitektur-umsetzung.md). Kein vorausgesetztes gemeinsames WLAN, keine kontinuierliche Erreichbarkeit. Mehrere Handys bedienen verschiedene autonome Boxen; Zentrale sammelt und vermittelt bei Kontakt. Umsetzung und Abnahme bleiben offen.
 
-## Aktueller Stand · 18. Oktober 2026
+## Aktueller Stand · 20. Oktober 2026
 
 - [Übergabe: spezialisierte LED-Effekt-Architektenrolle erstellen](LED-EFFEKT-ARCHITEKT-2026-10-18.md): bestätigter Schwerpunkt Verhalten/Berechnung/Prüfplanung; Rolle an einem neuen Effektentwurf erproben. Rolle und Entwurf noch offen.
-- [ESP-NOW-Sitzungsabschluss: RSSI, Funkelsteuerung und vollständiger Kameravergleich](ESPNOW-UEBERGABE-2026-10-18.md); eigener PR #66, noch nicht integriert.
+- [ESP-NOW-Sitzungsabschluss: RSSI, Funkelsteuerung und vollständiger Kameravergleich](ESPNOW-UEBERGABE-2026-10-18.md); PR #66 ist über #69 integriert. Der Sitzungsabschluss bleibt der historische Beleg vor Integration.
 
-**Belegt:** [PR #56](https://github.com/Sven401/Larp-Escape/pull/56) ist in
-`plan/projektuebergabe-kuratierter-stand` bei
-`784984da05249c77525273c658405d2f3b8e8e24` integriert. LED, Wake, Matrix,
-Audio und NFC verwenden den [gemeinsamen V2-Vertrag](../docs/led/ble-wire-v2.md).
-Alle acht CI-Jobs am Mergecommit sind erfolgreich; Einzelheiten und Grenzen
-stehen im [Maintainer-Einstieg](MAINTAINER.md).
+**Belegt:** [PR #79](https://github.com/Sven401/Larp-Escape/pull/79) bei
+`7e19c955aaa54bcc7ed318d594a6f69476de4aa9` integriert; Eltern `494f1c4` +
+`98488ea`, vollständiger Dateibaum identisch zum geprüften Head. Frühere
+Integrationen bleiben erhalten. Neun PR-Jobs erfolgreich; eigene Merge-CI und
+Abnahmegrenzen im [Integrationsbericht](STATIONSPILOT-INTEGRATION-2026-10-19.md).
 
 - [Konsolidierung: Herkunft, Konfliktentscheidungen, acht Ergebnis-IDs](KONSOLIDIERUNG-2026-10-17.md).
 - [Nachweisregister: historische Gerätebelege und Sicherungsreferenzen](BAUGRUPPEN-NACHWEISE.md).
@@ -25,8 +114,13 @@ stehen im [Maintainer-Einstieg](MAINTAINER.md).
 - [Operative Planung #25](https://github.com/Sven401/Larp-Escape/issues/25)
   und [abgeschlossene Softwarekonsolidierung #53](https://github.com/Sven401/Larp-Escape/issues/53).
 
-**Offen:** gemeinsames V2-Paar am Gerät, Matrixproblemstellen #54,
+**Offen:** TalkBack, mehrere reale Stationen, Funkverlust bei Bluetooth an
+und Langzeitbetrieb des Stationspiloten; Licht-/Spielaktionen und allgemeine
+Spielleitungsrechte sind Folgearbeit. Außerdem gemeinsame Baugruppenabnahme
+am passenden V2-Paar, Matrixproblemstellen #54,
 LED-/NFC-/Sitzungsfehlerfälle sowie allgemeiner Spielzugang und Profilbetrieb.
+Für Näheglut fehlen echter Spieleinsatz/Nähequelle, Produktadapter und optisches
+Nutzerurteil. D1-A/PR #73 bleibt gesondert in Review; #60/D1-B/C bleibt offen.
 Historische bestandene Teiltests bleiben erhalten. Ein Geräteupload ist ein
 separater Auftrag; vorab tatsächliches Paar und chipgebundenen Rückweg prüfen.
 

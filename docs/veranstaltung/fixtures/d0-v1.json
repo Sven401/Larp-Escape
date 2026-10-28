@@ -1,0 +1,1345 @@
+{
+  "version": 1,
+  "scope": "semantic_model_not_crypto_or_storage",
+  "notes": [
+    "Decoded projections, not COSE/CBOR bytes or signatures.",
+    "contentDigest is simulated verified payload identity, not a hash of this JSON.",
+    "verified/authorized and dependency flags model trusted subsystem observations, never network claims.",
+    "Model covers station-bound reference messages; stationless central observations and full codecs require D0-G1.",
+    "ID-03 starts above a persisted reservation after restart; arbitrary flash rollback requires recovery.",
+    "historicalContext is an explicitly installed complete historical tuple, not a permission supplied by the sender.",
+    "bootstrapFloor and pendingApplication/released model trusted persistent stream/application records; released is keyed by event/run/localStation/ruleId, not by fact or rule generation.",
+    "Quittungsreferenzen are decoded tokens; full COSE/CBOR and stateful receipt aggregation remain D0-G1/G3."
+  ],
+  "templates": {
+    "fact": {
+      "message": {
+        "version": 1,
+        "event": "01010101010101010101010101010101",
+        "run": "02020202020202020202020202020202",
+        "origin": "03030303030303030303030303030303",
+        "station": "04040404040404040404040404040404",
+        "generation": 2,
+        "bindingDigest": "1515151515151515151515151515151515151515151515151515151515151515",
+        "packageDigest": "1616161616161616161616161616161616161616161616161616161616161616",
+        "kind": "fact",
+        "epoch": "05050505050505050505050505050505",
+        "sequence": 4,
+        "factType": 1,
+        "subject": "07070707070707070707070707070707",
+        "value": true,
+        "dependencies": [],
+        "unusedRanges": [],
+        "contentDigest": "1717171717171717171717171717171717171717171717171717171717171717"
+      },
+      "context": {
+        "event": "01010101010101010101010101010101",
+        "run": "02020202020202020202020202020202",
+        "origin": "03030303030303030303030303030303",
+        "station": "04040404040404040404040404040404",
+        "generation": 2,
+        "bindingDigest": "1515151515151515151515151515151515151515151515151515151515151515",
+        "packageDigest": "1616161616161616161616161616161616161616161616161616161616161616",
+        "verified": true,
+        "authorized": true,
+        "epoch": "05050505050505050505050505050505",
+        "selfDependency": false,
+        "rangeOverlapsFact": false,
+        "knownDigest": null,
+        "dependenciesPresent": true,
+        "orderedRule": true,
+        "gap": false,
+        "capacity": true,
+        "released": false,
+        "historicalContext": null,
+        "sequenceClosedUnused": false,
+        "bootstrapFloor": 0,
+        "pendingApplication": false,
+        "bootstrapAuthorized": false
+      }
+    },
+    "observation": {
+      "message": {
+        "version": 1,
+        "event": "01010101010101010101010101010101",
+        "run": "02020202020202020202020202020202",
+        "origin": "03030303030303030303030303030303",
+        "station": "04040404040404040404040404040404",
+        "generation": 2,
+        "bindingDigest": "1515151515151515151515151515151515151515151515151515151515151515",
+        "packageDigest": "1616161616161616161616161616161616161616161616161616161616161616",
+        "kind": "observation",
+        "boot": "06060606060606060606060606060606",
+        "observationSequence": 1,
+        "state": 1,
+        "challenge": "08080808080808080808080808080808"
+      },
+      "context": {
+        "event": "01010101010101010101010101010101",
+        "run": "02020202020202020202020202020202",
+        "origin": "03030303030303030303030303030303",
+        "station": "04040404040404040404040404040404",
+        "generation": 2,
+        "bindingDigest": "1515151515151515151515151515151515151515151515151515151515151515",
+        "packageDigest": "1616161616161616161616161616161616161616161616161616161616161616",
+        "verified": true,
+        "authorized": true,
+        "pendingChallenge": "08080808080808080808080808080808",
+        "challengeLive": true,
+        "latestBoot": "06060606060606060606060606060606",
+        "lastSequence": 0
+      }
+    },
+    "command": {
+      "message": {
+        "version": 1,
+        "event": "01010101010101010101010101010101",
+        "run": "02020202020202020202020202020202",
+        "origin": "03030303030303030303030303030303",
+        "station": "04040404040404040404040404040404",
+        "generation": 2,
+        "bindingDigest": "1515151515151515151515151515151515151515151515151515151515151515",
+        "packageDigest": "1616161616161616161616161616161616161616161616161616161616161616",
+        "kind": "command",
+        "commandId": "09090909090909090909090909090909",
+        "targetBox": "07070707070707070707070707070707",
+        "targetBoot": "06060606060606060606060606060606",
+        "grant": "08080808080808080808080808080808",
+        "targetRevision": 7,
+        "action": 1,
+        "resource": 101,
+        "contentDigest": "1717171717171717171717171717171717171717171717171717171717171717"
+      },
+      "context": {
+        "event": "01010101010101010101010101010101",
+        "run": "02020202020202020202020202020202",
+        "origin": "03030303030303030303030303030303",
+        "station": "04040404040404040404040404040404",
+        "generation": 2,
+        "bindingDigest": "1515151515151515151515151515151515151515151515151515151515151515",
+        "packageDigest": "1616161616161616161616161616161616161616161616161616161616161616",
+        "verified": true,
+        "authorized": true,
+        "targetBox": "07070707070707070707070707070707",
+        "targetBoot": "06060606060606060606060606060606",
+        "grant": "08080808080808080808080808080808",
+        "targetRevision": 7,
+        "grantAgeMs": 100,
+        "grantLifetimeMs": 5000,
+        "spentCommand": null,
+        "spentDigest": null,
+        "actionAllowed": true,
+        "resourceAllowed": true
+      }
+    },
+    "receipt": {
+      "message": {
+        "version": 1,
+        "event": "01010101010101010101010101010101",
+        "run": "02020202020202020202020202020202",
+        "origin": "03030303030303030303030303030303",
+        "station": "04040404040404040404040404040404",
+        "generation": 2,
+        "bindingDigest": "1515151515151515151515151515151515151515151515151515151515151515",
+        "packageDigest": "1616161616161616161616161616161616161616161616161616161616161616",
+        "kind": "receipt",
+        "targetBox": "07070707070707070707070707070707",
+        "receiptId": "0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A",
+        "stage": 2,
+        "reason": 0,
+        "contentDigest": "1717171717171717171717171717171717171717171717171717171717171717",
+        "ref": [
+          "01010101010101010101010101010101",
+          "03030303030303030303030303030303",
+          "05050505050505050505050505050505",
+          4
+        ]
+      },
+      "context": {
+        "event": "01010101010101010101010101010101",
+        "run": "02020202020202020202020202020202",
+        "origin": "03030303030303030303030303030303",
+        "station": "04040404040404040404040404040404",
+        "generation": 2,
+        "bindingDigest": "1515151515151515151515151515151515151515151515151515151515151515",
+        "packageDigest": "1616161616161616161616161616161616161616161616161616161616161616",
+        "verified": true,
+        "authorized": true,
+        "expectedReceiver": "03030303030303030303030303030303",
+        "targetBox": "07070707070707070707070707070707",
+        "expectedDigest": "1717171717171717171717171717171717171717171717171717171717171717",
+        "expectedRef": [
+          "01010101010101010101010101010101",
+          "03030303030303030303030303030303",
+          "05050505050505050505050505050505",
+          4
+        ]
+      }
+    },
+    "allocate": {
+      "message": {},
+      "context": {
+        "storageCertain": true,
+        "storedEnd": 10,
+        "blockSize": 4
+      }
+    },
+    "prefix": {
+      "message": {},
+      "context": {
+        "present": [
+          1,
+          2,
+          3,
+          5
+        ],
+        "closedUnused": [],
+        "bootstrapFloor": 0,
+        "bootstrapAuthorized": false
+      }
+    },
+    "migration": {
+      "message": {},
+      "context": {
+        "capable": true,
+        "complete": true,
+        "hashesMatch": true,
+        "authorized": true,
+        "confirmed": true,
+        "stopped": true,
+        "expectedRevision": true,
+        "streamStatePreserved": true,
+        "latchesPreserved": true
+      }
+    }
+  },
+  "cases": [
+    {
+      "id": "FACT-01",
+      "model": "fact",
+      "expected": "apply_once"
+    },
+    {
+      "id": "FORMAT-01",
+      "model": "fact",
+      "expected": "reject_format",
+      "message": {
+        "version": 2
+      }
+    },
+    {
+      "id": "FORMAT-02",
+      "model": "fact",
+      "expected": "reject_format",
+      "message": {
+        "event": "00000000000000000000000000000000"
+      }
+    },
+    {
+      "id": "FORMAT-03",
+      "model": "fact",
+      "expected": "reject_format",
+      "message": {
+        "sequence": true
+      }
+    },
+    {
+      "id": "FORMAT-04",
+      "model": "fact",
+      "expected": "reject_format",
+      "message": {
+        "sequence": 0
+      }
+    },
+    {
+      "id": "FORMAT-05",
+      "model": "fact",
+      "expected": "reject_format",
+      "message": {
+        "sequence": 18446744073709551616
+      }
+    },
+    {
+      "id": "FORMAT-06",
+      "model": "fact",
+      "expected": "reject_format",
+      "message": {
+        "factType": 99
+      }
+    },
+    {
+      "id": "FORMAT-07",
+      "model": "fact",
+      "expected": "reject_format",
+      "message": {
+        "newField": 1
+      }
+    },
+    {
+      "id": "FORMAT-08",
+      "model": "fact",
+      "expected": "reject_format",
+      "message": {
+        "dependencies": [
+          "ref",
+          "ref",
+          "ref",
+          "ref",
+          "ref",
+          "ref",
+          "ref",
+          "ref",
+          "ref"
+        ]
+      }
+    },
+    {
+      "id": "FORMAT-09",
+      "model": "fact",
+      "expected": "reject_format",
+      "message": {
+        "dependencies": [
+          "ref",
+          "ref"
+        ]
+      }
+    },
+    {
+      "id": "CONTEXT-01",
+      "model": "fact",
+      "expected": "reject_context",
+      "message": {
+        "event": "1F1F1F1F1F1F1F1F1F1F1F1F1F1F1F1F"
+      }
+    },
+    {
+      "id": "CONTEXT-02",
+      "model": "fact",
+      "expected": "reject_context",
+      "message": {
+        "run": "20202020202020202020202020202020"
+      }
+    },
+    {
+      "id": "CONTEXT-03",
+      "model": "fact",
+      "expected": "reject_context",
+      "message": {
+        "packageDigest": "2121212121212121212121212121212121212121212121212121212121212121"
+      }
+    },
+    {
+      "id": "TRUST-01",
+      "model": "fact",
+      "expected": "reject_signature",
+      "context": {
+        "verified": false
+      }
+    },
+    {
+      "id": "TRUST-02",
+      "model": "fact",
+      "expected": "reject_trust",
+      "context": {
+        "authorized": false
+      }
+    },
+    {
+      "id": "TRUST-03",
+      "model": "fact",
+      "expected": "reject_trust",
+      "message": {
+        "origin": "22222222222222222222222222222222"
+      }
+    },
+    {
+      "id": "TRUST-04",
+      "model": "fact",
+      "expected": "reject_binding",
+      "message": {
+        "generation": 3
+      }
+    },
+    {
+      "id": "TRUST-05",
+      "model": "fact",
+      "expected": "reject_binding",
+      "message": {
+        "bindingDigest": "2323232323232323232323232323232323232323232323232323232323232323"
+      }
+    },
+    {
+      "id": "TRUST-06",
+      "model": "fact",
+      "expected": "reject_epoch",
+      "message": {
+        "epoch": "24242424242424242424242424242424"
+      }
+    },
+    {
+      "id": "ID-01",
+      "model": "fact",
+      "expected": "duplicate",
+      "context": {
+        "knownDigest": "1717171717171717171717171717171717171717171717171717171717171717"
+      }
+    },
+    {
+      "id": "ID-02",
+      "model": "fact",
+      "expected": "conflict",
+      "context": {
+        "knownDigest": "1818181818181818181818181818181818181818181818181818181818181818"
+      }
+    },
+    {
+      "id": "ID-03",
+      "model": "allocate",
+      "expected": [
+        11,
+        14
+      ]
+    },
+    {
+      "id": "ID-04",
+      "model": "allocate",
+      "expected": "blocked",
+      "context": {
+        "storageCertain": false
+      }
+    },
+    {
+      "id": "ID-05",
+      "model": "allocate",
+      "expected": "blocked",
+      "context": {
+        "storedEnd": 18446744073709551614
+      }
+    },
+    {
+      "id": "DEP-01",
+      "model": "fact",
+      "expected": "deferred",
+      "message": {
+        "dependencies": [
+          "validated_fact_reference"
+        ]
+      },
+      "context": {
+        "dependenciesPresent": false
+      }
+    },
+    {
+      "id": "DEP-02",
+      "model": "fact",
+      "expected": "deferred",
+      "context": {
+        "gap": true
+      }
+    },
+    {
+      "id": "DEP-03",
+      "model": "fact",
+      "expected": "apply_once",
+      "context": {
+        "gap": true,
+        "orderedRule": false
+      }
+    },
+    {
+      "id": "DEP-04",
+      "model": "fact",
+      "expected": "reject_dependency",
+      "context": {
+        "selfDependency": true
+      }
+    },
+    {
+      "id": "OFFLINE-01",
+      "model": "fact",
+      "expected": "already_released",
+      "context": {
+        "released": true
+      }
+    },
+    {
+      "id": "OFFLINE-02",
+      "model": "fact",
+      "expected": "reject_capacity",
+      "context": {
+        "capacity": false
+      }
+    },
+    {
+      "id": "GAP-01",
+      "model": "prefix",
+      "expected": 3
+    },
+    {
+      "id": "GAP-02",
+      "model": "prefix",
+      "expected": 5,
+      "context": {
+        "closedUnused": [
+          [
+            4,
+            4
+          ]
+        ]
+      }
+    },
+    {
+      "id": "GAP-03",
+      "model": "prefix",
+      "expected": "conflict",
+      "context": {
+        "closedUnused": [
+          [
+            3,
+            4
+          ]
+        ]
+      }
+    },
+    {
+      "id": "GAP-04",
+      "model": "fact",
+      "expected": "record_unused",
+      "message": {
+        "factType": 3,
+        "subject": "03030303030303030303030303030303",
+        "unusedRanges": [
+          [
+            1,
+            3
+          ]
+        ]
+      }
+    },
+    {
+      "id": "GAP-05",
+      "model": "fact",
+      "expected": "reject_format",
+      "message": {
+        "factType": 3,
+        "subject": "03030303030303030303030303030303",
+        "unusedRanges": [
+          [
+            1,
+            4
+          ]
+        ]
+      }
+    },
+    {
+      "id": "GAP-06",
+      "model": "fact",
+      "expected": "conflict",
+      "message": {
+        "factType": 3,
+        "subject": "03030303030303030303030303030303",
+        "unusedRanges": [
+          [
+            1,
+            3
+          ]
+        ]
+      },
+      "context": {
+        "rangeOverlapsFact": true
+      }
+    },
+    {
+      "id": "FRESH-01",
+      "model": "observation",
+      "expected": "fresh_observation"
+    },
+    {
+      "id": "FRESH-02",
+      "model": "observation",
+      "expected": "observation_age_unknown",
+      "message": {
+        "challenge": null
+      }
+    },
+    {
+      "id": "FRESH-03",
+      "model": "observation",
+      "expected": "observation_age_unknown",
+      "context": {
+        "challengeLive": false
+      }
+    },
+    {
+      "id": "FRESH-04",
+      "model": "command",
+      "expected": "consume_then_execute"
+    },
+    {
+      "id": "FRESH-05",
+      "model": "command",
+      "expected": "expired",
+      "context": {
+        "grantAgeMs": 5000
+      }
+    },
+    {
+      "id": "FRESH-06",
+      "model": "command",
+      "expected": "expired",
+      "context": {
+        "grantAgeMs": -1
+      }
+    },
+    {
+      "id": "FRESH-07",
+      "model": "command",
+      "expected": "reject_grant",
+      "message": {
+        "targetBoot": "29292929292929292929292929292929"
+      }
+    },
+    {
+      "id": "FRESH-08",
+      "model": "command",
+      "expected": "reject_grant",
+      "message": {
+        "grant": "2A2A2A2A2A2A2A2A2A2A2A2A2A2A2A2A"
+      }
+    },
+    {
+      "id": "FRESH-09",
+      "model": "command",
+      "expected": "reject_state",
+      "message": {
+        "targetRevision": 6
+      }
+    },
+    {
+      "id": "FRESH-10",
+      "model": "command",
+      "expected": "reject_state",
+      "context": {
+        "actionAllowed": false
+      }
+    },
+    {
+      "id": "FRESH-11",
+      "model": "command",
+      "expected": "duplicate",
+      "context": {
+        "spentCommand": "09090909090909090909090909090909",
+        "spentDigest": "1717171717171717171717171717171717171717171717171717171717171717"
+      }
+    },
+    {
+      "id": "FRESH-12",
+      "model": "command",
+      "expected": "grant_conflict",
+      "context": {
+        "spentCommand": "0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A",
+        "spentDigest": "1717171717171717171717171717171717171717171717171717171717171717"
+      }
+    },
+    {
+      "id": "FRESH-13",
+      "model": "command",
+      "expected": "reject_trust",
+      "context": {
+        "authorized": false
+      }
+    },
+    {
+      "id": "ACK-01",
+      "model": "receipt",
+      "expected": "not_applied"
+    },
+    {
+      "id": "ACK-02",
+      "model": "receipt",
+      "expected": "not_applied",
+      "message": {
+        "stage": 1
+      }
+    },
+    {
+      "id": "ACK-03",
+      "model": "receipt",
+      "expected": "reject_receipt_binding",
+      "context": {
+        "expectedReceiver": "07070707070707070707070707070707"
+      }
+    },
+    {
+      "id": "ACK-04",
+      "model": "receipt",
+      "expected": "reject_receipt_binding",
+      "message": {
+        "contentDigest": "1818181818181818181818181818181818181818181818181818181818181818"
+      }
+    },
+    {
+      "id": "MIG-01",
+      "model": "migration",
+      "expected": "ready_for_atomic_activation"
+    },
+    {
+      "id": "MIG-02",
+      "model": "migration",
+      "expected": "unsupported",
+      "context": {
+        "capable": false
+      }
+    },
+    {
+      "id": "MIG-03",
+      "model": "migration",
+      "expected": "reject_package",
+      "context": {
+        "complete": false
+      }
+    },
+    {
+      "id": "MIG-04",
+      "model": "migration",
+      "expected": "reject_package",
+      "context": {
+        "hashesMatch": false
+      }
+    },
+    {
+      "id": "MIG-05",
+      "model": "migration",
+      "expected": "pending_confirmation",
+      "context": {
+        "authorized": false
+      }
+    },
+    {
+      "id": "MIG-06",
+      "model": "migration",
+      "expected": "pending_confirmation",
+      "context": {
+        "confirmed": false
+      }
+    },
+    {
+      "id": "MIG-07",
+      "model": "migration",
+      "expected": "reject_state",
+      "context": {
+        "stopped": false
+      }
+    },
+    {
+      "id": "MIG-08",
+      "model": "migration",
+      "expected": "reject_state",
+      "context": {
+        "expectedRevision": false
+      }
+    },
+    {
+      "id": "FRESH-14",
+      "model": "observation",
+      "context": {
+        "lastSequence": 1
+      },
+      "expected": "stale_observation"
+    },
+    {
+      "id": "FRESH-15",
+      "model": "observation",
+      "message": {
+        "challenge": true
+      },
+      "expected": "reject_format"
+    },
+    {
+      "id": "GAP-07",
+      "model": "prefix",
+      "context": {
+        "present": [
+          1,
+          2,
+          3,
+          18446744073709551615
+        ],
+        "closedUnused": [
+          [
+            4,
+            18446744073709551614
+          ]
+        ]
+      },
+      "expected": 18446744073709551615
+    },
+    {
+      "id": "FORMAT-10",
+      "model": "fact",
+      "message": {
+        "contentDigest": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "expected": "apply_once"
+    },
+    {
+      "id": "GAP-08",
+      "model": "fact",
+      "message": {
+        "factType": 3,
+        "subject": "03030303030303030303030303030303",
+        "unusedRanges": [
+          [
+            1,
+            3
+          ]
+        ]
+      },
+      "context": {
+        "gap": true
+      },
+      "expected": "record_unused"
+    },
+    {
+      "id": "GAP-09",
+      "model": "fact",
+      "expected": "conflict",
+      "context": {
+        "sequenceClosedUnused": true
+      }
+    },
+    {
+      "id": "GAP-10",
+      "model": "fact",
+      "expected": "conflict",
+      "message": {
+        "factType": 3,
+        "subject": "03030303030303030303030303030303",
+        "unusedRanges": [
+          [
+            1,
+            3
+          ]
+        ]
+      },
+      "context": {
+        "sequenceClosedUnused": true
+      }
+    },
+    {
+      "id": "GAP-11",
+      "model": "prefix",
+      "expected": 0,
+      "context": {
+        "present": [
+          11
+        ]
+      }
+    },
+    {
+      "id": "GAP-12",
+      "model": "prefix",
+      "expected": 11,
+      "context": {
+        "present": [
+          11
+        ],
+        "bootstrapFloor": 10,
+        "bootstrapAuthorized": true
+      }
+    },
+    {
+      "id": "GAP-13",
+      "model": "prefix",
+      "expected": "reject_bootstrap",
+      "context": {
+        "present": [
+          11
+        ],
+        "bootstrapFloor": 10
+      }
+    },
+    {
+      "id": "GAP-14",
+      "model": "prefix",
+      "expected": 10,
+      "context": {
+        "present": [
+          12
+        ],
+        "bootstrapFloor": 10,
+        "bootstrapAuthorized": true
+      }
+    },
+    {
+      "id": "GAP-15",
+      "model": "prefix",
+      "expected": "conflict",
+      "context": {
+        "present": [
+          4
+        ],
+        "closedUnused": [
+          [
+            4,
+            4
+          ]
+        ],
+        "bootstrapFloor": 10,
+        "bootstrapAuthorized": true
+      }
+    },
+    {
+      "id": "GAP-16",
+      "model": "fact",
+      "expected": "bootstrap_covered",
+      "context": {
+        "bootstrapFloor": 10,
+        "bootstrapAuthorized": true
+      }
+    },
+    {
+      "id": "CONTEXT-04",
+      "model": "fact",
+      "expected": "record_history",
+      "message": {
+        "run": "30303030303030303030303030303030"
+      },
+      "context": {
+        "historicalContext": {
+          "event": "01010101010101010101010101010101",
+          "run": "30303030303030303030303030303030",
+          "packageDigest": "1616161616161616161616161616161616161616161616161616161616161616",
+          "station": "04040404040404040404040404040404",
+          "generation": 2,
+          "bindingDigest": "1515151515151515151515151515151515151515151515151515151515151515"
+        },
+        "gap": true,
+        "dependenciesPresent": false
+      }
+    },
+    {
+      "id": "CONTEXT-05",
+      "model": "fact",
+      "expected": "reject_context",
+      "message": {
+        "run": "30303030303030303030303030303030"
+      }
+    },
+    {
+      "id": "CONTEXT-06",
+      "model": "fact",
+      "expected": "reject_context",
+      "message": {
+        "run": "30303030303030303030303030303030",
+        "bindingDigest": "3131313131313131313131313131313131313131313131313131313131313131"
+      },
+      "context": {
+        "historicalContext": {
+          "event": "01010101010101010101010101010101",
+          "run": "30303030303030303030303030303030",
+          "packageDigest": "1616161616161616161616161616161616161616161616161616161616161616",
+          "station": "04040404040404040404040404040404",
+          "generation": 2,
+          "bindingDigest": "1515151515151515151515151515151515151515151515151515151515151515"
+        }
+      }
+    },
+    {
+      "id": "CONTEXT-07",
+      "model": "fact",
+      "expected": "reject_trust",
+      "message": {
+        "run": "30303030303030303030303030303030"
+      },
+      "context": {
+        "historicalContext": {
+          "event": "01010101010101010101010101010101",
+          "run": "30303030303030303030303030303030",
+          "packageDigest": "1616161616161616161616161616161616161616161616161616161616161616",
+          "station": "04040404040404040404040404040404",
+          "generation": 2,
+          "bindingDigest": "1515151515151515151515151515151515151515151515151515151515151515"
+        },
+        "authorized": false
+      }
+    },
+    {
+      "id": "CONTEXT-08",
+      "model": "fact",
+      "expected": "record_history",
+      "message": {
+        "packageDigest": "3232323232323232323232323232323232323232323232323232323232323232"
+      },
+      "context": {
+        "historicalContext": {
+          "event": "01010101010101010101010101010101",
+          "run": "02020202020202020202020202020202",
+          "packageDigest": "3232323232323232323232323232323232323232323232323232323232323232",
+          "station": "04040404040404040404040404040404",
+          "generation": 2,
+          "bindingDigest": "1515151515151515151515151515151515151515151515151515151515151515"
+        }
+      }
+    },
+    {
+      "id": "CONTEXT-09",
+      "model": "fact",
+      "expected": "record_unused",
+      "message": {
+        "run": "30303030303030303030303030303030",
+        "factType": 3,
+        "subject": "03030303030303030303030303030303",
+        "unusedRanges": [
+          [
+            1,
+            3
+          ]
+        ]
+      },
+      "context": {
+        "historicalContext": {
+          "event": "01010101010101010101010101010101",
+          "run": "30303030303030303030303030303030",
+          "packageDigest": "1616161616161616161616161616161616161616161616161616161616161616",
+          "station": "04040404040404040404040404040404",
+          "generation": 2,
+          "bindingDigest": "1515151515151515151515151515151515151515151515151515151515151515"
+        },
+        "gap": true
+      }
+    },
+    {
+      "id": "CONTEXT-10",
+      "model": "fact",
+      "expected": "reject_context",
+      "message": {
+        "event": "33333333333333333333333333333333"
+      },
+      "context": {
+        "historicalContext": {
+          "event": "01010101010101010101010101010101",
+          "run": "30303030303030303030303030303030",
+          "packageDigest": "1616161616161616161616161616161616161616161616161616161616161616",
+          "station": "04040404040404040404040404040404",
+          "generation": 2,
+          "bindingDigest": "1515151515151515151515151515151515151515151515151515151515151515"
+        }
+      }
+    },
+    {
+      "id": "CONTEXT-11",
+      "model": "fact",
+      "expected": "reject_context",
+      "message": {
+        "packageDigest": "3232323232323232323232323232323232323232323232323232323232323232"
+      }
+    },
+    {
+      "id": "CONTEXT-12",
+      "model": "observation",
+      "expected": "reject_context",
+      "message": {
+        "run": "30303030303030303030303030303030"
+      },
+      "context": {
+        "historicalContext": {
+          "event": "01010101010101010101010101010101",
+          "run": "30303030303030303030303030303030",
+          "packageDigest": "1616161616161616161616161616161616161616161616161616161616161616",
+          "station": "04040404040404040404040404040404",
+          "generation": 2,
+          "bindingDigest": "1515151515151515151515151515151515151515151515151515151515151515"
+        }
+      }
+    },
+    {
+      "id": "CONTEXT-13",
+      "model": "command",
+      "expected": "reject_context",
+      "message": {
+        "run": "30303030303030303030303030303030"
+      },
+      "context": {
+        "historicalContext": {
+          "event": "01010101010101010101010101010101",
+          "run": "30303030303030303030303030303030",
+          "packageDigest": "1616161616161616161616161616161616161616161616161616161616161616",
+          "station": "04040404040404040404040404040404",
+          "generation": 2,
+          "bindingDigest": "1515151515151515151515151515151515151515151515151515151515151515"
+        }
+      }
+    },
+    {
+      "id": "MIG-09",
+      "model": "migration",
+      "expected": "reject_state",
+      "context": {
+        "streamStatePreserved": false
+      }
+    },
+    {
+      "id": "MIG-10",
+      "model": "migration",
+      "expected": "reject_state",
+      "context": {
+        "latchesPreserved": false
+      }
+    },
+    {
+      "id": "OFFLINE-03",
+      "model": "fact",
+      "expected": "already_released",
+      "message": {
+        "sequence": 5
+      },
+      "context": {
+        "released": true
+      }
+    },
+    {
+      "id": "OFFLINE-04",
+      "model": "fact",
+      "expected": "already_released",
+      "message": {
+        "factType": 2
+      },
+      "context": {
+        "released": true
+      }
+    },
+    {
+      "id": "DEP-05",
+      "model": "fact",
+      "expected": "deferred",
+      "context": {
+        "knownDigest": "1717171717171717171717171717171717171717171717171717171717171717",
+        "pendingApplication": true,
+        "dependenciesPresent": false
+      }
+    },
+    {
+      "id": "DEP-06",
+      "model": "fact",
+      "expected": "apply_once",
+      "context": {
+        "knownDigest": "1717171717171717171717171717171717171717171717171717171717171717",
+        "pendingApplication": true
+      }
+    },
+    {
+      "id": "DEP-07",
+      "model": "fact",
+      "expected": "reject_trust",
+      "context": {
+        "knownDigest": "1717171717171717171717171717171717171717171717171717171717171717",
+        "pendingApplication": true,
+        "authorized": false
+      }
+    },
+    {
+      "id": "DEP-08",
+      "model": "fact",
+      "expected": "already_released",
+      "context": {
+        "knownDigest": "1717171717171717171717171717171717171717171717171717171717171717",
+        "pendingApplication": true,
+        "released": true
+      }
+    },
+    {
+      "id": "FRESH-16",
+      "model": "command",
+      "expected": "consume_then_execute",
+      "context": {
+        "stopped": false
+      }
+    },
+    {
+      "id": "FRESH-17",
+      "model": "command",
+      "expected": "reject_resource",
+      "context": {
+        "resourceAllowed": false
+      }
+    },
+    {
+      "id": "FRESH-18",
+      "model": "command",
+      "expected": "duplicate",
+      "context": {
+        "spentCommand": "09090909090909090909090909090909",
+        "spentDigest": "1717171717171717171717171717171717171717171717171717171717171717",
+        "grantAgeMs": 5000,
+        "actionAllowed": false,
+        "targetRevision": 8
+      }
+    },
+    {
+      "id": "FRESH-19",
+      "model": "command",
+      "expected": "grant_conflict",
+      "message": {
+        "contentDigest": "3434343434343434343434343434343434343434343434343434343434343434"
+      },
+      "context": {
+        "spentCommand": "09090909090909090909090909090909",
+        "spentDigest": "1717171717171717171717171717171717171717171717171717171717171717"
+      }
+    },
+    {
+      "id": "ACK-05",
+      "model": "receipt",
+      "expected": "record_applied",
+      "message": {
+        "stage": 3,
+        "reason": 0
+      }
+    },
+    {
+      "id": "ACK-06",
+      "model": "receipt",
+      "expected": "record_effect_observed",
+      "message": {
+        "stage": 4,
+        "reason": 0
+      }
+    },
+    {
+      "id": "ACK-07",
+      "model": "receipt",
+      "expected": "record_rejected",
+      "message": {
+        "stage": 5,
+        "reason": 6
+      }
+    },
+    {
+      "id": "ACK-08",
+      "model": "receipt",
+      "expected": "record_deferred",
+      "message": {
+        "stage": 6,
+        "reason": 3
+      }
+    },
+    {
+      "id": "ACK-09",
+      "model": "receipt",
+      "expected": "record_effect_unknown",
+      "message": {
+        "stage": 7,
+        "reason": 7
+      }
+    },
+    {
+      "id": "ACK-10",
+      "model": "receipt",
+      "expected": "reject_format",
+      "message": {
+        "stage": 3,
+        "reason": 6
+      }
+    },
+    {
+      "id": "ACK-11",
+      "model": "receipt",
+      "expected": "reject_format",
+      "message": {
+        "stage": 7,
+        "reason": 0
+      }
+    },
+    {
+      "id": "ACK-12",
+      "model": "receipt",
+      "expected": "reject_format",
+      "message": {
+        "stage": 6,
+        "reason": 5
+      }
+    },
+    {
+      "id": "ACK-13",
+      "model": "receipt",
+      "expected": "reject_receipt_binding",
+      "message": {
+        "ref": [
+          "01010101010101010101010101010101",
+          "03030303030303030303030303030303",
+          "05050505050505050505050505050505",
+          5
+        ]
+      }
+    },
+    {
+      "id": "ACK-14",
+      "model": "receipt",
+      "expected": "reject_format",
+      "message": {
+        "ref": [
+          "01010101010101010101010101010101",
+          "03030303030303030303030303030303",
+          "05050505050505050505050505050505",
+          true
+        ]
+      }
+    },
+    {
+      "id": "ACK-15",
+      "model": "receipt",
+      "expected": "record_applied",
+      "message": {
+        "ref": "09090909090909090909090909090909",
+        "stage": 3
+      },
+      "context": {
+        "expectedRef": "09090909090909090909090909090909"
+      }
+    },
+    {
+      "id": "ACK-16",
+      "model": "receipt",
+      "expected": "reject_receipt_binding",
+      "message": {
+        "ref": "35353535353535353535353535353535"
+      }
+    },
+    {
+      "id": "ACK-17",
+      "model": "receipt",
+      "expected": "reject_format",
+      "message": {
+        "stage": 5,
+        "reason": 0
+      }
+    },
+    {
+      "id": "GAP-17",
+      "model": "fact",
+      "context": {
+        "bootstrapFloor": 10
+      },
+      "expected": "reject_bootstrap"
+    },
+    {
+      "id": "GAP-18",
+      "model": "prefix",
+      "context": {
+        "present": [
+          1,
+          2,
+          3
+        ],
+        "closedUnused": [
+          [
+            4,
+            18446744073709551615
+          ]
+        ]
+      },
+      "expected": "conflict"
+    }
+  ]
+}

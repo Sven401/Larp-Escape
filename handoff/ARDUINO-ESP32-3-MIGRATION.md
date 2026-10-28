@@ -26,6 +26,32 @@ direkte Zugriff auf paketbezogene ESP-NOW-Signalstärke (RSSI) für die geplante
 Näheanzeige und mögliche näheabhängige Funkelintensität. RSSI bleibt eine
 Näherung; die Aktualisierung allein schafft keine genaue Entfernungsmessung.
 
+## Supportbefund aus beauftragtem Audit · 24. Oktober 2026
+
+Der spätere Nutzerauftrag zum [A1/A2-Pilot](../docs/quality/audits/2026-10-24-pilot/README.md)
+erlaubte den Quellenabgleich, nicht die Umsetzung der Migration. Basis
+`e61d7642`: lokal aufgelöst Arduino 2.0.14 / ESP-IDF **4.4.6**.
+[Espressif AR2024-008 vom 02.07.2024](https://www.espressif.com/sites/default/files/advisory_downloads/AR2024-008%20End-of-Life%20Advisory%20for%20ESP-IDF%20v4.4%20Release%20Branch%20EN.pdf)
+beendet den regulären Support der 4.4-Reihe seit Juli 2024, einschließlich
+weiterer Fehler-/Securitykorrekturen. Hashpins ändern diesen Status nicht.
+
+**Offen, zuständig Plattform und Systemintegration:** Für den nächsten
+beauftragten Planungs-/Migrationsabgleich, spätestens vor Produktfreigabe
+oder Pinänderung, eine ausdrückliche Weiterbenutzungsentscheidung mit Grund,
+Verantwortlichem und Wiedervorlage oder die Einplanung der Migration vorbereiten.
+Der Maintainer entscheidet technische Priorisierung im bestehenden Mandat;
+grundlegende Produktentscheidungen bleiben beim Nutzer. Noch keine Ausnahme
+beschlossen, kein neues Zieldatum und keine unterstützte Zielversion behauptet.
+Die bisherige Festlegung, jetzt keine Pakete zu ändern, bleibt bestehen.
+
+Konkrete Advisories mit einem Security-Fachreview auf tatsächliche Konfiguration,
+Aufrufpfad und gepinnte Binaryversion prüfen. Eine EOL-Version, die in einer
+Advisory-Matrix fehlt, ist nicht automatisch unbetroffen; alleinige BLE-Nutzung
+der App schließt einen aktivierten BTDM-Controllerpfad nicht aus. Die offene
+Classic-L2CAP-Frage ist im Pilot begrenzt beschrieben, keine bestätigte CVE-
+Betroffenheit. Bei der späteren Zielwahl Supportstatus und private GATT-/Crypto-
+ABI-Hooks neu auditieren; Hashes nicht ohne diesen Nachweis austauschen.
+
 ## Vorgemerkter Umfang und Abschlusskriterien
 
 - Unterstützte, reproduzierbar gepinnte Buildumgebung auswählen; Migration

@@ -61,8 +61,11 @@ ergänzt die 9×9-Kontaktanzeige in der echten Companion-App. Sie verwendet
 wieder die ursprüngliche Richtung: Spalten `0x20 B1/A0–A6/B5` einzeln LOW,
 Zeilen `0x21 B7–B0` und `0x20 B0` mit Pull-up lesen. Inaktive Spalten bleiben
 hochohmig; das historische anschließende HIGH wird nicht übernommen.
-Die Koordinaten A1 bis I9 bleiben unverändert. Einige Kontakte sind laut Nutzer
-wegen Platzkollisionen bewusst nicht bestückt; die genaue Liste ist unbekannt.
+Die Koordinaten A1 bis I9 bleiben unverändert. Der spätere
+[Sammelbericht vom 16.10.2026](../../docs/matrix/collection-result-2026-10-16.md)
+führt die neun nutzerbestätigt unbestückten Felder und die vier offenen
+Problemstellen C3, G3, H3 und A8. Die Deaktivierung unbestückter Felder betrifft
+die Appanzeige, nicht den Firmware-Scanner.
 
 Der historische Prüfmodus setzt ausdrücklich
 `LARP_MATRIX_LEGACY_IO7_INPUT=1`. Er liest B7 wie das Original, löst aber den
@@ -78,7 +81,10 @@ unverändert. Quelle, Änderung und Softwareprüfstand stehen im
 [Korrekturbericht](../../docs/matrix/scan-direction-correction-2026-10-16.md),
 Vorbereitung und gemeinsame Abnahmefälle im
 [Matrix-Testplan](../../docs/matrix/test-preparation.md).
-Die Korrektur ist noch nicht installiert oder am Gerät geprüft.
+Die Aussage „nicht installiert“ im Korrekturbericht gilt für dessen damaligen
+Vorbereitungsstand. Der spätere Sammellauf belegt 68 erkannte Koordinaten und
+110 registrierte Kontaktfolgen. Die gemeinsame V2-Geräteabnahme und die
+elektrische Eignung bleiben offen; daraus folgt keine neue Installationsfreigabe.
 
 ```powershell
 python -m platformio run -d firmware/led -e larp-matrix-test -j 2
@@ -138,6 +144,13 @@ keine zusätzliche BLE-Linkverschlüsselung oder Live-Relay-Erkennung. Physische
 USB-/Flashzugriff und die Einrichtungsdatei gehören zum vertrauenswürdigen Setup.
 
 ## Prüfwege und Geräteabnahme
+
+Für frühe Effektentwicklung ergänzt [LARP-LIVE/1](LIVE-NEARGLOW.md)
+serielle Liveparameter, zwei unabhängige Näheglut-Instanzen und parallele
+Kameraaufnahme. [Anleitung](../../docs/led/interactive-development.md) und
+[praktischer Iterationsbericht](../../docs/led/naeheglut-live-results-2026-10-18.md).
+Dieser Zugang existiert nur in der isolierten Laborfirmware; die produktiven
+Effekt-IDs und BLE-Nachrichten bleiben unverändert.
 
 Der [USB-Kamera-Messweg](../../docs/led/camera-measurement.md) ergänzt eine
 getrennte USB-Prüffirmware, automatische Index-/Farbkalibrierung und den

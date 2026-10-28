@@ -1,5 +1,7 @@
 # Vollständiger Prüfweg der kuratierten Produktbasis
 
+**Wartungsprüfung · 20.10.2026:** [Frische lokale Tests/Builds und Dokumentationsabgleich](../handoff/WARTUNG-PRUEFSTAND-2026-10-20.md) auf Integrationsstand `7e19c95`. Die historischen CI-Belege unten behalten ihren jeweiligen Commitbezug.
+
 **Zusätzlicher Abnahmeumfang · 18.10.2026:** [VA-01](veranstaltungsarchitektur.md) und [VA-T01–VA-T12](veranstaltungsarchitektur-umsetzung.md#4-gemeinsame-offene-abnahmekriterien) ergänzen dezentrale Ausfall-/Abgleich-/Funkfälle (#63). Bestehende B0-/Baugruppenprüfungen bleiben erhalten; diese Dokumentation führt keinen neuen Test aus und weist keine verteilte Abnahme nach.
 
 Stand des B0-Verfahrens: **16. Oktober 2026**, Aufgabe [B0 / #38](https://github.com/Sven401/Larp-Escape/issues/38).
@@ -18,6 +20,52 @@ Der Windows-Androidjob baut inzwischen zusätzlich `:app:assembleRelease`.
 Die Baugruppen-CI ergänzt gemeinsame Wire-/Adaptertests und getrennte
 LED-/NFC-/Matrix-Firmwarevarianten. Ein Softwarelauf ist keine Geräteabnahme.
 
+## Aus dem Fachaudit abgeleitete Prüfungen · 24.10.2026
+
+Die am 24.10.2026 übernommenen [Fachmandate](quality/verantwortlichkeiten.md)
+sind verbindlich. Vor Änderungen benennt der Maintainer je Auftrag den
+fachlich Verantwortlichen, einen anderen Gegenprüfer, betroffene Varianten
+und erforderliche Nachweise. Plattform prüft Task-/Queue-/Spinlock-/Callback-/
+ISR- sowie SDK-/Versionsgrenzen; Geräteintegration prüft Bus-, Adapter-,
+Fehler-, Parser- und Recoveryverträge bis zum Verbraucher. Qualität prüft
+Behauptung, Gegenfälle und ausgeführte Nachweise unabhängig vom Autor.
+Security-Expertise wird bei konkreten Advisories, Zugang, Kryptografie oder
+geänderten Vertrauensgrenzen gezielt einbezogen. Die vollständigen LED- und
+UI/UX-Aufträge bleiben erhalten; daraus entsteht kein neuer Scheduler.
+
+Der [Pilot](quality/audits/2026-10-24-pilot/README.md) bewahrt die ursprünglichen
+Fehlerbelege. Die [Softwarekorrekturen mit Prüfbericht](quality/runtime-fixes-2026-10-24.md)
+in PR #95 beheben A1-01 durch feste Wert-FIFOs und Statusmailbox unter derselben
+Authority-Sperre ohne RTOS-Aufrufe sowie A2-01 durch geprüfte I2C-Operationen,
+explizit gültige Eingaben und bestätigte Spaltenfreigabe vor erneuter Auswahl.
+Die bestehenden CI-Prüfungen werden dafür erweitert:
+
+- `host-configured-control` prüft zusätzlich volle/leere und umlaufende FIFOs,
+  kopierte Statuswerte sowie sämtliche modellierten RTOS-Aufrufe unter Sperre;
+  Nullwartezeit allein genügt nicht als Kontextnachweis.
+- `python test/test_configured_control/run_channel_checks.py` prüft den echten
+  Kanal mit Host-Mutex/Threads, erzwungenem Berechtigungsentzug und parallelen
+  FIFO-/Statuszugriffen. Der separate CI-Schritt erhält ein eigenes Befehlslog.
+- `host-mcp` führt elf Fälle mit tatsächlichen Quellen von Adafruit MCP23017
+  2.3.2 und BusIO 1.17.4 über ein Wire-/Registermodell aus: NACK, Null-/Teilantwort,
+  Teilbatchverwerfung, fehlgeschlagene Auswahl/Freigabe und frische Recovery
+  bis zur Spiellogik. Die bisherigen Baugruppen-MCP-Tests bleiben ein eigener
+  Adapterpfad. Explizit ungültige Wake-/Kristallwerte werden zusätzlich in den
+  GameApplication-Fällen von `host-regression` geprüft.
+- `host-regression` enthält 15 PN532-Parserfälle mit unabhängigen festen
+  Frames, Verkürzungen, ungültigen Feldern und leerem Ergebnis bei Ablehnung.
+- `python -m unittest discover -s scripts/tests -p test_patch_pn532.py -v`
+  prüft zehn Fälle des Patchschutzes mit temporären synthetischen Quellen.
+  Reale Upstream-/Patchhashes werden damit nicht zertifiziert.
+
+Ausgeführte Ergebnisse und Quellenstand stehen im datierten Prüfbericht;
+diese Anleitung nimmt keine späteren lokalen oder CI-Buildresultate vorweg.
+Host-Mutex/Threads belegen keine ESP32-SMP-, ISR- oder Timing-Eigenschaften.
+Das Wire-Modell belegt keine elektrischen Pegel, Chipidentität oder realen
+Bus-/Kartenbetrieb. Betroffene SDK-/ABI-Builds und erforderliche Gerätemessungen
+sind getrennt nachzuweisen. Die IDF-4.4-Supportentscheidung sowie bestehende
+Hardware- und End-to-End-Timeoutgrenzen bleiben offen.
+
 ## Reproduzierbare Eingänge
 
 Der [Quality-Workflow](../.github/workflows/quality.yml) führt drei unabhängige
@@ -34,7 +82,7 @@ wiederhergestellt. Der erste Lauf braucht Netzwerk.
 
 | Eingang | Festlegung und Herkunft |
 | --- | --- |
-| Python / PlatformIO | CI: Python 3.11, PlatformIO Core 6.2.0; Plattformen und Bibliotheken unverändert in [platformio.ini](../platformio.ini) gepinnt |
+| Python / PlatformIO | B0-CI: Python 3.11; Kamera-CI und vollständiger lokaler Python-Testlauf: Python 3.12 (NumPy-Pin benötigt mindestens 3.12). PlatformIO Core 6.2.0; Plattformen und Bibliotheken unverändert in [platformio.ini](../platformio.ini) gepinnt |
 | C++-Formatprüfung | clang-format 19.1.7, bestehende Formatbaseline |
 | Mbed TLS | offizielles 2.28.4-Quellarchiv, URL und SHA-256 im [bestehenden Kryptografievertrag](companion/peer-proof-v1.md#reproduzierbare-belege); SHA-256 `504bd29af6e7f9f3de1f0f7b7e16c73987a4194338681acd72b82383a49d55d5` |
 | ESP32-ABI | espressif32 6.6.0; unveränderte SHA-256-Pins für `libbt.a` und `libmbedcrypto.a` in [pin_gatt_source_sdk.py](../scripts/pin_gatt_source_sdk.py) |
@@ -62,12 +110,21 @@ Die Alternative wird nicht als zweiter Workflow oder zweite Prüfanleitung gepfl
 
 ## Lokal ausführen
 
+Das [D0-Vertragsmodell](veranstaltung/d0-vertrag-v1.md) ist hardwarefrei und
+benötigt nur die Python-Standardbibliothek: `python scripts/check_d0_contract.py`.
+Es prüft die versionierten semantischen Gegenbeispiele, keine Signaturen,
+CBOR-Bytes, Flashdurabilität oder installierte Produktfunktionen.
+
 Aus einem sauberen Checkout unter Windows mit Python und PlatformIO 6.2.0.
+Für den vollständigen Python-Testlauf unten Python 3.12 und die gepinnten
+Kamera-Abhängigkeiten verwenden, wie im Kamera-Job der Baugruppen-CI.
+Eine virtuelle Python-Umgebung kann diese Testabhängigkeiten isolieren.
 Die folgenden Prüfungen laufen ohne angeschlossene Hardware. Alle nativen
 Befehle müssen mit Exitcode 0 enden; bei Fehlern nicht einfach den nächsten
 Befehl als erfolgreichen Gesamtnachweis werten.
 
 ```powershell
+python -m pip install -r scripts/requirements-led-camera.txt
 python -m unittest discover -s scripts/tests -v
 python scripts/prepare_peer_mbedtls.py --directory .pio/peer-mbedtls
 $env:LARP_PEER_MBEDTLS_DIR = (Resolve-Path .pio/peer-mbedtls/source).Path
@@ -76,7 +133,9 @@ $env:LARP_PEER_MBEDTLS_ARCHIVE = (Resolve-Path .pio/peer-mbedtls/mbedtls-2.28.4.
 python scripts/check_architecture.py --self-test
 python scripts/check_architecture.py
 python -m platformio test -e host-regression -v
+python -m platformio test -e host-mcp -v
 python -m platformio test -e host-configured-control -v
+python test/test_configured_control/run_channel_checks.py
 python -m platformio test -e host-peer-proof -v
 python -m platformio run -e profile-tools
 python -m platformio run -e az-delivery-devkit-v4 -e esp32-runtime-probe -e esp32-profile-runtime-probe -e esp32-gatts-abi-probe -j 2
@@ -89,13 +148,22 @@ python scripts/check_headers.py
 python scripts/check_format.py
 ```
 
+Der [Kanalprüfer](../test/test_configured_control/run_channel_checks.py) benötigt
+einen G++ mit C++11-Threadunterstützung. Er nutzt `g++` aus `PATH` oder die von
+PlatformIO installierte MinGW-Toolchain; mit `--compiler` lässt sich der Pfad
+angeben. Kompilierung und Ausführung erfolgen in einem temporären Ordner.
+[Legacy-MCP-Prüfung und Grenzen](../test/test_mcp_adapter/README.md) beschreiben
+die echten Bibliotheksquellen, das Transportmodell und die historische Rotprobe.
+
 Für Android JDK 17/21 und SDK 35 wie in der
 [Android-Anleitung](../companion/android/README.md#bauen-und-installieren)
 über `JAVA_HOME` und `ANDROID_HOME` bereitstellen. Aus `companion/android/`:
 
 ```powershell
-./gradlew.bat :core:protocol:test :app:testDebugUnitTest :app:assembleDebug :app:assembleRelease :app:lintDebug --no-daemon --console=plain --stacktrace --continue
+./gradlew.bat :core:protocol:test :app:testDebugUnitTest :app:assembleDebug :app:assembleRelease :app:lintDebug :app:lintRelease :gamemaster:testDebugUnitTest :gamemaster:assembleDebug :gamemaster:assembleRelease :gamemaster:lintDebug :gamemaster:lintRelease --no-daemon --console=plain --stacktrace --continue
 ```
+
+Danach aus dem Repository-Stamm `python -m unittest discover -s scripts/tests -p test_android_apps.py -v` und `python scripts/check_android_apps.py` ausführen. [Apptrennung und Datenerhalt](companion/android-app-trennung.md) beschreiben die Paket-/Manifestprüfung. [Installation und Dev-Datenerhalt](companion/android-app-geraetepruefung-2026-10-18.md) sowie der [lesende Stationspilot](companion/spielleiter-stationspilot.md) sind begrenzt am Gerät geprüft; Mehrstationsbetrieb und Licht-/Spielaktionen bleiben offen.
 
 `--offline` funktioniert nur bei vollständigen lokalen Downloads. CI verwendet
 den Projektwrapper mit Netzwerk; weder ein globales Gradle noch lokale
@@ -115,11 +183,14 @@ bereits bestandenen Lauf.
 | Bereich | Erforderlicher Beleg |
 | --- | --- |
 | CI-Helfer | 20 Offlinefälle: 12 für Archivprüfung und Erhalt vorhandener Eingaben, 8 für echte Kindprozesse, Windows-Batchargumente, Exitcodes und Belegschutz; Windows-Batchfall nur unter Windows |
-| Hostregression / konfigurierte Steuerung | separate bestandene Läufe und JUnit-Dateien für `host-regression` und `host-configured-control` |
+| PN532-Patchschutz | zehn Offlinefälle mit synthetischen Quellen; eigener CI-Schritt und Log, keine Aussage über Geräteverhalten |
+| Hostregression / konfigurierte Steuerung | separate bestandene Läufe und JUnit-Dateien für `host-regression` und `host-configured-control`; letzterer umfasst den RTOS-Kontextguard und FIFO-/Mailboxgegenfälle |
+| Kanal: Kontext und Hostthreads | eigener bestandener Aufruf von `run_channel_checks.py` mit Compiler-/Exitcodes, Kanalquellenhashes und Threadergebnis im Befehlslog; kein zusätzlicher JUnit-Bericht und kein ESP32-SMP-/Timingnachweis |
+| Legacy-MCP / Adafruit | `host-mcp`: elf Fälle gegen MCP23017 2.3.2 und BusIO 1.17.4 mit eigenem JUnit-Bericht; Wire-/Registermodell und Consumerwirkung, keine elektrische Geräteabnahme |
 | Echte Kryptografie | `host-peer-proof` mit erfolgreichem Quellaudit, echten Mbed-TLS-Fällen und eigenem JUnit-Bericht |
 | Herkunftsprüfungen | beide SDK-Binärpins im ABI-Build; acht native und zwei SDK-Kryptografie-Negativfälle aus `check_peer_crypto_sources.py` |
 | Firmware | Produkt, beide Runtime-Proben und GATTS-ABI erfolgreich; Produkt-Flash/RAM aus dem Buildlog |
-| Android | Protokoll-/App-JUnit-Berichte, erfolgreicher Debug-Build, APK-SHA-256 im Log und Debug-Lint mit Fehler-/Warnungszahl |
+| Android | JUnit-Berichte für Protokollkern, Dev und GM; Debug-/Release-Builds beider Apps, vier APK-SHA-256 und Debug-/Release-Lint mit Fehler-/Warnungszahl; Paket-/Manifestprüfung mit `check_android_apps.py` |
 | Bestehende Qualitätsprüfungen | Architektur samt Fixtures, Profilwerkzeug, unabhängige C++11-Header und Formatbaseline erfolgreich |
 
 Die drei Artefakte `quality-hardware-independent-<run>-<attempt>`,
@@ -128,7 +199,8 @@ enthalten jeweils `provenance.json`, Aufruf und Exitcode je ausgeführtem
 Prüfschritt, vollständige kombinierte Standard-/Fehlerausgabe sowie
 `summary.md`. Die Provenienz nennt auch Runner-Image, Python und Lauf-URL.
 Werkzeugversionen, Quellaudit, Ressourcenwerte und APK-Prüfsumme stehen in den
-jeweiligen Befehlslogs. Die drei Host-JUnit-Dateien liegen im Host-Artefakt;
+jeweiligen Befehlslogs. Die vier Host-JUnit-Dateien (`host-regression`, `host-mcp`,
+`host-configured-control`, `host-peer-proof`) liegen im Host-Artefakt;
 `android-reports-<run>-<attempt>` bewahrt zusätzlich Android-JUnit, HTML-Testberichte
 und Lintberichte.
 

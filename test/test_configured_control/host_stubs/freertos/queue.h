@@ -1,6 +1,6 @@
 #pragma once
-#include "FreeRTOS.h"
 #include <cstring>
+#include <freertos/FreeRTOS.h>
 // Deterministic single-thread value-copy model. No SMP/timing evidence.
 struct StaticQueue_t {
     std::uint8_t *bytes = nullptr;
@@ -9,6 +9,7 @@ struct StaticQueue_t {
 using QueueHandle_t = StaticQueue_t *;
 inline QueueHandle_t xQueueCreateStatic(std::size_t length, std::size_t width, std::uint8_t *bytes,
                                         StaticQueue_t *control) {
+    host_rtos::noteApiCall();
     control->bytes = bytes;
     control->length = length;
     control->width = width;
@@ -16,6 +17,7 @@ inline QueueHandle_t xQueueCreateStatic(std::size_t length, std::size_t width, s
     return control;
 }
 inline int xQueueSendToBack(QueueHandle_t queue, const void *value, unsigned wait) {
+    host_rtos::noteApiCall();
     host_rtos::nonzeroWait = host_rtos::nonzeroWait || wait != 0;
     if (queue->count == queue->length)
         return pdFALSE;
@@ -25,6 +27,7 @@ inline int xQueueSendToBack(QueueHandle_t queue, const void *value, unsigned wai
     return pdTRUE;
 }
 inline int xQueueReceive(QueueHandle_t queue, void *value, unsigned wait) {
+    host_rtos::noteApiCall();
     host_rtos::nonzeroWait = host_rtos::nonzeroWait || wait != 0;
     if (!queue->count)
         return pdFALSE;
@@ -34,6 +37,7 @@ inline int xQueueReceive(QueueHandle_t queue, void *value, unsigned wait) {
     return pdTRUE;
 }
 inline int xQueuePeek(QueueHandle_t queue, void *value, unsigned wait) {
+    host_rtos::noteApiCall();
     host_rtos::nonzeroWait = host_rtos::nonzeroWait || wait != 0;
     if (!queue->count)
         return pdFALSE;
@@ -41,6 +45,7 @@ inline int xQueuePeek(QueueHandle_t queue, void *value, unsigned wait) {
     return pdTRUE;
 }
 inline int xQueueOverwrite(QueueHandle_t queue, const void *value) {
+    host_rtos::noteApiCall();
     if (queue->length != 1)
         return pdFALSE;
     std::memcpy(queue->bytes, value, queue->width);
