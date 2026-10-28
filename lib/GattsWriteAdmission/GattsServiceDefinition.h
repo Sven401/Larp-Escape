@@ -5,7 +5,7 @@ namespace larp {
 namespace companion {
 struct GattsServiceDefinition {
     static const std::uint16_t Application = 0x4c45, Handles = 5, ChallengeHandles = 7,
-                               IssueHandles = 9, AuthHandles = 13;
+                               IssueHandles = 9, AuthHandles = 13, AuthOutputHandles = 15;
     static const std::uint32_t SetupDeadlineMilliseconds = 30000;
     static const std::uint32_t EndpointDeadlineMilliseconds = 5000;
     // Canonical UUIDs are stored in BLE/ESP's little-endian 128-bit order.
@@ -41,6 +41,11 @@ struct GattsServiceDefinition {
         v[0] = 8;
         return v;
     }
+    static std::array<std::uint8_t, 16> output() noexcept {
+        auto v = service();
+        v[0] = 9;
+        return v;
+    }
 };
 struct GattsSourceRegistration {
     std::uint32_t token = 0;
@@ -53,12 +58,12 @@ struct GattsEndpointSetup {
     GattsSourceRegistration original;
     std::uint32_t receivedAt = 0;
     std::uint16_t service = 0, command = 0, profile = 0, challenge = 0, issue = 0, proof = 0,
-                  result = 0;
+                  result = 0, output = 0;
     bool operator==(const GattsEndpointSetup &other) const noexcept {
         return original == other.original && receivedAt == other.receivedAt &&
                service == other.service && command == other.command && profile == other.profile &&
                challenge == other.challenge && issue == other.issue && proof == other.proof &&
-               result == other.result;
+               result == other.result && output == other.output;
     }
 };
 enum class GattsEndpointSetupState : std::uint8_t { Unavailable, Pending, Installed, Rejected };

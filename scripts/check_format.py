@@ -58,6 +58,7 @@ ADAPTER_FILES = (
     "lib/GattsWriteAdmission/Esp32GattsSource.h",
     "lib/GattsWriteAdmission/Esp32GattsSource.cpp",
     "lib/GattsWriteAdmission/Esp32GattsPeerAuth.cpp",
+    "lib/GattsWriteAdmission/Esp32GattsOutput.cpp",
     "lib/FreeRtosPeerAuthRuntime/FreeRtosPeerAuthRuntime.h",
     "lib/FreeRtosPeerAuthRuntime/FreeRtosPeerAuthRuntime.cpp",
     "lib/GattsWriteAdmission/GattsServiceDefinition.h",

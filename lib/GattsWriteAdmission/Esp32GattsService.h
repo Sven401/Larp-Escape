@@ -15,7 +15,8 @@ enum class GattsServicePhase : std::uint8_t {
     Challenge,
     Issue,
     Proof,
-    Result
+    Result,
+    Output
 };
 enum class GattsServiceCopy : std::uint8_t { Copied, Ignored, Unavailable, Overflow };
 struct GattsServiceSnapshot {

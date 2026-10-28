@@ -340,7 +340,8 @@ Esp32GattsSource::postEndpointSetup(const GattsEndpointSetup &caller,
     setupPosting_ = true;
     GattsSourceRegistration current;
     const auto end = static_cast<std::uint32_t>(value.service) +
-                     (value.proof       ? GattsServiceDefinition::AuthHandles
+                     (value.output      ? GattsServiceDefinition::AuthOutputHandles
+                      : value.proof     ? GattsServiceDefinition::AuthHandles
                       : value.issue     ? GattsServiceDefinition::IssueHandles
                       : value.challenge ? GattsServiceDefinition::ChallengeHandles
                                         : GattsServiceDefinition::Handles) -
@@ -358,6 +359,9 @@ Esp32GattsSource::postEndpointSetup(const GattsEndpointSetup &caller,
         ((value.proof || value.result || challenge.auth) &&
          (!value.issue || !value.proof || !value.result || !challenge.auth ||
           value.proof <= value.issue || value.result <= value.proof || value.result > end)) ||
+        ((value.output || challenge.output) &&
+         (!value.result || !value.output || !challenge.output || !challenge.auth ||
+          value.output <= value.result || value.output > end)) ||
         end > UINT16_MAX ||
         clock_.nowMilliseconds() - value.receivedAt >=
             GattsServiceDefinition::EndpointDeadlineMilliseconds) {
@@ -437,6 +441,8 @@ void Esp32GattsSource::installEndpoints(void *context) noexcept {
     if (installed && value.proof)
         installed = challenge.auth &&
                     source.configurePeerAuthNow(value.proof, value.result, *challenge.auth);
+    if (installed && value.output)
+        installed = source.configureOutputNow(value.output);
     portENTER_CRITICAL(&source.mutex_);
     source.setup_.state = installed ? 3 : 4;
     portEXIT_CRITICAL(&source.mutex_);
@@ -902,6 +908,10 @@ bool Esp32GattsSource::requestNow(std::uint16_t packed, std::uint32_t transactio
         if (!borrowed)
             return challengeAttribute_ != 0;
         const auto read = borrowed->read;
+        if (outputAttribute_ && read.handle == outputAttribute_) {
+            readOutputNow(packed, transaction, read);
+            return true;
+        }
         const bool resultRead = resultAttribute_ && read.handle == resultAttribute_;
         if ((!challengeAttribute_ || read.handle != challengeAttribute_) && !resultRead)
             return false;

@@ -43,7 +43,7 @@ struct ChallengeIssueFixture : SecurityFixture {
     } authRecording{auth};
     std::uint32_t transaction = 0;
     explicit ChallengeIssueFixture(IPeerProofCrypto *actual = nullptr, std::uint32_t reg = 0,
-                                   bool full = false, bool gm = true)
+                                   bool full = false, bool gm = true, bool output = false)
         : SecurityFixture(false, gm, actual, reg),
           proof(grant, actual ? *actual : crypto, nonce, clock) {
         worker();
@@ -58,6 +58,8 @@ struct ChallengeIssueFixture : SecurityFixture {
             actor();
             TEST_ASSERT_TRUE(source.configurePeerAuthNow(0x46, 0x47, authRecording));
         }
+        if (output)
+            TEST_ASSERT_TRUE(source.configureOutputNow(0x48));
         original.connection = open();
         actor();
         pair();

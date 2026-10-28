@@ -5,6 +5,7 @@
 #include "Companion/PeerProof.h"
 #include "Companion/PeerProofGrant.h"
 #include "Companion/PeerRegistryActor.h"
+#include "Companion/ReplyFrameSender.h"
 #include "FreeRtosGattsConnection.h"
 #include "GattsServiceDefinition.h"
 #include "SdkGattSourceAbi.h"
@@ -19,6 +20,7 @@ namespace companion {
 // replace the BTA write path; other callbacks and other applications pass through.
 class Esp32GattsSource : public IGattsResponseContext,
                          public IGattsResponseSubmitter,
+                         public IReplyFrameBearer,
                          private IIdentityAccessObserver {
   public:
     Esp32GattsSource(IdentityAccess &access, const IProfileImportClock &clock,
@@ -83,6 +85,10 @@ class Esp32GattsSource : public IGattsResponseContext,
     bool challengeReadProducerNow(const PeerChallengeReadRequest &) const noexcept;
     bool postChallengeReadReply(const PeerChallengeReadReply &) noexcept;
     bool configurePeerAuthNow(std::uint16_t, std::uint16_t, IPeerAuthIngress &) noexcept;
+    // Optional whole-value read output. Configure on original actor before ANY
+    // connection. One separate transport worker owns copyReplyFrame; no SDK call there.
+    bool configureOutputNow(std::uint16_t) noexcept;
+    ReplyFrameCopy copyReplyFrame(const RoutedReplyFrame &) noexcept override;
     bool peerProofWriteCurrent(const PeerProofWriteRequest &) const noexcept;
     bool peerProofWriteProducerNow(const PeerProofWriteRequest &) const noexcept;
     bool peerAuthReadCurrent(const PeerChallengeReadRequest &) const noexcept;
@@ -95,6 +101,19 @@ class Esp32GattsSource : public IGattsResponseContext,
     bool submitOriginal(const RoutedWriteResponse &) noexcept override;
 
   private:
+    struct OutputValue {
+        RoutedReplyFrame frame;
+        PeerProofBinding original;
+        TrustedAuthority authority;
+        std::uint32_t lifecycle = 0, copiedAt = 0, token = 0;
+    } output_;
+    std::uint16_t outputAttribute_ = 0;
+    std::uint32_t outputCounter_ = 0;
+    TaskHandle_t outputWorker_ = nullptr;
+    bool outputPending_ = false;
+    bool outputReading_ = false; // Original actor only, never a cross-task flag.
+    bool outputScopeCurrent(const OutputValue &) const noexcept;
+    void readOutputNow(std::uint16_t, std::uint32_t, const sdk446::Read &) noexcept;
     struct Pending {
         Esp32GattsSource *owner = nullptr;
         RoutedWriteResponse response;
