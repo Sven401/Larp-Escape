@@ -7,8 +7,12 @@
 #include "TemporaryProfileFile.h"
 #include <cerrno>
 #include <cstdio>
-#include <io.h>
 #include <memory>
+#ifdef _WIN32
+#include <io.h>
+#else
+#include <unistd.h>
+#endif
 namespace {
 using namespace larp::devices;
 using namespace larp::configuration;
@@ -267,7 +271,7 @@ class FileWriter : public IProfileWriter {
     std::FILE *file_;
 };
 // Native file backend. Existing directory supplied by caller; fixed filenames.
-// _commit requests OS synchronization; physical power-loss durability is NOT a
+// OS synchronization is requested; physical power-loss durability is NOT a
 // host observation. This backend is not an ESP32 filesystem implementation.
 class NativeJournalStore : public IJournalStore {
   public:
@@ -323,7 +327,11 @@ class NativeJournalStore : public IJournalStore {
         if (!file_ || !writing_)
             return JournalCommit::Uncertain;
         const bool flushed = std::fflush(file_) == 0;
+#ifdef _WIN32
         const bool synced = flushed && _commit(_fileno(file_)) == 0;
+#else
+        const bool synced = flushed && fsync(fileno(file_)) == 0;
+#endif
         const bool closed = std::fclose(file_) == 0;
         file_ = nullptr;
         writing_ = false;
