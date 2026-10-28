@@ -254,3 +254,22 @@
   Werkzeugstandard. Simulationskontrollen bleiben außerhalb der Produktoberfläche.
 - **Rückweg:** Prototypordner separat entfernen/deaktivieren; Figma-Datei behalten
   oder gesondert archivieren. Android und Firmware bleiben unverändert.
+
+
+## Native IDF-Quellenprüfung · 28.10.2026
+
+**Projektwerkzeug, angewandt und bewertet:** `scripts/check_idf_sources.py`
+wurde beim nativen Host-/SDK-Aufbau wiederholt ausgeführt; es erkannte einen
+unvollständigen lokalen SDK-Checkout. Nach Wiederherstellung und korrekter
+Git-Pfadbehandlung akzeptiert es den exakten6.1-Pin. Sieben Tests mit echten
+isolierten Git-Repositories prüfen sauberen Stand sowie falschen HEAD,
+fehlendes/verschobenes Submodul, tracked Haupt-/Untermoduländerungen und
+falschen Gitroot. [Auftrag, Ergebnis und Grenzen](docs/migration/esp-idf-qualification-2026-10-28.md).
+
+Nutzen: Versionsstring allein genügte nicht; qualifizierte Quellen müssen beim
+Konfigurieren nachvollziehbar sein. Nur native Qualifikationsziele binden den
+Wächter ein, keine globale Regel, kein Hook und keine Automation. Untracked
+SDK-Dateien erfasst er nicht. Rückweg: native Qualifikation samt neuer CI und
+Guard-Einbindung gemeinsam zurücknehmen; bestehende Legacypins bleiben erhalten.
+Zukünftige SDK-Pinänderungen benötigen erneute Qualifikation, kein Guardlöschen
+zum Erreichen eines grünen Builds. Quelle: Migrationsauftrag dieser Sitzung.

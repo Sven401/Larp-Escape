@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <cstring>
+#include <functional>
 #include <limits>
 #include <memory>
 #include <string>
@@ -45,6 +46,7 @@
 #include "../../lib/FreeRtosPeerRegistryRuntime/FreeRtosPeerRegistryRuntime.cpp"
 #include "../../lib/FreeRtosProfileFrameQueue/FreeRtosProfileFrameQueue.cpp"
 #include "../../lib/FreeRtosProfileResponseQueue/FreeRtosProfileResponseQueue.cpp"
+#include "../../lib/GattsWriteAdmission/Esp32GattsOutput.cpp"
 #include "../../lib/GattsWriteAdmission/Esp32GattsPeerAuth.cpp"
 #include "../../lib/GattsWriteAdmission/Esp32GattsService.cpp"
 #include "../../lib/GattsWriteAdmission/Esp32GattsSource.cpp"
@@ -52,7 +54,14 @@
 #include "../../lib/GattsWriteAdmission/FreeRtosGattsResponseQueue.cpp"
 #include "../../lib/GattsWriteAdmission/GattsWriteAdmission.cpp"
 #include "../../lib/GattsWriteAdmission/SdkGattsService.cpp"
-#if defined(LARP_REAL_PEER_CRYPTO)
+#if defined(LARP_PSA_PEER_CRYPTO)
+#include "PsaPeerProofCrypto.h"
+namespace larp {
+namespace companion {
+using Esp32PeerProofCrypto = PsaPeerProofCrypto;
+}
+} // namespace larp
+#elif defined(LARP_REAL_PEER_CRYPTO)
 #include "../../lib/Esp32PeerProofCrypto/Esp32PeerProofCrypto.cpp"
 #endif
 #include "../../src/ProfileTool/TemporaryProfileFile.cpp"
@@ -993,6 +1002,8 @@ void test_profile_capability_fixture_matches_firmware_encoder() {
 #include "PeerProofGrantCases.h"
 #include "PeerRegistryActorCases.h"
 #include "PeerRegistryCases.h"
+// Output cases require the complete service/source and authenticated-peer fixtures above.
+#include "GattsOutputCases.h"
 } // namespace
 void setUp() {
     host_rtos::depth = 0;
@@ -1553,8 +1564,21 @@ int main() {
     RUN_TEST(test_auth_forged_positive_job_ack_principal_and_scope_never_post);
     RUN_TEST(test_auth_service_thirteen_handles_and_complete_source_ack_before_start);
     RUN_TEST(test_auth_setup_wrong_handles_incomplete_bundle_and_late_configuration_fail_closed);
+    RUN_TEST(test_output_original_grant_whole_owned_value_busy_and_empty_poll);
+    RUN_TEST(test_output_no_automatic_role_from_authentication_or_unconfigured_endpoint);
+    RUN_TEST(test_output_value_bounds_wrong_worker_route_and_blob_do_not_consume_slot);
+    RUN_TEST(test_output_absolute_expiry_busy_no_refresh_wrap_and_future);
+    RUN_TEST(test_output_rechecks_security_revoke_and_recycled_handle_before_actual_send);
+    RUN_TEST(test_output_empty_poll_cannot_discard_concurrently_copied_value_and_caller_is_frozen);
+    RUN_TEST(test_output_failed_sdk_submission_never_causes_automatic_replay);
+    RUN_TEST(test_output_last_security_ports_cannot_extend_absolute_reply_deadline);
+    RUN_TEST(test_output_recursive_read_cannot_send_the_same_slot_twice);
+    RUN_TEST(test_output_service_optional_fifteen_handles_install_and_read_permission);
+    RUN_TEST(test_output_configuration_rejects_aliases_even_with_nonordered_auth_handles);
 #if defined(LARP_REAL_PEER_CRYPTO)
     RUN_TEST(test_auth_actual_crypto_sdk_issue_reads_proof_writes_ack_and_result_blobs);
+    RUN_TEST(test_output_actual_p256_gm_response_and_revoke);
+    RUN_TEST(test_output_actual_p256_authenticated_peer_gets_no_implicit_gm);
 #endif
     return UNITY_END();
 }

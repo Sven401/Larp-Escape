@@ -41,9 +41,10 @@ struct PeerChallengeReadSetup {
     IPeerChallengeReadIngress *ingress = nullptr;
     IPeerChallengeIssueIngress *issue = nullptr;
     IPeerAuthIngress *auth = nullptr;
+    bool output = false;
     bool operator==(const PeerChallengeReadSetup &other) const noexcept {
         return boot == other.boot && context == other.context && ingress == other.ingress &&
-               issue == other.issue && auth == other.auth;
+               issue == other.issue && auth == other.auth && output == other.output;
     }
 };
 } // namespace companion

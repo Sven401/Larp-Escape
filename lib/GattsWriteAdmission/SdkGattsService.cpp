@@ -11,10 +11,11 @@ esp_bt_uuid_t sdkUuid(const std::array<std::uint8_t, 16> &value) {
     return uuid;
 }
 bool add(std::uint16_t service, const std::array<std::uint8_t, 16> &value, bool read = false,
-         bool issue = false, bool proof = false, bool result = false) {
+         bool issue = false, bool proof = false, bool result = false, bool output = false) {
     auto uuid = sdkUuid(value);
     esp_attr_value_t initial = {};
-    initial.attr_max_len = issue    ? PeerChallengeIssueLimits::Bytes
+    initial.attr_max_len = output   ? 20
+                           : issue  ? PeerChallengeIssueLimits::Bytes
                            : result ? PeerAuthLimits::Bytes
                                     : 128;
     esp_attr_control_t control = {};
@@ -28,16 +29,17 @@ bool add(std::uint16_t service, const std::array<std::uint8_t, 16> &value, bool 
                                   &initial, &control) == ESP_OK;
 }
 } // namespace
-bool SdkGattsServiceDriver::create(std::uint8_t interface, bool challenge, bool issue,
-                                   bool auth) noexcept {
-    if ((issue && !challenge) || (auth && !issue))
+bool SdkGattsServiceDriver::create(std::uint8_t interface, bool challenge, bool issue, bool auth,
+                                   bool output) noexcept {
+    if ((issue && !challenge) || (auth && !issue) || (output && !auth))
         return false;
     esp_gatt_srvc_id_t service = {};
     service.id.uuid = sdkUuid(GattsServiceDefinition::service());
     service.id.inst_id = 0;
     service.is_primary = true;
     return esp_ble_gatts_create_service(interface, &service,
-                                        auth        ? GattsServiceDefinition::AuthHandles
+                                        output      ? GattsServiceDefinition::AuthOutputHandles
+                                        : auth      ? GattsServiceDefinition::AuthHandles
                                         : issue     ? GattsServiceDefinition::IssueHandles
                                         : challenge ? GattsServiceDefinition::ChallengeHandles
                                                     : GattsServiceDefinition::Handles) == ESP_OK;
@@ -59,6 +61,9 @@ bool SdkGattsServiceDriver::addProof(std::uint16_t service) noexcept {
 }
 bool SdkGattsServiceDriver::addResult(std::uint16_t service) noexcept {
     return add(service, GattsServiceDefinition::result(), true, false, false, true);
+}
+bool SdkGattsServiceDriver::addOutput(std::uint16_t service) noexcept {
+    return add(service, GattsServiceDefinition::output(), true, false, false, false, true);
 }
 bool SdkGattsServiceDriver::start(std::uint16_t service) noexcept {
     return esp_ble_gatts_start_service(service) == ESP_OK;

@@ -1,5 +1,9 @@
 # Einmalige GATTS-Diensteinrichtung mit bestätigten Originalhandles
 
+**Optionale Erweiterung vom 28.10.2026:** Der [originalgebundene Lese-Rückkanal](gatts-output-v1.md)
+ergänzt die vollständige Peer-Variante um ein Outputattribut und 15 Handles.
+Die nachfolgenden Angaben bewahren den ursprünglichen 5-Handle-Schnitt.
+
 Stand: 7. Oktober 2026, Firmwarebasis `4b2c228`. Kleiner Firmware-/Toolpfad nach AGENTS.md; Hostmodell und tatsächlicher ESP32-Compile-/Linkanschluss. Kein ausgeführter Bluetoothstart oder Gerätebeleg.
 
 ## Verbindlicher schmaler Dienstvertrag

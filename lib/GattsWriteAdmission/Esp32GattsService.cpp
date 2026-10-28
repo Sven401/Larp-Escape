@@ -2,7 +2,8 @@
 namespace larp {
 namespace companion {
 std::uint16_t Esp32GattsService::handles() const noexcept {
-    return challenge_.auth      ? GattsServiceDefinition::AuthHandles
+    return challenge_.output    ? GattsServiceDefinition::AuthOutputHandles
+           : challenge_.auth    ? GattsServiceDefinition::AuthHandles
            : challenge_.issue   ? GattsServiceDefinition::IssueHandles
            : challenge_.ingress ? GattsServiceDefinition::ChallengeHandles
                                 : GattsServiceDefinition::Handles;
@@ -23,8 +24,8 @@ bool Esp32GattsService::begin() noexcept {
     worker_ = task;
     startedAt_ = clock_.nowMilliseconds();
     queue_ = xQueueCreateStatic(Depth, sizeof(Copied), storage_, &control_);
-    if ((challenge_.auth && !challenge_.issue) || !queue_ ||
-        (challenge_.ingress && (!challenge_.context || !challenge_.boot.valid())) ||
+    if ((challenge_.auth && !challenge_.issue) || (challenge_.output && !challenge_.auth) ||
+        !queue_ || (challenge_.ingress && (!challenge_.context || !challenge_.boot.valid())) ||
         (!challenge_.ingress &&
          (challenge_.context || challenge_.boot.valid() || challenge_.issue))) {
         phase(GattsServicePhase::Failed);
@@ -123,7 +124,8 @@ void Esp32GattsService::service() noexcept {
             phase(GattsServicePhase::Creating);
             accepted = posted = true;
             if (!driver_.create(value.original.interface, challenge_.ingress != nullptr,
-                                challenge_.issue != nullptr, challenge_.auth != nullptr))
+                                challenge_.issue != nullptr, challenge_.auth != nullptr,
+                                challenge_.output))
                 phase(GattsServicePhase::Failed);
         } else if (event.success && phase_ == GattsServicePhase::Creating &&
                    event.kind == GattsServiceEventKind::Created && event.uuid128 &&
@@ -214,6 +216,24 @@ void Esp32GattsService::service() noexcept {
                    event.service == setup_.service && event.attribute > setup_.proof &&
                    event.attribute <= setup_.service + handles() - 1) {
             setup_.result = event.attribute;
+            accepted = posted = true;
+            if (challenge_.output) {
+                phase(GattsServicePhase::Output);
+                if (!driver_.addOutput(setup_.service))
+                    phase(GattsServicePhase::Failed);
+            } else {
+                setup_.receivedAt = value.receivedAt;
+                phase(GattsServicePhase::Installing);
+                if (source_.postEndpointSetup(setup_, responses_, challenge_) !=
+                    GattsEndpointSetupPost::Posted)
+                    phase(GattsServicePhase::Failed);
+            }
+        } else if (event.success && phase_ == GattsServicePhase::Output &&
+                   event.kind == GattsServiceEventKind::Attribute && event.uuid128 &&
+                   event.uuid == GattsServiceDefinition::output() &&
+                   event.service == setup_.service && event.attribute > setup_.result &&
+                   event.attribute <= setup_.service + handles() - 1) {
+            setup_.output = event.attribute;
             setup_.receivedAt = value.receivedAt;
             accepted = posted = true;
             phase(GattsServicePhase::Installing);
