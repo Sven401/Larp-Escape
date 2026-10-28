@@ -71,6 +71,33 @@ int main(int argc, char **argv) {
                                    "effect ended before its actual output duration");
             }
             check(!running && !stopPending && black(fake.frames.back()),"effect did not finish dark");
+        } else if (name == "resonance" || name == "resonance-transitions" || name == "resonance-colors" || name == "resonance-watchdog") {
+            Serial.send("STOP"); for (unsigned i=0;i<10;++i) loop();
+            Serial.send("RUN 0123456789abcdef "+(name == "resonance-watchdog" ? std::string("resonance") : name));
+            unsigned observed = 0;
+            const unsigned zones[23] = {1,1,1,1,1,1,1,3,3,3,3,3,3,2,2,2,2,2,2,0,0,0,0};
+            for (unsigned i=0;i<60000;++i) {
+                if (i%200==0 && (name != "resonance-watchdog" || i < 8000)) Serial.send("KEEP 0123456789abcdef");
+                loop();
+                if (effectMode && resonanceMode && !fake.busy && testNow-resonanceAt>100) {
+                    const auto current = camera::resonanceStep(resonanceNumber, resonanceTransitions);
+                    if (current.effect != Effect::Resonance) continue;
+                    observed |= 1U << resonanceNumber;
+                    for (unsigned led=0;led<23;++led) {
+                        const auto &pixel = fake.frames.back()[led];
+                        const bool active = current.valid && current.mask<=15 && (current.mask&(1U<<zones[led]));
+                        check((pixel.blue>0)==active,"synthetic Wake lit the wrong region");
+                        if (active) {
+                            check(pixel.blue>=4 && pixel.blue<=24 && pixel.red==pixel.blue/6 && pixel.green==pixel.blue*2/3,"wrong resonance color");
+                            if (current.mask==15 && testNow-resonanceAt>850) check(pixel.blue==24,"merge did not settle");
+                        }
+                    }
+                }
+            }
+            check(!running && !stopPending && black(fake.frames.back()),"resonance lab did not finish dark");
+            if (name == "resonance") check(observed==65535,"not all 16 input masks observed");
+            if (name == "resonance-watchdog") check(Serial.output.find("watchdog")!=std::string::npos,"resonance watchdog missing");
+            if (name == "resonance-transitions") check(observed & (1U<<13),"resonance restart not reached");
         } else if (name == "stop-inflight") {
             // This transfer belongs to the direct calibration path, not engine.
             Serial.send("STOP"); for (unsigned i = 0; i < 10; ++i) loop();
