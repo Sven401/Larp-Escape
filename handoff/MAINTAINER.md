@@ -1,7 +1,5 @@
 # Maintainer-Einstieg
 
-**Aktive Produktintegration, 28.10.2026:** [BLE-Zugang, Rollen und Profile](BLE-ROLLEN-PROFILE-2026-10-28.md): erster Android-Protokollbaustein; Produktanschluss und Geraeteabnahme weiterhin offen.
-
 **Geprüfte Integration und aktiver Fachaudit · 24.10.2026:**
 [PR #97](https://github.com/Sven401/Larp-Escape/pull/97) ist in
 `plan/projektuebergabe-kuratierter-stand` integriert. Remote-Head und geprüfter
@@ -86,6 +84,8 @@ Dieser Übernahmeschritt richtete keinen Scheduler ein; die spätere Aktivierung
 ist oben dokumentiert. Kein Geräteupload und keine Übernahme nach `main`.
 
 ## Start für weitere App- und Firmwarearbeit
+
+**Aktive BLE-/Rollen-/Profilintegration, 28.10.2026:** [Arbeitsstand und Nachweise](BLE-ROLLEN-PROFILE-2026-10-28.md): Android-Transferkern und geschuetzter Firmware-Rueckkanal belegt; kompletter Produktanschluss und Geraeteablauf offen.
 
 **Integration und Bereinigung · 21.10.2026:** #91 ist bei `f174cee` integriert,
 mit neun erfolgreichen PR-Prüfungen und sieben erfolgreichen Prüfungen auf dem
