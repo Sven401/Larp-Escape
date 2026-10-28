@@ -1,5 +1,14 @@
 # Migrationsplan: native ESP-IDF-Basis und Projektaufbau prüfen
 
+## Beauftragte Umsetzung · 28. Oktober 2026
+
+**Aktiver Folgeauftrag:** Der Nutzer beauftragt in derselben Sitzung die Arbeit
+an den Zielen dieses Plans. Bestandsprüfung, native Buildbasis und PSA-Portierung
+sind begonnen. [Bestand, Zielentscheidung, Prüfungen und offene Tore](../docs/migration/esp-idf-qualification-2026-10-28.md)
+sind der aktuelle Umsetzungsstand. Der ursprüngliche reine Dokumentationsumfang
+unten ist historisch; er sperrt diesen Folgeauftrag nicht. Upload und gemeinsame
+Geräteabnahme bleiben separat. Keine abgeschlossene Gesamtmigration behauptet.
+
 ## Verbindliches Ziel und Planungsstand · 28. Oktober 2026
 
 **Entschieden:** Die neueste stabile ESP-IDF-Version ist die vorrangig zu

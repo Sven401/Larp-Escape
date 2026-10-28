@@ -1,0 +1,59 @@
+name: Native ESP-IDF qualification
+
+on:
+  push:
+    paths: ['CMakeLists.txt', 'cmake/**', 'firmware/idf/**', 'include/**', 'src/**', 'lib/**', 'test/**', 'scripts/check_idf_sources.py', 'scripts/tests/test_check_idf_sources.py', '.github/workflows/native-idf.yml']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: native-idf-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  qualification:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    # Official v6.1 multi-architecture image, resolved 2026-10-28.
+    container: espressif/idf@sha256:81893c71bb5e570088901f21def8684c25cd2a9020281bd01b843a7655edb18c
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: Verify SDK and exercise rejection cases
+        run: |
+          . "$IDF_PATH/export.sh"
+          python scripts/check_idf_sources.py "$IDF_PATH"
+          python -m unittest discover -s scripts/tests -p test_check_idf_sources.py -v
+      - name: Host wire-test prerequisite
+        run: |
+          apt-get update
+          apt-get install --yes libssl-dev
+      - name: Native core and real host PSA tests
+        run: |
+          . "$IDF_PATH/export.sh"
+          cmake -S . -B private/host-build -G Ninja -DLARP_PSA_IDF_PATH="$IDF_PATH"
+          cmake --build private/host-build -j 2
+          ctest --test-dir private/host-build --output-on-failure --output-junit host-results.xml
+      - name: ESP32 qualification image (no upload)
+        run: |
+          . "$IDF_PATH/export.sh"
+          idf.py -C firmware/idf -DIDF_TARGET=esp32 build
+      - name: Preserve qualification evidence
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+        with:
+          name: native-idf-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            private/host-build/host-results.xml
+            private/host-build/Testing/Temporary/LastTest.log
+            firmware/idf/build/log/
+            firmware/idf/build/project_description.json
+            firmware/idf/build/config/sdkconfig.h
+          if-no-files-found: warn

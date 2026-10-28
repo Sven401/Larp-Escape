@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <cstring>
+#include <functional>
 #include <limits>
 #include <memory>
 #include <string>
@@ -53,7 +54,14 @@
 #include "../../lib/GattsWriteAdmission/FreeRtosGattsResponseQueue.cpp"
 #include "../../lib/GattsWriteAdmission/GattsWriteAdmission.cpp"
 #include "../../lib/GattsWriteAdmission/SdkGattsService.cpp"
-#if defined(LARP_REAL_PEER_CRYPTO)
+#if defined(LARP_PSA_PEER_CRYPTO)
+#include "PsaPeerProofCrypto.h"
+namespace larp {
+namespace companion {
+using Esp32PeerProofCrypto = PsaPeerProofCrypto;
+}
+} // namespace larp
+#elif defined(LARP_REAL_PEER_CRYPTO)
 #include "../../lib/Esp32PeerProofCrypto/Esp32PeerProofCrypto.cpp"
 #endif
 #include "../../src/ProfileTool/TemporaryProfileFile.cpp"
