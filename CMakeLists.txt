@@ -55,12 +55,40 @@ if(BUILD_TESTING AND LARP_PSA_IDF_PATH)
     set(ENABLE_PROGRAMS OFF CACHE BOOL "" FORCE)
     set(ENABLE_TESTING OFF CACHE BOOL "" FORCE)
     set(GEN_FILES OFF CACHE BOOL "" FORCE)
-    add_subdirectory("${LARP_PSA_IDF_PATH}/components/mbedtls/mbedtls/tf-psa-crypto"
-                     "${CMAKE_BINARY_DIR}/tf-psa-crypto")
+    add_subdirectory("${LARP_PSA_IDF_PATH}/components/mbedtls/mbedtls"
+                     "${CMAKE_BINARY_DIR}/mbedtls")
     # Espressif's sources retain two legacy include paths supplied by its
     # ESP-only port. Host tests forward them to the identical private headers.
     target_include_directories(builtin PRIVATE "${CMAKE_SOURCE_DIR}/test/psa_host_compat")
     target_include_directories(tfpsacrypto PRIVATE "${CMAKE_SOURCE_DIR}/test/psa_host_compat")
+    add_executable(native-empty-ecc test/test_native_tls/test_empty_ecc.cpp)
+    target_link_libraries(native-empty-ecc PRIVATE tfpsacrypto)
+    add_test(NAME native-empty-ecc COMMAND native-empty-ecc)
+    add_library(larp_peer_tls STATIC lib/PinnedPeerTls/PinnedPeerTls.cpp)
+    target_include_directories(larp_peer_tls PUBLIC lib/PinnedPeerTls)
+    target_link_libraries(larp_peer_tls PUBLIC mbedtls mbedx509 tfpsacrypto)
+    target_compile_options(larp_peer_tls PRIVATE -Wall -Wextra -Wpedantic -Werror)
+    add_executable(native-ble-source test/test_native_ble_source/main.cpp
+        lib/NimblePeerSource/NimblePeerSource.cpp)
+    target_include_directories(native-ble-source PRIVATE test/test_native_ble_source/stubs
+        lib/NimblePeerSource)
+    target_compile_definitions(native-ble-source PRIVATE CONFIG_BT_NIMBLE_ENABLED=1
+        CONFIG_BT_NIMBLE_SM_SC_ONLY=1 CONFIG_BT_NIMBLE_SM_LEGACY=0
+        CONFIG_BT_NIMBLE_SM_SC_DEBUG_KEYS=0 CONFIG_BT_NIMBLE_NVS_PERSIST=0)
+    target_compile_options(native-ble-source PRIVATE -Wall -Wextra -Wpedantic -Werror)
+    target_link_libraries(native-ble-source PRIVATE larp_peer_tls)
+    foreach(case registration-failure timer-failure host-return weak-security short-key
+        numeric-comparison copy-and-notify default-mtu reconnect second-link encryption-error
+        queue-full wrong-task invalid-write notify-busy reset worker-revoke
+        advertising-failure security-start-failure open-failure unencrypted unbonded
+        numeric-wrong numeric-reject numeric-timeout lost-poll runtime-timer-failure notify-sdk-busy notify-sdk-fatal)
+        add_test(NAME "native-ble-${case}" COMMAND native-ble-source "${case}")
+    endforeach()
+    add_executable(native-tls-probe test/test_native_tls/server.cpp)
+    target_link_libraries(native-tls-probe PRIVATE larp_peer_tls)
+    add_test(NAME native-tls-peer COMMAND "${Python3_EXECUTABLE}"
+        "${CMAKE_SOURCE_DIR}/test/test_native_tls/run.py" "$<TARGET_FILE:native-tls-probe>")
+    set_tests_properties(native-tls-peer PROPERTIES TIMEOUT 120)
     add_executable(configured-control-psa test/test_configured_control/test_main.cpp
         lib/PsaPeerProofCrypto/PsaPeerProofCrypto.cpp)
     target_include_directories(configured-control-psa PRIVATE

@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Reject a different, incomplete or modified ESP-IDF qualification SDK."""
+"""Reject a different, incomplete or modified ESP-IDF security-qualification SDK."""
 import argparse
 from pathlib import Path
 import subprocess
 
-IDF_COMMIT = "fff9895c82d744c7237be8847347bdd1b07c6643"
+IDF_COMMIT = "9a97f6c54ec638111ce55cd36581b3c192f15207"
 
 
 def check(root):
@@ -13,7 +13,7 @@ def check(root):
     if git("rev-parse", "--show-toplevel").replace("\\", "/").casefold() != root.resolve().as_posix().casefold():
         raise ValueError("IDF_PATH must identify the SDK Git root")
     if git("rev-parse", "HEAD") != IDF_COMMIT:
-        raise ValueError("ESP-IDF commit differs from the qualified v6.1 pin")
+        raise ValueError("ESP-IDF commit differs from the exact security-qualification pin")
     states = git("submodule", "status", "--recursive")
     if not states or any(line and line[0] in "-+U" for line in states.splitlines()):
         raise ValueError("ESP-IDF submodule missing, conflicted or at another commit")
