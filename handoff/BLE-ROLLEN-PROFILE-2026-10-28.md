@@ -14,13 +14,15 @@ Geraetenachweis einschliesslich Fehler und Wiederverbindung sind erforderlich.
 Nutzerantwort zuerst: Geraete spaeter, zunaechst Software fertigstellen.
 Spaetere Nutzerfreigabe derselben Sitzung: Android und ESP verfuegbar;
 Moto G14 per ADB erkannt, GM 0.2/versionCode2 vom 18.10. installiert; ESP an COM3.
-Keine Installation oder Geraetebeobachtung in diesem Zwischenstand.
+Keine Installation oder funktionale Geraeteabnahme in diesem Zwischenstand.
 
 Maintainer und fuehrendes Plattform-/Integrationsmandat: Hauptagent `/root`.
 Unabhaengige Security-/Qualitaetsgegenpruefung des begrenzten Aenderungsumfangs:
 Subagent `/root/security_review`, eigener lesender Durchgang. Keine externe
 Zertifizierung. Varianten: gemeinsamer Android-Protokollkern, Dev und GM;
-Firmware unveraendert. UI und Geraeteadapter noch nicht geaendert.
+Zweiter Baustein: allgemeiner Firmware-Peer-Rueckkanal,
+Host-Konfiguration/Kryptografie und SDK-ABI-Ziel. Baugruppenfirmware,
+Produktstart, UI und Geraeteadapter noch nicht geaendert.
 
 ## Implementierter erster Baustein
 
@@ -63,7 +65,9 @@ Quellenpruefung durch Hauptagent und Gegenpruefer, keine neuen Funkmessungen:
 2. `GattsServiceDefinition`/`SdkGattsServiceDriver` registrieren bisher nur
    Command/Profile/Challenge/Issue/Proof/Result. Es fehlen ein echtes
    Status-/Antwortattribut und produktiver `IReplyFrameBearer`.
-   Nur `ProbeReplyBearer` in `src/ProfileRuntimeProbe/main.cpp` ist vorhanden.
+   Nur `ProbeReplyBearer` in `src/ProfileRuntimeProbe/main.cpp` war vorhanden.
+   **Fortschreibung:** optionaler echter Lesebearer jetzt in `6d7edee` implementiert
+   und geprueft; der Produktstart ist weiterhin nicht angeschlossen.
 3. Allgemeiner Peerzugang verlangt Original-SMP, SC, MITM und Bond.
    Bond-Reconnect-Evidenz, gegenseitiger Servernachweis und vertrauenswuerdiger
    produktiver Einrichtungs-/Rechteweg sind offen. Nicht durch GAP-auth_success,
@@ -77,22 +81,20 @@ Quellenpruefung durch Hauptagent und Gegenpruefer, keine neuen Funkmessungen:
 
 ## Naechste konkrete Arbeit
 
-1. Engen Originalbindungs-/Outputvertrag definieren und echten BLE-Antwort-/
-   Statusbearer samt registriertem Attribut implementieren. Bei Notify/Indicate
-   CCC und Sendebestaetigungen unterscheiden; alternativ einen vollstaendig
-   beschriebenen Lesepfad. SDK-Aufrufe ausserhalb von Spinlocks.
-2. Hostgegenfaelle: falscher Originalaktor, recycelter Handle, Entzug vor/nach
-   Kopie und vor Sendung, volle Ausgabe, Disconnect, verspaetete Antwort,
-   Ausgabefrist, unberechtigtes Lesen/Abonnieren. Betroffenen SDK-Build pruefen.
-3. Geschlossenes Integrationsziel mit echten Registry-/Security-/Profilbesitzern
-   zusammensetzen; Servernachweis, Einrichtung und Bond-Reconnect belegen.
-4. Android-Transport und GM-Produktbedienung anschliessen, vorhandene
-   UI/UX-Vertraege beachten. Aktionen nur aus aktueller autorisierter Sitzung
-   und bestaetigtem gueltigem Profil anbieten; unbekannte Rollen ablehnen.
-5. Reale Profilgeraeteadapter, Betrieb und Ressourcen pruefen. Danach passende
-   APK/Firmware eindeutig kennzeichnen und Geraeteablauf vorbereiten. Fuer die
-   spaetere Installation zuerst Geraeteverfuegbarkeit und chipgebundenen
-   Flash-Rueckweg neu pruefen. Keine Geraeteabnahme aus Hostmodellen ableiten.
+1. Geschlossenes Produkt-Integrationsziel mit echten Registry-/Security-/
+   Profilbesitzern und dem implementierten Rueckkanal zusammensetzen. Keine
+   Probe- oder Fake-GM-Eigentuemer in das Produkt uebernehmen.
+2. Gegenseitigen Servernachweis und vertrauenswuerdige Einrichtung an EINEM
+   urspruenglich gebundenen BLE-Aktor anschliessen; keinen HMAC-Grant-Bridge bauen.
+3. Bond-Wiederverbindungsnachweis implementieren und gegen aktuelle Registry,
+   Credential, Securitymodus und frischen Originalverbindungstoken pruefen.
+4. Android-Transport, Rollengate und GM-Produktbedienung anschliessen; die
+   vorhandenen UI/UX-Vertraege beachten. Aktionen nur aus aktueller autorisierter
+   Sitzung und bestaetigtem gueltigem Profil anbieten; unbekannte Rollen ablehnen.
+5. Reale Profilgeraeteadapter, Betrieb und Ressourcen pruefen. Danach passendes
+   APK-/Firmwarepaar eindeutig zuordnen und den Geraeteablauf ausfuehren.
+   Vor Installation Verfuegbarkeit, Chip und vorhandenen Flash-Rueckweg neu pruefen.
+   Keine Geraeteabnahme aus Hostmodellen ableiten.
 
 ## Arbeitsbereich und Fortsetzung
 
@@ -145,3 +147,54 @@ Private Dateien: `C:/Dev/Larp Escape/private/ble-rollen-profile-20261028/`
 mit `manifest.json`, `before-full-flash.bin`, `identity.log`, `read.log`,
 `verify.log`. Nicht versionieren. Historischen Restorevertrag aus Issue #39
 beachten: keine automatische Ruecksicherung, Chip/Hash/Laenge vorher neu pruefen.
+
+## Zweiter Softwarebaustein: echter geschuetzter Firmware-Rueckkanal
+
+Gepruefter Codecommit: `6d7edeebabbe281e06f8ca855827580e95aa0375`.
+[Vertrag und Quellen](../docs/companion/gatts-output-v1.md). Root fuehrt
+Plattform/Systemintegration; anderer Bearbeiter `/root/security_review` pruefte
+Security, Originalbindung und Nachweisgrenzen. Kein eigener Testlauf des Reviewers.
+
+`Esp32GattsSource` ist jetzt ein echter `IReplyFrameBearer`: ein fester
+20-Byte-Mailboxplatz, nur der urspruengliche SDK-Aktor beantwortet geschuetzte
+Reads. Eine aktuelle ausdrueckliche GM-Zuordnung und frische originale
+SC/MITM/Bond-Security bleiben erforderlich. Rechte, Verbindungstoken,
+Registrierung und Lifecycle werden nicht aus einer V2-HMAC-Anmeldung abgeleitet.
+Ein leerer Read bestaetigt keinen Auftrag; Copied/SDK-Erfolg bedeuten keine
+Peerzustellung. Frist <1000ms nach letzten SDKports, keine Blindwiederholung.
+Die zusaetzliche 15-Handle-Variante ist optional; 5/7/9/13 bleiben erhalten.
+
+Frische Ergebnisse am obigen Code:
+
+- `platformio test -e host-configured-control`: **524/524**, Exit0, zuletzt15.40s.
+  Darunter11 neue Outputfaelle mit kontrollierten Source-/SDK-Interleavings.
+- `platformio test -e host-peer-proof` mit archiv-/quellengeprueftem echtem
+  Mbed TLS2.28.4: **536/536**, Exit0,16.81s. Zwei zusaetzliche neue Nativefaelle
+  fuer echte P256-Anmeldung, GM/kein GM, raw Profilantwort-Ausgabe und Entzug.
+  Die Profilantwort ist synthetisch vom echten Encoder erzeugt: kein neuer
+  Profilimport-/Apply-/Speicher- oder Geraetenachweis.
+- `platformio run -e esp32-gatts-abi-probe -j 2`: **SUCCESS**. SDK-/Cryptopins
+  bestaetigt. RAM50.904Bytes, Flash1.095.129/1.310.720Bytes. Dieses ABI-Ziel
+  startet weder Bluetooth noch echte Profilgeraete; kein Produktbudgetnachweis.
+- Architektur145Dateien/302Includes,86unabhaengige C++11-Header, Formatbaseline
+  322Dateien mit clang-format19.1.7, `git diff --check`: bestanden.
+- Unabhaengige Pythongegenstellen: Security53 und Dienst58 negative Beispiele
+  abgewiesen; weiterhin explizite SDKmodelle, keine Funkmessungen.
+- Eigener separater Xtensa-Compile mit tatsaechlichen PlatformIO-Argumenten und
+  `-fstack-usage`: readOutputNow1024, copyReplyFrame464, outputScopeCurrent272,
+  dessen Lambda80Bytes eigene statische Frames. Das sind KEINE Gesamttiefe
+  und KEINE gemessene freie BTU-/Taskstackreserve.
+
+Reviewkorrektur: letzter Alterscheck nach allen externen SDK-Securityports.
+Ergaenzte Haertung: rekursiver Readguard und Ablehnung ueberlappender Output-
+handles auch bei direkt konfigurierten unsortierten Authhandles. Alle konkreten
+Reviewbefunde nach Quellnachpruefung geschlossen. Der erste zusaetzliche
+Nativeversuch verwendete faelschlich einen festen signierten Nachweis in zwei
+Verbindungsepochen innerhalb derselben Testfixture; getrennte frische Testfaelle
+bestehen. Kein daraus abgeleiteter Firmwarefehler.
+
+Lokale Werkzeuge/Kryptografiequellen unter `private/quality-tools` und
+`private/peer-mbedtls`; Compilerargumente, .su-Datei, Object und Quellenhash unter
+`private/output-stack`. Alles ignoriert; keine Schluessel oder Flashbytes versioniert.
+Produktstart, Servernachweis, Einrichtung, Bond-Reconnect, Android-Polling,
+reale Profilgeraete und das gemeinsame V2-Geraetepaar bleiben offen.
