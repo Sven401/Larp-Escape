@@ -1,0 +1,473 @@
+{
+  "schema": 1,
+  "scope": "Qualitative camera excerpts, not optical acceptance",
+  "source_commit": "dc8c5d2358ffc4d5753b21c8806261046b4788d3",
+  "collector_sha256": "40547198fcc15c40c89bda46206984f70f0269cde5bb1debedacc61b3ed17e10",
+  "runs": {
+    "v1": {
+      "capture_sha256": "90ef2b25934c785031f077aadd81b1a63c5e6f56cc05b3b64badc632ff65249f",
+      "camera_sha256": "b4a7f864ab8787f746b054d812afc3e0092b6005fabfe20018a258bf8da9ccb8",
+      "session_sha256": "d1c5044e637e19ec7585af3bb8112c4a8218b3c1d5192e0e4de754e55b149f6c",
+      "status": "incomplete",
+      "error": "Firmware stopped trial: STOP 17853c601f0e44f4 watchdog",
+      "firmware_sha256": "577d0b5a97e28f5a2c267aee0daf5a7bf34169a139b8baafbbafc27cd8c20ea3",
+      "host_source_sha256": "f5e39982c1105ae87f4615cbcdc9348099da9419b6ba86ac8a8584dd586d1f83",
+      "camera_timing": {
+        "received_fps": 26.93597802968655,
+        "max_gap_ms": 176.21019994840026,
+        "gaps_over_100ms": 5
+      },
+      "camera_settings": {
+        "width": {
+          "requested": 1280,
+          "accepted": true,
+          "readback": 1280.0
+        },
+        "height": {
+          "requested": 720,
+          "accepted": true,
+          "readback": 720.0
+        },
+        "fps": {
+          "requested": 30,
+          "accepted": true,
+          "readback": 30.00003000003
+        },
+        "auto_exposure": {
+          "requested": 0,
+          "accepted": true,
+          "readback": -1.0
+        },
+        "exposure": {
+          "requested": -10.0,
+          "accepted": true,
+          "readback": -10.0
+        },
+        "auto_wb": {
+          "requested": 0,
+          "accepted": true,
+          "readback": 0.0
+        },
+        "gain": {
+          "requested": 0,
+          "accepted": true,
+          "readback": 0.0
+        },
+        "backlight": {
+          "requested": 0,
+          "accepted": true,
+          "readback": 0.0
+        },
+        "sharpness": {
+          "requested": 0,
+          "accepted": true,
+          "readback": 0.0
+        },
+        "gamma": {
+          "requested": 100,
+          "accepted": true,
+          "readback": 100.0
+        },
+        "fourcc": {
+          "requested": 1196444237,
+          "accepted": true,
+          "readback": 1196444237.0
+        }
+      },
+      "frames": 1038,
+      "transfer_events": 652,
+      "writer_drops": 0,
+      "preview_warning_count": 0,
+      "final_black_confirmed": true
+    },
+    "v1b": {
+      "capture_sha256": "71a5d68b2b612d7a1ddb75966e39fe06012f265245105c1d1c946e286fca0625",
+      "camera_sha256": "f53ce2a10b6f210deb5482e32271fcc416d86df68f44bc09ca3c10e0894b0fde",
+      "session_sha256": "24135f4356afbe866e9703559ebd91bcefd518557082db5f076a24d7af4099e1",
+      "status": "recorded",
+      "error": null,
+      "firmware_sha256": "577d0b5a97e28f5a2c267aee0daf5a7bf34169a139b8baafbbafc27cd8c20ea3",
+      "host_source_sha256": "f5e39982c1105ae87f4615cbcdc9348099da9419b6ba86ac8a8584dd586d1f83",
+      "camera_timing": {
+        "received_fps": 23.574327929716013,
+        "max_gap_ms": 1146.5627999277785,
+        "gaps_over_100ms": 22
+      },
+      "camera_settings": {
+        "width": {
+          "requested": 1280,
+          "accepted": true,
+          "readback": 1280.0
+        },
+        "height": {
+          "requested": 720,
+          "accepted": true,
+          "readback": 720.0
+        },
+        "fps": {
+          "requested": 30,
+          "accepted": true,
+          "readback": 30.00003000003
+        },
+        "auto_exposure": {
+          "requested": 0,
+          "accepted": true,
+          "readback": -1.0
+        },
+        "exposure": {
+          "requested": -10.0,
+          "accepted": true,
+          "readback": -10.0
+        },
+        "auto_wb": {
+          "requested": 0,
+          "accepted": true,
+          "readback": 0.0
+        },
+        "gain": {
+          "requested": 0,
+          "accepted": true,
+          "readback": 0.0
+        },
+        "backlight": {
+          "requested": 0,
+          "accepted": true,
+          "readback": 0.0
+        },
+        "sharpness": {
+          "requested": 0,
+          "accepted": true,
+          "readback": 0.0
+        },
+        "gamma": {
+          "requested": 100,
+          "accepted": true,
+          "readback": 100.0
+        },
+        "fourcc": {
+          "requested": 1196444237,
+          "accepted": true,
+          "readback": 1196444237.0
+        }
+      },
+      "frames": 914,
+      "transfer_events": 1153,
+      "writer_drops": 0,
+      "preview_warning_count": 0,
+      "final_black_confirmed": true
+    },
+    "v2": {
+      "capture_sha256": "29a28c0ee222f3a5b0f02f9a52af490c06946f98d0597e42a4a7cb9bec2ecf6c",
+      "camera_sha256": "8e989e15a3faabc352798b75cd7e682df94d21f239bb6ab067acca46e79e4c7c",
+      "session_sha256": "c77635b47623a1bbef67cebbb2d7d65df9f0f92f9e556f37cb1d536c4872cb32",
+      "status": "recorded",
+      "error": null,
+      "firmware_sha256": "577d0b5a97e28f5a2c267aee0daf5a7bf34169a139b8baafbbafc27cd8c20ea3",
+      "host_source_sha256": "f5e39982c1105ae87f4615cbcdc9348099da9419b6ba86ac8a8584dd586d1f83",
+      "camera_timing": {
+        "received_fps": 29.920262367725687,
+        "max_gap_ms": 104.20390008948743,
+        "gaps_over_100ms": 1
+      },
+      "camera_settings": {
+        "width": {
+          "requested": 1280,
+          "accepted": true,
+          "readback": 1280.0
+        },
+        "height": {
+          "requested": 720,
+          "accepted": true,
+          "readback": 720.0
+        },
+        "fps": {
+          "requested": 30,
+          "accepted": true,
+          "readback": 30.00003000003
+        },
+        "auto_exposure": {
+          "requested": 0,
+          "accepted": true,
+          "readback": -1.0
+        },
+        "exposure": {
+          "requested": -10.0,
+          "accepted": true,
+          "readback": -10.0
+        },
+        "auto_wb": {
+          "requested": 0,
+          "accepted": true,
+          "readback": 0.0
+        },
+        "gain": {
+          "requested": 0,
+          "accepted": true,
+          "readback": 0.0
+        },
+        "backlight": {
+          "requested": 0,
+          "accepted": true,
+          "readback": 0.0
+        },
+        "sharpness": {
+          "requested": 0,
+          "accepted": true,
+          "readback": 0.0
+        },
+        "gamma": {
+          "requested": 100,
+          "accepted": true,
+          "readback": 100.0
+        },
+        "fourcc": {
+          "requested": 1196444237,
+          "accepted": true,
+          "readback": 1196444237.0
+        }
+      },
+      "frames": 1125,
+      "transfer_events": 1122,
+      "writer_drops": 0,
+      "preview_warning_count": 0,
+      "final_black_confirmed": true
+    },
+    "v3": {
+      "capture_sha256": "ceedf7d4856a5e1c9f6282a7dedfe00f898dd0094d7efa6962c3a141fde6d0f3",
+      "camera_sha256": "05c5d5193ec83f4aaaff884cf05c61e1b647eed8b1c6635fbe217587f99e3177",
+      "session_sha256": "3ebe38713cf187fd360734a09c7a59fd9576f90305fc2edd44f6c29b3db9b5bf",
+      "status": "recorded",
+      "error": null,
+      "firmware_sha256": "577d0b5a97e28f5a2c267aee0daf5a7bf34169a139b8baafbbafc27cd8c20ea3",
+      "host_source_sha256": "f5e39982c1105ae87f4615cbcdc9348099da9419b6ba86ac8a8584dd586d1f83",
+      "camera_timing": {
+        "received_fps": 29.836578752284844,
+        "max_gap_ms": 169.8212999617681,
+        "gaps_over_100ms": 1
+      },
+      "camera_settings": {
+        "width": {
+          "requested": 1280,
+          "accepted": true,
+          "readback": 1280.0
+        },
+        "height": {
+          "requested": 720,
+          "accepted": true,
+          "readback": 720.0
+        },
+        "fps": {
+          "requested": 30,
+          "accepted": true,
+          "readback": 30.00003000003
+        },
+        "auto_exposure": {
+          "requested": 0,
+          "accepted": true,
+          "readback": -1.0
+        },
+        "exposure": {
+          "requested": -10.0,
+          "accepted": true,
+          "readback": -10.0
+        },
+        "auto_wb": {
+          "requested": 0,
+          "accepted": true,
+          "readback": 0.0
+        },
+        "gain": {
+          "requested": 0,
+          "accepted": true,
+          "readback": 0.0
+        },
+        "backlight": {
+          "requested": 0,
+          "accepted": true,
+          "readback": 0.0
+        },
+        "sharpness": {
+          "requested": 0,
+          "accepted": true,
+          "readback": 0.0
+        },
+        "gamma": {
+          "requested": 100,
+          "accepted": true,
+          "readback": 100.0
+        },
+        "fourcc": {
+          "requested": 1196444237,
+          "accepted": true,
+          "readback": 1196444237.0
+        }
+      },
+      "frames": 1094,
+      "transfer_events": 1094,
+      "writer_drops": 0,
+      "preview_warning_count": 0,
+      "final_black_confirmed": true
+    }
+  },
+  "selected_frames": [
+    {
+      "run": "v1b",
+      "req": 2,
+      "requested_offset_ms": 1800,
+      "actual_offset_ms": 1796.4022000087425,
+      "file": "frame-000143.png",
+      "sha256": "ef82dbe9dc222d247b714e33ef663ae1f468af16c4adb4296807fdf50e1239a2"
+    },
+    {
+      "run": "v1b",
+      "req": 3,
+      "requested_offset_ms": 1800,
+      "actual_offset_ms": 1815.400099963881,
+      "file": "frame-000239.png",
+      "sha256": "abbe21ca6fd37f8b5f1a2175098b0509dfc014cc2fcf80f5256f8e1c65c1be61"
+    },
+    {
+      "run": "v1b",
+      "req": 4,
+      "requested_offset_ms": 1800,
+      "actual_offset_ms": 1790.309099946171,
+      "file": "frame-000353.png",
+      "sha256": "ff847ce4332915e75f27a7865673840d25812fa24b420083eda4de422c75eccf"
+    },
+    {
+      "run": "v3",
+      "req": 2,
+      "requested_offset_ms": 100,
+      "actual_offset_ms": 115.01249996945262,
+      "file": "frame-000126.png",
+      "sha256": "173ea21aa08e8ce0b0191504dbfebba8cd96b34b618020ef71cf71832f76027b"
+    },
+    {
+      "run": "v3",
+      "req": 2,
+      "requested_offset_ms": 300,
+      "actual_offset_ms": 315.0297999382019,
+      "file": "frame-000132.png",
+      "sha256": "95b756a37c2918d8d4daaeb66b71e42747fe19bcb602bcbf5c6d4cbd4739e748"
+    },
+    {
+      "run": "v3",
+      "req": 2,
+      "requested_offset_ms": 500,
+      "actual_offset_ms": 481.36269999668,
+      "file": "frame-000137.png",
+      "sha256": "6fa8562a84a293337fdcb8dd6e17865eed3ebc11f48cb4894ce6e14ebdd08e9b"
+    },
+    {
+      "run": "v3",
+      "req": 2,
+      "requested_offset_ms": 700,
+      "actual_offset_ms": 714.7573999827728,
+      "file": "frame-000144.png",
+      "sha256": "f2eff1ed464f4ccdd3d6ec9d50d065ebb3ee6fd59913f0c8f1985b446b3c55cf"
+    },
+    {
+      "run": "v3",
+      "req": 2,
+      "requested_offset_ms": 1000,
+      "actual_offset_ms": 1014.5150000462309,
+      "file": "frame-000153.png",
+      "sha256": "100d154c8b14e4203c274be98de3196effae661ea4334e4d8a0a7621491a2546"
+    },
+    {
+      "run": "v2",
+      "req": 2,
+      "requested_offset_ms": 100,
+      "actual_offset_ms": 88.21549999993294,
+      "file": "frame-000152.png",
+      "sha256": "a43f08876aa6e126a4ae811eaa22dee3f698b3b167d89fdb8112e2c97bbcdfbf"
+    },
+    {
+      "run": "v2",
+      "req": 2,
+      "requested_offset_ms": 300,
+      "actual_offset_ms": 309.8588000284508,
+      "file": "frame-000159.png",
+      "sha256": "ef49ac7d3077826ea40363edc022caf1a6c4b4d36c0308c7e113bf0f4633ded5"
+    },
+    {
+      "run": "v2",
+      "req": 2,
+      "requested_offset_ms": 500,
+      "actual_offset_ms": 508.34719999693334,
+      "file": "frame-000165.png",
+      "sha256": "25aa3a20fd31d491ea378697171d1cfa07423c334b6bcae72ae520d1ef99f5f4"
+    },
+    {
+      "run": "v2",
+      "req": 2,
+      "requested_offset_ms": 700,
+      "actual_offset_ms": 712.7370000816882,
+      "file": "frame-000171.png",
+      "sha256": "c262fb70b1e61b3761d7b43e6006c94a457a7c8664dfa3b01dda9a29ca96891d"
+    },
+    {
+      "run": "v2",
+      "req": 2,
+      "requested_offset_ms": 1000,
+      "actual_offset_ms": 1008.0171000445262,
+      "file": "frame-000180.png",
+      "sha256": "c974b208fe1752192189f770f5904c93e18662f29ec856229bc0667f93cae337"
+    },
+    {
+      "run": "v3",
+      "req": 7,
+      "requested_offset_ms": 1000,
+      "actual_offset_ms": 1003.1249999301508,
+      "file": "frame-000656.png",
+      "sha256": "8a9e002094aa14b5bb0bd5c49f4a75fc2f9c9e9bf714bdb7c0ef1bccb008ac48"
+    },
+    {
+      "run": "v3",
+      "req": 8,
+      "requested_offset_ms": 1000,
+      "actual_offset_ms": 998.0904000112787,
+      "file": "frame-000746.png",
+      "sha256": "ae14c264cac833cca1165b430e88561521ab0e4c6e335d2a690584285b66c428"
+    },
+    {
+      "run": "v3",
+      "req": 9,
+      "requested_offset_ms": 1000,
+      "actual_offset_ms": 994.8689000448212,
+      "file": "frame-000836.png",
+      "sha256": "be65ed53a3643e7e8882d0a1403daaac1bf58336ee229a28458a6d4e67524723"
+    },
+    {
+      "run": "v3",
+      "req": 10,
+      "requested_offset_ms": 1000,
+      "actual_offset_ms": 996.976500027813,
+      "file": "frame-000926.png",
+      "sha256": "59672bc5055fff73ff808a568ca4b4a46da9991863750e8d2f8b31c25b722e0e"
+    },
+    {
+      "run": "v3",
+      "req": 11,
+      "requested_offset_ms": 1000,
+      "actual_offset_ms": 988.1531000137329,
+      "file": "frame-000986.png",
+      "sha256": "0a9f0c121c3b85b1a0429ff71bc913ec613c863df6b12bc454b6b0ebd0bec6de"
+    }
+  ],
+  "preview": {
+    "run": "v1b",
+    "first_host_ms": 14867.76849993039,
+    "last_host_ms": 25349.69650004059,
+    "interval_ms": 100,
+    "warning": "Nearest frames reused across gaps; qualitative appearance only"
+  },
+  "index_map": {
+    "mapping_status": "verified",
+    "radiometry_status": "unassessed",
+    "map_sha256": "66612b18a527cb39a5087f6f9ed495bf64a0cb2ff4a59284ecb298b87ad5022b",
+    "camera_map_sha256": "daefa3ebd706aaeb83fa5d8e805a8b891799e0968ffd285f497c1778bc8e7615",
+    "calibration_capture_sha256": "2a337a9f9c93e8da67522c406189d62790b004d4534979c1a3820fa105df811b",
+    "positions": 23
+  }
+}

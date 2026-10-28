@@ -102,7 +102,7 @@ LedOutput engine(bus, clockNow);
 
 void liveState() {
     const auto bg = live.scene().background();
-    Serial.printf("STATE %s %lu %lu %u %u %u", token, (unsigned long)live.scene().revision(),
+    Serial.printf("STATE %s %lu %lu %u %u %u", token, (unsigned long)live.revision(),
                   (unsigned long)millis(), unsigned(bg.red), unsigned(bg.green), unsigned(bg.blue));
     for (unsigned slot = 0; slot < near::Slots; ++slot) {
         const auto &i = live.scene().instance(slot); const auto &p = i.parameters;
@@ -113,12 +113,22 @@ void liveState() {
     }
     Serial.println();
 }
+void sealState() {
+    const auto &i = live.sealScene().snapshot(); const auto &p = i.parameters;
+    Serial.printf("SEALSTATE %s %lu %lu %u %lu %lu %lu %u %u %u %u %u %u %u %u %u %u %u %u %u %u %u\n",
+        token, (unsigned long)live.revision(), (unsigned long)millis(), unsigned(i.state),
+        (unsigned long)i.round, (unsigned long)i.generation, (unsigned long)i.sequence,
+        unsigned(p.count), unsigned(p.valid), unsigned(p.cause), unsigned(i.pulseConsumed), unsigned(i.pulsePending),
+        unsigned(p.colour.red), unsigned(p.colour.green), unsigned(p.colour.blue),
+        unsigned(p.peak.red), unsigned(p.peak.green), unsigned(p.peak.blue),
+        unsigned(p.sweepMs), unsigned(p.pixelMs), unsigned(p.transitionMs), unsigned(p.pulseMs));
+}
 void stop(const char *reason) {
 #ifdef LARP_LED_CAMERA_RSSI_LAB
     rssi.end(loopNow);
 #endif
     if (liveMode) {
-        live.hardStop(); traceRevision = live.scene().revision(); liveState(); liveMode = false;
+        live.hardStop(); traceRevision = live.revision(); liveState(); sealState(); liveMode = false;
     }
     running = false; waiting = false; effectMode = false;
     // Let the engine drain a prior direct transfer, then request a fresh black.
@@ -144,6 +154,7 @@ void command(char *line) {
         Serial.printf("LARP-CAMERA/1 23 32 GPIO15 %lu %s\n",
                       (unsigned long)ESP.getSketchSize(), ESP.getSketchMD5().c_str());
         Serial.println("LARP-LIVE/1 2 23 32");
+        Serial.println("LARP-SEAL/1 1 23 32");
 #ifdef LARP_LED_CAMERA_RSSI_LAB
         Serial.println("LARP-RSSI/1 1 2000 3000");
 #endif
@@ -155,18 +166,18 @@ void command(char *line) {
         rssi.command(line, loopNow); return;
     }
 #endif
-    if (std::strncmp(line, "GLOW ", 5) == 0 || std::strncmp(line, "BG ", 3) == 0 ||
+    if (std::strncmp(line, "GLOW ", 5) == 0 || std::strncmp(line, "SEAL ", 5) == 0 || std::strncmp(line, "BG ", 3) == 0 ||
         std::strncmp(line, "STATUS ", 7) == 0) {
         if (!running || !liveMode) { Serial.printf("REJECT %s 0 inactive 0 %lu\n", token, (unsigned long)millis()); return; }
         const auto reply = live.command(line, millis());
-        if (std::strcmp(reply.kind, "STATUS") == 0) { liveState(); return; }
+        if (std::strcmp(reply.kind, "STATUS") == 0) { liveState(); sealState(); return; }
         if (std::strcmp(reply.kind, "REJECT") == 0)
             Serial.printf("REJECT %s %lu %s %lu %lu\n", token, (unsigned long)reply.request,
-                          reply.reason, (unsigned long)live.scene().revision(), (unsigned long)millis());
+                          reply.reason, (unsigned long)live.revision(), (unsigned long)millis());
         else {
             Serial.printf("%s %s %lu %lu %lu\n", reply.kind, token, (unsigned long)reply.request,
-                          (unsigned long)live.scene().revision(), (unsigned long)millis());
-            liveState();
+                          (unsigned long)live.revision(), (unsigned long)millis());
+            liveState(); sealState();
         }
         return;
     }
@@ -187,12 +198,12 @@ void command(char *line) {
         std::strcpy(token, id); frameNumber = stage = 0;
         started = lastKeep = millis(); lastLiveSubmit = started - LedOutput::FrameMilliseconds;
         running = liveMode = traceLive = true; waiting = effectMode = false;
-        traceRevision = live.scene().revision();
+        traceRevision = live.revision();
 #ifdef LARP_LED_CAMERA_RSSI_LAB
         rssi.begin(token);
 #endif
         Serial.printf("LIVE %s %lu %lu\n", token, (unsigned long)traceRevision, (unsigned long)started);
-        liveState(); return;
+        liveState(); sealState(); return;
     }
     if (std::strcmp(verb, "CAL") == 0) {
         if (strtok_r(nullptr, " ", &context)) return;
@@ -263,7 +274,7 @@ void loop() {
     }
     if (!running) { delay(1); return; }
     if (liveMode) {
-        const auto now = millis(); live.scene().service(now);
+        const auto now = millis(); live.service(now);
         if (bus.inFlight) {
             const auto result = bus.poll();
             if (result == TxResult::Failed || (result == TxResult::Busy && now-bus.submitted >= 2000)) {
@@ -271,7 +282,7 @@ void loop() {
             } else if (result == TxResult::Complete) directOutstanding = false;
         }
         if (liveMode && !bus.inFlight && now-lastLiveSubmit >= LedOutput::FrameMilliseconds) {
-            const Frame frame = live.scene().render(now); traceRevision = live.scene().revision();
+            const Frame frame = live.render(now); traceRevision = live.revision();
             if (!bus.submit(frame)) stop("live-submit");
             else { directOutstanding = true; lastLiveSubmit = now; }
         }
