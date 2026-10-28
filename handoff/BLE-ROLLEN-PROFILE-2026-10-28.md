@@ -11,7 +11,9 @@ Nutzerziel: Android verbindet sich authentifiziert mit einer V2-Box, erkennt
 bzw. ordnet eine autorisierte Rolle zu, laedt ein gueltiges Spielprofil und
 fuehrt ausschliesslich freigegebene Bedienaktionen aus. Host-, App- und echter
 Geraetenachweis einschliesslich Fehler und Wiederverbindung sind erforderlich.
-Nutzerantwort am 28.10.: Geraete spaeter verfuegbar, zunaechst Software fertigstellen.
+Nutzerantwort zuerst: Geraete spaeter, zunaechst Software fertigstellen.
+Spaetere Nutzerfreigabe derselben Sitzung: Android und ESP verfuegbar;
+Moto G14 per ADB erkannt, GM 0.2/versionCode2 vom 18.10. installiert; ESP an COM3.
 Keine Installation oder Geraetebeobachtung in diesem Zwischenstand.
 
 Maintainer und fuehrendes Plattform-/Integrationsmandat: Hauptagent `/root`.
@@ -101,5 +103,45 @@ Aktuellen Status und HEAD vor Fortsetzung in genau diesem Worktree pruefen.
 Die lokale Berechtigungsgrenze erfordert bei dortigen Git-/Build-/Schreibbefehlen
 gegebenenfalls gezielte Freigabe; kein Defekt im Produktcode.
 
-Pruefergebnisse des zugehoerigen Commits werden unten ergaenzt. Gesamtziel bleibt
-aktiv, auch wenn dieser erste Baustein erfolgreich getestet ist.
+## Frischer Softwarepruefstand
+
+Gepruefter Codecommit: `6242960d34338acba557c1d93c59761f65e0eed4`.
+Diese nachfolgende Dokumentfortschreibung aendert keine Produktquellen.
+
+- `platformio test -e host-configured-control -e host-regression`: **635/635**
+  erfolgreich, 13 Suiten, Exit0. Unveraenderte Firmwarequellen an obiger Basis;
+  bestehende Rollen-, Profil-, Entzugs- und Fehlerfaelle, keine neue Funkpruefung.
+- Android mit JDK21.0.8, vorhandenem SDK35 und Wrapper8.9, offline/no-daemon:
+  `:core:protocol:test :app:testDebugUnitTest :gamemaster:testDebugUnitTest
+  :app:assembleDebug :gamemaster:assembleDebug :app:lintDebug :gamemaster:lintDebug`:
+  **BUILD SUCCESSFUL**, final 1m6s, 109 Aufgaben. Protokoll **105**, Dev **76**,
+  GM **26** JVM-Faelle, jeweils 0 Fehler/Fehlschlaege/ausgelassene Faelle.
+  Darunter **18 neue** Profilcodec-/Transaktionsfaelle; echte C++-Goldenwerte,
+  CRC-Known-Vector, Grenzen, Quellbesitz, bewusste Uebernahme, Generationen,
+  exakte Saved-Zaehler, verlorene/verspaetete Antworten und absolute Fristen.
+- Beide Lintberichte: null Fehler; je drei Warnungen OldTargetApi,
+  DataExtractionRules, ObsoleteSdkInt; Dev zusaetzlich eine Information
+  AutoboxingStateCreation. Keine Ziel-SDK-/UI-Aenderung in diesem Paket.
+- `git diff --check`: bestanden. Gegenpruefung der konkreten Korrekturen
+  abgeschlossen; keine weiteren Befunde im begrenzten Diff. Der Gegenpruefer
+  hat selbst keine Tests ausgefuehrt.
+
+JUnit-/Lintberichte und APKs bleiben unter den jeweiligen ignorierten
+`companion/android/**/build/`-Pfaden. Keine Releasebuild-, Installations-,
+GATT-Funk-, Pairing-, Last- oder Geraetefunktionspruefung aus diesen Ergebnissen
+ableiten. Gesamtziel bleibt aktiv.
+
+## Frisch abgeglichener privater Flash-Rueckweg
+
+ESP32 an COM3: MAC `A8:42:E3:CD:4B:18`, 4 MiB, entspricht der dokumentierten Box.
+Neue Vollsicherung gelesen und per `esptool verify_flash` am selben Chip
+verifiziert, Ergebnis `verify OK (digest matched)`. SHA-256:
+`b703f4b13aaaaa3e8c3bc68d8e8134b1cec0a77df957ea06175ac147d1d03c71`.
+Damit bytegleich zur frueheren Sicherung vom 18.10.; keine Installation.
+Identitaet/Read/Verify setzen die Box per RTS zurueck, schreiben aber nichts
+in ihren Flash. Kein neuer BLE-/Spielgeraetenachweis.
+
+Private Dateien: `C:/Dev/Larp Escape/private/ble-rollen-profile-20261028/`
+mit `manifest.json`, `before-full-flash.bin`, `identity.log`, `read.log`,
+`verify.log`. Nicht versionieren. Historischen Restorevertrag aus Issue #39
+beachten: keine automatische Ruecksicherung, Chip/Hash/Laenge vorher neu pruefen.
