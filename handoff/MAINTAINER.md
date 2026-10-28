@@ -1,6 +1,63 @@
 # Maintainer-Einstieg
 
-**Geprüfte Integration und aktiver Fachaudit · 24.10.2026:**
+**Fachaudit verschlankt · 28.10.2026:** Dokumentationsbasis ist
+`f81956faffa4d4c6b0198fdbd0c626b21e137cd4` im Integrationsbranch
+`plan/projektuebergabe-kuratierter-stand`. Diese Fortschreibung liegt in
+[PR #99](https://github.com/Sven401/Larp-Escape/pull/99); sie ist bis zum Merge
+kein integrierter Regelstand. Die ausdrücklich beauftragte Umstellung des
+bestehenden Wochenauftrags wird getrennt im
+[Betriebsbeleg](../docs/quality/fachaudit-betrieb.md#beobachteter-ausgangspunkt-und-umstellung)
+nachgewiesen.
+
+**Neuer Arbeitsumfang:** Kurzcheck höchstens fünf Minuten; nur bei belegtem
+Anlass eine vertiefte Frage, insgesamt höchstens 30 Minuten einschließlich
+Gegenprüfung und Protokoll. Starre Fachgebietsrotation und Sechswochenziel
+entfallen. [Fachmandate](../docs/quality/verantwortlichkeiten.md),
+[Prüfpflichten](../docs/quality-checks.md), echte Wiedervorlageauslöser und
+quartalsweiser Normabgleich bleiben verbindlich. Eine fachliche Vertiefung
+braucht weiterhin eine tatsächlich durchgeführte Gegenprüfung; ein unveränderter
+Kurzcheck erneuert keinen vollständigen Fachprüfstand.
+
+**Nutzenkontrolle:** Nach vier abgeschlossenen geplanten Läufen werden belegte
+Maintainerentscheidungen, angenommene Änderungen und geschlossene Nachweislücken
+getrennt den Laufzeiten, offenen Entwürfen, Fehlalarmen und Quellenlücken
+gegenübergestellt. Der 26.10. zählt als erster Lauf vor der Verschlankung.
+Keine Befundquote, keine Wirkung aus bloßer Recherche ableiten.
+[Zählregeln und frühere Entscheidungsauslöser](../docs/quality/fachaudit-betrieb.md#messbarer-nutzen-und-entscheidung-nach-vier-läufen)
+sowie [Übernahme/Rückweg](../PROMOTION.md) sind festgehalten.
+
+**Erstlauf und Nachkontrolle abgeschlossen · 26.10.2026:** Der geplante A3-Lauf
+auf `f81956faffa4d4c6b0198fdbd0c626b21e137cd4` dauerte im Chat 20 Minuten
+18 Sekunden. Keine neuen/geänderten Findings, keine daraus angenommene
+Änderung und keine neue Geräteabnahme. Die gesondert gegengeprüfte
+Erstlaufkontrolle bestätigte:
+
+| Bereich | Ergebnis |
+| --- | --- |
+| Dubletten | Fünf bekannte Finding-IDs und #39/B7 erhalten; keine Wiederöffnung korrigierter Software allein aus Pilottexten; #54 getrennt. |
+| Zuständigkeiten | A3-Mandat, tatsächliche andere Qualitätsgegenprüfung und kanonische Ziele belegt; Fachreview und Maintainerentscheidung getrennt. |
+| Wiedervorlagen | Vorhandene Auslöser erhalten, A2-02-Geräterest an A2-03 gekoppelt; keine erfundenen Freigabetermine. |
+
+Laufbelege liegen lokal unter
+`outputs/fachaudit/2026-10-26T18-25-59Z-f81956f/README.md` und `lauf.json`.
+[Zeiten, Chatbelege und Grenzen](../docs/quality/fachaudit-betrieb.md#beobachteter-ausgangspunkt-und-umstellung)
+zeigen die Betriebsabweichung: Auditstart 19:25:47 statt 10:00 MEZ,
+Nachkontrolle 19:46:48 statt 11:00 MEZ. Ursache ungeklärt; beide wurden
+abgeschlossen. Die einmalige Nachkontrolle ist beendet und entfernt.
+Ein leerer Finding-Zähler allein begründet weder Erfolg noch Nutzlosigkeit.
+
+**Weiter offen:** Geräte-/SMP-/Zeitnachweise, IDF-4.4-Supportentscheidung,
+Chipzuordnung #39/B7, Adapterabnahmen und der messbare Zusatznutzen des
+Wochenbetriebs. Die nicht vertieften Fachgebiete bleiben sichtbar ungeprüft.
+Nächster Solltermin und rückgelesene Auftragseinstellungen stehen im
+[Betriebsbeleg](../docs/quality/fachaudit-betrieb.md#beobachteter-ausgangspunkt-und-umstellung).
+Der GitHub-Abgleich und die Produkt-/CI-Prüfungen bleiben unverändert.
+
+Die folgenden Einträge bewahren ihre **historischen** Integrations- und
+Prüfstände; frühere Terminvormerkungen und Betriebsregeln sind keine aktuellen
+Aufträge.
+
+**Historischer Integrations- und Aktivierungsstand · 24.10.2026:**
 [PR #97](https://github.com/Sven401/Larp-Escape/pull/97) ist in
 `plan/projektuebergabe-kuratierter-stand` integriert. Remote-Head und geprüfter
 Mergecommit: [`c582ed7048cf7c386f240eca20e09142b86c7e00`](https://github.com/Sven401/Larp-Escape/commit/c582ed7048cf7c386f240eca20e09142b86c7e00).
@@ -24,7 +81,7 @@ Dokumentänderungen nicht ausgelöst. Das sind keine zusätzlichen grünen
 Merge-Läufe. Diese Fortschreibung wertet vorhandene CI aus; lokal wurden
 keine Produkt-, Build- oder Gerätetests erneut ausgeführt.
 
-**Automationsstand:** Der [Fachaudit-Wochenauftrag](../docs/quality/fachaudit-betrieb.md)
+**Damals rückgelesener Automationsstand (24.10.2026):** Der [Fachaudit-Wochenauftrag](../docs/quality/fachaudit-betrieb.md)
 `larp-escape-fachaudit` ist nach ausdrücklichem Folgeauftrag **ACTIVE**.
 Prompt und Zielchat wurden zurückgelesen; der bestehende GitHub-Abgleich ist
 unverändert. Nächster Solltermin: **26.10.2026, 10:00 MEZ / 09:00 UTC**,

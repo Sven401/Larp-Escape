@@ -1,5 +1,36 @@
 # Projektfestlegungen: Übernahme und Korrektur
 
+## 28. Oktober 2026 — Fachaudit nach Erstlauf verschlankt
+
+- **Beauftragt:** Bestehenden Wochenauftrag verschlanken, Fachmandate und
+  Prüfpflichten erhalten und messbare Nutzenkriterien verankern. Dokumentation
+  in [PR #99](https://github.com/Sven401/Larp-Escape/pull/99) gegen den
+  Integrationsbranch, Basis `f81956faffa4d4c6b0198fdbd0c626b21e137cd4`.
+- **Beobachtete Anwendung:** Erster geplanter Lauf am 26.10.: 20 Minuten
+  18 Sekunden Chatdauer, keine neuen/geänderten Findings und keine daraus
+  angenommene Änderung; Dubletten, Zuständigkeiten und Wiedervorlagen in
+  gesonderter Gegenprüfung bestätigt. Audit und Kontrolle stark verspätet,
+  Ursache ungeklärt. Der Nutzen der manuellen Pilotkorrekturen wird dem
+  Wochenbetrieb nicht zugerechnet. [Belege](docs/quality/fachaudit-betrieb.md#beobachteter-ausgangspunkt-und-umstellung).
+- **Übernahme:** Kurzcheck höchstens fünf Minuten; nur bei belegtem Anlass
+  eine Vertiefung, höchstens 30 Minuten insgesamt. Rotation/Sechswochenziel
+  entfallen; echte Vertragsauslöser und quartalsweiser Normabgleich bleiben.
+  Kompaktes Laufprotokoll statt Registerkopie, Fachgegenprüfung weiterhin
+  bei Vertiefung. Keine neuen Rollen, globalen Regeln, Hooks oder Prüfwerkzeuge.
+  Die aktive Promptumstellung ist im Betriebsbeleg getrennt vom noch offenen
+  Dokumentations-PR nachgewiesen.
+- **Nutzungsbewertung:** Nach vier abgeschlossenen geplanten Läufen, einschließlich
+  26.10. als Ausgangsmessung, belegte Entscheidungen, angenommene Änderungen
+  und geschlossene Nachweislücken getrennt zählen und Aufwand/Fehlalarme/
+  offene Entwürfe gegenüberstellen. Frühere Betriebsbewertung bei Budget-
+  oder wiederholten Quellenproblemen nach den
+  [Zählregeln](docs/quality/fachaudit-betrieb.md#messbarer-nutzen-und-entscheidung-nach-vier-läufen).
+  Die neue Kurzcheckdauer und Wirkung sind noch nicht erprobt.
+- **Einfacher Rückweg:** Auf Nutzerauftrag denselben Auftrag pausieren oder
+  den früheren Prompt aus `f81956f` wiederherstellen. Nachweise, Fachmandate,
+  Prüfpflichten, CI und separaten GitHub-Abgleich erhalten. Kein automatischer
+  Taktwechsel, keine zusätzliche Kontrollautomation.
+
 ## 24. Oktober 2026 — Integration geprüft und Fachaudit aktiviert
 
 - **Beauftragt und erfolgt:** PR #97 nach zwölf erfolgreichen Checks in den
