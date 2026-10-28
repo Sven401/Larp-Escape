@@ -1,4 +1,125 @@
-# Notwendige zukünftige Arbeit: Arduino-ESP32 3.x
+# Migrationsplan: native ESP-IDF-Basis und Projektaufbau prüfen
+
+## Verbindliches Ziel und Planungsstand · 28. Oktober 2026
+
+**Entschieden:** Die neueste stabile ESP-IDF-Version ist die vorrangig zu
+prüfende Zielbasis. Arduino ist keine Projektanforderung mehr. Arduino darf
+nur als optionale IDF-Komponente übernommen werden, wenn ein konkreter,
+erheblicher Nutzen für Larp-Escape gegenüber nativen IDF-Adaptern belegt ist.
+Die bisherige Vorgabe Arduino-ESP32 3.x / ESP-IDF 5.x ist damit ersetzt.
+Quelle: ausdrücklicher Nutzerauftrag in Sitzung
+`01a1840c-a839-7ae3-9954-bb6ffc96d5e4` am 28.10.2026.
+
+**Verifiziert, nur Releaseabgleich:** Espressif kennzeichnet am 28.10.2026
+[ESP-IDF v6.1](https://github.com/espressif/esp-idf/releases/tag/v6.1)
+als neueste stabile Haupt-/Nebenversionslinie (Latest). Das ist der erste
+Prüfkandidat, keine bereits abgenommene Projektbasis. Vor Umsetzung Latest,
+Patchstände, Supportzeitraum, Known Issues und Security-Advisories erneut
+an offiziellen Quellen prüfen. Ein späterer Patch einer älteren Linie ist
+nicht automatisch die neueste Zielgeneration. Keine Vorabversion und kein
+beweglicher master-/latest-Verweis als reproduzierbarer Buildpin.
+
+**Offen:** Kompatibilität, konkrete Toolchainpins, Architekturentscheidungen,
+Umsetzung und Geräteabnahme. Dieser Auftrag aktualisiert den Plan; er startet
+keine Paketaktualisierung, Portierung oder Installation. Dokumentbasis:
+BLE-Arbeitsbranch `codex/ble-rollen-profile`, HEAD vor dieser Änderung
+`53bd24bee7b21b87cbb9781e1f53ad4d430da91c`; Plan und BLE-Übergabe gelesen,
+keine neuen Produktbuilds oder Geräteprüfungen. Der historische Dateiname
+bleibt zur Erhaltung vorhandener Links bestehen.
+
+## Vorgehen und Entscheidungstore
+
+### P1 · Bestand und Projektgrenzen erfassen
+
+- Aktuellen Integrationshead und gesicherten BLE-Stand abgleichen; getrennte
+  Arbeitsbasis für die spätere Migration verwenden. Historische LED-Branches
+  nicht als aktuellen Integrationsstand behandeln.
+- Tatsächliche Chips, Revisionen, Flash/PSRAM, Partitionen und Pinbelege erfassen;
+  Boardkonfiguration und physisch bestätigte Geräteidentität unterscheiden.
+- Für jede benötigte Firmwarevariante Quellpfad, Einstieg, Bibliotheken,
+  Arduino-Aufrufe, direkte IDF-/FreeRTOS-Nutzung und private SDK-Eingriffe
+  erfassen. Produkt, Labor, Proben und historische Quellen getrennt bewerten.
+- Vorhandene GameDomain-/GamePorts-/GameExecution-Grenzen und Hosttests prüfen
+  und erhalten. Fachlogik soll ohne Arduino, IDF und FreeRTOS testbar bleiben.
+  Komponenten nach fachlichen oder technischen Grenzen schneiden; keine
+  pauschale Neuarchitektur und kein zusätzlicher Task pro Baugruppe.
+
+**Ergebnis:** Bestands- und Portierungsmatrix mit Quelle/Commit, Adapter,
+Abhängigkeit, nativem Ersatz, Risiko und zugehörigem Nachweis. Offene reale
+Hardwarebefunde bleiben ausdrücklich offen.
+
+### P2 · Neueste stabile ESP-IDF-Version qualifizieren
+
+- Mit dem dann neuesten stabilen Release beginnen; exakten Tag/Commit und
+  Submodule, Toolchain, Python-/Buildwerkzeuge sowie Supportstatus dokumentieren.
+  Migration Guides aller übersprungenen Hauptversionen auf betroffene APIs
+  prüfen; Chipunterstützung, Known Issues und Advisories einschließen.
+- Native Grundlage mit CMake, Ninja und idf.py planen. Versionierte
+  Komponenten über IDF Component Manager und Lockfile; sdkconfig.defaults,
+  Partitionierung und reproduzierbare CI-/Entwicklungsumgebung festlegen.
+  PlatformIO ist eine zu bewertende Alt-Buildabhängigkeit, keine Zielvorgabe.
+- Bluetooth-Stack und verfügbare Sicherheits-/Lifecycle-Schnittstellen anhand
+  der bestehenden Verträge bewerten. Kein ungeprüfter Wechsel zu NimBLE oder
+  Übernehmen alter Bluedroid-Offsets. Mbed-TLS-/PSA-API, Zufallsquelle,
+  Schlüsselhaltung und TLS-Konfiguration am tatsächlichen Zielstand prüfen.
+- Eine ältere unterstützte IDF-Linie nur bei belegtem Blocker als begründete
+  Abweichung vorlegen: fehlende Fähigkeit, Quelle, Auswirkungen, Ersatzoption
+  und Wiedervorlage nennen. Arduino-Kompatibilität allein ist kein Grund,
+  die neueste IDF-Zielbasis aufzugeben. Zielwahl samt Restbefunden festhalten.
+
+**Ergebnis:** begründete Versionsentscheidung und feste Abhängigkeitsliste;
+Releaseverfügbarkeit allein gilt nicht als Kompatibilitäts- oder Securityfreigabe.
+
+### P3 · Arduino ausschließlich nach Nutzenprüfung
+
+Für jede erwogene Arduino-Komponente festhalten: benötigte Funktion/Bibliothek,
+IDF-nativer Ersatz, eingesparter Portierungs- und Wartungsaufwand, zusätzliche
+Abhängigkeiten, Ressourcenbedarf, Task-/Initialisierungsfolgen, Securitypflege
+und nachgewiesene Kompatibilität mit der gewählten IDF-Version. Beibehalten
+nur bei erheblichem belegtem Projektnutzen; reine Gewohnheit oder bestehende
+Includes genügen nicht. Ohne solchen Nachweis native Adapter planen.
+
+Espressif dokumentiert [Arduino als IDF-Komponente](https://docs.espressif.com/projects/arduino-esp32/en/latest/esp-idf_component.html).
+Diese Möglichkeit ist kein Beleg der Kompatibilität mit der neuesten IDF-Linie;
+konkretes Versionspaar bei der Entscheidung prüfen. Optionale Arduino-Abhängigkeit
+an Adaptergrenzen halten, nicht in Domain oder öffentliche Fachverträge ziehen.
+
+**Ergebnis:** ausdrückliche Entscheidung ohne Arduino oder eine begrenzte,
+begründete Komponentenliste mit Versionen und Rückweg zur nativen Umsetzung.
+
+### P4 · Schrittweise Portierung und Parität planen
+
+1. Reproduzierbaren nativen Minimalbuild und CI-Build vorsehen; anschließend
+   hardwareunabhängige Logik und ihre Hosttests auf der neuen Buildbasis prüfen.
+2. BLE/Sicherheit und die tatsächlich benötigten Hardwareadapter in getrennten
+   Schritten portieren. Die nachstehenden BLE-Prüftore sind verbindlich;
+   private sdk446-Hooks benötigen neue Nachweise oder einen geprüften Ersatz.
+3. ESP-NOW-Empfang/Koexistenz, RMT-Ausgabe und Besitzer, UART/Audio,
+   I²C/Matrix/Wake sowie NFC jeweils gegen erhaltene Funktions-/Fehlerverträge
+   prüfen. Zeitverhalten, Speicher und Last als gemeinsame Grenzen betrachten.
+4. Persistenz und Partitionierung mit Identitäten, Bonds, Peerregister,
+   Schlüsseln, Profilen und Spielständen planen. Datenformate, Upgrade und
+   Rückweg ausdrücklich prüfen; kein stiller Werksreset als Migrationsersatz.
+5. Betroffene Host-/Kryptografie-/SDK-/Androidtests und Firmwarevarianten neu
+   ausführen. TLS-Gegenstellenfälle auf dem neuen Backend wiederholen und um
+   zielbezogene Negativ-/Securityfälle ergänzen. Alte grüne Ergebnisse bleiben
+   Herkunft und sind keine Nachweise für die neue Basis.
+6. Nach gesondert beauftragtem Upload und chipgebundenem Rückweg ein eindeutig
+   zugeordnetes App-/Firmwarepaar prüfen: BLE-Einrichtung, gegenseitiger Nachweis,
+   Rollen/Entzug, Bond-Reconnect, geschützter Transfer, Datenbestand nach Neustart,
+   alle betroffenen Baugruppen, Funkkoexistenz, Heap/Stacks, Timing und Dauerlast.
+
+**Abschluss:** geprüfte Commits, reproduzierbarer sauberer Build, Portierungs-
+und Paritätsmatrix sowie getrennte Software-/Gerätebelege. Verbleibende Grenzen
+und Rückwege dokumentieren; Plattformmigration und noch offene BLE-/Rollen-/
+Profilproduktintegration getrennt bewerten. Keine Produktabnahme aus bloßen
+Builds oder synthetischen SDK-Modellen ableiten.
+
+## Erhaltene BLE-Übergabe und Sicherheitsprüftore
+
+Die folgenden Befunde und Prüfpflichten bleiben erhalten. Frühere Zielangaben
+Arduino 3.x / IDF 5.x sind durch die Entscheidung oben ersetzt; historische
+Abschnitte dokumentieren ihre damalige Begründung und sind kein Parallelauftrag.
 
 ## Neue Übergabeentscheidung vom 28.10.2026
 
@@ -50,12 +171,14 @@ Der Maintainer besetzt die Funktionen vor Umsetzung. Nächster Schritt: eigene
 Arbeitsbasis und genaue unterstützte Zielpakete festlegen, dann Auslöser und
 Prüftore unten gegen tatsächlichen Code/SDK abgleichen.
 
-1. Konkrete Arduino-3.x-/ESP-IDF-5.x-/Mbed-TLS-Versionen, Support und einschlägige
+1. Neueste stabile ESP-IDF-Version und ihr Kryptografiebackend nach P2 prüfen;
+   optionale Arduino-Komponenten nach P3 bewerten. Support und einschlägige
    Securitykorrekturen verifizieren und pinnen. Keine Versions- oder Hashguards
    bloß entfernen, um Builds grün zu bekommen. Kein unbekannter Backport als Fix.
 2. Originale GATT-/SMP-Callbacks, private Typen/Offsets, Aufgabenbesitz und
    Key-/Registry-Bindung neu prüfen. Die heutigen `sdk446`- und Binärpins sind
-   keine 5.x-Belege. Keine Ersetzung durch öffentliche GAP-auth_success-Flags.
+   keine Belege für die neue IDF-Zielbasis. Keine Ersetzung durch öffentliche
+   GAP-auth_success-Flags.
 3. ESP-NOW-Metadaten und Koexistenz, RMT/LED-Besitzer, UART/Audio, I²C/Matrix/Wake,
    PN532-Patch und Gerätefehlerverträge auf der neuen Basis erhalten und prüfen.
    Bestehende Pinbelege und B7-/Versorgungsgrenzen bleiben getrennt erhalten.
@@ -72,12 +195,13 @@ Prüftore unten gegen tatsächlichen Code/SDK abgleichen.
    Profilgeräteadapter und gemeinsamer Geräteablauf. Das sind weiterhin offene
    Produktnachweise, keine erledigten Migrationsnebenwirkungen.
 
-Die folgenden Abschnitte bewahren den vorherigen Auftrag und seine damaligen
+Die folgenden Abschnitte sind historisch und durch P1–P4 oben ersetzt.
+Sie bewahren den vorherigen Auftrag und seine damaligen
 Grenzen. Eine konkrete Zielversion und eine Umsetzung werden hier nicht erfunden.
 
 ## Historischer Auftrag und bisherige Planung
 
-**Status: beschlossen und einzuplanen; Umsetzung offen, noch nicht begonnen.**
+**Historischer Status vom 18.10.2026: beschlossen und einzuplanen; Umsetzung damals offen.**
 Datum: 18. Oktober 2026. Quelle: ausdrücklicher Nutzerauftrag in der
 ESP-NOW-Sitzung `01a14c5f-f677-7403-a000-bf20e5ba93a3`: Aktualisierung als
 zukünftige notwendige Projektarbeit dokumentieren und jetzt keinen weiteren
@@ -86,8 +210,8 @@ zu einem Geräteupload oder zum Austausch der funktionierenden Installation.
 
 ## Anlass und Ausgangsbasis
 
-Die ESP-Firmware soll künftig auf **Arduino-ESP32 3.x mit der dazu passenden
-ESP-IDF-5.x-Basis** aktualisiert werden. Konkrete Zielversion, kompatible
+Die damalige Planung sah **Arduino-ESP32 3.x mit der dazu passenden
+ESP-IDF-5.x-Basis** vor; dieses Ziel ist inzwischen ersetzt. Konkrete Zielversion, kompatible
 PlatformIO-Pakete, Termin und Aufwand werden erst bei Wiederaufnahme bestimmt.
 
 Geprüfte Ausgangsbasis: ESP-NOW-Arbeitsbranch bei `9493bf2`,
@@ -144,7 +268,7 @@ ABI-Hooks neu auditieren; Hashes nicht ohne diesen Nachweis austauschen.
 
 Die eigentliche RSSI-Anzeige, Kalibrierung und Effektsteuerung sind gesonderte
 Funktionsarbeit; deren konkrete Ausgestaltung ist mit diesem Plan nicht
-beschlossen. Für die Migration jetzt keine Pakete aktualisieren, Prototypen
+beschlossen. Damalige Auftragsgrenze: keine Pakete aktualisieren, Prototypen
 erstellen oder zusätzliche Untersuchungen beginnen.
 
 ## Bereits geprüfte Referenzen
