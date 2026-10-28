@@ -142,9 +142,26 @@ bestanden; Architektur/Headerprüfung wie oben.
 gegen den kuratierten Integrationsbranch. Er enthält die unintegrierten
 Vorarbeiten von [#100](https://github.com/Sven401/Larp-Escape/pull/100) als
 Voraussetzung, ohne diesen PR oder Zielbranch zu verändern.
-**CI-Snapshot nach Anlegen:** native Qualifikation und weitere PR-Jobs laufen
-noch; NFC-Transportjob erfolgreich. Keine pauschale CI-Freigabe aus diesem
-Zwischenstand. Die CI auf späteren Dokumentcommits ist davon getrennt. Lokale Logs/JUnit unter `private/host-psa` und
+**Nachfolgender geprüfter Codecommit:**
+`d81dc5ac122af64f3832ba17f0672ecb6c103ee3` ergänzt den POSIX-Journalpfad.
+Der Windows-Aufruf bleibt erhalten; Linux nutzt fsync(fileno()). Flush, Sync
+und Close müssen weiterhin alle erfolgreich sein. Neuer echter CLI-Test prüft
+Journalanlage, Wiederlesen/Export im zweiten Prozess und Ablehnung eines
+fehlenden Verzeichnisses ohne dessen Erstellung. Keine Powerloss-/Syncfehler-
+Injektionsbehauptung. Lokal CTest4/4 erfolgreich; Legacy-PlatformIO-Pfade
+host-configured-control524 und host-peer-proof536 ebenfalls erfolgreich.
+Unabhängiger POSIX-Quellenreview ohne konkreten offenen Befund.
+
+**Native CI erfolgreich:** [PR-Lauf40764974516](https://github.com/Sven401/Larp-Escape/actions/runs/40764974516)
+und eigener [Push-Lauf40764968617](https://github.com/Sven401/Larp-Escape/actions/runs/40764968617)
+am Head d81dc5a: SDK-Wächter/Negativtests, vier native Hosttests und tatsächlicher
+ESP32-Build im gepinnten Linux-Container erfolgreich. Der PR-Lauf prüft den
+virtuellen Zusammenführungsstand, der Push-Lauf den Arbeitsbranch; keine
+Integration in den Zielbranch. Belegartefakt `native-idf-40764974516-1`,
+ID12849643191,57.195Bytes, nicht abgelaufen (ausgelesen28.10.2026), mit JUnit,
+CTest-Log, IDF-Buildlogs, Projektbeschreibung und tatsächlicher sdkconfig.
+Weitere Repository-CI wird getrennt ausgewertet; diese Ergebnisse sind kein
+Geräte- oder Gesamtproduktnachweis. Lokale Logs/JUnit unter `private/host-psa` und
 `private/*build.log`, nicht versioniert; CI-Artefakte werden getrennt benannt.
 
 Unabhängiger Quellenreview: ursprünglicher CTest-Fixturepfad und fehlende
@@ -154,7 +171,7 @@ Keylebensdauer ohne konkreten Securitybefund. Kein eigener Testlauf des Reviewer
 
 ## Noch offene Abschlusskriterien und nächste Reihenfolge
 
-1. Neue CI-Qualifikation auswerten; der lokale native SDK-Build ist belegt. Alle bisherigen
+1. Native CI-Qualifikation ist belegt. Alle bisherigen
    Firmware-/Hostvarianten bleiben separate Paritätstore, keine pauschale Ablösung.
 2. Originalverbindungs-/BTU-/SMP-Ereignisordnung am gepinnten6.1-Quellpfad
    nachweisen oder neuen geprüften Anschluss entwerfen. Reconnect mit gleichem
@@ -193,3 +210,13 @@ Archiv-SHA256: `9208c19755cd4964b7915b9afcf02c66d493a4c870c4b3e83f6c538d9c1237a5
 Dieser Wechsel deckte zudem einen spät innerhalb eines Testnamensraums geladenen
 Standardheader auf; `<functional>` ist nun vor den Testnamensräumen eingebunden.
 Keine SDK-Sicherheitsguards oder Compilerwarnungen wurden dafür abgeschaltet.
+
+
+### Gefundene und korrigierte Linux-Grenze
+
+Der erste [native PR-Lauf an96eb63c](https://github.com/Sven401/Larp-Escape/actions/runs/40764291187)
+lehnte den Build des Profilwerkzeugs wegen des bisher unbedingten Windows-
+Headers io.h ab; der ESP32-Schritt wurde deshalb übersprungen. Das war eine
+Portierungslücke im Hostwerkzeug, kein fehlgeschlagener Gerätetest. Die oben
+belegte POSIX-Korrektur samt echter Journalprobe behebt diesen konkreten Fall;
+der erfolgreiche Folgelauf schließt den Linux-Build-/Testnachweis dieses Schnitts.

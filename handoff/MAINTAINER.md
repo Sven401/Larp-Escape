@@ -4,7 +4,8 @@
 [Bestand, Zielentscheidung und Prüfstand](../docs/migration/esp-idf-qualification-2026-10-28.md),
 [Plan](ARDUINO-ESP32-3-MIGRATION.md), [Entwurfs-PR#101](https://github.com/Sven401/Larp-Escape/pull/101).
 Native6.1-Buildbasis ohne Arduino, CMake-Hosttests und PSA-P256-Adapter auf
-Codecommit `e5ab595` lokal geprüft. BLE-/TLS-Produktanschluss, Geräteadapter,
+Codecommit `d81dc5a` lokal und in nativer Linux-CI geprüft; vier native Testsuiten
+und ESP32-Build erfolgreich. BLE-/TLS-Produktanschluss, Geräteadapter,
 Persistenzparität und gemeinsame Geräte-/Lastabnahme bleiben offen; kein Upload.
 
 
