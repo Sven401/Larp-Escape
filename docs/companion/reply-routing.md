@@ -1,13 +1,20 @@
-# Verifizierte Antwortauswahl aus der FreeRTOS-Queue
+# Verifizierte Antwortauswahl aus dem synchronisierten Antwortpuffer
 
 **Stand:** 7. Oktober 2026. **Status:** schmaler tatsächlicher Queue-/Host-/Probenpfad;
 physischer Transport, Identität/Pairing und tatsächliche Peerbestätigung offen.
+
+**Korrektur vom 24.10.2026:** Der Antwortpuffer ist ein eigener Wert-Ring mit
+vier Plätzen unter der Authoritysperre. Aufnahme, aktuelle Auswahl und rohe
+Diagnoseentnahme verwenden dieselbe Sperre, ohne verschachtelte RTOS-API.
+Die ursprünglichen Prüfzahlen unten sind historische Belege; der
+[aktuelle Hostprüfweg](../../test/test_configured_control/README.md) ergänzt
+FIFOumlauf, Vollgrenze, Zielerhalt und echten Host-Threadkonflikt.
 
 GameControl kopiert ursprüngliche Principal+connectionEpoch in jede
 RoutedGameReply. Der verifizierte Transporteigentümer benutzt nun
 FreeRtosGameControlChannel::takeCurrentReply anstelle einer blinden Rohentnahme.
 Unter derselben kurzen Authoritysperre prüft es aktuelle GM-Verbindung und
-entnimmt höchstens vier kopierte Antworten mit null Wartezeit. Nicht passende
+entnimmt höchstens vier kopierte Antworten aus dem Wert-Ring, ohne wartende API. Nicht passende
 Principal/Epoch oder unavailable/suspendierte/Observer-Verbindung verwirft
 bereits gepufferte Antworten. Eine passende wird kopiert und true geliefert.
 False erhält das Ziel unverändert; kein Gerät/Netzwerk wird innerhalb der

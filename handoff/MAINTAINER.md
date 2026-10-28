@@ -1,6 +1,185 @@
 # Maintainer-Einstieg
 
-**Setup-Bestandsaufnahme · 20.10.2026:** [Projekt, Werkzeuge, Prüfwege und Werkbank-Automatik](PROJEKT-SETUP.md). Gegen Integrationsbasis `5b85965` einschließlich #86/#87 geprüft; der aktive GitHub-Heartbeat verweist noch auf die historische KI-Werkbank. Korrektur vorgeschlagen, Automatisierung unverändert.
+**Fachaudit verschlankt · 28.10.2026:** Dokumentationsbasis ist
+`f81956faffa4d4c6b0198fdbd0c626b21e137cd4` im Integrationsbranch
+`plan/projektuebergabe-kuratierter-stand`. Diese Fortschreibung liegt in
+[PR #99](https://github.com/Sven401/Larp-Escape/pull/99); sie ist bis zum Merge
+kein integrierter Regelstand. Die ausdrücklich beauftragte Umstellung des
+bestehenden Wochenauftrags wird getrennt im
+[Betriebsbeleg](../docs/quality/fachaudit-betrieb.md#beobachteter-ausgangspunkt-und-umstellung)
+nachgewiesen.
+
+**Neuer Arbeitsumfang:** Kurzcheck höchstens fünf Minuten; nur bei belegtem
+Anlass eine vertiefte Frage, insgesamt höchstens 30 Minuten einschließlich
+Gegenprüfung und Protokoll. Starre Fachgebietsrotation und Sechswochenziel
+entfallen. [Fachmandate](../docs/quality/verantwortlichkeiten.md),
+[Prüfpflichten](../docs/quality-checks.md), echte Wiedervorlageauslöser und
+quartalsweiser Normabgleich bleiben verbindlich. Eine fachliche Vertiefung
+braucht weiterhin eine tatsächlich durchgeführte Gegenprüfung; ein unveränderter
+Kurzcheck erneuert keinen vollständigen Fachprüfstand.
+
+**Nutzenkontrolle:** Nach vier abgeschlossenen geplanten Läufen werden belegte
+Maintainerentscheidungen, angenommene Änderungen und geschlossene Nachweislücken
+getrennt den Laufzeiten, offenen Entwürfen, Fehlalarmen und Quellenlücken
+gegenübergestellt. Der 26.10. zählt als erster Lauf vor der Verschlankung.
+Keine Befundquote, keine Wirkung aus bloßer Recherche ableiten.
+[Zählregeln und frühere Entscheidungsauslöser](../docs/quality/fachaudit-betrieb.md#messbarer-nutzen-und-entscheidung-nach-vier-läufen)
+sowie [Übernahme/Rückweg](../PROMOTION.md) sind festgehalten.
+
+**Erstlauf und Nachkontrolle abgeschlossen · 26.10.2026:** Der geplante A3-Lauf
+auf `f81956faffa4d4c6b0198fdbd0c626b21e137cd4` dauerte im Chat 20 Minuten
+18 Sekunden. Keine neuen/geänderten Findings, keine daraus angenommene
+Änderung und keine neue Geräteabnahme. Die gesondert gegengeprüfte
+Erstlaufkontrolle bestätigte:
+
+| Bereich | Ergebnis |
+| --- | --- |
+| Dubletten | Fünf bekannte Finding-IDs und #39/B7 erhalten; keine Wiederöffnung korrigierter Software allein aus Pilottexten; #54 getrennt. |
+| Zuständigkeiten | A3-Mandat, tatsächliche andere Qualitätsgegenprüfung und kanonische Ziele belegt; Fachreview und Maintainerentscheidung getrennt. |
+| Wiedervorlagen | Vorhandene Auslöser erhalten, A2-02-Geräterest an A2-03 gekoppelt; keine erfundenen Freigabetermine. |
+
+Laufbelege liegen lokal unter
+`outputs/fachaudit/2026-10-26T18-25-59Z-f81956f/README.md` und `lauf.json`.
+[Zeiten, Chatbelege und Grenzen](../docs/quality/fachaudit-betrieb.md#beobachteter-ausgangspunkt-und-umstellung)
+zeigen die Betriebsabweichung: Auditstart 19:25:47 statt 10:00 MEZ,
+Nachkontrolle 19:46:48 statt 11:00 MEZ. Ursache ungeklärt; beide wurden
+abgeschlossen. Die einmalige Nachkontrolle ist beendet und entfernt.
+Ein leerer Finding-Zähler allein begründet weder Erfolg noch Nutzlosigkeit.
+
+**Weiter offen:** Geräte-/SMP-/Zeitnachweise, IDF-4.4-Supportentscheidung,
+Chipzuordnung #39/B7, Adapterabnahmen und der messbare Zusatznutzen des
+Wochenbetriebs. Die nicht vertieften Fachgebiete bleiben sichtbar ungeprüft.
+Nächster Solltermin und rückgelesene Auftragseinstellungen stehen im
+[Betriebsbeleg](../docs/quality/fachaudit-betrieb.md#beobachteter-ausgangspunkt-und-umstellung).
+Der GitHub-Abgleich und die Produkt-/CI-Prüfungen bleiben unverändert.
+
+Die folgenden Einträge bewahren ihre **historischen** Integrations- und
+Prüfstände; frühere Terminvormerkungen und Betriebsregeln sind keine aktuellen
+Aufträge.
+
+**Historischer Integrations- und Aktivierungsstand · 24.10.2026:**
+[PR #97](https://github.com/Sven401/Larp-Escape/pull/97) ist in
+`plan/projektuebergabe-kuratierter-stand` integriert. Remote-Head und geprüfter
+Mergecommit: [`c582ed7048cf7c386f240eca20e09142b86c7e00`](https://github.com/Sven401/Larp-Escape/commit/c582ed7048cf7c386f240eca20e09142b86c7e00).
+Der Dateibaum ist identisch zum PR-Head `a8f5ec45dccf6a2d83347bb503c70e8e9255a755`
+(Baum-ID `9154e19bd36c6d222a037c596e875c10a7951ba7`, lokal erneut verglichen).
+Vor dem Merge waren zwölf Checks erfolgreich: neun PR-Jobs und drei
+Quality-Jobs des Pushes auf den Arbeitsbranch. Davon getrennt ist die eigene
+[Merge-CI, Quality-Lauf 40042256785](https://github.com/Sven401/Larp-Escape/actions/runs/40042256785)
+jetzt **3/3 erfolgreich** (Push-Ereignis, abgeschlossen am 24.10.2026).
+
+| Prüfung auf dem tatsächlichen Merge | Ergebnis aus dem aktuellen Jobprotokoll |
+| --- | --- |
+| [Hardwareunabhängige Prüfungen](https://github.com/Sven401/Larp-Escape/actions/runs/40042256785/job/120715805046) | 122 allgemeine, 11 MCP-, 513 Steuerungs- und 523 Kryptografiefälle erfolgreich; 10 PN532-Patchtests, RTOS-Kontextprüfung und 20.000 FIFO-Befehle/-Antworten mit Hostthreads; Architektur-, 86 Header- und Formatprüfung erfolgreich |
+| [ESP32-Builds](https://github.com/Sven401/Larp-Escape/actions/runs/40042256785/job/120715805025) | Spiel-Firmware, Runtime-, Profil-Runtime- und GATTS-ABI-Probe erfolgreich; acht native und zwei SDK-Negativfälle der Kryptografie-Quellenprüfung abgewiesen |
+| [Android](https://github.com/Sven401/Larp-Escape/actions/runs/40042256785/job/120715804818) | Protokoll-/Unit-Tests, Debug-/Release-Builds und Lint für Dev und GM erfolgreich; zehn Trennungsregressionen und Prüfung beider App-Pakete erfolgreich |
+
+Alle drei Protokolle nennen `c582ed7` als tatsächlich ausgecheckten Commit;
+vier nicht abgelaufene Belegartefakte sind vorhanden. LED-, NFC- und
+ESP-NOW-Push-Workflows wurden durch ihre Pfadfilter bei diesen reinen
+Dokumentänderungen nicht ausgelöst. Das sind keine zusätzlichen grünen
+Merge-Läufe. Diese Fortschreibung wertet vorhandene CI aus; lokal wurden
+keine Produkt-, Build- oder Gerätetests erneut ausgeführt.
+
+**Damals rückgelesener Automationsstand (24.10.2026):** Der [Fachaudit-Wochenauftrag](../docs/quality/fachaudit-betrieb.md)
+`larp-escape-fachaudit` ist nach ausdrücklichem Folgeauftrag **ACTIVE**.
+Prompt und Zielchat wurden zurückgelesen; der bestehende GitHub-Abgleich ist
+unverändert. Nächster Solltermin: **26.10.2026, 10:00 MEZ / 09:00 UTC**,
+wöchentlich Montag in Europe/Berlin. Tatsächliche Scheduler-Vormerkung,
+Startversatz und Prüfweg stehen im Betriebsbeleg. Eine erste geplante
+Ausführung ist noch nicht erfasst; nach vier abgeschlossenen Wochenläufen
+folgt die Nutzungsbewertung.
+
+**Offen bleiben:** Geräte-/SMP-/Zeitnachweise, IDF-4.4-Supportentscheidung,
+Chipzuordnung #39/B7, Adapterabnahmen und die operative Bewährung des Audits.
+Fachmandate und Prüfpflichten gelten weiter. CI und Aktivierung sind keine
+Geräte- oder Gesamtproduktabnahme. Die folgenden Einträge bewahren die
+jeweiligen früheren Prüfstände.
+
+**Zweitlauf und Automationsvorbereitung · früherer Stand vom 24.10.2026:** Auf Integrationscommit
+`cee968a7bf4c97eb68c9fe6f705bb5a06eef76b0` wurde der
+[zweite Audit-Probelauf mit unabhängigem Wiederholungsabgleich](../docs/quality/audits/2026-10-24-probelauf-2/README.md)
+durchgeführt. Fünf Findings und #39/B7 wiedererkannt, keine Dubletten; offene
+A2-02-Gerätewiedervorlage dem bestehenden Adapterfreigabetor zugeordnet.
+[Fachaudit-Wochenauftrag](../docs/quality/fachaudit-betrieb.md) **pausiert vorbereitet**,
+nicht aktiviert. Die [eigene CI von PR #96 am tatsächlichen Merge](https://github.com/Sven401/Larp-Escape/actions/runs/40038277888)
+ist mit Quality 3/3 erfolgreich; andere Push-Workflows wurden durch ihre
+Pfadfilter nicht gestartet. Kein neuer Geräte- oder Gesamtproduktnachweis.
+
+**Fachaudit integriert · 24.10.2026:** [PR #95](https://github.com/Sven401/Larp-Escape/pull/95)
+ist in `plan/projektuebergabe-kuratierter-stand` übernommen, tatsächlicher
+Mergecommit [`882c9d613ed6e63b33b8e4dffcd2b207ea4d66d3`](https://github.com/Sven401/Larp-Escape/commit/882c9d613ed6e63b33b8e4dffcd2b207ea4d66d3).
+Der vollständige Dateibaum ist identisch mit dem geprüften PR-Head
+`d17e699e548346051f0777a022171be545e76b9b`; lokal mit `git diff --exit-code`
+und gleicher Git-Baum-ID `1cb1bf53e280881ae203be4c44aefbd4d9c56800` verifiziert.
+
+- **PR-Prüfstand:** neun erfolgreiche Jobs am PR-Zusammenführungsstand
+  `a4957905ba4081c28256230c05ebab6f2c6de229`, Head `d17e699e` gegen Basis
+  `e61d7642`: [Quality 3/3](https://github.com/Sven401/Larp-Escape/actions/runs/40035232919),
+  [LED/Baugruppen 4/4](https://github.com/Sven401/Larp-Escape/actions/runs/40035232741),
+  [NFC 2/2](https://github.com/Sven401/Larp-Escape/actions/runs/40035232726).
+- **Eigener Merge-Prüfstand:** sieben erfolgreiche Jobs (Quality 3/3, LED/Baugruppen 4/4).
+  [Quality](https://github.com/Sven401/Larp-Escape/actions/runs/40036526891) und
+  [LED/Baugruppen](https://github.com/Sven401/Larp-Escape/actions/runs/40036526833)
+  prüfen den tatsächlichen Mergecommit `882c9d6` über das Push-Ereignis.
+  Der separate NFC-Workflow wurde wegen seines Pfadfilters nicht neu gestartet;
+  sein grüner PR-Lauf bleibt ein eigener Nachweis. Die CI dieser reinen
+  Maintainer-Fortschreibung ist wiederum davon getrennt.
+- **Lokaler Softwareprüfstand vor dem Merge:** Codecommit `c4b84fc`, 122 allgemeine,
+  513 Steuerungs-, elf MCP- und 523 Kryptografiefälle, Kanalprüfung mit echten
+  Hostthreads und vier erfolgreiche ESP32-Buildvarianten;
+  [vollständige Befehle, Commitbezug und Grenzen](../docs/quality/runtime-fixes-2026-10-24.md).
+
+Damit sind die [Fachmandate unter dem Maintainer](../docs/quality/verantwortlichkeiten.md),
+die FreeRTOS-/MCP-Softwarekorrekturen und die zusätzlichen PN532-/MCP-/
+Kontextprüfungen integriert. Der [Pilot](../docs/quality/audits/2026-10-24-pilot/README.md)
+bewahrt die ursprünglichen Fehlerbelege. Hardwareabnahme, ESP32-SMP-/Timingnachweise,
+IDF-4.4-Supportentscheidung und bestehende Chip-/Fristgrenzen bleiben offen.
+[Automationsbestand](AUTOMATISIERUNGSINVENTAR-2026-10-23.md) und
+[Koordinatorentwurf](../docs/quality/fachaudit-entwurf.md) bleiben abgegrenzt.
+Dieser Übernahmeschritt richtete keinen Scheduler ein; die spätere Aktivierung
+ist oben dokumentiert. Kein Geräteupload und keine Übernahme nach `main`.
+
+## Start für weitere App- und Firmwarearbeit
+
+**Integration und Bereinigung · 21.10.2026:** #91 ist bei `f174cee` integriert,
+mit neun erfolgreichen PR-Prüfungen und sieben erfolgreichen Prüfungen auf dem
+Mergecommit. Der lokale Checkout `.worktrees/kanonischer-start` liegt sauber
+auf diesem Stand. [Abschlussbeleg, private Sicherung und erhaltene Arbeit](BEREINIGUNG-2026-10-20.md).
+Die folgenden Angaben bewahren den fachlichen Prüfstand der ursprünglichen
+Bestandsaufnahme; für neue Arbeit weiterhin den Remote-Head prüfen.
+
+**Ausgelesen und am Code abgeglichen · 20.10.2026:** Kanonischer Ausgangspunkt
+ist `origin/plan/projektuebergabe-kuratierter-stand`, in dieser Bestandsaufnahme
+bei `97a2584cc108ebb9c0f667fc46f898d163e00144` einschließlich #86/#87/#88.
+Vor neuer Arbeit den Remote-Stand und den tatsächlich geöffneten Checkout prüfen.
+Der Hauptordner stand beim Audit auf dem älteren Resonanzkreis-Branch;
+auch der gleichnamige lokale Integrationsbranch war zurückgeblieben.
+[Bestandsaufnahme, Quellenzuordnung und Aufräumvorschlag](ENTWICKLUNGSSTART-2026-10-20.md).
+
+| Arbeit | Einstieg | Noch offene Grenze |
+| --- | --- | --- |
+| Dev-App und Baugruppen | [Android-Anleitung](../companion/android/README.md), Modul `app`; [Baugruppenfirmware](../firmware/led/README.md), [Wire-V2](../docs/led/ble-wire-v2.md) | Einzeln belegte Funktionen sind keine gemeinsame Geräte-/Spielabnahme |
+| Spielleiter-App | Modul `gamemaster`; [Stationspilot](../docs/companion/spielleiter-stationspilot.md), [UI/UX-Vertrag](../docs/ui-ux/BOX-PILOT.md) | Lesender Pilot vorhanden; Licht-/Spielaktionen und allgemeine Rechte fehlen |
+| Spiel-/Profilfirmware | [Profilmodell](../docs/configuration/profile-model.md), [Geräteausführung](../docs/configuration/device-runtime.md), `src/main.cpp` und getrennte Profilprobe | F5a-Ausführung, reale Profilübernahme, F5b-Betrieb nicht abgeschlossen |
+| Dezentrale Veranstaltung | [VA-01](../docs/veranstaltungsarchitektur.md), [D0](../docs/veranstaltung/d0-vertrag-v1.md), [Plan #25](https://github.com/Sven401/Larp-Escape/issues/25) | D1-A in PR #73 separat bewerten; D1-B/C und D2–D4 bleiben offen |
+| LED-Effektentwicklung | [Rolle](../docs/led/rollen/led-effekt-architekt.md), [Spielinformation](../docs/led/spielinformation-2026-10-18.md), [Live-Anleitung](../docs/led/interactive-development.md), [Näheglut-Fortsetzung](NAEHEGLUT-STOP-SPIELANSCHLUSS-2026-10-18.md) | Labor, Produktadapter und optische Freigabe getrennt; offene Entwürfe nicht automatisch integrieren |
+
+Die [Prüfanleitung](../docs/quality-checks.md) und der
+[Wartungsprüfstand](WARTUNG-PRUEFSTAND-2026-10-20.md) ermöglichen den Start ohne
+Hardware. Der Audit prüft Git, Quellen, Dokumentation und vorhandene CI-Belege;
+er ist kein neuer Firmware-/Android- oder Gerätetest. Die Produktquellen an
+`97a2584` sind gegenüber dem Stationspilot-Merge `7e19c95` unverändert.
+PR #88 hatte neun erfolgreiche PR-Jobs; sein Merge hat denselben Git-Baum wie
+der geprüfte Head `a23ecd1`. Ein eigener CI-Lauf auf `97a2584` war beim Audit
+nicht vorhanden; die Nachweise werden nicht gleichgesetzt.
+
+## Datierte Fortschritte und Herkunft
+
+Die folgenden Einträge beschreiben den jeweiligen damaligen Stand.
+Für neue Arbeit gilt der Einstieg oben zusammen mit den aktuellen Fachquellen.
+
+**Setup und GitHub-Abgleich · 20.10.2026:** [Projekt, Werkzeuge, Prüfwege und Werkbank-Automatik](PROJEKT-SETUP.md). Die anschließende [beauftragte Umstellung mit Verlaufsaudit und Lese-Probelauf](GITHUB-AUTOMATISIERUNG-2026-10-20.md) löst den alten KI-Werkbank-Bezug ab. Bestehender Heartbeat wieder aktiv; 23 Issues und 16 Schutzfälle geprüft, keine Issue-/Boardänderung im Probelauf. Fachlicher Konflikt #34 bleibt offen.
 
 **Stationspilot #79 integriert · 19.10.2026:** Merge `7e19c95` in den kuratierten Integrationsbranch; Dateibaum identisch zum geprüften Head `98488ea`. [Mergebeleg, getrennte CI und offene Geräteabnahmen](STATIONSPILOT-INTEGRATION-2026-10-19.md). Der lesende native Pilot und die Apptrennung sind integriert; TalkBack, Mehrstationsbetrieb, echter Funkverlust und Langzeitbetrieb bleiben offen. Keine neue Geräteprüfung durch den Merge.
 
@@ -108,8 +287,9 @@ und offenen Abnahmekriterien. **Sollkonzept, keine Implementierung.**
 
 - **Dokumentationsbasis:** PR #87 ist bei `a4c83cb7351759808f85ede612abc7c2280212fc`
   integriert; Dateibaum identisch zum geprüften Wartungshead `44e7098`.
-  [Wartungsprüfstand](WARTUNG-PRUEFSTAND-2026-10-20.md). Diese Maintainer-Fortschreibung
-  führt den vorbereiteten Inhalt `499ec94` auf dieser Basis weiter; ihr PR ist noch keine Integration.
+  [Wartungsprüfstand](WARTUNG-PRUEFSTAND-2026-10-20.md). Die damalige Maintainer-Fortschreibung
+  aus `499ec94` ist inzwischen durch #86 bei `5b85965` integriert; #88 ergänzt
+  bei `97a2584` die Setup-Dokumentation. Beide ändern keine Produktquellen.
 - **Belegt:** PR #79 ist bei `7e19c955aaa54bcc7ed318d594a6f69476de4aa9`
   integriert. Frischer Fetch bestätigt Zielbasis `494f1c4` und Head `98488ea`
   als Eltern sowie identischen vollständigen Dateibaum zum geprüften Head.

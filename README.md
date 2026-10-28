@@ -1,25 +1,36 @@
 # Larp-Escape
 
-**Projekt und Arbeitsumgebung · 20.10.2026:** [Setup, Quellstruktur, Prüfwege und Werkbank-Automatik](handoff/PROJEKT-SETUP.md), gegen Integrationsbasis `5b85965` einschließlich #86/#87 geprüft.
-
-**Verbindliche Architektur · 18. Oktober 2026:** [Dezentrale Veranstaltung (VA-01)](docs/veranstaltungsarchitektur.md): autonome Boxen, mehrere BLE-Spielleitungen, ESP-NOW/WLAN bei Kontakt und eine zeitweise erreichbare Zentrale. [Verträge und Folgepakete](docs/veranstaltungsarchitektur-umsetzung.md). **Bestätigtes Soll; Umsetzung und Abnahme offen.**
-
 ESP32-Steuerung des Reichstag-Spiels: Rollenkarten, Kristallmatrix, Audio, LEDs und ESP-NOW-Aktivierung.
 
-**LED-Entwicklung:** [Projektgrenzen und externe Funktionsreferenz](docs/led/implementation-reference.md). Die Umsetzung in App und Firmware bleibt eigenständig.
+**Entwicklungseinstieg · 20.10.2026:** Kanonische Basis ist
+`plan/projektuebergabe-kuratierter-stand`, hier gegen `97a2584` geprüft.
+Der [Maintainer-Stand](handoff/MAINTAINER.md) führt nächste Arbeit und Grenzen;
+[Setup und Prüfwege](handoff/PROJEKT-SETUP.md) erklären die Arbeitsumgebung.
+Die [technische Übergabe](handoff/README.md) erschließt datierte Belege und Archive.
 
-**Aktueller Einstieg:** [Maintainer-Stand](handoff/MAINTAINER.md) und
-[technische Übergabe](handoff/README.md). PR #56 ist in
-`plan/projektuebergabe-kuratierter-stand` integriert: gemeinsamer V2-Vertrag für
-LED, Wake, Matrix, Audio und NFC. Die gemeinsame Geräteabnahme bleibt offen.
-Die [Repository-Hygiene vom 18. Oktober](handoff/REPOSITORY-HYGIENE-2026-10-18.md)
-ordnet ersetzte PRs, Prüfbelege und erhaltene Arbeitszweige zu.
-Unfertige und verworfene Arbeiten bleiben in den dokumentierten,
-veröffentlichten Archivbranches und Sicherungs-Tags erreichbar.
+| Arbeitsbereich | Vorhandene Grundlage | Einstieg und offene Fortsetzung |
+| --- | --- | --- |
+| **Larp Dev** · `companion/android/app/` | Baugruppenbedienung und Tests für LED, Wake, Matrix, Audio, NFC und ESP-NOW | [Android-Anleitung](companion/android/README.md); berührte Funktionen am passenden V2-Paar gezielt nachprüfen |
+| **Larp GM** · `companion/android/gamemaster/` | Eigenständige App: Station vorbereiten, auswählen, automatisch anmelden und bestätigten Zustand lesen | [Stationspilot](docs/companion/spielleiter-stationspilot.md); Licht-/Spielaktionen und allgemeine Spielleitungsrechte bleiben offen |
+| **Baugruppenfirmware** · `firmware/led/` | Gemeinsamer BLE-V2-Vertrag und getrennte Produkt-/Prüfvarianten; eigenständige Kamera-/Effektlabore | [Firmware-Anleitung](firmware/led/README.md), [Wire V2](docs/led/ble-wire-v2.md); gemeinsame Geräteabnahme und Spielanschluss bleiben offen |
+| **Spiel- und Profilkern** · `src/`, `include/`, `lib/` | Bestehendes festes Spiel sowie konfigurierbarer Profilkern mit synthetischen Runtime-Proben | [Geräteausführung](docs/configuration/device-runtime.md), [Profilanwendung](docs/configuration/profile-application.md); reale profilabhängige Gerätebesitzer und Produktionsanschluss bleiben offen |
+
+Die Produktquellen sind seit Stationspilot-Merge `7e19c95` unverändert;
+die [Wartungsprüfung vom 20.10.2026](handoff/WARTUNG-PRUEFSTAND-2026-10-20.md)
+belegt lokale Tests und Builds dieses Standes. Die historischen
+[Baugruppenergebnisse](handoff/BAUGRUPPEN-NACHWEISE.md) und der begrenzte
+GM-Gerätelauf bleiben erhalten; sie sind keine gemeinsame Gesamtspielabnahme.
+
+**Verbindliches Zielbild:** [Dezentrale Veranstaltung (VA-01)](docs/veranstaltungsarchitektur.md)
+mit autonomen Boxen, BLE je Station und unterbrechbarer Infrastruktur.
+[D0 und Folgepakete](docs/veranstaltungsarchitektur-umsetzung.md) trennen die
+integrierte Spezifikation von ihrer offenen Umsetzung. Für LED-Arbeit gelten
+die [Projektgrenzen](docs/led/implementation-reference.md); Näheglut hat einen
+[Laborstand und offenen Produktanschluss](docs/led/naeheglut-spielanschluss.md).
 
 ## Entwicklung ohne Hardware
 
-PlatformIO Core **6.2.0**, Python **3.11**. Plattformen und Bibliotheken sind in `platformio.ini` festgelegt. Der Host verwendet Windows und C++11. Ein ESP32 wird für diese Schritte nicht benötigt:
+PlatformIO Core **6.2.0**, Python **3.11** für B0; der vollständige Python-/Kameratestlauf benötigt **3.12**. Plattformen und Bibliotheken sind in `platformio.ini` festgelegt. Der Host verwendet Windows und C++11. Ein ESP32 wird für diese Schritte nicht benötigt:
 
 ```powershell
 python scripts/check_architecture.py --self-test
@@ -69,10 +80,11 @@ Die Spiellogik braucht weder Arduino noch Hardware-Stubs. Die alte Regression pr
 - [Companion-Status v1](docs/companion/status-v1.md)
 - [Statusschema](docs/companion/status-v1.schema.json)
 
-Unter `companion/android/` liegt eine Kotlin-/Compose-Entwicklungsbasis mit
-lesender BLE-Verbindungsprüfung und A3-Hostvertrag. Sie ist noch keine
-freigegebene Spielleitungs-App. HTTP-Endpunkt, WLAN-Einrichtung und produktive
-Fernsteuerbefehle sind offen.
+Unter `companion/android/` liegen die getrennten Kotlin-/Compose-Apps Larp Dev
+und Larp GM mit gemeinsamem `core:protocol`. [Apptrennung und Datenerhalt](docs/companion/android-app-trennung.md)
+sowie der [lesende GM-Stationspilot](docs/companion/spielleiter-stationspilot.md)
+sind implementiert. Allgemeiner Spielzugang, Spielsteuerung und veranstaltungsweite
+Verteilung bleiben offen; der Baugruppen-HMAC-Zugang ersetzt keine GM-Rollen.
 
 Die technische Übergabe in `handoff/` ist ohne Zugriff auf frühere interne
 Projektwerkzeuge lesbar. Sie nennt die erhaltenen Commitstände, Prüfungen und
@@ -90,6 +102,6 @@ Die Windows-CI ersetzt keine zusätzliche Prüfung von Include-Groß-/Kleinschre
 
 ## Konfigurierbare Firmware und Companion
 
-Der erste hardwarefreie Profilkern enthält Hardware, Rollen, Zustände, Übergangsbedingungen, Aktionen und Effekte. [Modell, Export und Grenzen](docs/configuration/profile-model.md), [Standardprofil](docs/configuration/standard-profile.json) und [strukturelles JSON-Schema](docs/configuration/profile-v1.schema.json). JSON-Import, Graphauswertung und eine profilabhängige Spielsitzung mit Rechnerbedienung sind implementiert. Komponentenplanung, Broker, statische FreeRTOS-Queues und kontrollierte Profilübernahme mit zwei privaten Profilspeichern sind implementiert und separat mit synthetischen Besitzern baubar. Zwei-Datensatz-Journal und synchronisierter Rechner-Dateispeicher sind implementiert; der ESP32-Speicheradapter ist an die separat gebaute FreeRTOS-Probe angeschlossen. Der gemeinsame Anwendungsablauf koordiniert Einrichtung, Speicherbestätigung und Spielleiterfreigabe in Rechnerwerkzeug und Probe. Reale profilabhängige Treiber, Produktionsanschluss, Geräte-/Stromausfallabnahme, Companion-API und Android-App sind noch offen.
+Der erste hardwarefreie Profilkern enthält Hardware, Rollen, Zustände, Übergangsbedingungen, Aktionen und Effekte. [Modell, Export und Grenzen](docs/configuration/profile-model.md), [Standardprofil](docs/configuration/standard-profile.json) und [strukturelles JSON-Schema](docs/configuration/profile-v1.schema.json). JSON-Import, Graphauswertung und eine profilabhängige Spielsitzung mit Rechnerbedienung sind implementiert. Komponentenplanung, Broker, statische FreeRTOS-Queues und kontrollierte Profilübernahme mit zwei privaten Profilspeichern sind implementiert und separat mit synthetischen Besitzern baubar. Zwei-Datensatz-Journal und synchronisierter Rechner-Dateispeicher sind implementiert; der ESP32-Speicheradapter ist an die separat gebaute FreeRTOS-Probe angeschlossen. Der gemeinsame Anwendungsablauf koordiniert Einrichtung, Speicherbestätigung und Spielleiterfreigabe in Rechnerwerkzeug und Probe. Für diesen Profilpfad bleiben reale profilabhängige Treiber, Produktionsanschluss, Geräte-/Stromausfallabnahme und die Anbindung an die Android-Apps offen.
 
 Konfigurierbare Graphausführung und Rechner-Vorschau: [Laufzeitvertrag](docs/configuration/execution.md).

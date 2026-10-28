@@ -6,6 +6,15 @@ Quelle: Nutzerauftrag in Codex-Sitzung `01a1468c-3ad1-7840-9439-076cf817ca52`.
 Die folgenden Geräteergebnisse sind **aus den benannten Originalberichten ausgelesen**;
 in dieser Sicherungssitzung fand kein neuer Gerätetest statt.
 
+**Historische Ergänzung, kuratiert am 20.10.2026:** Ein bislang unversionierter
+[Installations-/Ruhebericht zur Matrix-Richtungskorrektur](../docs/matrix/device-test-direction-fix-2026-10-16.md)
+und seine [vier erhaltenen Quellen](../docs/matrix/evidence/device-test-direction-fix-2026-10-16.json)
+sind wiederangebunden. Die ursprünglichen Dateien und lokale Artefakthashes
+wurden geprüft; keine neue Geräteprüfung. Dieser Zwischenstand ergänzt die
+Herkunft von MATRIX-01, ersetzt aber weder den späteren Sammellauf noch dessen
+offene Problemstellen. Die acht Ergebnis-IDs und das bisherige Sicherungsmanifest
+bleiben unverändert.
+
 ## Gesicherter Bestand
 
 Die Originalberichte, bereinigten Messdaten, Testpläne, Quellen und Tests bleiben

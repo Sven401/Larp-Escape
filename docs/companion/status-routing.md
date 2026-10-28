@@ -3,6 +3,16 @@
 Stand: 7. Oktober 2026. Tatsächlicher Application-/FreeRTOS-Hostpfad,
 JSONv2 unverändert; Statusframes und physischer Transport offen.
 
+**Korrektur vom 24.10.2026:** Die Mailbox besteht aus einem gespeicherten Wert
+und Verfügbarkeitsflag. Publikation, aktuelle Auswahl und rohe Diagnosekopie
+liegen mit dem AuthorityState unter derselben kurzen Spinlock-Sperre.
+Es gibt keinen FreeRTOS-Peek oder verschachtelten Queue-Lock. Die datierten
+alten Stack-/Objektgrößen unten beschreiben ausschließlich den damaligen
+Stand und sind keine Größenmessung dieser Korrektur.
+[Aktuelle Hostprüfungen](../../test/test_configured_control/README.md)
+trennen Kontextregel, Wertkonsistenz und Host-Threadkonflikte von weiterhin
+offener ESP32-SMP-/ISR-/Latenz-/Geräteabnahme.
+
 ## Kanonischer Produzent
 
 GameControl erzeugt ein RoutedConfiguredStatus mit kopierter Principal/
@@ -18,8 +28,8 @@ publiziert; Adapter darf historische Bytes nicht mit neuer Epoch versehen.
 
 ## Aktueller Empfänger
 
-FreeRtosGameControlChannel::readCurrentStatus führt genau einen Nullwartepeek
-unter der kurzen Authoritysperre aus und akzeptiert nur die ursprünglich
+FreeRtosGameControlChannel::readCurrentStatus prüft die verfügbare
+Statuskopie unter der kurzen Authoritysperre ohne RTOS-Aufruf und akzeptiert nur die ursprünglich
 gebundene aktuelle Principal+Epoch+GM. False erhält sein Ziel. Reconnect,
 Entzug, Observer oder Suspend sperren alten Stand sofort; nach neuer
 GameControlservice-Publikation wird der neue Lease-/Requeststand lesbar.

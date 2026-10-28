@@ -417,6 +417,34 @@ void test_timeout_discards_pending_crystal_before_the_next_role_starts() {
     TEST_ASSERT_FALSE(rig.diagnostics.contains(GameDiagnosticEvent::CrystalAudioUnavailable));
 }
 
+void test_invalid_wake_sample_cannot_trigger_ripples_or_standby_exit() {
+    GameRig rig;
+    rig.wake.signals = {{true, true, true, true}};
+    rig.wake.valid = false;
+    rig.tick();
+    assertPhase(GamePhase::Standby, rig);
+    TEST_ASSERT_TRUE(rig.lights.ripples.empty());
+    rig.wake.valid = true;
+    rig.tick();
+    assertPhase(GamePhase::Idle, rig);
+}
+
+void test_invalid_crystal_sample_cannot_consume_even_plausible_partial_positions() {
+    GameRig rig;
+    rig.wakeToIdle();
+    const auto &role = defaultRoleDefinitions()[0];
+    rig.selectRole(role);
+    rig.audio.finish();
+    rig.crystals.positions = {role.crystals[0].position};
+    rig.crystals.valid = false;
+    rig.tick(100U);
+    TEST_ASSERT_EQUAL_UINT8(0, rig.game.snapshot().crystalCount);
+    TEST_ASSERT_FALSE(rig.diagnostics.contains(GameDiagnosticEvent::CrystalObserved));
+    rig.crystals.valid = true;
+    rig.tick(100U);
+    TEST_ASSERT_EQUAL_UINT8(1, rig.game.snapshot().crystalCount);
+}
+
 void setUp() {}
 void tearDown() {}
 
@@ -440,5 +468,7 @@ int main() {
     RUN_TEST(test_repeated_setup_does_not_duplicate_the_state_graph);
     RUN_TEST(test_error_after_bonus_starts_a_fresh_wait_even_with_delayed_busy_signal);
     RUN_TEST(test_timeout_discards_pending_crystal_before_the_next_role_starts);
+    RUN_TEST(test_invalid_wake_sample_cannot_trigger_ripples_or_standby_exit);
+    RUN_TEST(test_invalid_crystal_sample_cannot_consume_even_plausible_partial_positions);
     return UNITY_END();
 }

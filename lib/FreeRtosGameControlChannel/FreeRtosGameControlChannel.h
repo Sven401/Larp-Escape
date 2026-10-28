@@ -1,12 +1,12 @@
 #pragma once
 #include "Companion/CommandIngress.h"
 #include <freertos/FreeRTOS.h>
-#include <freertos/queue.h>
 namespace larp {
 namespace companion {
-// Process-lifetime static queues; begin before tasks/callbacks. Zero wait,
-// value copies, no ISR API. Trusted transport owner attaches principal and
-// exclusively drains/routes replies by principal AND connectionEpoch.
+// Process-lifetime bounded value storage; begin before tasks/callbacks. No
+// blocking API, allocation or ISR use. One short spinlock covers authority and
+// all copied FIFO/mailbox state; no FreeRTOS API is called while it is held. Trusted transport
+// owner attaches principal and exclusively drains/routes replies by principal AND connectionEpoch.
 // Application alone receive/send/publish.
 class FreeRtosGameControlChannel : public IGameControlChannel,
                                    public ICommandIngress,
@@ -40,7 +40,7 @@ class FreeRtosGameControlChannel : public IGameControlChannel,
                               std::uint32_t connectionEpoch) noexcept override;
     // Raw drain for diagnostics/tests; does not select a current network recipient.
     bool takeReply(RoutedGameReply &reply);
-    // Sole verified transport owner: at most Queue zero-wait copied reads under
+    // Sole verified transport owner: at most Queue copied FIFO reads under
     // the authority lock, discarding stale/unavailable recipients. False preserves
     // destination. Selection is an observation point, not physical-send completion.
     // Recheck the bound epoch in the actual bearer before any later network send.
@@ -48,18 +48,36 @@ class FreeRtosGameControlChannel : public IGameControlChannel,
     // Raw diagnostic snapshot, NOT a current verified network recipient.
     bool readStatus(ConfiguredStatus &status) const;
     // Latest copied status only if the producer's original principal+epoch
-    // still match the current GM. False preserves destination. One zero-wait
-    // peek under authority lock; bearer must recheck before physical sending.
+    // still match the current GM. False preserves destination. One copied
+    // snapshot under authority lock; bearer must recheck before physical sending.
     bool readCurrentStatus(RoutedConfiguredStatus &status) const;
 
   private:
-    QueueHandle_t commands_ = nullptr, replies_ = nullptr, status_ = nullptr;
-    StaticQueue_t commandControl_ = {}, replyControl_ = {}, statusControl_ = {};
-    alignas(TrustedGameRequest) std::uint8_t
-        commandBytes_[ControlLimits::Queue * sizeof(TrustedGameRequest)] = {};
-    alignas(RoutedGameReply) std::uint8_t
-        replyBytes_[ControlLimits::Queue * sizeof(RoutedGameReply)] = {};
-    alignas(RoutedConfiguredStatus) std::uint8_t statusBytes_[sizeof(RoutedConfiguredStatus)] = {};
+    // Access only under authorityMutex_. Fixed capacity and trivial value copies
+    // bound the work; this is deliberately not a second RTOS synchronization layer.
+    template <typename T> struct ValueFifo {
+        T values[ControlLimits::Queue] = {};
+        std::size_t head = 0, count = 0;
+        bool push(const T &value) noexcept {
+            if (count == ControlLimits::Queue)
+                return false;
+            values[(head + count) % ControlLimits::Queue] = value;
+            ++count;
+            return true;
+        }
+        bool pop(T &value) noexcept {
+            if (!count)
+                return false;
+            value = values[head];
+            head = (head + 1) % ControlLimits::Queue;
+            --count;
+            return true;
+        }
+    };
+    ValueFifo<TrustedGameRequest> commands_;
+    ValueFifo<RoutedGameReply> replies_;
+    RoutedConfiguredStatus status_;
+    bool statusAvailable_ = false;
     mutable portMUX_TYPE authorityMutex_ = portMUX_INITIALIZER_UNLOCKED;
     AuthorityState authority_;
     bool started_ = false;

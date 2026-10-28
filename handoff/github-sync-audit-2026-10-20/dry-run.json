@@ -1,0 +1,75 @@
+{
+  "mode": "read-only",
+  "source_commit": "97a2584cc108ebb9c0f667fc46f898d163e00144",
+  "guard_cases_passed": 16,
+  "live_issues_compared": 23,
+  "github_mutations": 0,
+  "issue_state_changes": 0,
+  "proposals": [
+    {
+      "issue": 25,
+      "action": "prepend_owned_section",
+      "before_sha256": "93dfd9d7e185068369dff5d6ccfe62880cfa21f8d5b861f9a67b352448e053b5",
+      "proposed_sha256": "399f2516a05e7464bb3660785f51e0767c2d050f72ddaba484c311fd1877157d",
+      "outside_preserved": true,
+      "state_before": "open",
+      "state_after": "open",
+      "section": "Belegstand 20.10.2026. PR #79 ist als lesender nativer Stationspilot integriert; #85, #86 und #87 sind ebenfalls integriert. Larp Dev und Larp GM bleiben getrennt. [Stationsbeleg, 19.10.2026](https://github.com/Sven401/Larp-Escape/blob/97a2584cc108ebb9c0f667fc46f898d163e00144/handoff/STATIONSPILOT-INTEGRATION-2026-10-19.md); [Wartungsbericht, 20.10.2026](https://github.com/Sven401/Larp-Escape/blob/97a2584cc108ebb9c0f667fc46f898d163e00144/handoff/WARTUNG-PRUEFSTAND-2026-10-20.md).\n\nLicht-/Spielaktionen, allgemeiner Spielzugang, TalkBack, mehrere reale Stationen, Funkverlust bei eingeschaltetem Bluetooth und Dauerbetrieb bleiben offen. Die frischen Wartungstests sind Softwarebelege auf Produktbasis 7e19c95, keine neue Geräteabnahme. PR #73 ist weiterhin offen und nicht integriert; D1–D4 bleiben offen. Der ältere Rückkehrsatz in #34 bedarf eines Abgleichs mit dem GM-Piloten; keine automatische Änderung seiner Kriterien."
+    },
+    {
+      "issue": 33,
+      "action": "prepend_owned_section",
+      "before_sha256": "4491dde57c42f8d0ba0b06c39ccc0d36fe3a0e46993c1126e4cc8bd5615aa499",
+      "proposed_sha256": "dad133939631c6bb8e95d5c86652835b3f9b56f8f2fa8d264b874f3dc422a892",
+      "outside_preserved": true,
+      "state_before": "open",
+      "state_after": "open",
+      "section": "Belegstand 19.10.2026: Der integrierte GM-Stationspilot liest nach gegenseitiger V2-Anmeldung bestätigten Status und entwertet veraltete Beobachtungen. [Stationsbeleg, 19.10.2026](https://github.com/Sven401/Larp-Escape/blob/97a2584cc108ebb9c0f667fc46f898d163e00144/handoff/STATIONSPILOT-INTEGRATION-2026-10-19.md).\n\nBegrenzt am lokalen Paar geprüft; echter Funkverlust bei Bluetooth an, mehrere reale Stationen und Dauerbetrieb bleiben offen. Kein Abschluss des gesamten Issues und kein neuer Gerätetest durch die Synchronisierung."
+    },
+    {
+      "issue": 37,
+      "action": "prepend_owned_section",
+      "before_sha256": "be6015f17a5b54e450bbdd489ff257d5dbca3527e640a2d51667b3fd2d2d9b28",
+      "proposed_sha256": "110e0452ab308405a7414880171d45193bb4d5ce90747fd985b484b3d1fadd11",
+      "outside_preserved": true,
+      "state_before": "open",
+      "state_after": "open",
+      "section": "Belegstand 19.10.2026: Larp GM besitzt lokale Stationsvorbereitung, gezielte Anmeldung und einen lesenden Stationspiloten; über PR #79 integriert. [Stationsbeleg, 19.10.2026](https://github.com/Sven401/Larp-Escape/blob/97a2584cc108ebb9c0f667fc46f898d163e00144/handoff/STATIONSPILOT-INTEGRATION-2026-10-19.md).\n\nLicht-/Spielaktionen und allgemeine Spielleitungsrechte bleiben Folgearbeit. Der Baugruppen-HMAC-Zugang ersetzt #27/#28 nicht; Issue bleibt offen."
+    }
+  ],
+  "blocked": [
+    {
+      "issue": 34,
+      "reason": "Older return criterion conflicts with the integrated GM pilot; preserve the entire issue."
+    }
+  ],
+  "board_proposal": {
+    "issue": 60,
+    "before": "Todo",
+    "proposed": "In progress",
+    "reason": "D1-A is implemented and in open review #73; not merged or complete.",
+    "applied": false
+  },
+  "unchanged_issues": [
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    34,
+    35,
+    36,
+    38,
+    39,
+    41,
+    53,
+    54,
+    59,
+    60,
+    61,
+    62,
+    63
+  ]
+}

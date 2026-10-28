@@ -1,0 +1,157 @@
+{
+  "schemaVersion": 1,
+  "historicalDate": "2026-10-16",
+  "timezone": "Europe/Berlin",
+  "status": "Historical intermediate installation and rest-state observation, reconstructed from preserved local sources on 2026-10-20. No current device acceptance.",
+  "firmwareSourceCommit": "e4b2ce024655ae9e951e04542dc7f473e1bc6e9c",
+  "sourceProvenance": {
+    "originalReportSha256": "4b623a19f7d7131cabbcc93b76c12b0d9ba85acd492faebea685b001d98424dd",
+    "originalReportBytes": 6542,
+    "originalReportWasUntracked": true,
+    "originalAggregateJsonWasMissing": true,
+    "sourceReportCopiedUnchangedToPrivateAuditOutput": true,
+    "originalJsonFilesCopiedUnchangedToPrivateAuditOutput": true,
+    "publicContentPolicy": "Original JSON payloads reproduced below except the local serial port. No device identifiers, keys, raw flash, APKs or UI dumps are published. Original hashes refer to untouched private originals, not the sanitized payload serialization."
+  },
+  "historicalEvidence": [
+    {
+      "name": "device-preflight.json",
+      "originalSha256": "ec331ca1a284c961f02f9c4c1e325853a082068e4e82b175cca8aac4dc0ea794",
+      "originalBytes": 283,
+      "omittedFields": [
+        "serialPort"
+      ],
+      "historicalContent": {
+        "phoneMatched": true,
+        "model": "moto g14",
+        "android": "14",
+        "installedApkSha256": "fbdb0439aef6eb950b39c9eaf1b042865654e0865e46cce36ae91c5dc6910cd6",
+        "installedApkMatches": true,
+        "chipMatched": true,
+        "firmwareReadOrWritten": false
+      }
+    },
+    {
+      "name": "direction-fix-install.json",
+      "originalSha256": "2a500e424070a1337623a2d116797402b4bfaf95b5258dee825b3465d6694751",
+      "originalBytes": 830,
+      "omittedFields": [],
+      "historicalContent": {
+        "sourceCommit": "e4b2ce024655ae9e951e04542dc7f473e1bc6e9c",
+        "applicationOffset": "0x10000",
+        "firmwareSha256": "a15c2c698c527c1b919ffde7cc31b213c91570856100a16d9d5d7741d27beb8d",
+        "privateBackupVerified": true,
+        "chipMatchedBeforeWrite": true,
+        "sameSerialConnectionThroughout": true,
+        "writeAttempted": true,
+        "installed": true,
+        "physicalAcceptance": false,
+        "appChanged": false,
+        "rollbackPerformed": false,
+        "currentApplicationReverifiedBeforeWrite": true,
+        "applicationVerifiedAtDevice": true,
+        "applicationFullReadbackSha256Matched": true,
+        "partitionMapUnchanged": true,
+        "keyPartitionUnchanged": true,
+        "allNonApplicationRegionsUnchangedBeforeRestart": true,
+        "readbackBytes": 1139856,
+        "restartedAfterVerification": true,
+        "recordedUtc": "2026-10-16T17:55:47.853790+00:00"
+      }
+    },
+    {
+      "name": "flash-backup.json",
+      "originalSha256": "2bd9e665f3ba170e194e0a52709fff5f24be5da66e48a812575f2228b918455a",
+      "originalBytes": 596,
+      "omittedFields": [],
+      "historicalContent": {
+        "recordedUtc": "2026-10-16T17:52:48.792582+00:00",
+        "chipMatched": true,
+        "backupBytes": 4194304,
+        "backupSha256": "7daf56a99bf0b89dc49472893056af8f4c0c938ca006ef58b7d1fa91c7fb35f4",
+        "backupVerifiedAtDevice": true,
+        "currentMatrixApplicationMatched": true,
+        "currentSourceCommit": "c613acebfb07805d1c363b52a325721f2b6f8077",
+        "rollbackBackupHashMatched": true,
+        "partitionMapMatchesRollbackAndNewFirmware": true,
+        "keyPartitionMatchesRollback": true,
+        "newFirmwareSha256": "a15c2c698c527c1b919ffde7cc31b213c91570856100a16d9d5d7741d27beb8d",
+        "flashWritten": false
+      }
+    },
+    {
+      "name": "user-baseline.json",
+      "originalSha256": "5b5c5ae203fb57931abc4f592df07c2bdb59d73fce563a9c39bcc8224b4be626",
+      "originalBytes": 167,
+      "omittedFields": [],
+      "historicalContent": {
+        "source": "User confirmation in this session",
+        "allMagnetsRemoved": true,
+        "allReedContactsReportedReleased": true,
+        "physicalMappingConfirmed": false
+      }
+    }
+  ],
+  "importVerification": {
+    "date": "2026-10-20",
+    "canonicalCommitInspected": "97a2584cc108ebb9c0f667fc46f898d163e00144",
+    "method": "Read preserved local files, compare SHA-256 and inspect specified UI text. No device commands or installation.",
+    "allFourOriginalJsonHashesMatched": true,
+    "originalReportHashMatched": true,
+    "localArtifactHashes": [
+      {
+        "artifact": "pre-installation full flash",
+        "bytes": 4194304,
+        "sha256": "7daf56a99bf0b89dc49472893056af8f4c0c938ca006ef58b7d1fa91c7fb35f4",
+        "matchesHistoricalEvidence": true
+      },
+      {
+        "artifact": "installed application readback",
+        "bytes": 1139856,
+        "sha256": "a15c2c698c527c1b919ffde7cc31b213c91570856100a16d9d5d7741d27beb8d",
+        "matchesHistoricalEvidence": true
+      }
+    ],
+    "privateBaselineUiFiles": [
+      {
+        "name": "baseline-live-2.xml",
+        "sha256": "afa863c5ec6b809ec364d1faa2baf244cc38f1a278267bb852ee34598febbb3a",
+        "liveElectricalCoordinatesTextPresent": true,
+        "noObservedContactsTextPresent": true
+      },
+      {
+        "name": "baseline-live-3.xml",
+        "sha256": "afa863c5ec6b809ec364d1faa2baf244cc38f1a278267bb852ee34598febbb3a",
+        "liveElectricalCoordinatesTextPresent": true,
+        "noObservedContactsTextPresent": true
+      }
+    ],
+    "baselineFilesByteIdentical": true,
+    "captureIntervalReverified": false,
+    "deviceAccessed": false,
+    "firmwareUploaded": false,
+    "appInstalled": false,
+    "physicalCoordinateConfirmed": false
+  },
+  "additionalSourceContext": {
+    "laterPrivateUiFiles": "Preserved lower-left-held and lower-left-repeat XML files display Live and A9; lower-left-released XML files display Live and no contacts.",
+    "interpretationLimit": "Filenames and displayed coordinates do not independently confirm physical placement, user action or a new positive acceptance result. No new physical mapping is inferred."
+  },
+  "currentContinuation": {
+    "report": "../collection-result-2026-10-16.md",
+    "remainingProblemCoordinates": [
+      "C3",
+      "G3",
+      "H3",
+      "A8"
+    ],
+    "useOldIndividualContactContinuation": false
+  },
+  "limits": [
+    "Historical flags describe the 2026-10-16 source record, not the currently installed device pair.",
+    "The historical report predates the completed collection run and does not replace its 68 observed coordinates, nine unpopulated fields or four problem locations.",
+    "The audit did not repeat installation, radio, sensor or contact tests.",
+    "Chip identity, IO7 suitability and spatial mapping are not established by this import.",
+    "Private device artifacts remain private and require a fresh chip-bound rollback check before any future upload."
+  ]
+}

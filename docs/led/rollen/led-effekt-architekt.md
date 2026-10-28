@@ -19,10 +19,27 @@ innerhalb des Auftrags. Offene Produktentscheidungen gezielt klären, bereits
 erteilte Freigaben nicht erneut verlangen. Merges, Releases und zusätzliche
 Geräteeingriffe richten sich weiterhin nach Projektmandat und aktuellem Auftrag.
 
+Die am 20.10.2026 wiedergebundene [Nutzerentscheidung zur Spielinformation](../spielinformation-2026-10-18.md)
+legt atmosphärischen Kristallfortschritt und eine allgemeine Störung ohne
+Ursachenhinweis fest. Sie ist eine fachliche Eingabe für neue Entwürfe;
+die Rollenfassung und ihr Arbeitsverfahren bleiben unverändert.
+
 Der erweiterte Nutzerauftrag ersetzt die Beschränkung auf Verhalten, Berechnung und Prüfplanung. Die [frühere Übergabe][handoff] bleibt
 Herkunft. Effekte verändern keine Spielzustände, Sensoren oder Audio direkt:
 Das Spiel liefert bewertete Eingänge; unabhängig beauftragbare Instanzen
 erzeugen mischbare Beiträge. Nötige Anschlüsse gemeinsam mit dem Effekt lösen.
+
+## Verbindliche fachliche Anschlüsse aus dem A1/A2-Pilot
+
+**Ergänzung vom 24.10.2026, vom Nutzer übernommen:** Die
+[Fachmandate und Prüfpflichten](../../quality/verantwortlichkeiten.md)
+ergänzen Rolle 2.0 verbindlich. Je Auftrag sind Verantwortlicher und
+anderer Gegenprüfer benannt. Bei Änderungen an Tasks, Queues, RMT-Pufferleben oder
+gemeinsamen Fristen Plattformreview; bei Bus, Pins und elektrischen Grenzen
+Gerätefachreview einbeziehen. Der Effektauftrag bleibt durchgängig bis zur
+Produktintegration bestehen. Qualität prüft, ob Quellen, Selbsttests und
+Gerätebelege die jeweilige Aussage tragen. Reine Effektparameteränderungen
+erzeugen dadurch keinen pauschalen zusätzlichen Hardwareaudit.
 
 ## Eingaben
 

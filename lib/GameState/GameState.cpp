@@ -60,7 +60,10 @@ ReichstagGame::getRoleDefinition(const larp::domain::CardUid &cardUid) const {
 }
 
 ReichstagGame::CrystalCheckResult ReichstagGame::newCrystalisValid() {
-    const auto crystals = crystalInput.readPressedPositions();
+    const auto sample = crystalInput.readPressedPositions();
+    if (!sample.valid)
+        return NO_NEW_CRYSTAL;
+    const auto &crystals = sample.positions;
     if (!crystals.empty()) {
         report(larp::ports::GameDiagnosticEvent::CrystalScan,
                static_cast<std::uint32_t>(crystals.size()));
@@ -250,10 +253,11 @@ void ReichstagGame::stateStandByState() {
         gameReset();
         roundReset();
     }
-    const std::array<bool, 4> wakeSignals = wakeInput.readWakeSignals();
+    const auto wake = wakeInput.readWakeSignals();
+    const auto &wakeSignals = wake.signals;
     const std::array<std::uint8_t, 4> rippleOrigins = {{22U, 2U, 16U, 10U}};
     for (std::size_t index = 0U; index < wakeSignals.size(); ++index) {
-        if (wakeSignals[index])
+        if (wake.valid && wakeSignals[index])
             lightEffects.fireRipple(static_cast<std::uint8_t>(index), 60U, rippleOrigins[index]);
     }
 }
@@ -353,8 +357,8 @@ bool ReichstagGame::transitionToIdleBonus() {
 }
 
 bool ReichstagGame::transitionFromStandBY() {
-    const std::array<bool, 4> wakeSignals = wakeInput.readWakeSignals();
-    return wakeSignals[0] && wakeSignals[1] && wakeSignals[2] && wakeSignals[3];
+    const auto wake = wakeInput.readWakeSignals();
+    return wake.valid && wake.signals[0] && wake.signals[1] && wake.signals[2] && wake.signals[3];
 }
 
 bool ReichstagGame::transitionToStandBy() {
