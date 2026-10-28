@@ -1,0 +1,4 @@
+# Preserve the measured source/evidence bytes and their manifest SHA-256 values.
+server.cpp -text
+run.py -text
+results.json -text
