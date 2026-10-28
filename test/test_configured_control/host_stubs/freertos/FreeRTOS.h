@@ -7,6 +7,15 @@ namespace host_rtos {
 extern void (*beforeEnter)();
 extern unsigned depth;
 extern bool nonzeroWait;
+// Every modeled RTOS API records its context separately from its wait argument.
+inline unsigned &callsInsideCritical() {
+    static unsigned count = 0;
+    return count;
+}
+inline void noteApiCall() {
+    if (depth)
+        ++callsInsideCritical();
+}
 inline void enter(portMUX_TYPE *) {
     if (!depth && beforeEnter) {
         auto hook = beforeEnter;

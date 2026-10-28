@@ -1,9 +1,9 @@
 #include "MCPHandler.h"
 #include "GameRuntime/MatrixConfiguration.h"
 
-MCPHandler::MCPHandler(Adafruit_MCP23X17 &mcp, const MCPConfig &config, String name)
-    : mcp(mcp), prevGpioState(0xFFFF), config(config), name(name), initialized(false),
-      initializationAttempted(false) {}
+MCPHandler::MCPHandler(Adafruit_MCP23X17 &mcp, const MCPConfig &config, String name, TwoWire *wire)
+    : mcp(mcp), wire(wire), checkedDevice(config.i2c_addr, wire), prevGpioState(0xFFFF),
+      config(config), name(name), initialized(false), initializationAttempted(false) {}
 
 bool MCPHandler::configurationValid() const {
     if (config.numPins > NUM_PINS ||
@@ -33,14 +33,14 @@ bool MCPHandler::configurationValid() const {
 }
 
 bool MCPHandler::begin() {
-    if (!configurationValid())
+    if (!wire || !configurationValid())
         return false;
     if (initialized)
         return true;
     if (initializationAttempted)
         return false;
     initializationAttempted = true;
-    if (!mcp.begin_I2C(config.i2c_addr)) {
+    if (!mcp.begin_I2C(config.i2c_addr, wire)) {
         Serial.print("MCP23XXX not found at address ");
         Serial.println(config.i2c_addr);
         return false;
@@ -51,13 +51,16 @@ bool MCPHandler::begin() {
         const uint8_t pin = config.pinConfigs[position].pin;
         switch (config.pinConfigs[position].mode) {
         case INPUT_MODE:
-            mcp.pinMode(pin, INPUT);
+            if (!setPinMode(pin, INPUT))
+                return false;
             break;
         case INPUT_PULLUP_MODE:
-            mcp.pinMode(pin, INPUT_PULLUP);
+            if (!setPinMode(pin, INPUT_PULLUP))
+                return false;
             break;
         case OUTPUT_MODE:
-            mcp.pinMode(pin, OUTPUT);
+            if (!setPinMode(pin, OUTPUT))
+                return false;
             break;
         }
     }
@@ -81,7 +84,11 @@ void MCPHandler::printGpioStates() {
     if (!initialized)
         return;
     // Diagnostics read levels without changing the matrix pin directions.
-    uint16_t currentState = mcp.readGPIOAB();
+    uint16_t currentState = 0;
+    if (!readGPIOAB(currentState)) {
+        Serial.println("MCP GPIO unavailable");
+        return;
+    }
 
     // Array für Tracking von Änderungen und deren Richtung (Fallend/Steigend)
     bool stateChanged[16] = {false};
@@ -116,6 +123,11 @@ void MCPHandler::printGpioStates() {
 void MCPHandler::printConfiguredGpioStates(bool verbose) {
     if (!initialized || !configurationValid())
         return;
+    uint16_t currentState = 0;
+    if (!readGPIOAB(currentState)) {
+        Serial.println("MCP GPIO unavailable");
+        return;
+    }
     if (verbose) {
         Serial.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         Serial.print("Previous GPIO State: ");
@@ -128,8 +140,8 @@ void MCPHandler::printConfiguredGpioStates(bool verbose) {
 
     // Überprüfung der Zustände für nur konfigurierte Pins und Ausgabe des Zustands
     for (int i = 0; i < config.numPins; i++) {
-        uint8_t pin = config.pinConfigs[i].pin;      // Get the configured pin number
-        bool current = mcp.digitalRead(pin) == HIGH; // Read the pin state
+        uint8_t pin = config.pinConfigs[i].pin; // Get the configured pin number
+        bool current = (currentState & (1U << pin)) != 0;
         bool prev = (prevGpioState & (1U << pin)) != 0;
         if (verbose) {
             Serial.print("Pin ");
@@ -157,21 +169,55 @@ void MCPHandler::printConfiguredGpioStates(bool verbose) {
     }
 
     // Aktualisieren des vorherigen Zustands
-    prevGpioState = mcp.readGPIOAB(); // Optional: Update to reflect actual states if necessary
+    prevGpioState = currentState;
+}
+
+// MCP23017 BANK=0 register layout, as used by Adafruit MCP23017 2.3.2.
+// Use the bool BusIO overloads: scalar read()/RegisterBits erase I2C errors.
+bool MCPHandler::updateRegisterBit(uint8_t baseRegister, uint8_t pin, bool set) {
+    const uint16_t address = static_cast<uint16_t>(baseRegister * 2U + pin / 8U);
+    Adafruit_BusIO_Register reg(&checkedDevice, address);
+    uint8_t value = 0;
+    if (!reg.read(&value))
+        return false;
+    const uint8_t mask = static_cast<uint8_t>(1U << (pin % 8U));
+    value = set ? static_cast<uint8_t>(value | mask) : static_cast<uint8_t>(value & ~mask);
+    return reg.write(value);
+}
+
+bool MCPHandler::setPinMode(uint8_t pin, uint8_t mode) {
+    return updateRegisterBit(MCP23XXX_IODIR, pin, mode != OUTPUT) &&
+           updateRegisterBit(MCP23XXX_GPPU, pin, mode == INPUT_PULLUP);
 }
 
 bool MCPHandler::writeGPIO(MCP_Pins gpio, uint8_t value) {
     if (!initialized || !larp::runtime::isValidMatrixPin(static_cast<int>(gpio)) ||
         (value != LOW && value != HIGH))
         return false;
-    mcp.pinMode(gpio, OUTPUT);
-    mcp.digitalWrite(gpio, value);
+    if (!setPinMode(static_cast<uint8_t>(gpio), OUTPUT))
+        return false;
+    // Read the output latch, not sampled inputs, when preserving other outputs.
+    return updateRegisterBit(MCP23XXX_OLAT, static_cast<uint8_t>(gpio), value == HIGH);
+}
+
+bool MCPHandler::readGPIO(MCP_Pins gpio, uint8_t &value) {
+    value = LOW;
+    if (!initialized || !larp::runtime::isValidMatrixPin(static_cast<int>(gpio)) ||
+        !setPinMode(static_cast<uint8_t>(gpio), INPUT_PULLUP))
+        return false;
+    Adafruit_BusIO_Register reg(&checkedDevice,
+                                MCP23XXX_GPIO * 2U + static_cast<uint8_t>(gpio) / 8U);
+    uint8_t port = 0;
+    if (!reg.read(&port))
+        return false;
+    value = (port & (1U << (static_cast<uint8_t>(gpio) % 8U))) ? HIGH : LOW;
     return true;
 }
 
-uint16_t MCPHandler::readGPIO(MCP_Pins gpio) {
-    if (!initialized || !larp::runtime::isValidMatrixPin(static_cast<int>(gpio)))
-        return HIGH;
-    mcp.pinMode(gpio, INPUT_PULLUP);
-    return mcp.digitalRead(gpio);
+bool MCPHandler::readGPIOAB(uint16_t &value) {
+    value = 0;
+    if (!initialized)
+        return false;
+    Adafruit_BusIO_Register reg(&checkedDevice, MCP23XXX_GPIO * 2U, 2);
+    return reg.read(&value);
 }

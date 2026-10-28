@@ -2,6 +2,7 @@
 #include <type_traits>
 namespace larp {
 namespace companion {
+static_assert(ControlLimits::Queue > 0, "Value FIFO requires nonzero capacity");
 static_assert(std::is_trivially_copyable<TrustedGameRequest>::value,
               "Queue requires copied command values");
 static_assert(std::is_trivially_copyable<RoutedGameReply>::value,
@@ -11,22 +12,33 @@ static_assert(std::is_trivially_copyable<RoutedConfiguredStatus>::value,
 bool FreeRtosGameControlChannel::begin() {
     if (started_)
         return false;
-    commands_ = xQueueCreateStatic(ControlLimits::Queue, sizeof(TrustedGameRequest), commandBytes_,
-                                   &commandControl_);
-    replies_ = xQueueCreateStatic(ControlLimits::Queue, sizeof(RoutedGameReply), replyBytes_,
-                                  &replyControl_);
-    status_ = xQueueCreateStatic(1, sizeof(RoutedConfiguredStatus), statusBytes_, &statusControl_);
-    started_ = commands_ && replies_ && status_;
-    return started_;
+    started_ = true; // Initialization completes before task/callback publication.
+    return true;
 }
 bool FreeRtosGameControlChannel::receive(TrustedGameRequest &request) noexcept {
-    return started_ && xQueueReceive(commands_, &request, 0) == pdTRUE;
+    if (!started_)
+        return false;
+    portENTER_CRITICAL(&authorityMutex_);
+    const bool received = commands_.pop(request);
+    portEXIT_CRITICAL(&authorityMutex_);
+    return received;
 }
 bool FreeRtosGameControlChannel::send(const RoutedGameReply &reply) noexcept {
-    return started_ && xQueueSendToBack(replies_, &reply, 0) == pdTRUE;
+    if (!started_)
+        return false;
+    portENTER_CRITICAL(&authorityMutex_);
+    const bool sent = replies_.push(reply);
+    portEXIT_CRITICAL(&authorityMutex_);
+    return sent;
 }
 bool FreeRtosGameControlChannel::publish(const RoutedConfiguredStatus &status) noexcept {
-    return started_ && xQueueOverwrite(status_, &status) == pdTRUE;
+    if (!started_)
+        return false;
+    portENTER_CRITICAL(&authorityMutex_);
+    status_ = status;
+    statusAvailable_ = true;
+    portEXIT_CRITICAL(&authorityMutex_);
+    return true;
 }
 AuthorityUpdate FreeRtosGameControlChannel::updateAuthority(const TrustedAuthority &authority) {
     if (!started_)
@@ -90,14 +102,13 @@ GameSubmissionOutcome FreeRtosGameControlChannel::admit(const TrustedGameRequest
         return GameSubmissionOutcome::MissingPrincipal;
     if (!request.connectionEpoch)
         return GameSubmissionOutcome::MissingEpoch;
-    // No wait/device calls. Updates and copied admission share this short lock.
-    // Consumer queue operations finish before it reads authority: no reverse lock.
+    // Authority observation and copied admission share one short lock.
+    // Only bounded value storage is accessed; no RTOS/device call or second lock.
     portENTER_CRITICAL(&authorityMutex_);
     const auto outcome = !authority_.admits(request.principal, request.connectionEpoch)
                              ? GameSubmissionOutcome::Unauthorized
-                         : xQueueSendToBack(commands_, &request, 0) == pdTRUE
-                             ? GameSubmissionOutcome::Queued
-                             : GameSubmissionOutcome::QueueFull;
+                         : commands_.push(request) ? GameSubmissionOutcome::Queued
+                                                   : GameSubmissionOutcome::QueueFull;
     portEXIT_CRITICAL(&authorityMutex_);
     return outcome;
 }
@@ -130,18 +141,23 @@ GameSubmission FreeRtosGameControlChannel::submitJson(const char *bytes, std::si
     return result;
 }
 bool FreeRtosGameControlChannel::takeReply(RoutedGameReply &reply) {
-    return started_ && xQueueReceive(replies_, &reply, 0) == pdTRUE;
+    if (!started_)
+        return false;
+    portENTER_CRITICAL(&authorityMutex_);
+    const bool received = replies_.pop(reply);
+    portEXIT_CRITICAL(&authorityMutex_);
+    return received;
 }
 bool FreeRtosGameControlChannel::takeCurrentReply(RoutedGameReply &reply) {
     if (!started_)
         return false;
     bool selected = false;
     RoutedGameReply candidate;
-    // Queue operations on the application side release their lock before an
-    // authority read. No network call, wait or reverse lock order inside here.
+    // Select against the same authority observation as the copied FIFO removal.
+    // No network call, RTOS API or nested lock is needed.
     portENTER_CRITICAL(&authorityMutex_);
     for (std::size_t i = 0; i < ControlLimits::Queue; ++i) {
-        if (xQueueReceive(replies_, &candidate, 0) != pdTRUE)
+        if (!replies_.pop(candidate))
             break;
         if (authority_.admits(candidate.principal, candidate.connectionEpoch)) {
             reply = candidate;
@@ -155,21 +171,20 @@ bool FreeRtosGameControlChannel::takeCurrentReply(RoutedGameReply &reply) {
 bool FreeRtosGameControlChannel::readStatus(ConfiguredStatus &status) const {
     if (!started_)
         return false;
-    RoutedConfiguredStatus copied;
-    if (xQueuePeek(status_, &copied, 0) != pdTRUE)
-        return false;
-    status = copied.status;
-    return true;
+    portENTER_CRITICAL(&authorityMutex_);
+    const bool available = statusAvailable_;
+    if (available)
+        status = status_.status;
+    portEXIT_CRITICAL(&authorityMutex_);
+    return available;
 }
 bool FreeRtosGameControlChannel::readCurrentStatus(RoutedConfiguredStatus &status) const {
     if (!started_)
         return false;
-    RoutedConfiguredStatus copied;
     bool selected = false;
     portENTER_CRITICAL(&authorityMutex_);
-    if (xQueuePeek(status_, &copied, 0) == pdTRUE &&
-        authority_.admits(copied.principal, copied.connectionEpoch)) {
-        status = copied;
+    if (statusAvailable_ && authority_.admits(status_.principal, status_.connectionEpoch)) {
+        status = status_;
         selected = true;
     }
     portEXIT_CRITICAL(&authorityMutex_);

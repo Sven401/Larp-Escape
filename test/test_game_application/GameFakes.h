@@ -35,20 +35,28 @@ class FakeCardReader : public larp::ports::ICardReader {
 
 class FakeCrystalInput : public larp::ports::ICrystalInput {
   public:
-    larp::ports::CrystalInputBatch readPressedPositions() override {
+    larp::ports::CrystalInputSample readPressedPositions() override {
         ++reads;
-        return positions;
+        larp::ports::CrystalInputSample sample;
+        sample.positions = positions;
+        sample.valid = valid;
+        return sample;
     }
+    bool valid = true;
     larp::ports::CrystalInputBatch positions;
     unsigned int reads = 0U;
 };
 
 class FakeWakeInput : public larp::ports::IWakeInput {
   public:
-    std::array<bool, 4> readWakeSignals() override {
+    larp::ports::WakeInputSample readWakeSignals() override {
         ++reads;
-        return signals;
+        larp::ports::WakeInputSample sample;
+        sample.signals = signals;
+        sample.valid = valid;
+        return sample;
     }
+    bool valid = true;
     std::array<bool, 4> signals{{false, false, false, false}};
     unsigned int reads = 0U;
 };

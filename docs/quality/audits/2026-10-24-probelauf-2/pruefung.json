@@ -1,0 +1,173 @@
+{
+  "kind": "independent-manual-replay",
+  "input_sha256": "3834d224e143391ecb86f902e065def5446a9e3204f013127158db14e845f529",
+  "instruction_sha256": "3845018f2c35ff046a8c11a0f33f0619709e483a25ccdb3eb7238c04841965c9",
+  "instruction_hash_rule": "UTF-8 read_text; substring after '**Wiederverwendbarer Text des manuellen Auditauftrags:**' and before '## 9.'; preserve surrounding blank lines and blockquote prefixes; CRLF to LF; UTF-8 SHA256.",
+  "checked_source_hashes": 14,
+  "source_hash_semantics": "SHA256 of worktree file bytes before any tracked source edit; original inputs remain at commit cee968a7.",
+  "started_at_utc": "2026-10-23T23:24:25Z",
+  "completed_at_utc": "2026-10-23T23:36:07Z",
+  "method": "2A by Maintainer; independent 2B by responsibility_map using the same frozen inputs without reading 2A. No fresh network or software-test execution during replay. Semantic comparison by Maintainer; not an automated idempotence engine.",
+  "pass_2a": [
+    {
+      "id": "A1-01",
+      "owner": "Plattform und Systemintegration",
+      "status": "verifiziert: Software",
+      "open": "ESP32-SMP/ISR/Latenz und Gerätewirkung",
+      "trigger": "Task-/Queue-/Spinlock-/Callback-/ISR-Änderung; vor produktiver Kanalübernahme",
+      "new_id": false
+    },
+    {
+      "id": "A1-02",
+      "owner": "Plattform und Systemintegration",
+      "status": "fachlich geprüft: Supportentscheidung offen",
+      "open": "Befristete Weiterbenutzung oder Migration; konkrete Advisory-Anwendbarkeit",
+      "trigger": "Nächster beauftragter Planungs-/Migrationsabgleich; spätestens Produktfreigabe oder Pinänderung",
+      "new_id": false
+    },
+    {
+      "id": "A2-01",
+      "owner": "Geräteintegration und Hardwarevertrag",
+      "status": "verifiziert: Software",
+      "open": "Reale Busunterbrechung, Spaltenfreigabe, Recovery und Wire-Besitz",
+      "trigger": "Sensor-/Fehlergrenze geändert; vor Legacy-Wake-Freigabe/Adapterübernahme",
+      "new_id": false
+    },
+    {
+      "id": "A2-02",
+      "owner": "Geräteintegration und Hardwarevertrag",
+      "status": "verifiziert: Parser-/Patchregression",
+      "open": "Reale Karten/Transport/Resynchronisation; Wiedervorlage im Einzelbefund nicht explizit",
+      "trigger": "Parser-/Versions-/Patchänderung; Geräte-Restprüfung muss explizit mit A2-03-Adapterfreigabe verknüpft werden",
+      "new_id": false
+    },
+    {
+      "id": "A2-03",
+      "owner": "Geräteintegration und Hardwarevertrag",
+      "status": "umgesetzt: Vertragspräzisierung",
+      "open": "Adapter-/Busfehlerprüfung und gesamte Deadline",
+      "trigger": "Vor jeweiliger Adapterfreigabe; bei weitergereichter Bool-/Timeout-Zusage",
+      "new_id": false
+    },
+    {
+      "id": "issue-39/B7",
+      "owner": "Geräteintegration und Hardwarevertrag",
+      "status": "fachlich geprüft: Hardware offen",
+      "open": "Chip-/Boxrevision und zwei Endpunkte 0x20/B7, 0x21/B7; Supportartikel nicht lesbar",
+      "trigger": "Nächster H0-Zuordnungsauftrag; neuer Pinvertrag falls nötig vor Netzliste/Layout",
+      "new_id": false
+    }
+  ],
+  "pass_2b": [
+    {
+      "id": "A1-01",
+      "owner": "Plattform und Systemintegration",
+      "status": "verifiziert: Software",
+      "open": "SMP, ISR und Latenz am Gerät offen",
+      "trigger": "Task/Queue/Spinlock/Callback/ISR geändert; vor produktiver Kanalübernahme"
+    },
+    {
+      "id": "A1-02",
+      "owner": "Plattform und Systemintegration",
+      "status": "fachlich geprüft: Supportentscheidung offen",
+      "open": "Advisory-Anwendbarkeit und Ausnahme/Migrationsentscheidung offen",
+      "trigger": "Nächster Planungs-/Migrationsabgleich, spätestens Produktfreigabe oder Pinänderung"
+    },
+    {
+      "id": "A2-01",
+      "owner": "Geräteintegration und Hardwarevertrag",
+      "status": "verifiziert: Software",
+      "open": "Reale Busunterbrechung und elektrische Recovery offen",
+      "trigger": "Sensorfehlergrenze geändert; vor Legacy-Wake-Freigabe/Adapterübernahme"
+    },
+    {
+      "id": "A2-02",
+      "owner": "Geräteintegration und Hardwarevertrag",
+      "status": "verifiziert: Parser-/Patchregression",
+      "open": "Busadapter/Karten/Transport/Resynchronisation/Zeit offen; Geräte-Wiedervorlage im Einzelbefund fehlt",
+      "trigger": "Parser-/Quellpatchänderung; Geräte-Rest ohne ausdrücklich zugeordneten Auslöser"
+    },
+    {
+      "id": "A2-03",
+      "owner": "Geräteintegration und Hardwarevertrag",
+      "status": "umgesetzt: Vertragspräzisierung",
+      "open": "Vollständige Adapter- und Zeitabnahme offen",
+      "trigger": "Vor jeweiliger Adapterfreigabe; bei Bool-/Fristzusage"
+    },
+    {
+      "id": "issue-39/B7",
+      "owner": "Geräteintegration und Hardwarevertrag",
+      "status": "fachlich geprüft: Hardware offen",
+      "open": "Chipidentität und physische Anwendbarkeit offen; zwei Endpunkte getrennt",
+      "trigger": "H0-Zuordnungsauftrag; notwendiger Pinvertrag vor CAD/Netzliste/Layout"
+    }
+  ],
+  "comparison": {
+    "same_ids": true,
+    "same_lead_roles": true,
+    "same_software_statuses": true,
+    "same_open_boundaries_and_triggers": "manually confirmed; both independently identify the missing explicit A2-02 device follow-up trigger",
+    "new_finding_ids": 0,
+    "duplicated_finding_ids": 0,
+    "missing_lead_mandates": 0,
+    "existing_wiedervorlage_gap": "A2-02 physical remainder; retained in unmodified 2A/2B, then explicitly linked by Maintainer to existing A2-03 adapter-release gate in register.json"
+  },
+  "manual_counterexamples": [
+    {
+      "case": "wrong SDK",
+      "result": "reject Arduino-IDF5.2.1 inference; actual embedded4.4.6 remains distinct"
+    },
+    {
+      "case": "WLED dependency",
+      "result": "reject; external functional reference"
+    },
+    {
+      "case": "Draft/prerelease promoted to Final",
+      "result": "reject; no normative/final target selected"
+    },
+    {
+      "case": "unavailable source",
+      "result": "support article stays unreadable; accessible PDF is separate evidence"
+    },
+    {
+      "case": "known B7 rediscovered",
+      "result": "reuse issue39 with two endpoints; do not conflate issue54"
+    },
+    {
+      "case": "HEAD changes",
+      "result": "contract requires rebase of applicability; actual HEAD/tree stayed unchanged; no artificial HEAD change performed"
+    },
+    {
+      "case": "missing device measurement",
+      "result": "software proof accepted, physical/SMP/timing acceptance stays open"
+    }
+  ],
+  "new_tests_executed": 0,
+  "existing_ci": {
+    "commit": "cee968a7bf4c97eb68c9fe6f705bb5a06eef76b0",
+    "run": 40038277888,
+    "status": "success",
+    "jobs": 3
+  },
+  "automation_preparation": {
+    "id": "larp-escape-fachaudit",
+    "kind": "heartbeat",
+    "status": "PAUSED",
+    "prompt_sha256": "84216bd07c59a4912903a4829bbe44d6e6a3a5ae62a835beb00af51635de1943",
+    "exact_prompt_readback": true,
+    "existing_sync_unchanged": true,
+    "reviewer": "official_sources",
+    "review_findings_fixed": [
+      "Date baseline and give actual code/integrated decisions precedence",
+      "Routine unchanged run completion must stay silent"
+    ],
+    "scheduler_execution_tested": false,
+    "timezone_next_run_verified": false
+  },
+  "limitations": [
+    "Manual replay does not prove automatic duplicate prevention or scheduler reliability.",
+    "Original pilot basis differed; identical-input claim applies only to 2A/2B.",
+    "18 bounded primary-source entries are not a complete component/security/standards audit.",
+    "No products, dependency pins, role rules, GitHub planning or hardware were changed."
+  ]
+}

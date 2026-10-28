@@ -1,0 +1,157 @@
+{
+  "schema_version": 1,
+  "status": "Startregister nach manuellem Zweitlauf; kein Produktfreigabenachweis",
+  "as_of": "2026-10-24",
+  "source_commit": "cee968a7bf4c97eb68c9fe6f705bb5a06eef76b0",
+  "inputs_sha256": "3834d224e143391ecb86f902e065def5446a9e3204f013127158db14e845f529",
+  "supersession": "Neuere integrierte Entscheidungen und überprüfter Codezustand haben Vorrang; spätere Quellenabrufe dürfen historisches Ergebnis nicht überschreiben.",
+  "items": [
+    {
+      "id": "A1-01",
+      "kind": "existing_finding",
+      "comparison_key": "idf44-critical-section/no-rtos-api/profile-runtime-gatts",
+      "evidence_status": "belegt",
+      "processing_status": "verifiziert: Software",
+      "lead_mandate": "Plattform und Systemintegration",
+      "review_mandate": "Qualität und Nachweise; anderer Bearbeiter als Autor",
+      "remaining": "ESP32-SMP/ISR/Latenz und Gerätewirkung",
+      "review_trigger": "Task-/Queue-/Spinlock-/Callback-/ISR-Änderung; vor produktiver Kanalübernahme",
+      "calendar_due": null,
+      "calendar_due_note": "Ereignisgebundene Wiedervorlage; kein Datum erfunden und keine automatische Überfälligkeitsbehauptung.",
+      "canonical_target": "docs/quality/runtime-fixes-2026-10-24.md",
+      "integration_ref": "PR #95 / 882c9d613ed6e63b33b8e4dffcd2b207ea4d66d3"
+    },
+    {
+      "id": "A1-02",
+      "kind": "existing_finding",
+      "comparison_key": "idf44-eol/arduino2014/all-pinned-esp32",
+      "evidence_status": "belegt",
+      "processing_status": "fachlich geprüft: Supportentscheidung offen",
+      "lead_mandate": "Plattform und Systemintegration",
+      "review_mandate": "Qualität und Nachweise; anderer Bearbeiter als Autor",
+      "remaining": "Befristete Weiterbenutzung oder Migration; konkrete Advisory-Anwendbarkeit",
+      "review_trigger": "Nächster beauftragter Planungs-/Migrationsabgleich; spätestens Produktfreigabe oder Pinänderung",
+      "calendar_due": null,
+      "calendar_due_note": "Ereignisgebundene Wiedervorlage; kein Datum erfunden und keine automatische Überfälligkeitsbehauptung.",
+      "canonical_target": "handoff/ARDUINO-ESP32-3-MIGRATION.md",
+      "integration_ref": "PR #95 / 882c9d613ed6e63b33b8e4dffcd2b207ea4d66d3"
+    },
+    {
+      "id": "A2-01",
+      "kind": "existing_finding",
+      "comparison_key": "legacy-mcp/i2c-validity/root-legacy",
+      "evidence_status": "belegt",
+      "processing_status": "verifiziert: Software",
+      "lead_mandate": "Geräteintegration und Hardwarevertrag",
+      "review_mandate": "Qualität und Nachweise; anderer Bearbeiter als Autor",
+      "remaining": "Reale Busunterbrechung, Spaltenfreigabe, Recovery und Wire-Besitz",
+      "review_trigger": "Sensor-/Fehlergrenze geändert; vor Legacy-Wake-Freigabe/Adapterübernahme",
+      "calendar_due": null,
+      "calendar_due_note": "Ereignisgebundene Wiedervorlage; kein Datum erfunden und keine automatische Überfälligkeitsbehauptung.",
+      "canonical_target": "docs/quality/runtime-fixes-2026-10-24.md",
+      "integration_ref": "PR #95 / 882c9d613ed6e63b33b8e4dffcd2b207ea4d66d3"
+    },
+    {
+      "id": "A2-02",
+      "kind": "existing_finding",
+      "comparison_key": "pn532/passive-frame-patch-regression/root-legacy",
+      "evidence_status": "belegt",
+      "processing_status": "verifiziert: Parser-/Patchregression",
+      "lead_mandate": "Geräteintegration und Hardwarevertrag",
+      "review_mandate": "Qualität und Nachweise; anderer Bearbeiter als Autor",
+      "remaining": "Reale Karten/Transport/Resynchronisation; unveränderte offene Geräteabnahme",
+      "review_trigger": "Bei Parser-/Versions-/Patchänderung; offene Geräteprüfung ausdrücklich vor jeweiliger Adapterfreigabe zusammen mit A2-03",
+      "calendar_due": null,
+      "calendar_due_note": "Ereignisgebundene Wiedervorlage; kein Datum erfunden und keine automatische Überfälligkeitsbehauptung.",
+      "canonical_target": "docs/nfc-packet-contract.md",
+      "integration_ref": "PR #95 / 882c9d613ed6e63b33b8e4dffcd2b207ea4d66d3",
+      "coordination_decision": {
+        "date": "2026-10-24",
+        "role": "Maintainer",
+        "reason": "Im Zweitlauf erkannte fehlende explizite Wiedervorlage im Einzelbefund; bestehendes A2-03-Adapterfreigabetor aus dem integrierten Pilot/NFC-Vertrag wiederverwenden.",
+        "new_deadline": false,
+        "new_acceptance_criterion": false
+      }
+    },
+    {
+      "id": "A2-03",
+      "kind": "existing_finding",
+      "comparison_key": "pn532/spi-success-e2e-deadline/root-legacy",
+      "evidence_status": "belegt",
+      "processing_status": "umgesetzt: Vertragspräzisierung",
+      "lead_mandate": "Geräteintegration und Hardwarevertrag",
+      "review_mandate": "Qualität und Nachweise; anderer Bearbeiter als Autor",
+      "remaining": "Adapter-/Busfehlerprüfung und gesamte Deadline",
+      "review_trigger": "Vor jeweiliger Adapterfreigabe; bei weitergereichter Bool-/Timeout-Zusage",
+      "calendar_due": null,
+      "calendar_due_note": "Ereignisgebundene Wiedervorlage; kein Datum erfunden und keine automatische Überfälligkeitsbehauptung.",
+      "canonical_target": "docs/nfc-packet-contract.md",
+      "integration_ref": "PR #95 / 882c9d613ed6e63b33b8e4dffcd2b207ea4d66d3"
+    },
+    {
+      "id": "issue-39/B7",
+      "kind": "existing_hardware_case",
+      "comparison_key": "mcp23017/io7-input/issue39-wake20B7-matrix21B7",
+      "evidence_status": "Herstellerregel belegt; physische Zuordnung offen",
+      "processing_status": "fachlich geprüft: Hardware offen",
+      "lead_mandate": "Geräteintegration und Hardwarevertrag",
+      "review_mandate": "Qualität und Nachweise; anderer Bearbeiter als Autor",
+      "remaining": "Chip-/Boxrevision und zwei Endpunkte 0x20/B7, 0x21/B7; Supportartikel nicht lesbar",
+      "review_trigger": "Nächster H0-Zuordnungsauftrag; neuer Pinvertrag falls nötig vor Netzliste/Layout",
+      "calendar_due": null,
+      "calendar_due_note": "Ereignisgebundene Wiedervorlage; kein Datum erfunden und keine automatische Überfälligkeitsbehauptung.",
+      "canonical_target": "Hardware/HARDWAREPLANUNG.md",
+      "integration_ref": "GitHub issue #39 (beide B7-Endpunkte), getrennt von #54"
+    }
+  ],
+  "domains": [
+    {
+      "id": "A1",
+      "lead": "Plattform und Systemintegration",
+      "last_scoped_review": "2026-10-24",
+      "scope": "Pilotfragen A1-01/A1-02; kein vollständiger Advisory-/Komponentenaudit",
+      "proposed_rotation_position": 5
+    },
+    {
+      "id": "A2",
+      "lead": "Geräteintegration und Hardwarevertrag",
+      "last_scoped_review": "2026-10-24",
+      "scope": "Pilotfragen A2-01/A2-02/A2-03 und bekannter B7-Fall; keine Geräteabnahme",
+      "proposed_rotation_position": 6
+    },
+    {
+      "id": "A3",
+      "lead": "LED-Effekt-Architekt",
+      "last_scoped_review": null,
+      "scope": "Rechercheauftrag noch nicht ausgeführt",
+      "proposed_rotation_position": 1
+    },
+    {
+      "id": "A4",
+      "lead": "Plattform und Systemintegration; gezielte Security-Expertise",
+      "last_scoped_review": null,
+      "scope": "Rechercheauftrag noch nicht ausgeführt",
+      "proposed_rotation_position": 2
+    },
+    {
+      "id": "A5",
+      "lead": "UI/UX Designer mit Android-Fachreview",
+      "last_scoped_review": null,
+      "scope": "Rechercheauftrag noch nicht ausgeführt",
+      "proposed_rotation_position": 3
+    },
+    {
+      "id": "A6",
+      "lead": "Qualität und Nachweise; unabhängiger Gegenprüfer",
+      "last_scoped_review": null,
+      "scope": "Rechercheauftrag noch nicht ausgeführt",
+      "proposed_rotation_position": 4
+    }
+  ],
+  "scope_limits": [
+    "Gesamtes Komponentenregister einschließlich Transitiven noch unvollständig.",
+    "Keine vollständige Norm-, Security- oder Produktkonformität.",
+    "Keine kalendarischen Geräte-/Migrationsfreigabetermine beschlossen.",
+    "Konkrete personelle Besetzung neuer Folgeaufträge erfolgt vor deren Umsetzung."
+  ]
+}
