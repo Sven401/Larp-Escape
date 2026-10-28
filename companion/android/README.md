@@ -1,6 +1,10 @@
-# Larp-Escape: verbindliche Android-App
+# Larp-Escape: Android-Apps
 
-**Verbindliches Zielbild · 18.10.2026:** [VA-01](../../docs/veranstaltungsarchitektur.md) und [Vertragsmatrix](../../docs/veranstaltungsarchitektur-umsetzung.md). Mehrere Spielleitungen bedienen gleichzeitig verschiedene Boxen per BLE; zunächst eine aktive Steuersitzung je Box. Gespeicherte Boxzuordnungen, Zielwechsel und getrennte Beobachtungen sind Folgearbeit. Ein Handy muss nicht gleichzeitig alle Boxen verbinden. Bestehende Funktionen und datierte Prüfaussagen bleiben vom noch offenen Veranstaltungsumfang getrennt.
+**Nativer Stationspilot · 19.10.2026:** [Vorbereitung, Stationsauswahl, automatische Anmeldung und bestätigter Zustand](../../docs/companion/spielleiter-stationspilot.md) sind in Larp GM implementiert und mit der lokalen Box am Moto G14 geprüft. Nur GM aktualisiert; alle zehn Dev-Dateien unverändert. Licht-/Spielaktionen folgen separat.
+
+**Zwei Apps · 18.10.2026, fortgeschrieben 20.10.2026:** `:app` bleibt die Dev-App mit unveränderter Kennung `de.larpescape.companion` und bisherigen Datenspeichern. `:gamemaster` erzeugt separat `de.larpescape.gamemaster` mit eigener lokaler Stationsvorbereitung. [Technische Trennung, Datenerhalt und Prüfweg](../../docs/companion/android-app-trennung.md). [Installation, Dev-Datenerhalt und paralleler Betrieb am Moto G14](../../docs/companion/android-app-geraetepruefung-2026-10-18.md) sind geprüft; App-Auswahl: **Larp Dev** (GM-Icon mit DEV-Badge) und **Larp GM** (Original-Icon). Der lesende native Stationspilot ist umgesetzt; Licht-/Spielaktionen bleiben offen. [UX-01](../../docs/ui-ux/PROJEKTREFERENZ.md), [Dev-Abläufe](../../docs/ui-ux/DEV-APP-ABLAEUFE.md) und [Spielleitungs-Abläufe](../../docs/ui-ux/SPIELLEITER-APP-ABLAEUFE.md) führen die Designgrundlage.
+
+**Verbindliches Zielbild · 18.10.2026, fortgeschrieben 20.10.2026:** [VA-01](../../docs/veranstaltungsarchitektur.md) und [Vertragsmatrix](../../docs/veranstaltungsarchitektur-umsetzung.md). Mehrere Spielleitungen bedienen gleichzeitig verschiedene Boxen per BLE; zunächst eine aktive Steuersitzung je Box. Der lesende Stationspilot bietet gespeicherte lokale Boxzuordnungen, bewussten Zielwechsel und getrennte Beobachtungen. Die gemeinsame Mehrbox-/Mehrhandy-Abnahme und veranstaltungsweite Rechte-/Paketverwaltung bleiben offen. Ein Handy muss nicht gleichzeitig alle Boxen verbinden. Bestehende Funktionen und datierte Prüfaussagen bleiben vom noch offenen Veranstaltungsumfang getrennt.
 
 Die ESP-Seite enthält **ESP-NOW testen** mit Empfänger-MAC und bewusstem
 Einzelsenden. Lokale Sendeannahme, MAC-Zustellung und korrelierte Rückantwort
@@ -9,10 +13,10 @@ App-/Firmwarepaar und Einzelsendetest: [ESP-NOW-Test](../../docs/espnow/app-test
 Der [RSSI-Gehversuch mit Kameravergleich](../../docs/espnow/distance-camera-result-2026-10-18.md)
 ist abgeschlossen; Reichweite und Dauerbetrieb bleiben offen.
 
-Kotlin, Jetpack Compose und Material 3. Eigenständige App mit Paketname
+Kotlin, Jetpack Compose und Material 3. Die Dev-App hat den Paketnamen
 `de.larpescape.companion`, Mindestversion Android 13/API33. Bestehende
 Webprototypen und der .NET-Diagnoseclient bleiben separate Referenzen.
-Die Projekt-App bedient den eigenen LED-Produktdienst mit Funkeln,
+Die Dev-App bedient den eigenen LED-Produktdienst mit Funkeln,
 Lichtimpuls und Ripple sowie Start/Stop. Der LED-Zweig hat zunächst kein
 Spielmodul; seine LED-Berechtigung ist keine Legacy-Spielleiteranmeldung.
 
@@ -22,7 +26,13 @@ werden mit kopierten Bytes auf dem Hauptthread verarbeitet und an die jeweilige
 Verbindungsgeneration gebunden. Ein ViewModel besitzt die Sitzung auch bei
 Rotation. Verlassen der App beendet die Sitzung; kein Hintergrundservice.
 
-## Tastenmatrix im nächsten gemeinsamen Test
+## Tastenmatrix: gespeicherter Sammellauf und Nachprüfung
+
+Der [Sammeldurchgang vom 16.10.2026](../../docs/matrix/collection-result-2026-10-16.md)
+ist abgeschlossen: 68 Koordinaten, 110 registrierte Kontaktfolgen, neun
+nutzerbestätigt unbestückte Felder und vier offene Problemstellen (C3, G3, H3, A8).
+Der gespeicherte Lauf bleibt die Grundlage der gezielten Nachprüfung nach #54;
+die gemeinsame V2-Geräteabnahme und elektrische/räumliche Zuordnung bleiben offen.
 
 Die ESP-Seite zeigt vor Wake und LEDs ein 9×9-Raster mit elektrischen
 Koordinaten A–I/1–9. Ein Kontakt trägt ein sichtbares Symbol und erscheint
@@ -37,11 +47,11 @@ halten die Anzeige für weniger als eine Sekunde aktuell. Lesefehler,
 Verbindungsende und veraltete Werte zeigen unbekannt. LED-Antworten und
 einzelne BLE-Fragmente verlängern die Frische nicht. Bei Mehrfachkontakt
 zeigt die App die beobachteten Kontaktkoordinaten ausdrücklich als mehrdeutig;
-ihre Zuordnung zu tatsächlich gedrückten Tasten bleibt unklar. Die bestehende LED-/Wake-Firmware
-bleibt verbindbar und zeigt sichtbar, dass sie noch keine Matrixdaten liefert.
-Die neue Matrix-Prüffirmware und der [gemeinsame Testablauf](../../docs/matrix/test-preparation.md)
-werden vor der Geräteprüfung zusammen bereitgestellt. Die Appanzeige selbst
-bestätigt noch keine physische Taste.
+ihre Zuordnung zu tatsächlich gedrückten Tasten bleibt unklar. Firmwarevarianten
+ohne Matrixscan bleiben verbindbar und liefern keine Matrixdaten. Für weitere
+Prüfungen gelten der [Sammellauf mit Wiederaufnahme](../../docs/matrix/collection-run-2026-10-16.md)
+und die [Hardwaregrenzen](../../docs/matrix/test-preparation.md).
+Die Appanzeige selbst bestätigt noch keine physische Taste.
 
 ## Wake-Inputs
 
@@ -59,6 +69,10 @@ getrennte NFC-Prüffirmware und der anschließende Rundlauf mit einem echten
 Tag stehen im [NFC-Testablauf](../../docs/nfc/test-preparation.md).
 
 Alle Befehle in diesem Abschnitt laufen aus `companion/android/`.
+Der folgende vollständige Softwareprüflauf umfasst beide Apps mit JVM-Tests,
+Debug-/Release-Builds und Lint. Für APK-Identitäten und Manifestgrenzen danach
+den [Prüfer der Apptrennung](../../docs/companion/android-app-trennung.md#bauen-und-artefakte)
+aus dem Repository-Stamm ausführen. Installation am Handy ist ein eigener Schritt.
 Voraussetzung: JDK17 oder 21, Android SDK35 und Build Tools35.0.0. Der Gradle
 Wrapper lädt Gradle8.9; Versionen stehen in `gradle/libs.versions.toml`.
 SDK über `ANDROID_HOME` oder eine lokale, ignorierte `local.properties` angeben.
@@ -66,7 +80,14 @@ SDK über `ANDROID_HOME` oder eine lokale, ignorierte `local.properties` angeben
 ```powershell
 $env:JAVA_HOME='C:/Program Files/Android/openjdk/jdk-21.0.8'
 $env:ANDROID_HOME='C:/Program Files (x86)/Android/android-sdk'
-./gradlew.bat :core:protocol:test :app:testDebugUnitTest :app:assembleDebug :app:lintDebug
+./gradlew.bat :core:protocol:test :app:testDebugUnitTest :app:assembleDebug :app:assembleRelease :app:lintDebug :app:lintRelease :gamemaster:testDebugUnitTest :gamemaster:assembleDebug :gamemaster:assembleRelease :gamemaster:lintDebug :gamemaster:lintRelease --no-daemon --console=plain
+```
+
+Beispiel für eine separat beauftragte Dev-Installation; vorher Paket und
+Signatur mit der vorhandenen Installation abgleichen, siehe
+[Updatebedingung](../../docs/companion/android-app-trennung.md#erhaltener-datenbestand):
+
+```powershell
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 adb shell am start -n de.larpescape.companion/.MainActivity
 ```
@@ -169,9 +190,11 @@ LED-Firmware behauptet keinen geprüften Zustand eines nicht vorhandenen Spiels.
 Appwechsel, Rechteentzug, Bluetooth-Aus und bewusste Trennung entwerten den
 Appzustand; die Box schaltet bei erkanntem Verbindungsverlust aus.
 
-Hosttests und Builds prüfen Protokoll, Bedienregeln und Kompilierbarkeit. Der
-LED-Produktpfad wurde dadurch nicht auf Handy/Box physisch abgenommen; der
-frühere isolierte Rot-an/aus-Versuch war ein anderer Firmware- und Appstand.
+Hosttests und Builds prüfen Protokoll, Bedienregeln und Kompilierbarkeit.
+Die [Geräteprüfung vom 15.10.2026](../../docs/led/device-test-2026-10-15.md)
+belegt Funkeln, Stop und das automatische Ende von Lichtimpuls/Ripple am damals
+installierten eigenen Paar. Die gemeinsame V2-Abnahme und weitere Fehlerfälle
+bleiben offen; der frühere isolierte Rot-an/aus-Versuch ist ein eigener Beleg.
 
 ## Handyprobe
 

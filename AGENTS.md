@@ -41,3 +41,31 @@ Eine regelmäßige Hintergrundüberwachung ist gesondert zu vereinbaren.
   Flash-Rückweg abgleichen. Die Maintainer-Übernahme selbst beauftragt keinen Upload.
 - Abschlussberichte nennen Änderungen, geprüften Commit, Prüfergebnisse und
   verbleibende Einschränkungen sowie bei Veröffentlichung den PR-Link.
+
+## Verbindliche Fachmandate und Prüfpflichten
+
+Vom Nutzer am **24. Oktober 2026** nach dem A1/A2-Pilot übernommen:
+[Plattform und Systemintegration, Geräteintegration und Hardwarevertrag sowie
+Qualität und Nachweise](docs/quality/verantwortlichkeiten.md).
+Bei jedem beauftragten Arbeitspaket vor Änderungen fachlich Verantwortlichen,
+anderen Gegenprüfer, betroffene Varianten und passende Nachweise benennen.
+Der Maintainer besetzt die Funktionen; mehrere Mandate dürfen von einer Person
+oder einem Agenten ausgeführt werden, die eigene Umsetzung gilt nicht als
+unabhängig geprüft. Der Reviewumfang folgt den Auslösern im Rollenvertrag.
+
+Für Task-/Queue-/Spinlock-/Callback-/ISR-, Versions-/ABI-, Gerätefehler-,
+Parser-/Patch- und Timeoutänderungen sind die dort genannten Prüfpflichten
+verbindlich. Fehlende erforderliche Nachweise ausdrücklich offen lassen;
+Hosttest, SDK-Build und Geräteverhalten nicht gleichsetzen. Security-Fragen
+gezielt fachlich gegenprüfen. Die vollständigen LED- und UI/UX-Aufträge bleiben
+erhalten. Diese Übernahme richtet keinen Zeitplan oder dauerhaften Agenten ein.
+Herkunft, Nutzungsbewertung und Rückweg stehen in [PROMOTION.md](PROMOTION.md).
+
+## UI/UX-Arbeit
+
+Bei beauftragtem UI/UX-Entwurf, Bedienablaufplanung oder UI-Review den
+[Rollenvertrag](docs/ui-ux/ROLLE.md) und den projektgebundenen Skill
+`.agents/skills/ui-ux-design/SKILL.md` nutzen. Projektagent: `ui_ux_designer`
+unter `.codex/agents/`. Der [Box-Pilot](docs/ui-ux/BOX-PILOT.md) ist der
+erste Anwendungsfall. Sichtprüfung, Softwaretests und Geräteabnahme getrennt
+belegen; Grundsatzentscheidungen bleiben beim Nutzer.

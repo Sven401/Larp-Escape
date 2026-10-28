@@ -552,3 +552,26 @@ void test_grant_poll_during_actor_publication_remains_pending_without_mutable_ow
     TEST_ASSERT_TRUE(ack.gameMaster && ack.principal == 7);
     TEST_ASSERT_FALSE(host_rtos::nonzeroWait);
 }
+
+void test_source_grant_foreign_task_cannot_poll_or_cancel_current_job() {
+    GrantFixture fixture;
+    const auto job = fixture.posted();
+    TrustedAuthority destination = authority(99);
+    host_sdk_source::currentTask = reinterpret_cast<TaskHandle_t>(4);
+    grantState(PeerProofGrantState::Unavailable,
+               fixture.source.peerProofGrantState(job, destination));
+    TEST_ASSERT_EQUAL_UINT32(99, destination.epoch);
+    fixture.source.cancelPeerProofGrant(job);
+    fixture.cryptoWorker();
+    grantState(PeerProofGrantState::Pending, fixture.source.peerProofGrantState(job, destination));
+    const auto ack = fixture.apply();
+    host_sdk_source::currentTask = reinterpret_cast<TaskHandle_t>(4);
+    fixture.source.cancelPeerProofGrant(job);
+    grantState(PeerProofGrantState::Unavailable,
+               fixture.source.peerProofGrantState(job, destination));
+    TEST_ASSERT_EQUAL_UINT32(99, destination.epoch);
+    fixture.cryptoWorker();
+    grantState(PeerProofGrantState::Confirmed,
+               fixture.source.peerProofGrantState(job, destination));
+    TEST_ASSERT_TRUE(destination == ack);
+}

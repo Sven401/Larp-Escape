@@ -29,14 +29,15 @@ class KeyMatrix : public larp::ports::ICrystalInput, public larp::ports::IWakeIn
 
     void printMatrixState();
     bool printMatrixChanges();
-    // Missing coordinates and failed initialization are inactive (HIGH).
-    bool getKeyState(const larp::domain::GridPosition &position);
+    // A failed scan is explicit; high is only meaningful when true is returned.
+    bool getKeyState(const larp::domain::GridPosition &position, bool &high);
     void debug(const larp::domain::GridPosition &position);
     bool begin();
-    larp::ports::CrystalInputBatch readPressedPositions() override;
-    std::array<bool, 4> readWakeSignals() override;
+    larp::ports::CrystalInputSample readPressedPositions() override;
+    larp::ports::WakeInputSample readWakeSignals() override;
 
   private:
+    bool releaseColumns();
     const larp::runtime::MatrixLine *findRow(int coordinate) const;
     const larp::runtime::MatrixLine *findColumn(larp::domain::GridColumn coordinate) const;
     const HandlerReferences handlers;
@@ -45,6 +46,7 @@ class KeyMatrix : public larp::ports::ICrystalInput, public larp::ports::IWakeIn
     larp::runtime::MatrixConfiguration configuration;
     std::array<bool, larp::runtime::MatrixConfiguration::MaximumCells> lastState;
     bool initialized;
+    bool recoveryNeeded;
 };
 
 #endif // KEYMATRIX_H

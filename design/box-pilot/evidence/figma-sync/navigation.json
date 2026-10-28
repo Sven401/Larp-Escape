@@ -1,0 +1,1014 @@
+{
+  "date": "2026-10-18",
+  "source": "1dc92278501e0362774dee8cd589bce65e62852e",
+  "fileKey": "3uQpZfwREhQ9cHk80jMtRw",
+  "screenCount": 56,
+  "edgeCount": 148,
+  "starts": [
+    {
+      "nodeId": "3:20",
+      "name": "Stationsbedienung · Normalweg"
+    },
+    {
+      "nodeId": "16:1057",
+      "name": "Testfälle · getrennte Simulation"
+    }
+  ],
+  "frameIndex": [
+    {
+      "id": "3:20",
+      "name": "B0 · Stationen"
+    },
+    {
+      "id": "3:63",
+      "name": "B2 · Gerätezugriff"
+    },
+    {
+      "id": "3:95",
+      "name": "B3 · Suche"
+    },
+    {
+      "id": "3:159",
+      "name": "B5 · Zugang prüfen"
+    },
+    {
+      "id": "3:191",
+      "name": "B6 · Bereit"
+    },
+    {
+      "id": "3:223",
+      "name": "B7 · Auftrag offen"
+    },
+    {
+      "id": "3:253",
+      "name": "B8 · Antwort"
+    },
+    {
+      "id": "3:285",
+      "name": "B9 · Status veraltet"
+    },
+    {
+      "id": "3:317",
+      "name": "B10 · Unterbrechung"
+    },
+    {
+      "id": "3:349",
+      "name": "B11 · Wiederaufnahme"
+    },
+    {
+      "id": "3:381",
+      "name": "B12 · Rückkehr"
+    },
+    {
+      "id": "3:413",
+      "name": "F1 · Kein Gerät"
+    },
+    {
+      "id": "3:445",
+      "name": "F2 · Zugang abgelehnt"
+    },
+    {
+      "id": "3:477",
+      "name": "F3 · Bluetooth aus"
+    },
+    {
+      "id": "4:178",
+      "name": "R1 · Wiederaufnahme / Suche"
+    },
+    {
+      "id": "4:236",
+      "name": "R3 · Wiederaufnahme / Zugang"
+    },
+    {
+      "id": "4:273",
+      "name": "S1 · Stop / Auftrag offen"
+    },
+    {
+      "id": "7:58",
+      "name": "F4 · Gerätezugriff fehlt"
+    },
+    {
+      "id": "12:50",
+      "name": "F5 · Stationszuordnung unklar"
+    },
+    {
+      "id": "16:55",
+      "name": "E1 · Zugang / extern korrigiert, noch ungeprüft"
+    },
+    {
+      "id": "16:87",
+      "name": "E1 · Zugang erneut prüfen / Suche"
+    },
+    {
+      "id": "16:116",
+      "name": "E1 · Zugang erneut prüfen / Zugang"
+    },
+    {
+      "id": "16:151",
+      "name": "H1a · Einrichtungshilfe / Zugang"
+    },
+    {
+      "id": "16:191",
+      "name": "H1b · Einrichtungshilfe / Zugang"
+    },
+    {
+      "id": "16:238",
+      "name": "E2 · Zuordnung / extern korrigiert, noch ungeprüft"
+    },
+    {
+      "id": "16:270",
+      "name": "E2 · Zuordnung erneut prüfen / Suche"
+    },
+    {
+      "id": "16:299",
+      "name": "E2 · Zuordnung erneut prüfen / Zugang"
+    },
+    {
+      "id": "16:334",
+      "name": "H2a · Einrichtungshilfe / Zuordnung"
+    },
+    {
+      "id": "16:374",
+      "name": "H2b · Einrichtungshilfe / Zuordnung"
+    },
+    {
+      "id": "16:419",
+      "name": "A1 · Start ausgeführt · Antwort verloren / Auftrag offen"
+    },
+    {
+      "id": "16:446",
+      "name": "A1 · Start ausgeführt · Antwort verloren / Unterbrechung"
+    },
+    {
+      "id": "16:476",
+      "name": "A1 · Start ausgeführt · Antwort verloren / Wiederverbinden"
+    },
+    {
+      "id": "16:505",
+      "name": "A1 · Start ausgeführt · Antwort verloren / Prüfen"
+    },
+    {
+      "id": "16:534",
+      "name": "A1 · Start ausgeführt · Antwort verloren / frischer Zustand"
+    },
+    {
+      "id": "16:578",
+      "name": "A2 · Start nicht angekommen / Auftrag offen"
+    },
+    {
+      "id": "16:605",
+      "name": "A2 · Start nicht angekommen / Unterbrechung"
+    },
+    {
+      "id": "16:635",
+      "name": "A2 · Start nicht angekommen / Wiederverbinden"
+    },
+    {
+      "id": "16:664",
+      "name": "A2 · Start nicht angekommen / Prüfen"
+    },
+    {
+      "id": "16:693",
+      "name": "A2 · Start nicht angekommen / frischer Zustand"
+    },
+    {
+      "id": "16:737",
+      "name": "A3 · Stop ausgeführt · Antwort verloren / Auftrag offen"
+    },
+    {
+      "id": "16:764",
+      "name": "A3 · Stop ausgeführt · Antwort verloren / Unterbrechung"
+    },
+    {
+      "id": "16:794",
+      "name": "A3 · Stop ausgeführt · Antwort verloren / Wiederverbinden"
+    },
+    {
+      "id": "16:823",
+      "name": "A3 · Stop ausgeführt · Antwort verloren / Prüfen"
+    },
+    {
+      "id": "16:852",
+      "name": "A3 · Stop ausgeführt · Antwort verloren / frischer Zustand"
+    },
+    {
+      "id": "16:896",
+      "name": "A4 · Stop nicht angekommen / Auftrag offen"
+    },
+    {
+      "id": "16:923",
+      "name": "A4 · Stop nicht angekommen / Unterbrechung"
+    },
+    {
+      "id": "16:953",
+      "name": "A4 · Stop nicht angekommen / Wiederverbinden"
+    },
+    {
+      "id": "16:982",
+      "name": "A4 · Stop nicht angekommen / Prüfen"
+    },
+    {
+      "id": "16:1011",
+      "name": "A4 · Stop nicht angekommen / frischer Zustand"
+    },
+    {
+      "id": "17:139",
+      "name": "P0 · Verbindung bewusst pausiert"
+    },
+    {
+      "id": "17:175",
+      "name": "P1 · Zugang erneut prüfen / pausiert"
+    },
+    {
+      "id": "17:211",
+      "name": "P2 · Zuordnung erneut prüfen / pausiert"
+    },
+    {
+      "id": "17:247",
+      "name": "P3 · Start ausgeführt / pausiert"
+    },
+    {
+      "id": "17:283",
+      "name": "P4 · Start nicht angekommen / pausiert"
+    },
+    {
+      "id": "17:319",
+      "name": "P5 · Stop ausgeführt / pausiert"
+    },
+    {
+      "id": "17:355",
+      "name": "P6 · Stop nicht angekommen / pausiert"
+    }
+  ],
+  "navigation": [
+    {
+      "from": "3:27",
+      "to": "3:95",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "3:64",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "3:72",
+      "to": "3:95",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "7:87",
+      "to": "7:58",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "3:95",
+      "to": "3:159",
+      "trigger": "AFTER_TIMEOUT",
+      "timeout": 0.8999999761581421
+    },
+    {
+      "from": "3:96",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "3:104",
+      "to": "17:139",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "3:159",
+      "to": "3:191",
+      "trigger": "AFTER_TIMEOUT",
+      "timeout": 0.8999999761581421
+    },
+    {
+      "from": "3:160",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "3:168",
+      "to": "17:139",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "3:192",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "3:218",
+      "to": "3:223",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "3:220",
+      "to": "4:273",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "3:223",
+      "to": "3:253",
+      "trigger": "AFTER_TIMEOUT",
+      "timeout": 1.7000000476837158
+    },
+    {
+      "from": "3:224",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "3:254",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "3:280",
+      "to": "3:223",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "3:282",
+      "to": "4:273",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "3:285",
+      "to": "4:178",
+      "trigger": "AFTER_TIMEOUT",
+      "timeout": 2.4000000953674316
+    },
+    {
+      "from": "3:286",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "3:294",
+      "to": "4:178",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "3:317",
+      "to": "4:178",
+      "trigger": "AFTER_TIMEOUT",
+      "timeout": 2.4000000953674316
+    },
+    {
+      "from": "3:318",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "3:326",
+      "to": "4:178",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "3:350",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "3:376",
+      "to": "3:223",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "3:378",
+      "to": "4:273",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "3:381",
+      "to": "4:178",
+      "trigger": "AFTER_TIMEOUT",
+      "timeout": 2.4000000953674316
+    },
+    {
+      "from": "3:382",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "3:390",
+      "to": "4:178",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "3:422",
+      "to": "3:95",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "3:454",
+      "to": "16:151",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:53",
+      "to": "16:87",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "3:486",
+      "to": "3:95",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "4:178",
+      "to": "4:236",
+      "trigger": "AFTER_TIMEOUT",
+      "timeout": 0.8999999761581421
+    },
+    {
+      "from": "4:179",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "4:236",
+      "to": "3:349",
+      "trigger": "AFTER_TIMEOUT",
+      "timeout": 0.8999999761581421
+    },
+    {
+      "from": "4:237",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "4:273",
+      "to": "3:191",
+      "trigger": "AFTER_TIMEOUT",
+      "timeout": 1.7000000476837158
+    },
+    {
+      "from": "4:274",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "7:59",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "7:67",
+      "to": "3:95",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "12:59",
+      "to": "16:334",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:236",
+      "to": "16:270",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:56",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:64",
+      "to": "16:191",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:65",
+      "to": "3:95",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:87",
+      "to": "16:116",
+      "trigger": "AFTER_TIMEOUT",
+      "timeout": 0.8999999761581421
+    },
+    {
+      "from": "16:88",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:95",
+      "to": "17:175",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:116",
+      "to": "3:445",
+      "trigger": "AFTER_TIMEOUT",
+      "timeout": 0.8999999761581421
+    },
+    {
+      "from": "16:117",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:124",
+      "to": "17:175",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:152",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:187",
+      "to": "3:445",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:192",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:227",
+      "to": "16:55",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:239",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:247",
+      "to": "16:374",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:248",
+      "to": "3:95",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:270",
+      "to": "16:299",
+      "trigger": "AFTER_TIMEOUT",
+      "timeout": 0.8999999761581421
+    },
+    {
+      "from": "16:271",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:278",
+      "to": "17:211",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:299",
+      "to": "12:50",
+      "trigger": "AFTER_TIMEOUT",
+      "timeout": 0.8999999761581421
+    },
+    {
+      "from": "16:300",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:307",
+      "to": "17:211",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:335",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:370",
+      "to": "12:50",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:375",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:410",
+      "to": "16:238",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:419",
+      "to": "16:446",
+      "trigger": "AFTER_TIMEOUT",
+      "timeout": 1.7000000476837158
+    },
+    {
+      "from": "16:420",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:446",
+      "to": "16:476",
+      "trigger": "AFTER_TIMEOUT",
+      "timeout": 2.4000000953674316
+    },
+    {
+      "from": "16:447",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:455",
+      "to": "16:476",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:476",
+      "to": "16:505",
+      "trigger": "AFTER_TIMEOUT",
+      "timeout": 0.8999999761581421
+    },
+    {
+      "from": "16:477",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:484",
+      "to": "17:247",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:505",
+      "to": "16:534",
+      "trigger": "AFTER_TIMEOUT",
+      "timeout": 0.8999999761581421
+    },
+    {
+      "from": "16:506",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:513",
+      "to": "17:247",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:535",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:558",
+      "to": "3:223",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:559",
+      "to": "4:273",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:578",
+      "to": "16:605",
+      "trigger": "AFTER_TIMEOUT",
+      "timeout": 1.7000000476837158
+    },
+    {
+      "from": "16:579",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:605",
+      "to": "16:635",
+      "trigger": "AFTER_TIMEOUT",
+      "timeout": 2.4000000953674316
+    },
+    {
+      "from": "16:606",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:614",
+      "to": "16:635",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:635",
+      "to": "16:664",
+      "trigger": "AFTER_TIMEOUT",
+      "timeout": 0.8999999761581421
+    },
+    {
+      "from": "16:636",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:643",
+      "to": "17:283",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:664",
+      "to": "16:693",
+      "trigger": "AFTER_TIMEOUT",
+      "timeout": 0.8999999761581421
+    },
+    {
+      "from": "16:665",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:672",
+      "to": "17:283",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:694",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:717",
+      "to": "3:223",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:718",
+      "to": "4:273",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:737",
+      "to": "16:764",
+      "trigger": "AFTER_TIMEOUT",
+      "timeout": 1.7000000476837158
+    },
+    {
+      "from": "16:738",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:764",
+      "to": "16:794",
+      "trigger": "AFTER_TIMEOUT",
+      "timeout": 2.4000000953674316
+    },
+    {
+      "from": "16:765",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:773",
+      "to": "16:794",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:794",
+      "to": "16:823",
+      "trigger": "AFTER_TIMEOUT",
+      "timeout": 0.8999999761581421
+    },
+    {
+      "from": "16:795",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:802",
+      "to": "17:319",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:823",
+      "to": "16:852",
+      "trigger": "AFTER_TIMEOUT",
+      "timeout": 0.8999999761581421
+    },
+    {
+      "from": "16:824",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:831",
+      "to": "17:319",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:853",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:876",
+      "to": "3:223",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:877",
+      "to": "4:273",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:896",
+      "to": "16:923",
+      "trigger": "AFTER_TIMEOUT",
+      "timeout": 1.7000000476837158
+    },
+    {
+      "from": "16:897",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:923",
+      "to": "16:953",
+      "trigger": "AFTER_TIMEOUT",
+      "timeout": 2.4000000953674316
+    },
+    {
+      "from": "16:924",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:932",
+      "to": "16:953",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:953",
+      "to": "16:982",
+      "trigger": "AFTER_TIMEOUT",
+      "timeout": 0.8999999761581421
+    },
+    {
+      "from": "16:954",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:961",
+      "to": "17:355",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:982",
+      "to": "16:1011",
+      "trigger": "AFTER_TIMEOUT",
+      "timeout": 0.8999999761581421
+    },
+    {
+      "from": "16:983",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:990",
+      "to": "17:355",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:1012",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:1035",
+      "to": "3:223",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:1036",
+      "to": "4:273",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:1060",
+      "to": "3:445",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:1063",
+      "to": "16:55",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:1066",
+      "to": "12:50",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:1069",
+      "to": "16:238",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:1072",
+      "to": "16:419",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:1075",
+      "to": "16:578",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:1078",
+      "to": "16:737",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "16:1081",
+      "to": "16:896",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "17:140",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "17:148",
+      "to": "3:95",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "17:176",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "17:184",
+      "to": "16:87",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "17:212",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "17:220",
+      "to": "16:270",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "17:248",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "17:256",
+      "to": "16:476",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "17:284",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "17:292",
+      "to": "16:635",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "17:320",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "17:328",
+      "to": "16:794",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "17:356",
+      "to": "3:20",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "from": "17:364",
+      "to": "16:953",
+      "trigger": "ON_CLICK"
+    }
+  ]
+}

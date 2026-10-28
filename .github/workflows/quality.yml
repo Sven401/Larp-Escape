@@ -44,6 +44,8 @@ jobs:
           python scripts/quality_evidence.py run --name ci-helpers -- python -m unittest discover -s scripts/tests -p test_quality_evidence.py -v
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           python scripts/quality_evidence.py run --name source-helper-tests -- python -m unittest discover -s scripts/tests -p test_prepare_peer_mbedtls.py -v
+      - name: Test pinned PN532 repair guards
+        run: python scripts/quality_evidence.py run --name pn532-repair-tests -- python -m unittest discover -s scripts/tests -p test_patch_pn532.py -v
       - name: Check D0 event contract examples
         # D0 examples are a semantic specification, not a crypto/device proof.
         run: python scripts/quality_evidence.py run --name d0-contract -- python scripts/check_d0_contract.py
@@ -58,8 +60,12 @@ jobs:
         run: python scripts/quality_evidence.py run --name architecture -- python scripts/check_architecture.py
       - name: Run regression host tests
         run: python scripts/quality_evidence.py run --name host-regression -- python -m platformio test -e host-regression -v --junit-output-path "$env:RUNNER_TEMP/larp-quality-hardware-independent/host-regression.xml"
+      - name: Run legacy MCP tests against actual pinned Adafruit sources
+        run: python scripts/quality_evidence.py run --name host-mcp -- python -m platformio test -e host-mcp -v --junit-output-path "$env:RUNNER_TEMP/larp-quality-hardware-independent/host-mcp.xml"
       - name: Run configured-control host tests
         run: python scripts/quality_evidence.py run --name host-configured-control -- python -m platformio test -e host-configured-control -v --junit-output-path "$env:RUNNER_TEMP/larp-quality-hardware-independent/host-configured-control.xml"
+      - name: Check channel RTOS context and real host thread ordering
+        run: python scripts/quality_evidence.py run --name channel-context-threads -- python test/test_configured_control/run_channel_checks.py
       - name: Run host tests with real peer cryptography
         env:
           LARP_PEER_MBEDTLS_DIR: ${{ runner.temp }}/peer-mbedtls/source
@@ -154,7 +160,11 @@ jobs:
       - name: Record Gradle version
         run: python scripts/quality_evidence.py run --name gradle-version --cwd companion/android -- cmd /d /c gradlew.bat --version --no-daemon --console=plain
       - name: Test, build and lint Android using the project wrapper
-        run: python scripts/quality_evidence.py run --name android-checks --cwd companion/android -- cmd /d /c gradlew.bat :core:protocol:test :app:testDebugUnitTest :app:assembleDebug :app:assembleRelease :app:lintDebug --no-daemon --console=plain --stacktrace --continue
+        run: python scripts/quality_evidence.py run --name android-checks --cwd companion/android -- cmd /d /c gradlew.bat :core:protocol:test :app:testDebugUnitTest :app:assembleDebug :app:assembleRelease :app:lintDebug :app:lintRelease :gamemaster:testDebugUnitTest :gamemaster:assembleDebug :gamemaster:assembleRelease :gamemaster:lintDebug :gamemaster:lintRelease --no-daemon --console=plain --stacktrace --continue
+      - name: Verify app separation guard
+        run: python scripts/quality_evidence.py run --name android-separation-tests -- python -m unittest discover -s scripts/tests -p test_android_apps.py -v
+      - name: Verify both packaged applications
+        run: python scripts/quality_evidence.py run --name android-app-separation -- python scripts/check_android_apps.py
       - name: Record the debug APK identity
         run: python scripts/quality_evidence.py run --name apk-sha256 -- python -c "import hashlib; from pathlib import Path; apk = Path('companion/android/app/build/outputs/apk/debug/app-debug.apk'); print(hashlib.sha256(apk.read_bytes()).hexdigest(), apk)"
       - name: Summarize executed checks
@@ -179,5 +189,8 @@ jobs:
             companion/android/core/protocol/build/reports/tests/
             companion/android/app/build/test-results/**/*.xml
             companion/android/app/build/reports/tests/
-            companion/android/app/build/reports/lint-results-debug.*
+            companion/android/app/build/reports/lint-results-*
+            companion/android/gamemaster/build/reports/lint-results-*
+            companion/android/gamemaster/build/test-results/**/*.xml
+            companion/android/gamemaster/build/reports/tests/
           if-no-files-found: warn

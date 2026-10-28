@@ -4,6 +4,13 @@
 
 **Stand:** 7. Oktober 2026. Status-/Befehlskern, [begrenzter JSON-Befehlscodec](command-codec-v2.md) und statischer FreeRTOS-Adapter implementiert; Appfunk, Anmeldung und Android noch offen. 25 gezielte Hostfälle prüfen den vertikalen Codec-/Aufnahme-/Anwendungs-/Antwortpfad mit synthetischen Geräten und einem deterministischen RTOS-Modell; echte Geräte-/SMP-Abnahme steht aus. Status v1 bleibt unverändert.
 
+**Korrektur vom 24.10.2026:** Der Kanal verwendet für seine zwei FIFOs und
+Statusmailbox eigene begrenzte Wertablagen statt FreeRTOS-Queue-APIs.
+Authorityprüfung und Aufnahme/Auswahl bleiben unter derselben Sperre;
+`begin()` darf nach dem Start keine Daten löschen. Die datierten ursprünglichen
+Testzahlen unten bleiben historische Belege. Aktuelle Prüfwege stehen im
+[Hosttest-Einstieg](../../test/test_configured_control/README.md).
+
 ## Zuständigkeit
 
 Nutzerentscheidung vom 6. Oktober 2026: Diese Arbeit verantwortet die ESP-Firmware und deren Datenverträge/Schnittstellendesign. Die App-Seite konsumiert die versionierten Firmwareverträge. Die nachfolgenden v2-Typen/Schemata/Codecs sind der implementierte Firmwarestand; Appclient, UI und Androidprojekt werden auf der App-Seite umgesetzt. Aus einem lokalen Appmock werden keine zusätzlichen unterstützten Firmwarebefehle oder Zugangsrechte abgeleitet.
@@ -14,7 +21,7 @@ Companion/ConfiguredProtocol enthält kopierbare Werte und transportfreie Ports,
 
 Ein Anwendungseigentümer ruft `application.service(now)` genau einmal und danach `gameControl.service(now)` auf. Der zweite Aufruf tickt das Spiel nicht erneut, verarbeitet maximal vier kopierte Anfragen und veröffentlicht nach Anfragen oder spätestens bei einem regulären Service nach 250 ms einen Status. Betrieb und Publikation sind kooperativ; diese Frist ersetzt keine garantierte Taskplanung. Langsame Profile-/Speicher-IO bleibt Arbeit am gestoppten Spiel. Statuskopien werden dann ebenfalls verzögert. Kleine ExecutionSnapshot-Abfragen vermeiden volle Gerätearrays pro Anfrage.
 
-FreeRtosGameControlChannel besitzt statische FIFOs mit vier Anfragen/vier Antworten und eine überschreibbare Statusmailbox. Ausschließlich der Anwendungseigentümer nutzt receive/send/publish. Ein vertrauenswürdiger Transporteigentümer veröffentlicht den synchronisierten aktuellen Zugang und liefert kopierte Anfragen samt verifizierten principal+connectionEpoch-Metadaten. Er entnimmt Antworten und leitet jede nur an eine noch passende principal+connectionEpoch-Verbindung weiter. Eine recycelte Identität genügt nicht; der reale Replyrouter ist mit dem Transport noch zu implementieren. Statusleser lesen ausschließlich Mailboxkopien, keine Controller. Alle Queueaufrufe warten null Ticks, keine ISR-API, keine wiederkehrende Heapallokation. begin muss vor Tasks/Callbacks erfolgen, die Objekte leben den ganzen Boot. Volle Anfragequeue bedeutet nicht angenommen; volle Antwortqueue kann ein Ergebnis verlieren, niemals die bereits ausgeführte Anfrage ungeschehen machen. Status-/Antwortverluste werden getrennt gesättigt gezählt.
+FreeRtosGameControlChannel besitzt statische FIFOs mit vier Anfragen/vier Antworten und eine überschreibbare Statusmailbox. Ausschließlich der Anwendungseigentümer nutzt receive/send/publish. Ein vertrauenswürdiger Transporteigentümer veröffentlicht den synchronisierten aktuellen Zugang und liefert kopierte Anfragen samt verifizierten principal+connectionEpoch-Metadaten. Er entnimmt Antworten und leitet jede nur an eine noch passende principal+connectionEpoch-Verbindung weiter. Eine recycelte Identität genügt nicht; der reale Replyrouter ist mit dem Transport noch zu implementieren. Statusleser lesen ausschließlich Mailboxkopien, keine Controller. Zwei feste Wert-Ringe und eine kopierte Statusmailbox liegen mit dem AuthorityState unter derselben kurzen Spinlock-Sperre. Innerhalb dieser Sperre erfolgen ausschließlich begrenzte triviale Wertkopien und Index-/Zustandsprüfungen, keine FreeRTOS-API, Geräteaufrufe oder Heapallokation. Auch Rohentnahmen und Rohstatus lesen unter dieser Sperre; keine ISR-Nutzung. begin muss vor Tasks/Callbacks erfolgen, die Objekte leben den ganzen Boot. Volle Anfragequeue bedeutet nicht angenommen; volle Antwortqueue kann ein Ergebnis verlieren, niemals die bereits ausgeführte Anfrage ungeschehen machen. Status-/Antwortverluste werden getrennt gesättigt gezählt.
 
 ## Boot und Anmeldung
 
