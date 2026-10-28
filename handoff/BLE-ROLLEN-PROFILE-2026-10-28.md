@@ -1,9 +1,15 @@
-# BLE, Rollen und Profile: aktive Produktintegration
+# BLE, Rollen und Profile: abgeschlossene Arbeitsuebergabe
 
 Stand: **28.10.2026**, Sitzung `01a183bd-0df7-72e3-a67c-ddde84798a0b`.
-Status: **begonnen; kein fertiger Produktanschluss und keine neue Geraeteabnahme**.
+Status: **auf Nutzerauftrag mit Uebergabe abgeschlossen; Produktintegration und Geraeteabnahme offen**.
 Basis: `f81956faffa4d4c6b0198fdbd0c626b21e137cd4`, nach frischem Fetch.
 Zielbranch bleibt `plan/projektuebergabe-kuratierter-stand`.
+
+**Abschlussentscheidung, 28.10.2026:** Der Nutzer bestimmt die Plattformmigration
+als eigenen Plan und schliesst dieses Ziel nach Sicherung von Arbeit und Grund.
+[Verbindliche Migrationsuebergabe und naechster Maintainerauftrag](ARDUINO-ESP32-3-MIGRATION.md).
+Das ist keine Abnahme des urspruenglich angestrebten gesamten Produktablaufs.
+Keine weitere Implementierung, Installation oder Migration in dieser Sitzung.
 
 ## Auftrag, Verantwortliche und Grenzen
 
@@ -79,7 +85,10 @@ Quellenpruefung durch Hauptagent und Gegenpruefer, keine neuen Funkmessungen:
    Implementierung. SP-01 ist fachlicher Kontext, keine ungeprueft zu uebernehmende
    Mergekette. Generische Spielrollen aus Profilen nicht in Android hartcodieren.
 
-## Naechste konkrete Arbeit
+## Getrennte Folgearbeit fuer den Maintainer
+
+**Zuerst:** den [eigenen Migrationsplan](ARDUINO-ESP32-3-MIGRATION.md) aufnehmen.
+Die folgenden Produktarbeiten bleiben als anschliessende Integration erhalten.
 
 1. Geschlossenes Produkt-Integrationsziel mit echten Registry-/Security-/
    Profilbesitzern und dem implementierten Rueckkanal zusammensetzen. Keine
@@ -131,7 +140,7 @@ Diese nachfolgende Dokumentfortschreibung aendert keine Produktquellen.
 JUnit-/Lintberichte und APKs bleiben unter den jeweiligen ignorierten
 `companion/android/**/build/`-Pfaden. Keine Releasebuild-, Installations-,
 GATT-Funk-, Pairing-, Last- oder Geraetefunktionspruefung aus diesen Ergebnissen
-ableiten. Gesamtziel bleibt aktiv.
+ableiten. Der Nutzer hat den Arbeitsauftrag spaeter mit der Migrationsuebergabe geschlossen.
 
 ## Frisch abgeglichener privater Flash-Rueckweg
 
@@ -198,3 +207,45 @@ Lokale Werkzeuge/Kryptografiequellen unter `private/quality-tools` und
 `private/output-stack`. Alles ignoriert; keine Schluessel oder Flashbytes versioniert.
 Produktstart, Servernachweis, Einrichtung, Bond-Reconnect, Android-Polling,
 reale Profilgeraete und das gemeinsame V2-Geraetepaar bleiben offen.
+
+## Abschluss und erhaltene Machbarkeit
+
+Nutzerentscheidung: Plattformmigration als eigener Plan; Arbeit und Grund fuer
+den Maintainer im Projekt festhalten; dieses Ziel damit abschliessen. Keine
+Migration, kein neuer Hintergrundauftrag oder neuer Chat und kein Merge/Release.
+Der PR bleibt als begrenzte Vorbereitung ein Entwurf.
+
+Zusaetzlicher Befund aus unabhaengiger Securitygegenpruefung und gepruefter
+Hersteller-Advisory: Mbed TLS2.28.4 faellt in die Versionsmatrix von
+CVE-2025-27810. Kein geeigneter SDK-Backport belegt. Der geplante TLS-Produktpfad
+wird auf diesem Stand nicht freigegeben. Details und Prueftore stehen kanonisch
+in der Migrationsuebergabe, nicht in einem persoenlichen globalen Skill.
+
+Ein isolierter echter Mbed-TLS-/Python-OpenSSL-Hostversuch mit TLS1.2,
+ECDHE-ECDSA-AES128-GCM-SHA256 und gepinnten vorbereiteten Zertifikaten bestand
+neun Faelle: 1/7/20-Byte-Eingangsstuecke, falscher Client, falscher Serverpin,
+fehlendes Clientzertifikat, manipuliertes Record, Klartexteinschleusung und Replay.
+Bearbeitbare Quellen, Herkunft und Ergebnis sind im
+[Quellarchiv](quellarchiv/ble-tls-feasibility-2026-10-28/README.md) gesichert.
+Nur Machbarkeit auf dem alten Backend, keine Pruefung der CVE-Fehlerausloeser,
+kein SMP/Bond-, Rollen-, Profil-, Speicher- oder Geraetenachweis.
+
+Die geprueften Produktquellen 6242960/6d7edee bleiben unveraendert. Zuletzt
+veroeffentlichter Stand vor dieser Abschlussdoku:4ee93f0, PR#100. Der Zielbranch
+wurde separat nach ab7de9b aktualisiert (nur fuenf Audit-Dokumentdateien). Unser
+Link wurde versetzt; `git merge-tree --write-tree` bestaetigte konfliktfreie
+Kombinierbarkeit, ohne einen Branch zusammenzufuehren. Keine neue Produkt-CI
+oder Geraeteabnahme aus diesem Dokumentvergleich ableiten.
+
+Vor Abschluss erneut ausgelesen: Am PR-Head `4ee93f0` sind alle drei
+Workflowlaeufe erfolgreich abgeschlossen:
+[Quality](https://github.com/Sven401/Larp-Escape/actions/runs/40752621303),
+[LED product](https://github.com/Sven401/Larp-Escape/actions/runs/40752621317),
+[NFC probe](https://github.com/Sven401/Larp-Escape/actions/runs/40752621398).
+Die nachfolgende Abschlussdokumentation hat ihren eigenen CI-Stand; diese
+Ergebnisse werden nicht auf einen anderen Commit uebertragen.
+
+Abschlussgegenpruefung durch `/root/security_review`: keine konkreten Falsch-
+oder Ueberbehauptungen in Migrationsgrund, CVE-Abgrenzung, neun Hostfaellen,
+offener Produktabnahme oder Nutzerentscheidung gefunden; drei Archivhashes
+unabhaengig abgeglichen. Keine erneuten Tests oder Builds durch den Reviewer.

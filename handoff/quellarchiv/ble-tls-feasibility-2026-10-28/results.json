@@ -1,0 +1,75 @@
+{
+  "scope": "HOST TLS FEASIBILITY ONLY - old MbedTLS2.28.4 not cleared for production",
+  "deviceMeasured": false,
+  "roleGranted": false,
+  "cases": [
+    {
+      "case": "normal",
+      "fragment": 1,
+      "cipher": "ECDHE-ECDSA-AES128-GCM-SHA256",
+      "version": "TLSv1.2",
+      "echoBytes": 40,
+      "steps": 820
+    },
+    {
+      "case": "normal",
+      "fragment": 7,
+      "cipher": "ECDHE-ECDSA-AES128-GCM-SHA256",
+      "version": "TLSv1.2",
+      "echoBytes": 40,
+      "steps": 153
+    },
+    {
+      "case": "normal",
+      "fragment": 20,
+      "cipher": "ECDHE-ECDSA-AES128-GCM-SHA256",
+      "version": "TLSv1.2",
+      "echoBytes": 40,
+      "steps": 80
+    },
+    {
+      "case": "wrong_client",
+      "rejected": true,
+      "side": "server",
+      "code": -12288,
+      "plaintext": 0,
+      "steps": 59
+    },
+    {
+      "case": "wrong_server",
+      "rejected": true,
+      "side": "client",
+      "plaintext": 0,
+      "steps": 30
+    },
+    {
+      "case": "missing_client",
+      "rejected": true,
+      "side": "server",
+      "code": -29824,
+      "plaintext": 0,
+      "steps": 41
+    },
+    {
+      "case": "tamper",
+      "rejected": true,
+      "code": -29056,
+      "plaintext": 0,
+      "steps": 76
+    },
+    {
+      "case": "plaintext",
+      "rejected": true,
+      "code": -29184,
+      "plaintext": 0,
+      "steps": 73
+    },
+    {
+      "case": "replay",
+      "rejected": true,
+      "code": -29056,
+      "extraPlaintext": 0,
+      "steps": 84
+    }
+  ]
+}

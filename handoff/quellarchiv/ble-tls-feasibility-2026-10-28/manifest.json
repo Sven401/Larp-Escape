@@ -1,0 +1,24 @@
+{
+  "date": "2026-10-28",
+  "sourceCommit": "4ee93f01af30f1f8e3505ce8aaa009d8103fcb85",
+  "scope": "isolated host TLS feasibility, not product authorization",
+  "deviceMeasured": false,
+  "roleGranted": false,
+  "files": [
+    {
+      "file": "server.cpp",
+      "source": "private/tls-feasibility/server.cpp",
+      "sha256": "3aa7cd128bfd65b5a51b321bd14ee9c5b79589408149c2d542928ca453fda529"
+    },
+    {
+      "file": "run.py",
+      "source": "private/tls-feasibility/run.py",
+      "sha256": "c7a267e8d6214a1a59827639b12f57635671bf231a6b7ac02612cc56c74056a6"
+    },
+    {
+      "file": "results.json",
+      "source": "private/tls-feasibility/results.json",
+      "sha256": "fd6a4ffab50a3c73b3bdfa1fb3d9667cd3abd4cf14ec4e2fdacdeebe7b1273bc"
+    }
+  ]
+}
