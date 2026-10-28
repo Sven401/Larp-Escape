@@ -1,5 +1,7 @@
 # Maintainer-Einstieg
 
+**Aktive Produktintegration, 28.10.2026:** [BLE-Zugang, Rollen und Profile](BLE-ROLLEN-PROFILE-2026-10-28.md): erster Android-Protokollbaustein; Produktanschluss und Geraeteabnahme weiterhin offen.
+
 **Geprüfte Integration und aktiver Fachaudit · 24.10.2026:**
 [PR #97](https://github.com/Sven401/Larp-Escape/pull/97) ist in
 `plan/projektuebergabe-kuratierter-stand` integriert. Remote-Head und geprüfter
