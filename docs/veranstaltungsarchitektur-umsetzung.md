@@ -18,6 +18,13 @@ D0 #59 ist als Spezifikationspaket abgeschlossen. Implementierungs-/Geräteabnah
 bleiben getrennt. D0-G1–G5 weisen die Nachweise D1/D2/#28/#30/#31/D3/D4 zu;
 die offenen VA-T01–VA-T12 werden dadurch nicht als bestanden markiert.
 
+Für D1 #60 liegt auf Basis `dead1204` die
+[Speicher-/Wiederanlaufausarbeitung](veranstaltung/d1-persistenz-v1.md) mit
+dateibasierter Rechnerreferenz vor. D1-A ist ausgearbeitet, D1-B
+(Firmware/F5a/Verifizierer) und D1-C (physische Speicherung/Betrieb) bleiben
+offen. Das ist kein Abschluss von #60, keine neue Produktfreigabe oder
+SQLite-Auswahl für die Firmware; die folgenden Kriterien bleiben maßgeblich.
+
 | Bestehender Vertrag / Einstieg | Beibehalten | Erforderliche Anpassung / neues Anschlussdokument | Paket |
 | --- | --- | --- | --- |
 | [Identität/Zugang](companion/identity-access.md), [Register](companion/peer-registry-v1.md), [Geräteidentität](companion/device-identity-store-v1.md) | Stabile Boxidentität, ausdrückliche lokale Rechte; zunächst eine aktive Steuerverbindung je Box | Veranstaltung, Station, Zuordnungsgeneration und Durchlauf trennen; BLE-Übergabe; Rechtekapazität von Gleichzeitigkeit trennen. Boxereignisvertrauen ist eigener Vertrag, kein automatisches GM-Recht. PR #58 berücksichtigen. | #27/#28, D0 |
