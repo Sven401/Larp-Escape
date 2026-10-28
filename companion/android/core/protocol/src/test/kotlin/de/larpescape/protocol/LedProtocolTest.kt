@@ -91,7 +91,7 @@ class LedProtocolTest {
     }
     @Test fun validatesSignedStatusBeforeItCanEnableControls() {
         val (protocol, _) = authenticated()
-        for ((offset, value) in listOf(22 to 0, 30 to 0, 34 to 4, 35 to 0x81, 35 to 0x11, 35 to 5, 36 to 5, 37 to 1)) {
+        for ((offset, value) in listOf(22 to 0, 30 to 0, 34 to 5, 35 to 0x81, 35 to 0x11, 35 to 5, 36 to 5, 37 to 1)) {
             val modified = bytes("status_twinkle").also { it[offset] = value.toByte() }
             rejects { protocol.status(resign(modified, 59, "status")) }
         }
@@ -122,7 +122,8 @@ class LedProtocolTest {
     @Test fun rejectsEveryReservedOrContradictorySignedWakeByte() {
         val (protocol, _) = authenticated()
         for (value in 0..255) {
-            if (value and 0xdf == 0 || value and 0xdf == 0x80 || value and 0xdf in 0xc0..0xcf) continue
+            val wake = value and 0xcf // NFC and Resonance are independent capability bits.
+            if (wake == 0 && value and 0x10 == 0 || wake == 0x80 || wake in 0xc0..0xcf) continue
             val message = resign(bytes("status_twinkle").also { it[37] = value.toByte() }, 59, "status")
             rejects { protocol.status(message) }
         }
@@ -135,6 +136,25 @@ class LedProtocolTest {
         }
         assertNull(protocol.result(bytes("result_start")).status.wake)
         assertNull(protocol.result(bytes("result_stop")).status.wake)
+    }
+    @Test fun resonanceRequiresCapabilityAndMatchesIndependentCommandResultAndStatus() {
+        val (old, status) = authenticated()
+        assertFalse(status.resonanceSupported)
+        rejects { old.command(status, 4) }
+        val protocol = client(); protocol.proof(bytes("challenge"))
+        val supported = protocol.granted(bytes("granted_resonance"))
+        assertTrue(supported.resonanceSupported)
+        assertArrayEquals(bytes("command_start_resonance"), protocol.command(supported, 4))
+        assertEquals(4, protocol.result(bytes("result_resonance")).status.effect)
+        val running = protocol.status(bytes("status_resonance"))
+        assertEquals(4, running.effect); assertTrue(running.resonanceSupported)
+        assertEquals(WakeStatus(true, true, 15), running.wake)
+        rejects { protocol.command(supported, 5) }
+        rejects { protocol.status(resign(bytes("status_resonance").also { it[37] = 0xcf.toByte() }, 59, "status")) }
+        rejects { protocol.status(resign(bytes("status_resonance").also { it[37] = 0x10 }, 59, "status")) }
+        rejects { protocol.status(bytes("status_resonance").also { it[37] = 0xcf.toByte() }) }
+        val unknown = protocol.status(resign(bytes("status_resonance").also { it[37] = 0x90.toByte() }, 59, "status"))
+        assertTrue(unknown.resonanceSupported); assertEquals(WakeStatus(true, false, 0), unknown.wake)
     }
     @Test fun matchesIndependentMatrixGrantAndStatusIncludingLastContact() {
         val unknown = client(); unknown.proof(bytes("challenge"))

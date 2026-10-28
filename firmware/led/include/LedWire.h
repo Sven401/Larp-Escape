@@ -12,7 +12,7 @@ struct Message {
     std::uint16_t size = 0;
 };
 enum class Operation : std::uint8_t { Start = 1, Stop = 2, Pause = 3, Resume = 4, Volume = 5 };
-enum class Effect : std::uint8_t { Off = 0, Twinkle = 1, Burst = 2, Ripple = 3 };
+enum class Effect : std::uint8_t { Off = 0, Twinkle = 1, Burst = 2, Ripple = 3, Resonance = 4 };
 enum class Mode : std::uint8_t { LedOnly = 0, Stopped = 1, Running = 2, Paused = 3, Unknown = 4 };
 enum Flags : std::uint8_t { Ready = 1, Pending = 2, Off = 4, Completed = 8, Fault = 16 };
 enum class Outcome : std::uint8_t {
@@ -28,6 +28,7 @@ struct Snapshot {
     // Wake1..4 are raw HIGH on MCP B7/B6/B4/B3. Unknown never carries a mask.
     bool wakeSupported = false, wakeValid = false;
     bool nfcSupported = false;
+    bool resonanceSupported = false;
     std::uint8_t wakeMask = 0;
     // Nine rows by nine columns, row-major bits 0..80. Unknown carries no bits.
     bool matrixSupported = false, matrixValid = false, matrixAmbiguous = false;

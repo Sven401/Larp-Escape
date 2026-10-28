@@ -36,7 +36,9 @@ void write16(std::uint8_t *p, std::uint16_t v) noexcept {
 }
 bool valid(const Snapshot &s) noexcept {
     const auto effect = static_cast<unsigned>(s.effect);
-    return effect <= 3 && static_cast<unsigned>(s.mode) <= 4 && (s.flags & ~31U) == 0 &&
+    return effect <= 4 && (s.effect != Effect::Resonance || s.resonanceSupported) &&
+           (!s.resonanceSupported || s.wakeSupported) &&
+           static_cast<unsigned>(s.mode) <= 4 && (s.flags & ~31U) == 0 &&
            ((s.flags & Off) != 0) == (s.effect == Effect::Off) &&
            !((s.flags & Ready) && (s.flags & Fault)) &&
            (s.wakeMask & ~15U) == 0 && (!s.wakeValid || s.wakeSupported) &&
@@ -155,7 +157,8 @@ bool Session::status(std::uint8_t type, std::uint32_t now, Message &out) noexcep
     out.bytes[35] = state.flags;
     out.bytes[36] = static_cast<std::uint8_t>(state.mode);
     out.bytes[37] = (state.wakeSupported ? 0x80 : 0) |
-                    (state.wakeValid ? 0x40 : 0) | (state.nfcSupported ? 0x20 : 0) | state.wakeMask;
+                    (state.wakeValid ? 0x40 : 0) | (state.nfcSupported ? 0x20 : 0) |
+                    (state.resonanceSupported ? 0x10 : 0) | state.wakeMask;
     const auto esp = control_.espNowSnapshot();
     out.bytes[38] = (audio.supported ? 1 : 0) | (esp.supported ? 2 : 0) | (esp.supported && esp.ready ? 4 : 0) | (esp.rssiSupported ? 8 : 0);
     if (audio.supported) writeAudio(out.bytes.data() + 39, audio);
@@ -327,10 +330,12 @@ SessionResult Session::receive(const Message &m, std::uint32_t now, Message &out
         ((operation == Operation::Start && track >= 1 && track <= 255 && volume >= 1 && volume <= 10) ||
          ((operation == Operation::Stop || operation == Operation::Pause || operation == Operation::Resume) && track == 0 && volume == 0) ||
          (operation == Operation::Volume && track == 0 && volume >= 1 && volume <= 10)) :
-        ((operation == Operation::Start && m.bytes[31] >= 1 && m.bytes[31] <= 3) ||
+        ((operation == Operation::Start && m.bytes[31] >= 1 && m.bytes[31] <= 4) ||
          (operation == Operation::Stop && effect == Effect::Off));
     if (!remaining || remaining > 3000U) rejection = Outcome::Expired;
     else if (!commandValid) rejection = Outcome::InvalidCommand;
+    else if (!isAudio && effect == Effect::Resonance && !state.resonanceSupported)
+        rejection = Outcome::Unavailable;
     else if (isAudio && (!audio.supported || !valid(audio))) rejection = Outcome::Unavailable;
     else if (!valid(state) || !(state.flags & Ready) || (state.flags & Fault))
         rejection = Outcome::Unavailable;

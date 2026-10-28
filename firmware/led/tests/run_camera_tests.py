@@ -18,7 +18,8 @@ with tempfile.TemporaryDirectory(prefix="camera-loop-") as temp:
                     str(root / "tests/test_camera_lab.cpp"), str(root / "src/LedOutput.cpp"),
                     str(root / "src/NearGlow.cpp"), str(root / "src/CameraLabController.cpp"),
                     "-o", str(exe)], env=environment, check=True)
-    for case in ("sequence", "watchdog", "stop-inflight", "twinkle", "burst", "ripple", "live", "live-watchdog", "live-stop-timeout"):
+    for case in ("sequence", "watchdog", "stop-inflight", "twinkle", "burst", "ripple",
+                 "live", "live-watchdog", "live-stop-timeout", "resonance", "resonance-transitions", "resonance-colors", "resonance-watchdog"):
         subprocess.run([str(exe), case], env=environment, check=True)
 
     near_exe = Path(temp) / ("near.exe" if os.name == "nt" else "near")

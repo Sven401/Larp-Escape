@@ -4,6 +4,9 @@
 
 Stand: **18. Oktober 2026; ESP-NOW-Erweiterung implementiert, begrenzter App-/Geräte-Gehversuch abgeschlossen.**
 [Ergebnis und Grenzen](../espnow/distance-camera-result-2026-10-18.md): keine gemeinsame Gesamtspielabnahme.
+Resonanzkreis als neuer Wake-gesteuerter Effekt ergänzt; die
+[isolierte Kameraprüfung](resonance-camera-results-2026-10-18.md) ist belegt,
+seine gemeinsame Sensor-/BLE-Sichtabnahme bleibt offen.
 Quellen: [Firmware-Session](../../firmware/led/src/LedWire.cpp),
 [NFC-Session](../../firmware/led/src/NfcBleWire.cpp),
 [Android-Decoder](../../companion/android/core/protocol/src/main/kotlin/de/larpescape/protocol/LedProtocol.kt),
@@ -29,6 +32,12 @@ BLE-Link bekommt eine neue Connection-Nonce. Keine Protokollherabstufung.
 | V2 | V1 aus #45–#52 | Versionsfehler vor Grant; keine Bedienung |
 | V1 | V2 | Firmware verwirft das Hello und beendet die Sitzung; keine Bedienung |
 | V1 | passende historische V1 | Nur der ursprüngliche jeweilige Baugruppenvertrag |
+
+Innerhalb V2 gilt seit 18. Oktober zusätzlich die unten beschriebene
+[Resonanzkreis-Erweiterung](#resonanzkreis-erweiterung--18-oktober-2026).
+Eine neue App bedient ältere V2-Firmware weiter mit den drei bisherigen
+Effekten; eine ältere V2-App verwirft das neue Unterstützungsbit. Zur neuen
+Firmware gehört deshalb die neue App.
 
 V1-Apps/Firmwares mit kollidierenden Audio-/NFC-Typen werden nicht nach
 Nachrichtenlänge erraten. Ein passendes neues App-/Firmwarepaar muss später
@@ -78,7 +87,7 @@ Baugruppen. Fähigkeiten werden nicht mehr aus der Nachrichtenlänge abgeleitet.
 | 26–29 | Geräte-Millisekunden |
 | 30–33 | gemeinsame LED-/Audio-/Gesamtstatussequenz |
 | 34–36 | LED-Effekt, LED-Flags, Modus; Semantik aus V1 |
-| 37 | Wake: Bit 7 unterstützt, Bit 6 gültig, Bits 0–3 Rohmaske; NFC: Bit 5 unterstützt; Bit 4 null |
+| 37 | Wake: Bit 7 unterstützt, Bit 6 gültig, Bits 0–3 Rohmaske; NFC: Bit 5 unterstützt; Resonanzkreis: Bit 4 unterstützt |
 | 38 | Fähigkeiten: Bit 0 Audio unterstützt, Bit 1 ESP-NOW unterstützt, Bit 2 ESP-NOW bereit, Bit 3 RSSI unterstützt; Bits 4–7 null; bereit/RSSI verlangen ESP-NOW-Unterstützung |
 | 39–46 | Audio-Snapshot: LE32 Revision, LE16 Titel, Lautstärke, Flags |
 | 47 | Matrix: Bit 7 unterstützt, Bit 6 gültig, Bit 5 mehrdeutig; Bits 0–4 null |
@@ -90,6 +99,33 @@ keine Gültigkeit, Mehrdeutigkeit oder Kontakte. Ungültige Matrix hat keine
 Kontakte/Mehrdeutigkeit; ungültiges Wake keine Rohmaske. Audioflags und
 Bediensemantik bleiben gemäß [Audiovertrag](../audio/ble-wire.md) erhalten.
 Unbekannte Fähigkeiten werden nicht als Bereitschaft interpretiert.
+
+## Resonanzkreis-Erweiterung · 18. Oktober 2026
+
+Effekt-ID **4** bezeichnet den dauerhaft gestarteten, Wake-gesteuerten
+Resonanzkreis. IDs 0–3 und die 64-Byte-LED-Aufträge bleiben unverändert.
+Start erlaubt IDs 1–4, Stop nur ID 0. Das Unterstützungsbit ist Bit 4 in
+Statusbyte 37, gemeinsam mit dem restlichen Status durch HMAC gedeckt.
+Resonanzkreis-Unterstützung verlangt Wake-Unterstützung; ungültiges Wake
+behält keine Rohmaske. Effekt 4 im Gesamtstatus ohne Unterstützungsbit ist
+widersprüchlich und wird verworfen. Fehlende Fähigkeit sperrt den Start in
+der App; die Firmware-Session antwortet ohne Besitzerauftrag `Unavailable`.
+
+LED-/Audio-Ergebnisse enthalten weiterhin keine Fähigkeitsfelder. Die App
+behält deshalb die zuletzt aus einem Gesamtstatus bestätigte Fähigkeit für
+die bestehende Verbindung, ohne die Frische der Wake-Werte zu verlängern.
+Trennen löscht diese Fähigkeit. Ein aktiver Resonanzkreis mit null/ungültigen
+Eingängen darf einen schwarzen Frame ausgeben, bleibt aber Effekt 4 ohne
+`Off`- oder `Completed`-Flag. Nur Stop meldet Effekt 0. Start/Stop, Revisionen,
+Duplikate, Ausgabequittung und Trennverhalten folgen dem bestehenden Vertrag.
+
+Alle vier BLE-Baugruppenvarianten unterstützen den Effekt; der isolierte
+Kameralaborbuild ergänzt synthetische Wake-Szenarien und eine eigene
+Blau-/Cyan-Farbreferenz für den [optischen Prüfweg](resonance-camera-measurement.md).
+Er startet weiterhin kein BLE und liest keine realen Wake-Eingänge. Kein neuer Spielmodus,
+keine automatische Spielaktivierung und keine neue Geräteabnahme folgen daraus.
+Verhalten, Herkunft der Bereiche und Sichtprüfung:
+[Resonanzkreis-Prüfplan](resonance-test-preparation.md).
 
 | Firmware | LED | Wake | Audio | NFC | Matrix |
 | --- | --- | --- | --- | --- | --- |

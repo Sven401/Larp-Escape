@@ -3,6 +3,7 @@
 #include <cstring>
 #include <cstdlib>
 #include "CameraSequence.h"
+#include "ResonanceCameraSequence.h"
 #include "CameraLabController.h"
 #ifdef LARP_LED_CAMERA_RSSI_LAB
 #include "CameraLabRssi.h"
@@ -17,6 +18,10 @@ unsigned stage = 0, frameNumber = 0;
 std::uint32_t lastKeep = 0, started = 0, appliedAt = 0;
 bool running = false, effectMode = false, waiting = false, stopPending = false;
 bool directOutstanding = false;
+bool resonanceMode = false, resonanceTransitions = false;
+bool resonanceColors = false;
+unsigned resonanceNumber = 0;
+std::uint32_t resonanceAt = 0;
 Effect selected = Effect::Off;
 camera::LiveController live;
 bool liveMode = false, traceLive = false;
@@ -120,6 +125,20 @@ void stop(const char *reason) {
     engine.stop(); stopPending = true;
     Serial.printf("STOP %s %s\n", token, reason);
 }
+bool resonanceNext() {
+    const auto step = camera::resonanceStep(resonanceNumber, resonanceTransitions);
+    if (!step.duration) { stop("finished"); return false; }
+    stage = 100 + resonanceNumber;
+    resonanceAt = millis();
+    engine.updateWake(step.valid, step.mask);
+    if (step.restart && !(step.effect == Effect::Off ? engine.stop() : engine.start(step.effect))) {
+        stop("engine-rejected"); return false;
+    }
+    Serial.printf("W %s %u %lu %u %u %u %u\n", token, resonanceNumber,
+                  (unsigned long)resonanceAt, unsigned(step.valid), unsigned(step.mask),
+                  unsigned(step.effect), unsigned(step.restart));
+    return true;
+}
 void command(char *line) {
     if (std::strcmp(line, "HELLO") == 0) {
         Serial.printf("LARP-CAMERA/1 23 32 GPIO15 %lu %s\n",
@@ -178,10 +197,17 @@ void command(char *line) {
     if (std::strcmp(verb, "CAL") == 0) {
         if (strtok_r(nullptr, " ", &context)) return;
         selected = Effect::Off;
+        resonanceMode = false;
+        resonanceColors = false;
     } else if (std::strcmp(verb, "RUN") == 0) {
         char *effect = strtok_r(nullptr, " ", &context);
         if (!effect || strtok_r(nullptr, " ", &context)) return;
-        selected = std::strcmp(effect,"twinkle") == 0 ? Effect::Twinkle :
+        resonanceMode = std::strcmp(effect,"resonance") == 0 ||
+                        std::strcmp(effect,"resonance-transitions") == 0;
+        resonanceTransitions = std::strcmp(effect,"resonance-transitions") == 0;
+        resonanceColors = std::strcmp(effect,"resonance-colors") == 0;
+        selected = (resonanceMode || resonanceColors) ? Effect::Resonance :
+                   std::strcmp(effect,"twinkle") == 0 ? Effect::Twinkle :
                    std::strcmp(effect,"burst") == 0 ? Effect::Burst :
                    std::strcmp(effect,"ripple") == 0 ? Effect::Ripple : Effect::Off;
         if (selected == Effect::Off) return;
@@ -252,19 +278,30 @@ void loop() {
         delay(1); return;
     }
     if (effectMode) {
+        if (resonanceMode) {
+            const auto step = camera::resonanceStep(resonanceNumber, resonanceTransitions);
+            if (millis()-resonanceAt >= step.duration) {
+                ++resonanceNumber;
+                if (!resonanceNext()) { delay(1); return; }
+            }
+        }
         engine.service();
         if (engine.snapshot().fault) stop("engine-fault");
-        else if (millis()-appliedAt > 1000 && engine.snapshot().completed && engine.snapshot().off)
+        else if (!resonanceMode && millis()-appliedAt > 1000 && engine.snapshot().completed && engine.snapshot().off)
             stop("finished");
         else if (selected == Effect::Twinkle && millis()-started >= 7500) stop("finished");
         delay(1); return;
     }
     const auto current = selected == Effect::Off ? camera::step(stage) :
         stage < 6 ? camera::step(stage) :
-        stage == 6 ? camera::dark(1000) : camera::Step{-2, {}, 0, selected};
+        stage == 6 ? camera::dark(1000) : resonanceColors ? camera::resonanceColorStep(stage-7) :
+        camera::Step{-2, {}, 0, selected};
     if (current.index == -3) { stop("finished"); return; }
     if (current.index == -2) {
-        if (!engine.start(current.effect)) { stop("engine-rejected"); return; }
+        if (resonanceMode) {
+            resonanceNumber = 0;
+            if (!resonanceNext()) { delay(1); return; }
+        } else if (!engine.start(current.effect)) { stop("engine-rejected"); return; }
         effectMode = true; engine.service(); delay(1); return;
     }
     if (!waiting) {

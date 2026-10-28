@@ -1,0 +1,338 @@
+{
+  "date": "2026-10-18",
+  "source_commit": "a40365d715b2055ee23f767fa53b55ac25243437",
+  "status": "source analysis and bounded native characterization; no device or camera test",
+  "source_files_sha256": {
+    "lib/LedFx/twinklefox.cpp": "99a04ffdceb0ba55f3e73f0c3308b49e052ac307e7cc86d6fb8d5389794d185e",
+    "lib/LedFx/twinklefox.h": "3af577a06be71e1b5c264c73a1be2f393582c6bae95971578a277494a78f2759",
+    "lib/LedFx/Pallets.h": "880d36c1f94de3bb5482d46598b00f7dfd9e45ac272f3b0af02ff83706ce99a7",
+    "lib/LedFx/CrystalPaletteMap.cpp": "a3ca1cee5f36ac019b1211ae1239c42bfe5c6ce6a012a5431645a53c8081d864",
+    "lib/LedFx/CrystalPaletteMap.h": "652eb7c773ba5557158f9b6042e26405b6549fe14baa481df455675263ba6782",
+    "include/GameDomain/GameDefinitions.h": "24e9d066903c6d0e8491350fe1d337e7355d45f75d3a342f28db240f9c3160e2",
+    "include/GameDomain/GridPosition.h": "1fdf52b51c1eb1cb508811cba36059d26cb9fa195f2ecc007d84f254458c0c3f"
+  },
+  "fastled_library_version": "3.10.5",
+  "fastled_helpers_sha256": {
+    "platforms/shared/trig8.h": "16278e735ee66d3180416fb719aff5d6422afbfc13c6d74adb70dbcee56cff15",
+    "platforms/shared/math8.h": "4d5b68225b15c8375a955ea30fa835fd7469bb91ed593f4d38bc0dc59b24e0d5",
+    "fl/gfx/colorutils.cpp.hpp": "de6907d3001301e09ab9ca2c8e32cd0241c0b65f5206d2973781160b2a151c9c",
+    "lib8tion.h": "ebace43adbf180cbad1c8c21b4d02fae67f9de7a2e4e7a64985674bc7d593fdb",
+    "crgb.hpp": "0e001c0d2d56c7cd0d352972a436ed4cdf962a1540cb14a4572df9d6681c972d",
+    "fastled_config.h": "79a8c8f58b0aa0ead9af343e7a633fb29b26ce0c2c7361e4064c09f851373e46"
+  },
+  "probe_sources_sha256": {
+    "run.py": "1adf4d86f8788cdf5f52f12720287bb913ab05c90e924335324cffd83615e749",
+    "probe.cpp": "b31153036ca6b9f36bebc041af0195815e19e52d46bfb3450eb0189db28c917f",
+    "FastLED.h": "86ef237645d59b236d0306192c110eaf826383a11a5ffa899205459c2be3a335",
+    "fl/fx/fx1d.h": "5659f52341b451df457b1c2fc7ebd858b79529d1dc870e036d4c3b74ffe6e213",
+    "fl/stl/string.h": "21616ae74b38ed38b0d34bf4279ce3c3b6fc99a44673819ff399fbd865fb9410",
+    "extracted-fastled.cpp": "d6bc9b4cb4c4ad88f1fdf59149daa225e646adf0d194fb93605560f6d5d5762e",
+    "twinklefox.h": "8d7a4795cad383ed75712e33cbd5d96410fcf96c6b6209d5dfc809974b95c85d"
+  },
+  "adaptation": "twinklefox.cpp and CrystalPaletteMap.cpp unchanged; historical twinklefox.h private visibility changed to public for measurement only; bounded CRGB/Fx/clock/timer adapters; extracted FastLED sin8, NOBLEND palette lookup, palette morph and 16-bit background blend; no output driver, global color/power processing, or ESP32 tasks",
+  "cases": {
+    "boot": "boot passed",
+    "timers": "timers passed",
+    "no-catch-up": "no-catch-up passed",
+    "palette": "palette passed",
+    "background": "background passed",
+    "determinism": "determinism passed",
+    "wave": "wave passed",
+    "mapping": "mapping passed"
+  },
+  "palette_map_cases": 486,
+  "palette_map_matches": 6,
+  "stable_muted_profiles": {
+    "0": {
+      "samples": 8372,
+      "frames": 364,
+      "speed": 4,
+      "start_ms": 0,
+      "last_ms": 11979,
+      "lit_fraction": 0.0,
+      "maximum_rgb_channel": 0,
+      "sha256": "240f6e7d6d0401a069c9bf6e006ef4b1242888a60c63447d9f5a0db160d6f6db"
+    },
+    "1": {
+      "samples": 8372,
+      "frames": 364,
+      "speed": 4,
+      "start_ms": 0,
+      "last_ms": 11979,
+      "lit_fraction": 0.13258480649784998,
+      "maximum_rgb_channel": 255,
+      "sha256": "cc7f7a0f4fddd3410365ec5b3a5009df9510e0db24ab64db8ac135049169d235"
+    },
+    "2": {
+      "samples": 8372,
+      "frames": 364,
+      "speed": 4,
+      "start_ms": 0,
+      "last_ms": 11979,
+      "lit_fraction": 0.22694696607740086,
+      "maximum_rgb_channel": 255,
+      "sha256": "4fd5b965a55ac5db797c995b08d28c751afef1b1882c70eaa4e02369f6b8500e"
+    },
+    "3": {
+      "samples": 8372,
+      "frames": 364,
+      "speed": 4,
+      "start_ms": 0,
+      "last_ms": 11979,
+      "lit_fraction": 0.3983516483516483,
+      "maximum_rgb_channel": 255,
+      "sha256": "1d4260b06a6abee22ba10848ef8f2f1555036d089c864ae1c387561b450a3c20"
+    },
+    "4": {
+      "samples": 8372,
+      "frames": 364,
+      "speed": 4,
+      "start_ms": 0,
+      "last_ms": 11979,
+      "lit_fraction": 0.5037028189202102,
+      "maximum_rgb_channel": 255,
+      "sha256": "da0985badfac67aecbd44d793b0b4bcabd89b43d8d0ca5d1327c39493f590446"
+    },
+    "5": {
+      "samples": 8372,
+      "frames": 364,
+      "speed": 4,
+      "start_ms": 0,
+      "last_ms": 11979,
+      "lit_fraction": 0.6182513139034879,
+      "maximum_rgb_channel": 255,
+      "sha256": "7840639bdcf66985749f2c97f187e11016b55ad3886edd8b99b853bf990b5500"
+    },
+    "6": {
+      "samples": 8372,
+      "frames": 364,
+      "speed": 4,
+      "start_ms": 0,
+      "last_ms": 11979,
+      "lit_fraction": 0.7521500238891543,
+      "maximum_rgb_channel": 255,
+      "sha256": "515e4fef2a8828dc0b49718d9bdf59f0b0e4870da32335dfceefa659e7cee396"
+    },
+    "7": {
+      "samples": 8372,
+      "frames": 364,
+      "speed": 4,
+      "start_ms": 0,
+      "last_ms": 11979,
+      "lit_fraction": 0.8289536550406116,
+      "maximum_rgb_channel": 255,
+      "sha256": "4b07623dcbde103bcb90499adbd802c70ce15b895019d8911090ccf5c4e549a3"
+    },
+    "8": {
+      "samples": 8372,
+      "frames": 364,
+      "speed": 4,
+      "start_ms": 0,
+      "last_ms": 11979,
+      "lit_fraction": 0.995461060678452,
+      "maximum_rgb_channel": 255,
+      "sha256": "083aab770a61c3428a727b5185074f99f2c6112734170afcb2913438d3528dcd"
+    }
+  },
+  "pixel_parameters": [
+    {
+      "led": 0,
+      "offset": 10965,
+      "speed_q5_3": 18,
+      "salt": 131,
+      "nominal_cycle_speed1_ms": 14563.555555555555,
+      "nominal_cycle_speed4_ms": 1820.4444444444443
+    },
+    {
+      "led": 1,
+      "offset": 7997,
+      "speed_q5_3": 10,
+      "salt": 137,
+      "nominal_cycle_speed1_ms": 26214.4,
+      "nominal_cycle_speed4_ms": 3276.8
+    },
+    {
+      "led": 2,
+      "offset": 32101,
+      "speed_q5_3": 15,
+      "salt": 160,
+      "nominal_cycle_speed1_ms": 17476.266666666666,
+      "nominal_cycle_speed4_ms": 2184.5333333333333
+    },
+    {
+      "led": 3,
+      "offset": 12109,
+      "speed_q5_3": 15,
+      "salt": 89,
+      "nominal_cycle_speed1_ms": 17476.266666666666,
+      "nominal_cycle_speed4_ms": 2184.5333333333333
+    },
+    {
+      "led": 4,
+      "offset": 3829,
+      "speed_q5_3": 12,
+      "salt": 248,
+      "nominal_cycle_speed1_ms": 21845.333333333332,
+      "nominal_cycle_speed4_ms": 2730.6666666666665
+    },
+    {
+      "led": 5,
+      "offset": 26205,
+      "speed_q5_3": 20,
+      "salt": 237,
+      "nominal_cycle_speed1_ms": 13107.2,
+      "nominal_cycle_speed4_ms": 1638.4
+    },
+    {
+      "led": 6,
+      "offset": 28549,
+      "speed_q5_3": 9,
+      "salt": 91,
+      "nominal_cycle_speed1_ms": 29127.11111111111,
+      "nominal_cycle_speed4_ms": 3640.8888888888887
+    },
+    {
+      "led": 7,
+      "offset": 54381,
+      "speed_q5_3": 9,
+      "salt": 147,
+      "nominal_cycle_speed1_ms": 29127.11111111111,
+      "nominal_cycle_speed4_ms": 3640.8888888888887
+    },
+    {
+      "led": 8,
+      "offset": 12053,
+      "speed_q5_3": 22,
+      "salt": 152,
+      "nominal_cycle_speed1_ms": 11915.636363636364,
+      "nominal_cycle_speed4_ms": 1489.4545454545455
+    },
+    {
+      "led": 9,
+      "offset": 35197,
+      "speed_q5_3": 14,
+      "salt": 156,
+      "nominal_cycle_speed1_ms": 18724.571428571428,
+      "nominal_cycle_speed4_ms": 2340.5714285714284
+    },
+    {
+      "led": 10,
+      "offset": 56741,
+      "speed_q5_3": 19,
+      "salt": 129,
+      "nominal_cycle_speed1_ms": 13797.052631578947,
+      "nominal_cycle_speed4_ms": 1724.6315789473683
+    },
+    {
+      "led": 11,
+      "offset": 38285,
+      "speed_q5_3": 19,
+      "salt": 89,
+      "nominal_cycle_speed1_ms": 13797.052631578947,
+      "nominal_cycle_speed4_ms": 1724.6315789473683
+    },
+    {
+      "led": 12,
+      "offset": 2869,
+      "speed_q5_3": 16,
+      "salt": 229,
+      "nominal_cycle_speed1_ms": 16384.0,
+      "nominal_cycle_speed4_ms": 2048.0
+    },
+    {
+      "led": 13,
+      "offset": 2205,
+      "speed_q5_3": 8,
+      "salt": 24,
+      "nominal_cycle_speed1_ms": 32768.0,
+      "nominal_cycle_speed4_ms": 4096.0
+    },
+    {
+      "led": 14,
+      "offset": 18373,
+      "speed_q5_3": 13,
+      "salt": 148,
+      "nominal_cycle_speed1_ms": 20164.923076923078,
+      "nominal_cycle_speed4_ms": 2520.6153846153848
+    },
+    {
+      "led": 15,
+      "offset": 62125,
+      "speed_q5_3": 13,
+      "salt": 42,
+      "nominal_cycle_speed1_ms": 20164.923076923078,
+      "nominal_cycle_speed4_ms": 2520.6153846153848
+    },
+    {
+      "led": 16,
+      "offset": 9045,
+      "speed_q5_3": 10,
+      "salt": 94,
+      "nominal_cycle_speed1_ms": 26214.4,
+      "nominal_cycle_speed4_ms": 3276.8
+    },
+    {
+      "led": 17,
+      "offset": 25533,
+      "speed_q5_3": 18,
+      "salt": 224,
+      "nominal_cycle_speed1_ms": 14563.555555555555,
+      "nominal_cycle_speed4_ms": 1820.4444444444443
+    },
+    {
+      "led": 18,
+      "offset": 11749,
+      "speed_q5_3": 23,
+      "salt": 18,
+      "nominal_cycle_speed1_ms": 11397.565217391304,
+      "nominal_cycle_speed4_ms": 1424.695652173913
+    },
+    {
+      "led": 19,
+      "offset": 27597,
+      "speed_q5_3": 23,
+      "salt": 136,
+      "nominal_cycle_speed1_ms": 11397.565217391304,
+      "nominal_cycle_speed4_ms": 1424.695652173913
+    },
+    {
+      "led": 20,
+      "offset": 63349,
+      "speed_q5_3": 20,
+      "salt": 130,
+      "nominal_cycle_speed1_ms": 13107.2,
+      "nominal_cycle_speed4_ms": 1638.4
+    },
+    {
+      "led": 21,
+      "offset": 6877,
+      "speed_q5_3": 12,
+      "salt": 115,
+      "nominal_cycle_speed1_ms": 21845.333333333332,
+      "nominal_cycle_speed4_ms": 2730.6666666666665
+    },
+    {
+      "led": 22,
+      "offset": 4101,
+      "speed_q5_3": 17,
+      "salt": 125,
+      "nominal_cycle_speed1_ms": 15420.235294117647,
+      "nominal_cycle_speed4_ms": 1927.5294117647059
+    }
+  ],
+  "initial_runtime": {
+    "speed": 1,
+    "density": 1,
+    "target_palette": "black from static storage",
+    "automatic_background": true,
+    "incandescent_cooling": false
+  },
+  "wave_landmarks": {
+    "0": 0,
+    "85": 255,
+    "86": 255,
+    "255": 2
+  },
+  "raw_trace_scope": "23 LEDs, settled MutedAllColors palette, fixed speed 4, each density 0..8, global millis 0..11979 at 33ms sampling",
+  "evidence": "private/legacy-twinkle-analysis"
+}

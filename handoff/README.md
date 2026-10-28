@@ -99,6 +99,7 @@ ergänzt die älteren Gerätebelege; die fünf Original-PRs sind als gemergt ges
 
 ## Aktueller Stand · 20. Oktober 2026
 
+- [Übergabe: spezialisierte LED-Effekt-Architektenrolle erstellen](LED-EFFEKT-ARCHITEKT-2026-10-18.md): bestätigter Schwerpunkt Verhalten/Berechnung/Prüfplanung; Rolle an einem neuen Effektentwurf erproben. Rolle und Entwurf noch offen.
 - [ESP-NOW-Sitzungsabschluss: RSSI, Funkelsteuerung und vollständiger Kameravergleich](ESPNOW-UEBERGABE-2026-10-18.md); PR #66 ist über #69 integriert. Der Sitzungsabschluss bleibt der historische Beleg vor Integration.
 
 **Belegt:** [PR #79](https://github.com/Sven401/Larp-Escape/pull/79) bei
