@@ -140,6 +140,14 @@ IDF-4.4-Supportentscheidung und bestehende Chip-/Fristgrenzen bleiben offen.
 Dieser Übernahmeschritt richtete keinen Scheduler ein; die spätere Aktivierung
 ist oben dokumentiert. Kein Geräteupload und keine Übernahme nach `main`.
 
+**Neue verbindliche Priorität · 21.10.2026:** [SP-01](../docs/spielpakete-architektur.md)
+legt nachladbare Spiel-/Regelpakete, Mehrboxbetrieb in der ersten Produktversion
+und den Drittspiel-Nachweis bei unveränderter App/Firmware fest.
+[Plan und Abhängigkeiten](../docs/veranstaltungsarchitektur-umsetzung.md#0-produktpriorität-ab-21102026)
+führen die nächste Arbeit; ältere Prioritätslisten unten sind dadurch ergänzt
+beziehungsweise ersetzt. Quellprüfung an `e61d764`; keine Implementierung oder
+neue Produktabnahme. VA-01, D0, UX-01 und bestehende Restprüfungen bleiben erhalten.
+
 ## Start für weitere App- und Firmwarearbeit
 
 **Integration und Bereinigung · 21.10.2026:** #91 ist bei `f174cee` integriert,

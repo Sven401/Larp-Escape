@@ -1,4 +1,55 @@
-# VA-01: betroffene Verträge, Arbeitspakete und Abnahme
+# VA-01 und SP-01: Verträge, Produktplan und Abnahme
+
+## 0. Produktpriorität ab 21.10.2026
+
+**Status: bestätigt, verbindliches Architektur-Soll; Umsetzung und Abnahme offen.**
+[SP-01](spielpakete-architektur.md) ist der neue Produktmaßstab: eigene Spiele
+vollständig in Larp GM erstellen und als Spiel-/Regelpakete nachladen;
+kooperierende Boxen bereits in der ersten nutzbaren Produktversion;
+nach zwei Referenzspielen ein drittes, fachlich anderes Spiel bei eingefrorener
+App und Firmware durch Pakete/Inhalte ergänzen. Einzelbox- und Baugruppenläufe
+sind Zwischenbelege. Die neue Priorität ersetzt frühere Reihenfolgen, soweit
+diese allgemeine Autorenschaft oder Mehrboxbetrieb auf spätere Produktversionen
+verschieben. Bestehende Kriterien und datierte Nachweise bleiben erhalten.
+
+Quelle ist der ausdrückliche Nutzerauftrag vom 21.10.2026 in SP-01.
+Ausgelesene Basis: `e61d7642d035ccdcf8eca689d6c50a82bcf1560b`, nach frischem
+Fetch; Quell-/Dokument- und GitHub-Backlogprüfung, keine neue Laufzeitprüfung.
+[Produktplan #25](https://github.com/Sven401/Larp-Escape/issues/25) führt die
+operative Priorität; [Arbeitspaket #93](https://github.com/Sven401/Larp-Escape/issues/93)
+bündelt neue Paket-/Laufzeit-/Autorenarbeit und das Drittspiel-Tor.
+Diese Matrix hält Vertragszuordnung und Prüftore fest.
+
+| Folge | Arbeit und überprüfbares Ergebnis | Anschluss / Abhängigkeit |
+| --- | --- | --- |
+| P0 | Zwei unterschiedliche Referenzspiele und kleinsten allgemeinen Paket-/Sprachvertrag festlegen: Ereignisse, Zustände, Werte, Timer, Aktionen, zusammengesetzte Module und deren Bearbeitungsbeschreibung. Bindungen, Ressourcen, Rechte, Versionen und Budgets definieren. | SP-01, bestehender Profilkern und D0; keine neue Lua-/Wasm-/SDK- oder Wireformatentscheidung durch diesen Plan |
+| P1, parallel | Allgemeine begrenzte Laufzeit und reale Gerätebesitzer anschließen; GM-Editor, Bausteine, Paketprüfung und semantisch passende Vorschau gegen dieselben Referenzfälle entwickeln. D1/D2 und allgemeiner Zugang werden parallel angeschlossen. | #31 F5a, #27/#28, #60/#61; neue Autorenarbeit bleibt getrennt von #36 |
+| P2 | Paket aus GM je Zielbox prüfen, übertragen, bewusst aktivieren und bestätigten Speicher-/Laufstand lesen; Ressourcen und Zuordnungen nachvollziehbar vorbereiten. | #30 nach nutzbarem F5a-Pfad; #37/#33/#34, Fähigkeiten- und Rechteprüfung. Kein Warten auf eine fertige Zentrale |
+| P3 | Beide Referenzspiele auf kooperierenden realen Boxen ausführen; Offline-, Neustart-, Wiederholungs-, Durchlaufwechsel- und Lastfälle prüfen. | #31 F5b, #60/#61 und zentralenunabhängiger Teil #63; relevante Hardware-/Baugruppenrestprüfungen |
+| P4, Release-Tor | App, Firmware und beteiligte Ausführungswerkzeuge einfrieren; danach drittes Spiel neu entwerfen, in GM erstellen, prüfen, verteilen und im Mehrboxbetrieb spielen. Nur Pakete, Ressourcen und Bindungen ändern; unveränderte Binärhashes und neue Mechanik belegen. | SP-T-Kriterien aus SP-01; getrennte Software-/Geräte-/Nutzerbelege; Freigabe bleibt beim Nutzer |
+| Optionaler Ausbau | Zeitweise erreichbare Zentrale und ihr eigener Abnahmeanteil. | #62 und zentralenspezifischer Teil #63/VA-T08; keine Voraussetzung des vorbereiteten lokalen Mehrboxspiels |
+
+**Konkreter nächster Schritt:** P0 als versionierten Paket-/Sprachvertrag mit
+zwei unterschiedlichen Mehrbox-Referenzfällen und offenen Ressourcenbudgets
+ausarbeiten. Den dritten Abnahmefall erst nach dem Software-Freeze auswählen.
+Die ersten beiden Fälle müssen die allgemeinen Fähigkeiten erproben; keine
+versteckte Vorimplementierung des dritten Spiels im Laufzeitcode.
+
+**Integrationsfolge ohne Kreis:** F5a kann lokal bereitgestellte Referenzpakete
+über denselben Validator und dieselbe Laufzeit ausführen. Ein fertiger
+BLE-Pakettransfer ist dafür noch nicht nötig. Der reale Übernahmepfad folgt in
+#30; danach #31 F5b. Vorbereitung von Editor/Vorschau, D1/D2 und Zugang läuft
+parallel. Teilabschlüsse schließen weder #31 noch #63 pauschal ab.
+
+D0 #59 bleibt als Spezifikation abgeschlossen; D0-G1–G5 bleiben offen.
+D1-A in PR #73 ist weiterhin ein eigener offener Review, kein eingebauter
+Firmware-Speicher. #36 bleibt Erhalt/Import alter Szenariodaten. #29/#35/#39/#54
+und übrige Restprüfungen bleiben erhalten; ihre Reihenfolge richtet sich nach
+den berührten Fähigkeiten der Referenzspiele. #62 bleibt im Backlog. Ohne
+Zentralenimplementierung bleiben dessen D4-/VA-T08-Kriterien ausdrücklich offen;
+der erste SP-01-Produktabschluss ist kein Abschluss aller VA-01-Arbeiten.
+
+## Herkunft der VA-01-Matrix
 
 **Status: abgeleitete verbindliche Planungsanforderungen; technische Umsetzung offen.**
 Stand: **18. Oktober 2026**. Quelle und maßgeblicher Beschluss:
@@ -50,12 +101,14 @@ geändert, mit expliziten Fähigkeiten, Versionsgrenzen und Migration.
 
 | Arbeitspaket | Verbindliche Ergänzung |
 | --- | --- |
-| #25 Produktplan | Mehrbox-/Mehrspielleiter-Veranstaltung, Infrastrukturgrundsatz, VA-01 und D0–D4 aufnehmen. Zentrale ist kein Betriebszwang. |
+| #25 Produktplan | SP-01 priorisiert nachladbare Pakete, allgemeine Autorenschaft, Mehrboxbetrieb ab erster Produktversion und den Drittspiel-Nachweis. VA-01/D0 bleiben Grundlage; Zentrale ist kein Betriebszwang. |
 | #27 F1 / #28 F2 | Offline-Zugang je Box und Veranstaltung, klare BLE-Übergabe, keine zentrale Rechteprüfung. Zugangskonzept aus #58 erhalten; Ereignisursprungsprüfung zusätzlich D0. |
-| #29 F3 / #37 A3 | Mehrere Handys bedienen gleichzeitig verschiedene Boxen. Je Ziel aktuelle Berechtigung/Revision/Antwort. BLE-Abbruch manueller Ausgabe stoppt nicht pauschal das Spiel. |
-| #30 F4 | Lokale Profile/Ressourcen, Inhalts-/Veranstaltungsbindung, individuell bestätigte Aktivierung; Profilpersistenz von D1-Fortschrittspersistenz trennen. |
-| #31 F5a | Anwendungseigentümer und Gerätebesitzer um begrenzten Ereigniseingang ergänzen; kein Warten des lokalen Spieltakts auf Funk/Zentrale. Lokaler F5a-Abschluss braucht noch keine fertige Zentrale. |
-| #31 F5b | Lokale Autonomie nach Handy-/Zentralen-/Nachbarverlust; Wiederanlauf mit D1, kombinierte Ressourcen und spätere verteilte Abnahme D4 getrennt ausweisen. |
+| #29 F3 / #37 A3 | Mehrere Handys bedienen gleichzeitig verschiedene Boxen. Je Ziel aktuelle Berechtigung/Revision/Antwort; #37 verbindet GM mit Paketinstallation und Spielbedienung. BLE-Abbruch manueller Ausgabe stoppt nicht pauschal das Spiel. |
+| #30 F4 | SP-01-Pakete mit lokalen Profilen/Ressourcen, Fähigkeits-/Inhalts-/Veranstaltungsbindung und individuell bestätigter Aktivierung. Profilpersistenz bleibt getrennt von D1-Fortschrittspersistenz; Teilverteilung ist kein gemeinsamer Aktivierungserfolg. |
+| #31 F5a | Paketbestimmte allgemeine Laufzeit mit realen Besitzern und begrenztem Ereigniseingang verbinden; kein Warten des lokalen Spieltakts auf Funk/Zentrale. Lokaler Nachweis mit Referenzpaketen über denselben Validator/Laufzeitpfad erlaubt Vorbereitung vor #30. |
+| #31 F5b | Lokale Autonomie, Wiederanlauf mit D1 und kombinierte Ressourcen prüfen. Erste Produktversion zusätzlich mit D4-Mehrboxkern und eingefrorenen Binärdateien für das dritte Spiel nach SP-01; lokale Abnahme allein genügt nicht. |
+| #60 D1 / #61 D2 / #63 D4 | Dauerhafter Fortschritt, authentifizierter Ereignisaustausch und zentralenunabhängige verteilte Abnahme liegen auf dem Pfad zur ersten SP-01-Produktversion. Bestehende vollständige Kriterien einschließlich späterem Zentralenanteil bleiben erhalten. |
+| #62 D3 | Optionale Zentrale mit eigenem Abnahmeumfang; Autorenschaft, direkte Paketverteilung und lokaler Mehrboxbetrieb setzen sie nicht voraus. |
 | #33 A1a / #34 A1b | Quelle/Box/Empfangsalter je Beobachtung, getrennte Sitzungen und Schutz vor alten Antworten beim Boxwechsel; Cache ist keine aktuelle Fernerreichbarkeit. |
 | #35 NFC | Bestehende Resttests erhalten; produktiven Mehrstations-Spielobjektvertrag vor Spielintegration D0 zuordnen. |
 | #36 A2 | Altdatenübernahme bleibt erhalten und zurückgestellt; keine automatische Veröffentlichung oder gemeinsame Bearbeitung hinzufügen. |
@@ -74,12 +127,13 @@ GitHub #25 und die verlinkten Issues führen Status und operative Priorität.
 | **[D3 / #62](https://github.com/Sven401/Larp-Escape/issues/62) – Zentrale und Veranstaltungsansicht** | Eigenständiger persistenter Knoten mit zeitweise vollständiger Sicht, bestätigten Einzelaufträgen und Paketverteilung; getrennte lokale Handyzugänge. Hardwarewahl und Bedienvertrag vor Umsetzung konkretisieren. Ausfall blockiert keine Box. | D0; D1/D2 für tatsächlichen Abgleich, #30/#33/#34/#37 für Anschluss |
 | **[D4 / #63](https://github.com/Sven401/Larp-Escape/issues/63) – Verteilte Referenz- und Betriebsabnahme** | Zwei Boxen, zwei BLE-Handys, zeitweise getrennte Zentrale; nachvollziehbarer Offline-/Neustart-/Wiederholungs-/Transportwechselablauf und Last-/Funkmessung. Softwaremodell und physische Nachweise getrennt. | D1/D2, #27/#28/#31; D3 für Zentralenanteil, geklärter Prüfaufbau #39 |
 
-**Ausführungsfolge:** D0 ist über #72 spezifiziert und integriert; technische Zugangsklärung #27/#28
-und bestehende Baugruppenrestabnahme laufen als getrennte Stränge weiter.
-Anschließend D1 und D2 vertikal mit zwei Boxen anschließen, D3 darauf aufbauen
-und D4 gestuft abnehmen. Die bestehende lokale Folge #31 F5a → #30 → #31 F5b
-bleibt erhalten. Lokale Abschlüsse und verteilte Veranstaltungsfreigabe werden
-getrennt gezählt; kein pauschales Warten aller Arbeiten auf alle neuen Pakete.
+**Aktuelle Ausführungsfolge:** maßgeblich ist Abschnitt 0 / SP-01. D0 ist über
+#72 spezifiziert und integriert. Paket-/Autorenvertrag zuerst; Editor/Vorschau,
+F5a, allgemeiner Zugang und D1/D2 anschließend parallel gegen denselben Vertrag.
+Die Anschlussfolge #31 F5a → #30 → #31 F5b bleibt erhalten. Der D4-Mehrboxkern
+und das Drittspiel-Tor sind vor dem ersten Produktabschluss nachzuweisen.
+D3 sowie sein D4-Zentralenanteil folgen unabhängig; ein Teilabschluss darf
+nicht als vollständige D4-/VA-Abnahme ausgegeben werden.
 
 ## 4. Gemeinsame offene Abnahmekriterien
 

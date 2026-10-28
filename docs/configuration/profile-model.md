@@ -1,5 +1,11 @@
 # Konfigurationsprofil v1 – erster Umsetzungsschnitt
 
+**Architektur-Soll · 21.10.2026:** [SP-01](../spielpakete-architektur.md)
+verlangt allgemeine, nachladbare Spiel-/Regelpakete. Das vorhandene
+rollen-/kristallbezogene Profil-v1 bleibt eine Implementierungsbasis;
+neue Paket-, Sprach- und Migrationsverträge sowie generische Bausteine sind
+offen. Dieser Beschluss erweitert weder Schema noch ausführbare Fähigkeiten.
+
 **Verbindliches Veranstaltungs-Soll · 18.10.2026:** [VA-01](../veranstaltungsarchitektur.md), [Vertragsmatrix](../veranstaltungsarchitektur-umsetzung.md). Komponenten-IDs bleiben boxlokal. Veranstaltung, Station/Zuordnung und Spieldurchlauf sowie externe Ereignisregeln benötigen eigene versionierte Verträge (#59). Profil-v1-Schema und bestehende Exporte werden hier nicht geändert.
 
 Stand: 5. Oktober 2026. Profilmodell, Standardprofil, Validierung sowie JSON-Import und -Ausgabe sind implementiert. Ein hardwarefreier Graphkern mit Rechner-Vorschau ist implementiert; Profilabhängige Spiel-/Geräteaufträge sind mit Session verbunden; reale Komponentenadapter, Produktionsanschluss, Speicherung, Companion-Transport und Android-Editoren folgen. Die Produktionsfirmware verwendet noch den bisherigen Controller. Ein vorhandenes JSON-Dokument bedeutet keine erreichbare API oder übernommene Gerätekonfiguration.
