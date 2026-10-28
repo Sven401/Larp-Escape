@@ -1,5 +1,13 @@
 # Maintainer-Einstieg
 
+**Native ESP-IDF-Migration begonnen · 28.10.2026:**
+[Bestand, Zielentscheidung und Prüfstand](../docs/migration/esp-idf-qualification-2026-10-28.md),
+[Plan](ARDUINO-ESP32-3-MIGRATION.md), [Entwurfs-PR#101](https://github.com/Sven401/Larp-Escape/pull/101).
+Native6.1-Buildbasis ohne Arduino, CMake-Hosttests und PSA-P256-Adapter auf
+Codecommit `e5ab595` lokal geprüft. BLE-/TLS-Produktanschluss, Geräteadapter,
+Persistenzparität und gemeinsame Geräte-/Lastabnahme bleiben offen; kein Upload.
+
+
 **Fachaudit verschlankt · 28.10.2026:** Dokumentationsbasis ist
 `f81956faffa4d4c6b0198fdbd0c626b21e137cd4` im Integrationsbranch
 `plan/projektuebergabe-kuratierter-stand`. Diese Fortschreibung liegt in

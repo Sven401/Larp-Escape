@@ -128,8 +128,23 @@ festgelegter Systempaket-Snapshot.
 524 Steuerungstests und 7.873 Wireassertionen erfolgreich; Architektur145Dateien/
 302Includes und86unabhängige C++11-Header erfolgreich. Mit w64devkit2.9.1 /
 GCC16.2 zusätzlich echter neuer TF-PSA-Hostbuild und536Tests erfolgreich.
-Die letzte Prüfung des endgültigen Commits und der ESP32-Build werden nach
-Abschluss gesondert ergänzt. Lokale Logs/JUnit unter `private/host-psa` und
+**Abschließend am gesicherten Codecommit
+`e5ab595c0ab59254332b80156184f99bb1786be3` ausgeführt:** nativer CMake-Rebuild,
+CTest3/3 (524 Modellfälle,536echtePSA-Fälle,7.873Wireassertionen),
+`idf.py -C firmware/idf -DIDF_TARGET=esp32 build` und `idf.py ... size`
+erfolgreich. Prüffirmware-Image187.903Bytes, statisches DRAM34.634Bytes;
+kein gemessener Heap-/Stackrest, kein Budget des vollständigen Produkts.
+Sieben echte SDK-Guardfälle bestanden vor diesem Commit; deren Quellfassung
+ist im Commit unverändert gesichert. Formatbaseline325Dateien mit19.1.7
+bestanden; Architektur/Headerprüfung wie oben.
+
+[Entwurfs-PR#101](https://github.com/Sven401/Larp-Escape/pull/101) richtet sich
+gegen den kuratierten Integrationsbranch. Er enthält die unintegrierten
+Vorarbeiten von [#100](https://github.com/Sven401/Larp-Escape/pull/100) als
+Voraussetzung, ohne diesen PR oder Zielbranch zu verändern.
+**CI-Snapshot nach Anlegen:** native Qualifikation und weitere PR-Jobs laufen
+noch; NFC-Transportjob erfolgreich. Keine pauschale CI-Freigabe aus diesem
+Zwischenstand. Die CI auf späteren Dokumentcommits ist davon getrennt. Lokale Logs/JUnit unter `private/host-psa` und
 `private/*build.log`, nicht versioniert; CI-Artefakte werden getrennt benannt.
 
 Unabhängiger Quellenreview: ursprünglicher CTest-Fixturepfad und fehlende
@@ -139,7 +154,7 @@ Keylebensdauer ohne konkreten Securitybefund. Kein eigener Testlauf des Reviewer
 
 ## Noch offene Abschlusskriterien und nächste Reihenfolge
 
-1. Neuen SDK-/CI-Build abschließen und Belege am Commit sichern; alle bisherigen
+1. Neue CI-Qualifikation auswerten; der lokale native SDK-Build ist belegt. Alle bisherigen
    Firmware-/Hostvarianten bleiben separate Paritätstore, keine pauschale Ablösung.
 2. Originalverbindungs-/BTU-/SMP-Ereignisordnung am gepinnten6.1-Quellpfad
    nachweisen oder neuen geprüften Anschluss entwerfen. Reconnect mit gleichem
@@ -161,3 +176,20 @@ Keylebensdauer ohne konkreten Securitybefund. Kein eigener Testlauf des Reviewer
 Die erhaltene BLE-/Rollen-/Profilproduktintegration und ihre bereits alten
 Restaufgaben stehen weiter in der [BLE-Übergabe](../../handoff/BLE-ROLLEN-PROFILE-2026-10-28.md).
 Kein grünes Hostmodell oder Minimalbuild schließt diese Aufgaben automatisch.
+
+
+### Erprobte lokale Aufbaugrenzen
+
+Das erste SDK-Checkout scheiterte an langen Windows-Pfaden; acht Herstellerdateien
+waren zunächst nicht ausgecheckt. Nur der private frische SDK-Klon wurde mit
+`git -c core.longpaths=true` vervollständigt. Die Python-Werkzeuginstallation
+brauchte kurze vorhandene8.3-Pfadnamen. Nach einer zuvor abgebrochenen Extraktion
+konnte GCC bereits seine Version ausgeben, obwohl der interne Assembler fehlte;
+das vollständig aus dem geprüften Archiv entpackte Werkzeug baute erfolgreich.
+Kein Registrywechsel oder globaler Git-Konfigurationswechsel vorgenommen.
+Der alte Host-MinGW5.1 scheiterte an fehlendem intsafe.h; die auf Hersteller-
+SHA256 geprüfte portable w64devkit2.9.1-Toolchain baute dieselben Quellen.
+Archiv-SHA256: `9208c19755cd4964b7915b9afcf02c66d493a4c870c4b3e83f6c538d9c1237a5`.
+Dieser Wechsel deckte zudem einen spät innerhalb eines Testnamensraums geladenen
+Standardheader auf; `<functional>` ist nun vor den Testnamensräumen eingebunden.
+Keine SDK-Sicherheitsguards oder Compilerwarnungen wurden dafür abgeschaltet.
