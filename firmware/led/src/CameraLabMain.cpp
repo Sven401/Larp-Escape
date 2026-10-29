@@ -3,6 +3,7 @@
 #include <cstring>
 #include <cstdlib>
 #include "CameraSequence.h"
+#include "ResonanceCameraSequence.h"
 #include "CameraLabController.h"
 #ifdef LARP_LED_CAMERA_RSSI_LAB
 #include "CameraLabRssi.h"
@@ -17,6 +18,10 @@ unsigned stage = 0, frameNumber = 0;
 std::uint32_t lastKeep = 0, started = 0, appliedAt = 0;
 bool running = false, effectMode = false, waiting = false, stopPending = false;
 bool directOutstanding = false;
+bool resonanceMode = false, resonanceTransitions = false;
+bool resonanceColors = false;
+unsigned resonanceNumber = 0;
+std::uint32_t resonanceAt = 0;
 Effect selected = Effect::Off;
 camera::LiveController live;
 bool liveMode = false, traceLive = false;
@@ -97,7 +102,7 @@ LedOutput engine(bus, clockNow);
 
 void liveState() {
     const auto bg = live.scene().background();
-    Serial.printf("STATE %s %lu %lu %u %u %u", token, (unsigned long)live.scene().revision(),
+    Serial.printf("STATE %s %lu %lu %u %u %u", token, (unsigned long)live.revision(),
                   (unsigned long)millis(), unsigned(bg.red), unsigned(bg.green), unsigned(bg.blue));
     for (unsigned slot = 0; slot < near::Slots; ++slot) {
         const auto &i = live.scene().instance(slot); const auto &p = i.parameters;
@@ -108,23 +113,48 @@ void liveState() {
     }
     Serial.println();
 }
+void sealState() {
+    const auto &i = live.sealScene().snapshot(); const auto &p = i.parameters;
+    Serial.printf("SEALSTATE %s %lu %lu %u %lu %lu %lu %u %u %u %u %u %u %u %u %u %u %u %u %u %u %u\n",
+        token, (unsigned long)live.revision(), (unsigned long)millis(), unsigned(i.state),
+        (unsigned long)i.round, (unsigned long)i.generation, (unsigned long)i.sequence,
+        unsigned(p.count), unsigned(p.valid), unsigned(p.cause), unsigned(i.pulseConsumed), unsigned(i.pulsePending),
+        unsigned(p.colour.red), unsigned(p.colour.green), unsigned(p.colour.blue),
+        unsigned(p.peak.red), unsigned(p.peak.green), unsigned(p.peak.blue),
+        unsigned(p.sweepMs), unsigned(p.pixelMs), unsigned(p.transitionMs), unsigned(p.pulseMs));
+}
 void stop(const char *reason) {
 #ifdef LARP_LED_CAMERA_RSSI_LAB
     rssi.end(loopNow);
 #endif
     if (liveMode) {
-        live.hardStop(); traceRevision = live.scene().revision(); liveState(); liveMode = false;
+        live.hardStop(); traceRevision = live.revision(); liveState(); sealState(); liveMode = false;
     }
     running = false; waiting = false; effectMode = false;
     // Let the engine drain a prior direct transfer, then request a fresh black.
     engine.stop(); stopPending = true;
     Serial.printf("STOP %s %s\n", token, reason);
 }
+bool resonanceNext() {
+    const auto step = camera::resonanceStep(resonanceNumber, resonanceTransitions);
+    if (!step.duration) { stop("finished"); return false; }
+    stage = 100 + resonanceNumber;
+    resonanceAt = millis();
+    engine.updateWake(step.valid, step.mask);
+    if (step.restart && !(step.effect == Effect::Off ? engine.stop() : engine.start(step.effect))) {
+        stop("engine-rejected"); return false;
+    }
+    Serial.printf("W %s %u %lu %u %u %u %u\n", token, resonanceNumber,
+                  (unsigned long)resonanceAt, unsigned(step.valid), unsigned(step.mask),
+                  unsigned(step.effect), unsigned(step.restart));
+    return true;
+}
 void command(char *line) {
     if (std::strcmp(line, "HELLO") == 0) {
         Serial.printf("LARP-CAMERA/1 23 32 GPIO15 %lu %s\n",
                       (unsigned long)ESP.getSketchSize(), ESP.getSketchMD5().c_str());
         Serial.println("LARP-LIVE/1 2 23 32");
+        Serial.println("LARP-SEAL/1 1 23 32");
 #ifdef LARP_LED_CAMERA_RSSI_LAB
         Serial.println("LARP-RSSI/1 1 2000 3000");
 #endif
@@ -136,18 +166,18 @@ void command(char *line) {
         rssi.command(line, loopNow); return;
     }
 #endif
-    if (std::strncmp(line, "GLOW ", 5) == 0 || std::strncmp(line, "BG ", 3) == 0 ||
+    if (std::strncmp(line, "GLOW ", 5) == 0 || std::strncmp(line, "SEAL ", 5) == 0 || std::strncmp(line, "BG ", 3) == 0 ||
         std::strncmp(line, "STATUS ", 7) == 0) {
         if (!running || !liveMode) { Serial.printf("REJECT %s 0 inactive 0 %lu\n", token, (unsigned long)millis()); return; }
         const auto reply = live.command(line, millis());
-        if (std::strcmp(reply.kind, "STATUS") == 0) { liveState(); return; }
+        if (std::strcmp(reply.kind, "STATUS") == 0) { liveState(); sealState(); return; }
         if (std::strcmp(reply.kind, "REJECT") == 0)
             Serial.printf("REJECT %s %lu %s %lu %lu\n", token, (unsigned long)reply.request,
-                          reply.reason, (unsigned long)live.scene().revision(), (unsigned long)millis());
+                          reply.reason, (unsigned long)live.revision(), (unsigned long)millis());
         else {
             Serial.printf("%s %s %lu %lu %lu\n", reply.kind, token, (unsigned long)reply.request,
-                          (unsigned long)live.scene().revision(), (unsigned long)millis());
-            liveState();
+                          (unsigned long)live.revision(), (unsigned long)millis());
+            liveState(); sealState();
         }
         return;
     }
@@ -168,20 +198,27 @@ void command(char *line) {
         std::strcpy(token, id); frameNumber = stage = 0;
         started = lastKeep = millis(); lastLiveSubmit = started - LedOutput::FrameMilliseconds;
         running = liveMode = traceLive = true; waiting = effectMode = false;
-        traceRevision = live.scene().revision();
+        traceRevision = live.revision();
 #ifdef LARP_LED_CAMERA_RSSI_LAB
         rssi.begin(token);
 #endif
         Serial.printf("LIVE %s %lu %lu\n", token, (unsigned long)traceRevision, (unsigned long)started);
-        liveState(); return;
+        liveState(); sealState(); return;
     }
     if (std::strcmp(verb, "CAL") == 0) {
         if (strtok_r(nullptr, " ", &context)) return;
         selected = Effect::Off;
+        resonanceMode = false;
+        resonanceColors = false;
     } else if (std::strcmp(verb, "RUN") == 0) {
         char *effect = strtok_r(nullptr, " ", &context);
         if (!effect || strtok_r(nullptr, " ", &context)) return;
-        selected = std::strcmp(effect,"twinkle") == 0 ? Effect::Twinkle :
+        resonanceMode = std::strcmp(effect,"resonance") == 0 ||
+                        std::strcmp(effect,"resonance-transitions") == 0;
+        resonanceTransitions = std::strcmp(effect,"resonance-transitions") == 0;
+        resonanceColors = std::strcmp(effect,"resonance-colors") == 0;
+        selected = (resonanceMode || resonanceColors) ? Effect::Resonance :
+                   std::strcmp(effect,"twinkle") == 0 ? Effect::Twinkle :
                    std::strcmp(effect,"burst") == 0 ? Effect::Burst :
                    std::strcmp(effect,"ripple") == 0 ? Effect::Ripple : Effect::Off;
         if (selected == Effect::Off) return;
@@ -237,7 +274,7 @@ void loop() {
     }
     if (!running) { delay(1); return; }
     if (liveMode) {
-        const auto now = millis(); live.scene().service(now);
+        const auto now = millis(); live.service(now);
         if (bus.inFlight) {
             const auto result = bus.poll();
             if (result == TxResult::Failed || (result == TxResult::Busy && now-bus.submitted >= 2000)) {
@@ -245,26 +282,37 @@ void loop() {
             } else if (result == TxResult::Complete) directOutstanding = false;
         }
         if (liveMode && !bus.inFlight && now-lastLiveSubmit >= LedOutput::FrameMilliseconds) {
-            const Frame frame = live.scene().render(now); traceRevision = live.scene().revision();
+            const Frame frame = live.render(now); traceRevision = live.revision();
             if (!bus.submit(frame)) stop("live-submit");
             else { directOutstanding = true; lastLiveSubmit = now; }
         }
         delay(1); return;
     }
     if (effectMode) {
+        if (resonanceMode) {
+            const auto step = camera::resonanceStep(resonanceNumber, resonanceTransitions);
+            if (millis()-resonanceAt >= step.duration) {
+                ++resonanceNumber;
+                if (!resonanceNext()) { delay(1); return; }
+            }
+        }
         engine.service();
         if (engine.snapshot().fault) stop("engine-fault");
-        else if (millis()-appliedAt > 1000 && engine.snapshot().completed && engine.snapshot().off)
+        else if (!resonanceMode && millis()-appliedAt > 1000 && engine.snapshot().completed && engine.snapshot().off)
             stop("finished");
         else if (selected == Effect::Twinkle && millis()-started >= 7500) stop("finished");
         delay(1); return;
     }
     const auto current = selected == Effect::Off ? camera::step(stage) :
         stage < 6 ? camera::step(stage) :
-        stage == 6 ? camera::dark(1000) : camera::Step{-2, {}, 0, selected};
+        stage == 6 ? camera::dark(1000) : resonanceColors ? camera::resonanceColorStep(stage-7) :
+        camera::Step{-2, {}, 0, selected};
     if (current.index == -3) { stop("finished"); return; }
     if (current.index == -2) {
-        if (!engine.start(current.effect)) { stop("engine-rejected"); return; }
+        if (resonanceMode) {
+            resonanceNumber = 0;
+            if (!resonanceNext()) { delay(1); return; }
+        } else if (!engine.start(current.effect)) { stop("engine-rejected"); return; }
         effectMode = true; engine.service(); delay(1); return;
     }
     if (!waiting) {

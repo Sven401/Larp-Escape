@@ -1,5 +1,12 @@
 # Vollständiger Prüfweg der kuratierten Produktbasis
 
+**Verbindliches Produkt-Prüftor · 21.10.2026:** [SP-01](spielpakete-architektur.md)
+ergänzt Mehrboxbetrieb in der ersten Produktversion und ein nach dem Einfrieren
+der App-/Firmwarebinärdateien neu entworfenes drittes Spiel. Nachweis über
+unveränderte Hashes, ausschließlich neue Pakete/Inhalte und getrennte
+Vorschau-/Software-/Gerätebelege. Alle SP-T-Kriterien sind offen; bestehende
+B0-, Baugruppen- und VA-Prüfungen bleiben erforderlich für ihren jeweiligen Umfang.
+
 **Wartungsprüfung · 20.10.2026:** [Frische lokale Tests/Builds und Dokumentationsabgleich](../handoff/WARTUNG-PRUEFSTAND-2026-10-20.md) auf Integrationsstand `7e19c95`. Die historischen CI-Belege unten behalten ihren jeweiligen Commitbezug.
 
 **Zusätzlicher Abnahmeumfang · 18.10.2026:** [VA-01](veranstaltungsarchitektur.md) und [VA-T01–VA-T12](veranstaltungsarchitektur-umsetzung.md#4-gemeinsame-offene-abnahmekriterien) ergänzen dezentrale Ausfall-/Abgleich-/Funkfälle (#63). Bestehende B0-/Baugruppenprüfungen bleiben erhalten; diese Dokumentation führt keinen neuen Test aus und weist keine verteilte Abnahme nach.
@@ -114,6 +121,13 @@ Das [D0-Vertragsmodell](veranstaltung/d0-vertrag-v1.md) ist hardwarefrei und
 benötigt nur die Python-Standardbibliothek: `python scripts/check_d0_contract.py`.
 Es prüft die versionierten semantischen Gegenbeispiele, keine Signaturen,
 CBOR-Bytes, Flashdurabilität oder installierte Produktfunktionen.
+
+Die [D1-Rechnerreferenz](veranstaltung/d1-persistenz-v1.md) nutzt ebenfalls nur
+die Python-Standardbibliothek:
+`python -m unittest discover -s scripts/tests -p test_d1_journal.py -v`.
+Sie prüft dateibasierte Hosttransaktionen, Wiederaufnahme und echte Prozessabbrüche.
+SQLite ist dabei ein Rechnerbackend, keine Firmwareabhängigkeit. Kein Beleg
+für ESP-Flash, physische Stromausfälle, D0-Verifizierer oder Gerätewirkungen.
 
 Aus einem sauberen Checkout unter Windows mit Python und PlatformIO 6.2.0.
 Für den vollständigen Python-Testlauf unten Python 3.12 und die gepinnten
@@ -232,3 +246,21 @@ betroffenen Nachweis offen. Vorhandene historische Ergebnisse im
 [Übergabeprüfstand](../handoff/PRUEFSTAND.md) bleiben davon getrennt.
 Ein Hosttest oder Build belegt keine Bluetooth-, Handy-, LED- oder
 Originalboxabnahme. Dieser Prüfweg enthält keinen Upload oder Gerätebetrieb.
+
+## P0-Regelvertrag ohne Hardware prüfen
+
+```powershell
+python scripts/p0_rules_model.py
+python -m unittest discover -s scripts/tests -p test_p0_rules_model.py -v
+```
+
+[Vertrag und Grenzen](spielpakete/p0-vertrag-v1.md),
+[Referenztraces](spielpakete/fixtures/p0-v1.json). Das Modell prüft nur dekodierte
+Snapshots, vollständige RAM-Pläne, Dreizustandslogik, lokale Timerreihenfolge
+und deduplizierte Vorgänge/Latches. Vorab statisch typgeprüfte Projektionen, gültige Eingangsstrukturen und
+eine bereits geprüfte D0-Zulassung werden vorausgesetzt. `accepted` ist im
+Modell eine simulierte Vertrauensentscheidung, kein Paketfeld. Kürzere
+Listenausdrücke in Fixtures sind eine Projektion der normativen Objektgrammatik.
+Kein Parser, Modulcompiler, Deployment-/Ressourcenvalidator, Geräteadapter,
+Pause-/Recoveryablauf, lokale emit-Rückkopplungsqueue oder Flashcommit wird dadurch implementiert oder geprüft.
+Die Quality-CI führt die Gegenfälle einschließlich der sechs Traces aus.

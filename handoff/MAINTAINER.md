@@ -8,12 +8,78 @@ Codecommit `d81dc5a` lokal und in nativer Linux-CI geprüft; vier native Testsui
 und ESP32-Build erfolgreich. BLE-/TLS-Produktanschluss, Geräteadapter,
 Persistenzparität und gemeinsame Geräte-/Lastabnahme bleiben offen; kein Upload.
 
+## Integrierter Stand · 28.10.2026
+
+**Belegt:** Integrationsbranch `plan/projektuebergabe-kuratierter-stand` bei
+`191d08164614bd6472db241336d263da77691f49`, am 28.10.2026 per Fetch,
+Git-Historie und GitHub-Actions-API geprüft. Auf ausdrücklichen Nutzerauftrag
+wurden die PRs in dieser Reihenfolge mit Mergecommits übernommen:
+
+| PR / Umfang | Mergecommit |
+| --- | --- |
+| [#71 · Resonanzkreis](https://github.com/Sven401/Larp-Escape/pull/71) | `5b570da89ec3ae8822792bbe5fd88e285f6222e0` |
+| [#73 · D1-Rechnerreferenz](https://github.com/Sven401/Larp-Escape/pull/73) | `9e65852a4ec672b950e202dfdc94ccad270f35bb` |
+| [#89 · Kristallsiegel-Labor](https://github.com/Sven401/Larp-Escape/pull/89) | `f19789606df562a99d1e15e69a8f13d666c13996` |
+| [#94 · SP-01-Spielpaketarchitektur](https://github.com/Sven401/Larp-Escape/pull/94) | `191d08164614bd6472db241336d263da77691f49` |
+
+Die Konfliktpflege erhielt Resonanz-, Live-/RSSI- und Kristallsiegel-Laborpfade;
+#89 enthält #71 als Voraussetzung. Die anschließende Mergefolge brauchte keine
+weiteren Konfliktkorrekturen. Unabhängige Qualitätsgegenprüfung der
+Konfliktauflösungen ohne P1/P2-Befund; eigene Implementierung und Gegenprüfung
+bleiben getrennt. Der Dokumentations-PR dieser Fortschreibung ändert keine
+Produktquellen und ist bis zu seiner Integration ein eigener Vorschlag.
+
+### CI nach Integration
+
+Alle folgenden Läufe sind abgeschlossene **Push-Läufe auf tatsächlichen
+Mergecommits**, keine übertragenen PR-Ergebnisse. Run-/Jobstatus wurden am
+28.10.2026 erneut über die GitHub-Actions-API gelesen.
+
+| Nachweis | Geprüfter Commit | Ergebnis |
+| --- | --- | --- |
+| [Quality 40769750634](https://github.com/Sven401/Larp-Escape/actions/runs/40769750634) | `191d08164614bd6472db241336d263da77691f49` | 3/3 erfolgreich: hardwareunabhängige Prüfungen; Android-Tests, Builds und Lint; Spiel-Firmware, Runtime- und GATTS-ABI-Proben |
+| [LED product 40769728209](https://github.com/Sven401/Larp-Escape/actions/runs/40769728209) | `f19789606df562a99d1e15e69a8f13d666c13996` | 4/4 erfolgreich: Protokoll/Output; synthetische Kamera- und Labortests; Android; separate LED-Produktvarianten |
+| [ESP-NOW probe 40769662876](https://github.com/Sven401/Larp-Escape/actions/runs/40769662876) | `5b570da89ec3ae8822792bbe5fd88e285f6222e0` | 1/1 Build erfolgreich |
+
+#94 ändert gegenüber dem #89-Merge ausschließlich elf Dokumentdateien.
+`git diff f197896 191d081 -- firmware companion src include lib platformio.ini .github/workflows`
+ist leer; LED-/App-/Workflowquellen sind identisch. Der LED-Pfadfilter löste
+am finalen Dokumentmerge keinen neuen Lauf aus. Der ESP-NOW-Lauf gilt für
+seinen eigenen früheren Mergecommit. NFC wurde bei dieser Mergefolge nicht
+neu ausgelöst. Frühere Quality-Läufe wurden durch den abschließenden Lauf
+automatisch abgelöst; abgebrochene Läufe gelten nicht als bestandene Prüfungen.
+Die CI dieses neuen Dokumentations-PRs ist ein gesonderter Nachweis.
+
+### Offene Arbeit und Abnahmegrenzen
+
+- D1-A samt Rechnerreferenz ist integriert; [D1-B/C und #60](D1-AUSARBEITUNG-2026-10-18.md)
+  bleiben offen: echter Verifizierer, Firmware-/F5a-Anschluss, Budgets und
+  physische Speicher-/Stromausfallabnahme.
+- [Resonanzkreis](../docs/led/resonance-test-preparation.md) und
+  [Kristallsiegel](../docs/led/kristallsiegel-live-results-2026-10-20.md)
+  behalten ihre begrenzten historischen Labor-/Gerätenachweise. Gemeinsames
+  V2-App-/Firmwarepaar, reale Sensor-/Spielintegration und Produktabnahme bleiben offen.
+- [SP-01](../docs/spielpakete-architektur.md) ist als verbindliches Soll integriert;
+  Paketlaufzeit, Autorenwerkzeuge, Mehrboxbetrieb und Drittspielnachweis sind
+  damit nicht implementiert oder abgenommen.
+- [#100 · BLE-/Profilvorbereitung](https://github.com/Sven401/Larp-Escape/pull/100)
+  (`53bd24bee7b21b87cbb9781e1f53ad4d430da91c`) und
+  [#101 · native ESP-IDF-Basis](https://github.com/Sven401/Larp-Escape/pull/101)
+  (`f26e87efc1d6ed9d1e73bceb3a8a2aab2009ca04`) sind am 28.10.2026
+  weiterhin offene Entwürfe und nicht integriert. Ihre Vorarbeiten sind kein
+  Bestandteil des hier geprüften Integrationsstands; Migration und geschützter
+  Produktkanal bleiben eigene Folgearbeit.
+
+Keine neue Geräteprüfung, kein Upload und kein Release durch diese Integration.
+Für weitere Arbeit den Remote-Head frisch prüfen; `main` bleibt ein eigener Auftrag.
+
+## Frühere datierte Prüfstände
 
 **Fachaudit verschlankt · 28.10.2026:** Dokumentationsbasis ist
 `f81956faffa4d4c6b0198fdbd0c626b21e137cd4` im Integrationsbranch
-`plan/projektuebergabe-kuratierter-stand`. Diese Fortschreibung liegt in
-[PR #99](https://github.com/Sven401/Larp-Escape/pull/99); sie ist bis zum Merge
-kein integrierter Regelstand. Die ausdrücklich beauftragte Umstellung des
+`plan/projektuebergabe-kuratierter-stand`. Die Fortschreibung aus
+[PR #99](https://github.com/Sven401/Larp-Escape/pull/99) wurde vor den oben
+genannten PRs bei `ab7de9b` integriert. Die ausdrücklich beauftragte Umstellung des
 bestehenden Wochenauftrags wird getrennt im
 [Betriebsbeleg](../docs/quality/fachaudit-betrieb.md#beobachteter-ausgangspunkt-und-umstellung)
 nachgewiesen.
@@ -149,6 +215,14 @@ IDF-4.4-Supportentscheidung und bestehende Chip-/Fristgrenzen bleiben offen.
 Dieser Übernahmeschritt richtete keinen Scheduler ein; die spätere Aktivierung
 ist oben dokumentiert. Kein Geräteupload und keine Übernahme nach `main`.
 
+**Neue verbindliche Priorität · 21.10.2026:** [SP-01](../docs/spielpakete-architektur.md)
+legt nachladbare Spiel-/Regelpakete, Mehrboxbetrieb in der ersten Produktversion
+und den Drittspiel-Nachweis bei unveränderter App/Firmware fest.
+[Plan und Abhängigkeiten](../docs/veranstaltungsarchitektur-umsetzung.md#0-produktpriorität-ab-21102026)
+führen die nächste Arbeit; ältere Prioritätslisten unten sind dadurch ergänzt
+beziehungsweise ersetzt. Quellprüfung an `e61d764`; keine Implementierung oder
+neue Produktabnahme. VA-01, D0, UX-01 und bestehende Restprüfungen bleiben erhalten.
+
 ## Start für weitere App- und Firmwarearbeit
 
 **BLE-/Rollen-/Profiluebergabe, 28.10.2026:** [Arbeitsstand und Nachweise](BLE-ROLLEN-PROFILE-2026-10-28.md) gesichert; Nutzerziel mit Uebergabe geschlossen. [Plattformmigration als eigener Plan](ARDUINO-ESP32-3-MIGRATION.md) wegen neu benoetigtem sicherem TLS-Pfad aufnehmen. Produktanschluss und Geraeteabnahme bleiben offen.
@@ -173,7 +247,7 @@ auch der gleichnamige lokale Integrationsbranch war zurückgeblieben.
 | Dev-App und Baugruppen | [Android-Anleitung](../companion/android/README.md), Modul `app`; [Baugruppenfirmware](../firmware/led/README.md), [Wire-V2](../docs/led/ble-wire-v2.md) | Einzeln belegte Funktionen sind keine gemeinsame Geräte-/Spielabnahme |
 | Spielleiter-App | Modul `gamemaster`; [Stationspilot](../docs/companion/spielleiter-stationspilot.md), [UI/UX-Vertrag](../docs/ui-ux/BOX-PILOT.md) | Lesender Pilot vorhanden; Licht-/Spielaktionen und allgemeine Rechte fehlen |
 | Spiel-/Profilfirmware | [Profilmodell](../docs/configuration/profile-model.md), [Geräteausführung](../docs/configuration/device-runtime.md), `src/main.cpp` und getrennte Profilprobe | F5a-Ausführung, reale Profilübernahme, F5b-Betrieb nicht abgeschlossen |
-| Dezentrale Veranstaltung | [VA-01](../docs/veranstaltungsarchitektur.md), [D0](../docs/veranstaltung/d0-vertrag-v1.md), [Plan #25](https://github.com/Sven401/Larp-Escape/issues/25) | D1-A in PR #73 separat bewerten; D1-B/C und D2–D4 bleiben offen |
+| Dezentrale Veranstaltung | [VA-01](../docs/veranstaltungsarchitektur.md), [D0](../docs/veranstaltung/d0-vertrag-v1.md), [Plan #25](https://github.com/Sven401/Larp-Escape/issues/25) | D1-A/#73 integriert; D1-B/C und D2–D4 bleiben offen |
 | LED-Effektentwicklung | [Rolle](../docs/led/rollen/led-effekt-architekt.md), [Spielinformation](../docs/led/spielinformation-2026-10-18.md), [Live-Anleitung](../docs/led/interactive-development.md), [Näheglut-Fortsetzung](NAEHEGLUT-STOP-SPIELANSCHLUSS-2026-10-18.md) | Labor, Produktadapter und optische Freigabe getrennt; offene Entwürfe nicht automatisch integrieren |
 
 Die [Prüfanleitung](../docs/quality-checks.md) und der
@@ -262,6 +336,13 @@ Produktadapter, produktseitiger Nähe-/Spielwertvertrag und optisches Nutzerurte
 die [Rechnerprobe 1.0](LED-EFFEKT-ARCHITEKT-ERPROBUNG-2026-10-18.md) bleibt
 historischer Beleg.
 
+**D1 ausgearbeitet · 18. Oktober 2026:** [Speicher-/Wiederanlaufvorschlag zu #60](../docs/veranstaltung/d1-persistenz-v1.md)
+auf integriertem D0-Stand `dead1204`, mit dateibasierter Rechnerreferenz und
+[getrennten Nachweisgrenzen](D1-AUSARBEITUNG-2026-10-18.md).
+Vergabe pro Fakt, atomare Anwendung/Outbox, Latches, Konflikte, Kompaktierung
+und unklare physische Wirkungen sind konkretisiert. Kein Firmwareanschluss,
+Gerätezugriff oder Merge; #60 bleibt bis zu D1-B/D1-C offen.
+
 **D0 integriert · 18. Oktober 2026:** [Vertrag zu #59](../docs/veranstaltung/d0-vertrag-v1.md)
 mit Ereignisidentitäten, Offline-/Replayregeln, Ursprungsvertrauen und Migration.
 [PR #72](https://github.com/Sven401/Larp-Escape/pull/72) übernimmt den fachlich
@@ -279,6 +360,10 @@ integriert. Alle fünf Original-PRs sind als gemergt geschlossen; ihre Heads erh
 Der abgeschlossene [RSSI-Gehversuch](../docs/espnow/distance-camera-result-2026-10-18.md)
 und die [isolierte Kameraabnahme](../docs/led/camera-results-2026-10-18.md)
 ergänzen die bisherigen Teilbelege. Gesamtspiel, Reichweite und Dauerlast bleiben offen.
+Der [Resonanzkreis-Kameralauf](../docs/led/resonance-camera-results-2026-10-18.md)
+belegt zusätzlich alle 16 synthetischen Wake-Masken und Übergangs-/Stop-Fälle
+auf allen 23 LEDs. Reale Sensor-/BLE-Abnahme bleibt offen; ursprünglicher
+RSSI-Boxstand anschließend vollständig verifiziert wiederhergestellt.
 
 **Neue verbindliche Produktentscheidung · 18. Oktober 2026:** [VA-01](../docs/veranstaltungsarchitektur.md) legt autonome Boxen, BLE-Bedienung je Box, unterbrechbare ESP-NOW-/WLAN-Kommunikation und die Zentrale ohne Betriebszwang fest. [Vertrags-/Backlogmatrix](../docs/veranstaltungsarchitektur-umsetzung.md), neue Pakete #59–#63. Zugangskonzept PR #58 bleibt ergänzend maßgeblich. **Architektur-Soll; keine Implementierung oder neue Geräteabnahme.**
 
@@ -294,7 +379,7 @@ Aktuelle fachliche Ergänzung vom **18. Oktober 2026**:
 mit Rechteverwaltung, Schlüsselwechsel, Wiederherstellung, Unterbrechungspunkten
 und offenen Abnahmekriterien. **Sollkonzept, keine Implementierung.**
 
-## Aktuelle Arbeitsbasis
+## Historische Arbeitsbasis · 20.10.2026
 
 - **Dokumentationsbasis:** PR #87 ist bei `a4c83cb7351759808f85ede612abc7c2280212fc`
   integriert; Dateibaum identisch zum geprüften Wartungshead `44e7098`.
@@ -334,7 +419,9 @@ abgeschlossene Softwarekonsolidierung und Integration durch #56.
   D0-G1–G5 in #28/D1/D2/#30/#31/D3/D4 erfüllen. D1/D2 können nun gegen den
   integrierten Vertrag konkretisiert werden; die Zugangsspur #27 → #28 → #37
   bleibt eigenständig. Kein Beginn dieser Folgearbeiten durch den Mergeauftrag.
-  D1–D4 bleiben offen; App-Messjournal und Funkprobe schließen
+  Für D1 liegt jetzt die oben verlinkte Ausarbeitung samt Rechnerreferenz vor;
+  Firmware-/F5a-Anschluss und physische Abnahme sind offen. D2–D4 bleiben offen;
+  App-Messjournal und Funkprobe schließen
   weder dauerhaften Box-Spielfortschritt noch Veranstaltungsbetrieb ab.
 
 - **LED-Architektenrolle 2.0 erprobt und integriert:** Für weitere Effektarbeit
@@ -343,9 +430,9 @@ abgeschlossene Softwarekonsolidierung und Integration durch #56.
   Konkreter Spieleinsatz/Nähequelle, Produktadapter mit Epochen-/Profilgrenzen,
   produktseitige Mischung sowie Nutzerurteil am realen Licht bleiben offen.
   Der Laborprototyp schließt #29/#31/#37 oder die optische Abnahme nicht ab.
-- **D1-A separat in Review:** [PR #73](https://github.com/Sven401/Larp-Escape/pull/73)
-  ist weiterhin offen; vor einer eigenen Integration gegen die dann aktuelle
-  Basis prüfen. D1-B/C und #60 bleiben offene Folgearbeit.
+- **D1-A integriert · 28.10.2026:** [PR #73](https://github.com/Sven401/Larp-Escape/pull/73)
+  ist bei `9e65852` übernommen; aktuelle CI und Grenzen siehe Einstieg oben.
+  D1-B/C und #60 bleiben offene Folgearbeit.
 
 - **Gemeinsame Geräteabnahme offen:** passendes V2-App-/Firmwarepaar gezielt
   prüfen. Historischer RSSI-Beleg: App-Journalstand `6e6f093` und

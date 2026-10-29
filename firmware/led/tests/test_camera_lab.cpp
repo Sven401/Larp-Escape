@@ -71,6 +71,33 @@ int main(int argc, char **argv) {
                                    "effect ended before its actual output duration");
             }
             check(!running && !stopPending && black(fake.frames.back()),"effect did not finish dark");
+        } else if (name == "resonance" || name == "resonance-transitions" || name == "resonance-colors" || name == "resonance-watchdog") {
+            Serial.send("STOP"); for (unsigned i=0;i<10;++i) loop();
+            Serial.send("RUN 0123456789abcdef "+(name == "resonance-watchdog" ? std::string("resonance") : name));
+            unsigned observed = 0;
+            const unsigned zones[23] = {1,1,1,1,1,1,1,3,3,3,3,3,3,2,2,2,2,2,2,0,0,0,0};
+            for (unsigned i=0;i<60000;++i) {
+                if (i%200==0 && (name != "resonance-watchdog" || i < 8000)) Serial.send("KEEP 0123456789abcdef");
+                loop();
+                if (effectMode && resonanceMode && !fake.busy && testNow-resonanceAt>100) {
+                    const auto current = camera::resonanceStep(resonanceNumber, resonanceTransitions);
+                    if (current.effect != Effect::Resonance) continue;
+                    observed |= 1U << resonanceNumber;
+                    for (unsigned led=0;led<23;++led) {
+                        const auto &pixel = fake.frames.back()[led];
+                        const bool active = current.valid && current.mask<=15 && (current.mask&(1U<<zones[led]));
+                        check((pixel.blue>0)==active,"synthetic Wake lit the wrong region");
+                        if (active) {
+                            check(pixel.blue>=4 && pixel.blue<=24 && pixel.red==pixel.blue/6 && pixel.green==pixel.blue*2/3,"wrong resonance color");
+                            if (current.mask==15 && testNow-resonanceAt>850) check(pixel.blue==24,"merge did not settle");
+                        }
+                    }
+                }
+            }
+            check(!running && !stopPending && black(fake.frames.back()),"resonance lab did not finish dark");
+            if (name == "resonance") check(observed==65535,"not all 16 input masks observed");
+            if (name == "resonance-watchdog") check(Serial.output.find("watchdog")!=std::string::npos,"resonance watchdog missing");
+            if (name == "resonance-transitions") check(observed & (1U<<13),"resonance restart not reached");
         } else if (name == "stop-inflight") {
             // This transfer belongs to the direct calibration path, not engine.
             Serial.send("STOP"); for (unsigned i = 0; i < 10; ++i) loop();
@@ -114,6 +141,70 @@ int main(int argc, char **argv) {
                 check(!stopPending && black(fake.frames.back()),"LIVE STOP not confirmed black");
                 check(Serial.output.find("DONE 0123456789abcdef")!=std::string::npos,"LIVE DONE absent");
                 check(Serial.output.find("L 0123456789abcdef 5 ")!=std::string::npos,"black reset revision absent");
+            }
+        } else if (name == "seal" || name == "seal-watchdog" || name == "seal-stop-timeout") {
+            Serial.send("STOP"); for (unsigned i=0;i<10;++i) loop();
+            Serial.send("HELLO"); loop();
+            check(Serial.output.find("LARP-SEAL/1 1 23 32") != std::string::npos,"seal capability absent");
+            Serial.send("LIVE 0123456789abcdef"); loop();
+            Serial.send("SEAL 0123456789abcdef 1 1 1 start 1 1 0 0 0 0 8 12 4 18 24 600 150 300 800");
+            for (unsigned i=0;i<350;++i) loop();
+            check(live.revision()==2 && fake.frames.back()[0].green==8 &&
+                  fake.frames.back()[0].blue==12 && fake.frames.back()[8].blue==0,"seal snapshot did not reach bus");
+            check(Serial.output.find("SEALSTATE 0123456789abcdef 2 ") != std::string::npos,"seal state absent");
+            if (name == "seal-watchdog") {
+                for (unsigned i=0;i<1700;++i) loop();
+                check(!running && !stopPending && black(fake.frames.back()),"seal watchdog failed black");
+                check(live.sealScene().snapshot().state==seal::State::Stopped,"seal watchdog retained effect");
+            } else if (name == "seal-stop-timeout") {
+                while (!bus.inFlight) loop();
+                fake.stuck=true; Serial.send("STOP");
+                for (unsigned i=0;i<2050;++i) loop();
+                check(fake.resets==1 && !stopPending && black(fake.frames.back()),"seal stuck transfer blocked black stop");
+            } else {
+                while (!bus.inFlight) loop();
+                const auto oldRevision=bus.pendingRevision, oldFrame=bus.pendingNumber;
+                Serial.send("SEAL 0123456789abcdef 2 1 1 update 2 1 1 0 0 0 8 12 4 18 24 600 150 300 800");
+                for (unsigned i=0;i<10;++i) loop();
+                check(live.revision()==3,"seal revision not advanced");
+                check(Serial.output.find("L 0123456789abcdef "+std::to_string(oldRevision)+" "+std::to_string(oldFrame)+" ")!=std::string::npos,"seal update relabelled old transfer");
+                Serial.send("SEAL 0123456789abcdef 3 1 1 update 3 1 1 0 1 0 8 12 4 18 24 600 150 300 800");
+                for (unsigned i=0;i<1500;++i) { if(i%200==0) Serial.send("KEEP 0123456789abcdef"); loop(); }
+                for(const auto &p:fake.frames.back()) check(p.red==0 && p.green==8 && p.blue==12,"seal pulse did not settle");
+                check(live.sealScene().snapshot().pulseConsumed && !live.sealScene().snapshot().pulsePending,"seal pulse state wrong");
+                Serial.send("GLOW 0123456789abcdef 4 0 1 start 1000 1 24 8 0 1000 50 0");
+                for(unsigned i=0;i<100;++i) loop();
+                check(fake.frames.back()[0].red==24 && fake.frames.back()[0].green==16 && fake.frames.back()[0].blue==12,"seal/glow mix wrong");
+                Serial.send("SEAL 0123456789abcdef 5 1 1 stop 3 1 1 0 0 0 8 12 4 18 24 600 150 300 800");
+                for(unsigned i=0;i<350;++i) { if(i%200==0) Serial.send("KEEP 0123456789abcdef"); loop(); }
+                check(fake.frames.back()[0].red==24 && fake.frames.back()[0].green==8 && fake.frames.back()[0].blue==0,"targeted seal stop harmed glow");
+                const auto rev=live.revision();
+                Serial.send("SEAL 0123456789abcdef 6 1 1 update 3 1 1 0 1 0 8 12 4 18 24 600 150 300 800");
+                for(unsigned i=0;i<10;++i) loop();
+                check(live.revision()==rev && live.sealScene().snapshot().state==seal::State::Stopped,"update revived stopped seal");
+                Serial.send("STOP"); for(unsigned i=0;i<10;++i) loop();
+                check(!stopPending && black(fake.frames.back()),"seal global stop not black");
+                check(Serial.output.find("DONE 0123456789abcdef")!=std::string::npos,"seal stop unconfirmed");
+
+                camera::LiveController p; check(p.begin("0123456789abcdef"),"protocol setup");
+                const char *start="SEAL 0123456789abcdef 1 1 1 start 0 1 0 0 0 0 8 12 4 18 24 600 150 300 800";
+                check(std::strcmp(p.command(start,0).kind,"APPLIED")==0,"seal parser start");
+                check(std::strcmp(p.command(start,20).kind,"DUPLICATE")==0 && p.revision()==2,"seal duplicate changed revision");
+                check(std::strcmp(p.command("BG 0123456789abcdef 1 0 0 0",20).reason,"conflict")==0,"seal/glow global sequence conflict absent");
+                for(const char *bad:{
+                    "SEAL fedcba9876543210 2 1 1 update 1 1 1 0 0 0 8 12 4 18 24 600 150 300 800",
+                    "SEAL 0123456789abcdef 2 1 1 update 4 1 1 0 0 0 8 12 4 18 24 600 150 300 800",
+                    "SEAL 0123456789abcdef 2 1 1 update 1 1 1 0 0 256 8 12 4 18 24 600 150 300 800",
+                    "SEAL 0123456789abcdef 2 1 1 update 1 1 1 0 0 0 8 12 4 18 24 600 150 300 801",
+                    "SEAL 0123456789abcdef 2 1 1 update 1 1 1 0 0 0 8 12 4 18 24 100 150 300 800",
+                    "SEAL 0123456789abcdef 2 1 1 update 1 1 1 0 0 0 8 12 4 18 24 4294967296 150 300 800",
+                    "SEAL 0123456789abcdef 2 1 1 update 1 1 1 0 0 0 8 12 4 18 24 -600 150 300 800",
+                    "SEAL 0123456789abcdef 2 1 1 update 1 1 1 0 0 0 8 12 4 18 24 600 150 300 800 extra"})
+                    check(std::strcmp(p.command(bad,20).kind,"REJECT")==0 && p.revision()==2 &&
+                          p.sealScene().snapshot().parameters.count==0,"seal parser rejection not atomic");
+                check(std::strcmp(p.command("BG 0123456789abcdef 2 32 32 32",20).kind,"APPLIED")==0,"global seq after seal reject");
+                check(std::strcmp(p.command(start,20).reason,"stale")==0,"seal stale not rejected");
+                for(const auto &pixel:p.render(400)) check(pixel.red==32 && pixel.green==32 && pixel.blue==32,"ADD32 saturated background wrong");
             }
         } else throw std::runtime_error("unknown case");
         check(!camera::validToken("bad") && !camera::validToken("0123456789abcdef0") &&

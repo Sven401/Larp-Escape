@@ -11,6 +11,16 @@ als eigenen Plan und schliesst dieses Ziel nach Sicherung von Arbeit und Grund.
 Das ist keine Abnahme des urspruenglich angestrebten gesamten Produktablaufs.
 Keine weitere Implementierung, Installation oder Migration in dieser Sitzung.
 
+## Folgeauftrag: bedingte Wiederaufnahme
+
+Am 28.10.2026 beauftragt der Nutzer einen
+[Maintainer-Fortsetzungsplan](BLE-FORTSETZUNGSPLAN-2026-10-28.md).
+Er ergaenzt die obige Abschlussentscheidung: Nach belegter Erfuellung der
+Softwaretore S1 bis S6 darf die vollstaendige BLE-Produktintegration weitergehen,
+ohne erneute allgemeine Umfangsfrage. Jetzt nur Plan; keine Plattform- oder
+Produktumsetzung, kein Upload und keine automatische Wiederaufnahme.
+Die urspruenglichen Nachweis- und Abnahmegrenzen bleiben erhalten.
+
 ## Auftrag, Verantwortliche und Grenzen
 
 Nutzerziel: Android verbindet sich authentifiziert mit einer V2-Box, erkennt

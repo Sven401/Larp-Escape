@@ -1,0 +1,276 @@
+{
+  "source_commit": "a40365d715b2055ee23f767fa53b55ac25243437",
+  "status": "host characterization passed; no device/camera run",
+  "source_files_sha256": {
+    "lib/LedFx/ripple.cpp": "ff4276c0baa888143d55feccd5ddb9457818401fbfec1d31fce37c028ecbb7bd",
+    "lib/LedFx/ripple.h": "f89480657c3b4d4447529f0c5d7c848e09dffe245c9c79cdbda52ecc31ca15fd",
+    "lib/LedFx/burst.cpp": "c54d1d7d10e56a19e89963c11246ef6ca8628acb1d469365ed429d43f339494a",
+    "lib/LedFx/burst.h": "aa780d57a94a1dbc865eddcd9ae1d4ad6e60663141943b73ecf694e654db3cd3"
+  },
+  "probe_sources_sha256": {
+    "run.py": "8e443b42f2b2077cd30864c875afcc6f96a2ad4fd29b5d6c15648a984dc1cc50",
+    "probe.cpp": "87ae45831dc7e178504ce50f1bb4b5186574017a5e94452c0e88d4df333dd43b",
+    "FastLED.h": "2d7d999e678dd9cbf7cb9d5be20b5a4ada2b178830e7cb523bc72d2f771f0be9"
+  },
+  "method": "Unmodified historical ripple.cpp and burst.cpp, host CRGB saturating-add/scale8 shim. Allocated guard pixels capture invalid logical indices safely. No FastLED output driver or ESP32 scheduling.",
+  "frames": 60,
+  "nominal_frame_delay_ms": 33,
+  "brightness_samples": {
+    "0": 25,
+    "1": 51,
+    "8": 229,
+    "9": 255,
+    "10": 255,
+    "11": 250,
+    "30": 155,
+    "59": 10
+  },
+  "peak_footprints": {
+    "22": [
+      {
+        "led": 0,
+        "rgb": [
+          127,
+          127,
+          127
+        ]
+      },
+      {
+        "led": 1,
+        "rgb": [
+          63,
+          63,
+          63
+        ]
+      },
+      {
+        "led": 2,
+        "rgb": [
+          42,
+          42,
+          42
+        ]
+      },
+      {
+        "led": 19,
+        "rgb": [
+          42,
+          42,
+          42
+        ]
+      },
+      {
+        "led": 20,
+        "rgb": [
+          63,
+          63,
+          63
+        ]
+      },
+      {
+        "led": 21,
+        "rgb": [
+          127,
+          127,
+          127
+        ]
+      },
+      {
+        "led": 22,
+        "rgb": [
+          127,
+          127,
+          255
+        ]
+      }
+    ],
+    "2": [
+      {
+        "led": -1,
+        "rgb": [
+          42,
+          42,
+          42
+        ]
+      },
+      {
+        "led": 0,
+        "rgb": [
+          63,
+          63,
+          63
+        ]
+      },
+      {
+        "led": 1,
+        "rgb": [
+          127,
+          127,
+          127
+        ]
+      },
+      {
+        "led": 2,
+        "rgb": [
+          127,
+          127,
+          255
+        ]
+      },
+      {
+        "led": 3,
+        "rgb": [
+          127,
+          127,
+          127
+        ]
+      },
+      {
+        "led": 4,
+        "rgb": [
+          63,
+          63,
+          63
+        ]
+      },
+      {
+        "led": 5,
+        "rgb": [
+          42,
+          42,
+          42
+        ]
+      }
+    ],
+    "16": [
+      {
+        "led": 13,
+        "rgb": [
+          42,
+          42,
+          42
+        ]
+      },
+      {
+        "led": 14,
+        "rgb": [
+          63,
+          63,
+          63
+        ]
+      },
+      {
+        "led": 15,
+        "rgb": [
+          127,
+          127,
+          127
+        ]
+      },
+      {
+        "led": 16,
+        "rgb": [
+          127,
+          127,
+          255
+        ]
+      },
+      {
+        "led": 17,
+        "rgb": [
+          127,
+          127,
+          127
+        ]
+      },
+      {
+        "led": 18,
+        "rgb": [
+          63,
+          63,
+          63
+        ]
+      },
+      {
+        "led": 19,
+        "rgb": [
+          42,
+          42,
+          42
+        ]
+      }
+    ],
+    "10": [
+      {
+        "led": 7,
+        "rgb": [
+          42,
+          42,
+          42
+        ]
+      },
+      {
+        "led": 8,
+        "rgb": [
+          63,
+          63,
+          63
+        ]
+      },
+      {
+        "led": 9,
+        "rgb": [
+          127,
+          127,
+          127
+        ]
+      },
+      {
+        "led": 10,
+        "rgb": [
+          127,
+          127,
+          255
+        ]
+      },
+      {
+        "led": 11,
+        "rgb": [
+          127,
+          127,
+          127
+        ]
+      },
+      {
+        "led": 12,
+        "rgb": [
+          63,
+          63,
+          63
+        ]
+      },
+      {
+        "led": 13,
+        "rgb": [
+          42,
+          42,
+          42
+        ]
+      }
+    ]
+  },
+  "negative_index_origin": 2,
+  "negative_logical_index": -1,
+  "combined_masks": 16,
+  "findings": [
+    "constructor is dormant",
+    "60 emitted frames and no new contribution at frame 61",
+    "release does not cancel a fired pulse",
+    "held input repeats each 60 frames",
+    "mid-pulse fire ignores changed duration and center",
+    "completed pulse can be restarted",
+    "draw does not clear framebuffer",
+    "Idle double Burst yields white 120-frame pulse in serialized calls"
+  ],
+  "result": "PASS: four exact source pulse envelopes, 16 combined masks, negative-index guards, held repetition, busy retrigger, post-end restart, external-clear requirement, Idle double Burst"
+}

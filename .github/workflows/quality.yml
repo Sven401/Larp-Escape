@@ -49,6 +49,12 @@ jobs:
       - name: Check D0 event contract examples
         # D0 examples are a semantic specification, not a crypto/device proof.
         run: python scripts/quality_evidence.py run --name d0-contract -- python scripts/check_d0_contract.py
+      - name: Check P0 rule semantics and reference traces
+        # Decoded specification projection, not a package codec or device proof.
+        run: python scripts/quality_evidence.py run --name p0-rules -- python -m unittest discover -s scripts/tests -p test_p0_rules_model.py -v
+      - name: Check D1 host transactions and process recovery
+        # A host reference, not an ESP32 storage or physical power-cut proof.
+        run: python scripts/quality_evidence.py run --name d1-journal -- python -m unittest discover -s scripts/tests -p test_d1_journal.py -v
       - name: Prepare and audit the pinned real Mbed TLS sources
         run: python scripts/quality_evidence.py run --name mbedtls-source -- python scripts/prepare_peer_mbedtls.py --directory "$env:RUNNER_TEMP/peer-mbedtls"
       - name: Check the architecture guard fixtures

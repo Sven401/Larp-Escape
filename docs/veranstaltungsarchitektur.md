@@ -1,5 +1,12 @@
 # Verbindliche Entscheidung: dezentrale Veranstaltungsarchitektur
 
+**Ergänzendes Architekturziel · 21.10.2026:** [SP-01](spielpakete-architektur.md)
+verlangt nachladbare Spiel-/Regelpakete, Mehrboxbetrieb ab der ersten
+Produktversion und einen Drittspiel-Nachweis bei eingefrorener App/Firmware.
+VA-01 bleibt maßgeblich für Autonomie, Zuständigkeiten und Ausfallregeln;
+die [Umsetzungsreihenfolge](veranstaltungsarchitektur-umsetzung.md#0-produktpriorität-ab-21102026)
+ist auf das neue Produktziel ausgerichtet. Umsetzung und Abnahme offen.
+
 Technische Ausarbeitung auf Integrationsbasis `5f90d10`:
 [D0 v1: Identitäten, Ereignisse und Offline-Regeln](veranstaltung/d0-vertrag-v1.md),
 [Format, Ursprungsvertrauen und Migration](veranstaltung/d0-sicherheit-migration-v1.md).

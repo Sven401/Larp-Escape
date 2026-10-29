@@ -4,6 +4,12 @@ Append JSON objects, one complete line at a time, to --commands while this runs.
 Start requires slot/gen/p/valid/rgb/gain/duration_ms/curve. Update/stop inherit only
 ACK-confirmed parameters. op=background sets rgb; op=status reads state;
 op=finish ends with STOP and a bounded wait for actual black + DONE.
+--seal requires LARP-SEAL/1 support before LIVE. seal-start requires
+round/gen/count/valid/cause/consumed (cause: 0 snapshot, 1 progress). Its optional
+rgb/peak_rgb default to [0,8,12]/[4,18,24]; sweep_ms/pixel_ms/transition_ms/pulse_ms
+default to 600/150/300/800. seal-update/seal-stop inherit confirmed SEALSTATE
+parameters. consumed is a start-only input; authorize_pulse defaults to 0 and
+must be explicitly set to 1 on the update that authorizes a completion pulse.
 No flashing, reconnecting, command retry, calibration or acceptance verdict.
 """
 import argparse
@@ -22,6 +28,13 @@ import time
 from led_camera import digest
 from led_camera_lab import pack_frame
 import led_camera_rssi as rssi_module
+
+
+SEAL_CAPABILITY = "LARP-SEAL/1 1 23 32"
+SEAL_DEFAULTS = {"rgb": [0, 8, 12], "peak_rgb": [4, 18, 24], "sweep_ms": 600,
+                 "pixel_ms": 150, "transition_ms": 300, "pulse_ms": 800}
+SEAL_PARAMETERS = ("round", "gen", "count", "valid", "cause", "rgb", "peak_rgb",
+                   "sweep_ms", "pixel_ms", "transition_ms", "pulse_ms")
 
 
 class CommandTail:
@@ -69,7 +82,46 @@ def rgb(value):
     return [integer(c, 0, 32, "rgb channel") for c in value]
 
 
-def encode_command(item, token, req, state):
+def seal_parameters(params, allow_zero_identity=False):
+    """Validate the common wire/state parameters without authorizing a pulse."""
+    first_identity = 0 if allow_zero_identity else 1
+    result = {key: integer(params.get(key), first_identity, 0xFFFFFFFF, key)
+              for key in ("round", "gen")}
+    result.update({key: integer(params.get(key), 0, high, key)
+                   for key, high in (("count", 3), ("valid", 1), ("cause", 1))})
+    result.update({key: rgb(params.get(key)) for key in ("rgb", "peak_rgb")})
+    result["pixel_ms"] = integer(params.get("pixel_ms"), 50, 1000, "pixel_ms")
+    result["sweep_ms"] = integer(params.get("sweep_ms"), result["pixel_ms"], 5000, "sweep_ms")
+    result["transition_ms"] = integer(params.get("transition_ms"), 50, 5000, "transition_ms")
+    result["pulse_ms"] = integer(params.get("pulse_ms"), 200, 5000, "pulse_ms")
+    if result["pulse_ms"] % 2:
+        raise ValueError("pulse_ms must be even")
+    return result
+
+
+def encode_seal_command(item, token, req, state):
+    op = item["op"].removeprefix("seal-")
+    integer(req, 1, 0xFFFFFFFF, "req")
+    current = state if state and state["state"] else None
+    params = dict(SEAL_DEFAULTS) if op == "start" else dict(current or {})
+    params.update(item)
+    params = seal_parameters(params)
+    consumed = integer(item.get("consumed", None if op == "start" else 0), 0, 1, "consumed")
+    authorize = integer(item.get("authorize_pulse", 0), 0, 1, "authorize_pulse")
+    if consumed and op != "start":
+        raise ValueError("consumed is only an input for seal-start")
+    if authorize and op != "update":
+        raise ValueError("authorize_pulse is only allowed for seal-update")
+    if op == "stop":
+        if not current or any(params[key] != current[key] for key in SEAL_PARAMETERS):
+            raise ValueError("Seal stop must repeat ACK-confirmed parameters; update first")
+    values = [params["round"], params["gen"], op, params["count"], params["valid"],
+              params["cause"], consumed, authorize, *params["rgb"], *params["peak_rgb"],
+              params["sweep_ms"], params["pixel_ms"], params["transition_ms"], params["pulse_ms"]]
+    return f"SEAL {token} {req} " + " ".join(map(str, values))
+
+
+def encode_command(item, token, req, state, seal_state=None, seal_capability=False):
     """Build a complete wire command from explicit or confirmed parameters."""
     if "_invalid" in item:
         raise ValueError(item["_invalid"])
@@ -80,6 +132,11 @@ def encode_command(item, token, req, state):
         wire = f"BG {token} {req} " + " ".join(map(str, rgb(item.get("rgb"))))
     elif op in ("status", "finish"):
         wire = f"STATUS {token}" if op == "status" else "STOP"
+    elif op in ("seal-start", "seal-update", "seal-stop"):
+        if not seal_capability:
+            raise ValueError("Seal command requires exact " + SEAL_CAPABILITY + " capability")
+        allowed |= set(SEAL_PARAMETERS) | {"consumed", "authorize_pulse"}
+        wire = encode_seal_command(item, token, req, seal_state)
     elif op in ("start", "update", "stop"):
         allowed |= {"slot", "gen", "p", "valid", "rgb", "gain", "duration_ms", "curve"}
         slot = integer(item.get("slot"), 0, 1, "slot")
@@ -99,7 +156,7 @@ def encode_command(item, token, req, state):
                     raise ValueError("Stop must repeat ACK-confirmed parameters; update first")
         wire = f"GLOW {token} {req} {slot} " + " ".join(map(str, values))
     else:
-        raise ValueError("op must be start/update/stop/background/status/finish")
+        raise ValueError("op must be start/update/stop/seal-start/seal-update/seal-stop/background/status/finish")
     unknown = set(item) - allowed
     if unknown:
         raise ValueError("Unknown command fields: " + ", ".join(sorted(unknown)))
@@ -120,6 +177,44 @@ def parse_state(line, token):
                       "p": s[3], "valid": s[4], "rgb": s[5:8], "gain": s[8],
                       "duration_ms": s[9], "curve": s[10]})
     return {"revision": revision, "device_ms": device_ms, "background": bg, "slots": slots}
+
+
+def parse_seal_state(line, token):
+    fields = line.split()
+    if len(fields) != 23 or fields[:2] != ["SEALSTATE", token]:
+        raise ValueError("Invalid SEALSTATE envelope")
+    nums = [int(value) for value in fields[2:]]
+    state = {"revision": integer(nums[0], 0, 0xFFFFFFFF, "revision"),
+             "device_ms": integer(nums[1], 0, 0xFFFFFFFF, "device_ms"),
+             "state": integer(nums[2], 0, 3, "state"), "round": nums[3], "gen": nums[4],
+             "seq": integer(nums[5], 0, 0xFFFFFFFF, "seq"), "count": nums[6],
+             "valid": nums[7], "cause": nums[8],
+             "consumed": integer(nums[9], 0, 1, "consumed"),
+             "pending": integer(nums[10], 0, 1, "pending"), "rgb": nums[11:14],
+             "peak_rgb": nums[14:17], "sweep_ms": nums[17], "pixel_ms": nums[18],
+             "transition_ms": nums[19], "pulse_ms": nums[20]}
+    state.update(seal_parameters(state, allow_zero_identity=state["state"] == 0))
+    if state["state"] and not state["seq"]:
+        raise ValueError("Active SEALSTATE seq must be nonzero")
+    return state
+
+
+def paired_state(state, seal_state=None, seal_capability=False):
+    """Publish a single revision; an earlier Seal state must never be relabeled."""
+    if not state:
+        return None
+    if seal_capability:
+        if not seal_state or seal_state["revision"] != state["revision"]:
+            return None
+        return {**state, "seal": seal_state}
+    return state
+
+
+def acknowledged_state(command, state, seal_state=None, seal_capability=False):
+    snapshot = paired_state(state, seal_state, seal_capability)
+    if command and snapshot and command.get("revision") == snapshot["revision"]:
+        return snapshot
+    return None
 
 
 def parse_live_frame(line, token):
@@ -163,7 +258,7 @@ def unresolved_at_close(command):
     if command.get("result") is not None:
         command["ack_result"] = command["result"]
     command["result"] = "UNRESOLVED"
-    command["reason"] = "Trial ended without complete ACK and matching STATE (or explicit REJECT)"
+    command["reason"] = "Trial ended without complete ACK and matching STATE/required SEALSTATE (or explicit REJECT)"
     return True
 
 
@@ -279,7 +374,7 @@ def run(args):
               "utc": datetime.now(timezone.utc).isoformat(), "port": args.port,
               "firmware_sha256": hashlib.sha256(binary).hexdigest(),
               "host_source_sha256": digest(Path(__file__)), "commands": [], "events": [],
-              "states": [], "serial": [], "scope": "Interactive visual trial; not optical acceptance",
+              "states": [], "seal_states": [], "serial": [], "scope": "Interactive visual trial; not optical acceptance",
               "time_meaning": "Host perf_counter receive times; camera exposure and buffering unknown"}
     if rssi:
         report["rssi"] = {"peer": rssi.peer, "slot": rssi.slot, "samples": rssi.samples,
@@ -316,6 +411,8 @@ def run(args):
     camera = None
     pending_bytes = b""
     last_state = None
+    last_seal_state = None
+    seal_capability = False
     live = False
     identity_confirmed = False
     pending = None
@@ -339,7 +436,7 @@ def run(args):
         record("send", {"line": wire, "sent_ms": when})
         return when
     def receive_line(line):
-        nonlocal last_state
+        nonlocal last_state, last_seal_state
         if line.startswith(f"L {token} "):
             event = parse_live_frame(line, token)
             event["host_ms"] = now_ms()
@@ -352,7 +449,15 @@ def run(args):
             last_state = parse_state(line, token)
             last_state["host_ms"] = now_ms()
             report["states"].append(last_state)
-            (args.output / "active.json").write_text(json.dumps(last_state, indent=2), encoding="utf-8")
+        elif line.startswith(f"SEALSTATE {token} ") and seal_capability:
+            last_seal_state = parse_seal_state(line, token)
+            last_seal_state["host_ms"] = now_ms()
+            report["seal_states"].append(last_seal_state)
+        if line.startswith((f"STATE {token} ", f"SEALSTATE {token} ")):
+            active = paired_state(last_state, last_seal_state, seal_capability)
+            if active is not None:
+                report["active_state"] = active
+                (args.output / "active.json").write_text(json.dumps(active, indent=2), encoding="utf-8")
         if rssi:
             measurement = rssi.receive(line, now_ms())
             if measurement:
@@ -369,8 +474,9 @@ def run(args):
                 pending.update(result="REJECT", reason=fields[3], ack_host_ms=now_ms())
                 print(json.dumps(pending), flush=True)
                 pending = None
-        if pending and pending.get("revision") is not None and last_state and last_state["revision"] == pending["revision"]:
-            pending["active_state"] = last_state
+        active = acknowledged_state(pending, last_state, last_seal_state, seal_capability)
+        if active is not None:
+            pending["active_state"] = active
             print(json.dumps(pending), flush=True)
             pending = None
     try:
@@ -378,7 +484,8 @@ def run(args):
         identity = capability = False
         rssi_capability = rssi is None
         deadline, last_hello = time.perf_counter() + 5, 0
-        while time.perf_counter() < deadline and not (identity and capability and rssi_capability):
+        while time.perf_counter() < deadline and not (identity and capability and rssi_capability and
+                                                     (seal_capability or not getattr(args, "seal", False))):
             if time.perf_counter() - last_hello > .3:
                 send("HELLO")
                 last_hello = time.perf_counter()
@@ -392,9 +499,14 @@ def run(args):
                     capability = True
                 if line == rssi_module.CAPABILITY:
                     rssi_capability = True
+                if line == SEAL_CAPABILITY:
+                    seal_capability = True
             time.sleep(.002)
         if not (identity and capability and rssi_capability):
             raise RuntimeError("Missing exact firmware identity or required LIVE/RSSI capability")
+        if getattr(args, "seal", False) and not seal_capability:
+            raise RuntimeError("Missing required SEAL capability: " + SEAL_CAPABILITY)
+        report["seal_capability"] = seal_capability
         identity_confirmed = True
         send("STOP")
         deadline = time.perf_counter() + 3
@@ -466,7 +578,9 @@ def run(args):
             if not pending and requests:
                 item = requests.popleft()
                 try:
-                    wire = encode_command(item, token, req + 1, last_state)
+                    active = paired_state(last_state, last_seal_state, seal_capability)
+                    wire = encode_command(item, token, req + 1, last_state,
+                                          active.get("seal") if active else None, seal_capability)
                 except (ValueError, KeyError) as error:
                     rejected = {"input": item, "result": "HOST_REJECT", "error": str(error), "host_ms": now_ms()}
                     report["commands"].append(rejected)
@@ -589,6 +703,8 @@ def main():
     parser.add_argument("--height", type=int, default=480)
     parser.add_argument("--exposure", type=float, default=-7)
     parser.add_argument("--rois", type=Path)
+    parser.add_argument("--seal", action="store_true",
+                        help="Require exact Kristallsiegel capability before starting LIVE")
     parser.add_argument("--rssi-peer", type=rssi_module.normalize_peer,
                         help="Optional unicast peer MAC; RSSI updates only an explicitly started active slot")
     parser.add_argument("--rssi-slot", type=int, choices=(0, 1), default=0)
