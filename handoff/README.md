@@ -1,5 +1,21 @@
 # Technische Projektübergabe
 
+**Integrierter Stand · 28.10.2026:** Zielbranch
+`plan/projektuebergabe-kuratierter-stand` bei
+`191d08164614bd6472db241336d263da77691f49`. #71 (Resonanzkreis), #73
+(D1-Rechnerreferenz), #89 (Kristallsiegel-Labor) und #94 (SP-01) wurden in
+dieser Reihenfolge übernommen. [Mergefolge, vollständige Commitzuordnung,
+CI-Nachweise und offene Grenzen](MAINTAINER.md#integrierter-stand--28102026).
+Quality am finalen Merge: **3/3 erfolgreich**; LED product am #89-Merge:
+**4/4 erfolgreich**; ESP-NOW probe am #71-Merge: **1/1 erfolgreich**.
+Die unterschiedlichen Prüfcommits sind im Maintainer-Einstieg getrennt belegt;
+#94 ändert ausschließlich Dokumentation. Keine neue Geräte-/Gesamtspielabnahme.
+
+**Weiter offen:** D1-B/C, Firmware-/F5a-Anschluss, reale Profilübernahme,
+SP-01-Laufzeit/Autorenwerkzeuge und Mehrbox-/Drittspielabnahme. #100 und #101
+bleiben offene Entwürfe und sind nicht Teil dieses Integrationsstands.
+Die folgenden datierten Einträge bleiben historische Belege ihres jeweiligen Umfangs.
+
 **Architekturziel bestätigt · 21.10.2026:** [SP-01: nachladbare Spiel- und
 Regelpakete](../docs/spielpakete-architektur.md), [neue Prioritäten und
 Arbeitspakete](../docs/veranstaltungsarchitektur-umsetzung.md#0-produktpriorität-ab-21102026).
@@ -143,7 +159,7 @@ Spielleitungsrechte sind Folgearbeit. Außerdem gemeinsame Baugruppenabnahme
 am passenden V2-Paar, Matrixproblemstellen #54,
 LED-/NFC-/Sitzungsfehlerfälle sowie allgemeiner Spielzugang und Profilbetrieb.
 Für Näheglut fehlen echter Spieleinsatz/Nähequelle, Produktadapter und optisches
-Nutzerurteil. D1-A/PR #73 bleibt gesondert in Review; #60/D1-B/C bleibt offen.
+Nutzerurteil. D1-A/PR #73 ist seit 28.10.2026 integriert; #60/D1-B/C bleibt offen.
 Historische bestandene Teiltests bleiben erhalten. Ein Geräteupload ist ein
 separater Auftrag; vorab tatsächliches Paar und chipgebundenen Rückweg prüfen.
 
