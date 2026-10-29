@@ -1,4 +1,5 @@
 #include "NimblePeerSource.h"
+#include "PeerTlsBridge.h"
 #include <cstring>
 #include <functional>
 #include <iostream>
@@ -231,7 +232,21 @@ int main(int argc, char **argv) {
         if (name.find("numeric-") == 0)
             clockValue = UINT32_MAX - 1000;
         Fixture f;
-        if (name == "registration-failure") {
+        if (name == "bridge-bounds") {
+            PeerTlsBridge bridge({nullptr, 0}, {nullptr, 0}, {nullptr, 0});
+            PeerCipherFragment fragment{};
+            CHECK(!bridge.push(fragment));
+            fragment.count = 129;
+            CHECK(!bridge.push(fragment));
+            fragment.count = 128;
+            for (unsigned i = 0; i < 16; ++i) CHECK(bridge.push(fragment));
+            CHECK(!bridge.push(fragment));
+            CHECK(!bridge.open(fragment.origin));
+            PinnedPeerTls tls(f.source);
+            bridge.step(f.source, tls, 0); // stale origin discarded, slot released
+            CHECK(bridge.open(fragment.origin));
+            CHECK(bridge.poll(f.source));
+        } else if (name == "registration-failure") {
             registrationError = 1;
             CHECK(!f.source.begin());
             CHECK(!f.source.ready());

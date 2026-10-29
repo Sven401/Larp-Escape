@@ -1,5 +1,6 @@
 // Compile qualification first: no radio start, enrollment or authority.
 #include "NimblePeerSource.h"
+#include "PeerTlsBridge.h"
 #include "esp_log.h"
 namespace {
 struct ClosedIngress final : larp::companion::IPeerCipherIngress {
