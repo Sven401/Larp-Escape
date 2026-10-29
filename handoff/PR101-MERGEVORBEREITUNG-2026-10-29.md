@@ -46,3 +46,5 @@ Historische Angaben im ursprünglichen Qualifikationsbericht gelten weiterhin
 für ihre dort benannten alten Commits und Versionen.
 
 Frisch lokal: sieben SDK-Guardfälle erfolgreich, Exit 0. Diffprüfung bestanden. Unabhängige Quellengegenprüfung des #101-Schnitts und der gezielten SDK-/ECC-Übernahme ohne P1/P2-Befund. Der andere Bearbeiter konnte seine Guardtests wegen lokaler Temp-/Git-Schreibrechte nicht ausführen; daraus wird kein bestandener Test abgeleitet. Finale native CI bleibt eigener Nachweis.
+
+Erster neuer CI-Lauf: native Host-/ECC-Prüfung bestand; Legacy-host-regression versuchte jedoch den CMake-only ECC-Test ohne SDK-Header mitzubauen. platformio.ini ordnet test_native_tls deshalb explizit allein dem nativen CMake-Prüfweg zu; dessen verpflichtende ECC-Ausführung bleibt erhalten. Neuer CI-Lauf erforderlich.
