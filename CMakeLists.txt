@@ -61,6 +61,9 @@ if(BUILD_TESTING AND LARP_PSA_IDF_PATH)
     # ESP-only port. Host tests forward them to the identical private headers.
     target_include_directories(builtin PRIVATE "${CMAKE_SOURCE_DIR}/test/psa_host_compat")
     target_include_directories(tfpsacrypto PRIVATE "${CMAKE_SOURCE_DIR}/test/psa_host_compat")
+    add_executable(native-empty-ecc test/test_native_tls/test_empty_ecc.cpp)
+    target_link_libraries(native-empty-ecc PRIVATE tfpsacrypto)
+    add_test(NAME native-empty-ecc COMMAND native-empty-ecc)
     add_executable(configured-control-psa test/test_configured_control/test_main.cpp
         lib/PsaPeerProofCrypto/PsaPeerProofCrypto.cpp)
     target_include_directories(configured-control-psa PRIVATE

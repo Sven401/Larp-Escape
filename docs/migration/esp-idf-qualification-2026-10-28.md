@@ -6,6 +6,8 @@ die Ziele des [Migrationsplans](../../handoff/ARDUINO-ESP32-3-MIGRATION.md)
 zu verfolgen. Der frühere reine Dokumentationsumfang ist damit für diese
 Sitzung um Prüfung und Softwareumsetzung erweitert; Geräteupload bleibt separat.
 
+**Aktualisierung 29.10.2026:** [Mergevorbereitung und neuer SDK-Wartungspin](../../handoff/PR101-MERGEVORBEREITUNG-2026-10-29.md). Die folgenden Versions-/Prüfangaben sind historische Belege des ursprünglichen Schnitts; aktuelle Qualifikation gesondert auswerten.
+
 ## Arbeitsbasis, Verantwortung und Prüfgrenzen
 
 Eigener Branch `codex/esp-idf-migration`, aufgebaut auf BLE-Stand `8ac927f`

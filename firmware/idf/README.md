@@ -5,8 +5,8 @@ real FreeRTOS channels. The entry point only creates channels: no Bluetooth,
 GPIO, I2C, UART, Wi-Fi, NVS erase or game authorisation is started. It is a
 qualification image, not a replacement for the installed box firmware.
 
-Target: classic ESP32, 4 MiB flash. Candidate SDK: ESP-IDF v6.1, commit
-`fff9895c82d744c7237be8847347bdd1b07c6643`; use its submodule/tool versions.
+Target: classic ESP32, 4 MiB flash. Candidate SDK: ESP-IDF v6.1 manufacturer maintenance commit
+`9a97f6c54ec638111ce55cd36581b3c192f15207`; use its submodule/tool versions.
 No Arduino component or third-party runtime dependency is included yet.
 The existing partition CSV is referenced unchanged; this does not prove on-device
 data compatibility. No OTA rollback claim: the table contains one application slot.

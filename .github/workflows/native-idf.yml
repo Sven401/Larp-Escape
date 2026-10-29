@@ -26,6 +26,12 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           persist-credentials: false
+      - name: Check out exact manufacturer security-maintenance candidate
+        run: |
+          git -C "$IDF_PATH" fetch --depth 1 origin 9a97f6c54ec638111ce55cd36581b3c192f15207
+          git -C "$IDF_PATH" checkout --detach 9a97f6c54ec638111ce55cd36581b3c192f15207
+          git -C "$IDF_PATH" submodule update --init --recursive --depth 1
+          python "$IDF_PATH/tools/idf_tools.py" install --targets=esp32 openocd-esp32 esp-rom-elfs
       - name: Verify SDK and exercise rejection cases
         run: |
           . "$IDF_PATH/export.sh"
