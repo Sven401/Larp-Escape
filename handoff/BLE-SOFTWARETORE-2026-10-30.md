@@ -1,64 +1,64 @@
-# BLE-Softwaretore: Arbeitsstand 30.10.2026
-
-Status: **Teilumsetzung, keine Fortsetzungsfreigabe f¸r den vollst‰ndigen Produktweg.**
-Basis: `2f0b03f925cb5d54fc72ce0059d97815632652a4`, PR #103.
-Am 30.10. per GitHub-Checkdiagnose gelesen: alle 14 gemeldeten Checks erfolgreich,
-einschlieﬂlich nativer Qualifikation (Run 40970381064). Das gilt f¸r die Basis.
-
-## Neue Software
-
-`PeerTlsBridge` verbindet den Host-Eingang mit einem einzigen Kryptografiearbeiter.
-Je Richtung 16 kopierte Fragmente, maximal 128 Eingangsbytes und 20 Notifybytes.
-Kein Heap, keine Kryptografie und kein SDK-Aufruf unter dem Mailboxlock.
-Volle Eingangsqueue liefert false an den bereits geschlossen ablehnenden Quelladapter.
-Busy beh‰lt identische Ausgangsbytes; veraltete Ausg‰nge werden verworfen.
-Die urspr¸ngliche Epoche bleibt erhalten. Der Worker pr¸ft alte TLS-Lifetime vor
-neuem Open. Prozesslebenslange Credentials und genau ein Worker sind Voraussetzung.
-Kein Start im Firmwareeinstieg, keine Rolle, kein physischer Pairingbest‰tiger.
-Der Anschluss ist Vorbereitung; eine echte Gegenstelle durch diese Bridge fehlt noch.
-
-Unabh‰ngiger Quellenreview durch `/root/review`: Reconnect-Befund korrigiert;
-keine weiteren konkreten P1/P2 im begrenzten Umfang. Keine eigenen Testl‰ufe des
-Gegenpr¸fers. Busy-Retention und aktiver TLS-Reconnect brauchen Bridge-Regressionen.
-
-## S5: Quellvergleich und inkompatibler Datenpfad
-
-| Daten | Tats‰chlicher Quellstand | Sichere Behandlung / offener Anschluss |
-| --- | --- | --- |
-| Partitionen | Native Konfiguration verwendet unver‰ndert `firmware/led/partitions.csv`: NVS 0x9000/0x5000, app0 0x10000/0x300000, larpkeys 0x310000/0x6000, LittleFS-Label spiffs 0x316000/0xda000 | Ein Appslot; kein OTA-Rollback. Gleiche Offsets beweisen keine Formatkompatibilit‰t. |
-| Ger‰teidentit‰t | `Esp32DeviceIdentityStore`: Default-NVS, larp-companion/device-id-v1 | nvs_flash_init-Fehler liefert false; kein Autoerase. Nativer Produktstart bindet diesen Store noch nicht an. |
-| Rollenregister | `Esp32PeerRegistryStore`: larp-peers-v1/registry-v1, feste Datensatzl‰nge, Fehler sperren | Registerformat und NVS-Backend m¸ssen im nativen Ziel gemeinsam gepr¸ft werden. TLS verleiht keine Rolle. |
-| Baugruppenschl¸ssel | Legacy ProductMain: separate Partition larpkeys, Namespace larp-led | Nicht als TLS-Schl¸ssel oder Spielrolle ¸bernehmen. Native Provisionierung fehlt. |
-| Bonds | Neuer NimBLE-Adapter verlangt NVS-Persistenz aus; RAM-Store | Keine automatische ‹bernahme alter Bluedroid-Bonds. Neuer Pairingpfad samt physischer Best‰tigung erforderlich. |
-| Profile | Esp32ProfileStore: /larp-profiles/profile-a.larp und profile-b.larp, Label spiffs, format_if_mount_failed=false, grow_on_mount=false | LittleFS-Komponente ist im nativen Produkt noch nicht aufgelˆst. Mount-/Schema-/Journalfehler m¸ssen sperren; kein Formatieren als Reparatur. |
-
-Damit liegt ein Quellvergleich vor, **kein bestandener S5-Kompatibilit‰tslauf**.
-Der native Produktpfad darf inkompatible/missing Daten nicht als erfolgreichen
-Import melden. Vor Upload Chipidentit‰t, Vollbackuphash und R¸ckweg nach vorhandener
-Hardwaredokumentation erneut abgleichen. Kein Upload in dieser Sitzung.
-
-## Tore und n‰chster konkreter Schritt
-
-| Tor | Ergebnis dieses Arbeitsstands | Rest |
-| --- | --- | --- |
-| S1 | SDK-Quellpin frisch gepr¸ft; sieben Ablehnungsf‰lle erfolgreich; gr¸ne native Basis-CI ausgelesen | Advisory-/Variantenmatrix vollst‰ndig abschlieﬂen; neue Firmware-CI auf ƒnderungscommit |
-| S2 | Kopierte Mailboxen erg‰nzt | echte SMP/HCI/ACL-Ordnung, physisches Pairing, Fristen und Ger‰teprobe |
-| S3 | BLE-/TLS-Bridge erg‰nzt | echte Bridge-Gegenstelle, Busy/Reconnect, Android, finale Verbraucherautorisierung |
-| S4 | keine neue Ger‰te-/Profilruntime | reale Adapter, Profileigent¸mer und Fehler-/Budgetnachweis implementieren |
-| S5 | obiger Quellvergleich | native Storeintegration, inkompatible Datenf‰lle, R¸ckwegpr¸fung vor Upload |
-| S6 | gemeinsame gr¸ne Basis, unabh‰ngiger begrenzter Quellenreview | aktueller Commit/CI und Integrationsreview des vollst‰ndigen Ziels |
-
-N‰chster Schritt: Bridge durch eine echte TLS-Gegenstelle betreiben und
-Reconnect/Busy-Ausgang pr¸fen; danach Worker im nativen Integrationsziel mit
-expliziter Provisionierung, physischer Pairing-UI und autorisiertem Verbraucher
-verdrahten. Erst dieses Ziel erlaubt eine konkrete installierbare Ger‰teprobe.
-
-## Frische lokale Pr¸fungen
-
-Auf dem beschriebenen ƒnderungsbaum: CMake/GCC16.2 mit exakt gepr¸ftem SDK-Pin,
-Build erfolgreich; 36/36 CTest-Eintr‰ge erfolgreich (10,72s), einschlieﬂlich
-Bridge-Grenzen, 18 bestehender TLS-Gegenstellen-Unterf‰lle und PSA-Kryptografie.
-Sieben SDK-Guardf‰lle erfolgreich (24,96s). Der erste CTest-Aufruf scheiterte
-am fehlenden Python-Kryptografiepaket; Wiederholung mit vorhandenem
-cryptography45.0.7-Paket erfolgreich. Keine neue ESP32-Imagepr¸fung auf diesem
-ƒnderungsbaum; die ausgelesene gr¸ne Firmware-CI gehˆrt ausschlieﬂlich zur Basis.
+# BLE-Softwaretore: Arbeitsstand 30.10.2026
+
+Status: **Teilumsetzung, keine Fortsetzungsfreigabe f√ºr den vollst√§ndigen Produktweg.**
+Basis: `2f0b03f925cb5d54fc72ce0059d97815632652a4`, PR #103.
+Am 30.10. per GitHub-Checkdiagnose gelesen: alle 14 gemeldeten Checks erfolgreich,
+einschlie√ülich nativer Qualifikation (Run 40970381064). Das gilt f√ºr die Basis.
+
+## Neue Software
+
+`PeerTlsBridge` verbindet den Host-Eingang mit einem einzigen Kryptografiearbeiter.
+Je Richtung 16 kopierte Fragmente, maximal 128 Eingangsbytes und 20 Notifybytes.
+Kein Heap, keine Kryptografie und kein SDK-Aufruf unter dem Mailboxlock.
+Volle Eingangsqueue liefert false an den bereits geschlossen ablehnenden Quelladapter.
+Busy beh√§lt identische Ausgangsbytes; veraltete Ausg√§nge werden verworfen.
+Die urspr√ºngliche Epoche bleibt erhalten. Der Worker pr√ºft alte TLS-Lifetime vor
+neuem Open. Prozesslebenslange Credentials und genau ein Worker sind Voraussetzung.
+Kein Start im Firmwareeinstieg, keine Rolle, kein physischer Pairingbest√§tiger.
+Der Anschluss ist Vorbereitung; eine echte Gegenstelle durch diese Bridge fehlt noch.
+
+Unabh√§ngiger Quellenreview durch `/root/review`: Reconnect-Befund korrigiert;
+keine weiteren konkreten P1/P2 im begrenzten Umfang. Keine eigenen Testl√§ufe des
+Gegenpr√ºfers. Busy-Retention und aktiver TLS-Reconnect brauchen Bridge-Regressionen.
+
+## S5: Quellvergleich und inkompatibler Datenpfad
+
+| Daten | Tats√§chlicher Quellstand | Sichere Behandlung / offener Anschluss |
+| --- | --- | --- |
+| Partitionen | Native Konfiguration verwendet unver√§ndert `firmware/led/partitions.csv`: NVS 0x9000/0x5000, app0 0x10000/0x300000, larpkeys 0x310000/0x6000, LittleFS-Label spiffs 0x316000/0xda000 | Ein Appslot; kein OTA-Rollback. Gleiche Offsets beweisen keine Formatkompatibilit√§t. |
+| Ger√§teidentit√§t | `Esp32DeviceIdentityStore`: Default-NVS, larp-companion/device-id-v1 | nvs_flash_init-Fehler liefert false; kein Autoerase. Nativer Produktstart bindet diesen Store noch nicht an. |
+| Rollenregister | `Esp32PeerRegistryStore`: larp-peers-v1/registry-v1, feste Datensatzl√§nge, Fehler sperren | Registerformat und NVS-Backend m√ºssen im nativen Ziel gemeinsam gepr√ºft werden. TLS verleiht keine Rolle. |
+| Baugruppenschl√ºssel | Legacy ProductMain: separate Partition larpkeys, Namespace larp-led | Nicht als TLS-Schl√ºssel oder Spielrolle √ºbernehmen. Native Provisionierung fehlt. |
+| Bonds | Neuer NimBLE-Adapter verlangt NVS-Persistenz aus; RAM-Store | Keine automatische √úbernahme alter Bluedroid-Bonds. Neuer Pairingpfad samt physischer Best√§tigung erforderlich. |
+| Profile | Esp32ProfileStore: /larp-profiles/profile-a.larp und profile-b.larp, Label spiffs, format_if_mount_failed=false, grow_on_mount=false | LittleFS-Komponente ist im nativen Produkt noch nicht aufgel√∂st. Mount-/Schema-/Journalfehler m√ºssen sperren; kein Formatieren als Reparatur. |
+
+Damit liegt ein Quellvergleich vor, **kein bestandener S5-Kompatibilit√§tslauf**.
+Der native Produktpfad darf inkompatible/missing Daten nicht als erfolgreichen
+Import melden. Vor Upload Chipidentit√§t, Vollbackuphash und R√ºckweg nach vorhandener
+Hardwaredokumentation erneut abgleichen. Kein Upload in dieser Sitzung.
+
+## Tore und n√§chster konkreter Schritt
+
+| Tor | Ergebnis dieses Arbeitsstands | Rest |
+| --- | --- | --- |
+| S1 | SDK-Quellpin frisch gepr√ºft; sieben Ablehnungsf√§lle erfolgreich; gr√ºne native Basis-CI ausgelesen | Advisory-/Variantenmatrix vollst√§ndig abschlie√üen; neue Firmware-CI auf √Ñnderungscommit |
+| S2 | Kopierte Mailboxen erg√§nzt | echte SMP/HCI/ACL-Ordnung, physisches Pairing, Fristen und Ger√§teprobe |
+| S3 | BLE-/TLS-Bridge erg√§nzt | echte Bridge-Gegenstelle, Busy/Reconnect, Android, finale Verbraucherautorisierung |
+| S4 | keine neue Ger√§te-/Profilruntime | reale Adapter, Profileigent√ºmer und Fehler-/Budgetnachweis implementieren |
+| S5 | obiger Quellvergleich | native Storeintegration, inkompatible Datenf√§lle, R√ºckwegpr√ºfung vor Upload |
+| S6 | gemeinsame gr√ºne Basis, unabh√§ngiger begrenzter Quellenreview | aktueller Commit/CI und Integrationsreview des vollst√§ndigen Ziels |
+
+N√§chster Schritt: Bridge durch eine echte TLS-Gegenstelle betreiben und
+Reconnect/Busy-Ausgang pr√ºfen; danach Worker im nativen Integrationsziel mit
+expliziter Provisionierung, physischer Pairing-UI und autorisiertem Verbraucher
+verdrahten. Erst dieses Ziel erlaubt eine konkrete installierbare Ger√§teprobe.
+
+## Frische lokale Pr√ºfungen
+
+Auf dem beschriebenen √Ñnderungsbaum: CMake/GCC16.2 mit exakt gepr√ºftem SDK-Pin,
+Build erfolgreich; 36/36 CTest-Eintr√§ge erfolgreich (10,72s), einschlie√ülich
+Bridge-Grenzen, 18 bestehender TLS-Gegenstellen-Unterf√§lle und PSA-Kryptografie.
+Sieben SDK-Guardf√§lle erfolgreich (24,96s). Der erste CTest-Aufruf scheiterte
+am fehlenden Python-Kryptografiepaket; Wiederholung mit vorhandenem
+cryptography45.0.7-Paket erfolgreich. Keine neue ESP32-Imagepr√ºfung auf diesem
+√Ñnderungsbaum; die ausgelesene gr√ºne Firmware-CI geh√∂rt ausschlie√ülich zur Basis.
