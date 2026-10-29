@@ -217,6 +217,8 @@ neue Produktabnahme. VA-01, D0, UX-01 und bestehende Restprüfungen bleiben erha
 
 ## Start für weitere App- und Firmwarearbeit
 
+**BLE-/Rollen-/Profiluebergabe, 28.10.2026:** [Arbeitsstand und Nachweise](BLE-ROLLEN-PROFILE-2026-10-28.md) gesichert; Nutzerziel mit Uebergabe geschlossen. [Plattformmigration als eigener Plan](ARDUINO-ESP32-3-MIGRATION.md) wegen neu benoetigtem sicherem TLS-Pfad aufnehmen. Produktanschluss und Geraeteabnahme bleiben offen.
+
 **Integration und Bereinigung · 21.10.2026:** #91 ist bei `f174cee` integriert,
 mit neun erfolgreichen PR-Prüfungen und sieben erfolgreichen Prüfungen auf dem
 Mergecommit. Der lokale Checkout `.worktrees/kanonischer-start` liegt sauber

@@ -4,8 +4,9 @@ void authDispatch(PeerAuthDispatch expected, PeerAuthDispatch actual) {
     TEST_ASSERT_EQUAL(static_cast<unsigned>(expected), static_cast<unsigned>(actual));
 }
 struct AuthFixture : ChallengeIssueFixture {
-    explicit AuthFixture(IPeerProofCrypto *crypto = nullptr, std::uint32_t reg = 0, bool gm = true)
-        : ChallengeIssueFixture(crypto, reg, true, gm) {}
+    explicit AuthFixture(IPeerProofCrypto *crypto = nullptr, std::uint32_t reg = 0, bool gm = true,
+                         bool output = false)
+        : ChallengeIssueFixture(crypto, reg, true, gm, output) {}
     void issueNow() {
         write();
         peerOutcome(PeerProofOutcome::Issued, process().outcome);
