@@ -697,6 +697,15 @@ void test_peer_actual_mbedtls_p256_independent_signature_and_bad_public_inputs()
     const std::uint8_t n[32] = {0xff, 0xff, 0xff, 0xff, 0,    0,    0,    0,    0xff, 0xff, 0xff,
                                 0xff, 0xff, 0xff, 0xff, 0xff, 0xbc, 0xe6, 0xfa, 0xad, 0xa7, 0x17,
                                 0x9e, 0x84, 0xf3, 0xb9, 0xca, 0xc2, 0xfc, 0x63, 0x25, 0x51};
+    auto boundary = proof.signature;
+    std::fill(boundary.begin() + 32, boundary.end(), 0);
+    TEST_ASSERT_FALSE(actual.verify(key, transcript, boundary)); // s == 0
+    boundary = proof.signature;
+    std::copy(n, n + 32, boundary.begin());
+    TEST_ASSERT_FALSE(actual.verify(key, transcript, boundary)); // r == order
+    boundary = proof.signature;
+    std::copy(n, n + 32, boundary.begin() + 32);
+    TEST_ASSERT_FALSE(actual.verify(key, transcript, boundary)); // s == order
     int borrow = 0;
     for (int i = 31; i >= 0; --i) {
         int value = int(n[i]) - int(high[32 + i]) - borrow;
