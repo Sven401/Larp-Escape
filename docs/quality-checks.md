@@ -246,3 +246,21 @@ betroffenen Nachweis offen. Vorhandene historische Ergebnisse im
 [Übergabeprüfstand](../handoff/PRUEFSTAND.md) bleiben davon getrennt.
 Ein Hosttest oder Build belegt keine Bluetooth-, Handy-, LED- oder
 Originalboxabnahme. Dieser Prüfweg enthält keinen Upload oder Gerätebetrieb.
+
+## P0-Regelvertrag ohne Hardware prüfen
+
+```powershell
+python scripts/p0_rules_model.py
+python -m unittest discover -s scripts/tests -p test_p0_rules_model.py -v
+```
+
+[Vertrag und Grenzen](spielpakete/p0-vertrag-v1.md),
+[Referenztraces](spielpakete/fixtures/p0-v1.json). Das Modell prüft nur dekodierte
+Snapshots, vollständige RAM-Pläne, Dreizustandslogik, lokale Timerreihenfolge
+und deduplizierte Vorgänge/Latches. Vorab statisch typgeprüfte Projektionen, gültige Eingangsstrukturen und
+eine bereits geprüfte D0-Zulassung werden vorausgesetzt. `accepted` ist im
+Modell eine simulierte Vertrauensentscheidung, kein Paketfeld. Kürzere
+Listenausdrücke in Fixtures sind eine Projektion der normativen Objektgrammatik.
+Kein Parser, Modulcompiler, Deployment-/Ressourcenvalidator, Geräteadapter,
+Pause-/Recoveryablauf, lokale emit-Rückkopplungsqueue oder Flashcommit wird dadurch implementiert oder geprüft.
+Die Quality-CI führt die Gegenfälle einschließlich der sechs Traces aus.

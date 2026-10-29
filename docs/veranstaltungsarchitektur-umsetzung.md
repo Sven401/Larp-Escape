@@ -29,11 +29,13 @@ Diese Matrix hält Vertragszuordnung und Prüftore fest.
 | P4, Release-Tor | App, Firmware und beteiligte Ausführungswerkzeuge einfrieren; danach drittes Spiel neu entwerfen, in GM erstellen, prüfen, verteilen und im Mehrboxbetrieb spielen. Nur Pakete, Ressourcen und Bindungen ändern; unveränderte Binärhashes und neue Mechanik belegen. | SP-T-Kriterien aus SP-01; getrennte Software-/Geräte-/Nutzerbelege; Freigabe bleibt beim Nutzer |
 | Optionaler Ausbau | Zeitweise erreichbare Zentrale und ihr eigener Abnahmeanteil. | #62 und zentralenspezifischer Teil #63/VA-T08; keine Voraussetzung des vorbereiteten lokalen Mehrboxspiels |
 
-**Konkreter nächster Schritt:** P0 als versionierten Paket-/Sprachvertrag mit
-zwei unterschiedlichen Mehrbox-Referenzfällen und offenen Ressourcenbudgets
-ausarbeiten. Den dritten Abnahmefall erst nach dem Software-Freeze auswählen.
-Die ersten beiden Fälle müssen die allgemeinen Fähigkeiten erproben; keine
-versteckte Vorimplementierung des dritten Spiels im Laufzeitcode.
+**P0 konkretisiert · 29.10.2026:** [technischer Vertragsvorschlag](spielpakete/p0-vertrag-v1.md)
+mit [zwei Referenzfällen](spielpakete/p0-referenzspiele-v1.md),
+[Format-/Modulvertrag](spielpakete/p0-formate-v1.md), Startbudgets und begrenzten
+Rechnergegenbeispielen. Umsetzung/Produktabnahme bleiben offen. Als nächster
+Implementierungsschnitt P1a: vollständiger Validator/Expandierer/Planer und
+Konformitätsvektoren, danach D1-B/F5a und GM-Anschluss gemäß Vertrag. Den dritten
+Abnahmefall erst nach bestandenem P3 und Software-Freeze auswählen.
 
 **Integrationsfolge ohne Kreis:** F5a kann lokal bereitgestellte Referenzpakete
 über denselben Validator und dieselbe Laufzeit ausführen. Ein fertiger
@@ -42,8 +44,8 @@ BLE-Pakettransfer ist dafür noch nicht nötig. Der reale Übernahmepfad folgt i
 parallel. Teilabschlüsse schließen weder #31 noch #63 pauschal ab.
 
 D0 #59 bleibt als Spezifikation abgeschlossen; D0-G1–G5 bleiben offen.
-D1-A in PR #73 ist weiterhin ein eigener offener Review, kein eingebauter
-Firmware-Speicher. #36 bleibt Erhalt/Import alter Szenariodaten. #29/#35/#39/#54
+D1-A aus PR #73 ist auf der P0-Basis `191d081` integriert; D1-B und
+eingebauter Firmware-Speicher bleiben offen. #36 bleibt Erhalt/Import alter Szenariodaten. #29/#35/#39/#54
 und übrige Restprüfungen bleiben erhalten; ihre Reihenfolge richtet sich nach
 den berührten Fähigkeiten der Referenzspiele. #62 bleibt im Backlog. Ohne
 Zentralenimplementierung bleiben dessen D4-/VA-T08-Kriterien ausdrücklich offen;

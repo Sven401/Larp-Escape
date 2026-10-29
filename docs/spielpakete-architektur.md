@@ -23,6 +23,14 @@ Quelle für das Architekturziel und seine Abnahme SP-T01–SP-T07.
 [Arbeitspaket #93](https://github.com/Sven401/Larp-Escape/issues/93) führen
 die Priorität und die neuen Umsetzungsarbeiten.
 
+**P0-Ausarbeitung · 29.10.2026:** [versionierter technischer Paket-/Sprachvorschlag](spielpakete/p0-vertrag-v1.md),
+[Formate/Module/Deployment](spielpakete/p0-formate-v1.md) und
+[zwei unterschiedliche Mehrbox-Referenzspiele](spielpakete/p0-referenzspiele-v1.md).
+Dekodierte Modelltraces und Gegenfälle prüfen einen begrenzten Semantikausschnitt;
+keine neue Produktlaufzeit, kein vollständiger Paketcodec und keine Geräteabnahme.
+[Prüfstand und Anschlussarbeit](../handoff/SPIELPAKETE-P0-2026-10-29.md).
+Die folgenden SP-T01–SP-T07 bleiben offen.
+
 ## 1. Produktziel und erste Version
 
 Die Spielleiter-App soll Spiele erstellen, bearbeiten, prüfen, vorab ausführen,

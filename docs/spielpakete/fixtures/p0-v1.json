@@ -1,0 +1,997 @@
+{
+  "projection": "decoded-p0-v1",
+  "traces": [
+    {
+      "id": "A-source",
+      "spec": {
+        "values": {
+          "count": 0
+        },
+        "timers": {},
+        "rules": [
+          {
+            "id": "count",
+            "priority": 10,
+            "mode": "each",
+            "trigger": [
+              "local",
+              [
+                "pulse"
+              ]
+            ],
+            "guard": [
+              "all",
+              [
+                "eq",
+                [
+                  "input"
+                ],
+                [
+                  "literal",
+                  1
+                ]
+              ],
+              [
+                "lt",
+                [
+                  "value",
+                  "count"
+                ],
+                [
+                  "literal",
+                  2
+                ]
+              ]
+            ],
+            "actions": [
+              [
+                "add",
+                "count",
+                [
+                  "literal",
+                  1
+                ]
+              ]
+            ]
+          },
+          {
+            "id": "finish",
+            "priority": 10,
+            "mode": "once",
+            "trigger": [
+              "local",
+              [
+                "pulse"
+              ]
+            ],
+            "guard": [
+              "all",
+              [
+                "eq",
+                [
+                  "input"
+                ],
+                [
+                  "literal",
+                  1
+                ]
+              ],
+              [
+                "eq",
+                [
+                  "value",
+                  "count"
+                ],
+                [
+                  "literal",
+                  2
+                ]
+              ]
+            ],
+            "actions": [
+              [
+                "set",
+                "count",
+                [
+                  "literal",
+                  3
+                ]
+              ],
+              [
+                "emit",
+                "solved"
+              ],
+              [
+                "effect",
+                "light"
+              ]
+            ]
+          }
+        ]
+      },
+      "steps": [
+        {
+          "at": 0,
+          "event": {
+            "kind": "local",
+            "id": "boot1:1",
+            "port": "pulse",
+            "value": 1
+          },
+          "expect": {
+            "values": {
+              "count": 1
+            },
+            "emissions": []
+          }
+        },
+        {
+          "at": 1,
+          "event": {
+            "kind": "local",
+            "id": "boot1:2",
+            "port": "pulse",
+            "value": null
+          },
+          "expect": {
+            "values": {
+              "count": 1
+            }
+          }
+        },
+        {
+          "at": 2,
+          "event": {
+            "kind": "local",
+            "id": "boot1:3",
+            "port": "pulse",
+            "value": 1
+          },
+          "expect": {
+            "values": {
+              "count": 2
+            }
+          }
+        },
+        {
+          "at": 3,
+          "event": {
+            "kind": "local",
+            "id": "boot1:4",
+            "port": "pulse",
+            "value": 1
+          },
+          "expect": {
+            "values": {
+              "count": 3
+            },
+            "emissions": [
+              "solved"
+            ],
+            "intents": [
+              "light"
+            ]
+          }
+        },
+        {
+          "at": 4,
+          "event": {
+            "kind": "local",
+            "id": "boot1:4",
+            "port": "pulse",
+            "value": 1
+          },
+          "expect": {
+            "intents": [
+              "light"
+            ]
+          }
+        },
+        {
+          "at": 5,
+          "event": {
+            "kind": "local",
+            "id": "boot1:5",
+            "port": "pulse",
+            "value": 1
+          },
+          "expect": {
+            "values": {
+              "count": 3
+            },
+            "intents": [
+              "light"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "A-lens",
+      "spec": {
+        "values": {
+          "count": 0
+        },
+        "timers": {},
+        "rules": [
+          {
+            "id": "count",
+            "priority": 10,
+            "mode": "each",
+            "trigger": [
+              "local",
+              [
+                "pulse"
+              ]
+            ],
+            "guard": [
+              "all",
+              [
+                "eq",
+                [
+                  "input"
+                ],
+                [
+                  "literal",
+                  1
+                ]
+              ],
+              [
+                "lt",
+                [
+                  "value",
+                  "count"
+                ],
+                [
+                  "literal",
+                  1
+                ]
+              ]
+            ],
+            "actions": [
+              [
+                "add",
+                "count",
+                [
+                  "literal",
+                  1
+                ]
+              ]
+            ]
+          },
+          {
+            "id": "finish",
+            "priority": 10,
+            "mode": "once",
+            "trigger": [
+              "local",
+              [
+                "pulse"
+              ]
+            ],
+            "guard": [
+              "all",
+              [
+                "eq",
+                [
+                  "input"
+                ],
+                [
+                  "literal",
+                  1
+                ]
+              ],
+              [
+                "eq",
+                [
+                  "value",
+                  "count"
+                ],
+                [
+                  "literal",
+                  1
+                ]
+              ]
+            ],
+            "actions": [
+              [
+                "set",
+                "count",
+                [
+                  "literal",
+                  2
+                ]
+              ],
+              [
+                "emit",
+                "solved"
+              ],
+              [
+                "effect",
+                "light"
+              ]
+            ]
+          }
+        ]
+      },
+      "steps": [
+        {
+          "at": 0,
+          "event": {
+            "kind": "local",
+            "id": "b1:1",
+            "port": "pulse",
+            "value": 1
+          },
+          "expect": {
+            "values": {
+              "count": 1
+            }
+          }
+        },
+        {
+          "at": 1,
+          "event": {
+            "kind": "local",
+            "id": "b1:2",
+            "port": "pulse",
+            "value": 1
+          },
+          "expect": {
+            "values": {
+              "count": 2
+            },
+            "emissions": [
+              "solved"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "A-gate-left",
+      "spec": {
+        "values": {},
+        "timers": {},
+        "rules": [
+          {
+            "id": "gate",
+            "priority": 10,
+            "mode": "once",
+            "trigger": [
+              "fact",
+              [
+                "left",
+                "right"
+              ]
+            ],
+            "guard": [
+              "all",
+              [
+                "fact",
+                "left"
+              ],
+              [
+                "fact",
+                "right"
+              ]
+            ],
+            "actions": [
+              [
+                "emit",
+                "gate_solved"
+              ],
+              [
+                "effect",
+                "light"
+              ]
+            ]
+          }
+        ]
+      },
+      "steps": [
+        {
+          "at": 0,
+          "event": {
+            "kind": "fact",
+            "id": "left",
+            "subject": "left"
+          },
+          "expect": {
+            "emissions": []
+          }
+        },
+        {
+          "at": 1,
+          "event": {
+            "kind": "fact",
+            "id": "right",
+            "subject": "right"
+          },
+          "expect": {
+            "emissions": [
+              "gate_solved"
+            ],
+            "intents": [
+              "light"
+            ]
+          }
+        },
+        {
+          "at": 2,
+          "event": {
+            "kind": "fact",
+            "id": "left",
+            "subject": "left"
+          },
+          "expect": {
+            "intents": [
+              "light"
+            ]
+          }
+        },
+        {
+          "at": 3,
+          "event": {
+            "kind": "fact",
+            "id": "wrong-run",
+            "subject": "left",
+            "accepted": false
+          },
+          "expect": {
+            "intents": [
+              "light"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "A-gate-right",
+      "spec": {
+        "values": {},
+        "timers": {},
+        "rules": [
+          {
+            "id": "gate",
+            "priority": 10,
+            "mode": "once",
+            "trigger": [
+              "fact",
+              [
+                "left",
+                "right"
+              ]
+            ],
+            "guard": [
+              "all",
+              [
+                "fact",
+                "left"
+              ],
+              [
+                "fact",
+                "right"
+              ]
+            ],
+            "actions": [
+              [
+                "emit",
+                "gate_solved"
+              ],
+              [
+                "effect",
+                "light"
+              ]
+            ]
+          }
+        ]
+      },
+      "steps": [
+        {
+          "at": 0,
+          "event": {
+            "kind": "fact",
+            "id": "right",
+            "subject": "right"
+          },
+          "expect": {
+            "emissions": []
+          }
+        },
+        {
+          "at": 1,
+          "event": {
+            "kind": "fact",
+            "id": "left",
+            "subject": "left"
+          },
+          "expect": {
+            "emissions": [
+              "gate_solved"
+            ],
+            "intents": [
+              "light"
+            ]
+          }
+        },
+        {
+          "at": 2,
+          "event": {
+            "kind": "fact",
+            "id": "right",
+            "subject": "right"
+          },
+          "expect": {
+            "intents": [
+              "light"
+            ]
+          }
+        },
+        {
+          "at": 3,
+          "event": {
+            "kind": "fact",
+            "id": "wrong-run",
+            "subject": "left",
+            "accepted": false
+          },
+          "expect": {
+            "intents": [
+              "light"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "B-echo-deadline",
+      "spec": {
+        "values": {
+          "phase": 0
+        },
+        "timers": {
+          "window": 5000
+        },
+        "rules": [
+          {
+            "id": "begin",
+            "priority": 10,
+            "mode": "each",
+            "trigger": [
+              "local",
+              [
+                "sequence"
+              ]
+            ],
+            "guard": [
+              "all",
+              [
+                "eq",
+                [
+                  "input"
+                ],
+                [
+                  "literal",
+                  1
+                ]
+              ],
+              [
+                "eq",
+                [
+                  "value",
+                  "phase"
+                ],
+                [
+                  "literal",
+                  0
+                ]
+              ]
+            ],
+            "actions": [
+              [
+                "set",
+                "phase",
+                [
+                  "literal",
+                  1
+                ]
+              ],
+              [
+                "arm",
+                "window"
+              ]
+            ]
+          },
+          {
+            "id": "win",
+            "priority": 10,
+            "mode": "once",
+            "trigger": [
+              "local",
+              [
+                "sequence"
+              ]
+            ],
+            "guard": [
+              "all",
+              [
+                "eq",
+                [
+                  "input"
+                ],
+                [
+                  "literal",
+                  2
+                ]
+              ],
+              [
+                "eq",
+                [
+                  "value",
+                  "phase"
+                ],
+                [
+                  "literal",
+                  1
+                ]
+              ]
+            ],
+            "actions": [
+              [
+                "set",
+                "phase",
+                [
+                  "literal",
+                  2
+                ]
+              ],
+              [
+                "cancel",
+                "window"
+              ],
+              [
+                "emit",
+                "echo_solved"
+              ],
+              [
+                "effect",
+                "light"
+              ]
+            ]
+          },
+          {
+            "id": "wrong",
+            "priority": 10,
+            "mode": "each",
+            "trigger": [
+              "local",
+              [
+                "sequence"
+              ]
+            ],
+            "guard": [
+              "all",
+              [
+                "not",
+                [
+                  "eq",
+                  [
+                    "input"
+                  ],
+                  [
+                    "literal",
+                    2
+                  ]
+                ]
+              ],
+              [
+                "eq",
+                [
+                  "value",
+                  "phase"
+                ],
+                [
+                  "literal",
+                  1
+                ]
+              ]
+            ],
+            "actions": [
+              [
+                "set",
+                "phase",
+                [
+                  "literal",
+                  0
+                ]
+              ],
+              [
+                "cancel",
+                "window"
+              ]
+            ]
+          },
+          {
+            "id": "timeout",
+            "priority": 10,
+            "mode": "each",
+            "trigger": [
+              "timer",
+              "window"
+            ],
+            "guard": [
+              "eq",
+              [
+                "value",
+                "phase"
+              ],
+              [
+                "literal",
+                1
+              ]
+            ],
+            "actions": [
+              [
+                "set",
+                "phase",
+                [
+                  "literal",
+                  0
+                ]
+              ]
+            ]
+          }
+        ]
+      },
+      "steps": [
+        {
+          "at": 0,
+          "event": {
+            "kind": "local",
+            "id": "e1",
+            "port": "sequence",
+            "value": 1
+          },
+          "expect": {
+            "values": {
+              "phase": 1
+            }
+          }
+        },
+        {
+          "at": 5000,
+          "event": {
+            "kind": "local",
+            "id": "e2",
+            "port": "sequence",
+            "value": 2
+          },
+          "expect": {
+            "values": {
+              "phase": 0
+            },
+            "emissions": [],
+            "timers": {}
+          }
+        },
+        {
+          "at": 6000,
+          "event": {
+            "kind": "local",
+            "id": "e3",
+            "port": "sequence",
+            "value": 1
+          },
+          "expect": {
+            "values": {
+              "phase": 1
+            }
+          }
+        },
+        {
+          "at": 8000,
+          "event": {
+            "kind": "local",
+            "id": "e4",
+            "port": "sequence",
+            "value": 2
+          },
+          "expect": {
+            "values": {
+              "phase": 2
+            },
+            "emissions": [
+              "echo_solved"
+            ],
+            "timers": {}
+          }
+        },
+        {
+          "at": 9000,
+          "event": {
+            "kind": "local",
+            "id": "e5",
+            "port": "sequence",
+            "value": 2
+          },
+          "expect": {
+            "intents": [
+              "light"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "B-archive-alternative",
+      "spec": {
+        "values": {
+          "count": 0
+        },
+        "timers": {},
+        "rules": [
+          {
+            "id": "count",
+            "priority": 10,
+            "mode": "each",
+            "trigger": [
+              "local",
+              [
+                "pulse"
+              ]
+            ],
+            "guard": [
+              "all",
+              [
+                "port_is",
+                "pulse"
+              ],
+              [
+                "eq",
+                [
+                  "input"
+                ],
+                [
+                  "literal",
+                  1
+                ]
+              ],
+              [
+                "lt",
+                [
+                  "value",
+                  "count"
+                ],
+                [
+                  "literal",
+                  2
+                ]
+              ]
+            ],
+            "actions": [
+              [
+                "add",
+                "count",
+                [
+                  "literal",
+                  1
+                ]
+              ]
+            ]
+          },
+          {
+            "id": "finish",
+            "priority": 10,
+            "mode": "once",
+            "trigger": [
+              "local",
+              [
+                "pulse",
+                "alternate"
+              ]
+            ],
+            "guard": [
+              "all",
+              [
+                "eq",
+                [
+                  "input"
+                ],
+                [
+                  "literal",
+                  1
+                ]
+              ],
+              [
+                "any",
+                [
+                  "all",
+                  [
+                    "port_is",
+                    "pulse"
+                  ],
+                  [
+                    "eq",
+                    [
+                      "value",
+                      "count"
+                    ],
+                    [
+                      "literal",
+                      2
+                    ]
+                  ]
+                ],
+                [
+                  "port_is",
+                  "alternate"
+                ]
+              ]
+            ],
+            "actions": [
+              [
+                "emit",
+                "archive_solved"
+              ],
+              [
+                "effect",
+                "light"
+              ]
+            ]
+          }
+        ]
+      },
+      "steps": [
+        {
+          "at": 0,
+          "event": {
+            "kind": "local",
+            "id": "a1",
+            "port": "pulse",
+            "value": 1
+          },
+          "expect": {
+            "values": {
+              "count": 1
+            }
+          }
+        },
+        {
+          "at": 1,
+          "event": {
+            "kind": "local",
+            "id": "a2",
+            "port": "alternate",
+            "value": 1
+          },
+          "expect": {
+            "values": {
+              "count": 1
+            },
+            "emissions": [
+              "archive_solved"
+            ]
+          }
+        },
+        {
+          "at": 2,
+          "event": {
+            "kind": "local",
+            "id": "a3",
+            "port": "pulse",
+            "value": 1
+          },
+          "expect": {
+            "emissions": [
+              "archive_solved"
+            ],
+            "intents": [
+              "light"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
