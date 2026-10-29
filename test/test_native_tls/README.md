@@ -5,7 +5,7 @@ Source: the immutable feasibility archive in
 port; the original archive and its byte hashes remain unchanged.
 
 The executable links exactly `lib/PinnedPeerTls`, also compiled as the native
-ESP-IDF `larp_tls` component. The qualified SDK supplies Mbed TLS 4.1.0 and its
+ESP-IDF `larp_tls` component. The qualified SDK supplies Mbed TLS 4.1.1 and its
 TF-PSA backend; CMake verifies its full SDK/submodule pin first. The host uses
 that source configuration, while the SDK uses its resolved sdkconfig. These
 remain separate evidence. Cryptography 45.0.7 only generates synthetic test

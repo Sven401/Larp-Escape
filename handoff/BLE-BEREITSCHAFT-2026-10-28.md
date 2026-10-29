@@ -5,7 +5,21 @@ Auftrag dieser Sitzung: Voraussetzungen aus dem
 [Fortsetzungsplan](BLE-FORTSETZUNGSPLAN-2026-10-28.md) umsetzen;
 notwendige Geräteuploads konkret vorbereiten und getrennt beauftragen.
 
-## Gemeinsame Herkunft
+## Aktualisierung zur Mergevorbereitung · 30.10.2026
+
+Aktuelle Integrationsbasis: `eb3f4507369b12ea11cd4097195325b73b1d8f0b`,
+mit #100/#101/#102/#104. #101-Merge-CI: Quality 3/3 und native Qualifikation
+1/1 erfolgreich. SDK-Wartungspin und ECC-Regression sind damit bereits integriert.
+[Arbeitsbericht dieser Vorbereitung](PR103-MERGEVORBEREITUNG-2026-10-30.md).
+#103 ergänzt ausschließlich die noch inaktiven TLS-/NimBLE-Bausteine und
+beide isolierten Qualifikationsziele; keine Freigabe der vollständigen Produktstrecke.
+
+Die ursprüngliche #103-PR-CI am Head `b1410a0` bestand bereits einschließlich
+Hosttests und beider SDK-Images. Die unten beschriebenen früheren Buildprobleme
+sind historische Fehlerbelege. Die neue CI am aktualisierten Head bleibt ein
+eigener Nachweis. Kein Übertragen alter grüner Läufe auf neue Commits.
+
+## Historische gemeinsame Herkunft
 
 Branch `codex/ble-fortsetzungsbasis`, Ausgangsbasis
 `191d08164614bd6472db241336d263da77691f49`.
@@ -52,8 +66,8 @@ jeweiligen neuen Nachweisen offen.
 
 | Tor | Status und vorhandener Teil | Noch nötig |
 | --- | --- | --- |
-| S1 | offen; neuer exakter Herstellerpin, bestätigte Parser-/EMS-/X509-Fixes, echte öffentliche ECC-Regression mit Guardpage | neue ESP32-Builds/CI und vollständiger Abgleich der tatsächlich genutzten Varianten/Advisories |
-| S2 | offen; nativer öffentlicher NimBLE-Quelladapter und Hostmodell-Gegenfälle | vollständiger SDK-Imagelink, tatsächliche SMP-/HCI-/ACL-Ordnung, Nebenläufigkeit/Fristen und begrenzter Gerätelauf |
+| S1 | offen; neuer exakter Herstellerpin, bestätigte Parser-/EMS-/X509-Fixes, echte öffentliche ECC-Regression mit Guardpage | vollständiger Abgleich der tatsächlich genutzten Varianten/Advisories; finale CI gesondert auswerten |
+| S2 | offen; nativer öffentlicher NimBLE-Quelladapter und Hostmodell-Gegenfälle | tatsächliche SMP-/HCI-/ACL-Ordnung, Nebenläufigkeit/Fristen und begrenzter Gerätelauf |
 | S3 | offen; wiederverwendbarer `PinnedPeerTls`-Worker und echte OpenSSL-Gegenstelle am neuen Backend | tatsächliche BLE-/Androidkopplung, finale Rollen-/Verbraucherautorisierung und Geräte-/Ressourcennachweise |
 | S4 | offen; nativer Kern/RTOS und getrennte Prüfeinstiege vorhanden | benötigte reale Geräteadapter/Profileigentümer, tatsächliches Integrationsziel und Fehler-/Budgetnachweis |
 | S5 | offen; unveränderte Partition-CSV, geschlossener Start, kein Autoformat/Erase, keine ungeprüfte alte Bondübernahme | dokumentierter Vergleich NVS/LittleFS/Bond/Schlüssel/Profile und expliziter inkompatibler Datenpfad; chipgebundener Abgleich vor Upload |
@@ -109,7 +123,7 @@ behaupten, solange der entsprechende Build nicht bestanden hat.
 
 ## Weiterarbeit in diesem Paket
 
-1. Neue Host-/ESP32-Builds und SDK-Ablehnungsfälle am Wartungskandidaten abschließen;
+1. Finale Host-/ESP32-Builds und SDK-Ablehnungsfälle am aktualisierten Head auswerten;
    Quell-/Format-/Reviewstand sichern und CI an genau diesem Head auswerten.
 2. BLE-Quelladapter und TLS-Worker mit begrenzten kopierten Mailboxen zusammenführen;
    Runtime-/Datenkompatibilität für den tatsächlichen Profilpfad qualifizieren.
