@@ -1,5 +1,7 @@
 # BLE-Fortsetzung: gemeinsame Basis und offene Softwaretore
 
+Fortsetzung 30.10.2026: [Bridge, Datenvergleich und offene Tore](BLE-SOFTWARETORE-2026-10-30.md). Keine Produktfreigabe.
+
 Stand: 28.10.2026. **In Umsetzung; noch keine Freigabe der vollständigen BLE-Produktintegration.**
 Auftrag dieser Sitzung: Voraussetzungen aus dem
 [Fortsetzungsplan](BLE-FORTSETZUNGSPLAN-2026-10-28.md) umsetzen;

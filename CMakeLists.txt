@@ -77,7 +77,7 @@ if(BUILD_TESTING AND LARP_PSA_IDF_PATH)
         CONFIG_BT_NIMBLE_SM_SC_DEBUG_KEYS=0 CONFIG_BT_NIMBLE_NVS_PERSIST=0)
     target_compile_options(native-ble-source PRIVATE -Wall -Wextra -Wpedantic -Werror)
     target_link_libraries(native-ble-source PRIVATE larp_peer_tls)
-    foreach(case registration-failure timer-failure host-return weak-security short-key
+    foreach(case bridge-bounds registration-failure timer-failure host-return weak-security short-key
         numeric-comparison copy-and-notify default-mtu reconnect second-link encryption-error
         queue-full wrong-task invalid-write notify-busy reset worker-revoke
         advertising-failure security-start-failure open-failure unencrypted unbonded
