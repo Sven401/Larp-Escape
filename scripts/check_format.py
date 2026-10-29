@@ -25,6 +25,15 @@ from check_architecture import LAYER_ROOTS, SOURCE_SUFFIXES
 
 FORMATTER_VERSION = "19.1.7"
 ADAPTER_FILES = (
+    "lib/NimblePeerSource/NimblePeerSource.h",
+    "lib/NimblePeerSource/NimblePeerSource.cpp",
+    "test/test_native_ble_source/main.cpp",
+    "test/test_native_ble_source/stubs/fake_sdk.h",
+    "test/test_native_tls/test_empty_ecc.cpp",
+    "firmware/idf-ble/main/app_main.cpp",
+    "lib/PinnedPeerTls/PinnedPeerTls.h",
+    "lib/PinnedPeerTls/PinnedPeerTls.cpp",
+    "test/test_native_tls/server.cpp",
     "scripts/patches/pn532-1.3.4/read_detected.cpp",
     "src/main.cpp",
     "src/ProfileTool/main.cpp",

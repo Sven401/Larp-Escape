@@ -2,7 +2,7 @@ name: Native ESP-IDF qualification
 
 on:
   push:
-    paths: ['CMakeLists.txt', 'cmake/**', 'firmware/idf/**', 'include/**', 'src/**', 'lib/**', 'test/**', 'scripts/check_idf_sources.py', 'scripts/tests/test_check_idf_sources.py', '.github/workflows/native-idf.yml']
+    paths: ['CMakeLists.txt', 'cmake/**', 'firmware/idf/**', 'firmware/idf-ble/**', 'include/**', 'src/**', 'lib/**', 'test/**', 'scripts/check_idf_sources.py', 'scripts/tests/test_check_idf_sources.py', '.github/workflows/native-idf.yml']
   pull_request:
   workflow_dispatch:
 
@@ -17,7 +17,8 @@ jobs:
   qualification:
     runs-on: ubuntu-24.04
     timeout-minutes: 30
-    # Official v6.1 multi-architecture image, resolved 2026-10-28.
+    # Pinned v6.1 tool environment; source is moved to the exact reviewed
+    # manufacturer maintenance commit below, never a moving branch ref.
     container: espressif/idf@sha256:81893c71bb5e570088901f21def8684c25cd2a9020281bd01b843a7655edb18c
     defaults:
       run:
@@ -37,6 +38,7 @@ jobs:
           . "$IDF_PATH/export.sh"
           python scripts/check_idf_sources.py "$IDF_PATH"
           python -m unittest discover -s scripts/tests -p test_check_idf_sources.py -v
+          python -m pip install cryptography==45.0.7
       - name: Host wire-test prerequisite
         run: |
           apt-get update
@@ -51,6 +53,10 @@ jobs:
         run: |
           . "$IDF_PATH/export.sh"
           idf.py -C firmware/idf -DIDF_TARGET=esp32 build
+      - name: Native BLE source qualification image (radio stays disabled)
+        run: |
+          . "$IDF_PATH/export.sh"
+          idf.py -C firmware/idf-ble -DIDF_TARGET=esp32 build
       - name: Preserve qualification evidence
         if: always()
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
@@ -62,4 +68,7 @@ jobs:
             firmware/idf/build/log/
             firmware/idf/build/project_description.json
             firmware/idf/build/config/sdkconfig.h
+            firmware/idf-ble/build/log/
+            firmware/idf-ble/build/project_description.json
+            firmware/idf-ble/build/config/sdkconfig.h
           if-no-files-found: warn
