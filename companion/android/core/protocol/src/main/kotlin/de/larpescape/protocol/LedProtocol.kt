@@ -8,6 +8,7 @@ import javax.crypto.spec.SecretKeySpec
 data class LedStatus(val revision: Long, val nextRequest: Long, val deviceMillis: Long,
     val statusSequence: Long, val effect: Int, val flags: Int, val mode: Int, val wake: WakeStatus? = null,
     val nfcSupported: Boolean = false, val matrix: MatrixStatus? = null, val audio: AudioStatus? = null,
+    val resonanceSupported: Boolean = false,
     val espNowSupported: Boolean? = null, val espNowReady: Boolean? = null, val rssiSupported: Boolean? = null) {
     val ready get() = flags and 1 != 0
     val pending get() = flags and 2 != 0
@@ -98,7 +99,7 @@ class LedProtocol(access: LedAccess, private val clientNonce: ByteArray) {
         val supported = wakeByte and 0x80 != 0
         val valid = wakeByte and 0x40 != 0
         val mask = wakeByte and 15
-        require(wakeByte and 0x10 == 0 && (supported || wakeByte and 0xdf == 0) &&
+        require((supported || wakeByte and 0xdf == 0) &&
             (valid || mask == 0)) { "Widersprüchlicher Wake-Status." }
         val matrix = run {
             val matrixFlags = byte(bytes, 47)
@@ -113,13 +114,16 @@ class LedProtocol(access: LedAccess, private val clientNonce: ByteArray) {
         require(capabilities in 0..15 && (capabilities and 12 == 0 || capabilities and 2 != 0)) { "Unbekannte Boxfähigkeiten." }
         val audioSupported = capabilities and 1 != 0
         val audio = audioValues(bytes, 39, audioSupported)
+        val resonanceSupported = wakeByte and 0x10 != 0
+        require(byte(bytes, 34) != 4 || resonanceSupported) { "Resonanzkreis ohne bestätigte Unterstützung." }
         return values(u32(bytes, 18), u32(bytes, 22), u32(bytes, 26), u32(bytes, 30),
             byte(bytes, 34), byte(bytes, 35), byte(bytes, 36), WakeStatus(supported, valid, mask), wakeByte and 0x20 != 0, matrix,
-            audio).copy(espNowSupported = capabilities and 2 != 0, espNowReady = capabilities and 4 != 0, rssiSupported = capabilities and 8 != 0)
+            audio, resonanceSupported).copy(espNowSupported = capabilities and 2 != 0, espNowReady = capabilities and 4 != 0, rssiSupported = capabilities and 8 != 0)
     }
     fun command(status: LedStatus, effect: Int): ByteArray {
         check(granted)
-        require(effect in 0..3 && if (effect == 0) status.canStop else status.canStart) { "LED-Bedienung derzeit gesperrt." }
+        require(effect in 0..4 && if (effect == 0) status.canStop else status.canStart) { "LED-Bedienung derzeit gesperrt." }
+        require(effect != 4 || status.resonanceSupported) { "Diese Box unterstützt den Resonanzkreis noch nicht." }
         val value = byteArrayOf(2, 3) + session!! + le(status.nextRequest) + le(status.revision) +
             le((status.deviceMillis + 3000) and U32) + byteArrayOf(if (effect == 0) 2 else 1, effect.toByte())
         return value + mac("command", value)
@@ -204,10 +208,11 @@ class LedProtocol(access: LedAccess, private val clientNonce: ByteArray) {
     private fun audioValues(bytes: ByteArray, at: Int, supported: Boolean = true) = AudioStatus(u32(bytes, at),
         byte(bytes, at + 4) or (byte(bytes, at + 5) shl 8), byte(bytes, at + 6), byte(bytes, at + 7), supported)
     private fun values(revision: Long, next: Long, millis: Long, sequence: Long, effect: Int, flags: Int, mode: Int,
-        wake: WakeStatus? = null, nfcSupported: Boolean = false, matrix: MatrixStatus? = null, audio: AudioStatus? = null): LedStatus {
-        require(next != 0L && sequence != 0L && effect in 0..3 && flags in 0..31 && mode in 0..4 &&
+        wake: WakeStatus? = null, nfcSupported: Boolean = false, matrix: MatrixStatus? = null, audio: AudioStatus? = null,
+        resonanceSupported: Boolean = false): LedStatus {
+        require(next != 0L && sequence != 0L && effect in 0..4 && flags in 0..31 && mode in 0..4 &&
             (effect == 0) == (flags and 4 != 0) && !(flags and 1 != 0 && flags and 16 != 0)) { "Widersprüchlicher Boxstatus." }
-        return LedStatus(revision, next, millis, sequence, effect, flags, mode, wake, nfcSupported, matrix, audio)
+        return LedStatus(revision, next, millis, sequence, effect, flags, mode, wake, nfcSupported, matrix, audio, resonanceSupported)
     }
     private fun binding(bytes: ByteArray) {
         require(session != null && MessageDigest.isEqual(session, bytes.copyOfRange(2, 18))) { "Antwort gehört zu einer anderen Verbindung." }

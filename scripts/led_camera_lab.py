@@ -8,6 +8,7 @@ import secrets
 import statistics
 import time
 import shutil
+import subprocess
 from concurrent.futures import ThreadPoolExecutor
 
 from led_camera import digest
@@ -64,6 +65,14 @@ def run(args):
                 "camera_index": args.camera, "opencv": cv2.__version__, "frames": [],
                 "image_format":args.image_format,
                 "timestamp_meaning": "host receive times; optical sync delay calibrated separately"}
+    expected_reason = "watchdog" if args.watchdog_after is not None else "host" if args.stop_after is not None else "finished"
+    metadata["expected_stop_reason"] = expected_reason
+    source = Path(__file__).resolve().parents[1]
+    metadata["source_head"] = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=source, text=True).strip()
+    names = ("firmware/led/src/CameraLabMain.cpp", "firmware/led/src/LedOutput.cpp",
+             "firmware/led/src/RmtLedBus.cpp", "firmware/led/include/CameraSequence.h",
+             "firmware/led/include/ResonanceCameraSequence.h", "scripts/led_camera_lab.py")
+    metadata["source_files_sha256"] = {name: digest(source/name) for name in names}
     layout=json.loads(args.rois.read_text()) if args.rois else None
     if layout:
         if layout.get("schema")!=1 or len(layout.get("regions",[]))!=23:
@@ -75,6 +84,7 @@ def run(args):
     connection.port = args.port
     cap = None
     events = []
+    wake_events = []
     writer = ThreadPoolExecutor(max_workers=2)
     pending_images = []
     image_entries=[]
@@ -144,10 +154,11 @@ def run(args):
         camera_number=0
         metadata["contexts"]=[]
         sent = False
+        host_stop_sent = False
         finished_at = None
         while time.perf_counter()-start < 75:
             now = time.perf_counter()
-            if now-last_keep > .2:
+            if now-last_keep > .2 and (args.watchdog_after is None or now-start < args.watchdog_after):
                 connection.write(f"KEEP {token}\n".encode())
                 last_keep = now
             if not sent and now-start > .5:
@@ -156,6 +167,10 @@ def run(args):
                 connection.write((command+"\n").encode())
                 metadata["command_sent_ms"] = (time.perf_counter()-start)*1000
                 sent = True
+            if args.stop_after is not None and now-start >= args.stop_after and not host_stop_sent:
+                connection.write(b"STOP\n")
+                metadata["host_stop_sent_ms"] = (time.perf_counter()-start)*1000
+                host_stop_sent = True
             before = time.perf_counter()
             ok, frame = cap.read()
             received = time.perf_counter()
@@ -168,8 +183,18 @@ def run(args):
                         raise RuntimeError("Lost or duplicated firmware frame event")
                     event["host_ms"] = when
                     events.append(event)
-                elif line == f"STOP {token} finished":
+                elif line.startswith(f"W {token} "):
+                    fields = line.split()
+                    if len(fields) != 8:
+                        raise RuntimeError("Invalid synthetic Wake event")
+                    number, device, valid, mask, effect, restart = map(int, fields[2:])
+                    if number != len(wake_events) or valid not in (0, 1) or restart not in (0, 1):
+                        raise RuntimeError("Invalid synthetic Wake sequence")
+                    wake_events.append(dict(sequence=number, device_ms=device, valid=bool(valid),
+                                            mask=mask, effect=effect, restart=bool(restart), host_ms=when))
+                elif line == f"STOP {token} {expected_reason}":
                     metadata["finished_normally"] = True
+                    metadata["observed_stop_reason"] = expected_reason
                 elif line.startswith(f"STOP {token} "):
                     raise RuntimeError("Firmware aborted the transaction")
                 elif line == f"DONE {token}":
@@ -221,6 +246,10 @@ def run(args):
                 metadata["error"] = str(error)
         (args.output / "events.json").write_text(json.dumps(events, indent=2), encoding="utf-8")
         metadata["events_sha256"] = digest(args.output / "events.json")
+        if args.mode.startswith("resonance"):
+            (args.output / "wake-events.json").write_text(json.dumps(wake_events, indent=2), encoding="utf-8")
+            metadata["wake_events_sha256"] = digest(args.output / "wake-events.json")
+            metadata["wake_source"] = "synthetic lab observations; no physical MCP inputs or BLE"
         (args.output / "capture.json").write_text(json.dumps(metadata, indent=2), encoding="utf-8")
     if metadata["status"] != "recorded": raise RuntimeError("Incomplete image evidence")
     print(json.dumps({"status": metadata["status"], "mode": args.mode,
@@ -229,7 +258,8 @@ def run(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("mode", choices=["pilot", "calibrate", "twinkle", "burst", "ripple"])
+    parser.add_argument("mode", choices=["pilot", "calibrate", "twinkle", "burst", "ripple",
+                                        "resonance", "resonance-transitions", "resonance-colors"])
     parser.add_argument("--port", required=True)
     parser.add_argument("--firmware", required=True, type=Path)
     parser.add_argument("--output", required=True, type=Path)
@@ -239,7 +269,11 @@ if __name__ == "__main__":
     parser.add_argument("--image-format",choices=["bmp","png"],default="png")
     parser.add_argument("--rois",type=Path)
     parser.add_argument("--exposure", type=float, default=-7)
+    parser.add_argument("--watchdog-after", type=float, help="Stop KEEP messages at this host time; expect the lab watchdog")
+    parser.add_argument("--stop-after", type=float, help="Send host STOP at this time during the optical transaction")
     args=parser.parse_args()
+    if args.watchdog_after is not None and args.stop_after is not None:
+        parser.error("Use one stop mechanism per transaction")
     if args.width>640 and args.mode!="pilot" and args.rois is None:
         parser.error("HD measurement needs --rois; first acquire a pilot and ROI layout")
     run(args)

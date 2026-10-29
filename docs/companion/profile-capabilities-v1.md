@@ -1,5 +1,11 @@
 # Aus der Firmware erzeugte Profilfähigkeiten v1
 
+**Architektur-Soll · 21.10.2026:** [SP-01](../spielpakete-architektur.md)
+fordert versionierte nachladbare Regelbausteine samt Bearbeitungsbeschreibung.
+Der heutige Katalog beschreibt kompilierte Primitive; er lädt keine neuen
+Operationen. Zusammengesetzte Module, generischer Editor und Fähigkeitenabgleich
+bleiben Folgearbeit. Bestehende v1-Bytes und Prüfbelege werden nicht verändert.
+
 **Stand:** 7. Oktober 2026. **Status:** schmaler Firmware-, Werkzeug- und Hostpfad.
 
 scope=profile_language beschreibt die kompilierte Profilsprache. Aktuell

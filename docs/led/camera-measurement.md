@@ -10,6 +10,10 @@ Produkt-Effekte. [Gerätebefunde und Grenzen](camera-results-2026-10-18.md).
 Quellbasis: `fcb9121` plus der Kamera-PR. Die ursprüngliche reine
 Aufnahmevorbereitung steht in der Historie bei `fa878d9`.
 
+Ergänzung für den vierten Effekt: [Resonanzkreis-Prüfweg mit synthetischen
+Wake-Eingängen](resonance-camera-measurement.md) und
+[getrennter Kamerabefund](resonance-camera-results-2026-10-18.md).
+
 ## Aufbau und Zuständigkeit
 
 `larp-led-camera-lab` ist eine getrennte USB-Prüffirmware. Sie verwendet die

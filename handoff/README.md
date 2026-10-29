@@ -1,5 +1,29 @@
 # Technische Projektübergabe
 
+**Integrierter Stand · 28.10.2026:** Zielbranch
+`plan/projektuebergabe-kuratierter-stand` bei
+`191d08164614bd6472db241336d263da77691f49`. #71 (Resonanzkreis), #73
+(D1-Rechnerreferenz), #89 (Kristallsiegel-Labor) und #94 (SP-01) wurden in
+dieser Reihenfolge übernommen. [Mergefolge, vollständige Commitzuordnung,
+CI-Nachweise und offene Grenzen](MAINTAINER.md#integrierter-stand--28102026).
+Quality am finalen Merge: **3/3 erfolgreich**; LED product am #89-Merge:
+**4/4 erfolgreich**; ESP-NOW probe am #71-Merge: **1/1 erfolgreich**.
+Die unterschiedlichen Prüfcommits sind im Maintainer-Einstieg getrennt belegt;
+#94 ändert ausschließlich Dokumentation. Keine neue Geräte-/Gesamtspielabnahme.
+
+**Weiter offen:** D1-B/C, Firmware-/F5a-Anschluss, reale Profilübernahme,
+SP-01-Laufzeit/Autorenwerkzeuge und Mehrbox-/Drittspielabnahme. #100 und #101
+bleiben offene Entwürfe und sind nicht Teil dieses Integrationsstands.
+Die folgenden datierten Einträge bleiben historische Belege ihres jeweiligen Umfangs.
+
+**Architekturziel bestätigt · 21.10.2026:** [SP-01: nachladbare Spiel- und
+Regelpakete](../docs/spielpakete-architektur.md), [neue Prioritäten und
+Arbeitspakete](../docs/veranstaltungsarchitektur-umsetzung.md#0-produktpriorität-ab-21102026).
+Mehrboxbetrieb ist Voraussetzung der ersten Produktversion; ein drittes,
+nach dem Einfrieren der Software entworfenes Spiel muss ohne Änderungen an
+App oder Firmware funktionieren. Beschluss dokumentiert, Umsetzung und
+Abnahme offen; die folgenden datierten Belege behalten ihren ursprünglichen Umfang.
+
 **Integration und Bereinigung · 21.10.2026:** [PR #91 integriert, lokaler
 Entwicklungsstart, Quellen-/Belegsicherung und erhaltene offene Arbeit](BEREINIGUNG-2026-10-20.md).
 Integrierter Ausgangspunkt `f174cee`; die datierten Bestandsaufnahmen unten
@@ -13,6 +37,15 @@ offene PRs und Archivquellen. Die datierten Einträge unten bewahren ihre
 Herkunft; frühere Fortsetzungsaufträge werden dadurch nicht erneut aktiv.
 
 **Projekt und Setup · 20.10.2026:** [Detaillierter Überblick mit Werkbank-/Automationsprüfung](PROJEKT-SETUP.md), gegen Integrationsbasis `5b85965` einschließlich #86/#87 geprüft. Anschließend [GitHub-Abgleich geprüft, umgestellt und nach Lese-Probelauf reaktiviert](GITHUB-AUTOMATISIERUNG-2026-10-20.md); abschließende Quellbasis `97a2584`, Konflikt #34 bleibt offen.
+
+**Kristallsiegel-Prototyp · 20.10.2026:** [Entwurf](../docs/led/kristallsiegel-design.md)
+zeigt bestätigte Kristalle als drei bleibende Lichtabschnitte mit einmaligem
+Schlusspuls. [Gemeinsamer C++-Kern und vorhandener USB-/Kameraweg](../firmware/led/LIVE-CRYSTALSEAL.md)
+erlauben Liveparameter, gezielten Stop und getrennte Framebelege.
+[Drei vollständige reale Lichtversuche](../docs/led/kristallsiegel-live-results-2026-10-20.md)
+belegen Fortschrittsgruppen, Parametervergleich, getrennte Stops und vollständigen
+Flash-Rückweg bei `dc8c5d2`. Die reale Anordnung ist unregelmäßig; Kamera-Zeitabnahme,
+Spieladapter und abschließendes Nutzerurteil bleiben offen.
 
 **Stationspilot #79 integriert · 19.10.2026:** Merge `7e19c95` in den kuratierten Integrationsbranch; Dateibaum identisch zum geprüften Head `98488ea`. [Mergebeleg, getrennte CI und offene Geräteabnahmen](STATIONSPILOT-INTEGRATION-2026-10-19.md). Der lesende native Pilot und die Apptrennung sind integriert; TalkBack, Mehrstationsbetrieb, echter Funkverlust und Langzeitbetrieb bleiben offen. Keine neue Geräteprüfung durch den Merge.
 
@@ -80,6 +113,12 @@ Produktadapter, produktseitiger Nähe-/Spielwertvertrag und optisches Nutzerurte
 die [Rechnerprobe 1.0](LED-EFFEKT-ARCHITEKT-ERPROBUNG-2026-10-18.md) bleibt
 historischer Beleg.
 
+[D1-Ausarbeitung zu #60](../docs/veranstaltung/d1-persistenz-v1.md) auf Basis
+`dead1204`: Transaktionen, dauerhafte Vergabe/Replay/Outbox, Wiederanlauf,
+Kompaktierung und getrennte Effekte, mit ausführbarer Rechnerreferenz.
+[Prüfstand und offene Firmware-/Gerätetore](D1-AUSARBEITUNG-2026-10-18.md).
+Vorschlag, noch nicht integriert; keine Produkt-/Flash-/Stromausfallabnahme.
+
 [D0-Vertrag zu #59](../docs/veranstaltung/d0-vertrag-v1.md) über
 [PR #72](https://github.com/Sven401/Larp-Escape/pull/72) integriert:
 Identitäten, Ereignisse, Ausfallregeln, Vertrauen und Migration, einschließlich
@@ -99,6 +138,7 @@ ergänzt die älteren Gerätebelege; die fünf Original-PRs sind als gemergt ges
 
 ## Aktueller Stand · 20. Oktober 2026
 
+- [Übergabe: spezialisierte LED-Effekt-Architektenrolle erstellen](LED-EFFEKT-ARCHITEKT-2026-10-18.md): bestätigter Schwerpunkt Verhalten/Berechnung/Prüfplanung; Rolle an einem neuen Effektentwurf erproben. Rolle und Entwurf noch offen.
 - [ESP-NOW-Sitzungsabschluss: RSSI, Funkelsteuerung und vollständiger Kameravergleich](ESPNOW-UEBERGABE-2026-10-18.md); PR #66 ist über #69 integriert. Der Sitzungsabschluss bleibt der historische Beleg vor Integration.
 
 **Belegt:** [PR #79](https://github.com/Sven401/Larp-Escape/pull/79) bei
@@ -119,7 +159,7 @@ Spielleitungsrechte sind Folgearbeit. Außerdem gemeinsame Baugruppenabnahme
 am passenden V2-Paar, Matrixproblemstellen #54,
 LED-/NFC-/Sitzungsfehlerfälle sowie allgemeiner Spielzugang und Profilbetrieb.
 Für Näheglut fehlen echter Spieleinsatz/Nähequelle, Produktadapter und optisches
-Nutzerurteil. D1-A/PR #73 bleibt gesondert in Review; #60/D1-B/C bleibt offen.
+Nutzerurteil. D1-A/PR #73 ist seit 28.10.2026 integriert; #60/D1-B/C bleibt offen.
 Historische bestandene Teiltests bleiben erhalten. Ein Geräteupload ist ein
 separater Auftrag; vorab tatsächliches Paar und chipgebundenen Rückweg prüfen.
 

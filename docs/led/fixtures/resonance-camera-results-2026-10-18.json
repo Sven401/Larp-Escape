@@ -1,0 +1,4846 @@
+{
+  "schema": 1,
+  "date": "2026-10-18",
+  "status": "passed isolated optical lab acceptance",
+  "source_commit": "e9790d85372422bfa4a8f6fc6b9e11d5e4f2c380",
+  "source_capture_head": "5d0cbab52171f13be4e82312e38d84e884c76400",
+  "source_files_sha256": {
+    "firmware/led/src/CameraLabMain.cpp": "d5b6333a4d8ebcc947aea8c9bb5c4a8327f10223572c8f70a875bbe043f13eb2",
+    "firmware/led/src/LedOutput.cpp": "a7826c13795129c08a4ef4e8f4150c05412af0dc2634ef0188483ca987b1ba07",
+    "firmware/led/src/RmtLedBus.cpp": "5e2ca25b31c6d9cb72783ad08d6c3599e87341ff110019dfeff9e3e1f08e1ceb",
+    "firmware/led/include/CameraSequence.h": "a09b9d7a5db7cf3f2b5f555e223d61094ecc4e966b9daab1404d40bb51a28a71",
+    "firmware/led/include/ResonanceCameraSequence.h": "61d1997b45371994f79b61db055521d444de4d5cbfd066649f36b6359e09e03b",
+    "scripts/led_camera_lab.py": "eeaa8de438a20c4f744e316ec5ee21af72b6fd6d82966ecb60dfd997339c1a87"
+  },
+  "assessor_sha256": "1cb1f8f30f5f388e263149c259ff20f17a2b149492e3cfe431a320576c6050fe",
+  "firmware_sha256": "4070bc04231bb7f2699dd808a82ea491d0b6d46203964ae20c8a1bd235f7eb41",
+  "backup": {
+    "chip_mac": "a8:42:e3:cd:4b:18",
+    "port": "COM3",
+    "sha256": "b703f4b13aaaaa3e8c3bc68d8e8134b1cec0a77df957ea06175ac147d1d03c71",
+    "bytes": 4194304,
+    "verified_on_chip": true,
+    "historical_keys_partitions_match": true
+  },
+  "restored": {
+    "chip_mac": "a8:42:e3:cd:4b:18",
+    "artifact_sha256": "ed333fb42af533453eafd30aa4032d56e372016b8a658baee00eab7d8b5ef177",
+    "app_verified": true,
+    "keys_and_boot_unchanged": true,
+    "full_flash_verified": true,
+    "boot_observed": true
+  },
+  "original_application_sha256": "1ee51656a95f730bfdc101bdcb29a83b7b61a08dceb80514e737263ec4d5374c",
+  "camera": {
+    "index": 0,
+    "settings": {
+      "width": {
+        "requested": 1280,
+        "driver_accepted": true,
+        "readback": 1280.0
+      },
+      "height": {
+        "requested": 720,
+        "driver_accepted": true,
+        "readback": 720.0
+      },
+      "fps": {
+        "requested": 30,
+        "driver_accepted": true,
+        "readback": 30.00003000003
+      },
+      "auto_exposure": {
+        "requested": 0,
+        "driver_accepted": true,
+        "readback": -1.0
+      },
+      "exposure": {
+        "requested": -7,
+        "driver_accepted": true,
+        "readback": -7.0
+      },
+      "auto_wb": {
+        "requested": 0,
+        "driver_accepted": true,
+        "readback": 0.0
+      },
+      "gain": {
+        "requested": 0,
+        "driver_accepted": true,
+        "readback": 0.0
+      },
+      "backlight": {
+        "requested": 0,
+        "driver_accepted": true,
+        "readback": 0.0
+      },
+      "sharpness": {
+        "requested": 0,
+        "driver_accepted": true,
+        "readback": 0.0
+      },
+      "gamma": {
+        "requested": 100,
+        "driver_accepted": true,
+        "readback": 100.0
+      },
+      "fourcc": {
+        "requested": 1196444237,
+        "driver_accepted": true,
+        "readback": 1196444237.0
+      }
+    },
+    "opencv": "4.13.0",
+    "mapping_verified": true,
+    "leds": [
+      {
+        "index": 0,
+        "camera_x": 766,
+        "camera_y": 590,
+        "measurement_pixels": 62
+      },
+      {
+        "index": 1,
+        "camera_x": 815,
+        "camera_y": 597,
+        "measurement_pixels": 63
+      },
+      {
+        "index": 2,
+        "camera_x": 862,
+        "camera_y": 580,
+        "measurement_pixels": 99
+      },
+      {
+        "index": 3,
+        "camera_x": 831,
+        "camera_y": 560,
+        "measurement_pixels": 144
+      },
+      {
+        "index": 4,
+        "camera_x": 785,
+        "camera_y": 546,
+        "measurement_pixels": 172
+      },
+      {
+        "index": 5,
+        "camera_x": 783,
+        "camera_y": 499,
+        "measurement_pixels": 195
+      },
+      {
+        "index": 6,
+        "camera_x": 877,
+        "camera_y": 506,
+        "measurement_pixels": 159
+      },
+      {
+        "index": 7,
+        "camera_x": 833,
+        "camera_y": 472,
+        "measurement_pixels": 288
+      },
+      {
+        "index": 8,
+        "camera_x": 876,
+        "camera_y": 411,
+        "measurement_pixels": 151
+      },
+      {
+        "index": 9,
+        "camera_x": 869,
+        "camera_y": 339,
+        "measurement_pixels": 395
+      },
+      {
+        "index": 10,
+        "camera_x": 890,
+        "camera_y": 212,
+        "measurement_pixels": 1815
+      },
+      {
+        "index": 11,
+        "camera_x": 769,
+        "camera_y": 248,
+        "measurement_pixels": 1255
+      },
+      {
+        "index": 12,
+        "camera_x": 723,
+        "camera_y": 282,
+        "measurement_pixels": 1403
+      },
+      {
+        "index": 13,
+        "camera_x": 586,
+        "camera_y": 181,
+        "measurement_pixels": 711
+      },
+      {
+        "index": 14,
+        "camera_x": 443,
+        "camera_y": 196,
+        "measurement_pixels": 948
+      },
+      {
+        "index": 15,
+        "camera_x": 382,
+        "camera_y": 218,
+        "measurement_pixels": 973
+      },
+      {
+        "index": 16,
+        "camera_x": 378,
+        "camera_y": 164,
+        "measurement_pixels": 1206
+      },
+      {
+        "index": 17,
+        "camera_x": 280,
+        "camera_y": 172,
+        "measurement_pixels": 369
+      },
+      {
+        "index": 18,
+        "camera_x": 308,
+        "camera_y": 223,
+        "measurement_pixels": 169
+      },
+      {
+        "index": 19,
+        "camera_x": 303,
+        "camera_y": 331,
+        "measurement_pixels": 180
+      },
+      {
+        "index": 20,
+        "camera_x": 378,
+        "camera_y": 423,
+        "measurement_pixels": 374
+      },
+      {
+        "index": 21,
+        "camera_x": 470,
+        "camera_y": 498,
+        "measurement_pixels": 146
+      },
+      {
+        "index": 22,
+        "camera_x": 410,
+        "camera_y": 536,
+        "measurement_pixels": 137
+      }
+    ]
+  },
+  "calibration_sha256": "bba16ec8f12a36a3dea0cb13795f53432e365cae35e51aa35d771c54f35832c0",
+  "resonance_calibration_sha256": "eadad784ce90bdb863934e4cba6b63841075f591594e9bd4ceed2ec6be8cb6e8",
+  "runs": {
+    "pilot": {
+      "capture_sha256": "2294784f92e2e83c4313f71163fa35e42fff41473b99cb0caad3006f8047bded",
+      "events_sha256": "cec411e192f4b9555d393ff8f26fb4ffb3f9b4f1ea2d735a37a7d09e0d60c401",
+      "wake_events_sha256": null,
+      "runtime_image_md5": "577ed0bcd8cfb265df6449aff6944977",
+      "runtime_image_bytes": 280416,
+      "timing": {
+        "received_fps": 4.552941841529448,
+        "max_gap_ms": 544.3215999985114
+      },
+      "counts": {
+        "frames": 38,
+        "contexts": 0,
+        "verified_images": 38
+      }
+    },
+    "calibrate": {
+      "capture_sha256": "db182122cc0e1336cf86c077819c8928ec96fe74f045002134b7f08409159164",
+      "events_sha256": "7fa401952260400929aec3f2fd7afd00ddfb3f75628a5c3ce37f5ee3be61fab9",
+      "wake_events_sha256": null,
+      "runtime_image_md5": "577ed0bcd8cfb265df6449aff6944977",
+      "runtime_image_bytes": 280416,
+      "timing": {
+        "received_fps": 30.026259479019586,
+        "max_gap_ms": 73.788300040178
+      },
+      "counts": {
+        "frames": 1309,
+        "contexts": 44,
+        "verified_images": 1353
+      }
+    },
+    "colors": {
+      "capture_sha256": "acc1445fc4fc26430337386aea237ac2b00d6499eca50c90458b08cb3bf63f9b",
+      "events_sha256": "8569ddb49314a351997eef87cd711e38f6dfff93604a3a6723d9251a3008f229",
+      "wake_events_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "runtime_image_md5": "577ed0bcd8cfb265df6449aff6944977",
+      "runtime_image_bytes": 280416,
+      "timing": {
+        "received_fps": 30.02590976260203,
+        "max_gap_ms": 65.15410001156852
+      },
+      "counts": {
+        "frames": 290,
+        "contexts": 10,
+        "verified_images": 300
+      }
+    },
+    "masks": {
+      "capture_sha256": "744d0d217ccf6e25a55eb3abe014766430f32e8f0d28cbf493ebbc950ce2b287",
+      "events_sha256": "45b8067efbbd6d7231e13ef56ba05d0618c20a8f256214d1b807ddf29e6bffb2",
+      "wake_events_sha256": "47e715a03bc78ae4dd4673d25bc5cf63bd2249c103ea3b1fdcaea9d486ffb445",
+      "runtime_image_md5": "577ed0bcd8cfb265df6449aff6944977",
+      "runtime_image_bytes": 280416,
+      "timing": {
+        "received_fps": 30.02638122449439,
+        "max_gap_ms": 85.80350002739578
+      },
+      "counts": {
+        "frames": 1700,
+        "contexts": 57,
+        "verified_images": 1757
+      }
+    },
+    "masks-02": {
+      "capture_sha256": "d1f5350bc5bee8f1a9b0ae9673c39881322b345f2efe72d9c08aef82b53160a0",
+      "events_sha256": "12023c8dd47b9640b62d1a50492bef69e816436e41bf6b6f2acb46763ef55b9f",
+      "wake_events_sha256": "8ba8af361d330d2c7fa919eacbc8ca6dc5fcf67b96d6235d7004aff35f000e3c",
+      "runtime_image_md5": "577ed0bcd8cfb265df6449aff6944977",
+      "runtime_image_bytes": 280416,
+      "timing": {
+        "received_fps": 30.026462202729697,
+        "max_gap_ms": 59.488700004294515
+      },
+      "counts": {
+        "frames": 1700,
+        "contexts": 57,
+        "verified_images": 1757
+      },
+      "assessment": {
+        "schema": 1,
+        "mode": "resonance",
+        "passed": true,
+        "stop_reason": "finished",
+        "semantic_frames": 1516,
+        "input_steps": 16,
+        "firmware_sha256": "4070bc04231bb7f2699dd808a82ea491d0b6d46203964ae20c8a1bd235f7eb41",
+        "capture_sha256": "d1f5350bc5bee8f1a9b0ae9673c39881322b345f2efe72d9c08aef82b53160a0",
+        "calibration_sha256": "eadad784ce90bdb863934e4cba6b63841075f591594e9bd4ceed2ec6be8cb6e8",
+        "maximum_clipped_fraction": 0.0,
+        "leds": [
+          {
+            "led": 0,
+            "passed": true,
+            "correlation": 0.9957385447818966,
+            "normalized_mae": 0.019783233136197058,
+            "normalized_p95": 0.0434247193497347,
+            "final_dark_fraction": 0.013327655396520898,
+            "timing": {
+              "delay_ms": -14.678500003414229,
+              "uncertainty_ms": 8.058349997270852,
+              "correlation": 0.9965364343686578,
+              "edge_delay_intervals_ms": [
+                [
+                  -41.22380000189878,
+                  -8.042400021804497
+                ],
+                [
+                  -29.94929998810403,
+                  3.4950000147800893
+                ],
+                [
+                  -23.3563999987673,
+                  9.126600018469617
+                ],
+                [
+                  -17.83060000068508,
+                  14.765000000828877
+                ],
+                [
+                  -44.757400014670566,
+                  -11.526400006143376
+                ],
+                [
+                  -38.49040002725087,
+                  -5.10099997674115
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -22.73685000068508,
+                -6.620150006143376
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 1,
+            "passed": true,
+            "correlation": 0.9870878588889066,
+            "normalized_mae": 0.02189302474108311,
+            "normalized_p95": 0.04454728223837166,
+            "final_dark_fraction": 0.026037206228422104,
+            "timing": {
+              "delay_ms": -14.678500003414229,
+              "uncertainty_ms": 8.058349997270852,
+              "correlation": 0.99614092611037,
+              "edge_delay_intervals_ms": [
+                [
+                  -41.22380000189878,
+                  -8.042400021804497
+                ],
+                [
+                  -29.94929998810403,
+                  3.4950000147800893
+                ],
+                [
+                  -23.3563999987673,
+                  9.126600018469617
+                ],
+                [
+                  -17.83060000068508,
+                  14.765000000828877
+                ],
+                [
+                  -44.757400014670566,
+                  -11.526400006143376
+                ],
+                [
+                  -38.49040002725087,
+                  -5.10099997674115
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -22.73685000068508,
+                -6.620150006143376
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 2,
+            "passed": true,
+            "correlation": 0.9473417382586076,
+            "normalized_mae": 0.030293255642395586,
+            "normalized_p95": 0.2216604809634085,
+            "final_dark_fraction": 0.01009878508812794,
+            "timing": {
+              "delay_ms": -14.678500003414229,
+              "uncertainty_ms": 8.058349997270852,
+              "correlation": 0.9921978447942655,
+              "edge_delay_intervals_ms": [
+                [
+                  -41.22380000189878,
+                  -8.042400021804497
+                ],
+                [
+                  -29.94929998810403,
+                  3.4950000147800893
+                ],
+                [
+                  -23.3563999987673,
+                  9.126600018469617
+                ],
+                [
+                  -17.83060000068508,
+                  14.765000000828877
+                ],
+                [
+                  -44.757400014670566,
+                  -11.526400006143376
+                ],
+                [
+                  -38.49040002725087,
+                  -5.10099997674115
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -22.73685000068508,
+                -6.620150006143376
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 3,
+            "passed": true,
+            "correlation": 0.9900045108261645,
+            "normalized_mae": 0.020976072854964094,
+            "normalized_p95": 0.04436889313983544,
+            "final_dark_fraction": 0.016746659253865176,
+            "timing": {
+              "delay_ms": -14.678500003414229,
+              "uncertainty_ms": 8.058349997270852,
+              "correlation": 0.9979449125839466,
+              "edge_delay_intervals_ms": [
+                [
+                  -41.22380000189878,
+                  -8.042400021804497
+                ],
+                [
+                  -29.94929998810403,
+                  3.4950000147800893
+                ],
+                [
+                  -23.3563999987673,
+                  9.126600018469617
+                ],
+                [
+                  -17.83060000068508,
+                  14.765000000828877
+                ],
+                [
+                  -44.757400014670566,
+                  -11.526400006143376
+                ],
+                [
+                  -38.49040002725087,
+                  -5.10099997674115
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -22.73685000068508,
+                -6.620150006143376
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 4,
+            "passed": true,
+            "correlation": 0.9974972151508752,
+            "normalized_mae": 0.016152731548814074,
+            "normalized_p95": 0.03274726063127151,
+            "final_dark_fraction": 0.018948514082078868,
+            "timing": {
+              "delay_ms": -14.678500003414229,
+              "uncertainty_ms": 8.058349997270852,
+              "correlation": 0.9978453784081291,
+              "edge_delay_intervals_ms": [
+                [
+                  -41.22380000189878,
+                  -8.042400021804497
+                ],
+                [
+                  -29.94929998810403,
+                  3.4950000147800893
+                ],
+                [
+                  -23.3563999987673,
+                  9.126600018469617
+                ],
+                [
+                  -17.83060000068508,
+                  14.765000000828877
+                ],
+                [
+                  -44.757400014670566,
+                  -11.526400006143376
+                ],
+                [
+                  -38.49040002725087,
+                  -5.10099997674115
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -22.73685000068508,
+                -6.620150006143376
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 5,
+            "passed": true,
+            "correlation": 0.9975067695368557,
+            "normalized_mae": 0.017809952147591245,
+            "normalized_p95": 0.03978592462891318,
+            "final_dark_fraction": 0.010662515763950683,
+            "timing": {
+              "delay_ms": -9.784400013973936,
+              "uncertainty_ms": 6.64824999216944,
+              "correlation": 0.994130781535967,
+              "edge_delay_intervals_ms": [
+                [
+                  -41.22380000189878,
+                  -8.042400021804497
+                ],
+                [
+                  -29.94929998810403,
+                  3.4950000147800893
+                ],
+                [
+                  -23.3563999987673,
+                  9.126600018469617
+                ],
+                [
+                  -17.83060000068508,
+                  14.765000000828877
+                ],
+                [
+                  -11.526400006143376,
+                  22.938600027235225
+                ],
+                [
+                  -38.49040002725087,
+                  -5.10099997674115
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -16.432650006143376,
+                -3.1361500218044966
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 6,
+            "passed": true,
+            "correlation": 0.9563523725488725,
+            "normalized_mae": 0.027338415357977347,
+            "normalized_p95": 0.05895974320679895,
+            "final_dark_fraction": 0.02778455265778939,
+            "timing": {
+              "delay_ms": -14.678500003414229,
+              "uncertainty_ms": 8.058349997270852,
+              "correlation": 0.9946432776479586,
+              "edge_delay_intervals_ms": [
+                [
+                  -41.22380000189878,
+                  -8.042400021804497
+                ],
+                [
+                  -29.94929998810403,
+                  3.4950000147800893
+                ],
+                [
+                  -23.3563999987673,
+                  9.126600018469617
+                ],
+                [
+                  -17.83060000068508,
+                  14.765000000828877
+                ],
+                [
+                  -44.757400014670566,
+                  -11.526400006143376
+                ],
+                [
+                  -38.49040002725087,
+                  -5.10099997674115
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -22.73685000068508,
+                -6.620150006143376
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 7,
+            "passed": true,
+            "correlation": 0.9975849633476744,
+            "normalized_mae": 0.015077758480031251,
+            "normalized_p95": 0.03515797412442164,
+            "final_dark_fraction": 0.01601535390603893,
+            "timing": {
+              "delay_ms": -9.784400013973936,
+              "uncertainty_ms": 6.64824999216944,
+              "correlation": 0.9960587634562246,
+              "edge_delay_intervals_ms": [
+                [
+                  -41.22380000189878,
+                  -8.042400021804497
+                ],
+                [
+                  -29.94929998810403,
+                  3.4950000147800893
+                ],
+                [
+                  -23.3563999987673,
+                  9.126600018469617
+                ],
+                [
+                  -17.83060000068508,
+                  14.765000000828877
+                ],
+                [
+                  -11.526400006143376,
+                  22.938600027235225
+                ],
+                [
+                  -38.49040002725087,
+                  -5.10099997674115
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -16.432650006143376,
+                -3.1361500218044966
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 8,
+            "passed": true,
+            "correlation": 0.9984369271233045,
+            "normalized_mae": 0.013208835050607118,
+            "normalized_p95": 0.026642339254167133,
+            "final_dark_fraction": 0.017949881182448474,
+            "timing": {
+              "delay_ms": -6.571699999272823,
+              "uncertainty_ms": 6.376950022531673,
+              "correlation": 0.9876323642960717,
+              "edge_delay_intervals_ms": [
+                [
+                  -8.042400021804497,
+                  25.560300023062155
+                ],
+                [
+                  -29.94929998810403,
+                  3.4950000147800893
+                ],
+                [
+                  -23.3563999987673,
+                  9.126600018469617
+                ],
+                [
+                  -17.83060000068508,
+                  14.765000000828877
+                ],
+                [
+                  -11.526400006143376,
+                  22.938600027235225
+                ],
+                [
+                  -38.49040002725087,
+                  -5.10099997674115
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -12.948650021804497,
+                -0.19474997674115002
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 9,
+            "passed": true,
+            "correlation": 0.9979635585840589,
+            "normalized_mae": 0.01030012754718997,
+            "normalized_p95": 0.022307879300677378,
+            "final_dark_fraction": 0.012340615020996584,
+            "timing": {
+              "delay_ms": -0.8029999809805304,
+              "uncertainty_ms": 9.20424999576062,
+              "correlation": 0.9974819800601981,
+              "edge_delay_intervals_ms": [
+                [
+                  -8.042400021804497,
+                  25.560300023062155
+                ],
+                [
+                  -29.94929998810403,
+                  3.4950000147800893
+                ],
+                [
+                  -23.3563999987673,
+                  9.126600018469617
+                ],
+                [
+                  -17.83060000068508,
+                  14.765000000828877
+                ],
+                [
+                  -11.526400006143376,
+                  22.938600027235225
+                ],
+                [
+                  -5.10099997674115,
+                  28.06780002382584
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -10.00724997674115,
+                8.40125001478009
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 10,
+            "passed": true,
+            "correlation": 0.9997325051301893,
+            "normalized_mae": 0.0047601725929500354,
+            "normalized_p95": 0.011305801538769169,
+            "final_dark_fraction": 0.0033305965675189146,
+            "timing": {
+              "delay_ms": -0.8029999809805304,
+              "uncertainty_ms": 9.20424999576062,
+              "correlation": 0.9979236940126861,
+              "edge_delay_intervals_ms": [
+                [
+                  -8.042400021804497,
+                  25.560300023062155
+                ],
+                [
+                  -29.94929998810403,
+                  3.4950000147800893
+                ],
+                [
+                  -23.3563999987673,
+                  9.126600018469617
+                ],
+                [
+                  -17.83060000068508,
+                  14.765000000828877
+                ],
+                [
+                  -11.526400006143376,
+                  22.938600027235225
+                ],
+                [
+                  -5.10099997674115,
+                  28.06780002382584
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -10.00724997674115,
+                8.40125001478009
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 11,
+            "passed": true,
+            "correlation": 0.9995448105830664,
+            "normalized_mae": 0.006843494134806149,
+            "normalized_p95": 0.01659711533019686,
+            "final_dark_fraction": 0.0041474703024606185,
+            "timing": {
+              "delay_ms": -0.8029999809805304,
+              "uncertainty_ms": 9.20424999576062,
+              "correlation": 0.9997742372262838,
+              "edge_delay_intervals_ms": [
+                [
+                  -8.042400021804497,
+                  25.560300023062155
+                ],
+                [
+                  -29.94929998810403,
+                  3.4950000147800893
+                ],
+                [
+                  -23.3563999987673,
+                  9.126600018469617
+                ],
+                [
+                  -17.83060000068508,
+                  14.765000000828877
+                ],
+                [
+                  -11.526400006143376,
+                  22.938600027235225
+                ],
+                [
+                  -5.10099997674115,
+                  28.06780002382584
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -10.00724997674115,
+                8.40125001478009
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 12,
+            "passed": true,
+            "correlation": 0.9996031947369007,
+            "normalized_mae": 0.0053507175910756785,
+            "normalized_p95": 0.012619213688264,
+            "final_dark_fraction": 0.0008078725317506834,
+            "timing": {
+              "delay_ms": -0.8029999809805304,
+              "uncertainty_ms": 9.20424999576062,
+              "correlation": 0.9998905190397341,
+              "edge_delay_intervals_ms": [
+                [
+                  -8.042400021804497,
+                  25.560300023062155
+                ],
+                [
+                  -29.94929998810403,
+                  3.4950000147800893
+                ],
+                [
+                  -23.3563999987673,
+                  9.126600018469617
+                ],
+                [
+                  -17.83060000068508,
+                  14.765000000828877
+                ],
+                [
+                  -11.526400006143376,
+                  22.938600027235225
+                ],
+                [
+                  -5.10099997674115,
+                  28.06780002382584
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -10.00724997674115,
+                8.40125001478009
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 13,
+            "passed": true,
+            "correlation": 0.9996798875869521,
+            "normalized_mae": 0.005964749716641323,
+            "normalized_p95": 0.01430084929568608,
+            "final_dark_fraction": 0.003211385625556282,
+            "timing": {
+              "delay_ms": -0.8029999809805304,
+              "uncertainty_ms": 9.20424999576062,
+              "correlation": 0.9961787232787012,
+              "edge_delay_intervals_ms": [
+                [
+                  -8.042400021804497,
+                  25.560300023062155
+                ],
+                [
+                  -29.94929998810403,
+                  3.4950000147800893
+                ],
+                [
+                  -23.3563999987673,
+                  9.126600018469617
+                ],
+                [
+                  -17.83060000068508,
+                  14.765000000828877
+                ],
+                [
+                  -11.526400006143376,
+                  22.938600027235225
+                ],
+                [
+                  -5.10099997674115,
+                  28.06780002382584
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -10.00724997674115,
+                8.40125001478009
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 14,
+            "passed": true,
+            "correlation": 0.9995603240931306,
+            "normalized_mae": 0.007483074380913288,
+            "normalized_p95": 0.017918696415115284,
+            "final_dark_fraction": 0.007992346533109242,
+            "timing": {
+              "delay_ms": -0.8029999809805304,
+              "uncertainty_ms": 9.20424999576062,
+              "correlation": 0.9967404423296268,
+              "edge_delay_intervals_ms": [
+                [
+                  -8.042400021804497,
+                  25.560300023062155
+                ],
+                [
+                  -29.94929998810403,
+                  3.4950000147800893
+                ],
+                [
+                  -23.3563999987673,
+                  9.126600018469617
+                ],
+                [
+                  -17.83060000068508,
+                  14.765000000828877
+                ],
+                [
+                  -11.526400006143376,
+                  22.938600027235225
+                ],
+                [
+                  -5.10099997674115,
+                  28.06780002382584
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -10.00724997674115,
+                8.40125001478009
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 15,
+            "passed": true,
+            "correlation": 0.9996023552495493,
+            "normalized_mae": 0.006793123919611123,
+            "normalized_p95": 0.014960597803089679,
+            "final_dark_fraction": 0.006686254277563651,
+            "timing": {
+              "delay_ms": -0.8029999809805304,
+              "uncertainty_ms": 9.20424999576062,
+              "correlation": 0.9979574461998026,
+              "edge_delay_intervals_ms": [
+                [
+                  -8.042400021804497,
+                  25.560300023062155
+                ],
+                [
+                  -29.94929998810403,
+                  3.4950000147800893
+                ],
+                [
+                  -23.3563999987673,
+                  9.126600018469617
+                ],
+                [
+                  -17.83060000068508,
+                  14.765000000828877
+                ],
+                [
+                  -11.526400006143376,
+                  22.938600027235225
+                ],
+                [
+                  -5.10099997674115,
+                  28.06780002382584
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -10.00724997674115,
+                8.40125001478009
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 16,
+            "passed": true,
+            "correlation": 0.9995072377848243,
+            "normalized_mae": 0.0061736600397456435,
+            "normalized_p95": 0.01347190965267061,
+            "final_dark_fraction": 0.00386479601689008,
+            "timing": {
+              "delay_ms": 6.310800016624853,
+              "uncertainty_ms": 7.722050001844764,
+              "correlation": 0.9965354109302724,
+              "edge_delay_intervals_ms": [
+                [
+                  -8.042400021804497,
+                  25.560300023062155
+                ],
+                [
+                  3.4950000147800893,
+                  36.47390002454631
+                ],
+                [
+                  -23.3563999987673,
+                  9.126600018469617
+                ],
+                [
+                  -17.83060000068508,
+                  14.765000000828877
+                ],
+                [
+                  -11.526400006143376,
+                  22.938600027235225
+                ],
+                [
+                  -5.10099997674115,
+                  28.06780002382584
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -1.4112499852199107,
+                14.032850018469617
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 17,
+            "passed": true,
+            "correlation": 0.9987293655306625,
+            "normalized_mae": 0.009554162818333016,
+            "normalized_p95": 0.02076234011358327,
+            "final_dark_fraction": 0.01126083624134435,
+            "timing": {
+              "delay_ms": 6.310800016624853,
+              "uncertainty_ms": 7.722050001844764,
+              "correlation": 0.9961979706663447,
+              "edge_delay_intervals_ms": [
+                [
+                  -8.042400021804497,
+                  25.560300023062155
+                ],
+                [
+                  3.4950000147800893,
+                  36.47390002454631
+                ],
+                [
+                  -23.3563999987673,
+                  9.126600018469617
+                ],
+                [
+                  -17.83060000068508,
+                  14.765000000828877
+                ],
+                [
+                  -11.526400006143376,
+                  22.938600027235225
+                ],
+                [
+                  -5.10099997674115,
+                  28.06780002382584
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -1.4112499852199107,
+                14.032850018469617
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 18,
+            "passed": true,
+            "correlation": 0.9988353675349063,
+            "normalized_mae": 0.01038374519614736,
+            "normalized_p95": 0.0224616905720084,
+            "final_dark_fraction": 0.016250876510670354,
+            "timing": {
+              "delay_ms": -0.8029999809805304,
+              "uncertainty_ms": 9.20424999576062,
+              "correlation": 0.9979808591684374,
+              "edge_delay_intervals_ms": [
+                [
+                  -8.042400021804497,
+                  25.560300023062155
+                ],
+                [
+                  -29.94929998810403,
+                  3.4950000147800893
+                ],
+                [
+                  -23.3563999987673,
+                  9.126600018469617
+                ],
+                [
+                  -17.83060000068508,
+                  14.765000000828877
+                ],
+                [
+                  -11.526400006143376,
+                  22.938600027235225
+                ],
+                [
+                  -5.10099997674115,
+                  28.06780002382584
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -10.00724997674115,
+                8.40125001478009
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 19,
+            "passed": true,
+            "correlation": 0.9965433596308184,
+            "normalized_mae": 0.015748696454125747,
+            "normalized_p95": 0.03451395792638461,
+            "final_dark_fraction": 0.0239043658304618,
+            "timing": {
+              "delay_ms": -0.8029999809805304,
+              "uncertainty_ms": 9.20424999576062,
+              "correlation": 0.9967615975259465,
+              "edge_delay_intervals_ms": [
+                [
+                  -8.042400021804497,
+                  25.560300023062155
+                ],
+                [
+                  -29.94929998810403,
+                  3.4950000147800893
+                ],
+                [
+                  -23.3563999987673,
+                  9.126600018469617
+                ],
+                [
+                  -17.83060000068508,
+                  14.765000000828877
+                ],
+                [
+                  -11.526400006143376,
+                  22.938600027235225
+                ],
+                [
+                  -5.10099997674115,
+                  28.06780002382584
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -10.00724997674115,
+                8.40125001478009
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 20,
+            "passed": true,
+            "correlation": 0.9989177453212303,
+            "normalized_mae": 0.014077199177736243,
+            "normalized_p95": 0.027659435020930698,
+            "final_dark_fraction": 0.00035069411310604295,
+            "timing": {
+              "delay_ms": -6.571699999272823,
+              "uncertainty_ms": 6.376950022531673,
+              "correlation": 0.9896750455190245,
+              "edge_delay_intervals_ms": [
+                [
+                  -8.042400021804497,
+                  25.560300023062155
+                ],
+                [
+                  -29.94929998810403,
+                  3.4950000147800893
+                ],
+                [
+                  -23.3563999987673,
+                  9.126600018469617
+                ],
+                [
+                  -17.83060000068508,
+                  14.765000000828877
+                ],
+                [
+                  -11.526400006143376,
+                  22.938600027235225
+                ],
+                [
+                  -38.49040002725087,
+                  -5.10099997674115
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -12.948650021804497,
+                -0.19474997674115002
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 21,
+            "passed": true,
+            "correlation": 0.9975820226939077,
+            "normalized_mae": 0.018987613279725188,
+            "normalized_p95": 0.037036602966027905,
+            "final_dark_fraction": 0.024853261966813124,
+            "timing": {
+              "delay_ms": -9.784400013973936,
+              "uncertainty_ms": 6.64824999216944,
+              "correlation": 0.9938509070429677,
+              "edge_delay_intervals_ms": [
+                [
+                  -41.22380000189878,
+                  -8.042400021804497
+                ],
+                [
+                  -29.94929998810403,
+                  3.4950000147800893
+                ],
+                [
+                  -23.3563999987673,
+                  9.126600018469617
+                ],
+                [
+                  -17.83060000068508,
+                  14.765000000828877
+                ],
+                [
+                  -11.526400006143376,
+                  22.938600027235225
+                ],
+                [
+                  -38.49040002725087,
+                  -5.10099997674115
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -16.432650006143376,
+                -3.1361500218044966
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 22,
+            "passed": true,
+            "correlation": 0.9974690575576108,
+            "normalized_mae": 0.017977864527480143,
+            "normalized_p95": 0.04426548681343968,
+            "final_dark_fraction": 0.010571746104347031,
+            "timing": {
+              "delay_ms": -14.678500003414229,
+              "uncertainty_ms": 8.058349997270852,
+              "correlation": 0.9975673013026704,
+              "edge_delay_intervals_ms": [
+                [
+                  -41.22380000189878,
+                  -8.042400021804497
+                ],
+                [
+                  -29.94929998810403,
+                  3.4950000147800893
+                ],
+                [
+                  -23.3563999987673,
+                  9.126600018469617
+                ],
+                [
+                  -17.83060000068508,
+                  14.765000000828877
+                ],
+                [
+                  -44.757400014670566,
+                  -11.526400006143376
+                ],
+                [
+                  -38.49040002725087,
+                  -5.10099997674115
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -22.73685000068508,
+                -6.620150006143376
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          }
+        ],
+        "criteria": {
+          "correlation_min": 0.9,
+          "normalized_mae_max": 0.12,
+          "normalized_p95_max": 0.25,
+          "final_dark_max": 0.05,
+          "clipping_max": 0
+        },
+        "timing": {
+          "delay_ms": -0.8029999809805304,
+          "uncertainty_ms": 9.20424999576062,
+          "correlation": 0.9957601628591378,
+          "edge_delay_intervals_ms": [
+            [
+              -8.042400021804497,
+              25.560300023062155
+            ],
+            [
+              -29.94929998810403,
+              3.4950000147800893
+            ],
+            [
+              -23.3563999987673,
+              9.126600018469617
+            ],
+            [
+              -17.83060000068508,
+              14.765000000828877
+            ],
+            [
+              -11.526400006143376,
+              22.938600027235225
+            ],
+            [
+              -5.10099997674115,
+              28.06780002382584
+            ]
+          ],
+          "half_exposure_guard_ms": 3.90625,
+          "delay_bounds_ms": [
+            -10.00724997674115,
+            8.40125001478009
+          ],
+          "clock": "relative device TX_DONE intervals, constant host anchor",
+          "method": "dedicated markers of this transaction; no fit to the tested effect"
+        },
+        "scope": "Isolated synthetic Wake observations and real optical output; no physical sensor, BLE or gameplay acceptance"
+      }
+    },
+    "transitions": {
+      "capture_sha256": "bfe843f01f07f1e72c137ec7f3d96b356da896e6d52dc630d74aa4078caaee85",
+      "events_sha256": "0aee14315641a95b3707742a3e9b3dcc5377b5143c635941bb707b6168728926",
+      "wake_events_sha256": "045da23c20d06d50bc57b1d60b7adb2101e287d1982aea62b309f0615156d2ce",
+      "runtime_image_md5": "577ed0bcd8cfb265df6449aff6944977",
+      "runtime_image_bytes": 280416,
+      "timing": {
+        "received_fps": 30.023066219153865,
+        "max_gap_ms": 59.011699981056154
+      },
+      "counts": {
+        "frames": 1106,
+        "contexts": 37,
+        "verified_images": 1143
+      },
+      "assessment": {
+        "schema": 1,
+        "mode": "resonance-transitions",
+        "passed": true,
+        "stop_reason": "finished",
+        "semantic_frames": 808,
+        "input_steps": 22,
+        "firmware_sha256": "4070bc04231bb7f2699dd808a82ea491d0b6d46203964ae20c8a1bd235f7eb41",
+        "capture_sha256": "bfe843f01f07f1e72c137ec7f3d96b356da896e6d52dc630d74aa4078caaee85",
+        "calibration_sha256": "eadad784ce90bdb863934e4cba6b63841075f591594e9bd4ceed2ec6be8cb6e8",
+        "maximum_clipped_fraction": 0.0,
+        "leds": [
+          {
+            "led": 0,
+            "passed": true,
+            "correlation": 0.9949637111082551,
+            "normalized_mae": 0.024055210064544967,
+            "normalized_p95": 0.05106768271291389,
+            "final_dark_fraction": 0.018413319455764743,
+            "timing": {
+              "delay_ms": -17.826099985279143,
+              "uncertainty_ms": 7.575400016037747,
+              "correlation": 0.9955358536344965,
+              "edge_delay_intervals_ms": [
+                [
+                  -45.186949994647875,
+                  -11.781349995406345
+                ],
+                [
+                  -34.161549956770614,
+                  -0.6172500073444098
+                ],
+                [
+                  -27.71155000780709,
+                  6.129249987425283
+                ],
+                [
+                  -20.49525000131689,
+                  11.6320500432048
+                ],
+                [
+                  -47.93874999159016,
+                  -15.156949969241396
+                ],
+                [
+                  -42.07894996157847,
+                  -9.190750002162531
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -25.40150000131689,
+                -10.250699969241396
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 1,
+            "passed": true,
+            "correlation": 0.9859748446447208,
+            "normalized_mae": 0.026323349494877326,
+            "normalized_p95": 0.05264924643577081,
+            "final_dark_fraction": 0.03515830393756242,
+            "timing": {
+              "delay_ms": -17.826099985279143,
+              "uncertainty_ms": 7.575400016037747,
+              "correlation": 0.9972125490801709,
+              "edge_delay_intervals_ms": [
+                [
+                  -45.186949994647875,
+                  -11.781349995406345
+                ],
+                [
+                  -34.161549956770614,
+                  -0.6172500073444098
+                ],
+                [
+                  -27.71155000780709,
+                  6.129249987425283
+                ],
+                [
+                  -20.49525000131689,
+                  11.6320500432048
+                ],
+                [
+                  -47.93874999159016,
+                  -15.156949969241396
+                ],
+                [
+                  -42.07894996157847,
+                  -9.190750002162531
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -25.40150000131689,
+                -10.250699969241396
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 2,
+            "passed": true,
+            "correlation": 0.94245304657259,
+            "normalized_mae": 0.04016849441612315,
+            "normalized_p95": 0.2192024421812461,
+            "final_dark_fraction": 0.021576332694727866,
+            "timing": {
+              "delay_ms": -17.826099985279143,
+              "uncertainty_ms": 7.575400016037747,
+              "correlation": 0.9966473910227371,
+              "edge_delay_intervals_ms": [
+                [
+                  -45.186949994647875,
+                  -11.781349995406345
+                ],
+                [
+                  -34.161549956770614,
+                  -0.6172500073444098
+                ],
+                [
+                  -27.71155000780709,
+                  6.129249987425283
+                ],
+                [
+                  -20.49525000131689,
+                  11.6320500432048
+                ],
+                [
+                  -47.93874999159016,
+                  -15.156949969241396
+                ],
+                [
+                  -42.07894996157847,
+                  -9.190750002162531
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -25.40150000131689,
+                -10.250699969241396
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 3,
+            "passed": true,
+            "correlation": 0.9936302832827512,
+            "normalized_mae": 0.018689914288158704,
+            "normalized_p95": 0.03650694496506012,
+            "final_dark_fraction": 0.0233676159191007,
+            "timing": {
+              "delay_ms": -17.826099985279143,
+              "uncertainty_ms": 7.575400016037747,
+              "correlation": 0.9942776233134321,
+              "edge_delay_intervals_ms": [
+                [
+                  -45.186949994647875,
+                  -11.781349995406345
+                ],
+                [
+                  -34.161549956770614,
+                  -0.6172500073444098
+                ],
+                [
+                  -27.71155000780709,
+                  6.129249987425283
+                ],
+                [
+                  -20.49525000131689,
+                  11.6320500432048
+                ],
+                [
+                  -47.93874999159016,
+                  -15.156949969241396
+                ],
+                [
+                  -42.07894996157847,
+                  -9.190750002162531
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -25.40150000131689,
+                -10.250699969241396
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 4,
+            "passed": true,
+            "correlation": 0.9984391608414848,
+            "normalized_mae": 0.018008845641452085,
+            "normalized_p95": 0.03707629033597399,
+            "final_dark_fraction": 0.021875549521217293,
+            "timing": {
+              "delay_ms": -13.46914998232387,
+              "uncertainty_ms": 6.5940499869175255,
+              "correlation": 0.9951395635028107,
+              "edge_delay_intervals_ms": [
+                [
+                  -45.186949994647875,
+                  -11.781349995406345
+                ],
+                [
+                  -34.161549956770614,
+                  -0.6172500073444098
+                ],
+                [
+                  -27.71155000780709,
+                  6.129249987425283
+                ],
+                [
+                  -20.49525000131689,
+                  11.6320500432048
+                ],
+                [
+                  -15.156949969241396,
+                  18.95045001874678
+                ],
+                [
+                  -42.07894996157847,
+                  -9.190750002162531
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -20.063199969241396,
+                -6.8750999954063445
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 5,
+            "passed": true,
+            "correlation": 0.9977227204631708,
+            "normalized_mae": 0.01972029838799201,
+            "normalized_p95": 0.04210372080248041,
+            "final_dark_fraction": 0.013301090560462619,
+            "timing": {
+              "delay_ms": -13.46914998232387,
+              "uncertainty_ms": 6.5940499869175255,
+              "correlation": 0.9961890938846126,
+              "edge_delay_intervals_ms": [
+                [
+                  -45.186949994647875,
+                  -11.781349995406345
+                ],
+                [
+                  -34.161549956770614,
+                  -0.6172500073444098
+                ],
+                [
+                  -27.71155000780709,
+                  6.129249987425283
+                ],
+                [
+                  -20.49525000131689,
+                  11.6320500432048
+                ],
+                [
+                  -15.156949969241396,
+                  18.95045001874678
+                ],
+                [
+                  -42.07894996157847,
+                  -9.190750002162531
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -20.063199969241396,
+                -6.8750999954063445
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 6,
+            "passed": true,
+            "correlation": 0.9611740258215137,
+            "normalized_mae": 0.03516758057780591,
+            "normalized_p95": 0.1628858089133076,
+            "final_dark_fraction": 0.021353966797768693,
+            "timing": {
+              "delay_ms": -13.46914998232387,
+              "uncertainty_ms": 6.5940499869175255,
+              "correlation": 0.9956060744411742,
+              "edge_delay_intervals_ms": [
+                [
+                  -45.186949994647875,
+                  -11.781349995406345
+                ],
+                [
+                  -34.161549956770614,
+                  -0.6172500073444098
+                ],
+                [
+                  -27.71155000780709,
+                  6.129249987425283
+                ],
+                [
+                  -20.49525000131689,
+                  11.6320500432048
+                ],
+                [
+                  -15.156949969241396,
+                  18.95045001874678
+                ],
+                [
+                  -42.07894996157847,
+                  -9.190750002162531
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -20.063199969241396,
+                -6.8750999954063445
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 7,
+            "passed": true,
+            "correlation": 0.9956017486539062,
+            "normalized_mae": 0.017330786069528786,
+            "normalized_p95": 0.03614950202142633,
+            "final_dark_fraction": 0.023252214870731428,
+            "timing": {
+              "delay_ms": -13.46914998232387,
+              "uncertainty_ms": 6.5940499869175255,
+              "correlation": 0.995326004455098,
+              "edge_delay_intervals_ms": [
+                [
+                  -45.186949994647875,
+                  -11.781349995406345
+                ],
+                [
+                  -34.161549956770614,
+                  -0.6172500073444098
+                ],
+                [
+                  -27.71155000780709,
+                  6.129249987425283
+                ],
+                [
+                  -20.49525000131689,
+                  11.6320500432048
+                ],
+                [
+                  -15.156949969241396,
+                  18.95045001874678
+                ],
+                [
+                  -42.07894996157847,
+                  -9.190750002162531
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -20.063199969241396,
+                -6.8750999954063445
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 8,
+            "passed": true,
+            "correlation": 0.9930344597758505,
+            "normalized_mae": 0.018216649105835963,
+            "normalized_p95": 0.06634596381658708,
+            "final_dark_fraction": 0.009123678452051321,
+            "timing": {
+              "delay_ms": -10.486049998784438,
+              "uncertainty_ms": 6.201549996621907,
+              "correlation": 0.9947817640546719,
+              "edge_delay_intervals_ms": [
+                [
+                  -11.781349995406345,
+                  21.9274500424508
+                ],
+                [
+                  -34.161549956770614,
+                  -0.6172500073444098
+                ],
+                [
+                  -27.71155000780709,
+                  6.129249987425283
+                ],
+                [
+                  -20.49525000131689,
+                  11.6320500432048
+                ],
+                [
+                  -15.156949969241396,
+                  18.95045001874678
+                ],
+                [
+                  -42.07894996157847,
+                  -9.190750002162531
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -16.687599995406345,
+                -4.284500002162531
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 9,
+            "passed": true,
+            "correlation": 0.9977193259526159,
+            "normalized_mae": 0.016312673945494464,
+            "normalized_p95": 0.030837387293099795,
+            "final_dark_fraction": 0.015616594362742117,
+            "timing": {
+              "delay_ms": -4.90400000475347,
+              "uncertainty_ms": 9.19299999740906,
+              "correlation": 0.9990836165908559,
+              "edge_delay_intervals_ms": [
+                [
+                  -11.781349995406345,
+                  21.9274500424508
+                ],
+                [
+                  -34.161549956770614,
+                  -0.6172500073444098
+                ],
+                [
+                  -27.71155000780709,
+                  6.129249987425283
+                ],
+                [
+                  -20.49525000131689,
+                  11.6320500432048
+                ],
+                [
+                  -15.156949969241396,
+                  18.95045001874678
+                ],
+                [
+                  -9.190750002162531,
+                  25.270750004565343
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -14.097000002162531,
+                4.28899999265559
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 10,
+            "passed": true,
+            "correlation": 0.9980925114020192,
+            "normalized_mae": 0.006955475823308341,
+            "normalized_p95": 0.015927475642049885,
+            "final_dark_fraction": 0.001931660924377806,
+            "timing": {
+              "delay_ms": 2.7559999900404364,
+              "uncertainty_ms": 8.279499997384846,
+              "correlation": 0.9959995563750018,
+              "edge_delay_intervals_ms": [
+                [
+                  -11.781349995406345,
+                  21.9274500424508
+                ],
+                [
+                  -0.6172500073444098,
+                  33.241050004726276
+                ],
+                [
+                  -27.71155000780709,
+                  6.129249987425283
+                ],
+                [
+                  -20.49525000131689,
+                  11.6320500432048
+                ],
+                [
+                  -15.156949969241396,
+                  18.95045001874678
+                ],
+                [
+                  -9.190750002162531,
+                  25.270750004565343
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -5.52350000734441,
+                11.035499987425283
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 11,
+            "passed": true,
+            "correlation": 0.9965361194428562,
+            "normalized_mae": 0.015440869121399458,
+            "normalized_p95": 0.026390600243574,
+            "final_dark_fraction": 0.01654514561467414,
+            "timing": {
+              "delay_ms": -4.90400000475347,
+              "uncertainty_ms": 9.19299999740906,
+              "correlation": 0.9969722390290995,
+              "edge_delay_intervals_ms": [
+                [
+                  -11.781349995406345,
+                  21.9274500424508
+                ],
+                [
+                  -34.161549956770614,
+                  -0.6172500073444098
+                ],
+                [
+                  -27.71155000780709,
+                  6.129249987425283
+                ],
+                [
+                  -20.49525000131689,
+                  11.6320500432048
+                ],
+                [
+                  -15.156949969241396,
+                  18.95045001874678
+                ],
+                [
+                  -9.190750002162531,
+                  25.270750004565343
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -14.097000002162531,
+                4.28899999265559
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 12,
+            "passed": true,
+            "correlation": 0.9987858671602067,
+            "normalized_mae": 0.012724426335631065,
+            "normalized_p95": 0.02365567995807476,
+            "final_dark_fraction": 0.012580920038810743,
+            "timing": {
+              "delay_ms": -4.90400000475347,
+              "uncertainty_ms": 9.19299999740906,
+              "correlation": 0.9995477252025767,
+              "edge_delay_intervals_ms": [
+                [
+                  -11.781349995406345,
+                  21.9274500424508
+                ],
+                [
+                  -34.161549956770614,
+                  -0.6172500073444098
+                ],
+                [
+                  -27.71155000780709,
+                  6.129249987425283
+                ],
+                [
+                  -20.49525000131689,
+                  11.6320500432048
+                ],
+                [
+                  -15.156949969241396,
+                  18.95045001874678
+                ],
+                [
+                  -9.190750002162531,
+                  25.270750004565343
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -14.097000002162531,
+                4.28899999265559
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 13,
+            "passed": true,
+            "correlation": 0.9982138485331722,
+            "normalized_mae": 0.010998964354122924,
+            "normalized_p95": 0.02158044800409976,
+            "final_dark_fraction": 0.00907285526505798,
+            "timing": {
+              "delay_ms": 2.7559999900404364,
+              "uncertainty_ms": 8.279499997384846,
+              "correlation": 0.9985489501711116,
+              "edge_delay_intervals_ms": [
+                [
+                  -11.781349995406345,
+                  21.9274500424508
+                ],
+                [
+                  -0.6172500073444098,
+                  33.241050004726276
+                ],
+                [
+                  -27.71155000780709,
+                  6.129249987425283
+                ],
+                [
+                  -20.49525000131689,
+                  11.6320500432048
+                ],
+                [
+                  -15.156949969241396,
+                  18.95045001874678
+                ],
+                [
+                  -9.190750002162531,
+                  25.270750004565343
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -5.52350000734441,
+                11.035499987425283
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 14,
+            "passed": true,
+            "correlation": 0.9977145169793248,
+            "normalized_mae": 0.015494901116346082,
+            "normalized_p95": 0.0309159011403768,
+            "final_dark_fraction": 0.019784918566179775,
+            "timing": {
+              "delay_ms": 2.7559999900404364,
+              "uncertainty_ms": 8.279499997384846,
+              "correlation": 0.9967559336928458,
+              "edge_delay_intervals_ms": [
+                [
+                  -11.781349995406345,
+                  21.9274500424508
+                ],
+                [
+                  -0.6172500073444098,
+                  33.241050004726276
+                ],
+                [
+                  -27.71155000780709,
+                  6.129249987425283
+                ],
+                [
+                  -20.49525000131689,
+                  11.6320500432048
+                ],
+                [
+                  -15.156949969241396,
+                  18.95045001874678
+                ],
+                [
+                  -9.190750002162531,
+                  25.270750004565343
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -5.52350000734441,
+                11.035499987425283
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 15,
+            "passed": true,
+            "correlation": 0.9948315060276638,
+            "normalized_mae": 0.018288255683090882,
+            "normalized_p95": 0.03767212888073181,
+            "final_dark_fraction": 0.012764618567540503,
+            "timing": {
+              "delay_ms": 2.7559999900404364,
+              "uncertainty_ms": 8.279499997384846,
+              "correlation": 0.9951698041430916,
+              "edge_delay_intervals_ms": [
+                [
+                  -11.781349995406345,
+                  21.9274500424508
+                ],
+                [
+                  -0.6172500073444098,
+                  33.241050004726276
+                ],
+                [
+                  -27.71155000780709,
+                  6.129249987425283
+                ],
+                [
+                  -20.49525000131689,
+                  11.6320500432048
+                ],
+                [
+                  -15.156949969241396,
+                  18.95045001874678
+                ],
+                [
+                  -9.190750002162531,
+                  25.270750004565343
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -5.52350000734441,
+                11.035499987425283
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 16,
+            "passed": true,
+            "correlation": 0.9985489746500392,
+            "normalized_mae": 0.012980388337906738,
+            "normalized_p95": 0.029277140845742757,
+            "final_dark_fraction": 0.009080602725257753,
+            "timing": {
+              "delay_ms": 2.7559999900404364,
+              "uncertainty_ms": 8.279499997384846,
+              "correlation": 0.9991730787193298,
+              "edge_delay_intervals_ms": [
+                [
+                  -11.781349995406345,
+                  21.9274500424508
+                ],
+                [
+                  -0.6172500073444098,
+                  33.241050004726276
+                ],
+                [
+                  -27.71155000780709,
+                  6.129249987425283
+                ],
+                [
+                  -20.49525000131689,
+                  11.6320500432048
+                ],
+                [
+                  -15.156949969241396,
+                  18.95045001874678
+                ],
+                [
+                  -9.190750002162531,
+                  25.270750004565343
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -5.52350000734441,
+                11.035499987425283
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 17,
+            "passed": true,
+            "correlation": 0.9973729893712505,
+            "normalized_mae": 0.01464807090485238,
+            "normalized_p95": 0.03015815833041299,
+            "final_dark_fraction": 0.010499303513020645,
+            "timing": {
+              "delay_ms": 2.7559999900404364,
+              "uncertainty_ms": 8.279499997384846,
+              "correlation": 0.9990487343824574,
+              "edge_delay_intervals_ms": [
+                [
+                  -11.781349995406345,
+                  21.9274500424508
+                ],
+                [
+                  -0.6172500073444098,
+                  33.241050004726276
+                ],
+                [
+                  -27.71155000780709,
+                  6.129249987425283
+                ],
+                [
+                  -20.49525000131689,
+                  11.6320500432048
+                ],
+                [
+                  -15.156949969241396,
+                  18.95045001874678
+                ],
+                [
+                  -9.190750002162531,
+                  25.270750004565343
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -5.52350000734441,
+                11.035499987425283
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 18,
+            "passed": true,
+            "correlation": 0.9954819882180355,
+            "normalized_mae": 0.020924186593327284,
+            "normalized_p95": 0.04077462324320446,
+            "final_dark_fraction": 0.026482731480291195,
+            "timing": {
+              "delay_ms": 2.7559999900404364,
+              "uncertainty_ms": 8.279499997384846,
+              "correlation": 0.9948493298788117,
+              "edge_delay_intervals_ms": [
+                [
+                  -11.781349995406345,
+                  21.9274500424508
+                ],
+                [
+                  -0.6172500073444098,
+                  33.241050004726276
+                ],
+                [
+                  -27.71155000780709,
+                  6.129249987425283
+                ],
+                [
+                  -20.49525000131689,
+                  11.6320500432048
+                ],
+                [
+                  -15.156949969241396,
+                  18.95045001874678
+                ],
+                [
+                  -9.190750002162531,
+                  25.270750004565343
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -5.52350000734441,
+                11.035499987425283
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 19,
+            "passed": true,
+            "correlation": 0.9966641918526283,
+            "normalized_mae": 0.01836263099596377,
+            "normalized_p95": 0.036261198716191295,
+            "final_dark_fraction": 0.01829799288918078,
+            "timing": {
+              "delay_ms": -4.90400000475347,
+              "uncertainty_ms": 9.19299999740906,
+              "correlation": 0.9986981254056785,
+              "edge_delay_intervals_ms": [
+                [
+                  -11.781349995406345,
+                  21.9274500424508
+                ],
+                [
+                  -34.161549956770614,
+                  -0.6172500073444098
+                ],
+                [
+                  -27.71155000780709,
+                  6.129249987425283
+                ],
+                [
+                  -20.49525000131689,
+                  11.6320500432048
+                ],
+                [
+                  -15.156949969241396,
+                  18.95045001874678
+                ],
+                [
+                  -9.190750002162531,
+                  25.270750004565343
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -14.097000002162531,
+                4.28899999265559
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 20,
+            "passed": true,
+            "correlation": 0.9976689269363958,
+            "normalized_mae": 0.014016760976227107,
+            "normalized_p95": 0.027111227892794052,
+            "final_dark_fraction": 0.0033315940745074772,
+            "timing": {
+              "delay_ms": -10.486049998784438,
+              "uncertainty_ms": 6.201549996621907,
+              "correlation": 0.9940263960846244,
+              "edge_delay_intervals_ms": [
+                [
+                  -11.781349995406345,
+                  21.9274500424508
+                ],
+                [
+                  -34.161549956770614,
+                  -0.6172500073444098
+                ],
+                [
+                  -27.71155000780709,
+                  6.129249987425283
+                ],
+                [
+                  -20.49525000131689,
+                  11.6320500432048
+                ],
+                [
+                  -15.156949969241396,
+                  18.95045001874678
+                ],
+                [
+                  -42.07894996157847,
+                  -9.190750002162531
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -16.687599995406345,
+                -4.284500002162531
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 21,
+            "passed": true,
+            "correlation": 0.9972844172222975,
+            "normalized_mae": 0.021010870254497847,
+            "normalized_p95": 0.040722161774320094,
+            "final_dark_fraction": 0.026887080458369003,
+            "timing": {
+              "delay_ms": -13.46914998232387,
+              "uncertainty_ms": 6.5940499869175255,
+              "correlation": 0.9956484665385615,
+              "edge_delay_intervals_ms": [
+                [
+                  -45.186949994647875,
+                  -11.781349995406345
+                ],
+                [
+                  -34.161549956770614,
+                  -0.6172500073444098
+                ],
+                [
+                  -27.71155000780709,
+                  6.129249987425283
+                ],
+                [
+                  -20.49525000131689,
+                  11.6320500432048
+                ],
+                [
+                  -15.156949969241396,
+                  18.95045001874678
+                ],
+                [
+                  -42.07894996157847,
+                  -9.190750002162531
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -20.063199969241396,
+                -6.8750999954063445
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 22,
+            "passed": true,
+            "correlation": 0.9977868976349751,
+            "normalized_mae": 0.02073573062954372,
+            "normalized_p95": 0.04078454076455685,
+            "final_dark_fraction": 0.016503718487754237,
+            "timing": {
+              "delay_ms": -13.46914998232387,
+              "uncertainty_ms": 6.5940499869175255,
+              "correlation": 0.9949825939693469,
+              "edge_delay_intervals_ms": [
+                [
+                  -45.186949994647875,
+                  -11.781349995406345
+                ],
+                [
+                  -34.161549956770614,
+                  -0.6172500073444098
+                ],
+                [
+                  -27.71155000780709,
+                  6.129249987425283
+                ],
+                [
+                  -20.49525000131689,
+                  11.6320500432048
+                ],
+                [
+                  -15.156949969241396,
+                  18.95045001874678
+                ],
+                [
+                  -42.07894996157847,
+                  -9.190750002162531
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -20.063199969241396,
+                -6.8750999954063445
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          }
+        ],
+        "criteria": {
+          "correlation_min": 0.9,
+          "normalized_mae_max": 0.12,
+          "normalized_p95_max": 0.25,
+          "final_dark_max": 0.05,
+          "clipping_max": 0
+        },
+        "timing": {
+          "delay_ms": -4.90400000475347,
+          "uncertainty_ms": 9.19299999740906,
+          "correlation": 0.9937289183733133,
+          "edge_delay_intervals_ms": [
+            [
+              -11.781349995406345,
+              21.9274500424508
+            ],
+            [
+              -34.161549956770614,
+              -0.6172500073444098
+            ],
+            [
+              -27.71155000780709,
+              6.129249987425283
+            ],
+            [
+              -20.49525000131689,
+              11.6320500432048
+            ],
+            [
+              -15.156949969241396,
+              18.95045001874678
+            ],
+            [
+              -9.190750002162531,
+              25.270750004565343
+            ]
+          ],
+          "half_exposure_guard_ms": 3.90625,
+          "delay_bounds_ms": [
+            -14.097000002162531,
+            4.28899999265559
+          ],
+          "clock": "relative device TX_DONE intervals, constant host anchor",
+          "method": "dedicated markers of this transaction; no fit to the tested effect"
+        },
+        "scope": "Isolated synthetic Wake observations and real optical output; no physical sensor, BLE or gameplay acceptance"
+      }
+    },
+    "host-stop": {
+      "capture_sha256": "e227eb943281aa6a43b0b678d3720599c73d60b3f9caa91ba6e405ca1356b61d",
+      "events_sha256": "32540a5a86209c10c89457c7084b9ddc725f8d9a6aa7816a283be7fb032e8675",
+      "wake_events_sha256": "31190eb241fb1d7ff2529071ddead5c78f3cfb28ebcc91fde097098d9d67177d",
+      "runtime_image_md5": "577ed0bcd8cfb265df6449aff6944977",
+      "runtime_image_bytes": 280416,
+      "timing": {
+        "received_fps": 30.02624425570041,
+        "max_gap_ms": 63.88070003595203
+      },
+      "counts": {
+        "frames": 206,
+        "contexts": 7,
+        "verified_images": 213
+      },
+      "assessment": {
+        "schema": 1,
+        "mode": "resonance-transitions",
+        "passed": true,
+        "stop_reason": "host",
+        "semantic_frames": 41,
+        "input_steps": 1,
+        "firmware_sha256": "4070bc04231bb7f2699dd808a82ea491d0b6d46203964ae20c8a1bd235f7eb41",
+        "capture_sha256": "e227eb943281aa6a43b0b678d3720599c73d60b3f9caa91ba6e405ca1356b61d",
+        "calibration_sha256": "eadad784ce90bdb863934e4cba6b63841075f591594e9bd4ceed2ec6be8cb6e8",
+        "maximum_clipped_fraction": 0.0,
+        "leds": [
+          {
+            "led": 0,
+            "passed": true,
+            "correlation": 0.9666082757729769,
+            "normalized_mae": 0.07964023559047212,
+            "normalized_p95": 0.22392294500230872,
+            "final_dark_fraction": 0.0,
+            "timing": {
+              "delay_ms": -17.9419999984093,
+              "uncertainty_ms": 8.493199990596622,
+              "correlation": 0.9963480415172915,
+              "edge_delay_intervals_ms": [
+                [
+                  -44.33715001773089,
+                  -11.157249990850687
+                ],
+                [
+                  -25.966649988200516,
+                  0.2939499714411795
+                ],
+                [
+                  -27.08495004242286,
+                  6.052150007802993
+                ],
+                [
+                  -21.528949989005923,
+                  32.333549957256764
+                ],
+                [
+                  -48.3151500383392,
+                  -14.355050007812679
+                ],
+                [
+                  -41.280250024516135,
+                  -1.036749995779246
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -26.435199989005923,
+                -9.448800007812679
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 1,
+            "passed": true,
+            "correlation": 0.9710949864681071,
+            "normalized_mae": 0.06745484389052263,
+            "normalized_p95": 0.23019650153445675,
+            "final_dark_fraction": 0.0,
+            "timing": {
+              "delay_ms": -17.9419999984093,
+              "uncertainty_ms": 8.493199990596622,
+              "correlation": 0.9964843862369362,
+              "edge_delay_intervals_ms": [
+                [
+                  -44.33715001773089,
+                  -11.157249990850687
+                ],
+                [
+                  -25.966649988200516,
+                  0.2939499714411795
+                ],
+                [
+                  -27.08495004242286,
+                  6.052150007802993
+                ],
+                [
+                  -21.528949989005923,
+                  32.333549957256764
+                ],
+                [
+                  -48.3151500383392,
+                  -14.355050007812679
+                ],
+                [
+                  -41.280250024516135,
+                  -1.036749995779246
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -26.435199989005923,
+                -9.448800007812679
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 2,
+            "passed": true,
+            "correlation": 0.9850022091925572,
+            "normalized_mae": 0.029964004782345028,
+            "normalized_p95": 0.11307847087816898,
+            "final_dark_fraction": 0.01537970567774672,
+            "timing": {
+              "delay_ms": -17.9419999984093,
+              "uncertainty_ms": 8.493199990596622,
+              "correlation": 0.9970182835809879,
+              "edge_delay_intervals_ms": [
+                [
+                  -44.33715001773089,
+                  -11.157249990850687
+                ],
+                [
+                  -25.966649988200516,
+                  0.2939499714411795
+                ],
+                [
+                  -27.08495004242286,
+                  6.052150007802993
+                ],
+                [
+                  -21.528949989005923,
+                  32.333549957256764
+                ],
+                [
+                  -48.3151500383392,
+                  -14.355050007812679
+                ],
+                [
+                  -41.280250024516135,
+                  -1.036749995779246
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -26.435199989005923,
+                -9.448800007812679
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 3,
+            "passed": true,
+            "correlation": 0.9911496477699998,
+            "normalized_mae": 0.01892287380547983,
+            "normalized_p95": 0.02806315010424359,
+            "final_dark_fraction": 0.021242566354689737,
+            "timing": {
+              "delay_ms": -17.9419999984093,
+              "uncertainty_ms": 8.493199990596622,
+              "correlation": 0.9949926820179544,
+              "edge_delay_intervals_ms": [
+                [
+                  -44.33715001773089,
+                  -11.157249990850687
+                ],
+                [
+                  -25.966649988200516,
+                  0.2939499714411795
+                ],
+                [
+                  -27.08495004242286,
+                  6.052150007802993
+                ],
+                [
+                  -21.528949989005923,
+                  32.333549957256764
+                ],
+                [
+                  -48.3151500383392,
+                  -14.355050007812679
+                ],
+                [
+                  -41.280250024516135,
+                  -1.036749995779246
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -26.435199989005923,
+                -9.448800007812679
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 4,
+            "passed": true,
+            "correlation": 0.9979098659613176,
+            "normalized_mae": 0.02370349989577916,
+            "normalized_p95": 0.04718803527865861,
+            "final_dark_fraction": 0.005139371427493337,
+            "timing": {
+              "delay_ms": -12.756149999331683,
+              "uncertainty_ms": 6.505150008480996,
+              "correlation": 0.9915137171318303,
+              "edge_delay_intervals_ms": [
+                [
+                  -44.33715001773089,
+                  -11.157249990850687
+                ],
+                [
+                  -25.966649988200516,
+                  0.2939499714411795
+                ],
+                [
+                  -27.08495004242286,
+                  6.052150007802993
+                ],
+                [
+                  -21.528949989005923,
+                  32.333549957256764
+                ],
+                [
+                  -14.355050007812679,
+                  27.920849955175072
+                ],
+                [
+                  -41.280250024516135,
+                  -1.036749995779246
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -19.26130000781268,
+                -6.250999990850687
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 5,
+            "passed": true,
+            "correlation": 0.9992741845746853,
+            "normalized_mae": 0.019350498657817034,
+            "normalized_p95": 0.036905638854122694,
+            "final_dark_fraction": 0.01579962037380632,
+            "timing": {
+              "delay_ms": -12.756149999331683,
+              "uncertainty_ms": 6.505150008480996,
+              "correlation": 0.9878164633328216,
+              "edge_delay_intervals_ms": [
+                [
+                  -44.33715001773089,
+                  -11.157249990850687
+                ],
+                [
+                  -25.966649988200516,
+                  0.2939499714411795
+                ],
+                [
+                  -27.08495004242286,
+                  6.052150007802993
+                ],
+                [
+                  -21.528949989005923,
+                  32.333549957256764
+                ],
+                [
+                  -14.355050007812679,
+                  27.920849955175072
+                ],
+                [
+                  -41.280250024516135,
+                  -1.036749995779246
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -19.26130000781268,
+                -6.250999990850687
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 6,
+            "passed": true,
+            "correlation": 0.9990872407927438,
+            "normalized_mae": 0.02151264349926238,
+            "normalized_p95": 0.031548925000090065,
+            "final_dark_fraction": 0.012075931241579909,
+            "timing": {
+              "delay_ms": -12.756149999331683,
+              "uncertainty_ms": 6.505150008480996,
+              "correlation": 0.986822332372423,
+              "edge_delay_intervals_ms": [
+                [
+                  -44.33715001773089,
+                  -11.157249990850687
+                ],
+                [
+                  -25.966649988200516,
+                  0.2939499714411795
+                ],
+                [
+                  -27.08495004242286,
+                  6.052150007802993
+                ],
+                [
+                  -21.528949989005923,
+                  32.333549957256764
+                ],
+                [
+                  -14.355050007812679,
+                  27.920849955175072
+                ],
+                [
+                  -41.280250024516135,
+                  -1.036749995779246
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -19.26130000781268,
+                -6.250999990850687
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 7,
+            "passed": true,
+            "correlation": 0.9973581470834967,
+            "normalized_mae": 0.01680853256703705,
+            "normalized_p95": 0.036010890414492694,
+            "final_dark_fraction": 0.012630370551585928,
+            "timing": {
+              "delay_ms": -6.096999993314967,
+              "uncertainty_ms": 9.96649999753572,
+              "correlation": 0.9937018260985895,
+              "edge_delay_intervals_ms": [
+                [
+                  -11.157249990850687,
+                  22.406649991404265
+                ],
+                [
+                  -25.966649988200516,
+                  0.2939499714411795
+                ],
+                [
+                  -27.08495004242286,
+                  6.052150007802993
+                ],
+                [
+                  -21.528949989005923,
+                  32.333549957256764
+                ],
+                [
+                  -14.355050007812679,
+                  27.920849955175072
+                ],
+                [
+                  -41.280250024516135,
+                  -1.036749995779246
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -16.063499990850687,
+                3.869500004220754
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 8,
+            "passed": true,
+            "correlation": 0.998655398099347,
+            "normalized_mae": 0.015085418381350123,
+            "normalized_p95": 0.02956043374600993,
+            "final_dark_fraction": 0.01031031237469362,
+            "timing": {
+              "delay_ms": -0.3714000121690333,
+              "uncertainty_ms": 5.571599983610213,
+              "correlation": 0.995196191988153,
+              "edge_delay_intervals_ms": [
+                [
+                  -11.157249990850687,
+                  22.406649991404265
+                ],
+                [
+                  -25.966649988200516,
+                  0.2939499714411795
+                ],
+                [
+                  -27.08495004242286,
+                  6.052150007802993
+                ],
+                [
+                  -21.528949989005923,
+                  32.333549957256764
+                ],
+                [
+                  -14.355050007812679,
+                  27.920849955175072
+                ],
+                [
+                  -1.036749995779246,
+                  25.224649969954044
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -5.942999995779246,
+                5.2001999714411795
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 9,
+            "passed": true,
+            "correlation": 0.9986059108919405,
+            "normalized_mae": 0.010393492792124112,
+            "normalized_p95": 0.0194084210118252,
+            "final_dark_fraction": 0.004093923375494096,
+            "timing": {
+              "delay_ms": -0.3714000121690333,
+              "uncertainty_ms": 5.571599983610213,
+              "correlation": 0.9990918270869752,
+              "edge_delay_intervals_ms": [
+                [
+                  -11.157249990850687,
+                  22.406649991404265
+                ],
+                [
+                  -25.966649988200516,
+                  0.2939499714411795
+                ],
+                [
+                  -27.08495004242286,
+                  6.052150007802993
+                ],
+                [
+                  -21.528949989005923,
+                  32.333549957256764
+                ],
+                [
+                  -14.355050007812679,
+                  27.920849955175072
+                ],
+                [
+                  -1.036749995779246,
+                  25.224649969954044
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -5.942999995779246,
+                5.2001999714411795
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 10,
+            "passed": true,
+            "correlation": 0.9998145984418747,
+            "normalized_mae": 0.00532483706584309,
+            "normalized_p95": 0.011520779306497081,
+            "final_dark_fraction": 0.005668773678111056,
+            "timing": {
+              "delay_ms": 3.1730499896220863,
+              "uncertainty_ms": 7.785350018180907,
+              "correlation": 0.9962060679942878,
+              "edge_delay_intervals_ms": [
+                [
+                  -11.157249990850687,
+                  22.406649991404265
+                ],
+                [
+                  0.2939499714411795,
+                  38.792549984995276
+                ],
+                [
+                  -27.08495004242286,
+                  6.052150007802993
+                ],
+                [
+                  -21.528949989005923,
+                  32.333549957256764
+                ],
+                [
+                  -14.355050007812679,
+                  27.920849955175072
+                ],
+                [
+                  -1.036749995779246,
+                  25.224649969954044
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -4.6123000285588205,
+                10.958400007802993
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 11,
+            "passed": true,
+            "correlation": 0.9998020222714783,
+            "normalized_mae": 0.006882992050438578,
+            "normalized_p95": 0.014509126457406048,
+            "final_dark_fraction": 0.003441313386994402,
+            "timing": {
+              "delay_ms": -0.3714000121690333,
+              "uncertainty_ms": 5.571599983610213,
+              "correlation": 0.9977206200904447,
+              "edge_delay_intervals_ms": [
+                [
+                  -11.157249990850687,
+                  22.406649991404265
+                ],
+                [
+                  -25.966649988200516,
+                  0.2939499714411795
+                ],
+                [
+                  -27.08495004242286,
+                  6.052150007802993
+                ],
+                [
+                  -21.528949989005923,
+                  32.333549957256764
+                ],
+                [
+                  -14.355050007812679,
+                  27.920849955175072
+                ],
+                [
+                  -1.036749995779246,
+                  25.224649969954044
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -5.942999995779246,
+                5.2001999714411795
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 12,
+            "passed": true,
+            "correlation": 0.9997683765273947,
+            "normalized_mae": 0.008566301820286455,
+            "normalized_p95": 0.019827927356988188,
+            "final_dark_fraction": 0.003048135288297291,
+            "timing": {
+              "delay_ms": -0.3714000121690333,
+              "uncertainty_ms": 5.571599983610213,
+              "correlation": 0.9996575505418492,
+              "edge_delay_intervals_ms": [
+                [
+                  -11.157249990850687,
+                  22.406649991404265
+                ],
+                [
+                  -25.966649988200516,
+                  0.2939499714411795
+                ],
+                [
+                  -27.08495004242286,
+                  6.052150007802993
+                ],
+                [
+                  -21.528949989005923,
+                  32.333549957256764
+                ],
+                [
+                  -14.355050007812679,
+                  27.920849955175072
+                ],
+                [
+                  -1.036749995779246,
+                  25.224649969954044
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -5.942999995779246,
+                5.2001999714411795
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 13,
+            "passed": true,
+            "correlation": 0.9999048117267578,
+            "normalized_mae": 0.007108767941036636,
+            "normalized_p95": 0.012191318539841099,
+            "final_dark_fraction": 0.010345364863884106,
+            "timing": {
+              "delay_ms": 3.1730499896220863,
+              "uncertainty_ms": 7.785350018180907,
+              "correlation": 0.9987997056785813,
+              "edge_delay_intervals_ms": [
+                [
+                  -11.157249990850687,
+                  22.406649991404265
+                ],
+                [
+                  0.2939499714411795,
+                  38.792549984995276
+                ],
+                [
+                  -27.08495004242286,
+                  6.052150007802993
+                ],
+                [
+                  -21.528949989005923,
+                  32.333549957256764
+                ],
+                [
+                  -14.355050007812679,
+                  27.920849955175072
+                ],
+                [
+                  -1.036749995779246,
+                  25.224649969954044
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -4.6123000285588205,
+                10.958400007802993
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 14,
+            "passed": true,
+            "correlation": 0.9997135188101754,
+            "normalized_mae": 0.010720244636277968,
+            "normalized_p95": 0.017040758062343186,
+            "final_dark_fraction": 0.017718322787841696,
+            "timing": {
+              "delay_ms": 3.1730499896220863,
+              "uncertainty_ms": 7.785350018180907,
+              "correlation": 0.9977865054538614,
+              "edge_delay_intervals_ms": [
+                [
+                  -11.157249990850687,
+                  22.406649991404265
+                ],
+                [
+                  0.2939499714411795,
+                  38.792549984995276
+                ],
+                [
+                  -27.08495004242286,
+                  6.052150007802993
+                ],
+                [
+                  -21.528949989005923,
+                  32.333549957256764
+                ],
+                [
+                  -14.355050007812679,
+                  27.920849955175072
+                ],
+                [
+                  -1.036749995779246,
+                  25.224649969954044
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -4.6123000285588205,
+                10.958400007802993
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 15,
+            "passed": true,
+            "correlation": 0.9997407181422725,
+            "normalized_mae": 0.009939644435752095,
+            "normalized_p95": 0.013955850855990862,
+            "final_dark_fraction": 0.01689880606902352,
+            "timing": {
+              "delay_ms": 3.1730499896220863,
+              "uncertainty_ms": 7.785350018180907,
+              "correlation": 0.9958460373788821,
+              "edge_delay_intervals_ms": [
+                [
+                  -11.157249990850687,
+                  22.406649991404265
+                ],
+                [
+                  0.2939499714411795,
+                  38.792549984995276
+                ],
+                [
+                  -27.08495004242286,
+                  6.052150007802993
+                ],
+                [
+                  -21.528949989005923,
+                  32.333549957256764
+                ],
+                [
+                  -14.355050007812679,
+                  27.920849955175072
+                ],
+                [
+                  -1.036749995779246,
+                  25.224649969954044
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -4.6123000285588205,
+                10.958400007802993
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 16,
+            "passed": true,
+            "correlation": 0.9998427798621018,
+            "normalized_mae": 0.010138436206719522,
+            "normalized_p95": 0.01803136579862706,
+            "final_dark_fraction": 0.014497353410664736,
+            "timing": {
+              "delay_ms": 3.1730499896220863,
+              "uncertainty_ms": 7.785350018180907,
+              "correlation": 0.9990074946279983,
+              "edge_delay_intervals_ms": [
+                [
+                  -11.157249990850687,
+                  22.406649991404265
+                ],
+                [
+                  0.2939499714411795,
+                  38.792549984995276
+                ],
+                [
+                  -27.08495004242286,
+                  6.052150007802993
+                ],
+                [
+                  -21.528949989005923,
+                  32.333549957256764
+                ],
+                [
+                  -14.355050007812679,
+                  27.920849955175072
+                ],
+                [
+                  -1.036749995779246,
+                  25.224649969954044
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -4.6123000285588205,
+                10.958400007802993
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 17,
+            "passed": true,
+            "correlation": 0.9989571165761494,
+            "normalized_mae": 0.011146801100438026,
+            "normalized_p95": 0.020747651178010914,
+            "final_dark_fraction": 0.02651696012983643,
+            "timing": {
+              "delay_ms": 3.1730499896220863,
+              "uncertainty_ms": 7.785350018180907,
+              "correlation": 0.9988505652802714,
+              "edge_delay_intervals_ms": [
+                [
+                  -11.157249990850687,
+                  22.406649991404265
+                ],
+                [
+                  0.2939499714411795,
+                  38.792549984995276
+                ],
+                [
+                  -27.08495004242286,
+                  6.052150007802993
+                ],
+                [
+                  -21.528949989005923,
+                  32.333549957256764
+                ],
+                [
+                  -14.355050007812679,
+                  27.920849955175072
+                ],
+                [
+                  -1.036749995779246,
+                  25.224649969954044
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -4.6123000285588205,
+                10.958400007802993
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 18,
+            "passed": true,
+            "correlation": 0.9980527915563058,
+            "normalized_mae": 0.017485397264711797,
+            "normalized_p95": 0.03673697307932975,
+            "final_dark_fraction": 0.020518296957752067,
+            "timing": {
+              "delay_ms": 3.1730499896220863,
+              "uncertainty_ms": 7.785350018180907,
+              "correlation": 0.9954612067716089,
+              "edge_delay_intervals_ms": [
+                [
+                  -11.157249990850687,
+                  22.406649991404265
+                ],
+                [
+                  0.2939499714411795,
+                  38.792549984995276
+                ],
+                [
+                  -27.08495004242286,
+                  6.052150007802993
+                ],
+                [
+                  -21.528949989005923,
+                  32.333549957256764
+                ],
+                [
+                  -14.355050007812679,
+                  27.920849955175072
+                ],
+                [
+                  -1.036749995779246,
+                  25.224649969954044
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -4.6123000285588205,
+                10.958400007802993
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 19,
+            "passed": true,
+            "correlation": 0.9983554469559943,
+            "normalized_mae": 0.015247588018597456,
+            "normalized_p95": 0.0318399309286823,
+            "final_dark_fraction": 0.02412918279051319,
+            "timing": {
+              "delay_ms": -0.3714000121690333,
+              "uncertainty_ms": 5.571599983610213,
+              "correlation": 0.9988661213935661,
+              "edge_delay_intervals_ms": [
+                [
+                  -11.157249990850687,
+                  22.406649991404265
+                ],
+                [
+                  -25.966649988200516,
+                  0.2939499714411795
+                ],
+                [
+                  -27.08495004242286,
+                  6.052150007802993
+                ],
+                [
+                  -21.528949989005923,
+                  32.333549957256764
+                ],
+                [
+                  -14.355050007812679,
+                  27.920849955175072
+                ],
+                [
+                  -1.036749995779246,
+                  25.224649969954044
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -5.942999995779246,
+                5.2001999714411795
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 20,
+            "passed": true,
+            "correlation": 0.9992790802400842,
+            "normalized_mae": 0.013822828283203997,
+            "normalized_p95": 0.02843221297661936,
+            "final_dark_fraction": 0.007789770274018912,
+            "timing": {
+              "delay_ms": -0.3714000121690333,
+              "uncertainty_ms": 5.571599983610213,
+              "correlation": 0.9946755005465907,
+              "edge_delay_intervals_ms": [
+                [
+                  -11.157249990850687,
+                  22.406649991404265
+                ],
+                [
+                  -25.966649988200516,
+                  0.2939499714411795
+                ],
+                [
+                  -27.08495004242286,
+                  6.052150007802993
+                ],
+                [
+                  -21.528949989005923,
+                  32.333549957256764
+                ],
+                [
+                  -14.355050007812679,
+                  27.920849955175072
+                ],
+                [
+                  -1.036749995779246,
+                  25.224649969954044
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -5.942999995779246,
+                5.2001999714411795
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 21,
+            "passed": true,
+            "correlation": 0.9989613180169628,
+            "normalized_mae": 0.015676640889444163,
+            "normalized_p95": 0.029578538534821966,
+            "final_dark_fraction": 0.022046592448465872,
+            "timing": {
+              "delay_ms": -12.756149999331683,
+              "uncertainty_ms": 6.505150008480996,
+              "correlation": 0.9869635824748808,
+              "edge_delay_intervals_ms": [
+                [
+                  -44.33715001773089,
+                  -11.157249990850687
+                ],
+                [
+                  -25.966649988200516,
+                  0.2939499714411795
+                ],
+                [
+                  -27.08495004242286,
+                  6.052150007802993
+                ],
+                [
+                  -21.528949989005923,
+                  32.333549957256764
+                ],
+                [
+                  -14.355050007812679,
+                  27.920849955175072
+                ],
+                [
+                  -41.280250024516135,
+                  -1.036749995779246
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -19.26130000781268,
+                -6.250999990850687
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 22,
+            "passed": true,
+            "correlation": 0.9990238956545466,
+            "normalized_mae": 0.030335470840669874,
+            "normalized_p95": 0.0625088288431574,
+            "final_dark_fraction": 0.013693836832456027,
+            "timing": {
+              "delay_ms": -12.756149999331683,
+              "uncertainty_ms": 6.505150008480996,
+              "correlation": 0.9934447738198138,
+              "edge_delay_intervals_ms": [
+                [
+                  -44.33715001773089,
+                  -11.157249990850687
+                ],
+                [
+                  -25.966649988200516,
+                  0.2939499714411795
+                ],
+                [
+                  -27.08495004242286,
+                  6.052150007802993
+                ],
+                [
+                  -21.528949989005923,
+                  32.333549957256764
+                ],
+                [
+                  -14.355050007812679,
+                  27.920849955175072
+                ],
+                [
+                  -41.280250024516135,
+                  -1.036749995779246
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -19.26130000781268,
+                -6.250999990850687
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          }
+        ],
+        "criteria": {
+          "correlation_min": 0.9,
+          "normalized_mae_max": 0.12,
+          "normalized_p95_max": 0.25,
+          "final_dark_max": 0.05,
+          "clipping_max": 0
+        },
+        "timing": {
+          "delay_ms": -0.3714000121690333,
+          "uncertainty_ms": 5.571599983610213,
+          "correlation": 0.9937634575636312,
+          "edge_delay_intervals_ms": [
+            [
+              -11.157249990850687,
+              22.406649991404265
+            ],
+            [
+              -25.966649988200516,
+              0.2939499714411795
+            ],
+            [
+              -27.08495004242286,
+              6.052150007802993
+            ],
+            [
+              -21.528949989005923,
+              32.333549957256764
+            ],
+            [
+              -14.355050007812679,
+              27.920849955175072
+            ],
+            [
+              -1.036749995779246,
+              25.224649969954044
+            ]
+          ],
+          "half_exposure_guard_ms": 3.90625,
+          "delay_bounds_ms": [
+            -5.942999995779246,
+            5.2001999714411795
+          ],
+          "clock": "relative device TX_DONE intervals, constant host anchor",
+          "method": "dedicated markers of this transaction; no fit to the tested effect"
+        },
+        "scope": "Isolated synthetic Wake observations and real optical output; no physical sensor, BLE or gameplay acceptance"
+      }
+    },
+    "watchdog": {
+      "capture_sha256": "b43ed1cc09a393e76d6a1457d51ec2be11d3675b97a098786ad766944c513625",
+      "events_sha256": "8eb646210ab3f4eee5fc29fa7bfd07a966ef4c77f6496b2e035ac434dcf9f45f",
+      "wake_events_sha256": "659d267d845b9635ff164105da02b40720180d91520f3ddd2985826cec60f8b7",
+      "runtime_image_md5": "577ed0bcd8cfb265df6449aff6944977",
+      "runtime_image_bytes": 280416,
+      "timing": {
+        "received_fps": 30.025347151369303,
+        "max_gap_ms": 47.822299995459616
+      },
+      "counts": {
+        "frames": 220,
+        "contexts": 8,
+        "verified_images": 228
+      },
+      "assessment": {
+        "schema": 1,
+        "mode": "resonance-transitions",
+        "passed": true,
+        "stop_reason": "watchdog",
+        "semantic_frames": 53,
+        "input_steps": 2,
+        "firmware_sha256": "4070bc04231bb7f2699dd808a82ea491d0b6d46203964ae20c8a1bd235f7eb41",
+        "capture_sha256": "b43ed1cc09a393e76d6a1457d51ec2be11d3675b97a098786ad766944c513625",
+        "calibration_sha256": "eadad784ce90bdb863934e4cba6b63841075f591594e9bd4ceed2ec6be8cb6e8",
+        "maximum_clipped_fraction": 0.0,
+        "leds": [
+          {
+            "led": 0,
+            "passed": true,
+            "correlation": 0.9971463635808181,
+            "normalized_mae": 0.025027368933217345,
+            "normalized_p95": 0.04353559497595194,
+            "final_dark_fraction": 0.03194406293451838,
+            "timing": {
+              "delay_ms": -18.359650027006865,
+              "uncertainty_ms": 8.555750001221895,
+              "correlation": 0.9959075351495779,
+              "edge_delay_intervals_ms": [
+                [
+                  -44.62775001022965,
+                  -7.372550034895539
+                ],
+                [
+                  -33.50085001438856,
+                  2.400050009600818
+                ],
+                [
+                  -22.61905002174899,
+                  5.9046499989926815
+                ],
+                [
+                  -22.00915002822876,
+                  14.272249982692301
+                ],
+                [
+                  -36.51295003481209,
+                  -14.71015002578497
+                ],
+                [
+                  -39.79585000546649,
+                  0.23264995776116848
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -26.91540002822876,
+                -9.80390002578497
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 1,
+            "passed": true,
+            "correlation": 0.998628584524948,
+            "normalized_mae": 0.01917638551775372,
+            "normalized_p95": 0.0336860881915628,
+            "final_dark_fraction": 0.03078051705945677,
+            "timing": {
+              "delay_ms": -18.359650027006865,
+              "uncertainty_ms": 8.555750001221895,
+              "correlation": 0.9966116853887284,
+              "edge_delay_intervals_ms": [
+                [
+                  -44.62775001022965,
+                  -7.372550034895539
+                ],
+                [
+                  -33.50085001438856,
+                  2.400050009600818
+                ],
+                [
+                  -22.61905002174899,
+                  5.9046499989926815
+                ],
+                [
+                  -22.00915002822876,
+                  14.272249982692301
+                ],
+                [
+                  -36.51295003481209,
+                  -14.71015002578497
+                ],
+                [
+                  -39.79585000546649,
+                  0.23264995776116848
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -26.91540002822876,
+                -9.80390002578497
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 2,
+            "passed": true,
+            "correlation": 0.9991521777700055,
+            "normalized_mae": 0.015159674106368969,
+            "normalized_p95": 0.032857058799519154,
+            "final_dark_fraction": 0.01392289999785184,
+            "timing": {
+              "delay_ms": -18.359650027006865,
+              "uncertainty_ms": 8.555750001221895,
+              "correlation": 0.9970263776944716,
+              "edge_delay_intervals_ms": [
+                [
+                  -44.62775001022965,
+                  -7.372550034895539
+                ],
+                [
+                  -33.50085001438856,
+                  2.400050009600818
+                ],
+                [
+                  -22.61905002174899,
+                  5.9046499989926815
+                ],
+                [
+                  -22.00915002822876,
+                  14.272249982692301
+                ],
+                [
+                  -36.51295003481209,
+                  -14.71015002578497
+                ],
+                [
+                  -39.79585000546649,
+                  0.23264995776116848
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -26.91540002822876,
+                -9.80390002578497
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 3,
+            "passed": true,
+            "correlation": 0.9991417864891232,
+            "normalized_mae": 0.014161380667423791,
+            "normalized_p95": 0.02992240499361784,
+            "final_dark_fraction": 0.015152872080556977,
+            "timing": {
+              "delay_ms": -18.359650027006865,
+              "uncertainty_ms": 8.555750001221895,
+              "correlation": 0.9957739620515941,
+              "edge_delay_intervals_ms": [
+                [
+                  -44.62775001022965,
+                  -7.372550034895539
+                ],
+                [
+                  -33.50085001438856,
+                  2.400050009600818
+                ],
+                [
+                  -22.61905002174899,
+                  5.9046499989926815
+                ],
+                [
+                  -22.00915002822876,
+                  14.272249982692301
+                ],
+                [
+                  -36.51295003481209,
+                  -14.71015002578497
+                ],
+                [
+                  -39.79585000546649,
+                  0.23264995776116848
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -26.91540002822876,
+                -9.80390002578497
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 4,
+            "passed": true,
+            "correlation": 0.998495103527889,
+            "normalized_mae": 0.01913553072971901,
+            "normalized_p95": 0.040470408538021176,
+            "final_dark_fraction": 0.015439663009639329,
+            "timing": {
+              "delay_ms": -11.041350030340254,
+              "uncertainty_ms": 8.575049995444715,
+              "correlation": 0.9954168380067532,
+              "edge_delay_intervals_ms": [
+                [
+                  -44.62775001022965,
+                  -7.372550034895539
+                ],
+                [
+                  -33.50085001438856,
+                  2.400050009600818
+                ],
+                [
+                  -22.61905002174899,
+                  5.9046499989926815
+                ],
+                [
+                  -22.00915002822876,
+                  14.272249982692301
+                ],
+                [
+                  -14.71015002578497,
+                  29.947649971581995
+                ],
+                [
+                  -39.79585000546649,
+                  0.23264995776116848
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -19.61640002578497,
+                -2.4663000348955393
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 5,
+            "passed": true,
+            "correlation": 0.9992652971447245,
+            "normalized_mae": 0.018556302337885546,
+            "normalized_p95": 0.04470451267768603,
+            "final_dark_fraction": 0.011353192158212528,
+            "timing": {
+              "delay_ms": -11.041350030340254,
+              "uncertainty_ms": 8.575049995444715,
+              "correlation": 0.9959679791659711,
+              "edge_delay_intervals_ms": [
+                [
+                  -44.62775001022965,
+                  -7.372550034895539
+                ],
+                [
+                  -33.50085001438856,
+                  2.400050009600818
+                ],
+                [
+                  -22.61905002174899,
+                  5.9046499989926815
+                ],
+                [
+                  -22.00915002822876,
+                  14.272249982692301
+                ],
+                [
+                  -14.71015002578497,
+                  29.947649971581995
+                ],
+                [
+                  -39.79585000546649,
+                  0.23264995776116848
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -19.61640002578497,
+                -2.4663000348955393
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 6,
+            "passed": true,
+            "correlation": 0.9989660478328594,
+            "normalized_mae": 0.013338392068975184,
+            "normalized_p95": 0.026521940720348046,
+            "final_dark_fraction": 0.016238468146821564,
+            "timing": {
+              "delay_ms": -11.041350030340254,
+              "uncertainty_ms": 8.575049995444715,
+              "correlation": 0.9960865856235471,
+              "edge_delay_intervals_ms": [
+                [
+                  -44.62775001022965,
+                  -7.372550034895539
+                ],
+                [
+                  -33.50085001438856,
+                  2.400050009600818
+                ],
+                [
+                  -22.61905002174899,
+                  5.9046499989926815
+                ],
+                [
+                  -22.00915002822876,
+                  14.272249982692301
+                ],
+                [
+                  -14.71015002578497,
+                  29.947649971581995
+                ],
+                [
+                  -39.79585000546649,
+                  0.23264995776116848
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -19.61640002578497,
+                -2.4663000348955393
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 7,
+            "passed": true,
+            "correlation": 0.9980827576616976,
+            "normalized_mae": 0.01337792577919683,
+            "normalized_p95": 0.031572564879797024,
+            "final_dark_fraction": 0.017924775225694536,
+            "timing": {
+              "delay_ms": -11.041350030340254,
+              "uncertainty_ms": 8.575049995444715,
+              "correlation": 0.9954024155881739,
+              "edge_delay_intervals_ms": [
+                [
+                  -44.62775001022965,
+                  -7.372550034895539
+                ],
+                [
+                  -33.50085001438856,
+                  2.400050009600818
+                ],
+                [
+                  -22.61905002174899,
+                  5.9046499989926815
+                ],
+                [
+                  -22.00915002822876,
+                  14.272249982692301
+                ],
+                [
+                  -14.71015002578497,
+                  29.947649971581995
+                ],
+                [
+                  -39.79585000546649,
+                  0.23264995776116848
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -19.61640002578497,
+                -2.4663000348955393
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 8,
+            "passed": true,
+            "correlation": 0.9980720320834835,
+            "normalized_mae": 0.015632203701334824,
+            "normalized_p95": 0.03673967327582221,
+            "final_dark_fraction": 0.010725470799419672,
+            "timing": {
+              "delay_ms": -3.5699500385671854,
+              "uncertainty_ms": 8.708849996328354,
+              "correlation": 0.9935264756150675,
+              "edge_delay_intervals_ms": [
+                [
+                  -7.372550034895539,
+                  22.073949969373643
+                ],
+                [
+                  -33.50085001438856,
+                  2.400050009600818
+                ],
+                [
+                  -22.61905002174899,
+                  5.9046499989926815
+                ],
+                [
+                  -22.00915002822876,
+                  14.272249982692301
+                ],
+                [
+                  -14.71015002578497,
+                  29.947649971581995
+                ],
+                [
+                  -39.79585000546649,
+                  0.23264995776116848
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -12.27880003489554,
+                5.1388999577611685
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 9,
+            "passed": true,
+            "correlation": 0.9967473773985353,
+            "normalized_mae": 0.013535296352113996,
+            "normalized_p95": 0.02985481554010941,
+            "final_dark_fraction": 0.004758030042155345,
+            "timing": {
+              "delay_ms": 1.3163499836809933,
+              "uncertainty_ms": 5.989950025919825,
+              "correlation": 0.981968633508046,
+              "edge_delay_intervals_ms": [
+                [
+                  -7.372550034895539,
+                  22.073949969373643
+                ],
+                [
+                  -33.50085001438856,
+                  2.400050009600818
+                ],
+                [
+                  -22.61905002174899,
+                  5.9046499989926815
+                ],
+                [
+                  -22.00915002822876,
+                  14.272249982692301
+                ],
+                [
+                  -14.71015002578497,
+                  29.947649971581995
+                ],
+                [
+                  0.23264995776116848,
+                  24.469549991190434
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -4.6736000422388315,
+                7.306300009600818
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 10,
+            "passed": true,
+            "correlation": 0.9998245412798131,
+            "normalized_mae": 0.0044224597104694455,
+            "normalized_p95": 0.009282949011577162,
+            "final_dark_fraction": 0.00311079421101929,
+            "timing": {
+              "delay_ms": 4.15235000429675,
+              "uncertainty_ms": 6.658549994695932,
+              "correlation": 0.9966576418022868,
+              "edge_delay_intervals_ms": [
+                [
+                  -7.372550034895539,
+                  22.073949969373643
+                ],
+                [
+                  2.400050009600818,
+                  32.912749983370304
+                ],
+                [
+                  -22.61905002174899,
+                  5.9046499989926815
+                ],
+                [
+                  -22.00915002822876,
+                  14.272249982692301
+                ],
+                [
+                  -14.71015002578497,
+                  29.947649971581995
+                ],
+                [
+                  0.23264995776116848,
+                  24.469549991190434
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -2.506199990399182,
+                10.810899998992682
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 11,
+            "passed": true,
+            "correlation": 0.999675448238714,
+            "normalized_mae": 0.007587764816499787,
+            "normalized_p95": 0.013463268912092038,
+            "final_dark_fraction": 0.007213892007631601,
+            "timing": {
+              "delay_ms": 1.3163499836809933,
+              "uncertainty_ms": 5.989950025919825,
+              "correlation": 0.9907499145083538,
+              "edge_delay_intervals_ms": [
+                [
+                  -7.372550034895539,
+                  22.073949969373643
+                ],
+                [
+                  -33.50085001438856,
+                  2.400050009600818
+                ],
+                [
+                  -22.61905002174899,
+                  5.9046499989926815
+                ],
+                [
+                  -22.00915002822876,
+                  14.272249982692301
+                ],
+                [
+                  -14.71015002578497,
+                  29.947649971581995
+                ],
+                [
+                  0.23264995776116848,
+                  24.469549991190434
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -4.6736000422388315,
+                7.306300009600818
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 12,
+            "passed": true,
+            "correlation": 0.9995755807902713,
+            "normalized_mae": 0.007648049072408545,
+            "normalized_p95": 0.017741702173882275,
+            "final_dark_fraction": 0.004403294232547588,
+            "timing": {
+              "delay_ms": 1.3163499836809933,
+              "uncertainty_ms": 5.989950025919825,
+              "correlation": 0.9865828136774168,
+              "edge_delay_intervals_ms": [
+                [
+                  -7.372550034895539,
+                  22.073949969373643
+                ],
+                [
+                  -33.50085001438856,
+                  2.400050009600818
+                ],
+                [
+                  -22.61905002174899,
+                  5.9046499989926815
+                ],
+                [
+                  -22.00915002822876,
+                  14.272249982692301
+                ],
+                [
+                  -14.71015002578497,
+                  29.947649971581995
+                ],
+                [
+                  0.23264995776116848,
+                  24.469549991190434
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -4.6736000422388315,
+                7.306300009600818
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 13,
+            "passed": true,
+            "correlation": 0.9998730974350608,
+            "normalized_mae": 0.005899246129856127,
+            "normalized_p95": 0.01208407163841233,
+            "final_dark_fraction": 0.00572929132222966,
+            "timing": {
+              "delay_ms": 4.15235000429675,
+              "uncertainty_ms": 6.658549994695932,
+              "correlation": 0.9980140540728585,
+              "edge_delay_intervals_ms": [
+                [
+                  -7.372550034895539,
+                  22.073949969373643
+                ],
+                [
+                  2.400050009600818,
+                  32.912749983370304
+                ],
+                [
+                  -22.61905002174899,
+                  5.9046499989926815
+                ],
+                [
+                  -22.00915002822876,
+                  14.272249982692301
+                ],
+                [
+                  -14.71015002578497,
+                  29.947649971581995
+                ],
+                [
+                  0.23264995776116848,
+                  24.469549991190434
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -2.506199990399182,
+                10.810899998992682
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 14,
+            "passed": true,
+            "correlation": 0.9997916001047138,
+            "normalized_mae": 0.008054738479059196,
+            "normalized_p95": 0.015248113007610739,
+            "final_dark_fraction": 0.011855565611367962,
+            "timing": {
+              "delay_ms": 4.15235000429675,
+              "uncertainty_ms": 6.658549994695932,
+              "correlation": 0.9974936084627568,
+              "edge_delay_intervals_ms": [
+                [
+                  -7.372550034895539,
+                  22.073949969373643
+                ],
+                [
+                  2.400050009600818,
+                  32.912749983370304
+                ],
+                [
+                  -22.61905002174899,
+                  5.9046499989926815
+                ],
+                [
+                  -22.00915002822876,
+                  14.272249982692301
+                ],
+                [
+                  -14.71015002578497,
+                  29.947649971581995
+                ],
+                [
+                  0.23264995776116848,
+                  24.469549991190434
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -2.506199990399182,
+                10.810899998992682
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 15,
+            "passed": true,
+            "correlation": 0.9998330872329672,
+            "normalized_mae": 0.007205612480595436,
+            "normalized_p95": 0.014751789345958345,
+            "final_dark_fraction": 0.004647814372052052,
+            "timing": {
+              "delay_ms": 4.15235000429675,
+              "uncertainty_ms": 6.658549994695932,
+              "correlation": 0.995572384031617,
+              "edge_delay_intervals_ms": [
+                [
+                  -7.372550034895539,
+                  22.073949969373643
+                ],
+                [
+                  2.400050009600818,
+                  32.912749983370304
+                ],
+                [
+                  -22.61905002174899,
+                  5.9046499989926815
+                ],
+                [
+                  -22.00915002822876,
+                  14.272249982692301
+                ],
+                [
+                  -14.71015002578497,
+                  29.947649971581995
+                ],
+                [
+                  0.23264995776116848,
+                  24.469549991190434
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -2.506199990399182,
+                10.810899998992682
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 16,
+            "passed": true,
+            "correlation": 0.9999257417809652,
+            "normalized_mae": 0.004992875985356629,
+            "normalized_p95": 0.009829716403633362,
+            "final_dark_fraction": 0.0019875980337581804,
+            "timing": {
+              "delay_ms": 4.15235000429675,
+              "uncertainty_ms": 6.658549994695932,
+              "correlation": 0.9995556293958084,
+              "edge_delay_intervals_ms": [
+                [
+                  -7.372550034895539,
+                  22.073949969373643
+                ],
+                [
+                  2.400050009600818,
+                  32.912749983370304
+                ],
+                [
+                  -22.61905002174899,
+                  5.9046499989926815
+                ],
+                [
+                  -22.00915002822876,
+                  14.272249982692301
+                ],
+                [
+                  -14.71015002578497,
+                  29.947649971581995
+                ],
+                [
+                  0.23264995776116848,
+                  24.469549991190434
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -2.506199990399182,
+                10.810899998992682
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 17,
+            "passed": true,
+            "correlation": 0.9992280802771281,
+            "normalized_mae": 0.009935450734743143,
+            "normalized_p95": 0.0187447148623425,
+            "final_dark_fraction": 0.015577037345912767,
+            "timing": {
+              "delay_ms": 4.15235000429675,
+              "uncertainty_ms": 6.658549994695932,
+              "correlation": 0.9988356202525067,
+              "edge_delay_intervals_ms": [
+                [
+                  -7.372550034895539,
+                  22.073949969373643
+                ],
+                [
+                  2.400050009600818,
+                  32.912749983370304
+                ],
+                [
+                  -22.61905002174899,
+                  5.9046499989926815
+                ],
+                [
+                  -22.00915002822876,
+                  14.272249982692301
+                ],
+                [
+                  -14.71015002578497,
+                  29.947649971581995
+                ],
+                [
+                  0.23264995776116848,
+                  24.469549991190434
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -2.506199990399182,
+                10.810899998992682
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 18,
+            "passed": true,
+            "correlation": 0.9988594261648144,
+            "normalized_mae": 0.014961056303198437,
+            "normalized_p95": 0.03169739335748569,
+            "final_dark_fraction": 0.01678711369250833,
+            "timing": {
+              "delay_ms": 4.15235000429675,
+              "uncertainty_ms": 6.658549994695932,
+              "correlation": 0.9948515295624879,
+              "edge_delay_intervals_ms": [
+                [
+                  -7.372550034895539,
+                  22.073949969373643
+                ],
+                [
+                  2.400050009600818,
+                  32.912749983370304
+                ],
+                [
+                  -22.61905002174899,
+                  5.9046499989926815
+                ],
+                [
+                  -22.00915002822876,
+                  14.272249982692301
+                ],
+                [
+                  -14.71015002578497,
+                  29.947649971581995
+                ],
+                [
+                  0.23264995776116848,
+                  24.469549991190434
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -2.506199990399182,
+                10.810899998992682
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 19,
+            "passed": true,
+            "correlation": 0.9987537149744931,
+            "normalized_mae": 0.014902448218637633,
+            "normalized_p95": 0.03261853321274927,
+            "final_dark_fraction": 0.015501831948541928,
+            "timing": {
+              "delay_ms": 1.3163499836809933,
+              "uncertainty_ms": 5.989950025919825,
+              "correlation": 0.9797380954013727,
+              "edge_delay_intervals_ms": [
+                [
+                  -7.372550034895539,
+                  22.073949969373643
+                ],
+                [
+                  -33.50085001438856,
+                  2.400050009600818
+                ],
+                [
+                  -22.61905002174899,
+                  5.9046499989926815
+                ],
+                [
+                  -22.00915002822876,
+                  14.272249982692301
+                ],
+                [
+                  -14.71015002578497,
+                  29.947649971581995
+                ],
+                [
+                  0.23264995776116848,
+                  24.469549991190434
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -4.6736000422388315,
+                7.306300009600818
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 20,
+            "passed": true,
+            "correlation": 0.998940278017974,
+            "normalized_mae": 0.013435805724573703,
+            "normalized_p95": 0.028782950015457866,
+            "final_dark_fraction": 0.012554122422019228,
+            "timing": {
+              "delay_ms": -3.5699500385671854,
+              "uncertainty_ms": 8.708849996328354,
+              "correlation": 0.9951058762723687,
+              "edge_delay_intervals_ms": [
+                [
+                  -7.372550034895539,
+                  22.073949969373643
+                ],
+                [
+                  -33.50085001438856,
+                  2.400050009600818
+                ],
+                [
+                  -22.61905002174899,
+                  5.9046499989926815
+                ],
+                [
+                  -22.00915002822876,
+                  14.272249982692301
+                ],
+                [
+                  -14.71015002578497,
+                  29.947649971581995
+                ],
+                [
+                  -39.79585000546649,
+                  0.23264995776116848
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -12.27880003489554,
+                5.1388999577611685
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 21,
+            "passed": true,
+            "correlation": 0.9986833772034375,
+            "normalized_mae": 0.018991637154061054,
+            "normalized_p95": 0.04090280758163057,
+            "final_dark_fraction": 0.010634610912513442,
+            "timing": {
+              "delay_ms": -11.041350030340254,
+              "uncertainty_ms": 8.575049995444715,
+              "correlation": 0.9958396531523775,
+              "edge_delay_intervals_ms": [
+                [
+                  -44.62775001022965,
+                  -7.372550034895539
+                ],
+                [
+                  -33.50085001438856,
+                  2.400050009600818
+                ],
+                [
+                  -22.61905002174899,
+                  5.9046499989926815
+                ],
+                [
+                  -22.00915002822876,
+                  14.272249982692301
+                ],
+                [
+                  -14.71015002578497,
+                  29.947649971581995
+                ],
+                [
+                  -39.79585000546649,
+                  0.23264995776116848
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -19.61640002578497,
+                -2.4663000348955393
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          },
+          {
+            "led": 22,
+            "passed": true,
+            "correlation": 0.9990902763031995,
+            "normalized_mae": 0.016824036621778515,
+            "normalized_p95": 0.035947208350057325,
+            "final_dark_fraction": 0.030084813155028645,
+            "timing": {
+              "delay_ms": -11.041350030340254,
+              "uncertainty_ms": 8.575049995444715,
+              "correlation": 0.9947742857373925,
+              "edge_delay_intervals_ms": [
+                [
+                  -44.62775001022965,
+                  -7.372550034895539
+                ],
+                [
+                  -33.50085001438856,
+                  2.400050009600818
+                ],
+                [
+                  -22.61905002174899,
+                  5.9046499989926815
+                ],
+                [
+                  -22.00915002822876,
+                  14.272249982692301
+                ],
+                [
+                  -14.71015002578497,
+                  29.947649971581995
+                ],
+                [
+                  -39.79585000546649,
+                  0.23264995776116848
+                ]
+              ],
+              "half_exposure_guard_ms": 3.90625,
+              "delay_bounds_ms": [
+                -19.61640002578497,
+                -2.4663000348955393
+              ],
+              "clock": "relative device TX_DONE intervals, constant host anchor",
+              "method": "dedicated markers of this transaction; no fit to the tested effect"
+            }
+          }
+        ],
+        "criteria": {
+          "correlation_min": 0.9,
+          "normalized_mae_max": 0.12,
+          "normalized_p95_max": 0.25,
+          "final_dark_max": 0.05,
+          "clipping_max": 0
+        },
+        "timing": {
+          "delay_ms": 1.3163499836809933,
+          "uncertainty_ms": 5.989950025919825,
+          "correlation": 0.9936927877522926,
+          "edge_delay_intervals_ms": [
+            [
+              -7.372550034895539,
+              22.073949969373643
+            ],
+            [
+              -33.50085001438856,
+              2.400050009600818
+            ],
+            [
+              -22.61905002174899,
+              5.9046499989926815
+            ],
+            [
+              -22.00915002822876,
+              14.272249982692301
+            ],
+            [
+              -14.71015002578497,
+              29.947649971581995
+            ],
+            [
+              0.23264995776116848,
+              24.469549991190434
+            ]
+          ],
+          "half_exposure_guard_ms": 3.90625,
+          "delay_bounds_ms": [
+            -4.6736000422388315,
+            7.306300009600818
+          ],
+          "clock": "relative device TX_DONE intervals, constant host anchor",
+          "method": "dedicated markers of this transaction; no fit to the tested effect"
+        },
+        "scope": "Isolated synthetic Wake observations and real optical output; no physical sensor, BLE or gameplay acceptance"
+      }
+    }
+  },
+  "excluded": {
+    "run": "masks",
+    "reason": "85.8035 ms camera reception gap exceeds the predeclared 80 ms limit; not scored as passed"
+  },
+  "raw_evidence": "private/resonance-camera-20261018",
+  "scope": "Synthetic Wake observations and unchanged product LedOutput/RMT; actual LED camera pixels. No physical MCP sensor, BLE pair, game usability or electrical acceptance."
+}

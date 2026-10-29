@@ -2,6 +2,7 @@
 import importlib.util
 import json
 import hashlib
+import itertools
 import queue
 from pathlib import Path
 import sys
@@ -27,6 +28,17 @@ class InteractiveTests(unittest.TestCase):
         return interactive.parse_state(
             f"STATE {TOKEN} 1 400 4 4 4 1 1 3 1000 1 24 12 2 1000 1000 0 "
             "0 0 0 0 0 0 0 0 0 0 0", TOKEN)
+
+    def seal_parameters(self):
+        return {"op": "seal-start", "round": 7, "gen": 2, "count": 1,
+                "valid": 1, "cause": 0, "consumed": 0}
+
+    def seal_state(self):
+        return interactive.parse_seal_state(
+            f"SEALSTATE {TOKEN} 1 400 1 7 2 3 1 1 0 1 1 0 8 12 4 18 24 600 150 300 800", TOKEN)
+
+    def encode_seal(self, item, req=4, state=None):
+        return interactive.encode_command(item, TOKEN, req, self.state(), state, True)
 
     def test_partial_eof_waits_and_complete_append_is_read_once(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -107,6 +119,104 @@ class InteractiveTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             interactive.parse_state(f"STATE {TOKEN} 1", TOKEN)
 
+    def test_seal_start_requires_identity_snapshot_and_uses_documented_visual_defaults(self):
+        wire = self.encode_seal(self.seal_parameters())
+        self.assertEqual(wire, f"SEAL {TOKEN} 4 7 2 start 1 1 0 0 0 0 8 12 4 18 24 600 150 300 800")
+        self.assertEqual(len(wire.split()), 21)
+        for field in ("round", "gen", "count", "valid", "cause", "consumed"):
+            with self.subTest(field=field):
+                item = self.seal_parameters()
+                del item[field]
+                with self.assertRaises(ValueError):
+                    self.encode_seal(item, state=self.seal_state())
+
+    def test_seal_command_requires_exact_capability(self):
+        with self.assertRaisesRegex(ValueError, "capability"):
+            interactive.encode_command(self.seal_parameters(), TOKEN, 4, self.state())
+
+    def test_seal_update_inherits_confirmed_parameters_but_never_pulse_authorization(self):
+        item = {"op": "seal-update", "count": 3, "cause": 1}
+        with self.assertRaises(ValueError):
+            self.encode_seal(item)
+        state = self.seal_state()
+        state["authorize_pulse"] = 1
+        expected = f"SEAL {TOKEN} 4 7 2 update 3 1 1 0 0 0 8 12 4 18 24 600 150 300 800"
+        self.assertEqual(self.encode_seal(item, state=state), expected)
+        item["authorize_pulse"] = 1
+        self.assertEqual(self.encode_seal(item, state=state).split()[10], "1")
+        item.pop("authorize_pulse")
+        self.assertEqual(self.encode_seal(item, state=state), expected)
+
+    def test_seal_stop_repeats_confirmed_parameters_and_cannot_authorize_pulse(self):
+        item = {"op": "seal-stop"}
+        self.assertEqual(self.encode_seal(item, state=self.seal_state()),
+                         f"SEAL {TOKEN} 4 7 2 stop 1 1 0 0 0 0 8 12 4 18 24 600 150 300 800")
+        with self.assertRaises(ValueError):
+            self.encode_seal(item)
+        for field, value in (("round", 8), ("gen", 3), ("count", 2), ("valid", 0),
+                             ("cause", 1), ("rgb", [1, 8, 12]), ("peak_rgb", [4, 19, 24]),
+                             ("sweep_ms", 800), ("pixel_ms", 200), ("transition_ms", 400),
+                             ("pulse_ms", 1000), ("consumed", 1), ("authorize_pulse", 1)):
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                self.encode_seal({**item, field: value}, state=self.seal_state())
+        with self.assertRaisesRegex(ValueError, "only allowed"):
+            self.encode_seal({**self.seal_parameters(), "authorize_pulse": 1})
+        with self.assertRaisesRegex(ValueError, "only an input"):
+            self.encode_seal({"op": "seal-update", "consumed": 1}, state=self.seal_state())
+
+    def test_seal_validates_bounds_identities_flags_and_unknown_fields_before_send(self):
+        bad_values = [("round", 0), ("round", 0x100000000), ("gen", 0), ("gen", True),
+                      ("count", 4), ("valid", True), ("cause", 2), ("consumed", 2),
+                      ("authorize_pulse", True), ("rgb", [33, 8, 12]),
+                      ("peak_rgb", [4, -1, 24]), ("pixel_ms", 49), ("pixel_ms", 1001),
+                      ("sweep_ms", 149), ("sweep_ms", 5001), ("transition_ms", 49),
+                      ("transition_ms", 5001), ("pulse_ms", 198), ("pulse_ms", 5002),
+                      ("pulse_ms", 801), ("typo", 1)]
+        for field, value in bad_values:
+            with self.subTest(field=field, value=value), self.assertRaises(ValueError):
+                self.encode_seal({**self.seal_parameters(), field: value})
+        for req in (0, -1, 0x100000000, True):
+            with self.subTest(req=req), self.assertRaises(ValueError):
+                self.encode_seal(self.seal_parameters(), req=req)
+        valid = {**self.seal_parameters(), "round": 0xFFFFFFFF, "gen": 0xFFFFFFFF,
+                 "count": 3, "rgb": [32, 0, 32], "peak_rgb": [0, 32, 0],
+                 "pixel_ms": 1000, "sweep_ms": 5000, "transition_ms": 5000, "pulse_ms": 5000}
+        self.assertTrue(self.encode_seal(valid, req=0xFFFFFFFF).startswith(f"SEAL {TOKEN} 4294967295 "))
+        self.encode_seal({**valid, "pixel_ms": 50, "sweep_ms": 50, "transition_ms": 50, "pulse_ms": 200})
+
+    def test_seal_state_preserves_full_parameters_and_checks_wire_bounds(self):
+        state = self.seal_state()
+        self.assertEqual((state["revision"], state["round"], state["gen"], state["seq"]), (1, 7, 2, 3))
+        self.assertEqual((state["consumed"], state["pending"]), (1, 1))
+        self.assertEqual(state["peak_rgb"], [4, 18, 24])
+        self.assertEqual(state["pulse_ms"], 800)
+        line = f"SEALSTATE {TOKEN} 1 400 1 7 2 3 1 1 0 1 1 0 8 12 4 18 24 600 150 300 800"
+        for index, value in ((2, "4294967296"), (4, "4"), (5, "0"), (6, "0"),
+                             (7, "0"), (8, "4"), (9, "2"), (10, "2"), (11, "2"),
+                             (12, "2"), (13, "33"), (21, "0"), (22, "801")):
+            fields = line.split()
+            fields[index] = value
+            with self.subTest(index=index), self.assertRaises(ValueError):
+                interactive.parse_seal_state(" ".join(fields), TOKEN)
+        for bad in (line + " 0", line.rsplit(" ", 1)[0], line.replace(TOKEN, "wrong")):
+            with self.assertRaises(ValueError):
+                interactive.parse_seal_state(bad, TOKEN)
+        idle = interactive.parse_seal_state(
+            f"SEALSTATE {TOKEN} 0 0 0 0 0 0 0 0 0 0 0 0 8 12 4 18 24 600 150 300 800", TOKEN)
+        self.assertEqual((idle["state"], idle["round"], idle["gen"], idle["seq"]), (0, 0, 0, 0))
+
+    def test_seal_ack_waits_for_same_revision_of_both_states(self):
+        command = {"req": 3, "revision": 1, "result": "APPLIED"}
+        state, seal = self.state(), self.seal_state()
+        self.assertIsNone(interactive.acknowledged_state(command, state, None, True))
+        self.assertIsNone(interactive.acknowledged_state(command, state, {**seal, "revision": 2}, True))
+        self.assertIsNone(interactive.acknowledged_state(command, {**state, "revision": 2}, seal, True))
+        self.assertIsNone(interactive.acknowledged_state({"req": 3}, state, seal, True))
+        self.assertIsNone(interactive.acknowledged_state({**command, "revision": 2}, state, seal, True))
+        confirmed = interactive.acknowledged_state(command, state, seal, True)
+        self.assertEqual(confirmed["revision"], confirmed["seal"]["revision"])
+        self.assertIs(interactive.acknowledged_state(command, state), state)
+
     def test_frame_preserves_revision_uint32_wrap_and_rejects_bad_pixels(self):
         line = f"L {TOKEN} 4 7 4294967290 10 " + "180c02" * 23
         frame = interactive.parse_live_frame(line, TOKEN)
@@ -146,6 +256,37 @@ class InteractiveTests(unittest.TestCase):
             result = json.loads((args.output / "capture.json").read_text())
             self.assertEqual(result["status"], "incomplete")
             self.assertIn("Runtime image differs", result["error"])
+
+    def test_required_seal_capability_is_checked_before_live_or_stop(self):
+        class FakeSerial:
+            is_open = False
+            buffer = b""
+            writes = []
+            def open(self): self.is_open = True
+            def close(self): self.is_open = False
+            def write(self, value):
+                self.writes.append(value)
+                if value == b"HELLO\n":
+                    self.buffer += (f"LARP-CAMERA/1 23 32 GPIO15 12 {hashlib.md5(b'model-binary').hexdigest()}\n"
+                                    "LARP-LIVE/1 2 23 32\nLARP-SEAL/1 2 23 32\n").encode()
+            def read(self, count):
+                result, self.buffer = self.buffer, b""
+                return result
+        device = FakeSerial()
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            binary = root / "firmware.bin"
+            binary.write_bytes(b"model-binary")
+            args = SimpleNamespace(firmware=binary, output=root / "run", port="FAKE", seal=True)
+            ticks = itertools.count(step=.1)
+            with patch.dict(sys.modules, {"serial": SimpleNamespace(Serial=lambda **kw: device)}), \
+                 patch.object(interactive.time, "perf_counter", side_effect=lambda: next(ticks)), \
+                 patch.object(interactive.time, "sleep"):
+                with self.assertRaisesRegex(RuntimeError, "SEAL capability"):
+                    interactive.run(args)
+            self.assertFalse(device.is_open)
+            self.assertTrue(device.writes)
+            self.assertTrue(all(wire == b"HELLO\n" for wire in device.writes))
 
 
     def test_locked_preview_does_not_stop_capture_or_heartbeat(self):
@@ -208,13 +349,14 @@ class InteractiveTests(unittest.TestCase):
             self.assertEqual((root / "latest.png").read_bytes(), b"new-image")
 
     def test_deadline_resolves_late_ack_or_marks_unresolved_incomplete(self):
-        for late_ack in (False, True):
-            with self.subTest(late_ack=late_ack), tempfile.TemporaryDirectory() as temp:
+        for seal_enabled, late_ack, matching_seal in ((False, False, False), (False, True, False),
+                                                     (True, True, False), (True, True, True)):
+            with self.subTest(seal=seal_enabled, late_ack=late_ack, match=matching_seal), tempfile.TemporaryDirectory() as temp:
                 root = Path(temp)
                 binary = root / "firmware.bin"
                 binary.write_bytes(b"model-binary")
                 command_path = root / "commands.jsonl"
-                command_path.write_text(json.dumps(self.parameters()) + "\n")
+                command_path.write_text(json.dumps(self.seal_parameters() if seal_enabled else self.parameters()) + "\n")
                 output = root / "run"
                 messages = queue.Queue()
                 state0 = "0 0 0 0 0 0 0 0 0 0 0"
@@ -231,15 +373,22 @@ class InteractiveTests(unittest.TestCase):
                         line = value.decode().strip()
                         if line == "HELLO":
                             self.buffer += (f"LARP-CAMERA/1 23 32 GPIO15 12 {hashlib.md5(b'model-binary').hexdigest()}\nLARP-LIVE/1 2 23 32\n").encode()
+                            if seal_enabled:
+                                self.buffer += (interactive.SEAL_CAPABILITY + "\n").encode()
                         elif line.startswith("LIVE "):
                             self.token = line.split()[1]
                             self.buffer += (f"LIVE {self.token} 1 0\nSTATE {self.token} 1 0 0 0 0 {state0} {state0}\n").encode()
+                            if seal_enabled:
+                                self.buffer += (f"SEALSTATE {self.token} 1 0 0 0 0 0 0 0 0 0 0 0 8 12 4 18 24 600 150 300 800\n").encode()
                         elif line == "STOP":
                             if self.token is None:
                                 self.buffer += b"DONE 0000000000000000\n"
                             else:
                                 if late_ack:
                                     self.buffer += (f"APPLIED {self.token} 1 2 0\nSTATE {self.token} 2 0 0 0 0 1 1 1 1000 1 24 12 2 1000 1000 0 {state0}\n").encode()
+                                    if seal_enabled:
+                                        revision = 2 if matching_seal else 1
+                                        self.buffer += (f"SEALSTATE {self.token} {revision} 0 1 7 2 1 1 1 0 0 0 0 8 12 4 18 24 600 150 300 800\n").encode()
                                 self.buffer += (f"L {self.token} 3 0 1 2 " + "000000" * 23 + f"\nDONE {self.token}\n").encode()
                 class Process:
                     alive = False
@@ -253,20 +402,29 @@ class InteractiveTests(unittest.TestCase):
                     def terminate(self): self.alive = False
                 device = Serial()
                 args = SimpleNamespace(firmware=binary, output=output, port="FAKE", commands=command_path,
-                                       seconds=.015, camera=0, width=4, height=4, exposure=-7, rois=None)
+                                       seconds=.015, camera=0, width=4, height=4, exposure=-7, rois=None, seal=seal_enabled)
                 with patch.dict(sys.modules, {"serial": SimpleNamespace(Serial=lambda **kw: device)}), \
                      patch.object(interactive.mp, "Process", return_value=Process()), \
                      patch.object(interactive.mp, "Queue", return_value=messages), \
                      patch.object(interactive.mp, "Event", return_value=SimpleNamespace(set=lambda: None)):
-                    if late_ack:
+                    resolved = late_ack and (not seal_enabled or matching_seal)
+                    if resolved:
                         interactive.run(args)
                     else:
                         with self.assertRaisesRegex(RuntimeError, "Trial incomplete"):
                             interactive.run(args)
                 result = json.loads((output / "capture.json").read_text())
                 self.assertTrue(result["final_black_confirmed"])
-                self.assertEqual(result["commands"][0]["result"], "APPLIED" if late_ack else "UNRESOLVED")
-                self.assertEqual(result["status"], "recorded" if late_ack else "incomplete")
+                self.assertEqual(result["commands"][0]["result"], "APPLIED" if resolved else "UNRESOLVED")
+                self.assertEqual(result["status"], "recorded" if resolved else "incomplete")
+                if seal_enabled:
+                    active = json.loads((output / "active.json").read_text())
+                    self.assertEqual(active["revision"], active["seal"]["revision"])
+                    self.assertEqual(active["revision"], 2 if resolved else 1)
+                    self.assertEqual(result["active_state"], active)
+                    if resolved:
+                        confirmed = result["commands"][0]["active_state"]
+                        self.assertEqual(confirmed["revision"], confirmed["seal"]["revision"])
                 self.assertFalse(device.is_open)
 
 

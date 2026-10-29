@@ -1,23 +1,26 @@
 # Entwurf: Fachwissen durch gezielte Audits aktuell halten
 
-**Status: Fachmandate verbindlich; zweiter Probelauf abgeschlossen, Wochenauftrag aktiviert.**
-Ergänzung 24.10.2026: [Pilot, konkrete Funde und neue Prüfungen](audits/2026-10-24-pilot/README.md),
-[nach dem Pilot ausdrücklich übernommene Verantwortungsstruktur](verantwortlichkeiten.md).
-Fortschreibung: [Zweitlauf](audits/2026-10-24-probelauf-2/README.md) und
-[Betriebsvorbereitung](fachaudit-betrieb.md) am Prüfstand `cee968a7`, inzwischen
-über PR #97 bei `c582ed7` integriert. Die chatgebundene Automatisierung ist
-nach ausdrücklichem Folgeauftrag aktiviert; erste geplante Ausführung offen.
-[Aktueller Integrations- und Betriebsbeleg](../../handoff/MAINTAINER.md).
-Datum: 23.10.2026, Europe/Berlin. Auftrag: Automatisierungen untersuchen und
-einen dedizierten Audit-Agenten für die bestehenden Verantwortlichkeiten entwerfen.
-Technische Basis: `e61d7642d035ccdcf8eca689d6c50a82bcf1560b`, am 23.10.2026
-live geprüfter Integrationsbranch `plan/projektuebergabe-kuratierter-stand`.
-[Bestandsaufnahme und Prüfgrenzen](../../handoff/AUTOMATISIERUNGSINVENTAR-2026-10-23.md).
+**Stand 28.10.2026: Fachmandate verbindlich; Wochenauftrag wird auf Nutzerauftrag verschlankt.**
+Der erste reguläre A3-Lauf und die Erstlaufkontrolle sind abgeschlossen;
+fachlicher Ablauf bestanden, Ausführung verspätet. Der
+[Betriebsvertrag](fachaudit-betrieb.md) führt Kurzcheck, anlassbezogene
+Vertiefung und messbare Nutzenkriterien. Starre Rotation und Sechswochenziel
+sind abgelöst; neue Kurzcheckwirkung noch nicht praktisch belegt.
+Repositorybasis: `f81956faffa4d4c6b0198fdbd0c626b21e137cd4`.
+Die Umsetzung des Prompts und der noch offene Dokumentations-PR sind getrennt.
+
+Herkunft: [Bestandsaufnahme vom 23.10.](../../handoff/AUTOMATISIERUNGSINVENTAR-2026-10-23.md),
+[A1/A2-Pilot](audits/2026-10-24-pilot/README.md),
+[übernommene Fachmandate](verantwortlichkeiten.md),
+[manueller Zweitlauf](audits/2026-10-24-probelauf-2/README.md).
+Die technischen Quellenstände der folgenden Abschnitte sind die damalige
+Bestandsaufnahme; dieser Betriebsumbau ist kein neuer vollständiger Fachaudit.
 
 ## 1. Empfehlung
 
 Ein projektgebundener **Fachaudit-Koordinator** erhält begrenzte Rechercheaufträge
-und delegiert sie nach Fachgebiet. Er vergleicht offizielle Quellen mit der
+und setzt bei fachlicher Vertiefung passende Recherche und Gegenprüfung ein.
+Er vergleicht offizielle Quellen mit der
 tatsächlich verwendeten Version, Architektur und bisherigen Fachreferenz.
 Die bestehende Fachrolle prüft die Übertragbarkeit; der Maintainer führt die
 angenommene Änderung durch den normalen Projektprozess bis zum Pull Request.
@@ -53,8 +56,9 @@ benennt Auslöser, Verantwortliche, Gegenprüfung, Nachweise und Entscheidungsgr
 Die Übernahme ist keine Einrichtung des unten vorgeschlagenen Wochenlaufs.
 
 Der Fachaudit-Koordinator ist Teil dieser Qualitätsfunktion, keine zusätzliche
-technische Führungsebene. Je Auftrag werden Verantwortlicher und Gegenprüfer
-benannt; kein eigener permanenter Agent je Bibliothek. LED behält seine
+technische Führungsebene. Je fachlichem Auftrag werden Verantwortlicher und
+Gegenprüfer benannt; ein Routine-Kurzcheck ohne neue fachliche Aussage benötigt
+keine Delegation. Kein eigener permanenter Agent je Bibliothek. LED behält seine
 vollständige Umsetzungsverantwortung, UI/UX seinen Rollenvertrag. Security-
 Expertise bei entsprechender Frage ausdrücklich zuordnen. Produktentscheidungen
 und Releases bleiben beim Nutzer, technische Integration beim Maintainer.
@@ -162,42 +166,36 @@ Zuständigkeiten, Prioritäten und Kriterien liegen außerhalb seines Auftrags.
 Neue Auditfolgearbeit wird durch den gesondert beauftragten Maintainerprozess
 eingeordnet. Kein direkter Schreibkanal vom Recherche-Agenten in Sync-Marker.
 
-## 7. Automationsbetrieb nach erfolgreichem Pilot – Vorschlag
+## 7. Schlanker Automationsbetrieb ab 28.10.2026
 
-**Eine zusätzliche chatgebundene Automatisierung** wählt fällige Fachgebiete
-und nutzt kurzlebige Recherche-Subagenten. Standardmodell und bestehende
-Berechtigungen übernehmen. Kein eigener dauerhafter Zeitplan je Bibliothek.
+Der [Betriebsvertrag](fachaudit-betrieb.md) ist die aktuelle Referenz;
+der [Prompt](fachaudit-automation-prompt.md) ist der auszuführende Auftrag.
+Eine bestehende chatgebundene Automation, Montag 10:00 Europe/Berlin:
+höchstens fünf Minuten Kurzcheck einschließlich Laufnachweis und Abschluss,
+bei belegtem Anlass höchstens eine vertiefte Frage und 30 Minuten insgesamt. Kein eigener Zeitplan je Bibliothek.
 
-| Anlass | Vorgeschlagener Umfang |
-| --- | --- |
-| Wöchentlich, Montag 10:00 Europe/Berlin | Offizielle Releases, Advisories, Herstellerdokumente und fällige Quellen prüfen; maximal 30 Minuten und zwei vertiefte Fragen. Zeit/Zeitzone bei Einrichtung anhand des nächsten geplanten Laufs verifizieren. |
-| Rotation | A1–A6 innerhalb sechs Wochen prüfen; unbearbeitete Gebiete sichtbar führen. Stabile Normeditionen quartalsweise auf Revision/Errata prüfen. |
-| Projektänderung | Pin, PN532-Patch, SDK-Hash, Besitzer-/Protokollvertrag oder Migration geändert: gezielte Frage beim nächsten Koordinatorlauf per Git-Diff oder auf direkten Auftrag. Kein bereits installierter Webhook. |
-| Kritischer Befund | Bei Entdeckung sofort mit Anwendbarkeit melden. Ein Wochenlauf garantiert keine kontinuierliche Überwachung. |
-| Vor Migration oder Produktfreigabe | Betroffene Gebiete neu prüfen; alter Wochenbericht ersetzt keine Freigabeprüfung. |
+Anlässe sind relevante Code-/Pin-/Vertragsänderungen, Hersteller-/Advisoryhinweise,
+fällige Vertrags-/Normprüfungen oder eine konkrete Wissenslücke mit anstehender
+Entscheidung. A1–A6 bleiben die Themenkarte; keine starre Rotation und kein
+Sechswochenziel. Quartalsweiser Revisions-/Errataabgleich fester Normeditionen
+und alle Vertrags-/Produktfreigabeprüfungen bleiben bestehen.
+Ein Release allein ist kein Defekt oder Updateauftrag.
 
-Budgetende erzeugt einen unvollständigen Lauf mit offenem Rest, keine
-pauschale Entwarnung. Für lokale Aufgaben müssen Rechner und App laufen.
-Manuellen Probelauf und Kontrolle der ersten Ausführungen empfiehlt auch die
-[offizielle Automationsdokumentation](https://learn.chatgpt.com/docs/automations?surface=app).
-Ein verpasster Lauf bleibt als Lücke sichtbar.
+Ohne Anlass kurz und still beenden; nur `lauf.json`, kein vollständiger
+Registerabdruck und kein zusätzlicher Fachreview. Das Ergebnis erneuert
+keinen vollständigen Fachprüfstand. Erfolgreich geprüfte Eingänge dürfen
+getrennt davon ihren Vergleichsstand fortschreiben; offene Fälle bleiben.
+Jede Vertiefung und jeder neue
+handlungsrelevante fachliche Schluss braucht dagegen tatsächliche andere
+Gegenprüfung gemäß Fachmandat; fehlender Review bleibt sichtbar.
 
-**Berechtigungen des vorgeschlagenen Wochenlaufs:** Quellen, Repository und
-GitHub lesen; eigene Befundentwürfe und Laufnachweise im vereinbarten
-Projektbereich ablegen. Keine Produktdateien, Pins, Fixtures, Rollenregeln,
-Hooks oder GitHub-Planung ändern; keine Gerätehelfer, Uploads, Installationen,
-automatischen Commits/Pushes/PRs oder Nachrichten in andere Chats auslösen.
-Der separat beauftragte Maintainerprozess behält sein Mandat bis PR.
-
-Jeder Lauf erfasst Start/Ende, Quellenbasis, geprüfte und fehlgeschlagene
-Quellen, Diffs, Befund-IDs, Auslassungen und nächsten Prüfpunkt. Je Arbeitsstand
-nur ein schreibender Koordinator; parallele Recherche liefert getrennte Beiträge.
-Vor Übernahme HEAD und Zieldatei erneut prüfen; bei Änderung neu abgleichen.
-Duplikate aktualisieren statt neu anlegen. Zugriffsfehler entwerten die
-Aktualitätsaussage; alter Cache ist kein frischer Abruf. Unveränderte Läufe
-und bereits gemeldete unveränderte Blocker bleiben still. Benachrichtigt wird
-bei relevantem neuem Befund, entscheidender Änderung, Abschluss oder neu
-notwendigem Nutzereingriff.
+Budgetende, fehlender Vergleich oder unzugängliche notwendige Quelle bedeuten
+unvollständig; offene Fragen mit Auslöser erhalten. Vor Abschluss Remote-Head
+und wesentliche Eingänge erneut prüfen. Der Audit schreibt ausschließlich
+eigene neue Laufentwürfe; sämtliche Schreib-/Geräte-/GitHub-Grenzen bleiben.
+Ein `README.md` kommt nur bei Vertiefung, relevanter Abweichung oder nötiger
+Entscheidung hinzu. Software-/Gerätenachweise und Fachreview/Maintainerannahme
+bleiben getrennt. Ein lokaler Wochenlauf garantiert keine zeitkritische Alarmierung.
 
 ## 8. Dateien, Pilotauftrag und Rückweg
 
@@ -238,9 +236,9 @@ erhalten. Bestehende CI und GitHub-Sync laufen in ihrem jeweiligen Auftrag weite
 > externe Funktionsreferenz. Fehlende Quellen/Volltexte bleiben offen. Lege
 > das Ergebnis dem Fachreview vor; behaupte keine Übernahme oder Produktabnahme.
 
-## 9. Erprobung eines künftigen Automationsbetriebs
+## 9. Erprobung und Nutzenbewertung
 
-Vor einer gesondert beauftragten Zeitplanaktivierung zwei manuelle Läufe an benannten Commits vergleichen. Jeder
+Die zwei manuellen Probeläufe vor Aktivierung bleiben historische Nachweise. Jeder
 relevante Befund braucht Quelle, Anwendbarkeit, Empfänger und überprüfbare
 Folge. Der unveränderte zweite Lauf erzeugt keine Dubletten. Mindestens eine
 fachliche Entscheidung endet nachvollziehbar in der richtigen Referenz oder
@@ -250,17 +248,20 @@ Gegenfälle: falsche SDK-Version, WLED als vermeintliche Dependency, Draft als
 Final, unzugängliche Quelle, bekannte B7-Abweichung, inzwischen geänderter HEAD
 und fehlende Gerätemessung. Diese Unterschiede müssen erhalten bleiben.
 
-Bewerten: Aufwand pro nützlichem Befund, Fehlalarme, überfällige Gebiete,
-Zeit bis Fachentscheidung und tatsächlich geschlossene Nachweislücken.
-Ein niedriger Finding-Zähler ist kein Erfolgskriterium. Nach vier geplanten
-Läufen Nutzen/Takt prüfen; zusätzliche dauerhafte Automationsregeln erst mit
-Bewertung und Rückweg in PROMOTION übernehmen. Die bereits übernommenen
-Fachmandate und Prüfpflichten gelten unabhängig von einem Zeitplan.
+Nach vier abgeschlossenen geplanten Läufen einschließlich 26.10.2026
+Nutzen/Takt anhand der [messbaren Kriterien](fachaudit-betrieb.md#messbarer-nutzen-und-entscheidung-nach-vier-läufen)
+prüfen: einzigartige belegte Entscheidungen, angenommene Änderungen und
+geschlossene Nachweislücken getrennt zählen; Aufwand, offene Entwürfe,
+Fehlalarme und Betriebsgrenzen daneben ausweisen. Keine Findenquote und
+keine erfundene Zeitersparnis. Abdeckungslücken werden nicht durch frühere
+Rotationspositionen zu überfälligen Aufgaben. Unbekannt bleibt `null`.
+Zusätzliche Regeln benötigen Bewertung und Rückweg in PROMOTION;
+Fachmandate und Prüfpflichten gelten unabhängig vom Zeitplan.
 
 **Umgesetzt:** verbindliche Fachmandate und anschließend die
 [A1-/A2-Softwarekorrekturen mit Regressionen](runtime-fixes-2026-10-24.md).
 **Offen:** jeweilige Besetzung neuer Arbeitspakete, Geräte-/Zeitmessungen,
 Supportentscheidung und weitere technische Folgearbeit aus dem Pilot,
-operative Erprobung des aktivierten Wochenauftrags und gegebenenfalls
-Normvolltexte. Der begrenzte manuelle Zweitlauf und die Aktivierung sind belegt;
-eine zuverlässige regelmäßige Ausführung noch nicht.
+praktische Erprobung des verschlankten Auftrags und gegebenenfalls Normvolltexte.
+Ein regulärer Lauf und seine Kontrolle sind belegt; pünktlicher Betrieb,
+dauerhafter Zusatznutzen und die neue Kurzcheckdauer noch nicht.

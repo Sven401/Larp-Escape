@@ -1,5 +1,13 @@
 # LED-Effekte interaktiv mit Kamera entwickeln
 
+**Kristallsiegel · 20.10.2026:** Derselbe Host unterstützt mit `--seal` den
+[gemeinsamen Kristallsiegel-Kern und seine Liveparameter](../../firmware/led/LIVE-CRYSTALSEAL.md).
+`seal-start`, `seal-update` und `seal-stop` nutzen zusätzliche bestätigte
+SEALSTATE-Antworten; die folgenden Näheglut-Befehle bleiben erhalten.
+[Drei vollständige Sichtläufe mit 600/150- und 900/250-ms-Aufbau,
+Mischung, Stop und verifiziertem Rückweg](kristallsiegel-live-results-2026-10-20.md)
+belegen die Anwendung; Kameralücken verhindern eine formale optische Zeitabnahme.
+
 Stand: **18. Oktober 2026**. Anleitung für die implementierte Hostroute und
 `LARP-LIVE/1`, abgeglichen mit [Hostwerkzeug](../../scripts/led_camera_interactive.py)
 und [Laborvertrag](../../firmware/led/LIVE-NEARGLOW.md). Diese Anleitung behauptet

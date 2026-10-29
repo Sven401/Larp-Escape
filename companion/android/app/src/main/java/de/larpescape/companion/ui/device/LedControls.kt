@@ -32,6 +32,11 @@ fun LedControls(state: LedUiState, select: (LedEffect) -> Unit, start: () -> Uni
                 }
             }
             Text("Auswahl allein ändert das Licht nicht. Start ersetzt den laufenden Effekt.", style = MaterialTheme.typography.bodySmall)
+            if (state.selected == LedEffect.RESONANCE) {
+                Text(if (!state.resonanceSupported) "Der Resonanzkreis benötigt die passende neue Box-Firmware."
+                    else "Aktive Wake-Bereiche leuchten. Bei vier aktiven Eingängen wird das Licht gemeinsam ruhig. Unbekannte Eingänge bleiben dunkel.",
+                    style = MaterialTheme.typography.bodySmall)
+            }
             Button(onClick = start, enabled = state.canStart, modifier = Modifier.fillMaxWidth()) { Text("Start") }
             OutlinedButton(onClick = stop, enabled = state.canStop, modifier = Modifier.fillMaxWidth()) { Text("Stop · LEDs aus") }
             Text("Die Box bestätigt die Ausführung. Das sichtbare Licht kannst du am Streifen prüfen.", style = MaterialTheme.typography.bodySmall)
