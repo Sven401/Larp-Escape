@@ -142,7 +142,10 @@ class Model:
         due = sorted((deadline, name, generation)
                      for name, (deadline, generation) in self.state["timers"].items()
                      if deadline <= now)
-        for _, name, generation in due:
+        for deadline, name, generation in due:
+            # Earlier committed plans may cancel or replace a captured arm.
+            if self.state["timers"].get(name) != [deadline, generation]:
+                continue
             self.apply(dict(kind="timer", timer=name, id=f"timer:{name}:{generation}"))
         if event:
             return self.apply(event)
