@@ -82,7 +82,8 @@ def blockers(data, head, base, merge):
                 paths.append(name)
     if not valid_files:
         errors.append("complete GitHub file entries including rename origins required")
-    if any(any(p == prefix or p.startswith(prefix) for prefix in GOVERNANCE)
+    if any(p.rsplit("/", 1)[-1].casefold() in {"agents.md", "agents.override.md"}
+           or any(p == prefix or p.startswith(prefix) for prefix in GOVERNANCE)
            for p in paths):
         errors.append("governance requires human approval")
     approvals = data.get("approvals")

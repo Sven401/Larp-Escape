@@ -56,7 +56,7 @@ class ReadinessTests(unittest.TestCase):
     def test_nonroutine_and_governance(self):
         for risk in ("security", "architecture", "destructive-migration", "upload", "release", "unknown"):
             data=snapshot(); data["risk"]=risk; self.assert_blocked(data)
-        for path in ("AGENTS.md", ".github/workflows/quality.yml", ".codex/agents/reviewer.toml",
+        for path in ("AGENTS.md", "src/AGENTS.md", "src/AGENTS.override.md", ".github/workflows/quality.yml", ".codex/agents/reviewer.toml",
                      "docs/quality/merge-policy.md", "scripts/merge_readiness.py",
                      ".agents/skills/ui-ux-design/SKILL.md", "../escape", "a/../escape"):
             with self.subTest(path=path):
