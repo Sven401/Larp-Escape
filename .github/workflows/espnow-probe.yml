@@ -4,7 +4,6 @@ on:
   push:
     paths: ['firmware/espnow-probe/**', 'firmware/led/include/EspNowTest.h', 'firmware/led/include/LedWire.h', 'firmware/nfc-probe/skip_arduino_start.py', 'lib/EspNowCommunicator/**', 'include/GamePorts/ICommunicator.h', '.github/workflows/espnow-probe.yml']
   pull_request:
-    paths: ['firmware/espnow-probe/**', 'firmware/led/include/EspNowTest.h', 'firmware/led/include/LedWire.h', 'firmware/nfc-probe/skip_arduino_start.py', 'lib/EspNowCommunicator/**', 'include/GamePorts/ICommunicator.h', '.github/workflows/espnow-probe.yml']
   workflow_dispatch:
 
 permissions:
@@ -12,6 +11,7 @@ permissions:
 
 jobs:
   build:
+    name: ESP-NOW / Firmware
     runs-on: windows-2022
     timeout-minutes: 20
     steps:

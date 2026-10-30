@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   camera-tools:
-    name: Camera measurement tools (synthetic inputs)
+    name: LED / Camera
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
@@ -37,7 +37,7 @@ jobs:
           python scripts/led_camera_reference.py ripple --output "$RUNNER_TEMP/ripple.csv"
 
   protocol-output:
-    name: LED protocol and output tests
+    name: LED / Protocol
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
@@ -71,7 +71,7 @@ jobs:
           if-no-files-found: error
 
   firmware:
-    name: LED ESP32 product build
+    name: LED / Firmware
     runs-on: windows-2022
     timeout-minutes: 30
     env:
@@ -104,7 +104,7 @@ jobs:
           if-no-files-found: error
 
   android:
-    name: Android tests, lint and builds
+    name: LED / Android
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     steps:

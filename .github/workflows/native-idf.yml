@@ -15,6 +15,7 @@ concurrency:
 
 jobs:
   qualification:
+    name: Native / Qualification
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     # Pinned v6.1 tool environment; source is moved to the exact reviewed

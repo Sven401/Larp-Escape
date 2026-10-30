@@ -273,3 +273,18 @@ SDK-Dateien erfasst er nicht. Rückweg: native Qualifikation samt neuer CI und
 Guard-Einbindung gemeinsam zurücknehmen; bestehende Legacypins bleiben erhalten.
 Zukünftige SDK-Pinänderungen benötigen erneute Qualifikation, kein Guardlöschen
 zum Erreichen eines grünen Builds. Quelle: Migrationsauftrag dieser Sitzung.
+
+
+## 30.10.2026 - Getrennte Rollen und begrenzter Routine-Merge
+
+Ausdruecklich beauftragte Uebernahme nach Rollenarchitekturplan. Projektgebundene
+Regeln und sieben duenne Agentendefinitionen, bestehende LED-/UI-Verfahren und
+Fachprueftore erhalten. Quellenpruefung durch anderen Agenten deckte alte aktive
+Mergevorbehalte und notwendige Governance-Ausnahme auf; umgesetzt. Zehn lokale
+Policy-Testgruppen mit Grenzfaellen bestanden. [Auftrag, weitere Gegenpruefung,
+Live-Einrichtung, Piloten und Grenzen](handoff/ROLLENARCHITEKTUR-2026-10-30.md).
+
+Vorlaeufiger Nutzen: eindeutige Zustands-/Identitaetsblockaden statt fingierter
+Freigabe. Kein Nachweis eines abgeschlossenen autonomen Merge-Piloten oder einer
+Zeitersparnis. Rueckweg: eigene Rollenrevision gezielt zuruecknehmen, Belege
+bewahren; Auto-Merge bei Fehlverhalten stoppen. Keine globalen Skills oder Hooks.

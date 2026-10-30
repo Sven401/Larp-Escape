@@ -1,0 +1,24 @@
+name: Role policy
+on:
+  pull_request:
+  push:
+    paths: ['AGENTS.md', '.codex/agents/**', 'docs/quality/**', 'scripts/merge_readiness.py', 'scripts/tests/test_merge_readiness.py', '.github/**']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: role-policy-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  policy:
+    name: Roles / Policy
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.12'
+      - run: python -m unittest discover -s scripts/tests -p test_merge_readiness.py -v

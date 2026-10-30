@@ -23,7 +23,7 @@ defaults:
 
 jobs:
   hardware-independent:
-    name: Hardware-independent checks
+    name: Quality / Host
     runs-on: windows-2022
     timeout-minutes: 45
     steps:
@@ -96,7 +96,7 @@ jobs:
           if-no-files-found: error
 
   esp32-build:
-    name: ESP32 firmware build
+    name: Quality / Firmware
     runs-on: windows-2022
     timeout-minutes: 45
     steps:
@@ -135,7 +135,7 @@ jobs:
           if-no-files-found: error
 
   android:
-    name: Android checks
+    name: Quality / Android
     runs-on: windows-2022
     timeout-minutes: 30
     steps:
