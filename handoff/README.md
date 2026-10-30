@@ -1,5 +1,19 @@
 # Technische Projektübergabe
 
+**Einstieg aktualisiert · 30.10.2026:** Auf geprüftem Integrationsstand
+`6e6310cf2994b7e024eaf0da9659ae30cd50e4ff` sind die Vorbereitungen aus
+[#100](https://github.com/Sven401/Larp-Escape/pull/100),
+[#101](https://github.com/Sven401/Larp-Escape/pull/101) und
+[#103](https://github.com/Sven401/Larp-Escape/pull/103) integriert
+(Mergecommits `4f37317`, `eb3f450` und `7585e15`).
+[BLE-Bereitschaft und offene Softwaretore](BLE-BEREITSCHAFT-2026-10-28.md)
+sowie [native Qualifikation mit Wartungspin](../docs/migration/esp-idf-qualification-2026-10-28.md)
+ordnen den begrenzten Softwareumfang ein. Die vollständige BLE-Produktstrecke,
+reale Geräteadapter, Persistenzparität und gemeinsame Geräte-/Produktabnahme
+bleiben offen. Die nachfolgenden datierten Integrationsstände sind historische
+Belege; insbesondere die dortigen Hinweise auf offene Entwurfs-PRs beschreiben
+den damaligen Stand.
+
 **Integrierter Stand · 28.10.2026:** Zielbranch
 `plan/projektuebergabe-kuratierter-stand` bei
 `191d08164614bd6472db241336d263da77691f49`. #71 (Resonanzkreis), #73
