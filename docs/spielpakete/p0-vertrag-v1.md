@@ -145,6 +145,12 @@ wartend; kein wiederholtes Erzeugen neuer IDs. Impliziter Consume und ein
 explizites arm desselben konsumierenden Plans sind ein Timerwrite.
 Fälligkeit wird am Beginn eines Durchgangs erfasst; von einem Plan neu
 gearmte Timer können frühestens im nächsten Durchgang auslösen.
+Die erfasste Liste enthält Kandidaten, keine bereits angenommenen Eingänge.
+Vor jedem Timer-Eingang muss derselbe Arm (Timer-ID und Arm-Generation)
+noch aktiv und fällig sein. Ein vorher bestätigter Cancel verwirft dessen
+Kandidaten ohne Vorgangsbeleg oder Regelwirkung; ein neuer Arm wird niemals
+durch den alten Kandidaten konsumiert. Ein fehlgeschlagener Plan bestätigt
+auch seinen Cancel nicht; die betroffenen Arme bleiben unverändert.
 
 Pause friert Restzeit ein; Resume setzt sie fort. Stop verhindert weitere
 Regelverarbeitung und beansprucht keine neuen Geräteintents. Timerrest und
