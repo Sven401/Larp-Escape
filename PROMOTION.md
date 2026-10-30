@@ -301,3 +301,15 @@ Routinepiloten und Rückweg](handoff/ROLLENARCHITEKTUR-2026-10-30.md).
 Konfiguration und einmalige App-Qualifikation belegen keinen erfolgreichen
 geplanten Lauf oder dauerhaften Effizienzgewinn. Keine neuen allgemeinen
 Fachprüfregeln, persönlichen Skills oder Hooks aus dieser Fortschreibung.
+
+
+## 30.10.2026 — Projektkonfiguration ausdrücklich abgenommen
+
+Der Nutzer hat den Konfigurationsabschluss ausdrücklich bestätigt und B sowie
+die Prüfung des ersten tatsächlichen täglichen Laufs als nachgelagerte
+Betriebserprobung offen gelassen. Basis dieser Fortschreibung ist
+`1f726126a6079ab78f88d75f19b11c24f8cbf5a8`. A ist durch #109 abgeschlossen;
+[Abnahme, Restpunkte und Belege](handoff/ROLLENARCHITEKTUR-2026-10-30.md).
+Die Abnahme ist keine Behauptung zweier bestandener Piloten oder eines bereits
+beobachteten geplanten Laufs. Keine neuen Funktions-/Prüfregeln, Hooks,
+Berechtigungen oder Zeitpläne. Der bestehende Rückweg bleibt erhalten.

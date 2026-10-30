@@ -1,10 +1,37 @@
 # Rollenarchitektur: Einführung und Prüfstand
 
-Stand: **30.10.2026, Europe/Berlin**. Status: **Rollenpaket integriert;
-Reviewer-App qualifiziert; tägliche Abschlussprüfung eingerichtet;
-zwei vollständige Routine-Praxisdurchläufe noch offen.**
+Stand: **30.10.2026, Europe/Berlin**. Status: **Projektkonfiguration vom Nutzer
+abgenommen und abgeschlossen.** Praxisdurchlauf A ist bestanden; B und die
+Prüfung des ersten tatsächlichen täglichen Laufs bleiben als nachgelagerte
+Betriebserprobung offen.
 Quelle: Nutzerauftrag zur Rollenarchitektur, Zustimmung zur Umsetzung sowie
-Folgeaufträge zur App-Qualifikation, täglichen Prüfung und Integration von #107.
+Folgeaufträge zur App-Qualifikation, täglichen Prüfung und Integration von #107;
+abschließend ausdrückliche Nutzerentscheidung zur getrennten Konfigurationsabnahme.
+
+## Ausdrückliche Abnahme
+
+Der Nutzer hat bestätigt: „Ja, schließe die Projektkonfiguration so ab und
+dokumentiere die Abnahme. B und die Prüfung des ersten täglichen Laufs bleiben
+als nachgelagerte Betriebserprobung offen.“ Geprüfte Projektbasis dieser
+Fortschreibung: `1f726126a6079ab78f88d75f19b11c24f8cbf5a8`.
+
+Abgenommen sind Rollen und Zuständigkeiten, Entscheidungs-/Eskalationswege,
+unabhängige Reviewer-App, CI-/Merge-Absicherung und die eingerichtete tägliche
+Abschlussprüfung. Damit ist der Konfigurationsauftrag abgeschlossen. Die
+bisherige Kopplung dieses Abschlusses an zwei vollständige Routinepiloten wird
+mit dieser ausdrücklichen Entscheidung aufgehoben; die offenen Nachweise werden
+nicht als erfüllt ausgegeben. Keine Änderung von Produktprioritäten,
+Geräte-/Produktabnahmen, Mergeausnahmen oder Berechtigungen. Gesamtissue #25
+bleibt offen.
+
+| Nachweis / Restpunkt | Status, Verantwortung und nächster Schritt |
+| --- | --- |
+| A: Dokumentations-Routinepilot | Abgeschlossen: [PR #109](https://github.com/Sven401/Larp-Escape/pull/109), Prüfhead `32a6ba793cf8b4e21c2b9a320b75bec715442950`, Merge `1f726126a6079ab78f88d75f19b11c24f8cbf5a8`; unabhängiger App-Review, 12/12 PR-Prüfungen und [eigene Integrationsprüfung 3/3](https://github.com/Sven401/Larp-Escape/actions/runs/41137892899). [Abschlussbeleg](https://github.com/Sven401/Larp-Escape/pull/109#issuecomment-6534923517). |
+| B: Codekorrektur-Routinepilot | Offen, ereignisgebunden: PM verantwortet Auswahl/Priorität, Android Reproduktion, anderer Reviewer die Abgrenzung. Auslöser ist ein konkreter reproduzierbarer Fehlerbefund oder eine bereits beauftragte kleine Codekorrektur. Ohne Anlass keine neue Suche, Tests, Beauftragungen oder künstliche Änderung. [Auswahlgrenze und Rollenbewertung](https://github.com/Sven401/Larp-Escape/pull/109#issuecomment-6534952020), Wiedervorlage im Abschnitt rollenpilot-pm von [#25](https://github.com/Sven401/Larp-Escape/issues/25). |
+| Erster tatsächlicher täglicher Prüflauf | Offen; PM prüft nach dem ersten belegten geplanten Lauf dessen Laufnachweis, verwendeten Quellstand, eingehaltenen Umfang sowie Ergebnis und Benachrichtigungsverhalten. Ohne neuen B-Auslöser muss B unverändert warten. Konfiguration/Prompt-Rücklesen ersetzt diese Beobachtung nicht. Der tägliche Termin bleibt 18:00 Uhr Europe/Berlin; kein zusätzlicher Zeitplan. |
+
+Zwei vollständige Routinepiloten, ein erfolgreicher erster geplanter Lauf und
+ein allgemeiner Effizienzgewinn sind weiterhin **nicht** nachgewiesen.
 
 ## Integration und Verantwortung
 
@@ -94,18 +121,25 @@ Der zunächst vorgeschlagene stündliche Auftrag wurde automatisch abgelehnt und
 nicht eingerichtet. Er ist verworfen; die tägliche Prüfung ist ausdrücklich
 beauftragt und aktiv. Auto-Merge allein ersetzt weiterhin keine Nachkontrolle.
 
-## Offene Erprobung und Rückweg
+## Nachgelagerte Betriebserprobung und Rückweg
 
-Noch offen: zwei kleine reale Routinepakete (Dokumentation und Code) jeweils
-von Anforderung/Issue über passenden Spezialisten, Selbstprüfung, anderen
-Reviewer, aktuelle CI und Merge bis Integrationsnachkontrolle und gesamtem
-Auftragsabschluss durchführen. Rollenpaket und diese Governance-Fortschreibung
-zählen nicht als Routinepiloten. Keine künstlichen Änderungen nur für den Test.
+Die beiden offenen Restpunkte B und Erstlauf sind oben mit Verantwortlichen,
+Auslöser und nächstem Schritt geführt; sie blockieren die ausdrücklich erklärte
+Konfigurationsabnahme nicht. Der tägliche Auftrag wurde zurückgelesen:
+B-Wiedervorlage in #25, keine erneute Fehlersuche/Tests/Beauftragungen ohne
+neuen konkreten Auslöser, Anlass nur zur PM-Bewertung, unveränderte Wartefälle
+still. Die aktuelle Abnahme verlangt keine neue Implementierung oder Automation.
 
-PM benennt je Paket Ziel, Besitzer, Reviewer, Grenzen und Abnahmefälle.
-Nach zwei Piloten Agentenaufrufe, Review-Rückläufe, Wartezeiten bis Merge,
-Nutzereingriffe, Wiedereröffnungen und verfügbaren Ressourcenverbrauch bewerten;
-unbekannte Werte offen lassen. Kein dauerhafter Zeitgewinn bisher nachgewiesen.
+Für B gilt nach Auswahl weiterhin der vollständige Ablauf bis Merge,
+Integrationsnachkontrolle und belegtem Auftragsabschluss. Eine neue
+Implementierung statt Codekorrektur braucht eine gesonderte Vereinbarung des
+geänderten Pilotkriteriums. Die begrenzte bisherige Sichtung ist keine allgemeine
+Fehlerfreiheitsaussage. Rollen-/Governancepakete zählen nicht als Routinepiloten.
+
+Nachweise und Bewertung aus A bleiben erhalten; nach späterem B-Abschluss können
+Review-Rückläufe, CI-/Merge-Wartezeiten, Nutzereingriffe und verfügbare
+Ressourcenwerte gemeinsam bewertet werden. Unbekannte Werte bleiben unbekannt.
+Keine ungemessene Zeitersparnis oder dauerhafte Verbesserung behaupten.
 
 Rückweg: täglichen Abschlussauftrag bei Fehlverhalten pausieren; betroffene
 Auto-Merges stoppen, Belege erhalten und eigene Revisionen gezielt prüfen.

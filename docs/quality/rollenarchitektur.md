@@ -3,8 +3,11 @@
 Status: vom Nutzer am 30.10.2026 zur Umsetzung bestätigt. Basis: Integrationscommit
 `7585e1573240ac92da6e925f484a93429c219673`. Quelle: Auftrag zur Rollenarchitektur
 und Zustimmung „Ja, Mach das so.“ in der zugehörigen Sitzung.
-Konfiguration im PR ist noch kein Nachweis geladener Desktopagenten oder eines
-vollständig aktivierten automatischen Betriebs. [Einführungsstand](../../handoff/ROLLENARCHITEKTUR-2026-10-30.md).
+Am 30.10.2026 hat der Nutzer die eingerichtete Projektkonfiguration ausdrücklich
+abgenommen und den Konfigurationsauftrag abgeschlossen. Praxisdurchlauf A ist
+bestanden; B und die Prüfung des ersten tatsächlichen täglichen Laufs bleiben
+getrennte nachgelagerte Betriebserprobung, keine offenen Konfigurationskriterien.
+Ihre Ergebnisse werden nicht vorweggenommen. [Abnahme und Nachweise](../../handoff/ROLLENARCHITEKTUR-2026-10-30.md).
 
 ## Auftrag und Befugnisse
 
