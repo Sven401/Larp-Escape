@@ -45,6 +45,32 @@ keine zusätzliche Weisungsbefugnis über die Fachrollen.
 
 ## Auftrag, Gegenprüfung und Abschluss
 
+### Kurzvorlage für Auftrag und Abnahme
+
+Ab 30.10.2026 verwendet der Maintainer diese sechs Felder im bestehenden
+Auftrag oder Arbeitsbericht. Er leitet sie aus dem Nutzerauftrag und den
+gültigen Verträgen ab; der Nutzer muss keine zweite Spezifikation schreiben.
+Bei kleinen Aufgaben reichen sechs kurze Angaben. Kein zusätzliches Backlog
+und keine neue Freigabestufe. [Erste Anwendung](../../handoff/KI-PROJEKTEINSTIEG-2026-10-30.md).
+
+| Feld | Inhalt |
+| --- | --- |
+| Gewünschtes Verhalten | Beobachtbares Nutzerergebnis beziehungsweise konkretes Dokument-/Prüfergebnis. Technische Teilziele ersetzen dieses Ergebnis nicht. |
+| Verbindliche Quelle | Nutzerauftrag und maßgeblicher Vertrag mit Stand. Beispiele, Inspiration und verworfene Ansätze ausdrücklich davon unterscheiden. |
+| Umfang und Verantwortung | Enthaltene/ausgenommene Teile, betroffene Varianten, führendes Mandat und anderer Gegenprüfer; Arbeitsbereich/Branch/Code- und Integrationsbasis im Berichtskopf. |
+| Abnahmefälle | Konkrete Fälle mit erwartetem Ergebnis; bei Bedienung den vollständigen beauftragten Ablauf einschließlich relevanter Stop-/Fehler-/Wiederholungsfälle erhalten. |
+| Benötigte Nachweise | Je Fall passende Quellenprüfung, Test, Build, Sicht- oder Gerätebeobachtung; Prüfcommit und Grenzen. Bereits vorhandene Belege nur mit ihrem gültigen Umfang verwenden. |
+| Offene Entscheidungen und Grenzen | Fehlende Nachweise, Abhängigkeiten und echte Nutzerentscheidungen samt nächstem Schritt. Umsetzung innerhalb des erteilten Mandats fortsetzen. |
+
+Beim Abschluss jeden Abnahmefall als erfüllt, teilweise erfüllt oder offen
+mit Beleg und verbleibendem Schritt bewerten. Eine begründete Umfangsänderung
+sichtbar nachführen; ein technischer Teilerfolg schließt das ursprüngliche
+Ziel nicht stillschweigend. Bestehende Befugnisse und Gerätefreigaben bleiben
+maßgeblich. Anwendung, Nutzungsbewertung und einfacher Rückweg stehen in
+[PROMOTION.md](../../PROMOTION.md).
+
+### Durchführung und Nachweisgrenzen
+
 Vor Änderungen hält der Maintainer je Arbeitspaket den fachlich Verantwortlichen
 und einen anderen Gegenprüfer sowie Ziel, Codebasis, betroffene Varianten und
 erforderliche Nachweise im Auftrag oder Arbeitsbericht fest. Für gemeinsame

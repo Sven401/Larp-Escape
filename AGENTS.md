@@ -15,6 +15,11 @@ Eine regelmäßige Hintergrundüberwachung ist gesondert zu vereinbaren.
   Integrationsbranch ist `plan/projektuebergabe-kuratierter-stand`; Änderungen
   auf eigenen Arbeitsbranches vorbereiten und PRs gegen diesen Branch richten.
   Eine Integration nach `main` ist ein eigener Auftrag.
+- Den [Sitzungseinstieg](handoff/PROJEKT-SETUP.md#sitzungseinstieg) im tatsächlich
+  verwendeten Arbeitsbereich durchführen; alte lokale Regeln und Statusangaben
+  vor Umsetzung mit der aktuellen Auftragsbasis abgleichen. Nutzerziel und
+  Abnahme mit der [Kurzvorlage](docs/quality/verantwortlichkeiten.md#kurzvorlage-für-auftrag-und-abnahme)
+  im bestehenden Auftrag oder Arbeitsbericht festhalten und beim Abschluss bewerten.
 - [Maintainer-Einstieg](handoff/MAINTAINER.md) und
   [technische Übergabe](handoff/README.md) lesen, danach nur die für die Aufgabe
   passenden Verträge und Belege. Aussagen am aktuellen Code und Prüfstand messen.
