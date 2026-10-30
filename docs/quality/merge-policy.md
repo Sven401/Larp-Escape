@@ -2,7 +2,7 @@
 
 Status: Nutzerauftrag vom 30.10.2026. Gilt ausschließlich für
 `plan/projektuebergabe-kuratierter-stand` in `Sven401/Larp-Escape`.
-[Einführungsstand und noch fehlende Einrichtung](../../handoff/ROLLENARCHITEKTUR-2026-10-30.md).
+[Einführungsstand und offene Erprobung](../../handoff/ROLLENARCHITEKTUR-2026-10-30.md).
 
 ## Befugnis und Ausnahmen
 
@@ -72,14 +72,16 @@ Integrationslauf erzeugt konkrete Folgearbeit; kein blindes Revert und kein
 vollständiger Issueabschluss. PM prüft danach den ganzen Aufgabenumfang und
 aktualisiert zugehörige Issues nur mit passenden Belegen.
 
-Auto-Merge setzt den Merge nach Sitzungsschluss ereignisgesteuert fort,
-sobald die Freigaben vorliegen. Es fuehrt keine Integrationsnachkontrolle und
-keinen Issueabschluss durch. Ein separater, eng begrenzter
-Reviewer-/PM-Abschlussauftrag benoetigt noch ausdrueckliche Zustimmung zur
-dauerhaften Hintergrundarbeit; seine Einrichtung wurde automatisch abgelehnt.
-Bis dahin erfolgen Nachkontrolle und Issueabschluss in beauftragten Sitzungen. Solange die unabhängige Reviewidentität nicht
-bereitsteht, bleibt dieser Betrieb blockiert. Bestehender Fortschrittsabgleich
-und Fachaudit bekommen keine erweiterten Rechte. Kein neuer Pollingauftrag ist eingerichtet.
+Auto-Merge setzt den freigegebenen Merge nach Sitzungsschluss ereignisgesteuert
+fort; Integrationsnachkontrolle und Issueabschluss erledigt es nicht.
+Der Nutzer hat dafür eine **tägliche Abschlussprüfung um 18:00 Uhr,
+Europe/Berlin** beauftragt. Sie ist als separater, begrenzter Codex-Auftrag
+aktiv; unveränderte Zustände bleiben still. Sie ersetzt keine unabhängige
+Genehmigung und beginnt keine neuen Entwicklungsarbeiten. Der früher
+vorgeschlagene stündliche Auftrag wurde nicht eingerichtet und ist verworfen.
+Bestehender Fortschrittsabgleich und Fachaudit erhalten keine erweiterten Rechte.
+Die Reviewer-App ist für dieses Repository qualifiziert; aktuellen Rechte-/
+Freigabestatus trotzdem vor jedem Merge lesen. [Einführungsstand und Nachweise](../../handoff/ROLLENARCHITEKTUR-2026-10-30.md).
 
 ## Einrichtung und Rückweg
 
@@ -87,8 +89,9 @@ Repositoryweit Auto-Merge aktivieren, ausschließlich den Integrationsbranch mit
 zwölf Pflichtchecks, aktueller Basis, einer unabhängigen Genehmigung,
 Verwerfen alter Genehmigungen, Freigabe des letzten Pushs, aufgelösten Threads,
 Admin-Durchsetzung und ohne Forcepush/Löschung schützen. Main unverändert lassen.
-Eine separate berechtigte Reviewidentität muss vom Kontoinhaber bereitgestellt
-und praktisch qualifiziert werden. Kein Zugangsmaterial im Repository ablegen.
+Die separate Reviewer-App wurde vom Kontoinhaber bereitgestellt und praktisch
+qualifiziert. Appdefinition und tatsächlich bestätigte Installationsrechte
+getrennt prüfen. Kein Zugangsmaterial im Repository ablegen.
 
 `scripts/merge_readiness.py` prüft einen normalisierten Lesesnapshot lokal und
 ändert nichts an GitHub. Er unterstützt die Reviewerentscheidung, ersetzt weder

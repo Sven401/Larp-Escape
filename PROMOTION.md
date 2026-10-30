@@ -288,3 +288,16 @@ Vorlaeufiger Nutzen: eindeutige Zustands-/Identitaetsblockaden statt fingierter
 Freigabe. Kein Nachweis eines abgeschlossenen autonomen Merge-Piloten oder einer
 Zeitersparnis. Rueckweg: eigene Rollenrevision gezielt zuruecknehmen, Belege
 bewahren; Auto-Merge bei Fehlverhalten stoppen. Keine globalen Skills oder Hooks.
+
+
+## 30.10.2026 — Rollenpaket integriert und Abschlussprüfung eingerichtet
+
+PR #107 ist bei `f6ef9479627162682733047c8a122e8006178cfd` integriert.
+Die unabhängig abgegebene Reviewer-App-Genehmigung zählt nach Bestätigung von
+Contents-Schreibrecht an der Installation; Appdefinition allein genügte nicht.
+Auf ausdrücklichen Nutzerauftrag tägliche Abschlussprüfung um 18:00 Uhr
+Europe/Berlin aktiviert. Kein stündlicher Auftrag. [Nachweise, verbleibende
+Routinepiloten und Rückweg](handoff/ROLLENARCHITEKTUR-2026-10-30.md).
+Konfiguration und einmalige App-Qualifikation belegen keinen erfolgreichen
+geplanten Lauf oder dauerhaften Effizienzgewinn. Keine neuen allgemeinen
+Fachprüfregeln, persönlichen Skills oder Hooks aus dieser Fortschreibung.
