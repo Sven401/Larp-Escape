@@ -1,5 +1,32 @@
 # Projektfestlegungen: Übernahme und Korrektur
 
+## 30. Oktober 2026 — Projekteinstieg und kurze Auftragsabnahme
+
+- **Beauftragt:** Schritte 1–3 des KI-Verbesserungsplans umsetzen und als PR
+  vorbereiten, Sitzung `01a18a26-17d1-72e0-af1b-eab6a2e8b72a`.
+  Basis `7585e1573240ac92da6e925f484a93429c219673`.
+- **Beobachtete Anwendung:** Der [Sitzungseinstieg](handoff/PROJEKT-SETUP.md#sitzungseinstieg)
+  erkannte den alten Hauptcheckout, einen ebenfalls zurückliegenden Worktree
+  namens `kanonischer-start` und veraltete Integrationsangaben in den Einstiegen
+  und Issue #25. Ein eigener aktueller Arbeitsbereich wurde angehängt;
+  fremde Änderungen blieben erhalten. Die [sechs Auftragsfelder](docs/quality/verantwortlichkeiten.md#kurzvorlage-für-auftrag-und-abnahme)
+  wurden vor den Dokumentänderungen auf dieses echte Paket angewandt.
+- **Nutzungsbewertung:** Arbeitsbasis, Nutzerergebnis und vier konkrete
+  Abnahmefälle sind dadurch gemeinsam prüfbar. Die aktive Übersicht führt
+  einen datierten Stand und verweist auf Fachbelege; die zweite Einstiegsseite
+  dupliziert keinen Status. [Prüfbericht](handoff/KI-PROJEKTEINSTIEG-2026-10-30.md).
+  Das ist eine beobachtete Dokumentationsanwendung, kein gemessener Nachweis
+  besserer Produktumsetzung oder geringeren Gesamtaufwands in Folgesitzungen.
+- **Übernahmeumfang:** Kleiner AGENTS-Verweis, Verfahren im vorhandenen Setup,
+  Vorlage im bestehenden Fachmandat, bereinigte Einstiege. Keine neue Rolle,
+  Modellfestlegung, globale Regel, Hook, Automation oder allgemeines Prüfwerkzeug.
+- **Einfacher Rückweg:** Den neuen AGENTS-Verweis und die beiden neuen
+  Verfahrensabschnitte gezielt zurücknehmen. Bei Rücknahme der Kürzung die
+  Einstiege aus den gleichnamig zugeordneten Archiven vom 30.10. wiederherstellen
+  und deren datierten Status vor neuer Arbeit prüfen. Neuere fremde Änderungen
+  erhalten; kein blindes Zurücksetzen ganzer Dateien. Archive und Paketbeleg
+  bleiben erhalten, bestehende Fachmandate und Befugnisse gelten weiter.
+
 ## 28. Oktober 2026 — Fachaudit nach Erstlauf verschlankt
 
 - **Beauftragt:** Bestehenden Wochenauftrag verschlanken, Fachmandate und

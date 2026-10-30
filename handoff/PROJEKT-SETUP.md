@@ -1,5 +1,49 @@
 # Projekt, Setup und Werkbank-Automatik
 
+## Sitzungseinstieg
+
+**Verfahren ab 30.10.2026; erstmals im [Umsetzungspaket 1](KI-PROJEKTEINSTIEG-2026-10-30.md)
+angewandt.** Der [Maintainer-Einstieg](MAINTAINER.md) führt den datierten
+Projektstand. Die Bestandsaufnahme darunter beschreibt den 20.10. und ist
+kein heutiger Installations-, Branch- oder Produktnachweis.
+
+1. **Tatsächlichen Arbeitsbereich feststellen.** Im verwendeten Verzeichnis
+   Arbeitsbaum, Branch, vollständigen HEAD, Origin und vorhandene Worktrees
+   prüfen. Fremde Änderungen erhalten. Vorhandene passende saubere Arbeitskopie
+   bevorzugen; bei unabhängiger Arbeit einen eigenen Worktree verwenden.
+   Ein Name wie `kanonischer-start` oder ein lokaler Integrationsbranch ist
+   kein Aktualitätsbeleg.
+2. **Auftragsbasis frisch abgleichen.** Origin abrufen und den aktuellen
+   Integrationscommit feststellen. Eigenen Arbeitsbranch mit dieser Basis
+   vergleichen; bewusst ältere Prüfstände bleiben ausdrücklich datiert.
+   Veraltete aktive Anweisungen vor Umsetzung am aktuellen Stand abgleichen.
+   Bei fehlendem Zugriff nur den tatsächlich belegten Stand nennen und
+   abhängige Änderungen zurückstellen; unabhängige Arbeit kann weitergehen.
+3. **Geltende Anweisungen lesen.** Persönliche Defaults/Overrides, Projekt-AGENTS
+   und etwaige engere AGENTS im bearbeiteten Pfad unterscheiden. Nach einem
+   Arbeitsbereichswechsel die zutreffenden Regeln erneut lesen; ausgelesene
+   Dateien nicht als Nachweis eines intern geladenen Prompts ausgeben.
+   Aktuellen Maintainer-Einstieg und Wegweiser lesen, danach nur passende
+   Verträge und Belege. Archivtexte liefern Herkunft, keine Fortsetzungsaufträge.
+4. **Umgebung passend zum Auftrag prüfen.** Nur benötigte Werkzeuge und ihre
+   tatsächlich aufgerufenen Versionen feststellen. Bei Firmware/Android die
+   jeweiligen Anleitungen und Pins verwenden; ignorierte SDK-Einstellungen,
+   Caches oder Zugangsdaten werden nicht automatisch in Worktrees übernommen.
+   Ein fehlender PATH-Eintrag beweist keine fehlende Installation. Zugriffshürden,
+   fehlende Voraussetzungen und Produktfehler getrennt benennen.
+5. **Auftrag und Abschluss verbinden.** Arbeitsbereich, Branch, HEAD,
+   Integrationsbasis und maßgebliche Regeln kurz im bestehenden Arbeitsbericht
+   festhalten; dazu die [sechs Auftragsfelder](../docs/quality/verantwortlichkeiten.md#kurzvorlage-für-auftrag-und-abnahme).
+   Vor Commit/PR eigenen Diff und aktuellen Zielstand erneut abgleichen.
+   Neuere Änderungen werden fachlich bewertet, nicht automatisch übernommen.
+
+Die vorhandenen Git-Prüfungen aus Abschnitt 3 unten um `git rev-parse --show-toplevel`
+ergänzen. Ein fehlgeschlagener Fetch erneuert keinen Quellenstand.
+Für eine reine Dokumentänderung genügen die dafür passenden Dokumentprüfungen;
+SDK-/Geräteprüfungen werden dadurch weder erforderlich noch als bestanden behauptet.
+
+## Historische Bestandsaufnahme · 20.10.2026
+
 Stand: **20. Oktober 2026**, Zeitzone Europe/Berlin.
 **Status: belegt gegen Quellstand und lokal ausgelesene Konfiguration.**
 Geprüfte Produktbasis nach erfolgreichem Fetch:
