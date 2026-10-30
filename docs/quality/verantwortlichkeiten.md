@@ -28,7 +28,9 @@ zusammenhängende Fachmandate und eine getrennte Nachweisprüfung.
 
 | Funktion | Verantwortet | Liefert und entscheidet im Auftrag |
 | --- | --- | --- |
-| Maintainer | Gesamtintegration, Priorität, Konflikte, Auftrag und Besetzung | Benennt je Arbeitspaket fachlich Verantwortlichen und Gegenprüfer; ordnet Folgearbeit ein und führt Änderungen bis PR. Merges, Releases und grundlegende Produktentscheidungen bleiben beim Nutzer. |
+| Projektmanager | Auftrag, operative Priorität, Besetzung und Abschlussverfolgung | Benennt führenden Bearbeiter und anderen Gegenprüfer; verfolgt Abhängigkeiten und gesamten Auftragsabschluss. Keine Routineimplementierung oder technische Freigabe. |
+| Maintainer | Architektur, technische Standards und bereichsübergreifende technische Konflikte | Entscheidet im bestätigten Produktauftrag; keine obligatorische Freigabe kleiner Änderungen. Grundlegende Architektur-/Produktentscheidungen bleiben beim Nutzer. |
+| Reviewer | Unabhängige Qualität und technische Integration | Prüft aktuellen Diff/Nachweise und führt nach [Mergepolicy](merge-policy.md) Routine-Merge und Nachkontrolle aus; keine Selbstfreigabe. |
 | Plattform und Systemintegration | Aufgelöste Plattform/Framework/SDK pro Firmwarevariante; Support, ABI; Task-/ISR-/Callbackkontext, gemeinsam genutzte Ressourcen, Fristen und Speicher | Versions-/Kontextnachweis, tragfähiger Nebenläufigkeitsentwurf, Migrations-/Supportentscheidung und passende Prüfungen. Bindet Security-Fachreview für konkrete Advisories, Zugang oder Kryptografie ein; ist keine automatische Security-Qualifikation. |
 | Geräteintegration und Hardwarevertrag | Chip und Revision, Pins, Bus/Adapter, Fehler-/Verfügbarkeitsvertrag, Timeout/Recovery, Patch und physischer Rückweg | Durchgängiger Vertrag vom Transport bis zum bewerteten Eingang; Grenzen von Datenblatt und Bibliothek, Fehlerproben und nötige Gerätemessung. Keine elektrische Freigabe aus einem erfolgreichen Build. |
 | LED-Effekt-Architekt | Sichtbare Wirkung, Berechnung und vollständige Umsetzung bis Produktintegration | Behält Rolle 2.0. Holt Plattformreview bei Task/Queue/RMT-/Pufferänderungen und Gerätefachreview bei Pins/Bus/elektrischen Grenzen hinzu. |
@@ -45,7 +47,7 @@ keine zusätzliche Weisungsbefugnis über die Fachrollen.
 
 ## Auftrag, Gegenprüfung und Abschluss
 
-Vor Änderungen hält der Maintainer je Arbeitspaket den fachlich Verantwortlichen
+Vor Änderungen hält der Projektmanager je Arbeitspaket den fachlich Verantwortlichen
 und einen anderen Gegenprüfer sowie Ziel, Codebasis, betroffene Varianten und
 erforderliche Nachweise im Auftrag oder Arbeitsbericht fest. Für gemeinsame
 Grenzen wird ein führendes Mandat benannt; die andere Fachfunktion wird gezielt
@@ -63,8 +65,10 @@ Der Abschluss nennt geänderte Quelle/Commit, tatsächlich ausgeführte Prüfsch
 Ergebnisse, Reviewbefunde und verbleibende Grenzen. Für erforderliche, aber nicht
 ausgeführte Geräte- oder Lastmessungen bleibt die entsprechende Abnahme offen.
 Ein positiver Hosttest ersetzt weder SDK-/ABI-Build noch echte Nebenläufigkeits-
-oder Hardwarebelege. Technische Integration führt der Maintainer bis PR;
-Merge, Release und grundlegende Produktentscheidungen bleiben beim Nutzer.
+oder Hardwarebelege. Der Reviewer führt zulässige Routine-Merges nach der
+[Mergepolicy](merge-policy.md) aus; der Projektmanager verfolgt den gesamten
+Abschluss. Releases, main und die dort genannten Ausnahmen bleiben vorbehalten.
+Die [Rollenarchitektur](rollenarchitektur.md) trennt Entscheidungen und Eskalation.
 
 Die Rollenübernahme allein schließt keinen technischen Befund ab. Die danach
 beauftragten A1-/A2-Korrekturen sind mit [eigenem Prüfstand](runtime-fixes-2026-10-24.md)
@@ -98,6 +102,6 @@ mit dem Namen der jeweiligen Bibliothek.
 Die jeweiligen Verträge bleiben fachlich kanonisch. Das Rollenpapier routet
 Arbeit und wiederholt keine vollständigen Spezifikationen. Jeder angenommene
 Befund benennt dort eine konkrete Änderung und einen passenden Prüfweg.
-Offene Folgearbeit steht im Pilotbericht bis zur Einordnung durch den
-Maintainer; der bestehende GitHub-Abgleich erhält dadurch kein neues Mandat,
+Offene Folgearbeit steht im Pilotbericht bis zur operativen Einordnung durch den
+Projektmanager, bei technischen Konflikten mit dem Maintainer; der bestehende GitHub-Abgleich erhält dadurch kein neues Mandat,
 Issues oder Prioritäten zu erfinden.

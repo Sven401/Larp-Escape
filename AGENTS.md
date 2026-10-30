@@ -3,10 +3,16 @@
 ## Mandat
 
 Vom Nutzer am 14. Oktober 2026 zur Umsetzung bestätigt: Codex betreut dieses
-Repository innerhalb beauftragter Sitzungen bis zum fertigen Pull Request.
-Dazu gehören Priorisierung, Umsetzung, Prüfung, Dokumentation sowie eigene
-Branches, Commits, Pushes und Pull Requests. Merges, Releases und grundlegende
-Produktentscheidungen bleiben beim Nutzer und benötigen dessen konkreten Auftrag.
+Repository innerhalb beauftragter Sitzungen bis zum belegten Abschluss.
+Am 30.10.2026 hat der Nutzer die getrennte Rollenarchitektur bestätigt:
+Projektmanager koordiniert, Entwickler implementieren, Maintainer verantwortet
+technische Grundsätze, ein anderer Reviewer prüft und führt zulässige Routine-
+Merges in den Integrationsbranch selbstständig aus. Es gelten die
+[Rollen und Entscheidungswege](docs/quality/rollenarchitektur.md) sowie die
+[Mergepolicy](docs/quality/merge-policy.md). Releases, main, grundlegende Produkt-
+und Architekturentscheidungen sowie die dort genannten Ausnahmen bleiben
+ausdrücklich vorbehalten. Fehlende technische Freigabevoraussetzungen sind
+kein Anlass, Schutzregeln zu umgehen.
 Eine regelmäßige Hintergrundüberwachung ist gesondert zu vereinbaren.
 
 ## Einstieg und Arbeitsbasis
@@ -49,7 +55,8 @@ Vom Nutzer am **24. Oktober 2026** nach dem A1/A2-Pilot übernommen:
 Qualität und Nachweise](docs/quality/verantwortlichkeiten.md).
 Bei jedem beauftragten Arbeitspaket vor Änderungen fachlich Verantwortlichen,
 anderen Gegenprüfer, betroffene Varianten und passende Nachweise benennen.
-Der Maintainer besetzt die Funktionen; mehrere Mandate dürfen von einer Person
+Der Projektmanager besetzt die Funktionen, bei fachlicher Unsicherheit mit dem
+Maintainer; mehrere Mandate dürfen von einer Person
 oder einem Agenten ausgeführt werden, die eigene Umsetzung gilt nicht als
 unabhängig geprüft. Der Reviewumfang folgt den Auslösern im Rollenvertrag.
 

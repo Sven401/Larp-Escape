@@ -94,3 +94,19 @@ keine beobachtete Bedienbarkeit oder Nutzerbewertung.
 [Box-Pilot](BOX-PILOT.md) enthält Brief, Zustände, Ausgangsbefunde und Abnahmekriterien.
 Der erste Einsatz ist eine Quellcode-/Konzeptprüfung, keine visuelle Appabnahme.
 Nutzungsbewertung und Rückweg stehen in [PROMOTION.md](../../PROMOTION.md).
+
+## Android-Übergabe und leichter Korrekturweg · 30.10.2026
+
+Designer liefert Figma-Knoten/Referenz mit Stand, relevante Zustände, Aktionen,
+Texte, vorhandene Komponenten und überprüfbare Akzeptanzfälle. Android bestätigt
+Machbarkeit und verantwortet native Umsetzung, Lifecycle und Tests. UI/UX prüft
+anschließend die gerenderte Umsetzung in den relevanten Zuständen; Reviewer
+bewertet die gesamten Nachweise und Mergebedingungen. Neue Spielsemantik mit
+Game Designer und bei Produktänderung Nutzer abstimmen.
+
+Reine Text-/Abstands-/Komponentenkorrektur innerhalb bestehender Semantik braucht
+keine neue Exploration oder vollständige Figma-Runde. Betroffene Zustände und
+Accessibility passend nachprüfen. Neue Navigation, Fehler-/Wiederaufnahmeregeln
+oder Spielaktionen brauchen die entsprechende Zustands-/Designübergabe.
+Bestehende Figma-Komponenten und Quellen verwenden, keine zweite Bibliothek.
+Automatische Wiederverbindung wiederholt keinen Licht-/Spielauftrag.
