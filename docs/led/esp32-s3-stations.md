@@ -1,7 +1,9 @@
 # LED-/Funkvorbereitung für zwei ESP32-S3-Stationen
 
-Stand: **31. Oktober 2026**. Status: **Softwarevorbereitung; kein Upload und
-keine Geräteabnahme**. Nutzerauftrag: zwei Waveshare ESP32-S3-Zero als zusätzliche
+Stand: **31. Oktober 2026**. Status: **Softwarevorbereitung; ein S3 inzwischen
+gesichert und installiert**, siehe [Installationsnachweis](s3-installation-2026-10-31.md).
+Handy-/Sichtprüfung und Zwei-Geräte-Abnahme bleiben offen.
+Nutzerauftrag: zwei Waveshare ESP32-S3-Zero als zusätzliche
 autonome Stationen, erster LED-Test über die bestehende Handy-App mit den
 eingebauten LEDs. „Nähe Glut“ muss zwischen zwei S3-Stationen funktionieren.
 [Verbindliche Hardwareentscheidung](../../Hardware/HARDWAREPLANUNG.md#zusätzliche-autonome-stationen-waveshare-esp32-s3-zero).
@@ -142,5 +144,7 @@ RMT-Wellenform oder optische Ausgabe auf den S3-Geräten. Volle/leere Queue,
 konkurrierende Callbacks, Funkverlust und späte Rückantworten unter realer Last
 bleiben Teil des oben geplanten Gerätelaufs.
 
-Auftragsführung: zwei gezielte Subagenten (Firmware und unabhängiger Review),
-keine Geräte-/Mergeaktion. Laufzeit und Tokenaufwand wurden nicht erhoben.
+Auftragsführung der Softwarevorbereitung: zwei gezielte Subagenten (Firmware
+und unabhängiger Review), in dieser Phase keine Geräte-/Mergeaktion. Der später
+gesondert beauftragte Gerätelauf steht im oben verlinkten Installationsnachweis.
+Laufzeit und Tokenaufwand wurden nicht erhoben.
