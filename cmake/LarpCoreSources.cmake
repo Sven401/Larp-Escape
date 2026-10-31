@@ -7,6 +7,7 @@ set(LARP_CORE_SOURCES
     "${LARP_ROOT}/src/GameDomain/KeystoneTransition.cpp"
     "${LARP_ROOT}/src/GameDomain/PuzzleProgress.cpp"
     "${LARP_ROOT}/src/GameConfiguration/ProfileReader.cpp"
+    "${LARP_ROOT}/src/GameConfiguration/CanonicalPackageJson.cpp"
     "${LARP_ROOT}/src/GameConfiguration/ProfileValidation.cpp"
     "${LARP_ROOT}/src/GameConfiguration/ProfileWriter.cpp"
     "${LARP_ROOT}/src/GameConfiguration/StandardProfile.cpp"

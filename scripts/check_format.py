@@ -144,6 +144,7 @@ TEST_ROOTS = (
     "test/test_matrix_configuration",
     "test/test_companion_protocol",
     "test/test_configured_control",
+    "test/test_package_json",
     "test/test_device_logic",
     "test/test_game_application",
     "test/test_game_history",
