@@ -83,6 +83,53 @@ commitbezogene CI und Geräte-/Speicher-/Lastnachweise stehen noch aus.
 Die zwei bisherigen Referenzspiele und sechs Traces bleiben erhalten; keine
 neue dritte Abnahmemechanik. Kein Upload, Release, main-Merge oder Abschluss #93.
 
+### Nachgelagerte native Qualifikation und weiterer Recoveryfix
+
+Der ursprüngliche Komponentenhead `ac81f84e2aa122743af7f32083a449054003aba0`
+hatte elf erfolgreiche PR-Jobs und einen fehlgeschlagenen Native-Lauf mit 86/87
+CTests. Ausschließlich der Quelldatei-Provenienzguard des Owner-Audits scheiterte
+vor dessen Binärausführung an LF/CRLF. Der unabhängig geprüfte Drei-Dateien-Fix
+`1d54cd7c11032b999d14a7be9e5b3b923e779985` bindet diesen Guard an die tatsächlichen
+Gitblob-LF-Bytes; weitere Bytes werden nicht normalisiert. Windows und getrennte
+LF-Gitblobkopie bestehen jeweils 18 Gruppen/806 Assertions; Produkt-, Katalog-
+und Szenariobytes bleiben unverändert.
+
+**1d54cd7c ist vollständig unabhängig qualifiziert: zwölf von zwölf PR-Jobs und
+87/87 native CTests, null übersprungen.** Prüfmerge
+`56bd3b7867024532c1ab88e86feb979975851076` hat exakt Ziel
+`c4f1f824c6274e9a8d7676212a2a96be4d4a77b9` und Head als Eltern, Tree
+`92a42f750717b135dcf516a5e13d000394a0bb8d`. Alle zwölf Originalcheckoutlogs,
+sechs Workflowpfade, pull_request/Attempt1/Actions-App15368 und abschließend
+unveränderte Remote-Refs wurden von `quality_p1` geprüft.
+[Native41253041026](https://github.com/Sven401/Larp-Escape/actions/runs/41253041026)
+prüft ManualOverrideOwner-Automaten806 mit synthetischen Authority-/Transactionports
+und realer PSA-SHA, SignedEvidence2732+137, Codec-Traces620, Aux306,
+Effect3160 und Bundle167269/16390Cuts. Tatsächliche PsaPackageDigest-/D0Verifier-/
+D0Signeradapter, SDK-Pin `9a97f6c54ec638111ce55cd36581b3c192f15207` samt rekursiven
+Submodulen sowie beide SDK-Images sind bestätigt. Originalarchiv13062710466,
+SHA256 `4d4db8edc35e1203f20e3b0b8ee4549c59090b78f5bb018604219a5ccbb5c6aa`.
+[Quality41253040992](https://github.com/Sven401/Larp-Escape/actions/runs/41253040992)
+einschließlich aller vier Firmwarevarianten sowie LED41253040977, NFC41253040921,
+ESP41253040938 und Rollen41253041045 sind erfolgreich. Der frühere Fehlerlauf
+bleibt getrennt erhalten; erfolgreiche Builds sind keine Gerätebeobachtung.
+
+Die weitere Gegenprüfung fand danach eine zusätzliche Wrapper-Sprachasymmetrie:
+der Writer verbietet Auxoperationen mit der Kennung eines beliebigen Bundle-
+Parents, Recovery prüfte diese globale Kollision bislang nur für Datenchunks.
+Acht echte rote Fälle am unveränderten Body `032c01cb…` (alle vier Auxarten,
+je vor/nach einem verwaisten Parent) belegen die unbeabsichtigte Annahme.
+Der minimale Folgefix erweitert genau diese Prüfung auf Auxiliary; ein Final
+behält weiterhin seine eigene Parentkennung. Der vollständige neue lokale
+Auxkorpus umfasst 468 Assertions, die acht isolierten Fälle sind mit Fix grün.
+Kein Authority-/Schema-/Lowlevelwechsel. **Diese Änderung ist nicht im grünen
+1d54cd7c-Nachweis enthalten und benötigt einen eigenen neuen CI-Lauf.**
+
+Nutzerfreigabe am 01.11.2026: „Testfix und geprüfte Folgestände freigeben“.
+Sie gilt für unabhängig geprüfte Folgestände im bereits beauftragten Umfang,
+bestehenden Draft #135 und Branch `codex/p1a7-manuelle-ersatzfreigabe`.
+Merges, Releases, Geräteuploads und neue Grundsatzentscheidungen bleiben davon
+ausgeschlossen. Draftstatus und vollständiger offener Softwareauftrag bleiben.
+
 Die nachfolgenden Abschnitte dokumentieren den früheren veröffentlichten Prüfstand.
 
 ## Verantwortung und tatsächliche Änderungen

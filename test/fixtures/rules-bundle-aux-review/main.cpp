@@ -2,6 +2,7 @@
 #include "../rules-planner-review/CompilerSupport.h"
 #include "DeviceRuntime/RulesBundleJournal.h"
 #include "DeviceRuntime/RulesProgressControl.h"
+#include "DeviceRuntime/RulesProgressEffect.h"
 #include "GameExecution/RulesProgressCodec.h"
 #include <cstdlib>
 namespace rb = larp::devices::rules_bundle;
@@ -334,6 +335,98 @@ void otherAuxiliaryCases() {
     require(f.bundle.auxiliary(request, f.fence, 0).error == rb::Error::InvalidArgument,
             "Application forbidden through auxiliary");
 }
+void parentCollision(ProgressKind kind, bool auxiliaryFirst) {
+    Fixture f;
+    const auto catalogImage = f.medium.durable;
+    auto orphan = f.catalog;
+    orphan.operation[15] = 20; // Same P as the independently attributed auxiliary operation.
+    require(f.bundle.begin(orphan, rb::HeaderMeta{}, 0, 0).outcome == rb::Outcome::Prepared,
+            "prepare real orphan parent P");
+    require(f.bundle.step(f.fence).outcome == rb::Outcome::Progress,
+            "write actual inert orphan chunk");
+    ProgressRecord chunk;
+    std::vector<std::uint8_t> chunkBytes(3072);
+    require(f.low.readRecord(2, chunk, chunkBytes.data(), chunkBytes.size()).outcome ==
+                ProgressOutcome::Read,
+            "capture real orphan chunk");
+    chunkBytes.resize(chunk.payloadBytes);
+    f.store.loseSession();
+    bundle_review::Medium medium;
+    medium.durable = auxiliaryFirst ? catalogImage : f.medium.durable;
+    bundle_review::Session session(medium);
+    ProgressJournal low(session);
+    require(low.recover(f.origin).outcome == ProgressOutcome::Recovered,
+            "new session before identity comparison");
+    Memory mem;
+    Ids ids;
+    rb::Journal wrapper(low, f.hash, ids, mem.w);
+    Consumer initial;
+    require(wrapper.recover(initial).outcome == rb::Outcome::Recovered,
+            "clean pre-collision representation recovery");
+    std::vector<std::uint8_t> payload;
+    auto request = f.control(0, payload);
+    request.kind = kind;
+    request.expectedRevision = low.snapshot().revision;
+    if (kind != ProgressKind::Control) {
+        payload.assign(1, 0xa0); // Received is intentionally opaque, not a D0 ingress assertion.
+        if (kind == ProgressKind::EffectClaim || kind == ProgressKind::EffectResult) {
+            rp::Effect effect;
+            effect.application.bytes[15] = 50;
+            std::memcpy(effect.catalog.bytes, f.catalog.blob.data(), 32);
+            effect.ownerBoot.bytes[15] = 9;
+            effect.phase = kind == ProgressKind::EffectClaim ? rp::EffectPhase::Claim
+                                                             : rp::EffectPhase::Result;
+            effect.result = kind == ProgressKind::EffectClaim ? rp::HandlerResult::None
+                                                              : rp::HandlerResult::Unknown;
+            effect.expected.profile = 17;
+            effect.expected.trust = 23;
+            payload.resize(3072);
+            xr::Pool<std::uint8_t> out;
+            pool(out, payload);
+            require(rp::encodeEffect(effect, out).valid, "actual syntactically valid Effect codec");
+            payload.resize(out.count);
+        }
+        request.payload = payload.data();
+        request.payloadBytes = payload.size();
+        request.requestDigest = digest(f.hash, payload.data(), payload.size());
+    }
+    if (!auxiliaryFirst)
+        require(wrapper.auxiliary(request, f.fence, 0).error == rb::Error::Conflict,
+                "writer rejects auxiliary physical ID matching orphan Parent P");
+    // Inject only through the unchanged opaque low-level journal; no product mutation.
+    require(low.commit(request, f.fence).outcome == ProgressOutcome::Committed,
+            "persist colliding auxiliary P");
+    if (auxiliaryFirst) {
+        ProgressRequest raw;
+        raw.operationId = chunk.operationId;
+        raw.requestDigest = chunk.requestDigest;
+        raw.kind = ProgressKind::Control;
+        raw.expectedRevision = low.snapshot().revision;
+        raw.payload = chunkBytes.data();
+        raw.payloadBytes = chunkBytes.size();
+        require(low.commit(raw, f.fence).outcome == ProgressOutcome::Committed,
+                "persist valid orphan chunk after colliding auxiliary P");
+    }
+    session.loseSession();
+    bundle_review::Session reopened(medium);
+    ProgressJournal recovered(reopened);
+    require(recovered.recover(f.origin).outcome == ProgressOutcome::Recovered,
+            "collision is physically intact");
+    Memory replay;
+    Ids newIds;
+    rb::Journal b(recovered, f.hash, newIds, replay.w);
+    Consumer consumer;
+    const auto outcome = b.recover(consumer);
+    if (outcome.outcome != rb::Outcome::Rejected || outcome.error != rb::Error::Conflict)
+        std::cerr << "collision recovery outcome=" << static_cast<unsigned>(outcome.outcome)
+                  << " error=" << static_cast<unsigned>(outcome.error)
+                  << " consumer begins=" << consumer.begins << " commits=" << consumer.commits
+                  << '\n';
+    require(outcome.outcome == rb::Outcome::Rejected && outcome.error == rb::Error::Conflict,
+            "parent collision recovery must reject Conflict");
+    require(!consumer.begins && !consumer.commits && consumer.aborts == 1,
+            "parent collision closes before provisional callbacks");
+}
 void cancelCases() {
     {
         Fixture f;
@@ -370,7 +463,14 @@ void cancelCases() {
 }
 } // namespace
 int main(int argc, char **argv) {
-    if (argc == 3 && std::string(argv[1]) == "--rawsha") {
+    if (argc == 4 && std::string(argv[1]) == "--parent-collision") {
+        const int kind = std::atoi(argv[2]);
+        require(kind == 1 || kind == 3 || kind == 4 || kind == 5,
+                "recognized auxiliary collision kind");
+        require(std::string(argv[3]) == "before" || std::string(argv[3]) == "after",
+                "recognized collision order");
+        parentCollision(static_cast<ProgressKind>(kind), std::string(argv[3]) == "before");
+    } else if (argc == 3 && std::string(argv[1]) == "--rawsha") {
         const int kind = std::atoi(argv[2]);
         require(kind == 1 || kind == 3 || kind == 4, "recognized noncontrol Auxkind");
         rawAuxiliaryMismatch(static_cast<ProgressKind>(kind));
@@ -379,6 +479,10 @@ int main(int argc, char **argv) {
         controlCases();
         otherAuxiliaryCases();
         cancelCases();
+        for (auto kind : {ProgressKind::Control, ProgressKind::Received, ProgressKind::EffectClaim,
+                          ProgressKind::EffectResult})
+            for (bool first : {false, true})
+                parentCollision(kind, first);
     }
     std::cout << checks
               << " focused actual Bundle/Control/Aux assertions; synthetic consumer/fences only\n";

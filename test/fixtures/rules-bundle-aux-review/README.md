@@ -32,8 +32,8 @@ regression; omission always executes the complete campaign.
 
 ## Observed local evidence, 2026-11-01
 
-306 assertions pass with C++11/Wpedantic/Werror and real BCrypt against bundle
-body SHA256 `032c01cb157fbc8a8302d1be7282509458310d0345e6c2e6695ae04a2553dc8a`
+468 assertions pass with C++11/Wpedantic/Werror and real BCrypt against bundle
+body SHA256 `d8ce06a0167854058e295f3080a035bb6c5f83dd5ffa7644c756bd7cc42c0aad`
 and header `2522cb887df7fd24048eec13a676fe8639fd3d1fc7b1e3a68a6e961f30c3df35`.
 Both compile-and-run and prebuilt-binary runner modes were exercised.
 
@@ -44,3 +44,18 @@ and each passes against the actual corrected source. This mutation is not
 claimed to reproduce a previous committed or frozen source hash. Production
 files were not edited for the demonstration. Separate reviewer reexecution,
 native PSA, actual semantic owners and device qualification remain separate.
+
+Eight additional parent-identity regressions cover Control/Received/Claim/Result
+before and after an orphan's Parent P. Each starts with a real catalog Final,
+uses new durable sessions, and injects physically intact low-level records.
+Control and Effect payloads use the actual codecs; Received stays intentionally
+opaque. The existing wrapper writer already rejects Auxiliary ID P after orphan
+P, but the original recovery body accepted that collision and called consumer
+begin/commit. All eight cases fail against the unchanged, privately preserved
+body `032c01cb157fbc8a8302d1be7282509458310d0345e6c2e6695ae04a2553dc8a`
+and pass against the corrected body above. The exact product delta adds Auxiliary
+to the existing Chunk parent-collision scan; Final retains its own Parent ID.
+All eight cases run by default. For an isolated reproduction use
+`--parent-collision-kind control|received|claim|result --auxiliary-order before|after`.
+Order describes the auxiliary record relative to the orphan chunk. This is an
+actual before/fix comparison, separate from the older RawSHA mutation experiment.

@@ -13,13 +13,17 @@ def main():
     parser.add_argument('--build-dir', type=Path, default=Path('private/rules-bundle-aux-review'))
     parser.add_argument('--bundle-source', type=Path,
                         help='Audit-only alternate source for a negative regression demonstration')
-    parser.add_argument('--rawsha-kind', choices=['received', 'claim', 'result'])
+    isolated = parser.add_mutually_exclusive_group()
+    isolated.add_argument('--rawsha-kind', choices=['received', 'claim', 'result'])
+    isolated.add_argument('--parent-collision-kind', choices=['control', 'received', 'claim', 'result'])
+    parser.add_argument('--auxiliary-order', choices=['before', 'after'], default='after')
     args = parser.parse_args()
     here = Path(__file__).resolve().parent
     root = here.parents[2]
     env = dict(os.environ)
     sources = ['DeviceRuntime/ProgressJournal.cpp', 'DeviceRuntime/RulesBundleJournal.cpp',
-               'DeviceRuntime/RulesProgressControl.cpp', 'GameExecution/RulesPlanner.cpp',
+               'DeviceRuntime/RulesProgressControl.cpp', 'DeviceRuntime/RulesProgressEffect.cpp',
+               'GameExecution/RulesPlanner.cpp',
                'GameExecution/RulesProgressCodec.cpp', 'GameConfiguration/PackageModules.cpp',
                'GameConfiguration/PackageDeclarations.cpp', 'GameConfiguration/CanonicalPackageJson.cpp']
     if args.binary:
@@ -41,6 +45,10 @@ def main():
     command = [str(binary)]
     if args.rawsha_kind:
         command += ['--rawsha', {'received': '1', 'claim': '3', 'result': '4'}[args.rawsha_kind]]
+    if args.parent_collision_kind:
+        command += ['--parent-collision',
+                    {'received': '1', 'claim': '3', 'result': '4', 'control': '5'}[args.parent_collision_kind],
+                    args.auxiliary_order]
     subprocess.run(command, check=True, env=env, timeout=90)
 
 

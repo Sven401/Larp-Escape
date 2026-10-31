@@ -539,7 +539,7 @@ Result Journal::recover(IRecoveryConsumer &consumer) {
     }
     for (std::size_t i = 0; i < work_.records.count; ++i) {
         const auto &link = work_.records.data[i];
-        if (link.phase == Phase::Chunk)
+        if (link.phase == Phase::Chunk || link.phase == Phase::Auxiliary)
             for (std::size_t j = 0; j < work_.bundles.count; ++j)
                 if (link.record.operationId == work_.bundles.data[j].key.operation)
                     return rejected(Error::Conflict);
