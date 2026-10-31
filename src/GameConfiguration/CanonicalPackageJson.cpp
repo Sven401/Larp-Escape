@@ -32,6 +32,18 @@ void CanonicalPackageJsonReader::reset(IPackageByteSource *source) {
     buffered_ = false;
     ended_ = false;
 }
+void CanonicalPackageJsonReader::token(CanonicalJsonToken value) {
+    if (observer_)
+        observer_->token(value, offset_);
+}
+void CanonicalPackageJsonReader::scalarByte(std::uint8_t byte) {
+    if (observer_)
+        observer_->scalarByte(byte);
+}
+void CanonicalPackageJsonReader::scalarEnd() {
+    if (observer_)
+        observer_->scalarEnd(offset_);
+}
 bool CanonicalPackageJsonReader::fail(CanonicalJsonError error, std::size_t offset) {
     if (result_.error == CanonicalJsonError::None) {
         result_.error = error;
@@ -66,6 +78,8 @@ void CanonicalPackageJsonReader::consume() {
 bool CanonicalPackageJsonReader::push(State state) {
     if (depth_ == ContainerDepth)
         return fail(CanonicalJsonError::DepthLimit, offset_);
+    token(state == State::ObjectKeyOrEnd ? CanonicalJsonToken::ObjectBegin
+                                         : CanonicalJsonToken::ArrayBegin);
     frames_[depth_] = {};
     frames_[depth_++].state = state;
     consume();
@@ -82,6 +96,7 @@ bool CanonicalPackageJsonReader::utf8() {
         count = 3;
     else
         return fail(CanonicalJsonError::InvalidUtf8, offset_);
+    scalarByte(lead);
     consume();
     for (std::size_t index = 0; index < count; ++index) {
         if (!need())
@@ -100,18 +115,21 @@ bool CanonicalPackageJsonReader::utf8() {
         }
         if (byte_ < minimum || byte_ > maximum)
             return fail(CanonicalJsonError::InvalidUtf8, offset_);
+        scalarByte(byte_);
         consume();
     }
     return true;
 }
 bool CanonicalPackageJsonReader::string(std::uint8_t *key, std::size_t *length) {
     std::size_t size = 0;
+    token(key ? CanonicalJsonToken::Key : CanonicalJsonToken::String);
     consume(); // opening quote
     while (need()) {
         if (byte_ == '"') {
             consume();
             if (length)
                 *length = size;
+            scalarEnd();
             return true;
         }
         if (byte_ < 0x20)
@@ -132,6 +150,7 @@ bool CanonicalPackageJsonReader::string(std::uint8_t *key, std::size_t *length) 
                 return false;
             continue;
         }
+        scalarByte(decoded);
         if (key) {
             if (size == KeyBytes)
                 return fail(CanonicalJsonError::KeyTooLong, characterOffset);
@@ -163,7 +182,9 @@ bool CanonicalPackageJsonReader::readKey(Frame &frame) {
     return true;
 }
 bool CanonicalPackageJsonReader::integer() {
+    token(CanonicalJsonToken::Integer);
     if (byte_ == '-') {
+        scalarByte(byte_);
         consume();
         if (!need())
             return false;
@@ -171,26 +192,32 @@ bool CanonicalPackageJsonReader::integer() {
             return fail(CanonicalJsonError::InvalidNumber, offset_);
     }
     if (byte_ == '0') {
+        scalarByte(byte_);
         consume();
         if (peek() && digit(byte_))
             return fail(CanonicalJsonError::InvalidNumber, offset_);
     } else {
         do {
+            scalarByte(byte_);
             consume();
         } while (peek() && digit(byte_));
     }
     if (peek() && (byte_ == '.' || byte_ == 'e' || byte_ == 'E' || byte_ == '+'))
         return fail(CanonicalJsonError::InvalidNumber, offset_);
+    scalarEnd();
     return result_.error == CanonicalJsonError::None;
 }
 bool CanonicalPackageJsonReader::literal(const char *text) {
+    token(CanonicalJsonToken::Boolean);
     for (std::size_t index = 0; text[index] != '\0'; ++index) {
         if (!need())
             return false;
         if (byte_ != static_cast<std::uint8_t>(text[index]))
             return fail(CanonicalJsonError::UnexpectedToken, offset_);
+        scalarByte(byte_);
         consume();
     }
+    scalarEnd();
     return true;
 }
 bool CanonicalPackageJsonReader::value() {
@@ -227,6 +254,7 @@ bool CanonicalPackageJsonReader::document() {
         case State::ObjectKeyOrEnd:
         case State::ObjectKey:
             if (byte_ == '}' && frame.state == State::ObjectKeyOrEnd) {
+                token(CanonicalJsonToken::ObjectEnd);
                 consume();
                 --depth_;
             } else {
@@ -251,6 +279,7 @@ bool CanonicalPackageJsonReader::document() {
         case State::ArrayValueOrEnd:
         case State::ArrayValue:
             if (byte_ == ']' && frame.state == State::ArrayValueOrEnd) {
+                token(CanonicalJsonToken::ArrayEnd);
                 consume();
                 --depth_;
             } else {
@@ -266,6 +295,7 @@ bool CanonicalPackageJsonReader::document() {
                 consume();
                 frame.state = object ? State::ObjectKey : State::ArrayValue;
             } else if (byte_ == (object ? '}' : ']')) {
+                token(object ? CanonicalJsonToken::ObjectEnd : CanonicalJsonToken::ArrayEnd);
                 consume();
                 --depth_;
             } else {
@@ -279,21 +309,25 @@ bool CanonicalPackageJsonReader::document() {
         return fail(CanonicalJsonError::TrailingData, offset_);
     return result_.error == CanonicalJsonError::None;
 }
-CanonicalJsonResult CanonicalPackageJsonReader::validate(IPackageByteSource &source) {
+CanonicalJsonResult CanonicalPackageJsonReader::validate(IPackageByteSource &source,
+                                                         ICanonicalJsonObserver *observer) {
     reset(&source);
+    observer_ = observer;
     if (document())
         result_.offset = offset_;
     source_ = nullptr;
+    observer_ = nullptr;
     return result_;
 }
-CanonicalJsonResult CanonicalPackageJsonReader::validate(const char *bytes, std::size_t count) {
+CanonicalJsonResult CanonicalPackageJsonReader::validate(const char *bytes, std::size_t count,
+                                                         ICanonicalJsonObserver *observer) {
     if (!bytes && count != 0) {
         reset(nullptr);
         fail(CanonicalJsonError::InvalidArgument, 0);
         return result_;
     }
     MemorySource source(bytes, count);
-    return validate(source);
+    return validate(source, observer);
 }
 } // namespace configuration
 } // namespace larp
