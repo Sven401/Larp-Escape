@@ -13,6 +13,30 @@ Quellstände und Sicherungsreferenzen; die Berichte bleiben die Originalbelege.
 Hardwarezuordnung, [H1 / #54](https://github.com/Sven401/Larp-Escape/issues/54)
 die gezielte Matrixnachprüfung. Kein neues Hardwaredesign aus alten Exporten ableiten.
 
+## Lieferziel: zwei ESP32-S3-Exemplare für „Nähe Glut“
+
+**Bestätigt · 31. Oktober 2026:** Bis Dezember 2026 werden **zwei
+funktionierende ESP32-S3-Exemplare für „Nähe Glut“** benötigt. Der Effekt
+muss zwischen diesen beiden Exemplaren funktionieren.
+
+**Verbindliche Priorität:** Eine eigene PCB darf diesen Termin nicht
+gefährden. PCB-Entwicklung und -Fertigung dürfen daher keine Voraussetzung
+für die termingerechte Bereitstellung der beiden funktionierenden Exemplare
+werden; bei Terminrisiko ist ein Aufbau mit vorhandenen Boards und Modulen
+vorzusehen. Dies legt noch kein CAD-Werkzeug oder konkretes Platinenlayout fest.
+
+**Offen:** genauer Einsatztag im Dezember, Betriebsbedingungen und konkrete
+Abnahmekriterien. Der zuvor vorgeschlagene 30. November ist kein gesondert
+bestätigter Stichtag. Dieser Planungseintrag belegt keine Umsetzung oder
+Geräteabnahme und beauftragt keinen Geräteupload.
+
+Quelle: direkter Nutzerauftrag vom 31.10.2026 in Codex-Sitzung
+`01a192e5-6a3d-7ce2-a9e1-bfacd9a97e3b`: „Halte das Lieferziel in der
+Projektplanung fest: Bis Dezember brauchen wir zwei funktionierende
+ESP32-S3-Exemplare für „Nähe Glut“. Eine eigene PCB darf den Termin nicht
+gefährden.“ Dokumentbasis: `b8472542230c5834d9664e98a89eb46c1cba6e57`;
+Prüfweg: bestehende Hardwareplanung gelesen und Nutzerauftrag abgeglichen.
+
 ## Übernommene Ergebnisse und Konsequenzen
 
 Alle folgenden Ergebnisse sind **aus den Originalberichten ausgelesen und gegen
