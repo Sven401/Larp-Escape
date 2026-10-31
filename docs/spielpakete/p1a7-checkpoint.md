@@ -1,4 +1,4 @@
-# Manuelle Ersatzfreigabe v2: früher Softwareprüfstand
+# Manuelle Ersatzfreigabe v2: Komponentenprüfstand
 
 Status: **laufender vollständiger Umsetzungsauftrag; vorbereitender Draft**,
 31.10.2026. Ziel [#93](https://github.com/Sven401/Larp-Escape/issues/93).
@@ -6,6 +6,84 @@ Arbeitsbasis `27a8a5d4a5fb2ba77790997fc09c4a4f583ae6e1`, einschließlich der
 qualifizierten D0-Integration `c4f1f824c6274e9a8d7676212a2a96be4d4a77b9`.
 Der [bestätigte Erweiterungsvertrag](p0-manual-override-v2.md) bleibt der
 vollständige Auftrag; dieser Prüfstand ersetzt ihn nicht.
+
+## Folgecheckpoint · 01.11.2026
+
+Die folgenden zusätzlichen Komponenten sind auf dem Arbeitsbranch vorbereitet.
+Der tatsächliche Gesamtkoordinator `RulesProgressOwner`, produktive ursprüngliche
+Installations-/Eingangs-/Uhrbelege, Einrichtung und F5a bleiben offen. Sein noch
+unveröffentlichter Header/Body und der separate Schlüsseldatei-Kandidat gehören
+ausdrücklich nicht zu diesem Komponentencheckpoint. Die grüne PR-CI weiter unten
+bezieht sich ausschließlich auf den früheren Head `7a44ac50…`; der neue Stand
+braucht einen eigenen nativen PSA-/SDK-/PR-Lauf.
+
+Kern-/Integrationsentwickler bleibt `developer_p1a3`; Root implementiert zusätzlich
+den [Katalog-/Plancodec](rules-progress-codec-v1.md),
+[signierte Originalbelege](rules-signed-evidence-v1.md) und
+[Effektbelegcodec](rules-effect-codec-v1.md). `quality_p1` prüft andere tatsächliche
+Byte-/Krypto-/Automatenfälle, `module_digest_review` die Sicherheits-/Vertragsgrenzen
+und neue Control-/Auxspeicherfälle. Keine eigene Umsetzung gilt als unabhängig geprüft.
+
+- Konkreter Prepare/Confirm-Automat mit vollständigem Katalogdigest, kopierten
+  Originalfences, festen Phasenkennungen, Frist-/Entzugsprüfung und globaler
+  Unknownsperre. Committed beschreibt Dauerhaftigkeit; das eigene Ergebnisfeld
+  unterscheidet Released, NoRelease und Unresolved. Ein nicht ausgelöster Guard
+  darf einen gespeicherten Receipt erzeugen, ohne T2 oder Ersatzfreigabe zu behaupten.
+- Tatsächlicher kopierender PeerProof-/Registry-/Identity-Adapter und eigener
+  Eventdatenspeicher. Die positive Einrichtung-/Eventprovenienz ist weiterhin
+  nicht implementiert; Device-GM wird nicht als Eventrecht umgedeutet.
+- Vollständige kanonische Katalog-/Plan-/Override-/COSEblobs, private Live- gegenüber
+  inaktiver Historical-Admission und gemeinsamer semantischer Programmvalidator.
+  Decode publiziert keinen ausführbaren Plan.
+- Tatsächlich signierte Outbox und vollständige signierte Ursachenclosure mit
+  eingefrorenen ursprünglichen Bytes/Schlüsseln. Aktuelle Lookupquellen bleiben
+  bei historischer Prüfung unbenutzt. Mathematische Gültigkeit ist keine echte
+  Installations-/GM-/Eingangsautorität; die nötigen Produktports bleiben geschlossen.
+- Unwirksame Datenchunks und einzelner Finalmarker auf unveränderter Journal-ABI,
+  vollständige Pool-/Slotreservierung und echte simulierte Backend-Neusitzung.
+  Neue Control-/Auxbelege und Claim-/Resultdarstellung ersetzen noch keinen
+  durchgängigen semantischen Coordinator oder eine Gerätebeobachtung.
+
+Tatsächliche lokale Nachweise: vollständiger CMake-/CTestlauf **36/36**, danach
+fünf betroffene/neue Ziele **5/5**. Die anschließend gezielt korrigierte RawSHA-
+Recoverybindung der neuen Bundle-Auxsprache ist mit frisch gebautem unabhängigem
+Bundle-Basiskorpus erneut geprüft: acht positive/239 fehlerhafte Bestände,
+167269 Assertions und 16390 programmierte Präfixgrenzen. Der Lowlevel-
+`ProgressJournal::requestDigest` bleibt opak; nur die neue Wrappersprache bindet
+ihn beim Schreiben und Wiederherstellen an SHA256 der tatsächlichen Nutzbytes.
+Zusätzliche [gezielte Control-/Auxfälle](../../test/fixtures/rules-bundle-aux-review/README.md)
+prüfen mit 306 Assertions den tatsächlichen vorherigen Katalog-Final, neue
+Backend-Neusitzung, alle vier Auxarten, falsche RawSHA, exakte Reserve sowie
+Vorwrite-Abbruch gegenüber geschriebenem Chunk/Unknown. Consumer und Freigabe-
+fence sind ausdrücklich synthetisch. Die drei isolierten RawSHA-Gegenfälle
+scheitern ohne den neuen Guard in einer privaten Mutationsdatei; diese Datei
+wird nicht als früherer Originalcommit ausgegeben.
+`quality_p1` hat die drei Fixturequellen unabhängig gegengelesen und frisch
+übersetzt: ebenfalls 306 Assertions sowie die drei isolierten RawSHA-Fälle mit
+je 15 Assertions grün; ohne den neuen Guard schlagen alle drei gezielt fehl.
+
+PlatformIO **263/263 in 25 Suiten** vor dieser letzten zweizeiligen Korrektur;
+danach frischer Hostcompile und Control **5/5** am korrigierten Stand. Diese
+Reihenfolge ist kein pauschaler neuer Gesamtlauf. Zusätzlich unabhängig:
+[Owner 18 Gruppen/806 Assertions](../../test/fixtures/manual-owner-review/README.md),
+[Codec 61 Artefakte/20 Programme, sechs Traces/24 Zustände und Fehlkorpus](../../test/fixtures/rules-progress-independent-review/README.md),
+[SignedEvidence 2666+135 Assertions](../../test/fixtures/signed-rules-evidence-independent/README.md),
+[Effect 3160 Assertions](../../test/fixtures/rules-effect-independent-review/README.md).
+Die Authority-/Installations-/Clock-/Transactionports dieser Hosttests sind
+ausdrücklich synthetisch; ihre Grenzen stehen in den jeweiligen Berichten.
+
+Architekturguard **186 Dateien/403 Includes**, **107** unabhängige C++11-Header
+und Formatbaseline **376 Dateien/19.1.7** sind an einer separaten Kopie des exakt
+vorgemerkten Komponentenbaums geprüft. Darin sind Coordinatorheader/-body und
+Schlüsseldatei-Kandidat nachweislich abwesend. Der reine spätere Aux-Testtarget-
+Nachtrag ändert diese Guardflächen nicht.
+Alle Quellen bleiben unter den unveränderten Pflichtprüfungen; endgültige
+commitbezogene CI und Geräte-/Speicher-/Lastnachweise stehen noch aus.
+
+Die zwei bisherigen Referenzspiele und sechs Traces bleiben erhalten; keine
+neue dritte Abnahmemechanik. Kein Upload, Release, main-Merge oder Abschluss #93.
+
+Die nachfolgenden Abschnitte dokumentieren den früheren veröffentlichten Prüfstand.
 
 ## Verantwortung und tatsächliche Änderungen
 

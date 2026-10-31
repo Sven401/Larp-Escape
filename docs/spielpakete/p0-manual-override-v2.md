@@ -153,6 +153,17 @@ besitzen eigene Fences; ihr Wechsel darf auch ohne Fortschritts- oder
 GM-Verbindungsänderung einen vorbereiteten Plan sperren. Der finale Callback
 liest deren aktuelle Werte, nicht nur Kopien vom Empfang des Confirm.
 
+Die aktive Spieluhr ist von diesen logischen Revisionen zu trennen. Tatsächlich
+dauerhaft belegte monotone Uhrcheckpoints dürfen während einer Vorbereitung
+fortschreiten, ohne deren Identität, absolute Frist oder gespeicherte Fencekopie
+umzuschreiben. Der aktuelle dauerhafte Vorzustand muss dieselben logischen
+Fencefelder und `lastIssued` besitzen; allein `activeTime` darf entlang der
+vollständig geprüften ursprünglichen Uhr-/Boot-/Lifecyclekette wachsen.
+Ein weiterer privater Planungsfortschritt benötigt einen eigenen ursprünglichen
+ClockWitness vom aktuellen dauerhaften Vorzustand zur Planungsuhr. Diese
+Darstellungsrelation allein beweist keine Uhr und erteilt keine Freigabe.
+Ein neuer Besitzerboot übernimmt keine alte vorbereitete Live-Admission.
+
 Prepare erzeugt weder Latch noch Fakt, Intent oder dauerhafte Erfolgsmeldung.
 Ein voller Bereich erzeugt deferred, keine Verdrängung eines noch offenen
 Vorgangs. Tokenentropie/-Nichtwiederverwendung und Fristüberlauf sind im echten
@@ -218,6 +229,18 @@ Eine Gruppe darf in einem Plan genau einen Freigabeanspruch stellen. Zwei
 Ansprüche auf denselben gemeinsamen Latch sind ein Konflikt ohne Teilwirkung;
 keine Gewinnerregel durch Priorität. Ein bereits bestätigter Latch überspringt
 beide Varianten. Neue Generationen und Paketwechsel setzen ihn nicht zurück.
+
+`Committed` und `Duplicate` bezeichnen ausschließlich die dauerhafte Übernahme.
+Das getrennt kopierte Ergebnis `ReleaseDisposition` unterscheidet `Released`,
+`NoRelease` und `Unresolved`. Eine neue Ersatzfreigabe ist erst `Released`, wenn
+der tatsächliche gemeinsame Latch und der eigene T2-Beleg diese Freigabe tragen.
+Ein falscher oder unbekannter Guard kann einen dauerhaft übernommenen No-fire-
+Eingangsbeleg mit `NoRelease` ergeben; daraus entsteht keine Ersatzfreigabe.
+`already_released` bezeichnet die bereits nachgewiesene Gruppenfreigabe und
+behauptet keinen neuen T2-Beleg. Wiederholung, Status und historische Auskunft
+bewahren das ursprünglich abgeleitete Ergebnis; ein später gesetzter Latch darf
+einen alten `NoRelease`-Beleg nicht nachträglich umdeuten. Auch eine lokale
+Handler-Rückgabe beweist keine physisch beobachtete Wirkung.
 
 Ein erfolgreicher Plan enthält den T1- oder T2-Fakt, gemeinsamen Latch, lokale
 Erfolgsmarkierung, Eingangs-/Autorisierungsbeleg und begrenzte Intents. Das D1-

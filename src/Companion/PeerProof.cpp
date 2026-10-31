@@ -257,6 +257,30 @@ bool PeerProofOwner::readVerified(const PeerProofBinding &caller,
     busy_ = false;
     return valid;
 }
+bool PeerProofOwner::readVerifiedEvidence(const PeerProofBinding &caller,
+                                          AcceptedPeerProof &destination) noexcept {
+    const auto original = caller;
+    if (busy_ || phase_ != Phase::Verified || !(original == challenge_.original))
+        return false;
+    busy_ = true;
+    AcceptedPeerProof copied;
+    bool valid = !expired() && current() && encodePeerChallenge(challenge_, copied.transcript);
+    if (valid) {
+        copied.verified.original = original;
+        copied.verified.credential = credential_;
+        copied.verified.sequence = challenge_.sequence;
+        copied.verified.issuedAt = issuedAt_;
+        copied.verified.verifiedAt = verifiedAt_;
+        copied.signature = accepted_.signature;
+        valid = !expired() && current();
+    }
+    if (valid)
+        destination = copied;
+    else
+        phase_ = Phase::Failed;
+    busy_ = false;
+    return valid;
+}
 bool bindPeerProofEvidence(const VerifiedPeerProof &caller,
                            const OriginalPeerSecurity &callerSecurity,
                            VerifiedPeerEvidence &destination) noexcept {

@@ -55,6 +55,13 @@ struct VerifiedPeerProof {
     PeerCredential credential;
     std::uint32_t sequence = 0, issuedAt = 0, verifiedAt = 0;
 };
+// Complete original mathematical possession evidence, copied from the actual
+// consumed successful proof owner. This is NOT a GM/event-role certificate.
+struct AcceptedPeerProof {
+    VerifiedPeerProof verified;
+    PeerTranscript transcript{};
+    PeerSignature signature{};
+};
 bool encodePeerChallenge(const PeerChallenge &, PeerTranscript &) noexcept;
 bool decodePeerChallenge(const std::uint8_t *, std::size_t, PeerChallenge &) noexcept;
 bool encodePeerProof(const PeerProof &,
@@ -113,6 +120,9 @@ class PeerProofOwner {
     bool challengeSnapshot(const PeerProofBinding &, PeerChallengeSnapshot &) noexcept;
     PeerProofOutcome verify(const PeerProofBinding &, const PeerProof &) noexcept;
     bool readVerified(const PeerProofBinding &, VerifiedPeerProof &) noexcept;
+    // Copy before expiry/reset on the same serialized crypto worker. Preserves
+    // destination on failure; no re-signing/reconstructed new challenge.
+    bool readVerifiedEvidence(const PeerProofBinding &, AcceptedPeerProof &) noexcept;
 
   private:
     enum class Phase : std::uint8_t { Empty, Pending, Verified, Failed };

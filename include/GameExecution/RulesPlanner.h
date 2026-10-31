@@ -124,6 +124,10 @@ struct Program {
     Pool<Id> triggers;
     bool ready = false;
 };
+// Revalidates owned, rebound catalog storage with the same semantic checks as
+// ProgramBuilder. Clears ready at entry; Ready is a checked provisional result,
+// publication remains the enclosing consumer/owner transaction.
+Result validateOwnedProgram(Program &);
 // Destination is staging storage, never the active immutable program. Published
 // only by the compiler's non-failing final consumer commit. No scratch borrow.
 class ProgramBuilder : public configuration::IExpandedStationConsumer {
@@ -185,10 +189,11 @@ struct OverrideAuthority {
     std::uint32_t principal = 0, roleEpoch = 0, connectionToken = 0;
     std::uint32_t registration = 0, lifecycle = 0;
     std::uint16_t connectionHandle = 0;
-    std::uint64_t registryRevision = 0;
+    std::uint64_t registryRevision = 0, eventRevision = 0;
 };
 struct OverrideRecord {
     Context context;
+    Digest program; // SHA256 of actual complete canonical installed catalog bytes.
     Fence expected;
     OverrideAuthority authority;
     Identity ownerBoot, token, prepareId, confirmId, operation, rule;
@@ -199,22 +204,36 @@ struct OverrideRecord {
 };
 bool sameContext(const Context &, const Context &);
 bool sameFence(const Fence &, const Fence &);
+// Representation relation ONLY: all logical revisions/range unchanged, active
+// time monotonic. This proves NO clock witness and rebases NO original grant;
+// the actual owner must verify the separate original boot/monotonic witness.
+bool overridePlanningFence(const Fence &original, const Fence &planning);
 bool sameOverrideRecord(const OverrideRecord &, const OverrideRecord &);
 class ManualOverrideOwner;
+class Planner;
+enum class OverrideAdmissionScope : std::uint8_t { Empty, Live, Historical };
 // Misuse protection, not a cryptographic credential. Only the concrete owner
 // can construct a nonempty copied admission after its fresh authority checks.
 // The owner must still recheck authority/context/expiry at the final D1 fence.
 class OverrideAdmission {
   public:
     OverrideAdmission() = default;
+    OverrideAdmissionScope scope() const {
+        return scope_;
+    }
     const OverrideRecord &record() const {
         return record_;
     }
 
   private:
     friend class ManualOverrideOwner;
-    explicit OverrideAdmission(const OverrideRecord &record) : record_(record) {}
+    friend class Planner;
+    explicit OverrideAdmission(const OverrideRecord &record)
+        : record_(record), scope_(OverrideAdmissionScope::Live) {}
+    OverrideAdmission(const OverrideRecord &record, OverrideAdmissionScope scope)
+        : record_(record), scope_(scope) {}
     OverrideRecord record_;
+    OverrideAdmissionScope scope_ = OverrideAdmissionScope::Empty;
 };
 enum class InputKind : std::uint8_t { Local, Timer, Fact, Override };
 struct Input {
@@ -318,12 +337,26 @@ struct StateStorage {
     Pool<Id> solved;
     Pool<FactRef> evidence;
 };
+enum class ReplayScope : std::uint8_t { Rejected, ReplayedInactive };
+struct ReplayResult {
+    ReplayScope scope = ReplayScope::Rejected;
+    Result result;
+};
 // All sources/programs/state/storage belong to one exclusive synchronous owner.
 // No callbacks, hardware, allocation, durable commit or authentication here.
 class Planner {
   public:
     Result plan(const Program &program, const State &state, const Input &input,
                 const Capacities &capacity, Plan &destination, PlannerWorkspace &workspace);
+    // Pure historical reconstruction AFTER the actual owner has checked all
+    // original signed/install/authority evidence and the stored Final range.
+    // Historical admission never enters plan(), no new grant/IDs/effect. The
+    // returned computed plan is deliberately NOT ready for a new submission;
+    // nextState is INACTIVE until the owner compares the entire stored result.
+    ReplayResult replayHistorical(const Program &, const State &, const Input &,
+                                  const OverrideRecord *originalOverride, const Capacities &,
+                                  Plan &, PlannerWorkspace &, StateStorage &inactive,
+                                  State &nextState);
     static Result initialize(const Program &program, const Fence &fence, StateStorage &storage,
                              State &destination);
     static Result commitRam(const Program &program, const State &current, const Plan &plan,
@@ -340,6 +373,8 @@ class Planner {
     PlannerWorkspace *work_ = nullptr;
     Result result_;
     std::size_t visits_ = 0, proofWork_ = 0, actions_ = 0;
+    Result run(const Program &, const State &, const Input &, const Capacities &, Plan &,
+               PlannerWorkspace &, bool historical);
     void fail(Error error, bool deferred = false);
     Id admit(const FactRef &ref);
     bool validFact(const Fact &fact) const;
