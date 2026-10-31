@@ -24,6 +24,26 @@ if(BUILD_TESTING)
         GIT_TAG cbcd08fa7de711053a3deec6339ee89cad5d2697
         GIT_SHALLOW FALSE)
     FetchContent_MakeAvailable(unity)
+    add_executable(package-artifacts test/test_package_artifacts/test_main.cpp)
+    target_link_libraries(package-artifacts PRIVATE larp_core unity)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        target_compile_options(package-artifacts PRIVATE -Wall -Wextra -Wpedantic -Werror)
+    endif()
+    add_test(NAME package-artifacts COMMAND package-artifacts)
+    if(WIN32)
+        add_executable(package-artifacts-review test/fixtures/package-artifacts-review/cli.cpp)
+        target_link_libraries(package-artifacts-review PRIVATE larp_core bcrypt)
+        target_compile_options(package-artifacts-review PRIVATE -Wall -Wextra -Wpedantic -Werror)
+        add_test(NAME package-artifacts-review COMMAND "${Python3_EXECUTABLE}"
+            "${CMAKE_SOURCE_DIR}/test/fixtures/package-artifacts-review/run.py"
+            --binary "$<TARGET_FILE:package-artifacts-review>")
+        add_executable(package-metadata-review test/fixtures/package-artifacts-review/metadata.cpp)
+        target_link_libraries(package-metadata-review PRIVATE larp_core bcrypt)
+        target_compile_options(package-metadata-review PRIVATE -Wall -Wextra -Wpedantic -Werror)
+        add_test(NAME package-metadata-review COMMAND "${Python3_EXECUTABLE}"
+            "${CMAKE_SOURCE_DIR}/test/fixtures/package-artifacts-review/run_metadata.py"
+            --binary "$<TARGET_FILE:package-metadata-review>")
+    endif()
     add_executable(rules-planner test/test_rules_planner/test_main.cpp)
     target_link_libraries(rules-planner PRIVATE larp_core unity)
     if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
@@ -122,6 +142,24 @@ if(BUILD_TESTING AND LARP_PSA_IDF_PATH)
     # ESP-only port. Host tests forward them to the identical private headers.
     target_include_directories(builtin PRIVATE "${CMAKE_SOURCE_DIR}/test/psa_host_compat")
     target_include_directories(tfpsacrypto PRIVATE "${CMAKE_SOURCE_DIR}/test/psa_host_compat")
+    add_executable(package-artifacts-review-psa test/fixtures/package-artifacts-review/cli.cpp
+        lib/PsaPackageDigest/PsaPackageDigest.cpp)
+    target_include_directories(package-artifacts-review-psa PRIVATE lib/PsaPackageDigest)
+    target_compile_definitions(package-artifacts-review-psa PRIVATE PACKAGE_ARTIFACT_REVIEW_PSA=1)
+    target_link_libraries(package-artifacts-review-psa PRIVATE larp_core tfpsacrypto)
+    target_compile_options(package-artifacts-review-psa PRIVATE -Wall -Wextra -Wpedantic -Werror)
+    add_test(NAME package-artifacts-review-psa COMMAND "${Python3_EXECUTABLE}"
+        "${CMAKE_SOURCE_DIR}/test/fixtures/package-artifacts-review/run.py"
+        --binary "$<TARGET_FILE:package-artifacts-review-psa>")
+    add_executable(package-metadata-review-psa test/fixtures/package-artifacts-review/metadata.cpp
+        lib/PsaPackageDigest/PsaPackageDigest.cpp)
+    target_include_directories(package-metadata-review-psa PRIVATE lib/PsaPackageDigest)
+    target_compile_definitions(package-metadata-review-psa PRIVATE PACKAGE_ARTIFACT_REVIEW_PSA=1)
+    target_link_libraries(package-metadata-review-psa PRIVATE larp_core tfpsacrypto)
+    target_compile_options(package-metadata-review-psa PRIVATE -Wall -Wextra -Wpedantic -Werror)
+    add_test(NAME package-metadata-review-psa COMMAND "${Python3_EXECUTABLE}"
+        "${CMAKE_SOURCE_DIR}/test/fixtures/package-artifacts-review/run_metadata.py"
+        --binary "$<TARGET_FILE:package-metadata-review-psa>")
     add_executable(rules-planner-review-psa test/fixtures/rules-planner-review/cli.cpp
         lib/PsaPackageDigest/PsaPackageDigest.cpp)
     target_include_directories(rules-planner-review-psa PRIVATE lib/PsaPackageDigest)

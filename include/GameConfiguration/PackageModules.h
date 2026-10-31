@@ -135,6 +135,8 @@ struct Symbol {
     Literal initial;
     std::int32_t minimum = 0, maximum = 0;
     bool input = false;
+    Id resourceDigest = 0;
+    std::uint32_t resourceBytes = 0;
 };
 struct Action {
     Location location;
@@ -222,6 +224,13 @@ class IExpandedStationConsumer {
     virtual void commit() = 0;
     virtual void abort() = 0;
 };
+// Instrumentation for complete canonical sources. Events may be incomplete on
+// rejected sources; only endSource with canonical success is complete input.
+class ICompilerSourceObserver : public ICanonicalJsonObserver {
+  public:
+    virtual void beginSource(bool module, std::uint16_t source) = 0;
+    virtual void endSource(CanonicalJsonResult result) = 0;
+};
 // Exclusive, non-reentrant call: callbacks must not mutate sources, compiler or
 // caller workspaces, nor retain write/update buffers. All must outlive the call.
 // Pure compiler: one pass per immutable byte source, no heap/DOM/replay. Digest
@@ -232,7 +241,8 @@ class PackageModuleCompiler : private ICanonicalJsonObserver {
                                 IPackageDigest &digest, IExpandedPackageSink &sink,
                                 ModuleCompileWorkspace &workspace,
                                 ExpandedStationWorkspace &expanded,
-                                IExpandedStationConsumer *consumer = nullptr);
+                                IExpandedStationConsumer *consumer = nullptr,
+                                ICompilerSourceObserver *sources = nullptr);
 
   private:
     enum class Kind : std::uint8_t {
@@ -299,6 +309,7 @@ class PackageModuleCompiler : private ICanonicalJsonObserver {
     ModuleCompileWorkspace *work_ = nullptr;
     ExpandedStationWorkspace *expanded_ = nullptr;
     IExpandedPackageSink *sink_ = nullptr;
+    ICompilerSourceObserver *sources_ = nullptr;
     ModuleCompileResult result_;
     ModulePin pins_[16], pin_;
     std::size_t pinCount_ = 0, depth_ = 0, length_ = 0, offset_ = 0;

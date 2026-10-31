@@ -466,6 +466,8 @@ PackageModuleCompiler::Kind PackageModuleCompiler::child(bool array) {
     return Kind::Skip;
 }
 void PackageModuleCompiler::token(CanonicalJsonToken t, std::size_t offset) {
+    if (sources_)
+        sources_->token(t, offset);
     if (result_.error != ModuleError::None)
         return;
     offset_ = offset;
@@ -638,13 +640,17 @@ void PackageModuleCompiler::token(CanonicalJsonToken t, std::size_t offset) {
     text_[0] = '\0';
 }
 void PackageModuleCompiler::scalarByte(std::uint8_t b) {
+    if (sources_)
+        sources_->scalarByte(b);
     if (result_.error != ModuleError::None)
         return;
     if (length_ < sizeof(text_) - 1)
         text_[length_] = static_cast<char>(b);
     ++length_;
 }
-void PackageModuleCompiler::scalarEnd(std::size_t) {
+void PackageModuleCompiler::scalarEnd(std::size_t offset) {
+    if (sources_)
+        sources_->scalarEnd(offset);
     if (result_.error != ModuleError::None || !depth_)
         return;
     text_[length_ < sizeof(text_) ? length_ : sizeof(text_) - 1] = '\0';
@@ -866,8 +872,12 @@ void PackageModuleCompiler::scalar() {
         } else if (!std::strcmp(k, "description")) {
             if (scalar_ != CanonicalJsonToken::String)
                 fail(ModuleError::Type);
-        } else if (!std::strcmp(k, "bytes") ||
-                   !std::strcmp(k, "digest")) { /* checked by declarations */
+        } else if (!std::strcmp(k, "bytes")) {
+            if (!integer(1, 4294967295LL, n))
+                fail(ModuleError::Range);
+            s.resourceBytes = static_cast<std::uint32_t>(n);
+        } else if (!std::strcmp(k, "digest")) {
+            s.resourceDigest = intern(); // Content declaration reader checked the exact hex form.
         } else
             fail(ModuleError::Type);
         return;
@@ -2264,10 +2274,12 @@ bool PackageModuleCompiler::emitStation(Id stationId) {
 ModuleCompileResult PackageModuleCompiler::compile(
     IPackageByteSource &content, IModuleSourceProvider &provider, IPackageDigest &digest,
     IExpandedPackageSink &sink, ModuleCompileWorkspace &workspace,
-    ExpandedStationWorkspace &expanded, IExpandedStationConsumer *consumer) {
+    ExpandedStationWorkspace &expanded, IExpandedStationConsumer *consumer,
+    ICompilerSourceObserver *sources) {
     work_ = &workspace;
     expanded_ = &expanded;
     sink_ = &sink;
+    sources_ = sources;
     result_ = {};
     pinCount_ = depth_ = length_ = offset_ = 0;
     currentDefinition_ = moduleDefinition_ = currentRule_ = currentInstance_ = 0;
@@ -2278,8 +2290,12 @@ ModuleCompileResult PackageModuleCompiler::compile(
         work_->actions.count = work_->rules.count = work_->definitions.count =
             work_->instances.count = work_->bindings.count = work_->constraints.count =
                 work_->triggers.count = 0;
+    if (sources_)
+        sources_->beginSource(false, 0);
     HashSource contentSource(content, digest);
     const DeclarationResult declarations = declarations_.validate(contentSource, this);
+    if (sources_)
+        sources_->endSource(declarations.canonical);
     result_.canonical = declarations.canonical;
     if (declarations.scope != DeclarationScope::DeclarationsOnly) {
         result_.error =
@@ -2309,8 +2325,12 @@ ModuleCompileResult PackageModuleCompiler::compile(
             fail(ModuleError::MissingModule);
             break;
         }
+        if (sources_)
+            sources_->beginSource(true, static_cast<std::uint16_t>(i + 1));
         HashSource moduleSource(*source, digest);
         const CanonicalJsonResult canonical = canonical_.validate(moduleSource, this);
+        if (sources_)
+            sources_->endSource(canonical);
         result_.canonical = canonical;
         if (!canonical) {
             result_.error = ModuleError::CanonicalInput;
@@ -2396,6 +2416,7 @@ ModuleCompileResult PackageModuleCompiler::compile(
     work_ = nullptr;
     expanded_ = nullptr;
     sink_ = nullptr;
+    sources_ = nullptr;
     return result_;
 }
 } // namespace configuration
