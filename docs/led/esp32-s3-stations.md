@@ -1,8 +1,9 @@
 # LED-/Funkvorbereitung für zwei ESP32-S3-Stationen
 
 Stand: **31. Oktober 2026**. Status: **Softwarevorbereitung; ein S3 inzwischen
-gesichert und installiert**, siehe [Installationsnachweis](s3-installation-2026-10-31.md).
-Handy-/Sichtprüfung und Zwei-Geräte-Abnahme bleiben offen.
+gesichert und installiert**, siehe [Installations- und Handy-Nachweis](s3-installation-2026-10-31.md).
+Funkeln-Start/Stop/Wiederstart sind über die App einschließlich sichtbarer
+Nutzerbestätigung belegt; weitere Effekte und Zwei-Geräte-Abnahme bleiben offen.
 Nutzerauftrag: zwei Waveshare ESP32-S3-Zero als zusätzliche
 autonome Stationen, erster LED-Test über die bestehende Handy-App mit den
 eingebauten LEDs. „Nähe Glut“ muss zwischen zwei S3-Stationen funktionieren.

@@ -1,7 +1,8 @@
 # Erster ESP32-S3: Sicherung und Testinstallation
 
-Datum: **31. Oktober 2026**. Status: **ein S3 gesichert, installiert und per USB
-erreichbar; Handy-/Sichtprüfung und Zwei-Stationen-Test offen**.
+Datum: **31. Oktober 2026**. Status: **ein S3 gesichert und installiert;
+Funkeln-Start, Stop und erneuter Start über die Handy-App mit sichtbarer
+Nutzerbestätigung belegt. Weitere Effekte und Zwei-Stationen-Test offen.**
 Quelle: ausdrücklicher Nutzerauftrag in Sitzung
 `01a18f48-193f-7763-a3e4-9731b29c0086`: ESP32-S3 auf COM4 sichern und anschließend
 vorbereitete Testfirmware für den LED-Test über die Handy-App flashen.
@@ -25,7 +26,7 @@ ausgelesenen Status. Kein Forcieren und keine eFuse-/OTP-Änderung.
 COM4 bezeichnet den Anschluss dieses Laufs, keine dauerhafte Geräteidentität.
 
 Der vollständige ursprüngliche Flash wurde ab Adresse 0 mit **4.194.304 Byte**
-gelesen und **vor jedem Schreibzugriff am selben Chip mit `verify_flash`
+gelesen und **vor dem ersten Schreibzugriff am selben Chip mit `verify_flash`
 erfolgreich verglichen**. SHA-256:
 `ef926a939b08a81894b2ad3e6228bd48855f8af8140aac1eb438940effb0cdf2`.
 
@@ -90,16 +91,49 @@ Nachweis für alle USB-Treiber oder Boardrevisionen.
 Die Zugangsschlüssel wurden nicht ausgegeben oder versioniert. Die private
 Importdatei liegt unter
 `%LOCALAPPDATA%/LarpEscape/Provisioning/s3-34b7da5977e8-access-20261031.json`.
-Sie wurde **noch nicht in die Handy-App importiert**. Der Import ersetzt dort
-den bisher eingerichteten einen Boxzugang; die bisherige Box behält ihre eigene
-Firmware und ihre eigenen Zugangsdaten.
+Der Zugang wurde in der unten beschriebenen Fortsetzung importiert. Die bisherige
+Box behält ihre eigene Firmware und ihre eigenen Zugangsdaten.
 
-Nächster Schritt: Datei auf das Handy übertragen, in der vorhandenen Companion-App
-„Box-Zugang importieren“ wählen, den S3 verbinden und Funkeln starten, stoppen
-und bewusst erneut starten. Danach Lichtimpuls und Ripple prüfen. Dabei
-USB-/BLE-Antworten und tatsächliche Sichtbeobachtung getrennt dokumentieren.
+## Fortsetzung: erster Handy-/LED-Gerätelauf
 
-**Nicht ausgeführt:** LED-Start oder optische Beobachtung, Handy-/BLE-Abnahme,
-Zwei-S3-/RSSI-Lauf, Reichweiten-/Lastprüfung oder vollständiger Nähe-Glut-Effekt.
-Es wurde nur dieses eine Gerät installiert. Weitere Testschritte stehen im
+Auf Nutzerauftrag „weiter“ am selben Tag und nach ausdrücklicher USB-Freigabe
+wurde das angeschlossene **moto g14 / Android 14** verwendet. Vorhandene App:
+`de.larpescape.companion`, Version **0.2**, versionCode **2**. Kein APK-Update,
+keine Neuinstallation und kein Löschen von Appdaten. Der vorhandene verschlüsselte
+Zugangsblob wurde zuvor privat gesichert; sein Inhalt wurde nicht angezeigt.
+
+Die S3-Datei wurde per USB in Downloads übertragen und über „Box-Zugang
+importieren“ eingelesen. App bestätigt **LED-Box BB71E155**; die Kennung stimmt
+mit der Geräteidentität des privaten S3-Exports überein. Der Import ersetzt den
+einen aktiven Boxzugang dieses Handys. Die nicht mehr benötigte unverschlüsselte
+Transportkopie wurde nach dem Import wieder aus Downloads entfernt, die lokale
+private Originaldatei bleibt erhalten. Bluetooth wurde für den Test eingeschaltet.
+
+Die App fand zwei LED-Stationen. Die zuerst gewählte andere Station wurde mit
+„Die Box passt nicht zum eingerichteten Zugang“ abgewiesen; kein LED-Befehl wurde
+an sie gesendet. Die zweite Station bestätigte den S3-Zugang und meldete
+„LEDs bereit“ sowie „LEDs aus“.
+
+| Prüfschritt über die App | Geräte-/Appantwort | Direkte Nutzerbeobachtung |
+| --- | --- | --- |
+| Funkeln starten | „Box bestätigt: Funkeln gestartet“, „Box meldet: Funkeln“ | „Sie leuchtet und verändert ihre Helligkeit“ |
+| Stop | „Box bestätigt: LEDs aus“, „Box meldet: LEDs aus“ | „Ja, sie ist aus“ |
+| Bewusst erneut starten | Erneut „Funkeln gestartet“ und „Box meldet: Funkeln“ | „Ja, Funkeln läuft wieder“ |
+
+**Belegt:** Der begrenzte Bedienablauf Start → Stop → erneuter Start funktioniert
+mit dieser App und der eingebauten LED dieses S3. Die sichtbare Wirkung ist
+nutzerbestätigt; keine Kameramessung, Farb-/Helligkeitskalibrierung oder
+zeitliche Effektmessung wurde ausgeführt. Endzustand: Funkeln läuft wieder,
+Handy-App im LED-Bereich verbunden. Der Stop-Knopf bleibt verfügbar.
+
+Private Belege: `private/s3-stations-20261031/phone/` mit öffentlichem UI-XML
+für Import, abgewiesene andere Box, authentifizierten Ausgangszustand und
+Start-/Stop-/Wiederstartbestätigungen, Appversionsmetadaten und datierten
+Nutzerbeobachtungen. Zugangsdatei und vorheriger verschlüsselter Zugangsblob
+werden nicht versioniert. Die unabhängige Qualitätsprüfung liest nur die
+öffentlichen UI-/Exportmetadaten; sie ersetzt keine eigene Lichtbeobachtung.
+
+**Weiter offen:** Lichtimpuls und Ripple, BLE-Abbruch-/Neustartfälle,
+Zwei-S3-/RSSI-Lauf, Reichweiten-/Lastprüfung und vollständiger Nähe-Glut-Effekt.
+Es wurde nur dieses eine S3-Gerät installiert. Weitere Testschritte stehen im
 [S3-Prüfplan](esp32-s3-stations.md).
