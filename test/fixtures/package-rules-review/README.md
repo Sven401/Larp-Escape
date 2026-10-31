@@ -32,3 +32,8 @@ trigger lists are not assigned an invented P0 ordering restriction.
 
 Byte grammar regressions, complete planner conflict analysis, full module expansion, and firmware/device qualification
 remain separate checks. Compiler/layout measurements here are host evidence.
+
+The runner also constructs three targeted compact-context regressions at
+station 7 / rule 63 / action 7, checking deferred guard, trigger and action
+paths. These follow-up tests are implementation-author regressions, separate
+from the original 187 independently authored fixed vectors.
