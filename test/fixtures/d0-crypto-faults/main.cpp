@@ -133,7 +133,7 @@ void frozenBuffersAndAttributes() {
 psa_status_t psa_crypto_init() {
     ++backend.initCalls;
     if (backend.mutateKey)
-        std::memset(backend.mutateKey, 0, sizeof(CandidatePublicKey));
+        *backend.mutateKey = CandidatePublicKey{};
     if (backend.mutateHash)
         std::memset(backend.mutateHash, 0, 32);
     if (backend.mutateSignature)
