@@ -81,8 +81,8 @@ Der Build beschreibt kein Gerät. Vor einem gesondert beauftragten Upload
 beide Chips/Flashgrößen neu identifizieren, vollständige Sicherungen lesen
 und am jeweiligen Chip verifizieren. Partitionen und Flashadressen mit dem
 tatsächlichen Build abgleichen. Original-ESP32- oder ATmega-Abbilder nie auf
-den S3 übertragen. Der zuletzt zusätzlich identifizierte ATmega32U4 ist
-**kein zweiter S3**. Ein realer Zwei-S3-Nachweis fehlt noch.
+den S3 übertragen. Zwei S3 wurden inzwischen chipgebunden identifiziert,
+gesichert und installiert: [Geräteeinrichtung vom 31.10.2026](../../docs/led/s3-nearglow-pair-2026-10-31.md).
 
 ## Einmalige USB-Einrichtung
 
@@ -152,16 +152,22 @@ Implementierungscommit `9f233e41e5c0517add3080f1bea078d3ca01db6f`.
 - Näheglut-Core: 400 Assertions mit realer Host-HMAC und unabhängigem
   Python-Paketvektor; native Adapter und Anwendungseigentümer:
   165 Assertions gegen SDK-Fakes, einschließlich erneuter Paarung mit alter Antwort.
-- USB-Helfer: 19 Rechnerfälle ohne Gerätezugriff. CMake-Hostbuild und alle
+- USB-Helfer: zunächst 19 Rechnerfälle ohne Gerätezugriff. CMake-Hostbuild und alle
   sechs registrierten CTest-Fälle bestanden; nach Compilerkorrektur wurde
   der zuvor fehlgeschlagene Core gezielt wiederholt.
 - Gemeinsamer LED-Kern: Owner 16, NearGlow 7 mit 2002 Assertions,
   CrystalSeal 11 und RSSI 10 Regressionen bestanden. Architekturprüfung bestanden.
 
-Die reale Host-HMAC prüft den Paketcodec; die Adapterfehlerinjektion ersetzt
-PSA durch einen SDK-Fake. Ein Vektorvergleich der tatsächlich nativen
-PSA-HMAC und Schlüsselableitung ist vor einer Authentisierungs-/Gerätefreigabe
-noch zu erbringen und wird durch den erfolgreichen SDK-Build nicht ersetzt.
+Zusatznachweis am Commit `f5914bb`: Die tatsächliche `PsaCrypto`- und
+PMK-/LMK-Ableitungsimplementierung läuft gegen die echte PSA-Bibliothek aus
+dem verifizierten SDK. 257 Assertions vergleichen unabhängige Python-Vektoren;
+Entwickler, Hauptinstanz und anderer Reviewer haben den Lauf bestanden.
+Dies ist Hostausführung der SDK-PSA, keine isolierte Messung des S3-Kryptobeschleunigers.
+Die bisherigen Adapterfehlerinjektionen behalten ihren PSA-Fake.
+
+Nach dem Geräteauftrag schützt `d38a2c5` die Bereitschaftsabfrage nach eigenem
+Neustart vor begrenztem Boottext; 22 Helfertests unabhängig bestanden.
+Normales INFO, Identitäten, JSON, Größen und Fristen bleiben streng geprüft.
 
 Aufteilung: `s3_firmware` verantwortet Firmware, Plattform und Geräteadapter;
 `proximity_concept` den USB-Helfer; `s3_review` prüft unabhängig Sicherheit,
@@ -170,6 +176,6 @@ nativen Stand. Betroffene Variante ist ausschließlich Waveshare ESP32-S3-Zero
 mit einer eingebauten RGB-LED; der gemeinsame Typfix wird zusätzlich durch
 die bisherigen Hostregressionen abgedeckt.
 
-Diese Ergebnisse ersetzen weder den realen Zwei-S3-Lauf noch eine elektrische
-oder optische Geräteabnahme. Es wurde kein Gerät geflasht. Commitbezogener
-Abschluss und Gegenprüfung werden im zugehörigen PR festgehalten.
+Diese Rechnerergebnisse ersetzen weder eine elektrische noch eine optische
+Geräteabnahme. Der nachfolgende tatsächliche Upload und Funklauf ist im
+[separaten Gerätebericht](../../docs/led/s3-nearglow-pair-2026-10-31.md) abgegrenzt.
