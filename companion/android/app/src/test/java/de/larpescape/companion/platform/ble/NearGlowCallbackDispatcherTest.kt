@@ -126,7 +126,7 @@ class NearGlowCallbackDispatcherTest {
             assertEquals(bytecode, 0, process.waitFor())
             val methods = Regex("(?m)^  (?:public|private|protected|static).*\\([^\\n]*\\);\\r?$")
                 .findAll(bytecode).toList()
-            for (callback in listOf("onConnectionStateChange", "onServicesDiscovered", "onDescriptorWrite",
+        for (callback in listOf("onConnectionStateChange", "onMtuChanged", "onServicesDiscovered", "onDescriptorWrite",
                 "onCharacteristicWrite", "onCharacteristicChanged")) {
                 val index = methods.indexOfFirst { it.value.contains(" $callback(") }
                 assertTrue("Actual compiled callback missing: $callback", index >= 0)

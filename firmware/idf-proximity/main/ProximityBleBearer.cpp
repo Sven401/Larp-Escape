@@ -1,11 +1,13 @@
 #include "ProximityBleBearer.h"
 #include <esp_timer.h>
 #include "host/ble_hs_mbuf.h"
+#include "host/ble_att.h"
 #include "services/gap/ble_svc_gap.h"
 #include "services/gatt/ble_svc_gatt.h"
 namespace larp { namespace proximity { namespace ble {
 namespace {
 std::uint32_t now(){return static_cast<std::uint32_t>(esp_timer_get_time()/1000);}
+std::size_t frameBudget(std::uint16_t handle){const auto mtu=ble_att_mtu(handle);return std::min<std::size_t>(244,mtu>=23?mtu-3:20);}
 // BLE_UUID128_INIT uses little-endian UUID bytes.
 void increment(std::uint32_t &value){if(value!=UINT32_MAX)++value;}
 const ble_uuid128_t serviceId=BLE_UUID128_INIT(0x01,0xb1,0xc4,0x78,0xa4,0x35,0xf4,0xa7,0x5a,0x4d,0x50,0x2f,0x01,0x01,0x79,0x6c);
@@ -84,7 +86,7 @@ void Bearer::advertise(){
 int Bearer::access(std::uint16_t connection,std::uint16_t attribute,ble_gatt_access_ctxt *context,void *arg){
     auto &self=*static_cast<Bearer*>(arg);const auto v=self.snapshot();
     if(!self.onHost()||!context||context->op!=BLE_GATT_ACCESS_OP_WRITE_CHR||attribute!=self.input_||v.handle!=connection||!self.current(v.epoch))return BLE_ATT_ERR_UNLIKELY;
-    const auto size=OS_MBUF_PKTLEN(context->om);if(size<=8||size>20){self.recordAccess(size,BLE_ATT_ERR_INVALID_ATTR_VALUE_LEN);return BLE_ATT_ERR_INVALID_ATTR_VALUE_LEN;}
+    const auto size=OS_MBUF_PKTLEN(context->om);if(size<=8||size>frameBudget(connection)){self.recordAccess(size,BLE_ATT_ERR_INVALID_ATTR_VALUE_LEN);return BLE_ATT_ERR_INVALID_ATTR_VALUE_LEN;}
     Ingress e;e.kind=Ingress::Kind::Fragment;e.epoch=v.epoch;e.at=now();e.size=size;std::uint16_t copied=0;
     const int copiedStatus=ble_hs_mbuf_to_flat(context->om,e.bytes.data(),e.bytes.size(),&copied);
     if(copiedStatus||copied!=size){self.recordAccess(size,BLE_ATT_ERR_INSUFFICIENT_RES);self.abort(v.epoch,RevokeReason::AccessCopy,0,0,0,copiedStatus?copiedStatus:-1);return BLE_ATT_ERR_INSUFFICIENT_RES;}
@@ -124,8 +126,8 @@ void Bearer::poll(){
         if(sending_.size){
             if(sendingEpoch_!=v.epoch){sending_={};}
             else if(now()-sendingAt_>=(sending_.bytes[1]==0x84?1000U:2000U)){abort(v.epoch,RevokeReason::EgressAge,now()-sendingAt_,offset_,sending_.bytes[1]);sending_={};}
-            else{std::array<std::uint8_t,20> bytes{};std::size_t size=0;
-                if(!encodeFrame(sending_,transfer_,offset_,bytes,size)){abort(v.epoch,RevokeReason::FrameEncode,now()-sendingAt_,offset_,sending_.bytes[1]);}
+            else{std::array<std::uint8_t,244> bytes{};std::size_t size=0;
+                if(!encodeFrame(sending_,transfer_,offset_,bytes,size,frameBudget(v.handle))){abort(v.epoch,RevokeReason::FrameEncode,now()-sendingAt_,offset_,sending_.bytes[1]);}
                 else{auto *buffer=ble_hs_mbuf_from_flat(bytes.data(),size);
                     // Sample the actual pool before notify_custom consumes this buffer.
                     const int poolFree=buffer&&buffer->om_omp&&buffer->om_omp->omp_pool?buffer->om_omp->omp_pool->mp_num_free:-1;

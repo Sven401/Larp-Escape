@@ -226,3 +226,35 @@ Karten und B-Verbindenknopf vollständig lesbar, Navigation bricht geordnet um.
 Handy-Schriftgröße danach wieder1,0. Kein vollständiger Tastatur-/Editor- oder
 Screenreader-Nachweis. Der allgemeine Validierungshinweis nennt noch nicht die
 konkreten widersprechenden Punktnummern (begrenzter P3-UX-Restpunkt).
+
+Reservefix `0e4f952` schützt vier freie Blöcke nach eigener Notify-Allokation.
+Unabhängige 14 Bearerfälle/1232 Assertions und nativer Build bestanden;
+Image SHA256 `2a1218a2fb5df255e808e35d203ef54b9a8a89ab26842dedb76bb1f037b8a1b3`
+auf beiden installiert und Anwendung/`larpkeys` verglichen. Der nächste Versuch
+hat bei B keine Allokationsfehler mehr, aber 277 Schutzvertagungen und den
+Abbruchgrund13: Ein aus sechs ATT-Schreibfragmenten bestehender GET überschreitet
+die unveränderte 2s-Assemblierungsfrist. Die erste Fünferserie scheitert damit;
+der Reservefix allein ist ausdrücklich kein vollständiger Stabilitätsnachweis.
+
+Der daraufhin gebaute gemeinsame MTU-Kandidat verwendet denselben 8-Byte-Header,
+dieselben maximal256 Nachrichtenbytes und dieselbe HMAC-/Fristprüfung.
+Die App0.3.3/code6 wartet nach der Prioritätsanforderung auf den tatsächlichen
+MTU-Callback (mindestens156, höchstens517) und begrenzt ATT-Werte auf244 Byte.
+Erst danach folgen Discovery und Anmeldung. 145-Byte-Telemetrie passt dann in
+ein Fragment; auch Challenge, Proof, AuthOK, GET und Result benötigen jeweils
+nur eines. Firmware unterstützt weiterhin MTU23/20-Byte-Fragmente; Standardpfade
+der bisherigen LED-Protokolle behalten128 Nachrichtenbytes und20-Byte-Frames.
+
+Gemeinsame Softwareprüfung: unabhängig Core400/Adapter165/Protokoll1218/Runtime60
+und18 tatsächliche Bearerfälle/1701 Assertions erfolgreich. Alle sechs real
+gebauten Android-Callbacks einschließlich MTU sind im geschützten Dispatcher
+gebunden; 27 NearGlow-JVM-Tests bestanden. Vollständiger Android-Lauf mit
+Protokoll-/App-Tests, Debug-/Release-Build und beiden Lints sowie GM-Tests und
+GM-Debugbuild erfolgreich (2m34s). Native Build-/Sizeprüfung erfolgreich:
+DIRAM146.063 Byte belegt/195.697 frei laut Linkbericht, PreferredMTU256 und
+Mainstack8192. Die feste RX-Queue wächst um3584 Byte, lokale Owner-/Hostframes
+jeweils um224 Byte; kein gemessener Stack-Highwater wird daraus abgeleitet.
+Das Geräteimage hat SHA256
+`6dadac8c4fcc6092eb1805a3e5909c57b9e45a232b88e0b2b89c487bf3740712`.
+Der passende neue Geräteversuch folgt getrennt; aus Softwareprüfung wird kein
+Erfolg der erneut erforderlichen Fünferserie abgeleitet.

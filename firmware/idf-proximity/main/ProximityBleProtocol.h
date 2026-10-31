@@ -11,7 +11,10 @@ public:
     void reset()noexcept;
     FrameResult accept(const std::uint8_t*,std::size_t,std::uint32_t,Message&)noexcept;
 };
-bool encodeFrame(const Message&,std::uint16_t,std::uint16_t,std::array<std::uint8_t,20>&,std::size_t&)noexcept;
+bool encodeFrame(const Message&,std::uint16_t,std::uint16_t,std::uint8_t*,std::size_t,std::size_t&,std::size_t frameLimit=20)noexcept;
+template<std::size_t N> bool encodeFrame(const Message &message,std::uint16_t transfer,std::uint16_t offset,std::array<std::uint8_t,N> &bytes,std::size_t &written,std::size_t frameLimit=20)noexcept {
+    return encodeFrame(message,transfer,offset,bytes.data(),bytes.size(),written,frameLimit);
+}
 struct Credentials { Token device{};Secret secret{}; };
 class Crypto { public:virtual ~Crypto()=default;virtual bool hmac(const Secret&,const std::uint8_t*,std::size_t,Secret&)=0;virtual bool hash(const std::uint8_t*,std::size_t,Secret&)=0; };
 struct CurveView { ProximityCurve curve;std::uint32_t revision=1;Secret digest{};bool durable=false; };

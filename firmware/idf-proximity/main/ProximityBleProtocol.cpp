@@ -80,7 +80,7 @@ void Assembler::reset() noexcept {
 FrameResult Assembler::accept(const std::uint8_t *bytes, std::size_t size,
                               std::uint32_t now, Message &out) noexcept {
     out.size = 0;
-    if (!bytes || size <= 8 || size > 20 || bytes[0] != 1 || bytes[1] != 0x4c)
+    if (!bytes || size <= 8 || size > 244 || bytes[0] != 1 || bytes[1] != 0x4c)
         return FrameResult::Rejected;
     const auto transfer = get16(bytes + 2), total = get16(bytes + 4), offset = get16(bytes + 6);
     const auto count = static_cast<std::uint16_t>(size - 8);
@@ -104,16 +104,16 @@ FrameResult Assembler::accept(const std::uint8_t *bytes, std::size_t size,
     return FrameResult::Complete;
 }
 bool encodeFrame(const Message &message, std::uint16_t transfer, std::uint16_t offset,
-                  std::array<std::uint8_t, 20> &bytes, std::size_t &written) noexcept {
+                  std::uint8_t *bytes,std::size_t capacity,std::size_t &written,std::size_t frameLimit) noexcept {
     written = 0;
-    if (!transfer || !message.size || message.size > message.bytes.size() || offset >= message.size)
+    if (!bytes || capacity<9 || frameLimit<9 || frameLimit>244 || !transfer || !message.size || message.size > message.bytes.size() || offset >= message.size)
         return false;
-    bytes.fill(0);
+    std::fill_n(bytes,capacity,0);
     bytes[0] = 1; bytes[1] = 0x4c;
-    put16(bytes.data() + 2, transfer); put16(bytes.data() + 4, message.size);
-    put16(bytes.data() + 6, offset);
-    const auto count = std::min<std::size_t>(12, message.size - offset);
-    std::copy_n(message.bytes.data() + offset, count, bytes.begin() + 8);
+    put16(bytes + 2, transfer); put16(bytes + 4, message.size);
+    put16(bytes + 6, offset);
+    const auto count = std::min<std::size_t>(std::min(capacity,frameLimit)-8, message.size - offset);
+    std::copy_n(message.bytes.data() + offset, count, bytes + 8);
     written = 8 + count;
     return true;
 }

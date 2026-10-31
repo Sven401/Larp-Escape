@@ -169,7 +169,8 @@ class AndroidNearGlowRepository(private val context: Context) {
 
     private inner class Session(val slot: Int, val access: NearGlowAccess) {
         private val protocol = NearGlowProtocol(access, ByteArray(16).also { SecureRandom().nextBytes(it) })
-        private val frames = NearGlowFrameAssembler()
+        private var frames = NearGlowFrameAssembler()
+        private val setup = NearGlowConnectionSetup()
         private val outgoing = ArrayDeque<ByteArray>()
         private var writing = false
         private var subscribed = false
@@ -202,9 +203,12 @@ class AndroidNearGlowRepository(private val context: Context) {
                     if (BuildConfig.DEBUG) Log.d(NearGlowCallbackDiagnostics.TAG,
                         NearGlowCallbackDiagnostics.line(slot, stage, error))
                 } catch (_: Exception) { /* Diagnostics must not replace session cleanup. */ }
-                fail(slot, if (error is NearGlowPriorityRequestRejected)
-                    "Schnelle Handyverbindung nicht verfügbar · erneut verbinden"
-                    else "Verbindung oder Datenprüfung fehlgeschlagen · erneut verbinden")
+                fail(slot, when (error) {
+                    is NearGlowPriorityRequestRejected -> "Schnelle Handyverbindung nicht verfügbar · erneut verbinden"
+                    is NearGlowMtuRequestRejected -> "Größere Bluetooth-Datenpakete nicht verfügbar · erneut verbinden"
+                    is NearGlowMtuInsufficient -> "Bluetooth-Datenpakete sind zu klein · passende Stationsfirmware prüfen"
+                    else -> "Verbindung oder Datenprüfung fehlgeschlagen · erneut verbinden"
+                })
             },
         )
         private fun dispatchCallback(stage: NearGlowCallbackStage, action: () -> Unit) = callbackDispatcher.dispatch(stage, action)
@@ -212,14 +216,29 @@ class AndroidNearGlowRepository(private val context: Context) {
             override fun onConnectionStateChange(connection: BluetoothGatt, status: Int, newState: Int) { this@Session.dispatchCallback(NearGlowCallbackStage.CONNECTION) {
                 check(connection === gatt && status == BluetoothGatt.GATT_SUCCESS && newState == BluetoothProfile.STATE_CONNECTED)
                 update(slot) { it.copy(connected = true, message = "Handy verbunden · Station wird geprüft …") }
-                beginNearGlowConnection(
-                    requestHighPriority = { connection.requestConnectionPriority(BluetoothGatt.CONNECTION_PRIORITY_HIGH) },
-                    discoverServices = { connection.discoverServices() },
+                setup.begin(
+                    requestHighPriority = {
+                        connection.requestConnectionPriority(BluetoothGatt.CONNECTION_PRIORITY_HIGH).also {
+                            if (it) debugMilestone(NearGlowHandshakeMilestone.HIGH_PRIORITY_REQUESTED, 0)
+                        }
+                    },
+                    requestMtu = { connection.requestMtu(247) },
                 )
-                debugMilestone(NearGlowHandshakeMilestone.HIGH_PRIORITY_REQUESTED, 0)
+                debugMilestone(NearGlowHandshakeMilestone.MTU_REQUESTED, 0)
+            } }
+            override fun onMtuChanged(connection: BluetoothGatt, mtu: Int, status: Int) { this@Session.dispatchCallback(NearGlowCallbackStage.MTU) {
+                check(connection === gatt)
+                setup.mtuChanged(status == BluetoothGatt.GATT_SUCCESS, mtu) {
+                    frames = NearGlowFrameAssembler(setup.maxFrameBytes)
+                    try {
+                        if (BuildConfig.DEBUG) Log.d(NearGlowCallbackDiagnostics.TAG,
+                            NearGlowCallbackDiagnostics.mtu(slot, mtu, setup.maxFrameBytes))
+                    } catch (_: Exception) { /* Diagnostics never change MTU admission. */ }
+                    connection.discoverServices()
+                }
             } }
             override fun onServicesDiscovered(connection: BluetoothGatt, status: Int) { this@Session.dispatchCallback(NearGlowCallbackStage.SERVICES) {
-                check(connection === gatt && status == BluetoothGatt.GATT_SUCCESS)
+                check(connection === gatt && status == BluetoothGatt.GATT_SUCCESS && setup.negotiatedMtu != null)
                 val service = connection.getService(SERVICE) ?: error("service")
                 input = service.getCharacteristic(INPUT) ?: error("input")
                 val output = service.getCharacteristic(OUTPUT) ?: error("output")
@@ -266,7 +285,7 @@ class AndroidNearGlowRepository(private val context: Context) {
         private fun send(bytes: ByteArray) {
             check(transfer < 65535 && outgoing.isEmpty())
             update(slot) { it.copy(busy = true) }
-            outgoing.addAll(LedFrames.encode(bytes, ++transfer)); writeNext()
+            outgoing.addAll(NearGlowFrames.encode(bytes, ++transfer, setup.maxFrameBytes)); writeNext()
         }
         private fun writeNext() {
             if (!subscribed || writing || outgoing.isEmpty()) return

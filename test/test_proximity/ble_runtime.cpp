@@ -20,7 +20,7 @@ public:
     void revoke(std::uint32_t)override{++revoked;live=false;}
     bool ready()const override{return begun&&!broken;}
     bool fault()const override{return broken;}
-    void message(const Message &m,std::uint16_t transfer){std::uint16_t offset=0;while(offset<m.size){std::array<std::uint8_t,20> bytes{};std::size_t count=0;check(ble::encodeFrame(m,transfer,offset,bytes,count),"runtime test encode");ble::Ingress e;e.epoch=epoch;e.at=fake::now;e.size=count;e.bytes=bytes;in.push_back(e);offset+=count-8;}}
+    void message(const Message &m,std::uint16_t transfer){std::uint16_t offset=0;while(offset<m.size){std::array<std::uint8_t,20> bytes{};std::size_t count=0;check(ble::encodeFrame(m,transfer,offset,bytes,count),"runtime test encode");ble::Ingress e;e.epoch=epoch;e.at=fake::now;e.size=count;std::copy(bytes.begin(),bytes.end(),e.bytes.begin());in.push_back(e);offset+=count-8;}}
 };
 Token token(unsigned value){Token b;b.fill(value);return b;}
 void setup(){fake::multipleNvs=true;fake::records.clear();fake::staged.clear();fake::handles.clear();fake::incrementalRandom=true;fake::psaMacOk=true;fake::psaHashOk=true;fake::now=0;fake::writes=fake::commits=0;fake::commitAdvanceMs=0;fake::setFail=fake::commitFail=fake::readFail=fake::readCorrupt=false;fake::destroyFail=false;fake::activeKeys=fake::destroyCalls=0;}

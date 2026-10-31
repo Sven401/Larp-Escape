@@ -98,6 +98,16 @@ void framing(){
     Message full;full.size=256;for(unsigned i=0;i<256;++i)full.bytes[i]=i;assembler.reset();offset=0;
     while(offset<256){check(ble::encodeFrame(full,2,offset,bytes,size),"encode256");const auto result=assembler.accept(bytes.data(),size,offset,out);offset+=size-8;check(result==(offset==256?ble::FrameResult::Complete:ble::FrameResult::Receiving),"assemble256");}
     check(same(full,out),"max frame bytes changed");full.size=257;check(!ble::encodeFrame(full,3,0,bytes,size),"257byte message accepted");
+    full.size=256;
+    for(const auto budget:{9U,20U,153U,244U})for(const auto &value:{message,full}){
+        std::array<std::uint8_t,244> wide{};assembler.reset();offset=0;unsigned frames=0;
+        while(offset<value.size){check(ble::encodeFrame(value,1,offset,wide,size,budget)&&size<=budget,"MTU encode bound");const auto result=assembler.accept(wide.data(),size,frames,out);offset+=size-8;++frames;check(result==(offset==value.size?ble::FrameResult::Complete:ble::FrameResult::Receiving),"MTU variable assembly");}
+        check(same(value,out),"MTU roundtrip changed signed bytes");if(budget==153&&value.size==145)check(frames==1&&size==153,"telemetry not one ATTframe");if(budget==244&&value.size==256)check(frames==2&&size==28,"256 budget244 not two frames");
+    }
+    std::array<std::uint8_t,245> oversized{};check(!ble::encodeFrame(message,1,0,oversized,size,8)&&!ble::encodeFrame(message,1,0,oversized,size,245),"invalid frame budget");
+    check(ble::encodeFrame(full,1,0,oversized,size,244)&&size==244,"244 frame encode");assembler.reset();check(assembler.accept(oversized.data(),245,0,out)==ble::FrameResult::Rejected,"245 frame accepted");check(assembler.accept(oversized.data(),244,0,out)==ble::FrameResult::Receiving,"244 frame rejected");
+    check(assembler.accept(oversized.data(),243,1,out)==ble::FrameResult::Rejected,"truncated duplicate accepted");
+
 }
 #ifdef LARP_PROXIMITY_REAL_BLE_PSA
 void keyLifetime(){

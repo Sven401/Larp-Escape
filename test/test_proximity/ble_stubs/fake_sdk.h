@@ -75,12 +75,13 @@ struct ble_uuid128_t {
     }
 struct os_mempool { unsigned mp_num_free; };
 struct os_mbuf_pool { struct os_mempool *omp_pool; };
+uint16_t ble_att_mtu(uint16_t);
 int os_msys_num_free(void);
 int os_mbuf_free_chain(struct os_mbuf*);
 struct os_mbuf {
     struct os_mbuf_pool *om_omp;
     uint16_t len;
-    unsigned char bytes[128];
+    unsigned char bytes[244];
 };
 #define OS_MBUF_PKTLEN(p) ((p)->len)
 struct ble_gatt_access_ctxt {

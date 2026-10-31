@@ -1,12 +1,16 @@
 # Näheglut live in Larp Dev
 
-Status: Android-Korrekturkandidat 0.3.2/code5, 31.10.2026; Basis `deb9ab9`.
+Status: Android-Korrekturkandidat 0.3.3/code6, 31.10.2026; Basis `deb9ab9`.
 Gerätevertrag: [PROX-BLE/1](../led/prox-ble-v1.md). Native Build-, Screenshot-
 und Gerätebelege werden separat geführt; dieser Brief behauptet keine Abnahme.
+Technischer Anschluss: HIGH-Anfrage, dann MTU-Anfrage; erst ein erfolgreicher
+MTU-Rückruf ab 156 Byte erlaubt die Diensterkennung. Framebudget ist tatsächlich
+`min(MTU-3,244)`, Nachrichten bleiben auf 256 Byte begrenzt. Der 8-Byte-Header,
+HMAC und Fristen bleiben erhalten; alte LED-Aufrufer behalten 20-Byte-Frames.
 
 ## Ziel und Zuständigkeit
 
-Larp Dev 0.3.2 beobachtet zwei autonome S3-Stationen gleichzeitig und ändert ihre
+Larp Dev 0.3.3 beobachtet zwei autonome S3-Stationen gleichzeitig und ändert ihre
 Nähe-Helligkeitskennlinie bewusst während eines laufenden Versuchs. Die Station
 bleibt Eigentümer ihrer Messung, Glutausgabe und dauerhaft gespeicherten Parameter.
 Der Handyabbruch beendet ihre autonome Funktion nicht.

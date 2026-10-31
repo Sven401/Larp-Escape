@@ -250,3 +250,28 @@ verwendbare Poolinformation wird das eigene mbuf freigegeben und der Link
 sichtbar mit NotifyError/EINVAL gesperrt, nicht als Poolnull/Allocationsfehler
 etikettiert. Sobald `notify_custom` aufgerufen wurde, konsumiert ausschliesslich
 das SDK den Puffer auf jedem Rueckgabepfad; kein zusaetzliches eigenes Free.
+
+
+### MTU-angepasste Transportframes
+
+Der 8-Byte-Fragmentheader und die innere Message (maximal256 Byte einschliesslich
+HMAC) bleiben unveraendert. Ein Frame hat 9..244 Byte. Sein Budget betraegt
+`min(244, ausgehandelteATTmtu-3)`; bei unbekanntem MTU oder MTU23 gilt20.
+Es darf kein Erfolg eines MTU-Requests vorausgesetzt werden. Firmware liest
+`ble_att_mtu(handle)` ausschliesslich im Hosttask am aktuellen Link. Input
+prueft sowohl244 als auch das aktuelle ausgehandelte Budget; Callbacks kopieren
+maximal244 Byte in die begrenzte Ownerqueue. Die alte20-Byte-Zerlegung bleibt
+vollstaendig gueltig. Der eigene PROX-Assembler hat weiterhin256 Byte Budget.
+
+Die App handelt vor Discovery/CCCD eine groessere MTU aus (Ziel247) und
+verlangt ein bestaetigtes erfolgreiches Ergebnis mit MTU>=156, sonst wird
+der Livekanal nicht gestartet. Android kann stattdessen517 anfordern;
+die Firmware bietet explizit preferredMTU256 an. Der Firmwaretransport bleibt
+mit MTU23/20-Byte-Frames kompatibel. Bei MTU>=156 passen
+145 Byte Telemetrie plus8 Byte Header in ein153-Byte-Frame. Bei Budget244
+benoetigt die256-Byte-Maximalmessage zwei Frames (244 und28 Byte). Die Groesse
+kann zwischen Fragmenten wechseln, die Offset-/Transfer-/Längenpruefung bleibt
+streng. Framebudget<=8 oder>244 ist ungueltig. Fristen, Replay-/HMACpruefung,
+Source-Loss und Ressourcenvorrat werden dadurch nicht gelockert. Vor jedem
+Fragment gelten weiterhin das absolute Egressalter und der tatsaechliche
+Poolvorrat; eine groessere ATT-Nutzlast ist kein TX-Credit.
