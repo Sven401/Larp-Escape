@@ -26,6 +26,9 @@ import de.larpescape.companion.ui.device.DeviceViewModel
 import de.larpescape.companion.ui.device.LedControls
 import de.larpescape.companion.ui.device.AudioControls
 import de.larpescape.companion.ui.device.EspNowControls
+import de.larpescape.companion.ui.device.NearGlowControls
+import de.larpescape.companion.ui.device.NearGlowViewModel
+import de.larpescape.protocol.NearGlowAccess
 
 import de.larpescape.companion.ui.device.MatrixControls
 import de.larpescape.companion.ui.device.WakeControls
@@ -43,6 +46,30 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class MainActivity : ComponentActivity() {
+    private var nearGlowScreen by mutableStateOf(false)
+    private val nearGlowModel by viewModels<NearGlowViewModel>()
+    private fun readNearGlowAccess(slot: Int, uri: android.net.Uri?) {
+        if (uri != null) lifecycleScope.launch {
+            val bytes = try { withContext(Dispatchers.IO) {
+                contentResolver.openInputStream(uri)?.use { it.readNBytes(NearGlowAccess.MAX_BYTES + 1) } ?: ByteArray(0)
+            } } catch (_: Exception) { ByteArray(0) }
+            try { nearGlowModel.importAccess(slot, bytes) } finally { bytes.fill(0) }
+        }
+    }
+    private val importNearGlowA = registerForActivityResult(ActivityResultContracts.OpenDocument()) { readNearGlowAccess(0, it) }
+    private val importNearGlowB = registerForActivityResult(ActivityResultContracts.OpenDocument()) { readNearGlowAccess(1, it) }
+    private fun selectNearGlow(selected: Boolean) {
+        if (selected == nearGlowScreen) return
+        nearGlowScreen = selected
+        if (selected) {
+            scenarioScreen = false; nfcScreen = false; showPermissionExplanation = false
+            PhoneNfcTest.stop(this); nfcReader.stop(); model.foregroundEnded()
+            nearGlowModel.foregroundStarted(permissionsGranted())
+        } else {
+            nearGlowModel.foregroundEnded()
+            if (!scenarioScreen) model.foregroundStarted(permissionsGranted())
+        }
+    }
     private var nfcScreen by mutableStateOf(false)
     private var phoneNfcTest by mutableStateOf(false)
     private var scenarioScreen by mutableStateOf(false)
@@ -141,10 +168,11 @@ class MainActivity : ComponentActivity() {
     private fun permissionsGranted() = permissions.all { checkSelfPermission(it) == PackageManager.PERMISSION_GRANTED }
     private val request = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
         // Recheck both OS permissions; an empty or partial result map is not a grant.
-        model.permissionResult(permissionsGranted())
+        if (nearGlowScreen) nearGlowModel.permissionsChanged(permissionsGranted())
+        else model.permissionResult(permissionsGranted())
     }
     private fun requestBluetooth() {
-        model.permissionRequestStarted()
+        if (!nearGlowScreen) model.permissionRequestStarted()
         request.launch(permissions)
     }
     private fun startScan() {
@@ -156,11 +184,13 @@ class MainActivity : ComponentActivity() {
             else -> requestBluetooth()
         }
     }
+    @OptIn(ExperimentalLayoutApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         PhoneNfcTest.stop(this)
         nfcScreen = savedInstanceState?.getBoolean("nfcScreen") ?: false
         scenarioScreen = savedInstanceState?.getBoolean("scenarioScreen") ?: false
+        nearGlowScreen = savedInstanceState?.getBoolean("nearGlowScreen") ?: false
         setContent {
             MaterialTheme(colorScheme = lightColorScheme()) {
                 val state by model.state.collectAsStateWithLifecycle()
@@ -181,12 +211,20 @@ class MainActivity : ComponentActivity() {
                 Surface(Modifier.fillMaxSize()) {
                     Column(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing).verticalScroll(rememberScrollState()).padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
                         Text(getString(R.string.app_name), style = MaterialTheme.typography.headlineLarge)
-                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            FilterChip(selected = !nfcScreen && !scenarioScreen, onClick = { selectScenario(false); selectNfc(false) }, label = { Text("ESP") })
-                            FilterChip(selected = nfcScreen && !scenarioScreen, onClick = { selectScenario(false); selectNfc(true) }, label = { Text("NFC-Tags") })
-                            FilterChip(selected = scenarioScreen, onClick = { selectScenario(true) }, label = { Text("Szenario") })
+                        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            FilterChip(selected = !nfcScreen && !scenarioScreen && !nearGlowScreen, onClick = { selectNearGlow(false); selectScenario(false); selectNfc(false) }, label = { Text("ESP") })
+                            FilterChip(selected = nfcScreen && !scenarioScreen && !nearGlowScreen, onClick = { selectNearGlow(false); selectScenario(false); selectNfc(true) }, label = { Text("NFC-Tags") })
+                            FilterChip(selected = scenarioScreen && !nearGlowScreen, onClick = { selectNearGlow(false); selectScenario(true) }, label = { Text("Szenario") })
+                            FilterChip(selected = nearGlowScreen, onClick = { selectNearGlow(true) }, label = { Text("Näheglut") })
                         }
-                        if (scenarioScreen) {
+                        if (nearGlowScreen) {
+                            val live by nearGlowModel.state.collectAsStateWithLifecycle()
+                            if (live.permissionMissing) Button(onClick = ::requestBluetooth, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Bluetooth erlauben") }
+                            NearGlowControls(live, importAccess = { slot ->
+                                if (slot == 0) importNearGlowA.launch(arrayOf("application/json", "text/plain"))
+                                else importNearGlowB.launch(arrayOf("application/json", "text/plain"))
+                            }, nearGlowModel::connect, nearGlowModel::disconnect, nearGlowModel::edit, nearGlowModel::applyBoth)
+                        } else if (scenarioScreen) {
                             val scenarioState by scenarioModel.state.collectAsStateWithLifecycle()
                             ScenarioScreen(scenarioState, scenarioModel,
                                 importFile = { importScenario.launch(arrayOf("application/json", "text/plain")) },
@@ -251,12 +289,12 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-    override fun onStart() { super.onStart(); if (!scenarioScreen) model.foregroundStarted(permissionsGranted()) }
-    override fun onResume() { super.onResume(); if (!scenarioScreen) model.permissionsChanged(permissionsGranted()); if (nfcScreen && !scenarioScreen && !phoneNfcTest) nfcReader.start() }
+    override fun onStart() { super.onStart(); if (nearGlowScreen) nearGlowModel.foregroundStarted(permissionsGranted()) else if (!scenarioScreen) model.foregroundStarted(permissionsGranted()) }
+    override fun onResume() { super.onResume(); if (nearGlowScreen) nearGlowModel.permissionsChanged(permissionsGranted()) else if (!scenarioScreen) model.permissionsChanged(permissionsGranted()); if (nfcScreen && !scenarioScreen && !nearGlowScreen && !phoneNfcTest) nfcReader.start() }
     override fun onPause() { PhoneNfcTest.stop(this, "Vordergrund verlassen · Testtag deaktiviert"); nfcReader.stop(); super.onPause() }
-    override fun onSaveInstanceState(outState: Bundle) { outState.putBoolean("nfcScreen", nfcScreen); outState.putBoolean("scenarioScreen", scenarioScreen); super.onSaveInstanceState(outState) }
+    override fun onSaveInstanceState(outState: Bundle) { outState.putBoolean("nfcScreen", nfcScreen); outState.putBoolean("scenarioScreen", scenarioScreen); outState.putBoolean("nearGlowScreen", nearGlowScreen); super.onSaveInstanceState(outState) }
     override fun onStop() {
-        if (!isChangingConfigurations) { showPermissionExplanation = false; model.foregroundEnded() }
+        if (!isChangingConfigurations) { showPermissionExplanation = false; model.foregroundEnded(); nearGlowModel.foregroundEnded() }
         super.onStop()
     }
 }

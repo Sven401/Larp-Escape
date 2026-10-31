@@ -258,18 +258,15 @@ class LedProtocol(access: LedAccess, private val clientNonce: ByteArray) {
     }
 }
 
-/** All transport values fit the default ATT MTU; no long-write or MTU negotiation required. */
+/** Legacy callers retain ATT20 by default; a larger negotiated frame budget is explicit. */
 object LedFrames {
-    fun encode(message: ByteArray, transfer: Int): List<ByteArray> {
-        require(message.size in 1..128 && transfer in 1..65535)
-        return (message.indices step 12).map { offset ->
-            byteArrayOf(1, 0x4c, transfer.toByte(), (transfer shr 8).toByte(), message.size.toByte(),
-                (message.size shr 8).toByte(), offset.toByte(), (offset shr 8).toByte()) +
-                message.copyOfRange(offset, minOf(offset + 12, message.size))
-        }
+    fun encode(message: ByteArray, transfer: Int, maxFrameBytes: Int = 20): List<ByteArray> {
+        require(message.size in 1..128)
+        return NearGlowFrames.encode(message, transfer, maxFrameBytes)
     }
 }
-class LedFrameAssembler {
+class LedFrameAssembler(private val maxFrameBytes: Int = 20) {
+    init { require(maxFrameBytes in 9..244) }
     private var transfer = 0
     private var completedTransfer = 0
     private var started = 0L
@@ -278,7 +275,7 @@ class LedFrameAssembler {
     private var bytes = ByteArray(128)
     private var previous: ByteArray? = null
     fun accept(frame: ByteArray, now: Long): ByteArray? {
-        require(frame.size in 9..20 && frame[0] == 1.toByte() && frame[1] == 0x4c.toByte()) { "Ungültiges BLE-Fragment." }
+        require(frame.size in 9..maxFrameBytes && frame[0] == 1.toByte() && frame[1] == 0x4c.toByte()) { "Ungültiges BLE-Fragment." }
         val id = u16(frame, 2); val total = u16(frame, 4); val offset = u16(frame, 6)
         require(id != 0 && total in 1..128 && offset < total && offset + frame.size - 8 <= total)
         if (transfer != 0) require(now >= started && now - started < 2000) { "Boxnachricht unvollständig." }
