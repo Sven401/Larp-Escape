@@ -139,14 +139,14 @@ class PackageRuleReader : private ICanonicalJsonObserver {
         std::uint16_t definition = 0;
     };
     struct SubjectRef {
-        std::uint16_t id = 0;
-        std::uint8_t station = 0;
-        bool emit = false;
-        bool trigger = false;
-        std::uint8_t rule = 0;
-        std::uint8_t action = 255;
         std::size_t offset = 0;
+        std::uint16_t id = 0;
+        // station:3, rule:6, action:4 (8 = no action), emit:1, trigger:1.
+        // Explicit shifts avoid implementation-defined C++ bitfield layout.
+        std::uint16_t context = 0;
     };
+    static_assert(sizeof(SubjectRef) <= 2 * sizeof(std::size_t),
+                  "Subject references must retain their compact layout");
     PackageDeclarationReader declarations_;
     RuleResult result_;
     Frame frames_[CanonicalPackageJsonReader::ContainerDepth];

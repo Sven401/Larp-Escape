@@ -646,12 +646,11 @@ void PackageRuleReader::reference(std::uint16_t id, bool emit, std::size_t offse
     }
     SubjectRef &ref = refs_[refCount_++];
     ref.id = id;
-    ref.station = static_cast<std::uint8_t>(stationCount_ - 1);
-    ref.emit = emit;
     ref.offset = offset;
-    ref.rule = validationRule_;
-    ref.action = validationAction_;
-    ref.trigger = validationTrigger_;
+    const std::uint16_t action = validationAction_ == 255 ? 8 : validationAction_;
+    ref.context = static_cast<std::uint16_t>((stationCount_ - 1) | (validationRule_ << 3) |
+                                             (action << 9) | (static_cast<unsigned>(emit) << 13) |
+                                             (static_cast<unsigned>(validationTrigger_) << 14));
 }
 PackageRuleReader::Type PackageRuleReader::expression(std::uint16_t index, const Rule &rule,
                                                       bool positive) {
@@ -852,8 +851,14 @@ RuleResult PackageRuleReader::finish(DeclarationResult declarations) {
     for (std::size_t i = 0; i < refCount_ && result_.error == RuleError::None; ++i) {
         const SubjectRef &r = refs_[i];
         const SubjectSymbol &s = subjects_[r.id - 1];
-        context(r.station, r.rule, r.trigger ? "trigger" : "guard", r.action);
-        if (!s.defined || (r.emit && std::strcmp(s.origin, stationIds_[r.station])))
+        const unsigned stationIndex = r.context & 7;
+        const unsigned ruleIndex = (r.context >> 3) & 63;
+        const unsigned actionIndex = (r.context >> 9) & 15;
+        const bool emit = (r.context & (1u << 13)) != 0;
+        const bool trigger = (r.context & (1u << 14)) != 0;
+        context(stationIndex, ruleIndex, trigger ? "trigger" : "guard",
+                actionIndex == 8 ? 255 : actionIndex);
+        if (!s.defined || (emit && std::strcmp(s.origin, stationIds_[stationIndex])))
             fail(RuleError::Reference, r.offset);
     }
     for (std::size_t i = 0; i < subjectCount_ && result_.error == RuleError::None; ++i) {
