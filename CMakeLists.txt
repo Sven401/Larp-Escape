@@ -242,7 +242,12 @@ if(BUILD_TESTING AND LARP_PSA_IDF_PATH)
         numeric-comparison copy-and-notify default-mtu reconnect second-link encryption-error
         queue-full wrong-task invalid-write notify-busy reset worker-revoke
         advertising-failure security-start-failure open-failure unencrypted unbonded
-        numeric-wrong numeric-reject numeric-timeout lost-poll runtime-timer-failure notify-sdk-busy notify-sdk-fatal)
+        numeric-wrong numeric-reject numeric-timeout
+        admission-timeout admission-before admission-wrap admission-no-subscribe
+        admission-repeated-subscribe admission-late-comparison admission-reconnect
+        admission-callback-boundary admission-late-passkey admission-descriptor-boundary
+        admission-open-boundary admission-open-return-boundary admission-open-revoke
+        heartbeat-current-race heartbeat-ready-race lost-poll runtime-timer-failure notify-sdk-busy notify-sdk-fatal)
         add_test(NAME "native-ble-${case}" COMMAND native-ble-source "${case}")
     endforeach()
     add_executable(native-tls-probe test/test_native_tls/server.cpp)
