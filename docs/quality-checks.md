@@ -129,6 +129,11 @@ Sie prüft dateibasierte Hosttransaktionen, Wiederaufnahme und echte Prozessabbr
 SQLite ist dabei ein Rechnerbackend, keine Firmwareabhängigkeit. Kein Beleg
 für ESP-Flash, physische Stromausfälle, D0-Verifizierer oder Gerätewirkungen.
 
+Der [begrenzte D2-Transportkern](veranstaltung/d2-transportkern.md) wird mit
+`python -m platformio test -e host-regression -f test_event_transport -v`
+oder dem CMake-Test `event-transport` geprüft. Die D0-/D1-Anschlüsse sind dabei
+ausdrücklich Testmodelle; keine Kryptografie-, Flash- oder Funkabnahme.
+
 Aus einem sauberen Checkout unter Windows mit Python und PlatformIO 6.2.0.
 Für den vollständigen Python-Testlauf unten Python 3.12 und die gepinnten
 Kamera-Abhängigkeiten verwenden, wie im Kamera-Job der Baugruppen-CI.
