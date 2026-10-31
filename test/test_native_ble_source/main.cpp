@@ -20,13 +20,14 @@ void *gapArgument = nullptr;
 const ble_gatt_svc_def *definitions = nullptr;
 ble_npl_callout *timer = nullptr;
 ble_gap_conn_desc descriptor{};
-std::function<void()> hostHook;
+std::function<void()> hostHook, descriptorHook, openHook;
 int advertisingError = 0, securityError = 0;
 int registrationError = 0, timerError = 0, notifyError = 0, terminateHandle = -1, notified = 0,
     confirms = 0;
 bool allocationFailure = false, returnHost = false;
 std::vector<unsigned char> sent;
-std::uint32_t clockValue = 0;
+std::uint64_t clockValue = 0;
+std::function<void()> clockHook;
 struct HostYield {};
 } // namespace
 extern "C" {
@@ -42,7 +43,13 @@ TaskHandle_t xTaskCreateStatic(void (*entry)(void *), const char *, uint32_t, vo
 }
 void vTaskDelete(void *) {}
 int64_t esp_timer_get_time() {
-    return int64_t(clockValue) * 1000;
+    const auto observed = int64_t(clockValue) * 1000;
+    if (clockHook) {
+        auto hook = clockHook;
+        clockHook = {};
+        hook();
+    }
+    return observed;
 }
 int nimble_port_init() {
     return 0;
@@ -58,6 +65,11 @@ void *nimble_port_get_dflt_eventq() {
     return nullptr;
 }
 int ble_gap_conn_find(uint16_t handle, ble_gap_conn_desc *out) {
+    if (descriptorHook) {
+        auto hook = descriptorHook;
+        descriptorHook = {};
+        hook();
+    }
     if (handle != descriptor.conn_handle)
         return 1;
     *out = descriptor;
@@ -145,6 +157,8 @@ struct Ingress final : IPeerCipherIngress {
     bool open(const TlsOrigin &v) noexcept override {
         origin = v;
         ++opens;
+        if (openHook)
+            openHook();
         return allowOpen;
     }
     bool push(const PeerCipherFragment &v) noexcept override {
@@ -195,6 +209,22 @@ struct Fixture {
         v.subscribe.cur_notify = 1;
         event(v);
     }
+    void advance(std::uint32_t milliseconds) {
+        while (milliseconds) {
+            const auto step = milliseconds < 10 ? milliseconds : 10;
+            clockValue += step;
+            milliseconds -= step;
+            timer->callback(&timer->event);
+        }
+    }
+    void numeric() {
+        ble_gap_event v{};
+        v.type = BLE_GAP_EVENT_PASSKEY_ACTION;
+        v.passkey.conn_handle = 7;
+        v.passkey.params.action = BLE_SM_IOACT_NUMCMP;
+        v.passkey.params.numcmp = 123456;
+        event(v);
+    }
     void authenticate() {
         connect();
         descriptor.sec_state = {1, 1, 1, 16};
@@ -228,7 +258,7 @@ int main(int argc, char **argv) {
     try {
         CHECK(argc == 2);
         const std::string name = argv[1];
-        if (name.find("numeric-") == 0)
+        if (name.find("numeric-") == 0 || name == "admission-wrap")
             clockValue = UINT32_MAX - 1000;
         Fixture f;
         if (name == "registration-failure") {
@@ -257,7 +287,99 @@ int main(int argc, char **argv) {
         } else {
             f.start();
             CHECK(f.source.ready());
-            if (name == "weak-security" || name == "unencrypted" || name == "unbonded") {
+            if (name.find("admission-") == 0) {
+                f.connect();
+                if (name == "admission-late-passkey") {
+                    f.advance(29990);
+                    clockValue += 10;
+                    f.numeric();
+                    CHECK(f.ingress.comparisons == 0);
+                    CHECK(terminateHandle == 7);
+                    CHECK(confirms == 0);
+                } else if (name == "admission-descriptor-boundary" ||
+                           name == "admission-open-boundary" ||
+                           name == "admission-open-return-boundary" ||
+                           name == "admission-open-revoke") {
+                    f.advance(29999);
+                    descriptor.sec_state = {1, 1, 1, 16};
+                    if (name == "admission-descriptor-boundary")
+                        descriptorHook = [&]() { ++clockValue; };
+                    else if (name == "admission-open-return-boundary")
+                        openHook = [&]() { ++clockValue; };
+                    else if (name == "admission-open-revoke")
+                        openHook = [&]() { f.source.revoke(f.ingress.origin); };
+                    else
+                        openHook = [&]() {
+                            ++clockValue;
+                            CHECK(!f.source.current(f.ingress.origin));
+                            CHECK(f.source.notify(f.output()) == PeerNotify::Stale);
+                        };
+                    f.subscribe();
+                    CHECK(f.ingress.opens == (name == "admission-descriptor-boundary" ? 0 : 1));
+                    CHECK(!f.source.current(f.ingress.origin));
+                    CHECK(terminateHandle == 7);
+                    f.encrypted();
+                    CHECK(!f.source.current(f.ingress.origin));
+                } else if (name == "admission-before") {
+                    f.advance(29999);
+                    descriptor.sec_state = {1, 1, 1, 16};
+                    f.encrypted();
+                    f.subscribe();
+                    CHECK(f.ingress.opens == 1);
+                    f.advance(1000);
+                    CHECK(f.source.current(f.ingress.origin));
+                    CHECK(terminateHandle == -1);
+                } else {
+                    CHECK(name == "admission-timeout" || name == "admission-wrap" ||
+                          name == "admission-no-subscribe" ||
+                          name == "admission-repeated-subscribe" ||
+                          name == "admission-late-comparison" || name == "admission-reconnect" ||
+                          name == "admission-callback-boundary");
+                    if (name == "admission-no-subscribe") {
+                        descriptor.sec_state = {1, 1, 1, 16};
+                        f.encrypted();
+                    } else if (name == "admission-repeated-subscribe")
+                        f.subscribe();
+                    else if (name == "admission-late-comparison" || name == "admission-reconnect") {
+                        f.advance(29990);
+                        f.numeric();
+                        CHECK(f.source.confirm(f.ingress.origin, 123456, true));
+                    }
+                    if (name == "admission-repeated-subscribe") {
+                        f.advance(15000);
+                        f.subscribe();
+                        f.advance(15000);
+                    } else if (name == "admission-late-comparison" || name == "admission-reconnect")
+                        f.advance(10);
+                    else if (name == "admission-callback-boundary") {
+                        f.advance(29990);
+                        clockValue += 10; // Callback beats the periodic expiry poll.
+                    } else
+                        f.advance(30000);
+                    descriptor.sec_state = {1, 1, 1, 16};
+                    f.encrypted();
+                    f.subscribe();
+                    CHECK(f.ingress.opens == 0);
+                    CHECK(terminateHandle == 7);
+                    CHECK(confirms == 0);
+                    CHECK(f.write() == BLE_ATT_ERR_INSUFFICIENT_AUTHEN);
+                    if (name == "admission-reconnect") {
+                        const auto old = f.ingress.origin;
+                        f.disconnect(7);
+                        descriptor.sec_state = {};
+                        f.authenticate(); // Same handle, new original epoch.
+                        CHECK(f.ingress.opens == 1);
+                        CHECK(f.ingress.origin.epoch > old.epoch);
+                        f.source.revoke(old);
+                        CHECK(!f.source.confirm(old, 123456, true));
+                        auto late = f.output();
+                        late.origin = old;
+                        CHECK(f.source.notify(late) == PeerNotify::Stale);
+                        CHECK(!f.source.current(old));
+                        CHECK(f.source.current(f.ingress.origin));
+                    }
+                }
+            } else if (name == "weak-security" || name == "unencrypted" || name == "unbonded") {
                 f.connect();
                 descriptor.sec_state = {1, 0, 1, 16};
                 if (name == "unencrypted")
@@ -324,7 +446,23 @@ int main(int argc, char **argv) {
             } else {
                 f.authenticate();
                 auto original = f.ingress.origin;
-                if (name == "copy-and-notify") {
+                if (name == "heartbeat-current-race" || name == "heartbeat-ready-race") {
+                    clockHook = [&]() {
+                        clockValue += 10;
+                        timer->callback(&timer->event);
+                    };
+                    if (name == "heartbeat-current-race")
+                        CHECK(f.source.current(original));
+                    else
+                        CHECK(f.source.ready());
+                    CHECK(f.source.current(original));
+                    CHECK(f.source.ready());
+                    clockValue += 100;
+                    CHECK(!f.source.current(original)); // Real loss still latches.
+                    timer->callback(&timer->event);
+                    CHECK(!f.source.current(original));
+                    CHECK(!f.source.ready());
+                } else if (name == "copy-and-notify") {
                     CHECK(f.write() == 0);
                     CHECK(f.ingress.copy.count == 20);
                     CHECK(f.ingress.copy.bytes[0] == 9);
