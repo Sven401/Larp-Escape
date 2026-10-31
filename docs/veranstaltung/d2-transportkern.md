@@ -135,5 +135,8 @@ Workflows werden nicht verändert. Die gemeinsame Quellliste nimmt den Kern in
 die vorhandenen nativen SDK-Builds auf. Keine neue Bibliothek oder SDK-Migration.
 Der parallele D1-Speicherkern #60 und der Paketcompiler/Planer #93/#31 werden
 nicht umgestaltet; `DurablePort` ist der dokumentierte spätere Adapterauftrag.
+Der [begrenzte Workeranschluss](d2-durable-worker.md) ergänzt dafür eine kopierende,
+verweigernde Übergabe; semantische D1-Verarbeitung und produktive Koordination
+bleiben ausdrücklich offen.
 Reale Funkabnahme, Kanalwechsel, BLE-Koexistenz, Ressourcenlast, Stromausfälle,
 F5a-Wirkung und die Mehrbox-Produktabnahme sind ausdrücklich **offen**.
