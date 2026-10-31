@@ -76,6 +76,7 @@ struct ble_uuid128_t {
 struct os_mempool { unsigned mp_num_free; };
 struct os_mbuf_pool { struct os_mempool *omp_pool; };
 int os_msys_num_free(void);
+int os_mbuf_free_chain(struct os_mbuf*);
 struct os_mbuf {
     struct os_mbuf_pool *om_omp;
     uint16_t len;

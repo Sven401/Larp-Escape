@@ -11,13 +11,13 @@ extern "C" {
 }
 namespace larp { namespace proximity { namespace ble {
 struct Revocation { RevokeReason reason=RevokeReason::None;std::uint32_t epoch=0,at=0,age=0;std::uint16_t offset=0;std::uint8_t type=0;int sdk=0; };
-struct ResourceStats { std::uint32_t epoch=0,accessCalls=0,accessOk=0,accessAt=0,notifyCalls=0,notifyOk=0,notifyBusy=0,notifyAllocFailures=0;std::uint16_t accessSize=0;int accessCode=0,minMsysFree=-1,minNotifyPoolFree=-1,lastNotifyPoolFree=-1; };
+struct ResourceStats { std::uint32_t epoch=0,accessCalls=0,accessOk=0,accessAt=0,notifyCalls=0,notifyOk=0,notifyBusy=0,notifyAllocFailures=0,notifyReserveDeferrals=0;std::uint16_t accessSize=0;int accessCode=0,minMsysFree=-1,minNotifyPoolFree=-1,lastNotifyPoolFree=-1; };
 class Bearer final:public Transport {
     struct Link { std::uint32_t epoch=0;std::uint16_t handle=BLE_HS_CONN_HANDLE_NONE;bool connected=false,subscribed=false,abort=false,ready=false,fault=false; };
     struct Egress { std::uint32_t epoch=0,createdAt=0;Message message; };
     mutable portMUX_TYPE lock_=portMUX_INITIALIZER_UNLOCKED;
     Link link_;Revocation last_;ResourceStats stats_;
-    void recordAccess(std::uint16_t,int);void recordNotify(int,int,int);
+    void recordAccess(std::uint16_t,int);void recordNotify(int,int,int,bool,bool);
     void abort(std::uint32_t,RevokeReason,std::uint32_t age=0,std::uint16_t offset=0,std::uint8_t type=0,int sdk=0);
     QueueHandle_t incoming_=nullptr,outgoing_=nullptr;
     Token device_{};std::uint8_t addressType_=0;

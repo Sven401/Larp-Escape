@@ -32,11 +32,11 @@ void Bearer::recordAccess(std::uint16_t size,int code){
     if(stats_.minMsysFree<0||free<stats_.minMsysFree)stats_.minMsysFree=free;
     portEXIT_CRITICAL(&lock_);
 }
-void Bearer::recordNotify(int result,int poolFree,int globalFree){
+void Bearer::recordNotify(int result,int poolFree,int globalFree,bool deferred,bool allocated){
     portENTER_CRITICAL(&lock_);stats_.epoch=link_.epoch;increment(stats_.notifyCalls);
-    if(!result)increment(stats_.notifyOk);else if(result==BLE_HS_ENOMEM||result==BLE_HS_EBUSY)increment(stats_.notifyBusy);
-    if(poolFree<0)increment(stats_.notifyAllocFailures);
-    else{stats_.lastNotifyPoolFree=poolFree;if(stats_.minNotifyPoolFree<0||poolFree<stats_.minNotifyPoolFree)stats_.minNotifyPoolFree=poolFree;}
+    if(deferred)increment(stats_.notifyReserveDeferrals);else if(!result)increment(stats_.notifyOk);else if(result==BLE_HS_ENOMEM||result==BLE_HS_EBUSY)increment(stats_.notifyBusy);
+    if(!allocated)increment(stats_.notifyAllocFailures);
+    if(poolFree>=0){stats_.lastNotifyPoolFree=poolFree;if(stats_.minNotifyPoolFree<0||poolFree<stats_.minNotifyPoolFree)stats_.minNotifyPoolFree=poolFree;}
     if(stats_.minMsysFree<0||globalFree<stats_.minMsysFree)stats_.minMsysFree=globalFree;
     portEXIT_CRITICAL(&lock_);
 }
@@ -130,8 +130,15 @@ void Bearer::poll(){
                     // Sample the actual pool before notify_custom consumes this buffer.
                     const int poolFree=buffer&&buffer->om_omp&&buffer->om_omp->omp_pool?buffer->om_omp->omp_pool->mp_num_free:-1;
                     const int globalFree=os_msys_num_free();
-                    const int result=buffer?ble_gatts_notify_custom(v.handle,output_,buffer):BLE_HS_ENOMEM;
-                    recordNotify(result,poolFree,globalFree);
+                    // Keep this pool available for inbound ATT requests and their responses.
+                    // This is cooperative backpressure, not a cross-core atomic reservation.
+                    const bool allocated=buffer!=nullptr;
+                    const bool deferred=allocated&&poolFree>=0&&poolFree<4;
+                    int result=BLE_HS_ENOMEM;
+                    if(allocated&&poolFree<0){os_mbuf_free_chain(buffer);result=BLE_HS_EINVAL;}
+                    else if(deferred){os_mbuf_free_chain(buffer);result=BLE_HS_EBUSY;}
+                    else if(buffer)result=ble_gatts_notify_custom(v.handle,output_,buffer);
+                    recordNotify(result,poolFree,globalFree,deferred,allocated);
                     // notify_custom consumes the mbuf on every return, including errors.
                     if(!result){busy_=false;offset_+=size-8;if(offset_==sending_.size){sending_={};offset_=0;if(transfer_==UINT16_MAX)abort(v.epoch,RevokeReason::TransferExhausted);else ++transfer_;}}
                     else if(result==BLE_HS_ENOMEM||result==BLE_HS_EBUSY){if(!busy_){busy_=true;busyAt_=now();}else if(now()-busyAt_>=2000U)abort(v.epoch,RevokeReason::NotifyBusy,now()-sendingAt_,offset_,sending_.bytes[1],result);}

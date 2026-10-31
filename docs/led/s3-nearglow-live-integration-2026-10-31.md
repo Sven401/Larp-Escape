@@ -199,3 +199,30 @@ passende Session-/Characteristicidentität, etwa 2,55s nach AuthOK. Die Station
 meldet nur das anschließende Abbestellen durch Appcleanup, keinen früheren
 lokalen Abbruch. Ressourcendruck im ATT-/NimBLE-Pfad wird untersucht; automatische
 Schreibwiederholung und Lockerung der Schutzprüfungen sind nicht implementiert.
+
+Pufferdiagnosecommit `0b62652` (Anwendung SHA256
+`dd2c7ddb665821de24d49555a1c3f3f1d13723d8355e244ae39d87a09d581d06`)
+ist auf beiden S3 an `0x10000` installiert und mit unveränderter aktueller
+`larpkeys`-Sicherung verglichen. Unabhängige Hostprüfung: 935 Assertions in elf
+Bearerfällen plus Core400/Adapter165/Protokoll319/Runtime60; nativer SDK-Build
+erfolgreich. Ein erster Neuverbindungsdurchgang liefert beide Karten live und
+keinen gemessenen Pooldruck. Der zweite Durchgang reproduziert B-Schreibfehler17.
+Stats wurden vor weiterem Reconnect im selben Epoch gelesen: Access6/6
+(Proof plus erster GET-Frame), 333 Notifyversuche/99 erfolgreich, 234 Busy,
+232 Allokationsfehler, Minimum globaler freier MSYS-Blöcke24, im tatsächlich
+gewählten Notify-Pool dagegen0. A zeigt ebenfalls 64 Allokationsfehler und
+Poolminimum1. Keine AccessCopy-Ablehnung; Appcleanup bestellt danach Notify ab.
+
+Der genaue qualifizierte SDK-Quellpfad reserviert die ATT-Schreibantwort vor
+dem Accesscallback. Seine Poolwahl fällt bei leerem kleinem Pool nicht einfach
+auf den noch freien größeren Pool zurück. `NOTIFY_TX` meldet im selben
+Aufrufpfad nur den Sendeversuch, keinen Funkabschluss; es wird deshalb nicht
+als Completion-Credit umgedeutet. Als gezielter Fix wird vor SDK-Übergabe ein
+Restbestand im tatsächlichen Pool geschützt. Diese Messung belegt die
+beobachtete Ressourcenknappheit, keine vollständige Lastqualifikation.
+
+Großschrift1,3: echte Ansicht mit A-live/B-Fehler unabhängig angesehen; beide
+Karten und B-Verbindenknopf vollständig lesbar, Navigation bricht geordnet um.
+Handy-Schriftgröße danach wieder1,0. Kein vollständiger Tastatur-/Editor- oder
+Screenreader-Nachweis. Der allgemeine Validierungshinweis nennt noch nicht die
+konkreten widersprechenden Punktnummern (begrenzter P3-UX-Restpunkt).

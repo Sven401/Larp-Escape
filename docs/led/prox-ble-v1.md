@@ -228,3 +228,25 @@ vergleich ueber den vollstaendigen Fehlerzeitraum kann diese Grenze eingrenzen.
 `BLE_GAP_EVENT_NOTIFY_TX` wird bei Notifications im `ble_gatts_notify_custom`-
 Pfad nach L2CAP-Uebergabe ausgeloest und ist kein Controller-/RF-TXende. Die
 Diagnose aendert weder Sendefristen noch Ressourcenlimits oder Wiederholungen.
+
+
+### Kooperativer ATT-Poolvorrat
+
+Nach belegter Poolerschoepfung im Geraetelauf wird vor jeder Notification nach
+der eigenen mbuf-Allokation die freie Anzahl im tatsaechlichen Pool geprueft.
+Sind weniger als vier Bloecke frei, gibt der Sender ausschliesslich sein noch
+nicht an NimBLE uebergebenes mbuf einmal frei und vertagt denselben Fragment-
+versuch auf den naechsten Poll. `BLE-STATS.notifyReserveDeferrals` zaehlt diese
+Schutzvertagungen getrennt von SDK-ENOMEM/EBUSY (`notifyBusy`). `notifyCalls`
+zaehlt weiterhin Versuche inklusive Allokationsversuchen und Schutzvertagungen;
+`notifyOk` zaehlt nur erfolgreiche SDK-Uebergaben. Der Vorrat vier ist eine
+heuristische Restkapazitaet fuer ATT-Eingang/Antwort, keine atomare Reservierung
+gegen andere Tasks. Keine Poolvergroesserung und kein neuer Command-Retry.
+
+Offset, Transfer-ID und bestehende absolute Nachrichtenfristen bleiben bei
+Vertagung erhalten. Reicht die Kapazitaet bis zum bisherigen Alterslimit nicht,
+bleibt der sichtbare EgressAge-Abbruch erhalten. Bei zugewiesenem mbuf ohne
+verwendbare Poolinformation wird das eigene mbuf freigegeben und der Link
+sichtbar mit NotifyError/EINVAL gesperrt, nicht als Poolnull/Allocationsfehler
+etikettiert. Sobald `notify_custom` aufgerufen wurde, konsumiert ausschliesslich
+das SDK den Puffer auf jedem Rueckgabepfad; kein zusaetzliches eigenes Free.
