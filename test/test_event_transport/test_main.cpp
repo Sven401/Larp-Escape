@@ -59,6 +59,12 @@ class SimulatedVerifier : public OriginVerifier {
         response.recipient = value.id.origin;
         response.receiptId = id(6);
         response.stage = stage;
+        if (stage == Stage::Rejected)
+            response.reason = Reason::Context;
+        else if (stage == Stage::Deferred)
+            response.reason = Reason::Capacity;
+        else if (stage == Stage::EffectUnknown)
+            response.reason = Reason::EffectUncertain;
     }
 };
 // In-memory TEST model only: no flash durability, application or replay proof.
@@ -78,6 +84,9 @@ class SimulatedDurablePort : public DurablePort {
     bool haveReceipt = false;
     bool conflict = false;
     Stage previousStage = Stage::Transport;
+    Reason lastReceiptReason = Reason::None;
+    std::array<std::uint8_t, MessageLimit> lastReceiptBytes{};
+    std::size_t lastReceiptSize = 0;
     Publication mayPublish(const Fact &, const Id &, const std::uint8_t *, std::size_t) override {
         ++publishCalls;
         return publication;
@@ -95,8 +104,12 @@ class SimulatedDurablePort : public DurablePort {
         }
         return acceptance;
     }
-    ReceiptCommit recordReceipt(const Receipt &value) override {
+    ReceiptCommit recordReceipt(const Receipt &value, const std::uint8_t *data,
+                                std::size_t size) override {
         ++receiptCalls;
+        lastReceiptReason = value.reason;
+        lastReceiptSize = size;
+        std::copy_n(data, size, lastReceiptBytes.begin());
         if (!mergeReceipts)
             return receiptCommit;
         if (!(value.fact.id == fact(1).id) || value.fact.run != id(4) ||
@@ -359,6 +372,19 @@ void test_transport_and_negative_stages_never_release_even_with_bad_d1_result() 
     }
     Attempt attempt;
     CHECK_ENUM(Poll::Ready, f.core.poll(now, Bearer::Wlan, true, attempt));
+}
+void test_receipt_reason_and_original_bytes_reach_d1_unchanged() {
+    Fixture f;
+    CHECK_ENUM(Admission::Queued, f.enqueue());
+    f.verifier.receiptFor(fact(1), Stage::Deferred);
+    // Opaque test evidence, deliberately different from the outbound fact bytes.
+    const std::array<std::uint8_t, 7> original{{0xD2, 0x81, 0x00, 0xFF, 0x13, 0x37, 0x42}};
+    CHECK_ENUM(ReceiptResult::Retained, f.core.receipt(0, original.data(), original.size()));
+    TEST_ASSERT_EQUAL_UINT(1, f.durable.receiptCalls);
+    CHECK_ENUM(Reason::Capacity, f.durable.lastReceiptReason);
+    TEST_ASSERT_EQUAL_UINT(original.size(), f.durable.lastReceiptSize);
+    TEST_ASSERT_EQUAL_MEMORY(original.data(), f.durable.lastReceiptBytes.data(), original.size());
+    TEST_ASSERT_EQUAL_UINT(1, f.core.outgoingCount());
 }
 void test_durable_receipts_release_only_volatile_target_slot() {
     const std::array<Stage, 3> stages{{Stage::Durable, Stage::Applied, Stage::Observed}};
@@ -658,6 +684,7 @@ int main() {
     RUN_TEST(test_link_results_are_one_shot_and_never_release);
     RUN_TEST(test_receipt_requires_full_reference_and_authority);
     RUN_TEST(test_transport_and_negative_stages_never_release_even_with_bad_d1_result);
+    RUN_TEST(test_receipt_reason_and_original_bytes_reach_d1_unchanged);
     RUN_TEST(test_durable_receipts_release_only_volatile_target_slot);
     RUN_TEST(test_late_link_completion_cannot_touch_reused_slot);
     RUN_TEST(test_duplicate_payload_does_not_replace_signature_or_reset_retry);

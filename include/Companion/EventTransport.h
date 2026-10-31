@@ -31,12 +31,14 @@ struct Fact {
     Digest digest{};
 };
 enum class Stage { Transport, Durable, Applied, Observed, Rejected, Deferred, EffectUnknown };
+enum class Reason { None, Context, Trust, Gap, Capacity, Expired, Conflict, EffectUncertain };
 struct Receipt {
     Fact fact{};
     Id confirmer{};
     Id recipient{};
     Id receiptId{};
     Stage stage = Stage::Transport;
+    Reason reason = Reason::None;
 };
 enum class Verification { Unavailable, Rejected, Verified };
 
@@ -74,7 +76,9 @@ class DurablePort {
     // including after volatile slot release/reboot; return Unmatched if unknown.
     // Merge stages/conflicts durably; TargetDurable means this exact target's
     // durable receipt is committed. Never manufacture Applied/Observed here.
-    virtual ReceiptCommit recordReceipt(const Receipt &) {
+    // Original bytes retain key/binding/package/signature evidence for the
+    // commit-point authority check. Copy before retaining beyond this call.
+    virtual ReceiptCommit recordReceipt(const Receipt &, const std::uint8_t *, std::size_t) {
         return ReceiptCommit::Unavailable;
     }
 };

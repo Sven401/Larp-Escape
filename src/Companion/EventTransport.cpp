@@ -234,7 +234,7 @@ ReceiptResult Core::receipt(std::uint64_t now, const std::uint8_t *bytes, std::s
         return ReceiptResult::Unauthorized;
     // D1 must see late and contradictory receipts even after slot release or
     // reconstruction. A volatile queue is not the authoritative receipt index.
-    const auto committed = durable_.recordReceipt(receipt);
+    const auto committed = durable_.recordReceipt(receipt, bytes, size);
     if (committed == ReceiptCommit::Unavailable)
         return ReceiptResult::Unavailable;
     if (committed == ReceiptCommit::Unmatched)

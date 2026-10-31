@@ -79,6 +79,10 @@ Sendepuffer freigeben. Das löscht keine Journal-, Replay-, Outbox- oder
 Anwendungsbelege. Transportannahme, Ablehnung, Warten und unklare Wirkung sind
 keine höhere Erfolgsstufe. Der Kern erzeugt oder signiert keine Rückmeldung.
 Der Rückgabewert `Released` beschreibt ausschließlich die flüchtige Belegung.
+Grund und vollständige signierte Quittungsbytes werden an D1 weitergegeben,
+damit dessen Commitpunkt die ursprüngliche Schlüssel-/Bindungs-/Paketzuordnung
+erneut prüfen und den Beleg erhalten kann. Ports müssen Bytes vor einer späteren
+Verwendung kopieren; Zeiger sind nur während des jeweiligen Aufrufs gültig.
 
 ## Ausführung, Fristen und Ressourcen
 
@@ -97,7 +101,9 @@ Der Adapter muss faire Wahl zwischen beiden Eingangsarten, seine eigene
 Callbackrate und Länge/Framing vor dem Kopieren begrenzen. `enqueue` ist nur
 für den lokalen D1-Eigentümer, kein externer Funk-Eingang.
 
-Jeder Aufruf arbeitet höchstens vier Plätze ab. Aufwendige D0-/D1-Ports müssen
+Jeder Aufruf durchsucht ausschließlich die festen Viererarrays;
+`poll` und `processIncoming` bearbeiten höchstens einen Kandidaten.
+Aufwendige D0-/D1-Ports müssen
 selbst einen begrenzten, nicht wartenden Eigentümervertrag einhalten; dieser
 Kern misst keine Signatur- oder Flashlatenz. Die Tests ersetzen diese Nachweise
 nicht. Gezielte Vermittlung/Relay, historische Abgleichseiten, Fragmentcodec und
