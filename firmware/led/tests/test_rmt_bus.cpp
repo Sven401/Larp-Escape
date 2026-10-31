@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 using namespace larp::led;
+namespace larp { namespace led { LedBus &cameraLabBus(); }}
 namespace {
 std::uint32_t currentTime = 0, frequency = 40000000;
 rmt_config_t configured{};
@@ -71,6 +72,23 @@ void wait_failure() {
     waitResult = ESP_ERR_TIMEOUT; output.service(); finish(output);
     check(stops == 1 && output.snapshot().off && output.snapshot().fault, "completion failure did not recover to black");
 }
+#ifdef LARP_S3_LED_TEST
+void board_rgb() {
+    auto &bus = cameraLabBus();
+    check(bus.begin(), "board bus begin failed");
+    check(static_cast<unsigned>(configured.gpio_num) == 21, "Waveshare board LED pin incorrect");
+    Frame frame{};
+    frame[3].red = 12; frame[9].green = 7; frame[22].blue = 31;
+    check(bus.submit(frame), "board frame rejected");
+    check(sent.size() == 25, "board must transmit exactly one pixel and latch");
+    check(decode(0) == 12 && decode(1) == 7 && decode(2) == 31, "board RGB order/peak projection incorrect");
+    check(sent.back().duration0 == 6000 && sent.back().duration1 == 6000, "board latch missing");
+    check(bus.poll() == TxResult::Busy, "board fabricated completion");
+    waitResult = ESP_OK; check(bus.poll() == TxResult::Complete, "board completion missing");
+    frame[22].red = 33;
+    check(!bus.submit(frame), "board exceeded brightness bound");
+}
+#endif
 }
 unsigned long millis() { return currentTime; }
 esp_err_t rmt_config(const rmt_config_t *config) { configured = *config; return ESP_OK; }
@@ -101,6 +119,9 @@ int main(int argc, char **argv) {
         else if (name == "bad_counter") bad_counter();
         else if (name == "write_failure") write_failure();
         else if (name == "wait_failure") wait_failure();
+#ifdef LARP_S3_LED_TEST
+        else if (name == "board_rgb") board_rgb();
+#endif
         else return EXIT_FAILURE;
         std::cout << name << " passed\n";
     } catch (const std::exception &error) { std::cerr << error.what() << '\n'; return EXIT_FAILURE; }

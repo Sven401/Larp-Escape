@@ -2,6 +2,7 @@
 #include "LedWire.h"
 namespace larp { namespace espnowradio {
 bool begin();
+std::array<std::uint8_t, 6> localMac();
 void service(std::uint32_t now);
 void cancel();
 ledwire::EspNowSnapshot snapshot();

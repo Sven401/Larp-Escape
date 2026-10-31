@@ -1,6 +1,9 @@
 #ifdef LARP_ESPNOW_TEST
 #include "EspNowRadio.h"
 #include "EspNowTest.h"
+#ifdef LARP_S3_LED_TEST
+#include "EspNowDuplex.h"
+#endif
 #include "RssiMeasurement.h"
 #include <Arduino.h>
 #include <atomic>
@@ -14,18 +17,36 @@ namespace larp { namespace espnowradio {
 namespace {
 using namespace espnowtest;
 struct Event {
-    bool receipt = false, ok = false;
+    bool receipt = false, request = false, ok = false;
     Peer peer{};
     Packet packet{};
     int strength = 0;
 };
 QueueHandle_t queue = nullptr;
 std::atomic<bool> dropped{false};
+#ifdef LARP_S3_LED_TEST
+TxLane lane;
+Responder responder;
+#endif
 class Radio : public IRadio {
     Peer configured_{};
     bool configured = false;
 public:
     bool send(const Peer &peer, const Packet &packet) override {
+        return transmit(peer, packet, false);
+    }
+    bool transmit(const Peer &peer, const Packet &packet, bool receipt) {
+#ifdef LARP_S3_LED_TEST
+        if (!lane.begin(receipt ? TxLane::Kind::Receipt : TxLane::Kind::Request, peer)) return false;
+#endif
+        const bool ok = sendPacket(peer, packet, receipt ? 64 : 56);
+#ifdef LARP_S3_LED_TEST
+        if (!ok) lane.complete(peer); // no callback is promised for a rejected send
+#endif
+        return ok;
+    }
+private:
+    bool sendPacket(const Peer &peer, const Packet &packet, std::size_t size) {
         if (!configured || peer != configured_) {
             if (configured && esp_now_del_peer(configured_.data()) != ESP_OK) return false;
             configured = false;
@@ -35,7 +56,7 @@ public:
             if (esp_now_add_peer(&info) != ESP_OK) return false;
             configured_ = peer; configured = true;
         }
-        return esp_now_send(peer.data(), packet.data(), 56) == ESP_OK;
+        return esp_now_send(peer.data(), packet.data(), size) == ESP_OK;
     }
 } radio;
 Core core(radio);
@@ -59,8 +80,15 @@ void tx(const uint8_t *mac, esp_now_send_status_t status) {
     if (xQueueSend(queue, &e, 0) != pdTRUE) dropped.store(true);
 }
 void rx(const uint8_t *mac, const uint8_t *bytes, int size) {
-    if (!mac || !bytes || size != 64) return;
-    Event e{}; e.receipt = true;
+    if (!mac || !bytes) return;
+    Event e{};
+#ifdef LARP_S3_LED_TEST
+    e.request = size == 56 && validPacket(bytes, size, false);
+    if (!e.request && size != 64) return;
+#else
+    if (size != 64) return;
+#endif
+    e.receipt = !e.request;
     std::copy(mac, mac + 6, e.peer.begin()); std::copy(bytes, bytes + size, e.packet.begin());
     if (xQueueSend(queue, &e, 0) != pdTRUE) dropped.store(true);
 }
@@ -81,6 +109,9 @@ bool begin() {
         esp_wifi_set_promiscuous_rx_cb(sniff) == ESP_OK;
     wifi_promiscuous_filter_t capture{}; capture.filter_mask = WIFI_PROMIS_FILTER_MASK_MGMT;
     const bool captureOk = ok && esp_wifi_set_promiscuous_filter(&capture) == ESP_OK && esp_wifi_set_promiscuous(true) == ESP_OK;
+#ifdef LARP_S3_LED_TEST
+    responder.boot(esp_random());
+#endif
     core.enable(captureOk); return captureOk;
 }
 void service(std::uint32_t now) {
@@ -88,9 +119,22 @@ void service(std::uint32_t now) {
     if (dropped.load()) { core.overflow(); return; }
     Event e{};
     for (unsigned n = 0; queue && n < 16 && xQueueReceive(queue, &e, 0) == pdTRUE; ++n) {
+#ifdef LARP_S3_LED_TEST
+        if (e.request) {
+            if (e.peer != local) responder.offer(e.peer, e.packet.data(), 56, now);
+        } else if (e.receipt) core.receive(e.peer, e.packet.data(), e.packet.size(), e.strength);
+        else if (lane.complete(e.peer) == TxLane::Kind::Request) core.delivery(e.peer, e.ok);
+#else
         if (e.receipt) core.receive(e.peer, e.packet.data(), e.packet.size(), e.strength);
         else core.delivery(e.peer, e.ok);
+#endif
     }
+#ifdef LARP_S3_LED_TEST
+    if (lane.idle() && responder.pending(now)) {
+        radio.transmit(responder.peer(), responder.packet(), true);
+        responder.sent(); // send failure does not retry or fabricate a receipt
+    }
+#endif
     const auto state = core.snapshot();
     if (state.received && state.rssiValid && state.token != sampled) {
         sampled = state.token; filter.sample(state.rssi, now);
@@ -109,10 +153,17 @@ unsigned intensity(std::uint32_t now) {
 }
 ledwire::EspNowSnapshot snapshot() {
     auto s = core.snapshot(); s.rssiSupported = true;
+#ifdef LARP_S3_LED_TEST
+    s.ready = s.ready && lane.idle();
+#endif
     if (s.rssiValid) { s.filteredRssi = static_cast<std::int8_t>(filter.value()); s.intensity = filter.target(millis()); }
     return s;
 }
+std::array<std::uint8_t, 6> localMac() { return local; }
 bool submit(const std::array<std::uint8_t, 6> &peer, std::uint32_t now, bool rssi, bool intensity) {
+#ifdef LARP_S3_LED_TEST
+    if (!lane.idle()) return false;
+#endif
     Token token{}; esp_fill_random(token.data(), token.size());
     if (peer != selected) { filter.clear(); sampled.fill(0); }
     if (!core.start(peer, token, now, rssi)) return false;

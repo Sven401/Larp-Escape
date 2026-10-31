@@ -1,5 +1,10 @@
 # Eigenständige LED-Produktfunktion
 
+**Waveshare ESP32-S3-Zero · 31.10.2026:** Das eigene Testziel
+`larp-s3-espnow-test` bereitet beide zusätzlichen Stationen für die vorhandene
+Handy-App, ihre eingebaute RGB-LED und ESP-NOW/RSSI vor.
+[Build, Bedienung, Grenzen und offene Geräteabnahme](../../docs/led/esp32-s3-stations.md).
+
 Die zusätzliche Variante `larp-espnow-test` ergänzt die bestehende
 Baugruppenbedienung um einen bewusst gesendeten ESP-NOW-Test mit korrelierter
 Empfangsbestätigung. Sie benötigt die neue App und den separaten

@@ -66,8 +66,8 @@ class Control final : public wire::IControl {
 #ifdef LARP_NFC_TEST
     out.nfcSupported = true;
 #endif
-    out.wakeSupported = true; out.wakeValid = wake.valid;
-    out.resonanceSupported = true;
+    out.wakeSupported = larp::board::LegacyPeripherals; out.wakeValid = wake.valid;
+    out.resonanceSupported = larp::board::LegacyPeripherals;
     out.wakeMask = wake.activeMask;
 #ifdef LARP_MATRIX_TEST
     const auto matrix = matrixInputs.snapshot(millis());
@@ -93,7 +93,7 @@ class Control final : public wire::IControl {
   wire::AudioSnapshot audioSnapshot() const noexcept override {
     const auto s = audioOutput.snapshot();
     wire::AudioSnapshot out;
-    out.supported = true; out.revision = s.revision; out.appliedRevision = s.appliedRevision;
+    out.supported = larp::board::LegacyPeripherals; out.revision = s.revision; out.appliedRevision = s.appliedRevision;
     out.track = s.track; out.volume = s.volume; out.ready = s.ready;
     out.pending = s.pending; out.active = s.active; out.fault = s.fault; out.paused = s.paused;
     out.busyValid = s.busyValid; out.busyLow = s.busyLow;
@@ -359,6 +359,13 @@ void serviceUsb() {
     if (c == '\r') continue;
     if (c == '\n') {
       command[used] = 0;
+#ifdef LARP_S3_LED_TEST
+      if (!overflow && std::strcmp(command, "LARP-STATION-INFO") == 0) {
+        const auto mac = larp::espnowradio::localMac();
+        Serial.printf("LARP S3-ZERO mac=%02X:%02X:%02X:%02X:%02X:%02X ledPin=%u pixels=1 order=RGB\n",
+          mac[0], mac[1], mac[2], mac[3], mac[4], mac[5], larp::board::LedPin);
+      }
+#endif
       if (!overflow && std::strcmp(command, "LARP-PROVISION-V1") == 0) {
         if (provisioned) {
           // Explicit trusted USB request only; never print secrets at startup.
@@ -381,8 +388,10 @@ void setup() {
 #ifdef LARP_NFC_TEST
   if (!larp::nfcble::begin()) { Serial.println("LARP ERROR NFC worker"); return; }
 #endif
-  audioOutput.begin();
-  wakeInputs.begin(millis());
+  if (larp::board::LegacyPeripherals) {
+    audioOutput.begin();
+    wakeInputs.begin(millis());
+  }
 #ifdef LARP_MATRIX_TEST
   matrixInputs.begin(millis());
 #endif
@@ -421,7 +430,7 @@ void loop() {
 #ifdef LARP_MATRIX_TEST
   matrixInputs.service(millis());
 #endif
-  wakeInputs.service(millis());
+  if (larp::board::LegacyPeripherals) wakeInputs.service(millis());
   const auto wake = wakeInputs.snapshot();
   output.updateWake(wake.valid, wake.activeMask);
   serviceUsb();
@@ -436,7 +445,7 @@ void loop() {
   }
   // Apply link/epoch aborts before a prepared UART Play can leave the device.
   // Boot/fault Stop still drains even when BLE initialization did not succeed.
-  audioOutput.service();
+  if (larp::board::LegacyPeripherals) audioOutput.service();
   if (outputInitialized) {
 #ifdef LARP_ESPNOW_TEST
     output.setTwinkleIntensity(larp::espnowradio::intensity(millis()));
