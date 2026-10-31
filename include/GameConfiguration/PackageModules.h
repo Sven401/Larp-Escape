@@ -209,6 +209,19 @@ struct ExpandedStationWorkspace {
     module_ir::Pool<module_ir::ExpandedSymbol> timers;
     module_ir::Pool<module_ir::Id> triggers;
 };
+// Optional staged typed output. Borrowed views expire at callback return.
+// All fallible work is completed by prepare(); commit() is a non-failing,
+// same-owner publication after the byte sink commits. abort() discards staging.
+class IExpandedStationConsumer {
+  public:
+    virtual ~IExpandedStationConsumer() = default;
+    virtual bool begin(const std::uint8_t contentDigest[32]) = 0;
+    virtual bool station(const ModuleCompileWorkspace &source,
+                         const ExpandedStationWorkspace &expanded, module_ir::Id station) = 0;
+    virtual bool prepare() = 0;
+    virtual void commit() = 0;
+    virtual void abort() = 0;
+};
 // Exclusive, non-reentrant call: callbacks must not mutate sources, compiler or
 // caller workspaces, nor retain write/update buffers. All must outlive the call.
 // Pure compiler: one pass per immutable byte source, no heap/DOM/replay. Digest
@@ -218,7 +231,8 @@ class PackageModuleCompiler : private ICanonicalJsonObserver {
     ModuleCompileResult compile(IPackageByteSource &content, IModuleSourceProvider &modules,
                                 IPackageDigest &digest, IExpandedPackageSink &sink,
                                 ModuleCompileWorkspace &workspace,
-                                ExpandedStationWorkspace &expanded);
+                                ExpandedStationWorkspace &expanded,
+                                IExpandedStationConsumer *consumer = nullptr);
 
   private:
     enum class Kind : std::uint8_t {

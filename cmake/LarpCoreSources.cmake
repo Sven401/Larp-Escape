@@ -15,6 +15,7 @@ set(LARP_CORE_SOURCES
     "${LARP_ROOT}/src/GameConfiguration/ProfileWriter.cpp"
     "${LARP_ROOT}/src/GameConfiguration/StandardProfile.cpp"
     "${LARP_ROOT}/src/GameExecution/Engine.cpp"
+    "${LARP_ROOT}/src/GameExecution/RulesPlanner.cpp"
     "${LARP_ROOT}/src/GameExecution/Session.cpp"
     "${LARP_ROOT}/src/DeviceRuntime/Broker.cpp"
     "${LARP_ROOT}/src/DeviceRuntime/Lifecycle.cpp"

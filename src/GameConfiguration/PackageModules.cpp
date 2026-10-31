@@ -2261,12 +2261,10 @@ bool PackageModuleCompiler::emitStation(Id stationId) {
         fail(ModuleError::SinkFailure);
     return result_.error == ModuleError::None;
 }
-ModuleCompileResult PackageModuleCompiler::compile(IPackageByteSource &content,
-                                                   IModuleSourceProvider &provider,
-                                                   IPackageDigest &digest,
-                                                   IExpandedPackageSink &sink,
-                                                   ModuleCompileWorkspace &workspace,
-                                                   ExpandedStationWorkspace &expanded) {
+ModuleCompileResult PackageModuleCompiler::compile(
+    IPackageByteSource &content, IModuleSourceProvider &provider, IPackageDigest &digest,
+    IExpandedPackageSink &sink, ModuleCompileWorkspace &workspace,
+    ExpandedStationWorkspace &expanded, IExpandedStationConsumer *consumer) {
     work_ = &workspace;
     expanded_ = &expanded;
     sink_ = &sink;
@@ -2354,6 +2352,12 @@ ModuleCompileResult PackageModuleCompiler::compile(IPackageByteSource &content,
         for (Id i = 1; i < moduleDefinition_ && result_.error == ModuleError::None; ++i)
             expand(i);
     }
+    bool consumerStarted = false;
+    if (result_.error == ModuleError::None && consumer) {
+        consumerStarted = true;
+        if (!consumer->begin(result_.contentDigest))
+            fail(ModuleError::SinkFailure);
+    }
     if (result_.error == ModuleError::None) {
         writing_ = true;
         if (!sink.begin())
@@ -2362,11 +2366,19 @@ ModuleCompileResult PackageModuleCompiler::compile(IPackageByteSource &content,
             const std::uint16_t instances = result_.instances;
             result_.instances = 0;
             for (Id i = 1; i < moduleDefinition_ && result_.error == ModuleError::None; ++i)
-                if (expand(i))
-                    emitStation(i);
+                if (expand(i)) {
+                    if (consumer && !consumer->station(workspace, expanded, i))
+                        fail(ModuleError::SinkFailure);
+                    if (result_.error == ModuleError::None)
+                        emitStation(i);
+                }
             result_.instances = instances;
+            if (result_.error == ModuleError::None && consumer && !consumer->prepare())
+                fail(ModuleError::SinkFailure);
             if (result_.error == ModuleError::None && !sink.commit())
                 fail(ModuleError::SinkFailure);
+            if (result_.error == ModuleError::None && consumer)
+                consumer->commit();
         }
     }
     if (result_.error == ModuleError::None) {
@@ -2377,6 +2389,8 @@ ModuleCompileResult PackageModuleCompiler::compile(IPackageByteSource &content,
     } else {
         if (writing_)
             sink.abort();
+        if (consumerStarted)
+            consumer->abort();
         std::memset(result_.contentDigest, 0, sizeof(result_.contentDigest));
     }
     work_ = nullptr;
