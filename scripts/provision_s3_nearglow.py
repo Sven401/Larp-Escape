@@ -170,7 +170,7 @@ class Station:
                 pass
             self.connection = None
 
-    def exchange(self, command, operation=None, timeout=3):
+    def exchange(self, command, operation=None, timeout=3, boot_readiness=False):
         allowed = command in ("INFO", "ARM", "STOP", "REBOOT") or re.fullmatch(
             r"PAIR (?:[0-9A-F]{2}:){5}[0-9A-F]{2} [0-9a-f]{64}", command)
         if not allowed or len(command.encode("ascii")) > MAX_COMMAND:
@@ -190,6 +190,11 @@ class Station:
                     continue
                 if len(line) > MAX_RESPONSE + 1 or not line.endswith(b"\n"):
                     raise SetupError("Oversized or incomplete station response.")
+                # Only the explicit post-REBOOT INFO phase may encounter ROM/SDK
+                # text. Keep the same byte/line/deadline limits and never log it.
+                # JSON-looking responses still undergo the full strict checks.
+                if boot_readiness and command == "INFO" and not line.lstrip().startswith((b"{", b"[")):
+                    continue
                 value = _decode_json(line)
                 if value == {"type": "ready", "protocol": 1} and type(value["protocol"]) is int:
                     continue
@@ -204,8 +209,8 @@ class Station:
         except Exception:
             raise ConnectionProblem("USB exchange failed; response contents were not logged.") from None
 
-    def info(self, timeout=3):
-        value = self.exchange("INFO", timeout=timeout)
+    def info(self, timeout=3, boot_readiness=False):
+        value = self.exchange("INFO", timeout=timeout, boot_readiness=boot_readiness)
         if value["mac"] != self.mac:
             raise SetupError("Connected station does not match the expected MAC.")
         return value
@@ -331,7 +336,7 @@ def pair_stations(port_a, mac_a, port_b, mac_b, output, factory=None, clock=None
             while clock() < deadline:
                 try:
                     station.open()
-                    info = station.info(timeout=min(3, max(0.01, deadline - clock())))
+                    info = station.info(timeout=min(3, max(0.01, deadline - clock())), boot_readiness=True)
                     peer = stations[1] if station is stations[0] else stations[0]
                     if not info["paired"] or info["peer"] != peer.mac or info["fault"] or not _disarmed(info):
                         raise SetupError("Pairing after restart did not match the intended disarmed pair.")

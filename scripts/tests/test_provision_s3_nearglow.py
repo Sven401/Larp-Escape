@@ -52,6 +52,7 @@ class Device:
         self.on_reboot = None
         self.open_failures = 0
         self.ready = False
+        self.boot_lines = []
 
     def respond(self, command):
         op = command.split(" ", 1)[0]
@@ -113,6 +114,8 @@ class FakeSerial:
         if self.device.ready:
             self.queue.append(b'{"type":"ready","protocol":1}\n')
             self.device.ready = False
+        self.queue.extend(self.device.boot_lines)
+        self.device.boot_lines = []
         result = self.device.respond(command)
         if result is not None:
             self.queue.append(result if isinstance(result, bytes) else json.dumps(result).encode() + b"\n")
@@ -298,6 +301,47 @@ class SetupTests(unittest.TestCase):
         self.pair()
         self.assertEqual(counts["after_restart"], 3)
         self.assertEqual(json.loads(self.path.read_text())["phase"], "paired")
+
+    def test_post_reboot_boot_text_is_bounded_and_does_not_repeat_pair(self):
+        def boot_text(device):
+            device.boot_lines = [b"ESP-ROM:esp32s3-20210327\n", b"I (21) boot: " + PRIVATE.encode() + b"\n"]
+        self.a.on_reboot = boot_text
+        self.b.on_reboot = boot_text
+        self.pair()
+        self.assertEqual(json.loads(self.path.read_text())["phase"], "paired")
+        for device in (self.a, self.b):
+            self.assertEqual(device.operations().count("PAIR"), 1)
+            self.assertEqual(device.operations().count("REBOOT"), 1)
+            self.assertNotIn("ARM", device.operations())
+
+    def test_boot_text_tolerance_does_not_weaken_normal_info_or_json_checks(self):
+        self.a.boot_lines = [b"ESP-ROM:" + PRIVATE.encode() + b"\n"]
+        with self.assertRaises(setup.SetupError) as error:
+            setup.station_info("COM-A", A, factory=self.factory, clock=self.factory.clock)
+        self.assertNotIn(PRIVATE, str(error.exception))
+        bad_lines = [b"{" + PRIVATE.encode() + b"\n", b"[]\n",
+                     b'{"type":"error","op":"INFO","reason":"state"}\n',
+                     PRIVATE.encode() * 100 + b"\n", b"ESP-ROM:incomplete"]
+        for line in bad_lines:
+            with self.subTest(line_length=len(line)):
+                self.factory = Factory(); self.a, self.b = self.factory.devices.values()
+                if self.path.exists(): self.path.unlink()
+                self.a.on_reboot = lambda device, line=line: setattr(device, "boot_lines", [line])
+                with self.assertRaises(setup.SetupError) as error: self.pair()
+                self.assertNotIn(PRIVATE, str(error.exception))
+                self.assertEqual(json.loads(self.path.read_text())["phase"], "prepared")
+                self.assertEqual(self.a.operations().count("PAIR"), 1)
+                self.assertEqual(self.b.operations().count("PAIR"), 1)
+
+    def test_post_reboot_only_text_never_counts_as_ready(self):
+        def no_info(device):
+            device.hooks["INFO"] = lambda unused: b"ESP-ROM:" + PRIVATE.encode() + b"\n"
+        self.a.on_reboot = no_info
+        with self.assertRaises(setup.SetupError) as error: self.pair()
+        self.assertNotIn(PRIVATE, str(error.exception))
+        self.assertLess(self.factory.clock.now, 34)
+        self.assertEqual(json.loads(self.path.read_text())["phase"], "prepared")
+        self.assertEqual(self.a.operations().count("PAIR"), 1)
 
     def test_storage_failure_never_pairs_and_atomic_phase_failure_keeps_key(self):
         with patch.object(setup.os, "fsync", side_effect=OSError(PRIVATE)):
