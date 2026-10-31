@@ -15,6 +15,12 @@ target_link_libraries(larp-profile PRIVATE larp_core)
 include(CTest)
 if(BUILD_TESTING)
     find_package(Python3 REQUIRED COMPONENTS Interpreter)
+    add_test(NAME s3-nearglow-usb-setup COMMAND "${Python3_EXECUTABLE}"
+        "${CMAKE_SOURCE_DIR}/scripts/tests/test_provision_s3_nearglow.py")
+    add_test(NAME s3-proximity-core COMMAND "${Python3_EXECUTABLE}"
+        "${CMAKE_SOURCE_DIR}/test/test_proximity/run.py")
+    set_tests_properties(s3-nearglow-usb-setup s3-proximity-core PROPERTIES
+        WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}" TIMEOUT 120)
     add_test(NAME native-journal COMMAND "${Python3_EXECUTABLE}"
         "${CMAKE_SOURCE_DIR}/test/test_configured_control/check_native_journal.py"
         "$<TARGET_FILE:larp-profile>")

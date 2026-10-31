@@ -88,9 +88,9 @@ Frame Scene::render(std::uint32_t now) {
         const auto channels = value(i, now);
         for (unsigned c = 0; c < 3; ++c) sum[c] += channels[c] / Scale;
     }
-    Pixel result; result.red = static_cast<std::uint8_t>(std::min(32U, sum[0]));
-    result.green = static_cast<std::uint8_t>(std::min(32U, sum[1]));
-    result.blue = static_cast<std::uint8_t>(std::min(32U, sum[2]));
+    Pixel result; result.red = static_cast<std::uint8_t>(std::min<std::uint32_t>(32U, sum[0]));
+    result.green = static_cast<std::uint8_t>(std::min<std::uint32_t>(32U, sum[1]));
+    result.blue = static_cast<std::uint8_t>(std::min<std::uint32_t>(32U, sum[2]));
     Frame frame; frame.fill(result); return frame;
 }
 bool Scene::background(Pixel p) {
