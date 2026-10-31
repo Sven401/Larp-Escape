@@ -8,6 +8,13 @@ Grundlage: [Effektvertrag](effect-command-contract.md),
 [Profilübernahme](../configuration/activation.md) und VA-01.
 Farbfreigabe und das unten markierte Pausenverhalten bleiben Nutzerentscheidungen.
 
+**S3-Stationen · Entwurf vom 31.10.2026:** Das
+[Konzept für Proximity-Spielstationen](esp32-s3-proximity-konzept.md) ergänzt
+diesen Anschluss um zwei bewegte Requisiten, autonome Näheeffekte und
+Spielaktionen nach bestätigter grober Funknähe mit Verweilen. Es führt die
+bestätigte Näheglut-Semantik fort; neue Kontakt- und Umsetzungsdetails bleiben
+als Entwurf gekennzeichnet.
+
 **Bestätigte Spielbedeutung, Nutzerantwort vom 18.10.2026:** Näheglut ist wie
 Funkeln ein durchlaufender Effekt im Spiel. Startende Spielaktion ist die
 Erkennung einer korrespondierenden Spielstation. Es ist kein an ein
