@@ -89,7 +89,7 @@ gesichert und installiert: [Geräteeinrichtung vom 31.10.2026](../../docs/led/s3
 ## Einmalige USB-Einrichtung
 
 Die ursprüngliche Paarung/ARM-Einrichtung unten bleibt erhalten. Für
-**Larp Dev 0.3: Näheglut live** ergänzt der
+**Larp Dev 0.3.3: Näheglut live** ergänzt der
 [PROX-BLE/1-Vertrag](../../docs/led/prox-ble-v1.md) zwei individuelle
 Handyzugänge und eine gespeicherte Kennlinie pro Station. Das vorhandene
 ESP-NOW-Paargeheimnis wird dafür weder exportiert noch in die App importiert.
@@ -116,6 +116,14 @@ Helligkeiten zu; gleiche Helligkeiten erlauben Plateaus. „Auf beide Stationen
 ohne die Szene neu zu starten oder ihre Quellenfrische zu erneuern.
 Die Speicherung bleibt bei Handyabbruch erhalten. Der Handyabbruch löst
 weder ARM/STOP noch weitere Konfigurationsaufträge aus.
+
+App 0.3.3 gehört zum MTU-angepassten Livefirmwarestand: Vor Anmeldung werden
+höhere Verbindungspriorität und eine tatsächliche ATT-MTU von mindestens 156
+ausgehandelt. Werte bleiben auf 244 Byte pro Fragment und 256 Byte pro Nachricht
+begrenzt; Telemetrie und Verwaltungsbefehle passen jeweils in ein Fragment.
+Eine bloß angenommene MTU-Anfrage reicht nicht. Firmware unterstützt weiterhin
+den 20-Byte-Standardpfad, dessen parallele Gerätegrenzen im Integrationsbericht
+stehen. Unzureichende Aushandlung zeigt die App kontrolliert an.
 
 Normales USB-INFO bleibt unverändert. `BLE-INFO` zeigt gesondert BLE-/
 Konfigurationsstatus, gespeicherte und angewandte Revision. In der Live-

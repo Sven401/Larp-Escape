@@ -1,10 +1,70 @@
 # Näheglut live: App- und Stationsanschluss
 
-Status: **beauftragte Umsetzung, Prüfungen laufen**, 31.10.2026.
+Status: **App 0.3.3/code6 und passende Firmware installiert; begrenzter
+Zwei-Stationen-Geräteversuch einschließlich Quellenverlust/Rückkehr bestanden**,
+31.10.2026.
 Ausgangsbasis `b3e3693dc3904877c5e508273247ab495534f5d8`, Arbeitsbranch
 `codex/s3-nearglow-android-live`. Auftrag: vorhandenes Larp Dev um echte
 Livewerte beider S3 und während des autonomen Betriebs veränderbare
 Funknähe-Helligkeitsbereiche erweitern.
+
+## Aktueller geprüfter Kandidat
+
+Gemeinsamer Implementierungsstand `07750d44e5d9053acf1c0d1af9143087cf1bbf79`.
+Firmwareimage 1.030.560 Byte, SHA256
+`6dadac8c4fcc6092eb1805a3e5909c57b9e45a232b88e0b2b89c487bf3740712`;
+installiertes Debug-APK 0.3.3/code6, SHA256
+`d4a839f14aed7bb68fbb420d5e7944b137465045398315ea7d8213e12cf2741e`.
+Beide S3-Anwendungen und die erhaltenen Zugangs-/Kurvendaten wurden nach Upload
+mit `verify-flash` verglichen. Nur die Anwendung an `0x10000` wurde aktualisiert.
+Beide Stationen speichern jetzt die ansteigende Defaultkurve als Revision 3.
+
+- Fünf vollständige Neuverbindungen je Station erfolgreich: fünf verschiedene
+  AuthOK je Slot, beide Geräte-Epochen5, identischer App-Prozess18327 und fünf
+  Endscreens mit zwei aktuellen Karten. Zwei zeitversetzte gefilterte Logausschnitte
+  ergänzen sich, weil der begrenzte Android-Ringpuffer ältere Zeilen verdrängt;
+  ihre deduplizierte Union enthält ausschließlich tatsächlich vorhandene
+  Original-Logzeilen sowie einen gesonderten Provenienzheader.
+- Tatsächliche MTU256/Framebudget244 auf beiden, Proof jeweils ein Fragment.
+  In Epoch5 sind Proof/GET/SET je drei erfolgreiche Schreibzugriffe; Notify
+  A534/534 und B529/529 erfolgreich an SDK übergeben, Busy/Allokationsfehler/
+  Reservevertagungen0, abgetastetes Poolminimum11. SDK-Erfolg ist kein eigener
+  Funkempfangsnachweis. Beide UI-Endanzeigen sind separat gesichert.
+- 180s paralleler ESP-NOW-Gerätelauf: je351/351 Proben frisch, keine Lesefehler,
+  Fault0, Altermaxima502/497ms. Innerhalb desselben Handy-Verbindungspaars wurde
+  die Kurve bewusst übernommen: beide dauerhaft Revision3, Glut-Ziel200→1000,
+  bestätigte RGB-Ausgabe4/1/0→24/8/0. Der Nutzer bestätigt beide LEDs heller.
+- Kontrolliertes Verlassen der App: je39/39 Proben rund20s frisch, Fault0,
+  weiterhin ARM, Ziel1000 und RGB24/8/0. Anschließendes Verbinden erfolgt ohne
+  automatischen SET-Auftrag. Stationen bleiben Eigentümer der Szene.
+- Unabhängige Code-, Größen-, HMAC-, Fristen- und sichtbare UI-Prüfung;
+  aktuelle Native-/Android-/GM-Builds und passende Tests bestanden. Die folgenden
+  Abschnitte erhalten die getrennten Diagnose- und Zwischenstände.
+
+Physischer Quellenverlust ist zusätzlich belegt: COM7 tatsächlich abgezogen,
+A meldet bei weiterhin aktiver Handyverbindung fehlenden Partnerfunk,
+Glut-Ziel0 und bestätigte RGB0/0/0; B zeigt unbekannte aktuelle Handywerte.
+Der Nutzer bestätigt das sichtbare Ausblenden. Nach Wiedereinstecken kehren
+Glut und Partnerfunk ohne Startbefehl zurück, vom Nutzer bestätigt.
+Die gesonderten A-Protokolle enthalten39 beziehungsweise72 ungültige Proben,
+anschließend165 frische Rückkehrproben; alle Fault0. Beide UI-Zustände wurden
+separat gespeichert und unabhängig geprüft.
+
+B war bei der nächsten Bedienabfrage bereits wieder live; deshalb wurde kein
+weiterer Verbindenklick ausgeführt. Wer diese Handyverbindung initiiert hatte,
+ist nicht protokolliert; kein automatischer Reconnect wird daraus abgeleitet.
+USB bestätigt nach dem echten B-Neustart weiterhin dauerhaft gespeicherte und
+angewandte Revision3 mit den Defaultpunkten. B-Epoch1 hat nur zwei erfolgreiche
+Schreibzugriffe (Proof/GET), keinen neuen SET. A bleibt im bestehenden Epoch6.
+Abschließend je16/16 frische Proben beider Stationen, Fault0, ARM dauerhaft,
+Ziel1000 und RGB24/8/0. Der Nutzer bestätigt nach der Kurvenübernahme beide
+LEDs sichtbar heller als beim20-%-Plateau.
+
+Größere systematische räumliche Annäherung, elektrische Last-/Fehlerinjektion,
+Stromausfall während NVS-Commit
+und vollständige RF-/Security-/Produktqualifikation sind getrennte Nachweise.
+Der Entwurf [PR119](https://github.com/Sven401/Larp-Escape/pull/119) bleibt wegen
+der neuen Vertrauensgrenze offen; keine Integration nach main und kein Release.
 
 ## Umfang und Zuständigkeit
 
@@ -258,3 +318,13 @@ Das Geräteimage hat SHA256
 `6dadac8c4fcc6092eb1805a3e5909c57b9e45a232b88e0b2b89c487bf3740712`.
 Der passende neue Geräteversuch folgt getrennt; aus Softwareprüfung wird kein
 Erfolg der erneut erforderlichen Fünferserie abgeleitet.
+
+Der abgeschlossene neue Geräteversuch steht im aktuellen Ergebnisabschnitt
+am Anfang dieses Berichts. Zusätzlicher aktueller CMake-/SDK-PSA-Abgleich:
+Beide echten Proximity-PSA-Tests bestanden am MTU-Quellstand. Beim weitergehenden
+40-Test-Lauf bestehen39 Tests; ausschließlich der TLS-Peerversuch fehlt zunächst
+wegen eines Kryptografiemoduls im falschen Python. Nach Auswahl der bereits
+vorhandenen SDK-Pythonumgebung besteht der gezielt wiederholte TLS-Test.
+Der erste Hostbuild brauchte zuvor den vollständigen Werkzeugpfad für den
+Assembler. Beide Umgebungsfehler wurden getrennt vom Quellcode behandelt;
+der fehlgeschlagene Gesamtlauf wird nicht rückwirkend als grüner Lauf bezeichnet.
