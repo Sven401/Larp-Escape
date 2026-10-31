@@ -1,6 +1,10 @@
 # Einrichtungsschlüssel: prüfbare Entscheidungsvorlage
 
-Status: **Vorschlag, nicht bestätigt oder implementiert**, 31.10.2026.
+Status: **Aufbewahrungsweg A vom Nutzer bestätigt, Umsetzung offen**, 31.10.2026.
+Quelle: Antwort „Schlüsseldatei pro Box umsetzen (empfohlen)“ auf die konkrete
+Aufbewahrungsfrage in Sitzung `01a192a7-694c-73b2-b7b4-05d67b091cf5`.
+Container/KDF/Providerdetails und der physische Erstnachweis waren ausdrücklich
+ausgenommen und bleiben eigenständige offene Ausarbeitungen.
 Anlass: der vollständige manuelle Ersatzweg aus #93 benötigt tatsächlich
 veranstaltungsbezogene GM-Rechte. Der bestehende Device-Registerkern beweist
 diese Zuordnung noch nicht. Nutzerziel, Schlüsselwechsel und Recovery folgen
@@ -11,8 +15,9 @@ Arbeitsbasis `7a44ac502529cb66b45d6a802ff96b180012e8d3` mit
 [Draft #135](https://github.com/Sven401/Larp-Escape/pull/135). Entwurf und
 Koordination Root nach [UI/UX-Rolle](ROLLE.md), technische Ausarbeitung
 `developer_p1a3`, gezielte unabhängige Sicherheitsprüfung `module_digest_review`.
-Die technischen und gestalterischen Aussagen unten sind eine Vorentscheidung,
-keine gerenderte Oberfläche, Nutzerprüfung oder Geräteabnahme.
+Bestätigt ist die Aufbewahrungswahl; die weiteren technischen und gestalterischen
+Aussagen unten sind eine Ausarbeitung, keine gerenderte Oberfläche,
+Nutzerprüfung oder Geräteabnahme.
 
 ## Nutzer und Geltungsbereich
 
@@ -57,8 +62,8 @@ Ablesen, Kopieren, Verlust, Sichtschutz und Wiederimport müssten eigens entworf
 und geprüft werden. Die Implementierung führt diese Variante nicht still zusätzlich
 als Rescuekey ein. Auch sie ersetzt weder Boxprüfung noch aktuelle Autorisierung.
 
-Die konkrete Produktentscheidung ist zunächst **A oder B als vorgesehener
-Aufbewahrungsweg**. A ist der technische Vorschlag, noch keine Nutzerfreigabe.
+Die konkrete Produktentscheidung ist **A als vorgesehener Aufbewahrungsweg**.
+Die Nutzerfreigabe umfasst keine zusätzliche Papier-/QR- oder Rescuevariante.
 
 ## Zustände und sichtbare Handlungen für A
 
@@ -121,6 +126,7 @@ Die gezielte unabhängige Gegenprüfung durch `module_digest_review` am 31.10.20
 ergab keine offene P1/P2-Abweichung zum bestehenden Vertrag. Die Klarstellungen
 zum tatsächlichen Wiederimport und zum vollständigen Recoveryweg W1–W6 sind
 eingearbeitet. Das ist eine Konzept-/Vertragsprüfung, keine Produktfreigabe.
-Nächster Schritt ist die Bestätigung der konkreten Aufbewahrungsentscheidung;
-der physische Erstnachweis bleibt ein gesondert vorzubereitender Entscheidungspunkt. Kein Upload,
+Nächster Schritt ist die konkrete technische Ausarbeitung des bestätigten
+Dateiwegs; der physische Erstnachweis bleibt ein gesondert vorzubereitender
+Entscheidungspunkt. Kein Upload,
 Release, Schlüsselprovisionieren oder Gerätezugriff durch diesen Entwurf.
