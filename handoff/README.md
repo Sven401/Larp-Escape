@@ -1,5 +1,8 @@
 # Technische Projektübergabe
 
+**Produktstand · 31.10.2026:** [PO-Update: Gelb, autonomer Zweistationenbeleg,
+getrennter PR-Prüfstand und offene Spielpaketkette](PRODUKTSTAND-2026-10-31.md).
+
 **Einstieg aktualisiert · 30.10.2026:** Auf geprüftem Integrationsstand
 `6e6310cf2994b7e024eaf0da9659ae30cd50e4ff` sind die Vorbereitungen aus
 [#100](https://github.com/Sven401/Larp-Escape/pull/100),
