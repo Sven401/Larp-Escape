@@ -1,0 +1,141 @@
+{
+  "tool": "Bambu Studio 2.8.2.61",
+  "printer": "Bambu Lab A1 mini, 0.4 mm",
+  "bed": "Textured PEI Plate",
+  "date": "2026-10-31",
+  "note": "Digital slicing only; estimates are not real print or fit measurements.",
+  "parts": [
+    {
+      "part": "base",
+      "stl_sha256": "24489c78894b55db8a16260e03f4bb1667c10c79b9ecdae25ff8bb98c0dbdbde",
+      "filament": "petg_hf",
+      "slicer_return_code": 0,
+      "warning": "",
+      "estimated_seconds": 24485.599609375,
+      "estimated_grams": 291.77386474609375,
+      "bbox": {
+        "depth": 148.0,
+        "height": 87.0,
+        "width": 168.0,
+        "x": 6.0,
+        "y": 16.000009536743164,
+        "z": 0.0
+      },
+      "gcode_sha256": "3411fc1654ad52f3b670c16318d28f703ae86a236564a65dffa0f559ea11a969",
+      "project_3mf_sha256": "a79782ef6c0f5481737dd003f5ffa2a148ed09a16a284f5d87246de63b467a8f",
+      "wall_loops": 4,
+      "infill_percent": 20.0,
+      "layer_mm": 0.20000000298023224
+    },
+    {
+      "part": "tray",
+      "stl_sha256": "e29f6c5d87185f736ba59bcbb3e4ddba26a27621e4473a9fcce7fc1308ad4287",
+      "filament": "petg_hf",
+      "slicer_return_code": 0,
+      "warning": "",
+      "estimated_seconds": 2981.87353515625,
+      "estimated_grams": 21.388416290283203,
+      "bbox": {
+        "depth": 136.0,
+        "height": 8.0,
+        "width": 138.0,
+        "x": 21.000009536743164,
+        "y": 22.000009536743164,
+        "z": 0.0
+      },
+      "gcode_sha256": "819fb975f4b41e15e7bb80cada2f70ca73bf6ef1257192c64b86c93f2f92346c",
+      "project_3mf_sha256": "f1828a2ef5db43df4924111733bc943d51622892e884853cb5899eec6c7b35a0",
+      "wall_loops": 4,
+      "infill_percent": 20.0,
+      "layer_mm": 0.20000000298023224
+    },
+    {
+      "part": "lid",
+      "stl_sha256": "14cde595fef5623646952850ae36e69ad3426cc2a322164a4794feeda20e049a",
+      "filament": "petg_hf",
+      "slicer_return_code": 0,
+      "warning": "",
+      "estimated_seconds": 5426.845703125,
+      "estimated_grams": 61.420555114746094,
+      "bbox": {
+        "depth": 148.0,
+        "height": 4.5,
+        "width": 168.0,
+        "x": 6.0,
+        "y": 16.000009536743164,
+        "z": 0.0
+      },
+      "gcode_sha256": "98c95d8285cbc48db50db2746b0edb09d52a9f342ad295c90b9c2cb248c8d30d",
+      "project_3mf_sha256": "ae7950e26de74e7c314cdd15edad53b252dc3cb4407528dbc7f5b943ae01e146",
+      "wall_loops": 4,
+      "infill_percent": 20.0,
+      "layer_mm": 0.20000000298023224
+    },
+    {
+      "part": "diffuser",
+      "stl_sha256": "7b641fe440d3e8fea8e5aedd177cc8de8825a207a2a0ea8cf07ca5bed6b6eccb",
+      "filament": "petg_translucent",
+      "slicer_return_code": 0,
+      "warning": "",
+      "estimated_seconds": 1735.000244140625,
+      "estimated_grams": 8.286364555358887,
+      "bbox": {
+        "depth": 102.08455657958984,
+        "height": 6.400000095367432,
+        "width": 102.08455657958984,
+        "x": 38.95771026611328,
+        "y": 38.957725524902344,
+        "z": 0.0
+      },
+      "gcode_sha256": "ecf5148415004eeca7d9c507ba92bb659b966bfcb496069ffe34b27f960d7bca",
+      "project_3mf_sha256": "4b55bff2ddcc69b4b76d1161dc2e60e5ee73ab3cd2b8a7164f9ff7c5280f52ad",
+      "wall_loops": 4,
+      "infill_percent": 20.0,
+      "layer_mm": 0.20000000298023224
+    },
+    {
+      "part": "ring_holder",
+      "stl_sha256": "c9fde4bf903e05e7393d47377e787ae374441aaf9e295916dc649ba229802968",
+      "filament": "petg_hf",
+      "slicer_return_code": 0,
+      "warning": "",
+      "estimated_seconds": 1583.93310546875,
+      "estimated_grams": 8.301265716552734,
+      "bbox": {
+        "depth": 112.1662826538086,
+        "height": 12.399999618530273,
+        "width": 112.15372467041016,
+        "x": 42.257347106933594,
+        "y": 25.710039138793945,
+        "z": 0.0
+      },
+      "gcode_sha256": "1b4f95d6b735bbb3cf5c4d78684c75eeb6dcbcd9b6ff94488cde8729510b3dbd",
+      "project_3mf_sha256": "5ca2518baae4cc5e094d46a4d4d36ca812789e44b717d90b6294f0c98660673e",
+      "wall_loops": 4,
+      "infill_percent": 20.0,
+      "layer_mm": 0.20000000298023224
+    },
+    {
+      "part": "coupon",
+      "stl_sha256": "1a8085c77efb3622a9646242f2a6ba1775ab047ca5adf65e23d4794c59553c6f",
+      "filament": "petg_hf",
+      "slicer_return_code": 0,
+      "warning": "",
+      "estimated_seconds": 1109.4246826171875,
+      "estimated_grams": 5.222868919372559,
+      "bbox": {
+        "depth": 24.0,
+        "height": 10.0,
+        "width": 50.0,
+        "x": 65.0,
+        "y": 78.0,
+        "z": 0.0
+      },
+      "gcode_sha256": "4ad7a55531c38a70962de0dd70a3c9d64f7929b6a57963102a70a35bc460062a",
+      "project_3mf_sha256": "9219348689029e856e0f0c96be512d754a952b6e58db55048dced59c6f3688d9",
+      "wall_loops": 4,
+      "infill_percent": 20.0,
+      "layer_mm": 0.20000000298023224
+    }
+  ]
+}

@@ -1,0 +1,333 @@
+{
+  "revision": "R1",
+  "board_mm": [
+    85,
+    80
+  ],
+  "mounts_mm": [
+    [
+      5,
+      5
+    ],
+    [
+      80,
+      5
+    ],
+    [
+      5,
+      75
+    ],
+    [
+      80,
+      75
+    ]
+  ],
+  "antenna_notch_mm": [
+    15.5,
+    0,
+    35.5,
+    15
+  ],
+  "parts": [
+    {
+      "ref": "J1",
+      "value": "DevKitC J1 socket 1x22",
+      "footprint": "Connector_PinSocket_2.54mm:PinSocket_1x22_P2.54mm_Vertical",
+      "xy": [
+        14,
+        2
+      ],
+      "pins": {
+        "8": "GPIO15",
+        "9": "GPIO16",
+        "22": "GND"
+      },
+      "pin_count": 22
+    },
+    {
+      "ref": "J3",
+      "value": "DevKitC J3 socket 1x22",
+      "footprint": "Connector_PinSocket_2.54mm:PinSocket_1x22_P2.54mm_Vertical",
+      "xy": [
+        36.86,
+        2
+      ],
+      "pins": {
+        "1": "GND",
+        "21": "GND",
+        "22": "GND"
+      },
+      "pin_count": 22
+    },
+    {
+      "ref": "J2",
+      "value": "GCT USB4135-GF-A POWER ONLY",
+      "footprint": "Connector_USB:USB_C_Receptacle_GCT_USB4135-GF-A_6P_TopMnt_Horizontal",
+      "xy": [
+        65,
+        76.5475
+      ],
+      "pins": {
+        "A5": "CC1",
+        "A9": "USB5V",
+        "A12": "GND",
+        "B5": "CC2",
+        "B9": "USB5V",
+        "B12": "GND",
+        "SH": "GND"
+      },
+      "pin_count": 7,
+      "pin_numbers": [
+        "A5",
+        "A9",
+        "A12",
+        "B5",
+        "B9",
+        "B12",
+        "SH"
+      ]
+    },
+    {
+      "ref": "F1",
+      "value": "37212000411 2A slow",
+      "footprint": "Fuse:Fuse_Littelfuse_372_D8.50mm",
+      "xy": [
+        73,
+        60
+      ],
+      "pins": {
+        "1": "USB5V",
+        "2": "LED5V"
+      },
+      "pin_count": 2
+    },
+    {
+      "ref": "U1",
+      "value": "SN74AHCT125N",
+      "footprint": "Package_DIP:DIP-14_W7.62mm",
+      "xy": [
+        51,
+        30
+      ],
+      "pins": {
+        "1": "OE_N",
+        "2": "DATA_IN",
+        "3": "DATA_BUFFER",
+        "4": "LED5V",
+        "5": "GND",
+        "7": "GND",
+        "9": "GND",
+        "10": "LED5V",
+        "12": "GND",
+        "13": "LED5V",
+        "14": "LED5V"
+      },
+      "pin_count": 14,
+      "types": {
+        "1": "input",
+        "2": "input",
+        "3": "tri_state",
+        "4": "input",
+        "5": "input",
+        "6": "tri_state",
+        "7": "power_in",
+        "8": "tri_state",
+        "9": "input",
+        "10": "input",
+        "11": "tri_state",
+        "12": "input",
+        "13": "input",
+        "14": "power_in"
+      }
+    },
+    {
+      "ref": "R1",
+      "value": "1k",
+      "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
+      "xy": [
+        40,
+        20
+      ],
+      "pins": {
+        "1": "GPIO15",
+        "2": "DATA_IN"
+      },
+      "pin_count": 2
+    },
+    {
+      "ref": "R2",
+      "value": "10k",
+      "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
+      "xy": [
+        45,
+        25
+      ],
+      "pins": {
+        "1": "DATA_IN",
+        "2": "GND"
+      },
+      "pin_count": 2
+    },
+    {
+      "ref": "R3",
+      "value": "330",
+      "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
+      "xy": [
+        65,
+        30
+      ],
+      "pins": {
+        "1": "DATA_BUFFER",
+        "2": "LED_DATA"
+      },
+      "pin_count": 2
+    },
+    {
+      "ref": "R4",
+      "value": "10k",
+      "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
+      "xy": [
+        65,
+        35
+      ],
+      "pins": {
+        "1": "LED_DATA",
+        "2": "GND"
+      },
+      "pin_count": 2
+    },
+    {
+      "ref": "R5",
+      "value": "10k",
+      "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
+      "xy": [
+        40,
+        56
+      ],
+      "pins": {
+        "1": "GPIO16",
+        "2": "ENABLE_BASE"
+      },
+      "pin_count": 2
+    },
+    {
+      "ref": "R6",
+      "value": "100k",
+      "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
+      "xy": [
+        45,
+        62
+      ],
+      "pins": {
+        "1": "ENABLE_BASE",
+        "2": "GND"
+      },
+      "pin_count": 2
+    },
+    {
+      "ref": "R7",
+      "value": "10k",
+      "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
+      "xy": [
+        65,
+        20
+      ],
+      "pins": {
+        "1": "LED5V",
+        "2": "OE_N"
+      },
+      "pin_count": 2
+    },
+    {
+      "ref": "Q1",
+      "value": "2N3904 EBC",
+      "footprint": "Package_TO_SOT_THT:TO-92_Inline_Wide",
+      "xy": [
+        56,
+        54
+      ],
+      "pins": {
+        "1": "GND",
+        "2": "ENABLE_BASE",
+        "3": "OE_N"
+      },
+      "pin_count": 3,
+      "types": {
+        "1": "passive",
+        "2": "input",
+        "3": "open_collector"
+      }
+    },
+    {
+      "ref": "C1",
+      "value": "1000uF 10V D10 P5",
+      "footprint": "Capacitor_THT:CP_Radial_D10.0mm_P5.00mm",
+      "xy": [
+        68,
+        48
+      ],
+      "pins": {
+        "1": "LED5V",
+        "2": "GND"
+      },
+      "pin_count": 2
+    },
+    {
+      "ref": "C2",
+      "value": "100nF C320C104K5R5TA",
+      "footprint": "NearGlow:C_Kemet_C320_P2.54mm",
+      "xy": [
+        60,
+        26
+      ],
+      "pins": {
+        "1": "LED5V",
+        "2": "GND"
+      },
+      "pin_count": 2
+    },
+    {
+      "ref": "J4",
+      "value": "LED +5V DATA GND",
+      "footprint": "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-3-5.08_1x03_P5.08mm_Horizontal",
+      "xy": [
+        63,
+        10
+      ],
+      "pins": {
+        "1": "LED5V",
+        "2": "LED_DATA",
+        "3": "GND"
+      },
+      "pin_count": 3
+    },
+    {
+      "ref": "R8",
+      "value": "5.1k 1%",
+      "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
+      "xy": [
+        42,
+        70
+      ],
+      "pins": {
+        "1": "CC1",
+        "2": "GND"
+      },
+      "pin_count": 2
+    },
+    {
+      "ref": "R9",
+      "value": "5.1k 1%",
+      "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
+      "xy": [
+        42,
+        75
+      ],
+      "pins": {
+        "1": "CC2",
+        "2": "GND"
+      },
+      "pin_count": 2
+    }
+  ]
+}

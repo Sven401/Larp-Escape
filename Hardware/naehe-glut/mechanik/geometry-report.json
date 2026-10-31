@@ -1,0 +1,148 @@
+{
+  "revision": "NG-R1-mechanical-draft",
+  "freecad_version": "1.0.2",
+  "units": "mm",
+  "parameters": {
+    "width": 168.0,
+    "depth": 148.0,
+    "wall": 3.0,
+    "base_height": 87.0,
+    "lid_thickness": 3.0,
+    "corner_radius": 6.0,
+    "tray_z": 38.0,
+    "tray_thickness": 3.0,
+    "pcb_bottom_z": 46.0,
+    "pcb_thickness": 1.6,
+    "ring_x": 84.0,
+    "ring_y": 52.0,
+    "ring_od": 65.5,
+    "ring_id": 52.3,
+    "ring_thickness": 3.2,
+    "ring_holder_z": 74.6,
+    "screw_clearance": 3.4,
+    "nut_af": 5.8,
+    "nut_depth": 2.8
+  },
+  "parts": {
+    "base": {
+      "valid_brep": true,
+      "solids": 1,
+      "volume_mm3": 289376.6472007012,
+      "stl_closed": true,
+      "stl_facets": 7414,
+      "stl_volume_mm3": 289329.8125,
+      "stl_non_manifold": false,
+      "stl_self_intersections": false,
+      "stl_non_uniform_orientation": false,
+      "step_valid": true,
+      "step_solids": 1,
+      "print_bounds_mm": [
+        168.0,
+        148.0,
+        87.0
+      ]
+    },
+    "tray": {
+      "valid_brep": true,
+      "solids": 1,
+      "volume_mm3": 20500.294973690954,
+      "stl_closed": true,
+      "stl_facets": 5072,
+      "stl_volume_mm3": 20498.802734375,
+      "stl_non_manifold": false,
+      "stl_self_intersections": false,
+      "stl_non_uniform_orientation": false,
+      "step_valid": true,
+      "step_solids": 1,
+      "print_bounds_mm": [
+        138.0,
+        136.0,
+        8.0
+      ]
+    },
+    "lid": {
+      "valid_brep": true,
+      "solids": 1,
+      "volume_mm3": 65270.60521352305,
+      "stl_closed": true,
+      "stl_facets": 3260,
+      "stl_volume_mm3": 65280.59375,
+      "stl_non_manifold": false,
+      "stl_self_intersections": false,
+      "stl_non_uniform_orientation": false,
+      "step_valid": true,
+      "step_solids": 1,
+      "print_bounds_mm": [
+        168.0,
+        148.0,
+        4.500000000000043
+      ]
+    },
+    "diffuser": {
+      "valid_brep": true,
+      "solids": 1,
+      "volume_mm3": 6900.619266550397,
+      "stl_closed": true,
+      "stl_facets": 836,
+      "stl_volume_mm3": 6894.19921875,
+      "stl_non_manifold": false,
+      "stl_self_intersections": false,
+      "stl_non_uniform_orientation": false,
+      "step_valid": true,
+      "step_solids": 1,
+      "print_bounds_mm": [
+        73.0,
+        73.0,
+        6.400000000000034
+      ]
+    },
+    "ring_holder": {
+      "valid_brep": true,
+      "solids": 1,
+      "volume_mm3": 6938.261588893596,
+      "stl_closed": true,
+      "stl_facets": 4536,
+      "stl_volume_mm3": 6935.13818359375,
+      "stl_non_manifold": false,
+      "stl_self_intersections": false,
+      "stl_non_uniform_orientation": false,
+      "step_valid": true,
+      "step_solids": 1,
+      "print_bounds_mm": [
+        79.28203230275511,
+        79.48629904082131,
+        12.400000000000006
+      ]
+    },
+    "coupon": {
+      "valid_brep": true,
+      "solids": 1,
+      "volume_mm3": 5816.6853153862385,
+      "stl_closed": true,
+      "stl_facets": 744,
+      "stl_volume_mm3": 5815.9140625,
+      "stl_non_manifold": false,
+      "stl_self_intersections": false,
+      "stl_non_uniform_orientation": false,
+      "step_valid": true,
+      "step_solids": 1,
+      "print_bounds_mm": [
+        50.0,
+        24.0,
+        10.0
+      ]
+    }
+  },
+  "collisions_mm3": {},
+  "notes": [
+    "Digital checks do not establish physical fit, RF performance or water resistance.",
+    "Cable envelopes are reserved design spaces, not certified dimensions of a selected cable."
+  ],
+  "pcb_step_sha256": "142e65eeb9bf46b686526d12e6fadaa2a7eabe060a8cecdd4da1308241c7ec7c",
+  "pcb_step_transform": "KiCad STEP + (45,137,46); KiCad layout (u,v) -> (45+u,137-v)",
+  "module_collisions_mm3": {},
+  "diffuser_support_area_mm2": 20.9979,
+  "external_metal_antenna_clearance_mm": 15,
+  "antenna_clearance_intersections_mm3": {},
+  "passed": true
+}

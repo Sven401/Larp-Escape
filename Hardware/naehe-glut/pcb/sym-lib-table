@@ -1,0 +1,1 @@
+(sym_lib_table (version 7) (lib (name "NearGlow") (type "KiCad") (uri "${KIPRJMOD}/NearGlow.kicad_sym") (options "") (descr "Project-local carrier symbols")))
