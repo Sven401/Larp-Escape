@@ -1,0 +1,25 @@
+{
+  "source": "https://github.com/bambulab/BambuStudio/tree/v02.08.02.61/resources/profiles/BBL",
+  "source_license": "BambuStudio AGPL-3.0; retain upstream attribution",
+  "sha256": {
+    "machine\\Bambu Lab A1 mini 0.4 nozzle.json": "1b028c1c4df4ef075571dab8597b54c6c9f32b1b914b3ca271f4ae38805ff6af",
+    "machine\\fdm_bbl_3dp_001_common.json": "aa5b0148c3131965ab2bb1d377b43301304030c3d87b339897cef98809a9004f",
+    "machine\\fdm_machine_common.json": "aef949f605e74bd7370dab061d9cb9f6b7fde5ae92e7fe3b34d98c0a7746c514",
+    "machine\\Bambu Lab A1 mini 0.4 nozzle template machine_start_gcode.json": "78dde019be6bf06b0db7252778215016cfc623cd4406fd2f6aec07cd0bd889e8",
+    "machine\\Bambu Lab A1 mini 0.4 nozzle template machine_end_gcode.json": "3d7a8fe220fde5b793ade2657742ea74e8e8c6ec50cbadc330b87dacac3ef7f4",
+    "machine\\Bambu Lab A1 mini 0.4 nozzle template layer_change_gcode.json": "2a5ec06e6b2ef607f46b97a51d68314a2d9cc4b23dee91b6982c70e2b0badd47",
+    "machine\\Bambu Lab A1 mini 0.4 nozzle template time_lapse_gcode.json": "a3d31982b3ce7e8843826014ad41ce4e624438f89550ea784fe05c164478f998",
+    "machine\\Bambu Lab A1 mini 0.4 nozzle template change_filament_gcode.json": "bf534d9a5b2be9a6814f25a2bfc1a98f153d7b4b88b5abcfb4560d039b4413ce",
+    "process\\0.20mm Standard @BBL A1M.json": "14678254543d4f458cd58060bffbe39a1a57e796d7d462bd690b3dd37f935c4d",
+    "process\\fdm_process_single_0.20.json": "dc32f236bb0ae0d19560954a1beb87701dac4db85877f5f7c92b3a67315431c5",
+    "process\\fdm_process_single_common.json": "b589e22e3a9f3513dd71d0a1061181c6f24a2e330b73b1cf7f63a292d7d6a37b",
+    "process\\fdm_process_common.json": "ff2c0e49a424f70319e52eff6e84c57604b5b86deb883bb4d5614ff448d0c107",
+    "filament\\Bambu PETG HF @BBL A1M.json": "b0b4f1e62ad9557390e3b3ba6ac29684fbbbc69a7784c118ecb1ea4c76e29d61",
+    "filament\\Bambu PETG HF @base.json": "0134a6fec448bdfb8add8a9e8733924527c632ae6f91529af60f7adad988ffca",
+    "filament\\fdm_filament_pet.json": "33ce64c25a626455eecf244ddd2e75022c08f95a074ba0d1690ab63802fab9d7",
+    "filament\\fdm_filament_common.json": "55573eb37c4031a58e939c4a2c281d62e234192509cac525d4f8d911e8a85c09",
+    "filament\\Bambu PETG Translucent @BBL A1M.json": "b53f325133aca4649720582d91c5dbea6702ff5e83e5eaba0320be6bdfcbb7ad",
+    "filament\\Bambu PETG Translucent @base.json": "805b92479637c5b5d75be2eb0fad8d664dd756c7389015dbc7ae401652b2a2af"
+  },
+  "overrides": "4 walls, 20% gyroid, 5 top/bottom layers, no support, no brim"
+}

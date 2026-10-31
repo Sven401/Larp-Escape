@@ -1,0 +1,986 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<export version="E">
+  <design>
+    <source>C:\Users\seide\.codex\worktrees\naehe-glut-lieferziel\Larp Escape\Hardware\naehe-glut\pcb\naehe-glut-r1.kicad_sch</source>
+    <date>2026-10-31T18:33:21</date>
+    <tool>Eeschema 10.0.8</tool>
+    <sheet number="1" name="/" tstamps="/">
+      <title_block>
+        <title>Naehe Glut ESP32-S3 Carrier</title>
+        <company/>
+        <rev>R1</rev>
+        <date>2026-10-31</date>
+        <source>naehe-glut-r1.kicad_sch</source>
+        <comment number="1" value=""/>
+        <comment number="2" value=""/>
+        <comment number="3" value=""/>
+        <comment number="4" value=""/>
+        <comment number="5" value=""/>
+        <comment number="6" value=""/>
+        <comment number="7" value=""/>
+        <comment number="8" value=""/>
+        <comment number="9" value=""/>
+      </title_block>
+    </sheet>
+  </design>
+  <components>
+    <comp ref="C1">
+      <value>1000uF 10V D10 P5</value>
+      <footprint>Capacitor_THT:CP_Radial_D10.0mm_P5.00mm</footprint>
+      <fields>
+        <field name="Footprint">Capacitor_THT:CP_Radial_D10.0mm_P5.00mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="NearGlow" part="C1" description=""/>
+      <property name="Sheetname" value="naehe-glut-r1"/>
+      <property name="Sheetfile" value="naehe-glut-r1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>eae021a3-8329-57b2-88c1-969a19b4f9d3</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C2">
+      <value>100nF C320C104K5R5TA</value>
+      <footprint>NearGlow:C_Kemet_C320_P2.54mm</footprint>
+      <fields>
+        <field name="Footprint">NearGlow:C_Kemet_C320_P2.54mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="NearGlow" part="C2" description=""/>
+      <property name="Sheetname" value="naehe-glut-r1"/>
+      <property name="Sheetfile" value="naehe-glut-r1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>f944aa6e-ebf9-5e9b-9568-b91522976348</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="F1">
+      <value>37212000411 2A slow</value>
+      <footprint>Fuse:Fuse_Littelfuse_372_D8.50mm</footprint>
+      <fields>
+        <field name="Footprint">Fuse:Fuse_Littelfuse_372_D8.50mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="NearGlow" part="F1" description=""/>
+      <property name="Sheetname" value="naehe-glut-r1"/>
+      <property name="Sheetfile" value="naehe-glut-r1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>b45e2b0d-f4e1-5e10-a6ed-36310d99c446</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="J1">
+      <value>DevKitC J1 socket 1x22</value>
+      <footprint>Connector_PinSocket_2.54mm:PinSocket_1x22_P2.54mm_Vertical</footprint>
+      <fields>
+        <field name="Footprint">Connector_PinSocket_2.54mm:PinSocket_1x22_P2.54mm_Vertical</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="NearGlow" part="J1" description=""/>
+      <property name="Sheetname" value="naehe-glut-r1"/>
+      <property name="Sheetfile" value="naehe-glut-r1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>3e745770-bc23-57e0-a1a0-aea228ff7fff</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+            <pin num="3"/>
+            <pin num="4"/>
+            <pin num="5"/>
+            <pin num="6"/>
+            <pin num="7"/>
+            <pin num="8"/>
+            <pin num="9"/>
+            <pin num="10"/>
+            <pin num="11"/>
+            <pin num="12"/>
+            <pin num="13"/>
+            <pin num="14"/>
+            <pin num="15"/>
+            <pin num="16"/>
+            <pin num="17"/>
+            <pin num="18"/>
+            <pin num="19"/>
+            <pin num="20"/>
+            <pin num="21"/>
+            <pin num="22"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="J2">
+      <value>GCT USB4135-GF-A POWER ONLY</value>
+      <footprint>Connector_USB:USB_C_Receptacle_GCT_USB4135-GF-A_6P_TopMnt_Horizontal</footprint>
+      <fields>
+        <field name="Footprint">Connector_USB:USB_C_Receptacle_GCT_USB4135-GF-A_6P_TopMnt_Horizontal</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="NearGlow" part="J2" description=""/>
+      <property name="Sheetname" value="naehe-glut-r1"/>
+      <property name="Sheetfile" value="naehe-glut-r1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>ebaba8ca-2318-58f1-abf6-860ecb22f98d</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="A5"/>
+            <pin num="A9"/>
+            <pin num="A12"/>
+            <pin num="B5"/>
+            <pin num="B9"/>
+            <pin num="B12"/>
+            <pin num="SH"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="J3">
+      <value>DevKitC J3 socket 1x22</value>
+      <footprint>Connector_PinSocket_2.54mm:PinSocket_1x22_P2.54mm_Vertical</footprint>
+      <fields>
+        <field name="Footprint">Connector_PinSocket_2.54mm:PinSocket_1x22_P2.54mm_Vertical</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="NearGlow" part="J3" description=""/>
+      <property name="Sheetname" value="naehe-glut-r1"/>
+      <property name="Sheetfile" value="naehe-glut-r1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>f6eafa86-6f0f-56f9-ab25-4208a1120555</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+            <pin num="3"/>
+            <pin num="4"/>
+            <pin num="5"/>
+            <pin num="6"/>
+            <pin num="7"/>
+            <pin num="8"/>
+            <pin num="9"/>
+            <pin num="10"/>
+            <pin num="11"/>
+            <pin num="12"/>
+            <pin num="13"/>
+            <pin num="14"/>
+            <pin num="15"/>
+            <pin num="16"/>
+            <pin num="17"/>
+            <pin num="18"/>
+            <pin num="19"/>
+            <pin num="20"/>
+            <pin num="21"/>
+            <pin num="22"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="J4">
+      <value>LED +5V DATA GND</value>
+      <footprint>TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-3-5.08_1x03_P5.08mm_Horizontal</footprint>
+      <fields>
+        <field name="Footprint">TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-3-5.08_1x03_P5.08mm_Horizontal</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="NearGlow" part="J4" description=""/>
+      <property name="Sheetname" value="naehe-glut-r1"/>
+      <property name="Sheetfile" value="naehe-glut-r1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>3530adf4-c2ca-54de-9247-df842736b6d5</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+            <pin num="3"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="Q1">
+      <value>2N3904 EBC</value>
+      <footprint>Package_TO_SOT_THT:TO-92_Inline_Wide</footprint>
+      <fields>
+        <field name="Footprint">Package_TO_SOT_THT:TO-92_Inline_Wide</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="NearGlow" part="Q1" description=""/>
+      <property name="Sheetname" value="naehe-glut-r1"/>
+      <property name="Sheetfile" value="naehe-glut-r1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>3ca5b3a1-8a6d-5290-ab57-99dd5a862429</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+            <pin num="3"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R1">
+      <value>1k</value>
+      <footprint>Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal</footprint>
+      <fields>
+        <field name="Footprint">Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="NearGlow" part="R1" description=""/>
+      <property name="Sheetname" value="naehe-glut-r1"/>
+      <property name="Sheetfile" value="naehe-glut-r1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>687705a5-7302-564d-b316-0b3322cca96c</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R2">
+      <value>10k</value>
+      <footprint>Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal</footprint>
+      <fields>
+        <field name="Footprint">Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="NearGlow" part="R2" description=""/>
+      <property name="Sheetname" value="naehe-glut-r1"/>
+      <property name="Sheetfile" value="naehe-glut-r1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>5cb1c3d7-9695-50ef-920a-ec003d40dc27</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R3">
+      <value>330</value>
+      <footprint>Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal</footprint>
+      <fields>
+        <field name="Footprint">Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="NearGlow" part="R3" description=""/>
+      <property name="Sheetname" value="naehe-glut-r1"/>
+      <property name="Sheetfile" value="naehe-glut-r1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>aabc5f84-8b23-5d3e-9f56-234050f35e0b</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R4">
+      <value>10k</value>
+      <footprint>Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal</footprint>
+      <fields>
+        <field name="Footprint">Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="NearGlow" part="R4" description=""/>
+      <property name="Sheetname" value="naehe-glut-r1"/>
+      <property name="Sheetfile" value="naehe-glut-r1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>d9ac1fe8-8582-54d5-b6b6-d864ed18a6ad</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R5">
+      <value>10k</value>
+      <footprint>Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal</footprint>
+      <fields>
+        <field name="Footprint">Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="NearGlow" part="R5" description=""/>
+      <property name="Sheetname" value="naehe-glut-r1"/>
+      <property name="Sheetfile" value="naehe-glut-r1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>9d3cd365-acaf-5cff-8492-586a5afe8d8c</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R6">
+      <value>100k</value>
+      <footprint>Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal</footprint>
+      <fields>
+        <field name="Footprint">Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="NearGlow" part="R6" description=""/>
+      <property name="Sheetname" value="naehe-glut-r1"/>
+      <property name="Sheetfile" value="naehe-glut-r1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>514c929a-eb4e-50f1-90f4-870d6cc32571</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R7">
+      <value>10k</value>
+      <footprint>Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal</footprint>
+      <fields>
+        <field name="Footprint">Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="NearGlow" part="R7" description=""/>
+      <property name="Sheetname" value="naehe-glut-r1"/>
+      <property name="Sheetfile" value="naehe-glut-r1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>01e2f180-ef31-5dcf-aa25-01b681eefe79</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R8">
+      <value>5.1k 1%</value>
+      <footprint>Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal</footprint>
+      <fields>
+        <field name="Footprint">Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="NearGlow" part="R8" description=""/>
+      <property name="Sheetname" value="naehe-glut-r1"/>
+      <property name="Sheetfile" value="naehe-glut-r1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>9875f316-84ab-59f9-a11b-33d86a16554d</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R9">
+      <value>5.1k 1%</value>
+      <footprint>Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal</footprint>
+      <fields>
+        <field name="Footprint">Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="NearGlow" part="R9" description=""/>
+      <property name="Sheetname" value="naehe-glut-r1"/>
+      <property name="Sheetfile" value="naehe-glut-r1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>d97d0852-d7aa-5c5c-8396-c80929e40df6</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="U1">
+      <value>SN74AHCT125N</value>
+      <footprint>Package_DIP:DIP-14_W7.62mm</footprint>
+      <fields>
+        <field name="Footprint">Package_DIP:DIP-14_W7.62mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="NearGlow" part="U1" description=""/>
+      <property name="Sheetname" value="naehe-glut-r1"/>
+      <property name="Sheetfile" value="naehe-glut-r1.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>3509396c-9dc5-5e70-a32b-9a096e5a59cd</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+            <pin num="3"/>
+            <pin num="4"/>
+            <pin num="5"/>
+            <pin num="6"/>
+            <pin num="7"/>
+            <pin num="8"/>
+            <pin num="9"/>
+            <pin num="10"/>
+            <pin num="11"/>
+            <pin num="12"/>
+            <pin num="13"/>
+            <pin num="14"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+  </components>
+  <libparts>
+    <libpart lib="NearGlow" part="C1">
+      <fields>
+        <field name="Reference">C</field>
+        <field name="Value">1000uF 10V D10 P5</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="passive"/>
+        <pin num="2" name="2" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="NearGlow" part="C2">
+      <fields>
+        <field name="Reference">C</field>
+        <field name="Value">100nF C320C104K5R5TA</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="passive"/>
+        <pin num="2" name="2" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="NearGlow" part="F1">
+      <fields>
+        <field name="Reference">F</field>
+        <field name="Value">37212000411 2A slow</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="passive"/>
+        <pin num="2" name="2" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="NearGlow" part="J1">
+      <fields>
+        <field name="Reference">J</field>
+        <field name="Value">DevKitC J1 socket 1x22</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="passive"/>
+        <pin num="2" name="2" type="passive"/>
+        <pin num="3" name="3" type="passive"/>
+        <pin num="4" name="4" type="passive"/>
+        <pin num="5" name="5" type="passive"/>
+        <pin num="6" name="6" type="passive"/>
+        <pin num="7" name="7" type="passive"/>
+        <pin num="8" name="8" type="passive"/>
+        <pin num="9" name="9" type="passive"/>
+        <pin num="10" name="10" type="passive"/>
+        <pin num="11" name="11" type="passive"/>
+        <pin num="12" name="12" type="passive"/>
+        <pin num="13" name="13" type="passive"/>
+        <pin num="14" name="14" type="passive"/>
+        <pin num="15" name="15" type="passive"/>
+        <pin num="16" name="16" type="passive"/>
+        <pin num="17" name="17" type="passive"/>
+        <pin num="18" name="18" type="passive"/>
+        <pin num="19" name="19" type="passive"/>
+        <pin num="20" name="20" type="passive"/>
+        <pin num="21" name="21" type="passive"/>
+        <pin num="22" name="22" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="NearGlow" part="J2">
+      <fields>
+        <field name="Reference">J</field>
+        <field name="Value">GCT USB4135-GF-A POWER ONLY</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="A5" name="A5" type="passive"/>
+        <pin num="A9" name="A9" type="passive"/>
+        <pin num="A12" name="A12" type="passive"/>
+        <pin num="B5" name="B5" type="passive"/>
+        <pin num="B9" name="B9" type="passive"/>
+        <pin num="B12" name="B12" type="passive"/>
+        <pin num="SH" name="SH" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="NearGlow" part="J3">
+      <fields>
+        <field name="Reference">J</field>
+        <field name="Value">DevKitC J3 socket 1x22</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="passive"/>
+        <pin num="2" name="2" type="passive"/>
+        <pin num="3" name="3" type="passive"/>
+        <pin num="4" name="4" type="passive"/>
+        <pin num="5" name="5" type="passive"/>
+        <pin num="6" name="6" type="passive"/>
+        <pin num="7" name="7" type="passive"/>
+        <pin num="8" name="8" type="passive"/>
+        <pin num="9" name="9" type="passive"/>
+        <pin num="10" name="10" type="passive"/>
+        <pin num="11" name="11" type="passive"/>
+        <pin num="12" name="12" type="passive"/>
+        <pin num="13" name="13" type="passive"/>
+        <pin num="14" name="14" type="passive"/>
+        <pin num="15" name="15" type="passive"/>
+        <pin num="16" name="16" type="passive"/>
+        <pin num="17" name="17" type="passive"/>
+        <pin num="18" name="18" type="passive"/>
+        <pin num="19" name="19" type="passive"/>
+        <pin num="20" name="20" type="passive"/>
+        <pin num="21" name="21" type="passive"/>
+        <pin num="22" name="22" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="NearGlow" part="J4">
+      <fields>
+        <field name="Reference">J</field>
+        <field name="Value">LED +5V DATA GND</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="passive"/>
+        <pin num="2" name="2" type="passive"/>
+        <pin num="3" name="3" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="NearGlow" part="Q1">
+      <fields>
+        <field name="Reference">Q</field>
+        <field name="Value">2N3904 EBC</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="E" type="passive"/>
+        <pin num="2" name="B" type="input"/>
+        <pin num="3" name="C" type="open_collector"/>
+      </pins>
+    </libpart>
+    <libpart lib="NearGlow" part="R1">
+      <fields>
+        <field name="Reference">R</field>
+        <field name="Value">1k</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="passive"/>
+        <pin num="2" name="2" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="NearGlow" part="R2">
+      <fields>
+        <field name="Reference">R</field>
+        <field name="Value">10k</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="passive"/>
+        <pin num="2" name="2" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="NearGlow" part="R3">
+      <fields>
+        <field name="Reference">R</field>
+        <field name="Value">330</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="passive"/>
+        <pin num="2" name="2" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="NearGlow" part="R4">
+      <fields>
+        <field name="Reference">R</field>
+        <field name="Value">10k</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="passive"/>
+        <pin num="2" name="2" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="NearGlow" part="R5">
+      <fields>
+        <field name="Reference">R</field>
+        <field name="Value">10k</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="passive"/>
+        <pin num="2" name="2" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="NearGlow" part="R6">
+      <fields>
+        <field name="Reference">R</field>
+        <field name="Value">100k</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="passive"/>
+        <pin num="2" name="2" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="NearGlow" part="R7">
+      <fields>
+        <field name="Reference">R</field>
+        <field name="Value">10k</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="passive"/>
+        <pin num="2" name="2" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="NearGlow" part="R8">
+      <fields>
+        <field name="Reference">R</field>
+        <field name="Value">5.1k 1%</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="passive"/>
+        <pin num="2" name="2" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="NearGlow" part="R9">
+      <fields>
+        <field name="Reference">R</field>
+        <field name="Value">5.1k 1%</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="passive"/>
+        <pin num="2" name="2" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="NearGlow" part="U1">
+      <fields>
+        <field name="Reference">U</field>
+        <field name="Value">SN74AHCT125N</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="1OE_N" type="input"/>
+        <pin num="2" name="1A" type="input"/>
+        <pin num="3" name="1Y" type="tri_state"/>
+        <pin num="4" name="2OE_N" type="input"/>
+        <pin num="5" name="2A" type="input"/>
+        <pin num="6" name="2Y" type="tri_state"/>
+        <pin num="7" name="GND" type="power_in"/>
+        <pin num="8" name="3Y" type="tri_state"/>
+        <pin num="9" name="3A" type="input"/>
+        <pin num="10" name="3OE_N" type="input"/>
+        <pin num="11" name="4Y" type="tri_state"/>
+        <pin num="12" name="4A" type="input"/>
+        <pin num="13" name="4OE_N" type="input"/>
+        <pin num="14" name="VCC" type="power_in"/>
+      </pins>
+    </libpart>
+  </libparts>
+  <libraries>
+    <library logical="NearGlow">
+      <uri>${KIPRJMOD}/NearGlow.kicad_sym</uri>
+    </library>
+  </libraries>
+  <nets>
+    <net code="1" name="/CC1" class="Default">
+      <node ref="J2" pin="A5" pinfunction="A5_A5" pintype="passive"/>
+      <node ref="R8" pin="1" pinfunction="1_1" pintype="passive"/>
+    </net>
+    <net code="2" name="/CC2" class="Default">
+      <node ref="J2" pin="B5" pinfunction="B5_B5" pintype="passive"/>
+      <node ref="R9" pin="1" pinfunction="1_1" pintype="passive"/>
+    </net>
+    <net code="3" name="/DATA_BUFFER" class="Default">
+      <node ref="R3" pin="1" pinfunction="1_1" pintype="passive"/>
+      <node ref="U1" pin="3" pinfunction="1Y_3" pintype="tri_state"/>
+    </net>
+    <net code="4" name="/DATA_IN" class="Default">
+      <node ref="R1" pin="2" pinfunction="2_2" pintype="passive"/>
+      <node ref="R2" pin="1" pinfunction="1_1" pintype="passive"/>
+      <node ref="U1" pin="2" pinfunction="1A_2" pintype="input"/>
+    </net>
+    <net code="5" name="/ENABLE_BASE" class="Default">
+      <node ref="Q1" pin="2" pinfunction="B_2" pintype="input"/>
+      <node ref="R5" pin="2" pinfunction="2_2" pintype="passive"/>
+      <node ref="R6" pin="1" pinfunction="1_1" pintype="passive"/>
+    </net>
+    <net code="6" name="/GND" class="Default">
+      <node ref="C1" pin="2" pinfunction="2_2" pintype="passive"/>
+      <node ref="C2" pin="2" pinfunction="2_2" pintype="passive"/>
+      <node ref="J1" pin="22" pinfunction="22_22" pintype="passive"/>
+      <node ref="J2" pin="A12" pinfunction="A12_A12" pintype="passive"/>
+      <node ref="J2" pin="B12" pinfunction="B12_B12" pintype="passive"/>
+      <node ref="J2" pin="SH" pinfunction="SH_SH" pintype="passive"/>
+      <node ref="J3" pin="1" pinfunction="1_1" pintype="passive"/>
+      <node ref="J3" pin="21" pinfunction="21_21" pintype="passive"/>
+      <node ref="J3" pin="22" pinfunction="22_22" pintype="passive"/>
+      <node ref="J4" pin="3" pinfunction="3_3" pintype="passive"/>
+      <node ref="Q1" pin="1" pinfunction="E_1" pintype="passive"/>
+      <node ref="R2" pin="2" pinfunction="2_2" pintype="passive"/>
+      <node ref="R4" pin="2" pinfunction="2_2" pintype="passive"/>
+      <node ref="R6" pin="2" pinfunction="2_2" pintype="passive"/>
+      <node ref="R8" pin="2" pinfunction="2_2" pintype="passive"/>
+      <node ref="R9" pin="2" pinfunction="2_2" pintype="passive"/>
+      <node ref="U1" pin="12" pinfunction="4A_12" pintype="input"/>
+      <node ref="U1" pin="5" pinfunction="2A_5" pintype="input"/>
+      <node ref="U1" pin="7" pinfunction="GND_7" pintype="power_in"/>
+      <node ref="U1" pin="9" pinfunction="3A_9" pintype="input"/>
+    </net>
+    <net code="7" name="/GPIO15" class="Default">
+      <node ref="J1" pin="8" pinfunction="8_8" pintype="passive"/>
+      <node ref="R1" pin="1" pinfunction="1_1" pintype="passive"/>
+    </net>
+    <net code="8" name="/GPIO16" class="Default">
+      <node ref="J1" pin="9" pinfunction="9_9" pintype="passive"/>
+      <node ref="R5" pin="1" pinfunction="1_1" pintype="passive"/>
+    </net>
+    <net code="9" name="/LED5V" class="Default">
+      <node ref="C1" pin="1" pinfunction="1_1" pintype="passive"/>
+      <node ref="C2" pin="1" pinfunction="1_1" pintype="passive"/>
+      <node ref="F1" pin="2" pinfunction="2_2" pintype="passive"/>
+      <node ref="J4" pin="1" pinfunction="1_1" pintype="passive"/>
+      <node ref="R7" pin="1" pinfunction="1_1" pintype="passive"/>
+      <node ref="U1" pin="10" pinfunction="3OE_N_10" pintype="input"/>
+      <node ref="U1" pin="13" pinfunction="4OE_N_13" pintype="input"/>
+      <node ref="U1" pin="14" pinfunction="VCC_14" pintype="power_in"/>
+      <node ref="U1" pin="4" pinfunction="2OE_N_4" pintype="input"/>
+    </net>
+    <net code="10" name="/LED_DATA" class="Default">
+      <node ref="J4" pin="2" pinfunction="2_2" pintype="passive"/>
+      <node ref="R3" pin="2" pinfunction="2_2" pintype="passive"/>
+      <node ref="R4" pin="1" pinfunction="1_1" pintype="passive"/>
+    </net>
+    <net code="11" name="/OE_N" class="Default">
+      <node ref="Q1" pin="3" pinfunction="C_3" pintype="open_collector"/>
+      <node ref="R7" pin="2" pinfunction="2_2" pintype="passive"/>
+      <node ref="U1" pin="1" pinfunction="1OE_N_1" pintype="input"/>
+    </net>
+    <net code="12" name="/USB5V" class="Default">
+      <node ref="F1" pin="1" pinfunction="1_1" pintype="passive"/>
+      <node ref="J2" pin="A9" pinfunction="A9_A9" pintype="passive"/>
+      <node ref="J2" pin="B9" pinfunction="B9_B9" pintype="passive"/>
+    </net>
+    <net code="13" name="unconnected-(J1-Pad1)" class="Default">
+      <node ref="J1" pin="1" pinfunction="1_1" pintype="passive+no_connect"/>
+    </net>
+    <net code="14" name="unconnected-(J1-Pad2)" class="Default">
+      <node ref="J1" pin="2" pinfunction="2_2" pintype="passive+no_connect"/>
+    </net>
+    <net code="15" name="unconnected-(J1-Pad3)" class="Default">
+      <node ref="J1" pin="3" pinfunction="3_3" pintype="passive+no_connect"/>
+    </net>
+    <net code="16" name="unconnected-(J1-Pad4)" class="Default">
+      <node ref="J1" pin="4" pinfunction="4_4" pintype="passive+no_connect"/>
+    </net>
+    <net code="17" name="unconnected-(J1-Pad5)" class="Default">
+      <node ref="J1" pin="5" pinfunction="5_5" pintype="passive+no_connect"/>
+    </net>
+    <net code="18" name="unconnected-(J1-Pad6)" class="Default">
+      <node ref="J1" pin="6" pinfunction="6_6" pintype="passive+no_connect"/>
+    </net>
+    <net code="19" name="unconnected-(J1-Pad7)" class="Default">
+      <node ref="J1" pin="7" pinfunction="7_7" pintype="passive+no_connect"/>
+    </net>
+    <net code="20" name="unconnected-(J1-Pad10)" class="Default">
+      <node ref="J1" pin="10" pinfunction="10_10" pintype="passive+no_connect"/>
+    </net>
+    <net code="21" name="unconnected-(J1-Pad11)" class="Default">
+      <node ref="J1" pin="11" pinfunction="11_11" pintype="passive+no_connect"/>
+    </net>
+    <net code="22" name="unconnected-(J1-Pad12)" class="Default">
+      <node ref="J1" pin="12" pinfunction="12_12" pintype="passive+no_connect"/>
+    </net>
+    <net code="23" name="unconnected-(J1-Pad13)" class="Default">
+      <node ref="J1" pin="13" pinfunction="13_13" pintype="passive+no_connect"/>
+    </net>
+    <net code="24" name="unconnected-(J1-Pad14)" class="Default">
+      <node ref="J1" pin="14" pinfunction="14_14" pintype="passive+no_connect"/>
+    </net>
+    <net code="25" name="unconnected-(J1-Pad15)" class="Default">
+      <node ref="J1" pin="15" pinfunction="15_15" pintype="passive+no_connect"/>
+    </net>
+    <net code="26" name="unconnected-(J1-Pad16)" class="Default">
+      <node ref="J1" pin="16" pinfunction="16_16" pintype="passive+no_connect"/>
+    </net>
+    <net code="27" name="unconnected-(J1-Pad17)" class="Default">
+      <node ref="J1" pin="17" pinfunction="17_17" pintype="passive+no_connect"/>
+    </net>
+    <net code="28" name="unconnected-(J1-Pad18)" class="Default">
+      <node ref="J1" pin="18" pinfunction="18_18" pintype="passive+no_connect"/>
+    </net>
+    <net code="29" name="unconnected-(J1-Pad19)" class="Default">
+      <node ref="J1" pin="19" pinfunction="19_19" pintype="passive+no_connect"/>
+    </net>
+    <net code="30" name="unconnected-(J1-Pad20)" class="Default">
+      <node ref="J1" pin="20" pinfunction="20_20" pintype="passive+no_connect"/>
+    </net>
+    <net code="31" name="unconnected-(J1-Pad21)" class="Default">
+      <node ref="J1" pin="21" pinfunction="21_21" pintype="passive+no_connect"/>
+    </net>
+    <net code="32" name="unconnected-(J3-Pad2)" class="Default">
+      <node ref="J3" pin="2" pinfunction="2_2" pintype="passive+no_connect"/>
+    </net>
+    <net code="33" name="unconnected-(J3-Pad3)" class="Default">
+      <node ref="J3" pin="3" pinfunction="3_3" pintype="passive+no_connect"/>
+    </net>
+    <net code="34" name="unconnected-(J3-Pad4)" class="Default">
+      <node ref="J3" pin="4" pinfunction="4_4" pintype="passive+no_connect"/>
+    </net>
+    <net code="35" name="unconnected-(J3-Pad5)" class="Default">
+      <node ref="J3" pin="5" pinfunction="5_5" pintype="passive+no_connect"/>
+    </net>
+    <net code="36" name="unconnected-(J3-Pad6)" class="Default">
+      <node ref="J3" pin="6" pinfunction="6_6" pintype="passive+no_connect"/>
+    </net>
+    <net code="37" name="unconnected-(J3-Pad7)" class="Default">
+      <node ref="J3" pin="7" pinfunction="7_7" pintype="passive+no_connect"/>
+    </net>
+    <net code="38" name="unconnected-(J3-Pad8)" class="Default">
+      <node ref="J3" pin="8" pinfunction="8_8" pintype="passive+no_connect"/>
+    </net>
+    <net code="39" name="unconnected-(J3-Pad9)" class="Default">
+      <node ref="J3" pin="9" pinfunction="9_9" pintype="passive+no_connect"/>
+    </net>
+    <net code="40" name="unconnected-(J3-Pad10)" class="Default">
+      <node ref="J3" pin="10" pinfunction="10_10" pintype="passive+no_connect"/>
+    </net>
+    <net code="41" name="unconnected-(J3-Pad11)" class="Default">
+      <node ref="J3" pin="11" pinfunction="11_11" pintype="passive+no_connect"/>
+    </net>
+    <net code="42" name="unconnected-(J3-Pad12)" class="Default">
+      <node ref="J3" pin="12" pinfunction="12_12" pintype="passive+no_connect"/>
+    </net>
+    <net code="43" name="unconnected-(J3-Pad13)" class="Default">
+      <node ref="J3" pin="13" pinfunction="13_13" pintype="passive+no_connect"/>
+    </net>
+    <net code="44" name="unconnected-(J3-Pad14)" class="Default">
+      <node ref="J3" pin="14" pinfunction="14_14" pintype="passive+no_connect"/>
+    </net>
+    <net code="45" name="unconnected-(J3-Pad15)" class="Default">
+      <node ref="J3" pin="15" pinfunction="15_15" pintype="passive+no_connect"/>
+    </net>
+    <net code="46" name="unconnected-(J3-Pad16)" class="Default">
+      <node ref="J3" pin="16" pinfunction="16_16" pintype="passive+no_connect"/>
+    </net>
+    <net code="47" name="unconnected-(J3-Pad17)" class="Default">
+      <node ref="J3" pin="17" pinfunction="17_17" pintype="passive+no_connect"/>
+    </net>
+    <net code="48" name="unconnected-(J3-Pad18)" class="Default">
+      <node ref="J3" pin="18" pinfunction="18_18" pintype="passive+no_connect"/>
+    </net>
+    <net code="49" name="unconnected-(J3-Pad19)" class="Default">
+      <node ref="J3" pin="19" pinfunction="19_19" pintype="passive+no_connect"/>
+    </net>
+    <net code="50" name="unconnected-(J3-Pad20)" class="Default">
+      <node ref="J3" pin="20" pinfunction="20_20" pintype="passive+no_connect"/>
+    </net>
+    <net code="51" name="unconnected-(U1-2Y-Pad6)" class="Default">
+      <node ref="U1" pin="6" pinfunction="2Y_6" pintype="tri_state+no_connect"/>
+    </net>
+    <net code="52" name="unconnected-(U1-3Y-Pad8)" class="Default">
+      <node ref="U1" pin="8" pinfunction="3Y_8" pintype="tri_state+no_connect"/>
+    </net>
+    <net code="53" name="unconnected-(U1-4Y-Pad11)" class="Default">
+      <node ref="U1" pin="11" pinfunction="4Y_11" pintype="tri_state+no_connect"/>
+    </net>
+  </nets>
+</export>

@@ -1,0 +1,231 @@
+{
+  "grid_mm": 0.2,
+  "clearance_mm": 0.25,
+  "routes": [
+    {
+      "net_code": 12,
+      "target": "J2.A9 fanout",
+      "grid_steps": 78
+    },
+    {
+      "net_code": 12,
+      "target": "J2.B9 fanout",
+      "grid_steps": 18
+    },
+    {
+      "net_code": 9,
+      "target": "C1.1",
+      "grid_steps": 111
+    },
+    {
+      "net_code": 9,
+      "target": "U1.10",
+      "grid_steps": 87
+    },
+    {
+      "net_code": 9,
+      "target": "U1.13",
+      "grid_steps": 54
+    },
+    {
+      "net_code": 9,
+      "target": "U1.14",
+      "grid_steps": 14
+    },
+    {
+      "net_code": 9,
+      "target": "C2.1",
+      "grid_steps": 28
+    },
+    {
+      "net_code": 9,
+      "target": "R7.1",
+      "grid_steps": 56
+    },
+    {
+      "net_code": 9,
+      "target": "U1.4",
+      "grid_steps": 52
+    },
+    {
+      "net_code": 9,
+      "target": "J4.1",
+      "grid_steps": 61
+    },
+    {
+      "net_code": 6,
+      "target": "J3.22",
+      "grid_steps": 115
+    },
+    {
+      "net_code": 6,
+      "target": "J3.21",
+      "grid_steps": 14
+    },
+    {
+      "net_code": 6,
+      "target": "U1.7",
+      "grid_steps": 110
+    },
+    {
+      "net_code": 6,
+      "target": "U1.5",
+      "grid_steps": 35
+    },
+    {
+      "net_code": 6,
+      "target": "U1.9",
+      "grid_steps": 48
+    },
+    {
+      "net_code": 6,
+      "target": "U1.12",
+      "grid_steps": 50
+    },
+    {
+      "net_code": 6,
+      "target": "C2.2",
+      "grid_steps": 66
+    },
+    {
+      "net_code": 6,
+      "target": "R2.2",
+      "grid_steps": 41
+    },
+    {
+      "net_code": 6,
+      "target": "Q1.1",
+      "grid_steps": 57
+    },
+    {
+      "net_code": 6,
+      "target": "R6.2",
+      "grid_steps": 45
+    },
+    {
+      "net_code": 6,
+      "target": "R8.2",
+      "grid_steps": 56
+    },
+    {
+      "net_code": 6,
+      "target": "R9.2",
+      "grid_steps": 26
+    },
+    {
+      "net_code": 6,
+      "target": "J2.SH",
+      "grid_steps": 39
+    },
+    {
+      "net_code": 6,
+      "target": "J2.B12 fanout",
+      "grid_steps": 26
+    },
+    {
+      "net_code": 6,
+      "target": "J2.SH",
+      "grid_steps": 19
+    },
+    {
+      "net_code": 6,
+      "target": "J2.A12 fanout",
+      "grid_steps": 30
+    },
+    {
+      "net_code": 6,
+      "target": "J2.SH",
+      "grid_steps": 27
+    },
+    {
+      "net_code": 6,
+      "target": "J2.SH",
+      "grid_steps": 19
+    },
+    {
+      "net_code": 6,
+      "target": "C1.2",
+      "grid_steps": 97
+    },
+    {
+      "net_code": 6,
+      "target": "R4.2",
+      "grid_steps": 77
+    },
+    {
+      "net_code": 6,
+      "target": "J4.3",
+      "grid_steps": 126
+    },
+    {
+      "net_code": 6,
+      "target": "J3.1",
+      "grid_steps": 208
+    },
+    {
+      "net_code": 1,
+      "target": "J2.A5 fanout",
+      "grid_steps": 131
+    },
+    {
+      "net_code": 2,
+      "target": "J2.B5 fanout",
+      "grid_steps": 173
+    },
+    {
+      "net_code": 3,
+      "target": "R3.1",
+      "grid_steps": 151
+    },
+    {
+      "net_code": 4,
+      "target": "R2.1",
+      "grid_steps": 69
+    },
+    {
+      "net_code": 4,
+      "target": "R1.2",
+      "grid_steps": 52
+    },
+    {
+      "net_code": 5,
+      "target": "R6.1",
+      "grid_steps": 57
+    },
+    {
+      "net_code": 5,
+      "target": "Q1.2",
+      "grid_steps": 53
+    },
+    {
+      "net_code": 7,
+      "target": "R1.1",
+      "grid_steps": 500
+    },
+    {
+      "net_code": 8,
+      "target": "R5.1",
+      "grid_steps": 321
+    },
+    {
+      "net_code": 10,
+      "target": "R4.1",
+      "grid_steps": 77
+    },
+    {
+      "net_code": 10,
+      "target": "J4.2",
+      "grid_steps": 101
+    },
+    {
+      "net_code": 11,
+      "target": "Q1.3",
+      "grid_steps": 171
+    },
+    {
+      "net_code": 11,
+      "target": "R7.2",
+      "grid_steps": 174
+    }
+  ]
+}

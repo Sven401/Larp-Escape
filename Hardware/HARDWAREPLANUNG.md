@@ -37,6 +37,15 @@ ESP32-S3-Exemplare für „Nähe Glut“. Eine eigene PCB darf den Termin nicht
 gefährden.“ Dokumentbasis: `b8472542230c5834d9664e98a89eb46c1cba6e57`;
 Prüfweg: bestehende Hardwareplanung gelesen und Nutzerauftrag abgeglichen.
 
+**Umsetzung R1 · 31. Oktober 2026:** Die beauftragte Hardwareentwicklung wird
+unter [Nähe Glut R1](naehe-glut/README.md) geführt, einschließlich
+[Bestellliste](naehe-glut/BESTELLUNG.md), Akkukonzept, PCB und Gehäuse.
+Der Nutzer hat Komponenten-, Akku- und Druckerauswahl ausdrücklich delegiert.
+Der dort dokumentierte digitale Fertigungsstand ersetzt keine Geräteabnahme;
+Firmwareportierung und gemeinsamer Funktionstest der beiden Exemplare bleiben
+offen. Die Terminpriorität und der Aufbau mit vorhandenen Boards/Modulen bei
+PCB-Risiko gelten unverändert.
+
 ## Übernommene Ergebnisse und Konsequenzen
 
 Alle folgenden Ergebnisse sind **aus den Originalberichten ausgelesen und gegen

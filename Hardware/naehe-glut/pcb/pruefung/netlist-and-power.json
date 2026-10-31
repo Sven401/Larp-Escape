@@ -1,0 +1,15 @@
+{
+  "netlist_pad_pairs": 95,
+  "native_netlist_matches_pcb": true,
+  "esp_power_pins_isolated": true,
+  "copper_path_resistance_ohm_at_20C": {
+    "usb_to_fuse": 0.015507844110309893,
+    "fuse_to_led": 0.03131666666666683,
+    "led_ground_to_usb": 0.043632195369910975
+  },
+  "single_path_total_ohm": 0.0904567061468877,
+  "copper_drop_V_at_1_5A": 0.13568505922033153,
+  "copper_drop_V_at_2A": 0.1809134122937754,
+  "copper_loss_W_at_2A": 0.3618268245875508,
+  "assumptions": "35um copper,20um via wall,1.6mm board; single paths carrying full current; excludes fuse,connector,cable; no thermal/device proof"
+}
