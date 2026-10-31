@@ -34,6 +34,26 @@ struct CanonicalJsonResult {
         return error == CanonicalJsonError::None;
     }
 };
+// Optional synchronous instrumentation. No pointers are retained or supplied.
+// Events can be incomplete on failure. Callbacks must not reenter the reader or
+// mutate its source. No event constitutes accepted package data.
+enum class CanonicalJsonToken : std::uint8_t {
+    ObjectBegin,
+    ObjectEnd,
+    ArrayBegin,
+    ArrayEnd,
+    Key,
+    String,
+    Integer,
+    Boolean
+};
+class ICanonicalJsonObserver {
+  public:
+    virtual ~ICanonicalJsonObserver() = default;
+    virtual void token(CanonicalJsonToken token, std::size_t offset) = 0;
+    virtual void scalarByte(std::uint8_t byte) = 0;
+    virtual void scalarEnd(std::size_t offset) = 0;
+};
 // This bounded operating profile is not a schema/module/capability validator.
 // One exclusive synchronous call; source bytes must remain stable during it.
 // No source pointer is retained after return. No heap, DOM or recursive descent.
@@ -42,8 +62,10 @@ class CanonicalPackageJsonReader {
     static const std::size_t DocumentBytes = 262144;
     static const std::size_t ContainerDepth = 32;
     static const std::size_t KeyBytes = 48;
-    CanonicalJsonResult validate(IPackageByteSource &source);
-    CanonicalJsonResult validate(const char *bytes, std::size_t count);
+    CanonicalJsonResult validate(IPackageByteSource &source,
+                                 ICanonicalJsonObserver *observer = nullptr);
+    CanonicalJsonResult validate(const char *bytes, std::size_t count,
+                                 ICanonicalJsonObserver *observer = nullptr);
 
   private:
     enum class State : std::uint8_t {
@@ -63,6 +85,7 @@ class CanonicalPackageJsonReader {
         std::uint8_t key[KeyBytes] = {};
     };
     IPackageByteSource *source_ = nullptr;
+    ICanonicalJsonObserver *observer_ = nullptr;
     CanonicalJsonResult result_;
     std::size_t offset_ = 0;
     std::size_t depth_ = 0;
@@ -72,6 +95,9 @@ class CanonicalPackageJsonReader {
     Frame frames_[ContainerDepth];
 
     void reset(IPackageByteSource *source);
+    void token(CanonicalJsonToken value);
+    void scalarByte(std::uint8_t byte);
+    void scalarEnd();
     bool fail(CanonicalJsonError error, std::size_t offset);
     bool peek();
     bool need();
