@@ -102,4 +102,3 @@ def main():
     print(len(scenarios),'independent proof/limit/fence/security scenarios passed through compiler/program/planner/RAM chain')
 
 if __name__=='__main__':main()
-
