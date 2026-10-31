@@ -24,6 +24,12 @@ if(BUILD_TESTING)
         GIT_TAG cbcd08fa7de711053a3deec6339ee89cad5d2697
         GIT_SHALLOW FALSE)
     FetchContent_MakeAvailable(unity)
+    add_executable(package-json test/test_package_json/test_main.cpp)
+    target_link_libraries(package-json PRIVATE larp_core unity)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        target_compile_options(package-json PRIVATE -Wall -Wextra -Wpedantic -Werror)
+    endif()
+    add_test(NAME package-json COMMAND package-json)
     add_executable(configured-control test/test_configured_control/test_main.cpp)
     target_include_directories(configured-control PRIVATE
         test/test_configured_control/host_stubs
