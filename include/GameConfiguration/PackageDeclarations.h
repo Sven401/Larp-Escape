@@ -30,8 +30,10 @@ struct DeclarationResult {
 // Canonical/source errors take precedence over the first declaration error.
 class PackageDeclarationReader : private ICanonicalJsonObserver {
   public:
-    DeclarationResult validate(IPackageByteSource &source);
-    DeclarationResult validate(const char *bytes, std::size_t count);
+    DeclarationResult validate(IPackageByteSource &source,
+                               ICanonicalJsonObserver *observer = nullptr);
+    DeclarationResult validate(const char *bytes, std::size_t count,
+                               ICanonicalJsonObserver *observer = nullptr);
     static const std::size_t MetadataBytes = 32768;
 
   private:
@@ -74,6 +76,7 @@ class PackageDeclarationReader : private ICanonicalJsonObserver {
     ModuleIdentity module_;
     std::size_t moduleCount_ = 0;
     CanonicalPackageJsonReader canonical_;
+    ICanonicalJsonObserver *downstream_ = nullptr;
     DeclarationResult result_;
     Frame frames_[CanonicalPackageJsonReader::ContainerDepth];
     std::size_t depth_ = 0;
