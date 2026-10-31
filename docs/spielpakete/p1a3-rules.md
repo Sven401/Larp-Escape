@@ -102,3 +102,29 @@ PackageRules.cpp `35722e9e648e41ccfa78477f9c61a00bc950e4f73a48a5b6e9ba2c198a0e37
 PackageRules.h `66590d99eb63bc83a0ab7288877dc2d55474cc845932faca1b395bf58eb30219`.
 Der verÃ¶ffentlichte Commit und die PR-CI werden im PR zugeordnet; diese
 Quellhashes bezeichnen den tatsÃ¤chlich lokal geprÃ¼ften Implementierungsstand.
+
+
+## Speicherfolgeschritt · 31.10.2026
+
+Aufbauend auf #121, exakt `77540756f7f7383aa7117fbeb52c7bfea8b34a83`,
+werden die Diagnosekontexte der 4096 offenen Subjectreferenzen in einem
+uint16-Feld gespeichert. Drei Bits Station, sechs Bits Regel, vier Bits Aktion
+(8 steht intern für keine Aktion), ein Emit- und ein Triggerbit erhalten alle
+bisherigen Grenzen und Diagnosepfade. Byteoffset und Subject-ID bleiben separat;
+keine C++-Bitfelder, neue Allokation oder Änderung des Wireformats.
+
+Gemessen mit MinGW GCC 5.1.0/C++11/32 Bit: Reader **139476 Bytes**, vorher
+155860 Bytes: **16384 Bytes / 10,51 % weniger**. Eine Compilezeitprüfung schützt
+das kompakte Referenzlayout. Die oben genannten Quellhashes und Stackwerte
+bezeichnen weiterhin den historischen #121-Stand, nicht diesen Folgeschritt.
+Das verbleibende Layout liegt weiterhin über 64 KiB; Geräteintegration und
+Taskstackqualifikation bleiben offen. Dieser PR löst den abgegrenzten
+Speicherschritt, nicht das gesamte Epic #93.
+
+Prüfweg: frischer CMake/Ninja-C++11/Werror-Hostbuild und CTest; vorhandener
+Gegenvektorläufer `test/fixtures/package-rules-review/run.py` mit demselben
+Compiler. Zusätzlich werden verzögerte Guard-, Trigger- und Aktionsdiagnosen
+an Station 7 / Regel 63 / Aktion 7 geprüft. Der Läufer bestätigt 187 feste
+Semantikvektoren und 11581 Quellenfehler-/Präfixprüfungen sowie diese drei
+Grenzdiagnosen. Erneute Ausführung vorhandener unabhängiger Vektoren ist keine
+neue unabhängige Fachfreigabe. CI am veröffentlichten Head separat prüfen.

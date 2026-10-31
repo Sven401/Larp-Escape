@@ -3,6 +3,7 @@
 No product encoder/model is used to derive input bytes or expected outcomes.
 """
 import argparse
+import copy
 import json
 import os
 from pathlib import Path
@@ -47,6 +48,43 @@ def main():
             assert line.endswith('/stations/0/rules/0/trigger'), (name, line)
         if name == 'foreign-value':
             assert line.endswith('/stations/0/rules/0/guard'), (name, line)
+    # Exercise every compact-context field at its highest supported index.
+    baseline = json.loads(next(v[1] for v in vectors if v[0] == 'baseline'))
+    template = baseline['stations'][0]
+    stations = []
+    for si in range(8):
+        station = copy.deepcopy(template)
+        station['id'] = 's' + str(si)
+        station['rules'] = []
+        stations.append(station)
+    rule = copy.deepcopy(template['rules'][0])
+    rule['actions'] = []
+    rule['guard'] = {'op': 'literal', 'type': 'bool', 'value': True}
+    for ri in range(64):
+        item = copy.deepcopy(rule)
+        item['id'] = 'r' + str(ri).zfill(2)
+        stations[7]['rules'].append(item)
+    baseline['stations'] = stations
+    baseline['subjects'] = []
+    cases = []
+    last = stations[7]['rules'][63]
+    last['guard'] = {'op': 'fact', 'subject': 'missing'}
+    cases.append((copy.deepcopy(baseline), '/stations/7/rules/63/guard'))
+    last['trigger'] = {'kind': 'fact', 'subjects': ['missing']}
+    cases.append((copy.deepcopy(baseline), '/stations/7/rules/63/trigger'))
+    last['trigger'] = copy.deepcopy(rule['trigger'])
+    last['guard'] = copy.deepcopy(rule['guard'])
+    last['actions'] = [{'op': 'emit', 'subject': 'out' + str(i)} for i in range(8)]
+    baseline['subjects'] = [{'id': 'out' + str(i), 'originStation': 's7'} for i in range(7)]
+    cases.append((copy.deepcopy(baseline), '/stations/7/rules/63/actions/7'))
+    encoded = [json.dumps(data, sort_keys=True, separators=(',', ':')) for data, _ in cases]
+    result = subprocess.run([str(programs['cli'])], input='\n'.join(encoded)+'\n',
+                            text=True, capture_output=True, check=True, env=env)
+    lines = result.stdout.splitlines()
+    assert len(lines) == len(cases), result.stdout
+    for line, (_, path) in zip(lines, cases):
+        assert line.startswith('R ') and line.endswith(path), (path, line)
+    print('3 maximum-index deferred diagnostic paths passed')
     print(f'{len(vectors)} fixed semantic vectors passed')
     selected = {'baseline', 'fallback', 'module', 'instance', 'fact-output-conflict(True, True)'}
     result = subprocess.run([str(programs['faults'])],
