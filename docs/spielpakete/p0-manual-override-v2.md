@@ -258,9 +258,14 @@ Fristgrenze, CAS-Wechsel, Kapazitätsmangel, Commit-Unsicherheit mit und ohne
 bestätigte Übernahme, Generationswechsel und attempted-Effekte prüfen. Die
 bestehenden sechs v1-Traces werden unverändert erneut ausgeführt.
 
-Prüfstand dieses Arbeitsbaums: `python -B -m unittest discover -s scripts/tests
--p 'test_p0*model.py' -q`. Der abschließende aktuelle Lauf wird nach der gezielten
-Vertragsgegenprüfung dokumentiert. Eine grüne Modellsuite allein gibt keinen
+Prüfstand dieses Arbeitsbaums, 31.10.2026:
+`python -B -m unittest discover -s scripts/tests -p 'test_p0*model.py' -q`:
+63 Tests bestanden (45 neue v2-Gegenfälle, 18 bestehende P0-Tests einschließlich
+der sechs unveränderten Referenztraces). Führender Bearbeiter `developer_p1a3`,
+anderer Vertrags-/Securitygegenprüfer `module_digest_review`: gefundene Replay-,
+Kontext-, Fences-, Prozessverlust- und Slotfreigabefehler korrigiert und unabhängig
+nachgeprüft; keine offenen P1/P2 im abgegrenzten Referenzumfang. Root hat den
+gesamten 63-Fälle-Lauf erneut ausgeführt. Eine grüne Modellsuite gibt keinen
 Produkt- oder D1-Pfad frei.
 
 Danach folgen tatsächliche v2-Quellen durch Compiler/Artefaktprüfung/ProgramBuilder,
