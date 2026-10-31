@@ -1,8 +1,8 @@
 # Erster ESP32-S3: Sicherung und Testinstallation
 
 Datum: **31. Oktober 2026**. Status: **ein S3 gesichert und installiert;
-Funkeln-Start, Stop und erneuter Start über die Handy-App mit sichtbarer
-Nutzerbestätigung belegt. Weitere Effekte und Zwei-Stationen-Test offen.**
+Funkeln-Start/Stop/Wiederstart sowie Lichtimpuls und Ripple mit automatischem
+Aus über die Handy-App sichtbar nutzerbestätigt. Zwei-Stationen-Test offen.**
 Quelle: ausdrücklicher Nutzerauftrag in Sitzung
 `01a18f48-193f-7763-a3e4-9731b29c0086`: ESP32-S3 auf COM4 sichern und anschließend
 vorbereitete Testfirmware für den LED-Test über die Handy-App flashen.
@@ -123,7 +123,7 @@ an sie gesendet. Die zweite Station bestätigte den S3-Zugang und meldete
 **Belegt:** Der begrenzte Bedienablauf Start → Stop → erneuter Start funktioniert
 mit dieser App und der eingebauten LED dieses S3. Die sichtbare Wirkung ist
 nutzerbestätigt; keine Kameramessung, Farb-/Helligkeitskalibrierung oder
-zeitliche Effektmessung wurde ausgeführt. Endzustand: Funkeln läuft wieder,
+zeitliche Effektmessung wurde ausgeführt. Endzustand dieses ersten Durchlaufs: Funkeln läuft wieder,
 Handy-App im LED-Bereich verbunden. Der Stop-Knopf bleibt verfügbar.
 
 Private Belege: `private/s3-stations-20261031/phone/` mit öffentlichem UI-XML
@@ -133,7 +133,38 @@ Nutzerbeobachtungen. Zugangsdatei und vorheriger verschlüsselter Zugangsblob
 werden nicht versioniert. Die unabhängige Qualitätsprüfung liest nur die
 öffentlichen UI-/Exportmetadaten; sie ersetzt keine eigene Lichtbeobachtung.
 
-**Weiter offen:** Lichtimpuls und Ripple, BLE-Abbruch-/Neustartfälle,
+## Fortsetzung: Lichtimpuls und Ripple über die App
+
+Ebenfalls am 31.10.2026 ausdrücklich beauftragt und am unveränderten
+Firmware-/Apppaar auf derselben **LED-Box BB71E155** ausgeführt:
+
+| Effekt | Geräte-/Appantwort | Direkte Nutzerbeobachtung |
+| --- | --- | --- |
+| Lichtimpuls | „Lichtimpuls gestartet“, anschließend „Effekt beendet, LEDs aus“ und „Box meldet: LEDs aus“ | „Ja, einmal aufgehellt und dann aus“ |
+| Ripple | „Ripple gestartet“, anschließend dieselbe automatische Abschluss-/Ausmeldung | „Ja, kurz sichtbar und dann aus“ |
+
+Der erste Lichtimpuls wurde vom Gerät bestätigt und selbstständig beendet,
+vom Nutzer jedoch nicht gesehen. Auf dessen Bitte wurde er bewusst wiederholt
+und danach sichtbar bestätigt; der unbeobachtete erste Durchlauf gilt nicht
+als optischer Fehler oder als eigene Sichtabnahme. Bei beiden Effekten wurde
+für den natürlichen Abschluss **kein Stop-Befehl** gesendet.
+
+**Belegt:** bewusster Appstart, sichtbarer kurzer Lichtverlauf und automatisches
+Aus auf der eingebauten einzelnen RGB-LED. Ripple ist hier die vorhandene
+Einpixel-Projektion des logischen Streifeneffekts; eine räumlich laufende Welle
+auf einem LED-Streifen ist damit nicht abgenommen. Keine Zeit-, Farb- oder
+Helligkeitsmessung per Kamera. **Aktueller Endzustand: LEDs aus**, App verbunden
+im LED-Bereich, Ripple ausgewählt.
+
+Zusätzliche private UI-Belege im obigen Handyordner:
+`burst-first-result.xml`, `burst-completed.xml`, `burst-repeat-start.xml`,
+`burst-repeat-completed.xml`, `ripple-start-result.xml`, `ripple-completed.xml`
+und `burst-ripple-observations.json` mit den datierten Nutzerantworten.
+Unabhängiger Beleg-/Dokumentationsreview durch `s3_review`: keine offenen
+Beanstandungen; keine Gerätebedienung, eigene Lichtbeobachtung oder Öffnung
+von Zugangsschlüsseldateien durch den Reviewer.
+
+**Weiter offen:** räumliche Ripple-Wirkung am Streifen, BLE-Abbruch-/Neustartfälle,
 Zwei-S3-/RSSI-Lauf, Reichweiten-/Lastprüfung und vollständiger Nähe-Glut-Effekt.
 Es wurde nur dieses eine S3-Gerät installiert. Weitere Testschritte stehen im
 [S3-Prüfplan](esp32-s3-stations.md).
