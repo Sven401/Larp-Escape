@@ -86,3 +86,13 @@ latch cannot relabel an old NoRelease receipt; new AlreadyReleased refers only
 to the existing group. Result equality includes release. There is currently no
 actual historical ManualResult producer: inactive replay deltas do not establish
 a historical disposition, GM permission or durable transaction proof.
+
+Cross-platform provenance correction after actual Native CTest failure:
+sourceCatalogGoldensSHA256 now guards the original Gitblob LF bytes
+db50c0c16f07ccb2e153ae735f3ef961106a4b930255fd52fcb4fe82faeea72a.
+Only CRLF-to-LF conversion is permitted before source-file SHA256; no JSON or
+other whitespace normalization. The former Windows raw hash55cfa774... is kept
+as optional provenance metadata, not an alternative accepted source. Catalog
+canonical bytes/SHA, decoded expected Program, artifact vectors and all scenario
+expectations are unchanged. Native at ac81f84e failed BEFORE this audit binary
+ran; successful real-PSA tests elsewhere do not substitute for its next gate.
