@@ -22,6 +22,7 @@ set(LARP_CORE_SOURCES
     "${LARP_ROOT}/src/DeviceRuntime/ProfileApplication.cpp"
     "${LARP_ROOT}/src/DeviceRuntime/ProfileController.cpp"
     "${LARP_ROOT}/src/DeviceRuntime/ProfileJournal.cpp"
+    "${LARP_ROOT}/src/DeviceRuntime/ProgressJournal.cpp"
     "${LARP_ROOT}/src/DeviceRuntime/Runtime.cpp"
     "${LARP_ROOT}/src/Companion/AuthorityState.cpp"
     "${LARP_ROOT}/src/Companion/CommandFrame.cpp"
