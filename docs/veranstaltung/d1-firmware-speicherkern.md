@@ -1,6 +1,6 @@
 # D1-B2: begrenzter Firmware-Speicherkern
 
-Status: **Umsetzung in Prüfung**, 31.10.2026. Beauftragte Teilmenge von
+Status: **begrenzter Softwarekern implementiert**, 31.10.2026. Beauftragte Teilmenge von
 [#60](https://github.com/Sven401/Larp-Escape/issues/60), abgeleitet aus
 [D1 v1, Abschnitte 2–4 und Tor B2](d1-persistenz-v1.md). D1-A ist integriert.
 Dieses Paket liefert eine atomare Transaktionsablage, noch keinen vollständigen
@@ -58,7 +58,7 @@ Eigene IDs werden aus `expectedLastIssued + 1 .. + issueCount` vorhergesagt und
 gemeinsam mit den Nutzdaten gespeichert. Vor `Committed` oder bestätigtem
 `Duplicate` dürfen sie weder veröffentlicht noch als Erfolg gemeldet werden.
 
-Der Commit friert Anfrage und Nutzdaten ein, validiert das Medium und ruft direkt
+Der Commit validiert das Medium, friert Anfrage und Nutzdaten ein und ruft direkt
 vor dem ersten Write `IProgressCommitFence::allow` auf. F5a muss diese Freigabe an
 den vollständigen Plan und aktuelle Rechte-/Profil-/Kontextrevisionen binden und
 Änderungen bis zum geklärten Ausgang ordnen. Der Callback ist **keine** Umsetzung
