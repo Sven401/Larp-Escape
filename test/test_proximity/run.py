@@ -56,7 +56,7 @@ def main():
             "-I",str(ROOT/"test/test_proximity/ble_stubs"),"-I",str(ROOT/"firmware/idf-proximity/main"),"-I",str(ROOT/"firmware/led/include"),
             str(ROOT/"test/test_proximity/ble_bearer.cpp"),str(ROOT/"firmware/idf-proximity/main/ProximityBleBearer.cpp"),
             str(ROOT/"firmware/idf-proximity/main/ProximityBleProtocol.cpp"),str(ROOT/"firmware/led/src/NearGlow.cpp"),"-o",str(bearer)],check=True,env=env)
-        for case in ("roundtrip","interval45","notify-error","stale-queued","stale-partial","busy","full-in","full-out","copy","epochs"):
+        for case in ("roundtrip","interval45","notify-error","stale-queued","stale-partial","busy","full-in","full-out","copy","epochs","access-error"):
             subprocess.run([str(bearer),case],check=True,env=env)
 
 if __name__ == "__main__": main()

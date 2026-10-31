@@ -73,7 +73,11 @@ struct ble_uuid128_t {
             __VA_ARGS__                                                                            \
         }                                                                                          \
     }
+struct os_mempool { unsigned mp_num_free; };
+struct os_mbuf_pool { struct os_mempool *omp_pool; };
+int os_msys_num_free(void);
 struct os_mbuf {
+    struct os_mbuf_pool *om_omp;
     uint16_t len;
     unsigned char bytes[128];
 };

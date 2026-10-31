@@ -7,6 +7,7 @@ namespace larp { namespace proximity { namespace ble {
 namespace {
 std::uint32_t now(){return static_cast<std::uint32_t>(esp_timer_get_time()/1000);}
 // BLE_UUID128_INIT uses little-endian UUID bytes.
+void increment(std::uint32_t &value){if(value!=UINT32_MAX)++value;}
 const ble_uuid128_t serviceId=BLE_UUID128_INIT(0x01,0xb1,0xc4,0x78,0xa4,0x35,0xf4,0xa7,0x5a,0x4d,0x50,0x2f,0x01,0x01,0x79,0x6c);
 const ble_uuid128_t inputId=BLE_UUID128_INIT(0x01,0xb1,0xc4,0x78,0xa4,0x35,0xf4,0xa7,0x5a,0x4d,0x50,0x2f,0x02,0x01,0x79,0x6c);
 const ble_uuid128_t outputId=BLE_UUID128_INIT(0x01,0xb1,0xc4,0x78,0xa4,0x35,0xf4,0xa7,0x5a,0x4d,0x50,0x2f,0x03,0x01,0x79,0x6c);
@@ -21,6 +22,22 @@ Revocation Bearer::diagnostic()const{portENTER_CRITICAL(&lock_);const auto value
 void Bearer::abort(std::uint32_t epoch,RevokeReason reason,std::uint32_t age,std::uint16_t offset,std::uint8_t type,int sdk){
     const auto at=now();portENTER_CRITICAL(&lock_);
     if(link_.epoch==epoch){if(last_.reason==RevokeReason::None||last_.epoch!=epoch)last_={reason,epoch,at,age,offset,type,sdk};link_.abort=true;}
+    portEXIT_CRITICAL(&lock_);
+}
+ResourceStats Bearer::resources()const{portENTER_CRITICAL(&lock_);const auto value=stats_;portEXIT_CRITICAL(&lock_);return value;}
+void Bearer::recordAccess(std::uint16_t size,int code){
+    const auto at=now();const auto free=os_msys_num_free();portENTER_CRITICAL(&lock_);
+    stats_.epoch=link_.epoch;increment(stats_.accessCalls);if(!code)increment(stats_.accessOk);
+    stats_.accessAt=at;stats_.accessSize=size;stats_.accessCode=code;
+    if(stats_.minMsysFree<0||free<stats_.minMsysFree)stats_.minMsysFree=free;
+    portEXIT_CRITICAL(&lock_);
+}
+void Bearer::recordNotify(int result,int poolFree,int globalFree){
+    portENTER_CRITICAL(&lock_);stats_.epoch=link_.epoch;increment(stats_.notifyCalls);
+    if(!result)increment(stats_.notifyOk);else if(result==BLE_HS_ENOMEM||result==BLE_HS_EBUSY)increment(stats_.notifyBusy);
+    if(poolFree<0)increment(stats_.notifyAllocFailures);
+    else{stats_.lastNotifyPoolFree=poolFree;if(stats_.minNotifyPoolFree<0||poolFree<stats_.minNotifyPoolFree)stats_.minNotifyPoolFree=poolFree;}
+    if(stats_.minMsysFree<0||globalFree<stats_.minMsysFree)stats_.minMsysFree=globalFree;
     portEXIT_CRITICAL(&lock_);
 }
 void Bearer::revoke(std::uint32_t epoch){abort(epoch,RevokeReason::Owner);}
@@ -67,17 +84,19 @@ void Bearer::advertise(){
 int Bearer::access(std::uint16_t connection,std::uint16_t attribute,ble_gatt_access_ctxt *context,void *arg){
     auto &self=*static_cast<Bearer*>(arg);const auto v=self.snapshot();
     if(!self.onHost()||!context||context->op!=BLE_GATT_ACCESS_OP_WRITE_CHR||attribute!=self.input_||v.handle!=connection||!self.current(v.epoch))return BLE_ATT_ERR_UNLIKELY;
-    const auto size=OS_MBUF_PKTLEN(context->om);if(size<=8||size>20)return BLE_ATT_ERR_INVALID_ATTR_VALUE_LEN;
+    const auto size=OS_MBUF_PKTLEN(context->om);if(size<=8||size>20){self.recordAccess(size,BLE_ATT_ERR_INVALID_ATTR_VALUE_LEN);return BLE_ATT_ERR_INVALID_ATTR_VALUE_LEN;}
     Ingress e;e.kind=Ingress::Kind::Fragment;e.epoch=v.epoch;e.at=now();e.size=size;std::uint16_t copied=0;
-    if(ble_hs_mbuf_to_flat(context->om,e.bytes.data(),e.bytes.size(),&copied)||copied!=size||!self.event(e))return BLE_ATT_ERR_INSUFFICIENT_RES;
-    return 0;
+    const int copiedStatus=ble_hs_mbuf_to_flat(context->om,e.bytes.data(),e.bytes.size(),&copied);
+    if(copiedStatus||copied!=size){self.recordAccess(size,BLE_ATT_ERR_INSUFFICIENT_RES);self.abort(v.epoch,RevokeReason::AccessCopy,0,0,0,copiedStatus?copiedStatus:-1);return BLE_ATT_ERR_INSUFFICIENT_RES;}
+    if(!self.event(e)){self.recordAccess(size,BLE_ATT_ERR_INSUFFICIENT_RES);return BLE_ATT_ERR_INSUFFICIENT_RES;}
+    self.recordAccess(size,0);return 0;
 }
 int Bearer::gap(ble_gap_event *e,void *arg){
     auto &self=*static_cast<Bearer*>(arg);if(!e||!self.onHost())return 0;
     if(e->type==BLE_GAP_EVENT_CONNECT){
         if(e->connect.status){self.advertise();return 0;}
         auto v=self.snapshot();if(v.connected||v.epoch==UINT32_MAX){ble_gap_terminate(e->connect.conn_handle,BLE_ERR_REM_USER_CONN_TERM);if(v.epoch==UINT32_MAX)self.fail();return 0;}
-        portENTER_CRITICAL(&self.lock_);++self.link_.epoch;self.link_.handle=e->connect.conn_handle;self.link_.connected=true;self.link_.subscribed=false;self.link_.abort=false;portEXIT_CRITICAL(&self.lock_);
+        portENTER_CRITICAL(&self.lock_);++self.link_.epoch;self.link_.handle=e->connect.conn_handle;self.link_.connected=true;self.link_.subscribed=false;self.link_.abort=false;self.stats_={};self.stats_.epoch=self.link_.epoch;portEXIT_CRITICAL(&self.lock_);
         self.transfer_=1;self.offset_=0;self.sending_={};self.busy_=false;return 0;
     }
     if(e->type==BLE_GAP_EVENT_DISCONNECT){
@@ -107,7 +126,12 @@ void Bearer::poll(){
             else if(now()-sendingAt_>=(sending_.bytes[1]==0x84?1000U:2000U)){abort(v.epoch,RevokeReason::EgressAge,now()-sendingAt_,offset_,sending_.bytes[1]);sending_={};}
             else{std::array<std::uint8_t,20> bytes{};std::size_t size=0;
                 if(!encodeFrame(sending_,transfer_,offset_,bytes,size)){abort(v.epoch,RevokeReason::FrameEncode,now()-sendingAt_,offset_,sending_.bytes[1]);}
-                else{auto *buffer=ble_hs_mbuf_from_flat(bytes.data(),size);const int result=buffer?ble_gatts_notify_custom(v.handle,output_,buffer):BLE_HS_ENOMEM;
+                else{auto *buffer=ble_hs_mbuf_from_flat(bytes.data(),size);
+                    // Sample the actual pool before notify_custom consumes this buffer.
+                    const int poolFree=buffer&&buffer->om_omp&&buffer->om_omp->omp_pool?buffer->om_omp->omp_pool->mp_num_free:-1;
+                    const int globalFree=os_msys_num_free();
+                    const int result=buffer?ble_gatts_notify_custom(v.handle,output_,buffer):BLE_HS_ENOMEM;
+                    recordNotify(result,poolFree,globalFree);
                     // notify_custom consumes the mbuf on every return, including errors.
                     if(!result){busy_=false;offset_+=size-8;if(offset_==sending_.size){sending_={};offset_=0;if(transfer_==UINT16_MAX)abort(v.epoch,RevokeReason::TransferExhausted);else ++transfer_;}}
                     else if(result==BLE_HS_ENOMEM||result==BLE_HS_EBUSY){if(!busy_){busy_=true;busyAt_=now();}else if(now()-busyAt_>=2000U)abort(v.epoch,RevokeReason::NotifyBusy,now()-sendingAt_,offset_,sending_.bytes[1],result);}

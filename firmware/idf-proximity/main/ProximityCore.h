@@ -149,7 +149,7 @@ public:
     Kind complete(const Mac &peer){if(peer!=peer_)return Kind::None;auto k=kind_;kind_=Kind::None;return k;}
     bool idle()const{return kind_==Kind::None;}bool expired(std::uint32_t now)const{return !idle()&&now-at_>=2000U;}
 };
-struct UsbCommand { enum class Kind { Invalid,Info,Pair,Arm,Stop,Reboot,BleAccess,BleInfo,BleDiag } kind=Kind::Invalid;Config config; };
+struct UsbCommand { enum class Kind { Invalid,Info,Pair,Arm,Stop,Reboot,BleAccess,BleInfo,BleDiag,BleStats } kind=Kind::Invalid;Config config; };
 inline int hex(char c){return c>='0'&&c<='9'?c-'0':c>='a'&&c<='f'?c-'a'+10:c>='A'&&c<='F'?c-'A'+10:-1;}
 inline UsbCommand parse(const char *s) {
     UsbCommand c;if(!s)return c;
@@ -158,6 +158,7 @@ inline UsbCommand parse(const char *s) {
     else if(!std::strcmp(s,"STOP"))c.kind=UsbCommand::Kind::Stop;
     else if(!std::strcmp(s,"REBOOT"))c.kind=UsbCommand::Kind::Reboot;
     else if(!std::strcmp(s,"BLE-ACCESS"))c.kind=UsbCommand::Kind::BleAccess;
+    else if(!std::strcmp(s,"BLE-STATS"))c.kind=UsbCommand::Kind::BleStats;
     else if(!std::strcmp(s,"BLE-DIAG"))c.kind=UsbCommand::Kind::BleDiag;
     else if(!std::strcmp(s,"BLE-INFO"))c.kind=UsbCommand::Kind::BleInfo;
     else if(std::strlen(s)==87&&!std::strncmp(s,"PAIR ",5)&&s[22]==' ') {

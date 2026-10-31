@@ -197,3 +197,34 @@ Geraetesnapshot im Egress, andere Nachrichten maximal 2000ms. Die Snapshotzeit
 an Telemetrieoffset24 und Bearer-Zeit stammen beide aus `esp_timer_get_time()/1000`.
 Ein erfolgreicher Notify-SDKaufruf bestaetigt nur die Uebergabe an NimBLE, keinen
 Empfang der App. Die Diagnose ist kein Funk- oder Latenz-Messnachweis.
+
+
+### ATT-Ressourcendiagnose
+
+Grund19 in `BLE-DIAG` bezeichnet einen lokalen `mbuf_to_flat`-Fehler (SDKcode
+oder -1 bei unerwarteter Kopierlaenge). Der Link wird dann lokal gesperrt.
+`BLE-STATS` liefert separat `type="ble-stats"`, `protocol=1`, `epoch`,
+`accessCalls`, `accessOk`, `accessAtMs`, `accessSize`, `accessCode`, `notifyCalls`,
+`notifyOk`, `notifyBusy`, `notifyAllocFailures`, `minMsysFree`,
+`minNotifyPoolFree`, `lastNotifyPoolFree`. Zaehler sind saturierend uint32 und
+werden bei neuem Link zurueckgesetzt; sie bleiben nach Disconnect lesbar.
+`accessCode` ist der ATT-Rueckgabecode des letzten eigenen Accessaufrufs.
+Minima -1 bedeuten noch keine Beobachtung. Callbackzaehler erfassen nur den
+zum eigenen Input zugelassenen Writepfad, keine CCCD/anderen Attribute.
+
+MSYS ist die globale Anzahl freier Bloecke; ein positives globales Minimum
+beweist keinen freien Block im passenden Pool. Der Notify-Poolwert stammt aus
+dem tatsaechlich zugewiesenen mbuf (`om_omp->omp_pool->mp_num_free`), unmittelbar
+vor `notify_custom`, nachdem dessen eigener Block bereits reserviert wurde.
+Die Werte sind beobachtete Momentaufnahmen, keine reservierten Credits oder
+garantierten Tiefstwerte zwischen Abtastungen. Bei Allocationsfehler ist der
+passende Pool fuer diesen Versuch unbekannt. NotifyBusy umfasst ENOMEM/EBUSY;
+NotifyOk ist nur SDK-Uebergabe, kein Funk-/Appempfangsnachweis.
+
+Im exakt gepinnten SDK reserviert `ble_att_svr_rx_write` seine Antwort vor
+unserem Accesscallback (`ble_att_svr_build_write_rsp` / `ble_att_svr_pkt`).
+Dort kann ATT17 entstehen, ohne unseren Accesszaehler zu erhoehen. Ein Zaehler-
+vergleich ueber den vollstaendigen Fehlerzeitraum kann diese Grenze eingrenzen.
+`BLE_GAP_EVENT_NOTIFY_TX` wird bei Notifications im `ble_gatts_notify_custom`-
+Pfad nach L2CAP-Uebergabe ausgeloest und ist kein Controller-/RF-TXende. Die
+Diagnose aendert weder Sendefristen noch Ressourcenlimits oder Wiederholungen.
