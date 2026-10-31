@@ -6,6 +6,30 @@
 namespace larp {
 namespace configuration {
 using namespace module_ir;
+namespace module_ir {
+bool manualReleasePair(const Pool<Action> &actions, const Rule &original, const Rule &replacement) {
+    if (!original.once || !replacement.once || original.trigger != 3 || original.policy != 3 ||
+        replacement.trigger != 4 || replacement.policy != 2 || replacement.fallback ||
+        original.actionCount != replacement.actionCount || original.actionCount > 8 ||
+        static_cast<std::size_t>(original.firstAction) + original.actionCount > actions.count ||
+        static_cast<std::size_t>(replacement.firstAction) + replacement.actionCount > actions.count)
+        return false;
+    bool emits = false;
+    for (unsigned i = 0; i < original.actionCount; ++i) {
+        const auto &a = actions.data[original.firstAction + i];
+        const auto &b = actions.data[replacement.firstAction + i];
+        if (!a.target || a.target != b.target || a.resource != b.resource || a.expr || b.expr)
+            return false;
+        if (a.op == Op::Emit) {
+            if (b.op != Op::Override || a.resource)
+                return false;
+            emits = true;
+        } else if (a.op != Op::Effect || b.op != Op::Effect || !a.resource)
+            return false;
+    }
+    return emits;
+}
+} // namespace module_ir
 namespace {
 bool positive(const Pool<Node> &nodes, Id index);
 const char *const contentFields[] = {"format",    "label",    "modules",  "packageId", "requires",
@@ -42,10 +66,10 @@ std::uint32_t field(const char *key, const char *const *keys, std::size_t count)
             return 1u << i;
     return 0;
 }
-const char *const opNames[] = {"",     "literal", "parameter", "value", "input", "port_is",
-                               "fact", "not",     "all",       "any",   "eq",    "lt",
-                               "le",   "gt",      "ge",        "add",   "sub",   "set",
-                               "arm",  "cancel",  "emit",      "effect"};
+const char *const opNames[] = {"",     "literal", "parameter", "value",  "input",   "port_is",
+                               "fact", "not",     "all",       "any",    "eq",      "lt",
+                               "le",   "gt",      "ge",        "add",    "sub",     "set",
+                               "arm",  "cancel",  "emit",      "effect", "override"};
 const char *typeName(Type t) {
     switch (t) {
     case Type::Boolean:
@@ -777,8 +801,10 @@ void PackageModuleCompiler::scalar() {
                 fail(ModuleError::Value);
             d.version = intern();
         } else if (!std::strcmp(k, "format")) {
-            if (scalar_ != CanonicalJsonToken::String || !equals("larp.module.v1"))
+            if (scalar_ != CanonicalJsonToken::String ||
+                (!equals("larp.module.v1") && !equals("larp.module.v2")))
                 fail(ModuleError::Value);
+            d.language = equals("larp.module.v2") ? 2 : 1;
         } else if (!std::strcmp(k, "label")) {
             if (scalar_ != CanonicalJsonToken::String || !length_ || length_ > 96)
                 fail(ModuleError::Range);
@@ -913,7 +939,11 @@ void PackageModuleCompiler::scalar() {
     if (f.kind == Kind::Trigger) {
         Rule &r = work_->rules.data[currentRule_ - 1];
         if (!std::strcmp(k, "kind")) {
-            r.trigger = equals("local") ? 1 : equals("timer") ? 2 : equals("fact") ? 3 : 0;
+            r.trigger = equals("local")      ? 1
+                        : equals("timer")    ? 2
+                        : equals("fact")     ? 3
+                        : equals("override") ? 4
+                                             : 0;
             if (!r.trigger)
                 fail(ModuleError::Value);
         } else if (!std::strcmp(k, "timer")) {
@@ -1150,7 +1180,7 @@ void PackageModuleCompiler::close() {
         break;
     case Kind::Trigger: {
         const Rule &r = work_->rules.data[currentRule_ - 1];
-        fields(r.trigger == 1 ? 3 : r.trigger == 2 ? 9 : 5);
+        fields(r.trigger == 1 ? 3 : r.trigger == 2 ? 9 : r.trigger == 4 ? 1 : 5);
         break;
     }
     case Kind::Offline:
@@ -1168,6 +1198,7 @@ void PackageModuleCompiler::close() {
             fields(68);
             break;
         case Op::Emit:
+        case Op::Override:
             fields(36);
             break;
         case Op::Effect:
@@ -1337,6 +1368,33 @@ Type PackageModuleCompiler::expressionType(Id index, Id owner, bool constraint, 
     return n.op == Op::Add || n.op == Op::Sub ? Type::Integer : Type::Boolean;
 }
 bool PackageModuleCompiler::validateDefinitions() {
+    for (std::size_t i = 0; i < work_->definitions.count; ++i)
+        if (work_->definitions.data[i].language == 2 && work_->language != 2) {
+            location_ = work_->definitions.data[i].location;
+            fail(ModuleError::UnsupportedScope);
+        }
+    for (std::size_t i = 0; i < work_->rules.count; ++i)
+        work_->rules.data[i].group = 0;
+    for (std::size_t i = 0; i < work_->rules.count; ++i) {
+        Rule &r = work_->rules.data[i];
+        if (r.policy != 3)
+            continue;
+        location_ = r.location;
+        if (work_->definitions.data[r.owner - 1].language != 2) {
+            fail(ModuleError::UnsupportedScope);
+            continue;
+        }
+        Rule *replacement = nullptr;
+        for (std::size_t j = 0; j < work_->rules.count; ++j)
+            if (work_->rules.data[j].owner == r.owner && work_->rules.data[j].id == r.fallback)
+                replacement = &work_->rules.data[j];
+        if (!replacement || r.group || replacement->group ||
+            !manualReleasePair(work_->actions, r, *replacement)) {
+            fail(ModuleError::Conflict);
+            continue;
+        }
+        r.group = replacement->group = static_cast<Id>(i + 1);
+    }
     for (std::size_t i = 0; i < work_->symbols.count; ++i) {
         const Symbol &s = work_->symbols.data[i];
         location_ = s.location;
@@ -1375,12 +1433,16 @@ bool PackageModuleCompiler::validateDefinitions() {
     for (std::size_t i = 0; i < work_->rules.count; ++i) {
         const Rule &r = work_->rules.data[i];
         location_ = r.location;
-        if (r.policy == 3) {
+        const bool v2 = work_->definitions.data[r.owner - 1].language == 2;
+        if ((r.policy == 3 || r.trigger == 4) && !v2) {
             fail(ModuleError::UnsupportedScope);
             continue;
         }
-        if ((r.trigger != 3 && r.policy != 2) || (r.trigger == 3 && r.policy != 1 && r.policy != 2))
+        if ((r.trigger != 3 && r.policy != 2) ||
+            (r.trigger == 3 && r.policy != 1 && r.policy != 2 && !(v2 && r.policy == 3)))
             fail(ModuleError::Value);
+        if (r.trigger == 4 && !r.group)
+            fail(ModuleError::Reference);
         if (r.trigger == 3 && !r.once)
             fail(ModuleError::Type);
         if (r.trigger == 3 && !positive(work_->nodes, r.guard))
@@ -1434,7 +1496,9 @@ bool PackageModuleCompiler::validateDefinitions() {
             } else if (a.op == Op::Arm || a.op == Op::Cancel) {
                 if (!findSymbol(r.owner, a.target, SymbolKind::Timer))
                     fail(ModuleError::Reference);
-            } else if (a.op == Op::Emit) {
+            } else if (a.op == Op::Emit || a.op == Op::Override) {
+                if (a.op == Op::Override && (!v2 || r.trigger != 4 || !r.group))
+                    fail(v2 ? ModuleError::Type : ModuleError::UnsupportedScope);
                 s = findSymbol(r.owner, a.target, SymbolKind::Output);
                 if (!work_->definitions.data[r.owner - 1].module)
                     s = findSymbol(0, a.target, SymbolKind::Subject);
@@ -1472,6 +1536,8 @@ bool PackageModuleCompiler::validateDefinitions() {
                 const Rule &other = work_->rules.data[k];
                 if (other.owner != r.owner || (r.trigger != 3 && other.trigger != 3))
                     continue;
+                if (r.group && r.group == other.group)
+                    continue; // Only the complete one-to-one pair checked above.
                 for (std::size_t l = 0; l < other.actionCount; ++l) {
                     const Action &b = work_->actions.data[other.firstAction + l];
                     if (a.op == b.op && a.target == b.target &&
@@ -1770,6 +1836,9 @@ Id PackageModuleCompiler::copyRule(const Rule &source, Context &context) {
     target.name = qualified(context.path, source.id);
     target.rule = source;
     Rule &r = target.rule;
+    r.group = r.fallback = 0;
+    if (source.fallback)
+        target.fallbackName = qualified(context.path, source.fallback);
     r.guard = copyExpression(source.guard, context);
     r.firstTrigger = static_cast<Id>(expanded_->triggers.count);
     for (std::size_t i = 0; i < source.triggerCount; ++i) {
@@ -1819,7 +1888,7 @@ Id PackageModuleCompiler::copyRule(const Rule &source, Context &context) {
                     action.target = static_cast<Id>(j + 1);
             if (!action.target)
                 fail(ModuleError::Reference);
-        } else if (action.op == Op::Emit)
+        } else if (action.op == Op::Emit || action.op == Op::Override)
             action.target = resolveInterface(action.target, context, Type::Solved, true);
         else if (action.op == Op::Effect) {
             Id s = findSymbol(context.definition, action.target, SymbolKind::Output);
@@ -1960,13 +2029,32 @@ bool positive(const Pool<Node> &nodes, Id index) {
 }
 } // namespace
 bool PackageModuleCompiler::validateExpanded(Id stationId) {
+    expanded_->language = work_->language;
+    for (std::size_t i = 0; i < expanded_->rules.count; ++i) {
+        auto &e = expanded_->rules.data[i];
+        if (e.rule.policy != 3)
+            continue;
+        location_ = e.rule.location;
+        Id target = 0;
+        for (std::size_t j = 0; j < expanded_->rules.count; ++j)
+            if (sameName(e.fallbackName, expanded_->rules.data[j].name))
+                target = static_cast<Id>(j + 1);
+        if (!target || e.rule.group || expanded_->rules.data[target - 1].rule.group ||
+            !manualReleasePair(expanded_->actions, e.rule,
+                               expanded_->rules.data[target - 1].rule)) {
+            fail(ModuleError::Conflict);
+            continue;
+        }
+        e.rule.fallback = target;
+        e.rule.group = expanded_->rules.data[target - 1].rule.group = static_cast<Id>(i + 1);
+    }
     for (std::size_t i = 0; i < expanded_->rules.count; ++i) {
         const Rule &r = expanded_->rules.data[i].rule;
         if (r.trigger == 3 && !positive(expanded_->nodes, r.guard))
             fail(ModuleError::Type);
         for (std::size_t j = 0; j < r.actionCount; ++j) {
             const Action &a = expanded_->actions.data[r.firstAction + j];
-            if (a.op == Op::Emit) {
+            if (a.op == Op::Emit || a.op == Op::Override) {
                 const Id subject = findSymbol(0, a.target, SymbolKind::Subject);
                 if (!subject || work_->symbols.data[subject - 1].auxiliary !=
                                     work_->definitions.data[stationId - 1].id)
@@ -1986,6 +2074,8 @@ bool PackageModuleCompiler::validateExpanded(Id stationId) {
             for (std::size_t k = 0; k < i; ++k) {
                 const Rule &other = expanded_->rules.data[k].rule;
                 if (r.trigger != 3 && other.trigger != 3)
+                    continue;
+                if (r.group && r.group == other.group)
                     continue;
                 for (std::size_t l = 0; l < other.actionCount; ++l) {
                     const Action &b = expanded_->actions.data[other.firstAction + l];
@@ -2131,8 +2221,9 @@ bool PackageModuleCompiler::emitRule(const ExpandedRule &e) {
             quoted(opNames[static_cast<unsigned>(a.op)]);
             write(",\"timer\":");
             name(expanded_->timers.data[a.target - 1].name);
-        } else if (a.op == Op::Emit) {
-            write("\"op\":\"emit\",\"subject\":");
+        } else if (a.op == Op::Emit || a.op == Op::Override) {
+            write(a.op == Op::Override ? "\"op\":\"override\",\"subject\":"
+                                       : "\"op\":\"emit\",\"subject\":");
             quoted(string(a.target));
         } else {
             write("\"op\":\"effect\",\"port\":");
@@ -2151,15 +2242,22 @@ bool PackageModuleCompiler::emitRule(const ExpandedRule &e) {
     write(",\"mode\":");
     quoted(r.once ? "once" : "each");
     write(",\"offline\":{\"policy\":");
-    quoted(r.policy == 1 ? "wait" : "local_continue");
+    quoted(r.policy == 1 ? "wait" : r.policy == 3 ? "local_fallback" : "local_continue");
+    if (r.policy == 3) {
+        write(",\"rule\":");
+        name(e.fallbackName);
+    }
     write("},\"priority\":");
     number(r.priority);
     write(",\"trigger\":{\"kind\":");
-    quoted(r.trigger == 1 ? "local" : r.trigger == 2 ? "timer" : "fact");
+    quoted(r.trigger == 1   ? "local"
+           : r.trigger == 2 ? "timer"
+           : r.trigger == 4 ? "override"
+                            : "fact");
     if (r.trigger == 2) {
         write(",\"timer\":");
         name(expanded_->timers.data[r.timer - 1].name);
-    } else {
+    } else if (r.trigger != 4) {
         write(r.trigger == 1 ? ",\"ports\":[" : ",\"subjects\":[");
         for (std::size_t i = 0; i < r.triggerCount; ++i) {
             if (i)
@@ -2209,7 +2307,8 @@ bool PackageModuleCompiler::emitStation(Id stationId) {
         fail(ModuleError::SinkFailure);
         return false;
     }
-    write("{\"format\":\"larp.rules.v1\",\"ports\":[");
+    write(work_->language == 2 ? "{\"format\":\"larp.rules.v2\",\"ports\":["
+                               : "{\"format\":\"larp.rules.v1\",\"ports\":[");
     bool comma = false;
     for (std::size_t i = 0; i < work_->symbols.count; ++i) {
         const Symbol &s = work_->symbols.data[i];
@@ -2286,6 +2385,8 @@ ModuleCompileResult PackageModuleCompiler::compile(
     moduleDocument_ = false;
     writing_ = false;
     deferred_ = false;
+    work_->language = expanded_->language = 1;
+    work_->manualOverride = false;
     work_->strings.count = work_->stringOffsets.count = work_->nodes.count = work_->symbols.count =
         work_->actions.count = work_->rules.count = work_->definitions.count =
             work_->instances.count = work_->bindings.count = work_->constraints.count =
@@ -2293,7 +2394,11 @@ ModuleCompileResult PackageModuleCompiler::compile(
     if (sources_)
         sources_->beginSource(false, 0);
     HashSource contentSource(content, digest);
-    const DeclarationResult declarations = declarations_.validate(contentSource, this);
+    const DeclarationResult declarations = declarations_.validate(contentSource, this, true);
+    work_->language = declarations.language;
+    work_->manualOverride = declarations.manualOverride;
+    for (std::size_t i = 0; i < work_->definitions.count; ++i)
+        work_->definitions.data[i].language = work_->language;
     if (sources_)
         sources_->endSource(declarations.canonical);
     result_.canonical = declarations.canonical;

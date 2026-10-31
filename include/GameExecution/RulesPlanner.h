@@ -21,17 +21,20 @@ struct Digest {
 struct Context {
     Identity event, run, station, box, sourceEpoch;
     Digest deployment, binding, content;
+    std::uint64_t bindingGeneration = 0; // Actual station binding, not rule generation.
 };
 struct FactId {
     Identity event, origin, epoch;
     std::uint64_t sequence = 0;
 };
+enum class FactType : std::uint8_t { TaskSolved = 1, LocalOverride = 2 };
 // A projection of an already admitted D0 fact. This pure kernel performs no
 // signature/role verification; its owner must supply verified immutable records.
 struct FactRef {
     FactId id;
     Digest digest, deployment, binding;
     Identity run, station, subject;
+    FactType type = FactType::TaskSolved;
 };
 struct Evidence {
     Span<FactRef> refs;
@@ -49,7 +52,9 @@ struct SubjectBinding {
     const char *name = nullptr;
     Identity subject, station, box, epoch;
     Digest binding;
-    Span<Identity> epochs; // Optional complete list; epoch is the one-entry convenience input.
+    Span<Identity> epochs;      // Optional complete list; epoch is the one-entry convenience input.
+    std::uint8_t factTypes = 6; // Bits 1/2; actual artifact bindings copy their real permissions.
+    bool epochsComplete = false; // True also represents an explicitly empty allowed list.
 };
 enum class Error : std::uint8_t {
     None,
@@ -102,6 +107,8 @@ struct Rule {
     Identity stable;
 };
 struct Program {
+    std::uint8_t language = 1;
+    bool manualOverride = false;
     Context context;
     Pool<char> strings;
     Pool<std::uint32_t> offsets;
@@ -168,7 +175,48 @@ struct Latch {
     std::uint32_t generation = 0;
     Evidence evidence;
 };
-enum class InputKind : std::uint8_t { Local, Timer, Fact };
+struct Fence {
+    std::uint64_t progress = 0, profile = 0, trust = 0, facts = 0, ledger = 0, resources = 0;
+    std::uint64_t rights = 0, capacity = 0;
+    std::uint64_t lastIssued = 0, activeTime = 0;
+};
+struct OverrideAuthority {
+    Identity peer;
+    std::uint32_t principal = 0, roleEpoch = 0, connectionToken = 0;
+    std::uint32_t registration = 0, lifecycle = 0;
+    std::uint16_t connectionHandle = 0;
+    std::uint64_t registryRevision = 0;
+};
+struct OverrideRecord {
+    Context context;
+    Fence expected;
+    OverrideAuthority authority;
+    Identity ownerBoot, token, prepareId, confirmId, operation, rule;
+    Digest prepareDigest, confirmDigest;
+    Id original = 0, replacement = 0;
+    std::uint32_t originalGeneration = 0, replacementGeneration = 0;
+    std::uint64_t preparedAt = 0, expiresAt = 0, confirmedAt = 0;
+};
+bool sameContext(const Context &, const Context &);
+bool sameFence(const Fence &, const Fence &);
+bool sameOverrideRecord(const OverrideRecord &, const OverrideRecord &);
+class ManualOverrideOwner;
+// Misuse protection, not a cryptographic credential. Only the concrete owner
+// can construct a nonempty copied admission after its fresh authority checks.
+// The owner must still recheck authority/context/expiry at the final D1 fence.
+class OverrideAdmission {
+  public:
+    OverrideAdmission() = default;
+    const OverrideRecord &record() const {
+        return record_;
+    }
+
+  private:
+    friend class ManualOverrideOwner;
+    explicit OverrideAdmission(const OverrideRecord &record) : record_(record) {}
+    OverrideRecord record_;
+};
+enum class InputKind : std::uint8_t { Local, Timer, Fact, Override };
 struct Input {
     Context context;
     InputKind kind = InputKind::Local;
@@ -179,15 +227,11 @@ struct Input {
     bool known = true;
     std::int32_t value = 0;
     Fact fact;
+    OverrideAdmission overrideAdmission;
 };
 struct Receipt {
     Context context;
     Input input;
-};
-struct Fence {
-    std::uint64_t progress = 0, profile = 0, trust = 0, facts = 0, ledger = 0, resources = 0;
-    std::uint64_t rights = 0, capacity = 0;
-    std::uint64_t lastIssued = 0, activeTime = 0;
 };
 enum class Mode : std::uint8_t { Running, Paused, Stopped, RecoveryRequired };
 struct State {
@@ -220,6 +264,7 @@ struct Emission {
     std::uint32_t generation = 0;
     FactId candidate;
     Evidence dependencies;
+    FactType type = FactType::TaskSolved;
 };
 struct Intent {
     Id port = 0, resource = 0;

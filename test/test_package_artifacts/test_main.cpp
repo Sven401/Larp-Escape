@@ -292,6 +292,8 @@ void test_complete_artifacts_and_full_uint64_generation_seam() {
     TEST_ASSERT_EQUAL_MEMORY(identity(3).bytes, memory.program.context.station.bytes, 16);
     TEST_ASSERT_EQUAL(std::numeric_limits<std::uint64_t>::max(),
                       memory.catalog.stations.data[0].generation);
+    TEST_ASSERT_TRUE(memory.program.context.bindingGeneration ==
+                     std::numeric_limits<std::uint64_t>::max());
     TEST_ASSERT_EQUAL(2, f.sources.opened);
     TEST_ASSERT_EQUAL(f.sources.opened, f.sources.closed);
     TEST_ASSERT_EQUAL(0, memory.program.rules.count);

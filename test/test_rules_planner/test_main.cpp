@@ -106,11 +106,12 @@ Context context() {
 // canonical bytes and production PSA before this same builder/runtime path.
 bool build(bool twoRules = false, Op operation = Op::Add, bool timerTrigger = false,
            bool guard = true, std::int32_t initial = 0, bool extraRule = false,
-           bool extraSubject = false) {
+           bool extraSubject = false, unsigned epochMode = 0) {
     static char strings[] = "station\0p\0out\0res\0n\0r\0t\0solved\0z";
     static std::uint32_t offsets[] = {0, 8, 10, 14, 18, 20, 22, 24, 31};
-    ir::Definition definitions[1];
+    ir::Definition definitions[2];
     definitions[0].id = 1;
+    definitions[1].id = 9;
     ir::Symbol symbols[4];
     symbols[0].owner = 1;
     symbols[0].id = 2;
@@ -125,7 +126,7 @@ bool build(bool twoRules = false, Op operation = Op::Add, bool timerTrigger = fa
     symbols[2].kind = ir::SymbolKind::Resource;
     symbols[2].type = Type::Light;
     symbols[3].id = 8;
-    symbols[3].auxiliary = 1;
+    symbols[3].auxiliary = epochMode >= 2 ? 9 : 1;
     symbols[3].kind = ir::SymbolKind::Subject;
     symbols[3].type = Type::Solved;
     ir::Node nodes[2];
@@ -171,7 +172,7 @@ bool build(bool twoRules = false, Op operation = Op::Add, bool timerTrigger = fa
     pool(source.stringOffsets, offsets);
     source.stringOffsets.count = 9;
     pool(source.definitions, definitions);
-    source.definitions.count = 1;
+    source.definitions.count = epochMode >= 2 ? 2 : 1;
     pool(source.symbols, symbols);
     source.symbols.count = 4;
     ExpandedStationWorkspace expanded;
@@ -198,6 +199,20 @@ bool build(bool twoRules = false, Op operation = Op::Add, bool timerTrigger = fa
     subject.station = identity(3);
     subject.box = identity(4);
     subject.epoch = identity(5);
+    Identity allowedEpochs[] = {identity(12)};
+    if (epochMode == 1)
+        subject.epochsComplete = true;
+    if (epochMode >= 2) {
+        subject.station = identity(10);
+        subject.box = identity(11);
+        subject.epoch = identity(12);
+        subject.epochsComplete = epochMode == 2;
+        if (epochMode == 4) {
+            subject.epoch = identity(13); // Nonempty spans already override convenience values.
+            subject.epochs.data = allowedEpochs;
+            subject.epochs.count = 1;
+        }
+    }
     std::memset(subject.binding.bytes, 0x44, 32);
     SubjectBinding subjects[2] = {subject, subject};
     subjects[1].name = "unknown";
@@ -493,6 +508,44 @@ void test_extra_deployment_bindings_are_rejected() {
     TEST_ASSERT_TRUE(build());
     TEST_ASSERT_TRUE(memory.program.ready);
 }
+void test_complete_empty_remote_epochs_and_old_convenience_are_distinct() {
+    TEST_ASSERT_FALSE(build(false, Op::Add, false, true, 0, false, false, 1));
+    TEST_ASSERT_FALSE(memory.program.ready); // Explicit local current epoch is mandatory.
+    for (unsigned mode = 2; mode <= 4; ++mode) {
+        TEST_ASSERT_TRUE(build(false, Op::Add, false, true, 0, false, false, mode));
+        const auto &binding = memory.program.subjects.data[0].binding;
+        TEST_ASSERT_TRUE(binding.epochsComplete);
+        TEST_ASSERT_EQUAL(mode == 2 ? 0 : 1, binding.epochs.count);
+        start();
+        Input incoming;
+        incoming.context = state.context;
+        incoming.kind = InputKind::Fact;
+        incoming.fact = ownFact(1);
+        incoming.fact.ref.id.origin = binding.box;
+        incoming.fact.ref.id.epoch = identity(12);
+        incoming.fact.ref.station = binding.station;
+        const auto result = plan(incoming);
+        TEST_ASSERT_EQUAL_INT(static_cast<int>(mode == 2 ? Decision::Rejected : Decision::Ready),
+                              static_cast<int>(result.decision));
+        TEST_ASSERT_FALSE(mode == 2 && scratch.plan.ready);
+        incoming.fact.ref.id.epoch = identity(13);
+        TEST_ASSERT_EQUAL_INT(static_cast<int>(Decision::Rejected),
+                              static_cast<int>(plan(incoming).decision));
+    }
+    TEST_ASSERT_TRUE(build()); // Original one-epoch convenience API remains accepted.
+}
+void test_default_override_admission_cannot_manufacture_an_input() {
+    TEST_ASSERT_TRUE(build());
+    start();
+    Input incoming;
+    incoming.context = state.context;
+    incoming.kind = InputKind::Override;
+    const auto result = plan(incoming);
+    TEST_ASSERT_EQUAL_INT(static_cast<int>(Decision::Rejected), static_cast<int>(result.decision));
+    TEST_ASSERT_FALSE(scratch.plan.ready);
+    TEST_ASSERT_EQUAL(0, state.latches.count);
+    TEST_ASSERT_EQUAL(0, scratch.plan.emissions.count);
+}
 } // namespace
 void setUp() {}
 void tearDown() {}
@@ -509,5 +562,7 @@ int main() {
     RUN_TEST(test_own_fact_later_admission_and_all_provenance_boundaries);
     RUN_TEST(test_expected_content_digest_is_not_silently_rebound);
     RUN_TEST(test_extra_deployment_bindings_are_rejected);
+    RUN_TEST(test_complete_empty_remote_epochs_and_old_convenience_are_distinct);
+    RUN_TEST(test_default_override_admission_cannot_manufacture_an_input);
     return UNITY_END();
 }

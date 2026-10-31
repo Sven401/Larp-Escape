@@ -7,6 +7,9 @@ namespace execution {
 namespace rules {
 namespace {
 using configuration::module_ir::SymbolKind;
+bool produces(Op op) {
+    return op == Op::Emit || op == Op::Override;
+}
 template <typename T> bool valid(const Pool<T> &p) {
     return p.count <= p.capacity && (!p.count || p.data);
 }
@@ -39,21 +42,27 @@ bool equal(const FactId &a, const FactId &b) {
            a.sequence == b.sequence;
 }
 bool equal(const FactRef &a, const FactRef &b) {
-    return equal(a.id, b.id) && equal(a.digest, b.digest) && equal(a.deployment, b.deployment) &&
-           equal(a.binding, b.binding) && equal(a.run, b.run) && equal(a.station, b.station) &&
-           equal(a.subject, b.subject);
+    return a.type == b.type && equal(a.id, b.id) && equal(a.digest, b.digest) &&
+           equal(a.deployment, b.deployment) && equal(a.binding, b.binding) &&
+           equal(a.run, b.run) && equal(a.station, b.station) && equal(a.subject, b.subject);
 }
 bool equal(const Context &a, const Context &b) {
-    return equal(a.event, b.event) && equal(a.run, b.run) && equal(a.station, b.station) &&
-           equal(a.box, b.box) && equal(a.sourceEpoch, b.sourceEpoch) &&
-           equal(a.deployment, b.deployment) && equal(a.binding, b.binding) &&
-           equal(a.content, b.content);
+    return a.bindingGeneration == b.bindingGeneration && equal(a.event, b.event) &&
+           equal(a.run, b.run) && equal(a.station, b.station) && equal(a.box, b.box) &&
+           equal(a.sourceEpoch, b.sourceEpoch) && equal(a.deployment, b.deployment) &&
+           equal(a.binding, b.binding) && equal(a.content, b.content);
 }
 bool equal(const Fence &a, const Fence &b) {
     return a.progress == b.progress && a.profile == b.profile && a.trust == b.trust &&
            a.facts == b.facts && a.ledger == b.ledger && a.resources == b.resources &&
            a.rights == b.rights && a.capacity == b.capacity && a.lastIssued == b.lastIssued &&
            a.activeTime == b.activeTime;
+}
+bool equal(const OverrideAuthority &a, const OverrideAuthority &b) {
+    return equal(a.peer, b.peer) && a.principal == b.principal && a.roleEpoch == b.roleEpoch &&
+           a.connectionToken == b.connectionToken && a.connectionHandle == b.connectionHandle &&
+           a.registration == b.registration && a.lifecycle == b.lifecycle &&
+           a.registryRevision == b.registryRevision;
 }
 int compare(const FactRef &a, const FactRef &b) {
     int n = std::memcmp(a.id.event.bytes, b.id.event.bytes, 16);
@@ -187,8 +196,8 @@ bool inputBound(const Program &p, unsigned kind, Id target) {
         const auto &r = p.rules.data[ri].ir;
         if (r.trigger != kind)
             continue;
-        bool match = kind == 2 && r.timer == target;
-        if (kind != 2)
+        bool match = (kind == 2 && r.timer == target) || (kind == 4 && ri + 1 == target);
+        if (kind != 2 && kind != 4)
             for (unsigned j = 0; j < r.triggerCount; ++j)
                 match |= p.triggers.data[r.firstTrigger + j] == target;
         if (!match)
@@ -206,6 +215,23 @@ bool inputBound(const Program &p, unsigned kind, Id target) {
     return true;
 }
 } // namespace
+bool sameContext(const Context &a, const Context &b) {
+    return equal(a, b);
+}
+bool sameFence(const Fence &a, const Fence &b) {
+    return equal(a, b);
+}
+bool sameOverrideRecord(const OverrideRecord &a, const OverrideRecord &b) {
+    return equal(a.context, b.context) && equal(a.expected, b.expected) &&
+           equal(a.authority, b.authority) && equal(a.ownerBoot, b.ownerBoot) &&
+           equal(a.token, b.token) && equal(a.prepareId, b.prepareId) &&
+           equal(a.confirmId, b.confirmId) && equal(a.operation, b.operation) &&
+           equal(a.rule, b.rule) && equal(a.prepareDigest, b.prepareDigest) &&
+           equal(a.confirmDigest, b.confirmDigest) && a.original == b.original &&
+           a.replacement == b.replacement && a.originalGeneration == b.originalGeneration &&
+           a.replacementGeneration == b.replacementGeneration && a.preparedAt == b.preparedAt &&
+           a.expiresAt == b.expiresAt && a.confirmedAt == b.confirmedAt;
+}
 const char *name(const Program &p, Id id) {
     if (!id || id > p.offsets.count || !p.offsets.data || !p.strings.data)
         return "";
@@ -221,6 +247,8 @@ bool ProgramBuilder::begin(const std::uint8_t digest[32]) {
     result_ = {};
     found_ = prepared_ = false;
     program_.ready = false;
+    program_.language = 1;
+    program_.manualOverride = false;
     program_.context = context_;
     if (std::memcmp(context_.content.bytes, digest, 32)) {
         result_.error = Error::Context;
@@ -303,6 +331,13 @@ bool ProgramBuilder::station(const configuration::ModuleCompileWorkspace &s,
         return false;
     }
     found_ = true;
+    program_.language = s.language;
+    program_.manualOverride = s.manualOverride;
+    if (s.language != e.language || (s.language != 1 && s.language != 2) ||
+        (s.language == 2 && !s.manualOverride)) {
+        result_.error = Error::Unsupported;
+        return false;
+    }
     if (!valid(s.symbols) || !valid(e.values) || !valid(e.timers) || !valid(e.nodes) ||
         !valid(e.actions) || !valid(e.rules) || !valid(e.triggers)) {
         result_.error = Error::Reference;
@@ -345,7 +380,8 @@ bool ProgramBuilder::station(const configuration::ModuleCompileWorkspace &s,
                     !valid(subject.binding.epochs))
                     result_.error = Error::Reference;
                 const std::size_t start = program_.epochs.count,
-                                  count = subject.binding.epochs.count
+                                  count = (subject.binding.epochsComplete ||
+                                           subject.binding.epochs.count)
                                               ? subject.binding.epochs.count
                                               : 1;
                 bool ownEpoch = false;
@@ -366,6 +402,7 @@ bool ProgramBuilder::station(const configuration::ModuleCompileWorkspace &s,
                 subject.binding.epochs.data =
                     program_.epochs.data ? program_.epochs.data + start : nullptr;
                 subject.binding.epochs.count = program_.epochs.count - start;
+                subject.binding.epochsComplete = true;
                 if (!std::strcmp(sourceName(s, v.auxiliary), station_) &&
                     !equal(subject.binding.station, program_.context.station))
                     result_.error = Error::Context;
@@ -468,7 +505,7 @@ bool ProgramBuilder::station(const configuration::ModuleCompileWorkspace &s,
         }
         auto &a = program_.actions.data[out - 1];
         a = e.actions.data[i];
-        if (a.op == Op::Emit)
+        if (produces(a.op))
             a.target = lookup(program_.subjects, intern(sourceName(s, a.target)));
         if (a.op == Op::Effect) {
             a.target = lookup(program_.ports, intern(sourceName(s, a.target)));
@@ -483,6 +520,8 @@ bool ProgramBuilder::station(const configuration::ModuleCompileWorkspace &s,
         }
         auto &r = program_.rules.data[out - 1];
         r.ir = e.rules.data[i].rule;
+        r.ir.group = 0;
+        r.ir.fallback = r.ir.policy == 3 ? qualified(e.rules.data[i].fallbackName, s) : 0;
         r.name = qualified(e.rules.data[i].name, s);
         unsigned matches = 0;
         for (std::size_t j = 0; j < bindings_.count; ++j)
@@ -512,6 +551,18 @@ bool ProgramBuilder::station(const configuration::ModuleCompileWorkspace &s,
                                   : lookup(program_.ports, intern(sourceName(s, original)));
         }
     }
+    for (std::size_t i = 0; i < program_.rules.count; ++i) {
+        auto &r = program_.rules.data[i].ir;
+        if (r.policy != 3)
+            continue;
+        const Id wanted = r.fallback;
+        r.fallback = 0;
+        for (std::size_t j = 0; j < program_.rules.count; ++j)
+            if (program_.rules.data[j].name == wanted)
+                r.fallback = static_cast<Id>(j + 1);
+        if (!r.fallback)
+            result_.error = Error::Reference;
+    }
     return result_.error == Error::None;
 }
 bool ProgramBuilder::validate() {
@@ -540,20 +591,47 @@ bool ProgramBuilder::validate() {
                 result_.error = Error::Conflict;
                 return false;
             }
+    for (std::size_t i = 0; i < program_.rules.count; ++i)
+        program_.rules.data[i].ir.group = 0;
     for (std::size_t i = 0; i < program_.rules.count; ++i) {
-        const auto &r = program_.rules.data[i];
-        for (std::size_t j = 0; j < i; ++j)
-            if (equal(r.stable, program_.rules.data[j].stable)) {
-                result_.error = Error::Conflict;
-                return false;
-            }
-        if (r.ir.policy == 3 || r.ir.fallback) {
+        auto &original = program_.rules.data[i];
+        auto &r = original.ir;
+        if (r.policy != 3)
+            continue;
+        if (program_.language != 2 || !program_.manualOverride) {
             result_.error = Error::Unsupported;
             return false;
         }
-        if (!r.ir.generation || r.ir.trigger < 1 || r.ir.trigger > 3 ||
+        if (!r.fallback || r.fallback > program_.rules.count) {
+            result_.error = Error::Reference;
+            return false;
+        }
+        auto &replacement = program_.rules.data[r.fallback - 1];
+        if (r.group || replacement.ir.group || !equal(original.stable, replacement.stable) ||
+            !configuration::module_ir::manualReleasePair(program_.actions, r, replacement.ir)) {
+            result_.error = Error::Conflict;
+            return false;
+        }
+        r.group = replacement.ir.group = static_cast<Id>(i + 1);
+    }
+    for (std::size_t i = 0; i < program_.rules.count; ++i) {
+        const auto &r = program_.rules.data[i];
+        for (std::size_t j = 0; j < i; ++j)
+            if (equal(r.stable, program_.rules.data[j].stable) &&
+                (!r.ir.group || r.ir.group != program_.rules.data[j].ir.group)) {
+                result_.error = Error::Conflict;
+                return false;
+            }
+        if ((r.ir.policy == 3 || r.ir.trigger == 4 || r.ir.fallback) && program_.language != 2) {
+            result_.error = Error::Unsupported;
+            return false;
+        }
+        if (!r.ir.generation || r.ir.trigger < 1 ||
+            r.ir.trigger > (program_.language == 2 ? 4 : 3) ||
             (r.ir.trigger != 3 && r.ir.policy != 2) ||
-            (r.ir.trigger == 3 && r.ir.policy != 1 && r.ir.policy != 2) || r.ir.actionCount > 8 ||
+            (r.ir.trigger == 3 && r.ir.policy != 1 && r.ir.policy != 2 && r.ir.policy != 3) ||
+            (r.ir.trigger == 4 && (!r.ir.group || r.ir.triggerCount || r.ir.timer)) ||
+            r.ir.actionCount > 8 ||
             static_cast<std::size_t>(r.ir.firstAction) + r.ir.actionCount >
                 program_.actions.count ||
             static_cast<std::size_t>(r.ir.firstTrigger) + r.ir.triggerCount >
@@ -617,18 +695,29 @@ bool ProgramBuilder::validate() {
             } else if (a.op == Op::Arm || a.op == Op::Cancel) {
                 if (!a.target || a.target > program_.timers.count)
                     result_.error = Error::Reference;
-            } else if (a.op == Op::Emit) {
+            } else if (produces(a.op)) {
+                if (a.op == Op::Override &&
+                    (program_.language != 2 || r.ir.trigger != 4 || !r.ir.group)) {
+                    result_.error = Error::Unsupported;
+                    return false;
+                }
                 if (!a.target || a.target > program_.subjects.count)
                     result_.error = Error::Reference;
                 else if (!equal(program_.subjects.data[a.target - 1].binding.station,
                                 program_.context.station) ||
                          !r.ir.once)
                     result_.error = Error::InvalidProgram;
+                else if (!(program_.subjects.data[a.target - 1].binding.factTypes &
+                           (1u << static_cast<unsigned>(a.op == Op::Override
+                                                            ? FactType::LocalOverride
+                                                            : FactType::TaskSolved))))
+                    result_.error = Error::Reference;
                 for (std::size_t k = 0; k < i; ++k) {
                     const auto &other = program_.rules.data[k].ir;
                     for (unsigned l = 0; l < other.actionCount; ++l) {
                         const auto &b = program_.actions.data[other.firstAction + l];
-                        if (b.op == Op::Emit && b.target == a.target)
+                        if (produces(b.op) && b.target == a.target &&
+                            (!r.ir.group || r.ir.group != program_.rules.data[k].ir.group))
                             result_.error = Error::Conflict;
                     }
                 }
@@ -664,10 +753,11 @@ bool ProgramBuilder::validate() {
                     const bool timers = (a.op == Op::Arm || a.op == Op::Cancel) &&
                                         (b.op == Op::Arm || b.op == Op::Cancel);
                     if (sameRule && a.target == b.target &&
-                        (values || timers || (a.op == Op::Emit && b.op == Op::Emit)))
+                        (values || timers || (produces(a.op) && produces(b.op))))
                         result_.error = Error::Conflict;
                     if (a.op == Op::Effect && b.op == Op::Effect &&
                         (sameRule || r.ir.trigger == 3 || other.ir.trigger == 3) &&
+                        (sameRule || !r.ir.group || r.ir.group != other.ir.group) &&
                         equal(program_.ports.data[a.target - 1].exclusive,
                               program_.ports.data[b.target - 1].exclusive))
                         result_.error = Error::Conflict;
@@ -696,6 +786,12 @@ bool ProgramBuilder::validate() {
         }
     for (std::size_t i = 0; i < program_.subjects.count; ++i)
         if (!inputBound(program_, 3, static_cast<Id>(i + 1))) {
+            result_.error = Error::OperatingProfile;
+            return false;
+        }
+    for (std::size_t i = 0; i < program_.rules.count; ++i)
+        if (program_.rules.data[i].ir.trigger == 4 &&
+            !inputBound(program_, 4, static_cast<Id>(i + 1))) {
             result_.error = Error::OperatingProfile;
             return false;
         }
@@ -731,9 +827,12 @@ void Planner::fail(Error error, bool deferred) {
     result_.decision = deferred ? Decision::Deferred : Decision::Rejected;
 }
 bool Planner::validFact(const Fact &f) const {
-    if (f.kind != FactClass::CurrentSolved || !f.subject || f.subject > program_->subjects.count)
+    if (f.kind != FactClass::CurrentSolved || !f.subject || f.subject > program_->subjects.count ||
+        (f.ref.type != FactType::TaskSolved && f.ref.type != FactType::LocalOverride))
         return false;
     const auto &binding = program_->subjects.data[f.subject - 1].binding;
+    if (!(binding.factTypes & (1u << static_cast<unsigned>(f.ref.type))))
+        return false;
     const auto &r = f.ref;
     bool epoch = false;
     for (std::size_t i = 0; i < binding.epochs.count; ++i)
@@ -769,7 +868,7 @@ Id Planner::admit(const FactRef &r) {
             const auto &rule = program_->rules.data[i];
             for (unsigned j = 0; j < rule.ir.actionCount; ++j) {
                 const auto &a = program_->actions.data[rule.ir.firstAction + j];
-                if (a.op != Op::Emit || a.target != subject)
+                if (!produces(a.op) || a.target != subject)
                     continue;
                 for (std::size_t k = 0; k < state_->latches.count; ++k)
                     producer |= equal(state_->latches.data[k].rule, rule.stable);
@@ -880,7 +979,7 @@ bool Planner::snapshot() {
             latched |= equal(s.latches.data[i].rule, r.stable);
         for (unsigned ai = 0; ai < r.ir.actionCount; ++ai) {
             const auto &a = program_->actions.data[r.ir.firstAction + ai];
-            if (a.op != Op::Emit)
+            if (!produces(a.op))
                 continue;
             bool solved = false;
             for (std::size_t i = 0; i < s.solved.count; ++i)
@@ -1318,7 +1417,11 @@ bool Planner::action(const Rule &rule, Id index, std::uint32_t cause) {
         plan_->timers.data[out - 1].value = next;
         return true;
     }
-    if (a.op == Op::Emit) {
+    if (produces(a.op)) {
+        if (a.op == Op::Override && input_->kind != InputKind::Override) {
+            fail(Error::Context);
+            return false;
+        }
         if (plan_->emissions.count == 8) {
             fail(Error::Budget);
             return false;
@@ -1347,6 +1450,7 @@ bool Planner::action(const Rule &rule, Id index, std::uint32_t cause) {
         emission.subject = a.target;
         emission.rule = rule.stable;
         emission.generation = rule.ir.generation;
+        emission.type = a.op == Op::Override ? FactType::LocalOverride : FactType::TaskSolved;
         emission.candidate.event = program_->context.event;
         emission.candidate.origin = program_->context.box;
         emission.candidate.epoch = program_->context.sourceEpoch;
@@ -1395,6 +1499,9 @@ bool sameOperation(const Input &a, const Input &b) {
         return a.bootGeneration == b.bootGeneration && a.sequence == b.sequence;
     if (a.kind == InputKind::Timer)
         return a.timer == b.timer && a.armGeneration == b.armGeneration;
+    if (a.kind == InputKind::Override)
+        return equal(a.overrideAdmission.record().operation,
+                     b.overrideAdmission.record().operation);
     return equal(a.fact.ref.id, b.fact.ref.id);
 }
 bool sameInput(const Input &a, const Input &b) {
@@ -1406,6 +1513,8 @@ bool sameInput(const Input &a, const Input &b) {
     if (a.kind == InputKind::Fact)
         return a.fact.subject == b.fact.subject && a.fact.kind == b.fact.kind &&
                equal(a.fact.ref, b.fact.ref);
+    if (a.kind == InputKind::Override)
+        return sameOverrideRecord(a.overrideAdmission.record(), b.overrideAdmission.record());
     return true;
 }
 bool sameNamespace(const Context &a, const Context &b) {
@@ -1458,9 +1567,16 @@ Result Planner::plan(const Program &program, const State &state, const Input &in
     }
     if (!snapshot())
         return finish();
+    if (input.kind == InputKind::Override &&
+        (!nonzero(input.overrideAdmission.record().operation) ||
+         !equal(input.overrideAdmission.record().context, program.context))) {
+        fail(Error::Context);
+        return finish();
+    }
     for (std::size_t i = 0; i < state.ledger.count; ++i) {
         const auto &r = state.ledger.data[i];
-        if ((input.kind == InputKind::Fact || sameNamespace(r.context, state.context)) &&
+        if ((input.kind == InputKind::Fact || input.kind == InputKind::Override ||
+             sameNamespace(r.context, state.context)) &&
             sameOperation(input, r.input)) {
             if (!equal(r.context, state.context) || !sameInput(input, r.input))
                 fail(Error::Conflict);
@@ -1517,7 +1633,7 @@ Result Planner::plan(const Program &program, const State &state, const Input &in
                 const auto &r = program.rules.data[i];
                 for (unsigned j = 0; j < r.ir.actionCount; ++j) {
                     const auto &a = program.actions.data[r.ir.firstAction + j];
-                    if (a.op != Op::Emit || a.target != input.fact.subject)
+                    if (!produces(a.op) || a.target != input.fact.subject)
                         continue;
                     for (std::size_t k = 0; k < state.latches.count; ++k)
                         producer |= equal(state.latches.data[k].rule, r.stable);
@@ -1534,6 +1650,33 @@ Result Planner::plan(const Program &program, const State &state, const Input &in
             known |= state.facts.data[i].subject == input.fact.subject;
         destination.admitsFact = !known;
         destination.fact = input.fact;
+    } else if (input.kind == InputKind::Override) {
+        const auto &a = input.overrideAdmission.record();
+        if (program.language != 2 || !program.manualOverride) {
+            fail(Error::Unsupported);
+            return finish();
+        }
+        if (!a.original || a.original > program.rules.count || !a.replacement ||
+            a.replacement > program.rules.count || !equal(a.expected, state.fence) ||
+            !nonzero(a.ownerBoot) || !nonzero(a.token) || !nonzero(a.prepareId) ||
+            !nonzero(a.confirmId) || !nonzero(a.authority.peer) || !a.authority.principal ||
+            !a.authority.roleEpoch || !a.authority.connectionToken || !a.authority.registration ||
+            !a.authority.lifecycle || !a.authority.registryRevision ||
+            a.confirmedAt < a.preparedAt || a.confirmedAt > a.expiresAt) {
+            fail(Error::Context);
+            return finish();
+        }
+        const auto &original = program.rules.data[a.original - 1];
+        const auto &replacement = program.rules.data[a.replacement - 1];
+        if (original.ir.fallback != a.replacement || original.ir.group != a.original ||
+            replacement.ir.group != a.original || !equal(original.stable, a.rule) ||
+            !equal(replacement.stable, a.rule) || original.ir.generation != a.originalGeneration ||
+            replacement.ir.generation != a.replacementGeneration ||
+            !configuration::module_ir::manualReleasePair(program.actions, original.ir,
+                                                         replacement.ir)) {
+            fail(Error::Context);
+            return finish();
+        }
     } else {
         fail(Error::Type);
         return finish();
@@ -1571,6 +1714,8 @@ Result Planner::plan(const Program &program, const State &state, const Input &in
             continue;
         bool matches =
             r.ir.trigger == 2 && input.kind == InputKind::Timer && r.ir.timer == input.timer;
+        matches |= r.ir.trigger == 4 && input.kind == InputKind::Override &&
+                   input.overrideAdmission.record().replacement == order[ri] + 1;
         if ((r.ir.trigger == 1 && input.kind == InputKind::Local) ||
             (r.ir.trigger == 3 && input.kind == InputKind::Fact))
             for (unsigned j = 0; j < r.ir.triggerCount; ++j)
@@ -1589,6 +1734,11 @@ Result Planner::plan(const Program &program, const State &state, const Input &in
         }
         const auto cause = combine(base, proof(r.ir.guard), false);
         if (r.ir.once) {
+            for (std::size_t i = 0; i < destination.latches.count; ++i)
+                if (equal(destination.latches.data[i].rule, r.stable)) {
+                    fail(Error::Conflict);
+                    return finish();
+                }
             Id latch = append(destination.latches);
             if (!latch) {
                 fail(Error::OperatingProfile, true);

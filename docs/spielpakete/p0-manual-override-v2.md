@@ -271,9 +271,116 @@ Produkt- oder D1-Pfad frei.
 Danach folgen tatsächliche v2-Quellen durch Compiler/Artefaktprüfung/ProgramBuilder,
 Planner und Besitzer, echte Autoritätsadapter, der gemeinsame Plan-/Belegcodec,
 Journal-Recovery und End-to-End-Faulttests. Das bestehende ProgressJournal bietet
-3072 Byte Nutzlast und höchstens acht neue Fact-IDs pro Commit. Ein vollständiger
-Plan muss mit geteiltem Katalog und ausgewiesenem Profil passen; keine stille
-Kürzung, Transaktionszerlegung oder Partitionsvergrößerung. Falls das nicht
-darstellbar ist, bleibt dieser Betriebsumfang offen/deferred, statt eine
-RAM-Freigabe als dauerhaft zu melden. D2-Transport wird wiederverwendet, nicht neu
-erfunden. Geräteuploads und Trustpolicyänderungen sind nicht Teil dieses Schnitts.
+3072 Byte Nutzlast je physischem Record und höchstens acht neue Fact-IDs pro
+Application-Commit. Abschnitt 7 beschreibt die ausdrücklich beauftragte
+Bundle-Schicht für größere vollständige Pläne. Es gibt keine stille Kürzung,
+Aufteilung in mehrere wirksame Anwendungscommits oder Partitionsvergrößerung.
+Passt der vollständige Plan nicht in das ausgewiesene Transaktions-/Slotprofil,
+bleibt er deferred, statt eine RAM-Freigabe als dauerhaft zu melden. D2-Transport
+wird wiederverwendet, nicht neu erfunden. Geräteuploads und Trustpolicyänderungen
+sind nicht Teil dieses Schnitts.
+
+## 7. Atomare Bundle-Schicht über dem vorhandenen Journal
+
+Status: am 31.10.2026 nach konkretem Entwurf und unabhängiger Gegenprüfung vom
+Maintainer als technische D1-Umsetzung bestätigt; Produktcode und Powercut-
+Nachweise noch offen. Die vorhandene Journal-ABI und Partition bleiben gleich.
+
+Das eigenständige semantische Transaktionsprofil erlaubt höchstens 32768 Byte
+vollständige kanonische Blobbytes. Es ist ausdrücklich NICHT das P0-
+Quellmetadatenbudget. Der Blob enthält entweder einen vollständigen unveränderlichen
+Programmkatalog oder einen vollständigen Plan einschließlich ursprünglicher
+Autoritäts-/Eingangsbelege, Zustandsschreibungen, Beweisen, endgültigen signierten
+COSE-Outboxbytes und Intents. Beide Größen werden getrennt begründet ausgewiesen.
+Es gibt keine Zusage, dass jeder erlaubte P0-Plan in dieses Betriebsprofil passt.
+
+Der Blob wird in höchstens 16 unveränderlichen Datenchunks mit je 2048 Byte
+Nutzdaten vorbereitet; nur der letzte darf kürzer sein. Jeder Chunk ist ein
+vollständiger `ProgressKind::Control`-Record mit `issueCount=0`. Er hat keine
+fachliche Wirkung, erzeugt keinen Freigabe-Latch und vergibt keine Fact-ID.
+Ein einziger abschließender Application-Marker bindet sämtliche vollständigen
+Bytes und vergibt gemeinsam den gesamten ausgehenden Bereich von null bis acht
+Fact-IDs. Katalogfinalisierung ist ebenfalls nur Control, niemals Anwendung.
+
+Die kanonischen CBOR-Maps haben exakt folgende Integerlabels; kürzeste definite
+Kodierung, keine unbekannten Felder, Duplikate oder angehängten Bytes:
+
+| Label | Gemeinsames Feld |
+| --- | --- |
+| 0 | Textdomain `larp.rules.bundle.v1` |
+| 1 | Rolle: 1 Datenchunk, 2 Finalmarker |
+| 2 | Art: 1 Katalog, 2 Anwendung |
+| 3 | unveränderliche Parent-/Bundle-Operation-ID, bstr16, nichtnull |
+| 4 | unveränderlicher Parent-Requestdigest, bstr32 |
+| 5 | tatsächlicher Deploymentdigest, bstr32 |
+| 6 | vollständiger Katalogdigest, bstr32 |
+| 7 | vollständiger Blobdigest, bstr32 |
+| 8 | gesamte Bloblänge, positiver uint32 innerhalb des Transaktionsprofils |
+
+Ein Chunk ergänzt Labels 9 Anzahl, 10 nullbasierter Index, 11 Daten-bstr. Anzahl
+ist exakt `ceil(totalBytes/2048)`; alle Datenlängen müssen die eindeutige vollständige
+Abdeckung ergeben. Der Journalheader hat eine eigene sichere einmalige physische
+Operation-ID und als Requestdigest SHA-256 des tatsächlichen kanonischen
+Chunkpayloads. Die physischen IDs werden einmal gewählt und anschließend
+eingefroren; keine Hashtrunkierung oder unbegrenzte Regeneration bei Kollision.
+
+Ein Finalmarker ergänzt Labels 9 Anzahl und 10 eine vollständige Liste
+`[[journalIndex,physicalChunkOperationId,rawChunkRequestDigest]...]` in
+Chunkindexreihenfolge. Seine Journal-Operation-ID ist die Parent-ID; sein
+Requestdigest bindet den tatsächlichen Finalpayload. Der Marker muss die echten
+gespeicherten Chunkbytes, deren Header, vollständige geordnete Abdeckung und den
+SHA-256 der gesamten Blobbytes prüfen; behauptete Digestfelder genügen nicht.
+Alle gültigen Chunks derselben Parent-ID müssen dieselbe Art, Requestidentität,
+Deployment-/Katalogbindung, Größe, Anzahl und denselben Blobhash besitzen. Auch
+vor Final ist widersprüchliche Wiederverwendung Conflict, keine auswählbare
+passende Teilmenge. Ein Anwendungskatalog muss zuvor vollständig finalisiert und
+verifiziert sein. Kein neuer Stand ersetzt still einen alten gebundenen Katalog.
+
+Physische Journalrevision und logische Planner-/Grantrevision sind getrennt.
+Control-Chunks erhöhen die erste, niemals die zweite. Kandidaten für die
+einmalige Signierung sind `capturedLastIssued+1..N`; Chunks ändern LastIssued
+nicht. Der Application-Finalheader vergibt genau dieses vollständige N.
+Vor Final sind auch bereits korrekt signierte Blobbytes ausschließlich private
+Vorbereitung: keine Outbox, kein Fact-Export, kein Relay und kein Loopback.
+Nach Erfolg verwenden Outbox und späterer eigener Eingang genau dieselben
+ursprünglichen Bytes, IDs und Payloaddigests.
+
+Die Phasenidentitäten, ConfirmedAt, ursprüngliche Autorität, Signaturen und
+sämtliche schon versuchten physischen Requests einschließlich ihrer
+expectedJournalRevision bleiben beim Retry unverändert. Eigene Chunkwrites
+dürfen weder den Preparestand rebasieren noch die Frist verlängern. Unmittelbar
+vor Final prüft der Besitzer erneut den ursprünglichen vollständigen Kontext,
+aktuelle Originalautorität/Verbindung, feste Frist, alle logischen Rechte-/Trust-/
+Ressourcen-/Kapazitätsfences und tatsächliches LastIssued. Entzug/Ablauf vor Final
+führt ohne fachliche Teilwirkung zum terminalen Abbruch. Bei Unknown ist die
+Sperre bis zur qualifizierten Auflösung bindend, auch nach Fristablauf.
+
+Vor dem ersten Write werden alle benötigten Katalog-/Plan-/Finalslots sowie die
+nachfolgend notwendigen Intent-Claim-/Resultbelege reserviert bzw. im serialisierten
+Besitzerbudget gesperrt. Neue Arbeit darf dieses Budget nicht stehlen. Vollständige
+valide vorbereitete Chunks ohne Marker bleiben nach qualifiziertem Recovery
+unwirksam und verbrauchen Slots. Kein Erase/Reclaim wird dazu erfunden.
+
+Unknown schon bei einem Chunkwrite verlangt echten Backend-Reopen und
+`ProgressJournal::recover`, nicht bloß das erneute Lesen eines Caches oder einen
+neuen Wrapper. Belegte/torn Records und fehlende reservierte Tails bleiben harte
+Journalfehler und werden niemals als harmlose Orphans ignoriert. Ein fehlender
+Finalmarker beweist erst nach vollständig qualifiziertem Recovery Nichtanwendung.
+Ein bestätigter Finalmarker mit fehlender/falscher Seite oder unpassendem Kontext,
+Katalog, Umfang oder Hash sperrt die semantische Recovery; kein Rückfall auf einen
+älteren Spielzustand und keine Präfixpublikation.
+
+Erst nachdem der vollständige wiederhergestellte Bestand geprüft ist, wird ein
+vollständiger Snapshot publiziert. Alte bestätigte Fortschritte und ursprüngliche
+Identitäten/Belege bleiben erhalten. Ihre mathematische Signaturprüfung ist von
+heutigen GM-Rechten zu trennen; aktueller Entzug löscht keine historische
+Freigabe. Heutige Autorität gilt für neue Finalisierung und Statusleserechte,
+nicht als Ersatz für den damaligen Beleg. Frühere attempted-Intents werden zu
+unknown und niemals automatisch wiederholt.
+
+Pflichtnachweise sind unter anderem jeder programmierte Teilpräfix/Sync-Cut,
+Chunk- und Final-Unknown, echter simuliert qualifizierter Reopen, tatsächlicher
+Ownerverlust, falsche/fehlende/vertauschte Seiten und Parentkonflikte, Slot-/
+Intentreservierung, Entzug und Ablauf zwischen Chunks/Final, vollständige
+Original-/Ersatz-End-to-Endfälle sowie korrekt signierte unveränderte Outboxbytes.
+Simulation ersetzt keine spätere Geräte-Powerlossqualifikation.

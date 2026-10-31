@@ -67,7 +67,7 @@ class SourceProvider {
                                      configuration::IPackageByteSource *&source) = 0;
     virtual void close(configuration::IPackageByteSource &source) = 0;
 };
-enum class ProfileFormat : std::uint8_t { Invalid, Rules, Legacy };
+enum class ProfileFormat : std::uint8_t { Invalid, Rules, Legacy, RulesV2 };
 enum class Verification : std::uint8_t { Invalid, DeviceReadback, OperatorInventory };
 struct Artifact {
     Id path = 0;
@@ -128,6 +128,7 @@ struct Resource {
 struct Rule {
     std::uint64_t offset = 0;
     Id station = 0, expanded = 0, fallback = 0;
+    Id group = 0;
     Identity id;
     std::uint32_t generation = 0;
     std::uint8_t policy = 0;
@@ -281,6 +282,7 @@ class Validator : private configuration::ICompilerSourceObserver {
     Identity event_, run_;
     Digest content_;
     bool contentCatalog_ = false;
+    bool v2_ = false;
     configuration::IPackageByteSource *profileSource_ = nullptr;
     std::uint64_t profileOffset_ = 0;
     bool profileEnded_ = false, profileHashFailed_ = false;

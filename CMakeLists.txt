@@ -18,6 +18,8 @@ if(BUILD_TESTING)
     add_test(NAME native-journal COMMAND "${Python3_EXECUTABLE}"
         "${CMAKE_SOURCE_DIR}/test/test_configured_control/check_native_journal.py"
         "$<TARGET_FILE:larp-profile>")
+    add_test(NAME manual-override-v2-model COMMAND "${Python3_EXECUTABLE}" -B -m unittest discover
+        -s "${CMAKE_SOURCE_DIR}/scripts/tests" -p test_p0_manual_override_v2_model.py)
     include(FetchContent)
     FetchContent_Declare(unity
         GIT_REPOSITORY https://github.com/ThrowTheSwitch/Unity.git
@@ -39,6 +41,14 @@ if(BUILD_TESTING)
         target_compile_options(d0-crypto-lifecycle PRIVATE -Wall -Wextra -Wpedantic -Werror)
     endif()
     add_test(NAME d0-crypto-lifecycle COMMAND d0-crypto-lifecycle)
+    add_executable(d0-signer-lifecycle test/fixtures/d0-signer-faults/main.cpp
+        lib/PsaD0FactSigner/PsaD0FactSigner.cpp)
+    target_include_directories(d0-signer-lifecycle PRIVATE test/fixtures/d0-signer-faults/stubs
+        include lib/PsaD0FactSigner)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        target_compile_options(d0-signer-lifecycle PRIVATE -Wall -Wextra -Wpedantic -Werror)
+    endif()
+    add_test(NAME d0-signer-lifecycle COMMAND d0-signer-lifecycle)
     add_executable(package-artifacts test/test_package_artifacts/test_main.cpp)
     target_link_libraries(package-artifacts PRIVATE larp_core unity)
     if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
@@ -46,6 +56,24 @@ if(BUILD_TESTING)
     endif()
     add_test(NAME package-artifacts COMMAND package-artifacts)
     if(WIN32)
+        add_executable(manual-override-v2-review test/fixtures/manual-override-v2-review/cli.cpp)
+        target_link_libraries(manual-override-v2-review PRIVATE larp_core bcrypt)
+        target_compile_options(manual-override-v2-review PRIVATE -Wall -Wextra -Wpedantic -Werror)
+        add_test(NAME manual-override-v2-review COMMAND "${Python3_EXECUTABLE}"
+            "${CMAKE_SOURCE_DIR}/test/fixtures/manual-override-v2-review/run.py"
+            --binary "$<TARGET_FILE:manual-override-v2-review>")
+        add_executable(manual-override-v2-writer-review test/fixtures/manual-override-v2-review/WriterFaults.cpp)
+        target_link_libraries(manual-override-v2-writer-review PRIVATE larp_core bcrypt)
+        target_compile_options(manual-override-v2-writer-review PRIVATE -Wall -Wextra -Wpedantic -Werror)
+        add_test(NAME manual-override-v2-writer-review COMMAND "${Python3_EXECUTABLE}"
+            "${CMAKE_SOURCE_DIR}/test/fixtures/manual-override-v2-review/run_writer.py"
+            --binary "$<TARGET_FILE:manual-override-v2-writer-review>")
+        add_executable(d0-writer-review test/fixtures/d0-writer-review/cli.cpp)
+        target_link_libraries(d0-writer-review PRIVATE larp_core bcrypt)
+        target_compile_options(d0-writer-review PRIVATE -Wall -Wextra -Wpedantic -Werror)
+        add_test(NAME d0-writer-review COMMAND "${Python3_EXECUTABLE}"
+            "${CMAKE_SOURCE_DIR}/test/fixtures/d0-writer-review/run.py"
+            --binary "$<TARGET_FILE:d0-writer-review>")
         add_executable(d0-fact-review test/fixtures/d0-fact-review/cli.cpp)
         target_link_libraries(d0-fact-review PRIVATE larp_core bcrypt)
         target_compile_options(d0-fact-review PRIVATE -Wall -Wextra -Wpedantic -Werror)
@@ -163,6 +191,37 @@ if(BUILD_TESTING AND LARP_PSA_IDF_PATH)
     # ESP-only port. Host tests forward them to the identical private headers.
     target_include_directories(builtin PRIVATE "${CMAKE_SOURCE_DIR}/test/psa_host_compat")
     target_include_directories(tfpsacrypto PRIVATE "${CMAKE_SOURCE_DIR}/test/psa_host_compat")
+    add_executable(manual-override-v2-review-psa test/fixtures/manual-override-v2-review/cli.cpp
+        lib/PsaPackageDigest/PsaPackageDigest.cpp)
+    target_include_directories(manual-override-v2-review-psa PRIVATE lib/PsaPackageDigest)
+    target_compile_definitions(manual-override-v2-review-psa PRIVATE MANUAL_OVERRIDE_V2_REVIEW_PSA=1)
+    target_link_libraries(manual-override-v2-review-psa PRIVATE larp_core tfpsacrypto)
+    target_compile_options(manual-override-v2-review-psa PRIVATE -Wall -Wextra -Wpedantic -Werror)
+    add_test(NAME manual-override-v2-review-psa COMMAND "${Python3_EXECUTABLE}"
+        "${CMAKE_SOURCE_DIR}/test/fixtures/manual-override-v2-review/run.py"
+        --binary "$<TARGET_FILE:manual-override-v2-review-psa>")
+    add_executable(manual-override-v2-writer-review-psa test/fixtures/manual-override-v2-review/WriterFaults.cpp
+        lib/PsaPackageDigest/PsaPackageDigest.cpp lib/PsaD0FactCrypto/PsaD0FactCrypto.cpp
+        lib/PsaD0FactSigner/PsaD0FactSigner.cpp)
+    target_include_directories(manual-override-v2-writer-review-psa PRIVATE lib/PsaPackageDigest
+        lib/PsaD0FactCrypto lib/PsaD0FactSigner)
+    target_compile_definitions(manual-override-v2-writer-review-psa PRIVATE MANUAL_OVERRIDE_V2_REVIEW_PSA=1)
+    target_link_libraries(manual-override-v2-writer-review-psa PRIVATE larp_core tfpsacrypto)
+    target_compile_options(manual-override-v2-writer-review-psa PRIVATE -Wall -Wextra -Wpedantic -Werror)
+    add_test(NAME manual-override-v2-writer-review-psa COMMAND "${Python3_EXECUTABLE}"
+        "${CMAKE_SOURCE_DIR}/test/fixtures/manual-override-v2-review/run_writer.py"
+        --binary "$<TARGET_FILE:manual-override-v2-writer-review-psa>")
+    add_executable(d0-writer-review-psa test/fixtures/d0-writer-review/cli.cpp
+        lib/PsaPackageDigest/PsaPackageDigest.cpp lib/PsaD0FactCrypto/PsaD0FactCrypto.cpp
+        lib/PsaD0FactSigner/PsaD0FactSigner.cpp)
+    target_include_directories(d0-writer-review-psa PRIVATE lib/PsaPackageDigest
+        lib/PsaD0FactCrypto lib/PsaD0FactSigner)
+    target_compile_definitions(d0-writer-review-psa PRIVATE D0_FACT_REVIEW_PSA=1)
+    target_link_libraries(d0-writer-review-psa PRIVATE larp_core tfpsacrypto)
+    target_compile_options(d0-writer-review-psa PRIVATE -Wall -Wextra -Wpedantic -Werror)
+    add_test(NAME d0-writer-review-psa COMMAND "${Python3_EXECUTABLE}"
+        "${CMAKE_SOURCE_DIR}/test/fixtures/d0-writer-review/run.py"
+        --binary "$<TARGET_FILE:d0-writer-review-psa>")
     add_executable(d0-fact-review-psa test/fixtures/d0-fact-review/cli.cpp
         lib/PsaPackageDigest/PsaPackageDigest.cpp lib/PsaD0FactCrypto/PsaD0FactCrypto.cpp)
     target_include_directories(d0-fact-review-psa PRIVATE lib/PsaPackageDigest lib/PsaD0FactCrypto)

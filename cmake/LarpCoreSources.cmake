@@ -36,6 +36,7 @@ set(LARP_CORE_SOURCES
     "${LARP_ROOT}/src/Companion/ConfiguredProtocol.cpp"
     "${LARP_ROOT}/src/Companion/DeviceIdentityStore.cpp"
     "${LARP_ROOT}/src/Companion/D0Fact.cpp"
+    "${LARP_ROOT}/src/Companion/D0FactWriter.cpp"
     "${LARP_ROOT}/src/Companion/EventTransport.cpp"
     "${LARP_ROOT}/src/Companion/GameCommandReader.cpp"
     "${LARP_ROOT}/src/Companion/Identity.cpp"
