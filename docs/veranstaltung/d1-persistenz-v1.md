@@ -15,6 +15,8 @@ Maßgeblich: [D0-Identität/Anwendung](d0-vertrag-v1.md),
 Dieser Vorschlag ändert weder D0 noch die Zugangsrollen, Wirebytes, Profile oder
 das NFC-Testformat. Erst seine beauftragte Integration übernimmt ihn ins Soll.
 
+**Softwarefortsetzung · 31.10.2026:** Der [begrenzte Firmware-Speicherkern](d1-firmware-speicherkern.md) konkretisiert eine Teilmenge von D1-B2. D0-/Reducer-/F5a-Anschluss, Ressourcenabnahme und D1-C bleiben offen. Die folgenden D1-A-Angaben behalten ihren historischen Umfang.
+
 ## 1. Lieferumfang und Besitz
 
 D1 wird für die Abnahme in drei Teile getrennt:
