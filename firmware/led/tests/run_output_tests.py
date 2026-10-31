@@ -40,6 +40,15 @@ def main():
         ], check=True, env=environment)
         for case in ("wire_and_completion", "bad_counter", "write_failure", "wait_failure"):
             subprocess.run([str(sdk_executable), case], check=True, env=environment)
+        board_executable = Path(temporary) / ("board.exe" if os.name == "nt" else "board")
+        subprocess.run([
+            compiler, "-std=c++17", "-Wall", "-Wextra", "-Wpedantic", "-Werror",
+            "-DLARP_S3_LED_TEST=1", "-DLARP_LED_PIN=21", "-DLARP_LED_CAMERA_LAB=1",
+            "-I", str(ROOT / "tests/stubs"), "-I", str(ROOT / "include"),
+            str(ROOT / "src/LedOutput.cpp"), str(ROOT / "src/RmtLedBus.cpp"),
+            str(ROOT / "tests/test_rmt_bus.cpp"), "-o", str(board_executable),
+        ], check=True, env=environment)
+        subprocess.run([str(board_executable), "board_rgb"], check=True, env=environment)
         # The historical row wiring includes IO7, which requires an explicit
         # legacy-input opt-in; a passing host test cannot establish chip support.
         for legacy in (None, "0"):
@@ -51,6 +60,7 @@ def main():
             assert rejected.returncode != 0, "matrix build accepted missing/disabled legacy IO7 opt-in"
             assert "Historical matrix test requires LARP_MATRIX_LEGACY_IO7_INPUT=1" in rejected.stderr
         for name, sources in (
+            ("espnow-duplex", ("tests/test_espnow_duplex.cpp",)),
             ("wake", ("src/WakeInputs.cpp", "tests/test_wake_inputs.cpp")),
             ("mcp-wake", ("src/McpWakeBus.cpp", "tests/test_mcp_wake_bus.cpp")),
             ("matrix", ("src/MatrixInputs.cpp", "src/WakeInputs.cpp", "tests/test_matrix_inputs.cpp")),
@@ -63,7 +73,7 @@ def main():
                 *(str(ROOT / source) for source in sources), "-o", str(wake_executable),
             ], check=True, env=environment)
             subprocess.run([str(wake_executable)], check=True, env=environment)
-    print("21 LED engine cases, 4 SDK cases and Wake/Matrix reader/I2C cases passed")
+    print("21 LED engine cases, 5 SDK cases, duplex radio cases and Wake/Matrix reader/I2C cases passed")
 
 
 if __name__ == "__main__":

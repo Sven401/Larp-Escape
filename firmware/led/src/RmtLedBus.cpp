@@ -35,8 +35,25 @@ public:
         for (const auto &pixel : frame) {
             if (pixel.red > LedOutput::Brightness || pixel.green > LedOutput::Brightness ||
                 pixel.blue > LedOutput::Brightness) return false;
-            const std::uint8_t grb[] = {pixel.green, pixel.red, pixel.blue};
-            for (const auto value : grb) for (int bit = 7; bit >= 0; --bit) {
+        }
+        // A board LED previews the brightest channel values of the logical strip.
+        // Effect calculation/timing stays unchanged; spatial output is not proven.
+        Frame physical = frame;
+        if (board::OutputPixels == 1) {
+            Pixel peak{};
+            for (const auto &pixel : frame) {
+                if (pixel.red > peak.red) peak.red = pixel.red;
+                if (pixel.green > peak.green) peak.green = pixel.green;
+                if (pixel.blue > peak.blue) peak.blue = pixel.blue;
+            }
+            physical[0] = peak;
+        }
+        for (std::size_t i = 0; i < board::OutputPixels; ++i) {
+            const auto &pixel = physical[i];
+            const std::uint8_t bytes[] = {
+                board::LegacyPeripherals ? pixel.green : pixel.red,
+                board::LegacyPeripherals ? pixel.red : pixel.green, pixel.blue};
+            for (const auto value : bytes) for (int bit = 7; bit >= 0; --bit) {
                 const bool one = (value & (1U << bit)) != 0;
                 auto &item = items_[index++];
                 item.level0 = 1;
@@ -75,7 +92,7 @@ public:
     }
 private:
     static constexpr rmt_channel_t Channel = RMT_CHANNEL_0;
-    static constexpr std::size_t ItemCount = PixelCount * 24U + 1U;
+    static constexpr std::size_t ItemCount = board::OutputPixels * 24U + 1U;
     rmt_item32_t items_[ItemCount]{};
     bool installed_ = false, transmitting_ = false;
 };
