@@ -13,6 +13,33 @@ Quellstände und Sicherungsreferenzen; die Berichte bleiben die Originalbelege.
 Hardwarezuordnung, [H1 / #54](https://github.com/Sven401/Larp-Escape/issues/54)
 die gezielte Matrixnachprüfung. Kein neues Hardwaredesign aus alten Exporten ableiten.
 
+## Zusätzliche autonome Stationen: Waveshare ESP32-S3-Zero
+
+**Bestätigt · 31. Oktober 2026:** Die ersten zwei zusätzlichen autonomen
+Stationen verwenden Waveshare ESP32-S3-Zero. **„Nähe Glut“ muss zwischen
+zwei ESP32-S3-Stationen funktionieren.** Der erste LED-/Funktest soll über
+die vorhandene Handy-App gestartet werden und die eingebauten LEDs verwenden.
+Quelle: direkte Nutzerfestlegungen in Codex-Sitzung
+`01a18f48-193f-7763-a3e4-9731b29c0086`; ursprünglicher PM-Eintrag `f1113b1`.
+Die autonome Zielarchitektur bleibt [VA-01](../docs/veranstaltungsarchitektur.md).
+
+**Gemessen · 31.10.2026:** Ein Gerät auf COM4 wurde mit esptool 4.5.1 als
+ESP32-S3 Revision v0.1, MAC `34:b7:da:59:77:e8`, ausgelesen; keine gespeicherte
+Firmware geändert. Das zweite Gerät und seine Revision sind noch zu identifizieren.
+
+**Belegt aus Herstellerdokumentation · 31.10.2026:** Die Board-LED liegt an
+GPIO21 und verwendet RGB-Reihenfolge; die bisherige Box verwendet einen
+GRB-Streifen. [Waveshare-Boarddaten](https://www.waveshare.com/wiki/ESP32-S3-Zero),
+[Hersteller-FAQ zur Farbreihenfolge](https://docs.waveshare.com/ESP32-S3-Zero/FAQ).
+Die Standardausführung ist mit 4 MiB Flash und 2 MiB PSRAM beschrieben;
+vor Upload tatsächliche Speichervariante feststellen.
+
+**Softwarevorbereitung und offene Abnahme:**
+[S3-Stationstest](../docs/led/esp32-s3-stations.md) trennt Build/Hostprüfungen
+von Flash-Rückweg, Zwei-Geräte-Lauf und der weiterhin offenen produktiven
+Nähe-Glut-Anbindung. Audio-, Wake-, NFC- und Matrixpins der alten Box werden
+für diesen S3-LED-Test nicht übernommen.
+
 ## Übernommene Ergebnisse und Konsequenzen
 
 Alle folgenden Ergebnisse sind **aus den Originalberichten ausgelesen und gegen
