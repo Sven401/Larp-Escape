@@ -10,3 +10,4 @@ tasks.test { systemProperty("firmwareFixtures", rootProject.file("../contract/fi
 tasks.test { systemProperty("ledFixtures", rootProject.file("../../docs/led/fixtures").absolutePath) }
 
 tasks.test { systemProperty("profileFixtures", rootProject.file("../../docs/companion/fixtures/profile-source").absolutePath) }
+tasks.test { systemProperty("proxFixtures", rootProject.file("../../test/test_proximity/ble_vectors.json").absolutePath) }

@@ -1,5 +1,6 @@
 #pragma once
 #include "NearGlow.h"
+#include "ProximityCurve.h"
 #include <algorithm>
 #include <array>
 #include <cstdint>
@@ -74,7 +75,9 @@ class Core {
     Token boot_{},nonce_{},peerBoot_{};
     bool armed_=false,pending_=false,fresh_=false,fault_=false;
     std::uint32_t probeSequence_=0,sequence_=0,generation_=0,sentAt_=0,receivedAt_=0;
-    int q_=0;
+    int q_=0,raw_=0;
+    std::uint32_t acceptedSequence_=0;
+    ProximityCurve curve_;
     led::near::Parameters parameters_;
     bool apply(led::near::Operation op,std::uint32_t now) {
         scene_.service(now);
@@ -111,8 +114,8 @@ public:
         Token peerBoot{};std::copy(p.begin()+36,p.begin()+52,peerBoot.begin());
         if(!fresh_||observedAt-receivedAt_>=3000U||peerBoot!=peerBoot_)q_=rssi*256;
         else q_+=(rssi*256-q_)/4;
-        peerBoot_=peerBoot;fresh_=true;receivedAt_=observedAt;
-        parameters_.valid=true;parameters_.level=static_cast<std::uint16_t>(std::max(0,std::min(1000,20*(q_/256+90))));
+        peerBoot_=peerBoot;fresh_=true;receivedAt_=observedAt;raw_=rssi;acceptedSequence_=probeSequence_;
+        parameters_.valid=true;parameters_.level=curve_.level(q_/256);
         return apply(led::near::Operation::Update,now);
     }
     void service(std::uint32_t now) {
@@ -122,6 +125,15 @@ public:
             fresh_=false;parameters_.valid=false;parameters_.level=0;apply(led::near::Operation::Update,now);
         }
     }
+    bool setCurve(const ProximityCurve &curve,std::uint32_t now) {
+        if(!curve.valid()||fault_)return false;
+        service(now);curve_=curve;
+        if(armed_&&fresh(now)){parameters_.level=curve_.level(q_/256);return apply(led::near::Operation::Update,now);}
+        return true;
+    }
+    int rawRssi()const{return raw_;}
+    std::uint32_t acceptedSequence()const{return acceptedSequence_;}
+    std::uint32_t sampleAge(std::uint32_t now)const{return acceptedSequence_?now-receivedAt_:UINT32_MAX;}
     led::Pixel render(std::uint32_t now) { return scene_.render(now)[0]; }
     bool armed()const{return armed_;} bool fault()const{return fault_;} bool pending()const{return pending_;}
     bool fresh(std::uint32_t now)const{return fresh_&&now-receivedAt_<3000U;}
@@ -137,7 +149,7 @@ public:
     Kind complete(const Mac &peer){if(peer!=peer_)return Kind::None;auto k=kind_;kind_=Kind::None;return k;}
     bool idle()const{return kind_==Kind::None;}bool expired(std::uint32_t now)const{return !idle()&&now-at_>=2000U;}
 };
-struct UsbCommand { enum class Kind { Invalid,Info,Pair,Arm,Stop,Reboot } kind=Kind::Invalid;Config config; };
+struct UsbCommand { enum class Kind { Invalid,Info,Pair,Arm,Stop,Reboot,BleAccess,BleInfo } kind=Kind::Invalid;Config config; };
 inline int hex(char c){return c>='0'&&c<='9'?c-'0':c>='a'&&c<='f'?c-'a'+10:c>='A'&&c<='F'?c-'A'+10:-1;}
 inline UsbCommand parse(const char *s) {
     UsbCommand c;if(!s)return c;
@@ -145,6 +157,8 @@ inline UsbCommand parse(const char *s) {
     else if(!std::strcmp(s,"ARM"))c.kind=UsbCommand::Kind::Arm;
     else if(!std::strcmp(s,"STOP"))c.kind=UsbCommand::Kind::Stop;
     else if(!std::strcmp(s,"REBOOT"))c.kind=UsbCommand::Kind::Reboot;
+    else if(!std::strcmp(s,"BLE-ACCESS"))c.kind=UsbCommand::Kind::BleAccess;
+    else if(!std::strcmp(s,"BLE-INFO"))c.kind=UsbCommand::Kind::BleInfo;
     else if(std::strlen(s)==87&&!std::strncmp(s,"PAIR ",5)&&s[22]==' ') {
         for(unsigned i=0;i<6;++i) {auto at=5+i*3;int a=hex(s[at]),b=hex(s[at+1]);if(a<0||b<0||(i<5&&s[at+2]!=':'))return {};c.config.peer[i]=(a<<4)|b;}
         for(unsigned i=0;i<32;++i){int a=hex(s[23+i*2]),b=hex(s[24+i*2]);if(a<0||b<0)return {};c.config.secret[i]=(a<<4)|b;}

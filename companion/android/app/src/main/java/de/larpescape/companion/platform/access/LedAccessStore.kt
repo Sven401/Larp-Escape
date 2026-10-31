@@ -13,9 +13,9 @@ import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
 
 /** Only ciphertext reaches storage; Android Keystore keeps the wrapping key non-exportable. */
-class LedAccessStore(context: Context) {
-    private val file = AtomicFile(File(context.noBackupFilesDir, "led-access-v1.bin"))
-    private val alias = "larpescape-led-access-v1"
+class LedAccessStore(context: Context, storageName: String = "led-access-v1.bin",
+    private val alias: String = "larpescape-led-access-v1") {
+    private val file = AtomicFile(File(context.noBackupFilesDir, storageName))
     private fun key(create: Boolean): SecretKey {
         val store = KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
         (store.getKey(alias, null) as? SecretKey)?.let { return it }

@@ -1,4 +1,8 @@
 #include "ProximityCore.h"
+#ifdef LARP_PROXIMITY_BLE
+#include "ProximityBleRuntime.h"
+#include "ProximityBleBearer.h"
+#endif
 #include <atomic>
 #include <cstdio>
 #include <cstdarg>
@@ -22,6 +26,10 @@
 
 namespace {
 using namespace larp::proximity;
+#ifdef LARP_PROXIMITY_BLE
+ble::Bearer bleBearer; // BSS: dedicated 8192-byte NimBLE host stack.
+ble::Runtime bleControl(bleBearer);
+#endif
 std::uint32_t nowMs(){return static_cast<std::uint32_t>(esp_timer_get_time()/1000);}
 void wipe(void *memory,std::size_t n){volatile auto *p=static_cast<volatile std::uint8_t*>(memory);while(n--)*p++=0;}
 void report(const char *format,...) __attribute__((format(printf,1,2)));
@@ -75,11 +83,12 @@ public:
 class Output {
     rmt_channel_handle_t channel_=nullptr;rmt_encoder_handle_t encoder_=nullptr;
     std::array<rmt_symbol_word_t,25> symbols_{};
-    std::array<std::atomic<bool>,2> done_{};unsigned completionSlot_=0;
+    struct Completion {std::atomic<bool> done{false};std::atomic<std::uint32_t> at{0};};
+    std::array<Completion,2> done_{};unsigned completionSlot_=0;
     bool pending_=false,known_=false,fault_=false,recovered_=false;
-    std::uint32_t at_=0;larp::led::Pixel submitted_{},confirmed_{};
+    std::uint32_t at_=0,confirmedAt_=0,submittedCurve_=0,confirmedCurve_=0;larp::led::Pixel submitted_{},confirmed_{};
     static bool done(rmt_channel_handle_t,const rmt_tx_done_event_data_t*,void *user) {
-        static_cast<std::atomic<bool>*>(user)->store(true,std::memory_order_release);return false;
+        auto &cell=*static_cast<Completion*>(user);cell.at.store(nowMs(),std::memory_order_relaxed);cell.done.store(true,std::memory_order_release);return false;
     }
     void error(){fault_=true;known_=false;pending_=false;}
     bool configure() {
@@ -93,18 +102,18 @@ class Output {
     }
 public:
     bool begin() { return configure()&&submit({},nowMs()); }
-    bool submit(larp::led::Pixel pixel,std::uint32_t now) {
+    bool submit(larp::led::Pixel pixel,std::uint32_t now,std::uint32_t curveRevision=0) {
         if(pending_||!channel_||!encoder_||pixel.red>32||pixel.green>32||pixel.blue>32)return false;
         const std::uint8_t bytes[]={pixel.red,pixel.green,pixel.blue};unsigned index=0;
         for(auto byte:bytes)for(int bit=7;bit>=0;--bit){auto &s=symbols_[index++];const bool one=(byte&(1U<<bit))!=0;s={};s.level0=1;s.duration0=one?24:10;s.level1=0;s.duration1=one?26:40;}
         auto &latch=symbols_[24];latch={};latch.duration0=6000;latch.duration1=6000;
         rmt_transmit_config_t tx{};tx.flags.queue_nonblocking=true;
-        done_[completionSlot_].store(false,std::memory_order_release);submitted_=pixel;at_=now;
+        done_[completionSlot_].done.store(false,std::memory_order_release);submitted_=pixel;submittedCurve_=curveRevision;at_=now;
         if(rmt_transmit(channel_,encoder_,symbols_.data(),sizeof(symbols_),&tx)!=ESP_OK){error();return false;}
         pending_=true;return true;
     }
     void service(std::uint32_t now) {
-        if(pending_&&done_[completionSlot_].exchange(false,std::memory_order_acquire)) {pending_=false;confirmed_=submitted_;known_=true;}
+        if(pending_&&done_[completionSlot_].done.exchange(false,std::memory_order_acquire)) {pending_=false;confirmed_=submitted_;confirmedAt_=done_[completionSlot_].at.load(std::memory_order_relaxed);confirmedCurve_=submittedCurve_;known_=true;}
         if(pending_&&now-at_>=2000U)error();
         if(fault_&&!recovered_&&channel_&&encoder_){
             recovered_=true;
@@ -119,6 +128,9 @@ public:
     bool idle()const{return !pending_;}bool fault()const{return fault_;}
     bool black()const{return known_&&!pending_&&!confirmed_.red&&!confirmed_.green&&!confirmed_.blue;}
     bool known()const{return known_;}larp::led::Pixel confirmed()const{return confirmed_;}
+    larp::led::Pixel submitted()const{return submitted_;}
+    std::uint32_t submittedAt()const{return at_;}std::uint32_t confirmedAt()const{return confirmedAt_;}
+    std::uint32_t submittedCurve()const{return submittedCurve_;}std::uint32_t confirmedCurve()const{return confirmedCurve_;}
 };
 struct Event { enum class Kind { Rx,Tx,WifiStop } kind=Kind::Rx;Mac source{},destination{};Packet packet{};int rssi=0;std::uint32_t at=0;bool ok=false; };
 QueueHandle_t events=nullptr;
@@ -180,6 +192,11 @@ extern "C" void app_main() {
     }
     // Boot entropy must be collected after WiFi enables the hardware entropy source.
     if(radioReady){esp_fill_random(boot.data(),boot.size());if(!nonzero(boot.data(),boot.size()))fault=2;core=Core(boot);}
+#ifdef LARP_PROXIMITY_BLE
+    bleControl.begin(core,radioReady,nowMs());
+    if(core.fault()&&!fault)fault=7;
+    larp::led::Pixel computed{};
+#endif
     bool autoArm=paired&&config.armed&&!fault;
     char line[112]{};unsigned used=0;bool overflow=false;
     TxLane lane;Packet transmit{},response{};bool responsePending=false;std::uint32_t responseAt=0,lastPoll=0,lastFrame=0,rebootAt=0;bool reboot=false;
@@ -211,6 +228,17 @@ extern "C" void app_main() {
                 report("{\"type\":\"info\",\"protocol\":1,\"mac\":\"%02X:%02X:%02X:%02X:%02X:%02X\",\"peer\":\"%02X:%02X:%02X:%02X:%02X:%02X\",\"paired\":%s,\"armed\":%s,\"persistedArmed\":%s,\"durableKnown\":%s,\"fresh\":%s,\"ageMs\":%s,\"filteredRssi\":%s,\"level\":%u,\"fault\":%u,\"radio\":%s,\"txIdle\":%s,\"outputKnown\":%s,\"outputPending\":%s,\"black\":%s,\"rgb\":[%u,%u,%u],\"restartRequired\":%s}\n",
                     local[0],local[1],local[2],local[3],local[4],local[5],config.peer[0],config.peer[1],config.peer[2],config.peer[3],config.peer[4],config.peer[5],
                     boolean(paired),boolean(core.armed()),boolean(paired&&config.armed),boolean(durableKnown),boolean(core.fresh(now)),age,strength,core.level(),fault,boolean(radioReady),boolean(lane.idle()),boolean(output.known()),boolean(!output.idle()),boolean(output.black()),rgb.red,rgb.green,rgb.blue,boolean(restartRequired));
+#ifdef LARP_PROXIMITY_BLE
+            }else if(command.kind==UsbCommand::Kind::BleAccess){
+                ble::Credentials credential;
+                if(!bleControl.provision(core,radioReady,now)||!bleControl.credential(credential))report("{\"type\":\"error\",\"op\":\"BLE-ACCESS\",\"reason\":\"unavailable\"}\n");
+                else{const char digits[]="0123456789abcdef";char device[33]{},secret[65]{};for(unsigned i=0;i<16;++i){device[i*2]=digits[credential.device[i]>>4];device[i*2+1]=digits[credential.device[i]&15];}for(unsigned i=0;i<32;++i){secret[i*2]=digits[credential.secret[i]>>4];secret[i*2+1]=digits[credential.secret[i]&15];}
+                    report("{\"schemaVersion\":1,\"protocol\":\"LARP-PROX-BLE/1\",\"deviceId\":\"%s\",\"secret\":\"%s\",\"name\":\"Larp Naeheglut\",\"stationMac\":\"%02X:%02X:%02X:%02X:%02X:%02X\"}\n",device,secret,local[0],local[1],local[2],local[3],local[4],local[5]);wipe(device,sizeof(device));wipe(secret,sizeof(secret));}
+                wipe(credential.secret.data(),credential.secret.size());
+            }else if(command.kind==UsbCommand::Kind::BleInfo){
+                const auto &view=bleControl.view();const auto p=view.curve.encode();
+                report("{\"type\":\"ble-info\",\"protocol\":1,\"ready\":%s,\"fault\":%u,\"curveRevision\":%lu,\"appliedRevision\":%lu,\"curveDurableKnown\":%s,\"points\":[[%d,%u],[%d,%u],[%d,%u],[%d,%u]]}\n",bleControl.ready()?"true":"false",bleControl.fault(),static_cast<unsigned long>(view.revision),static_cast<unsigned long>(bleControl.revision()),view.durable?"true":"false",static_cast<std::int8_t>(p[0]),p[1],static_cast<std::int8_t>(p[2]),p[3],static_cast<std::int8_t>(p[4]),p[5],static_cast<std::int8_t>(p[6]),p[7]);
+#endif
             }else if(command.kind==UsbCommand::Kind::Stop){
                 autoArm=false;core.stop(now);responsePending=false;
                 Config saved=config;saved.armed=false;
@@ -260,7 +288,24 @@ extern "C" void app_main() {
                 if(core.beginProbe(nonce,now,codec,packet))send(TxLane::Kind::Request,packet,now);else if(core.fault())fail(8,now);
             }
         }
-        if(output.idle()&&now-lastFrame>=33U){lastFrame=now;const auto pixel=fault?larp::led::Pixel{}:core.render(now);if(!output.fault()&&!output.submit(pixel,now))fail(6,now);}
+#ifdef LARP_PROXIMITY_BLE
+        bleControl.process(core);
+        now=nowMs();core.service(now);output.service(now);if(core.fault())fail(7,now);if(output.fault())fail(6,now);
+#endif
+        if(output.idle()&&now-lastFrame>=33U){lastFrame=now;const auto pixel=fault?larp::led::Pixel{}:core.render(now);
+#ifdef LARP_PROXIMITY_BLE
+            computed=pixel;const auto curveRevision=bleControl.revision();
+#else
+            const std::uint32_t curveRevision=0;
+#endif
+            if(!output.fault()&&!output.submit(pixel,now,curveRevision))fail(6,now);
+        }
+#ifdef LARP_PROXIMITY_BLE
+        ble::Telemetry telemetry;telemetry.deviceMs=now;telemetry.fault=fault;
+        telemetry.flags=(paired?1:0)|(core.armed()?2:0)|(paired&&config.armed?4:0)|(durableKnown?8:0)|(core.fresh(now)?16:0)|(radioReady?32:0)|(lane.idle()?64:0)|(output.known()?128:0)|(!output.idle()?256:0)|(output.black()?512:0);
+        telemetry.raw=core.rawRssi();telemetry.filtered=core.filtered();telemetry.targetLevel=core.fresh(now)?core.level():0;telemetry.age=core.sampleAge(now);telemetry.sampleSequence=core.acceptedSequence();telemetry.peer=config.peer;
+        telemetry.computed=computed;telemetry.submitted=output.submitted();telemetry.confirmed=output.confirmed();telemetry.submittedAt=output.submittedAt();telemetry.confirmedAt=output.confirmedAt();telemetry.submittedCurveRevision=output.submittedCurve();telemetry.confirmedCurveRevision=output.confirmedCurve();bleControl.publish(telemetry);
+#endif
         if(reboot&&now-rebootAt>=100U&&output.black())esp_restart();
         vTaskDelay(pdMS_TO_TICKS(1));
     }

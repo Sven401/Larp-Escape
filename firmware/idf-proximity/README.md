@@ -13,7 +13,9 @@ Ein lokaler Anwendungseigentümer führt Funkbewertung, Effekt und
 genau einen nativen RMT-Ausgabetreiber. Die eingebaute einzelne RGB-LED liegt
 an **GPIO21**, Reihenfolge RGB; Arbeitsfarbe `(24,8,0)`, Gain 1000,
 Smoothstep über 1000 ms und maximal 32 je Kanal. Audio, Wake, NFC, Matrix
-und BLE werden nicht gestartet. Die frühere Handy-Testfirmware bleibt ein
+werden nicht gestartet. Die neue Livevariante `s3-proximity-live-v1` ergänzt
+einen eigenen, erst nach expliziter USB-Einrichtung verfügbaren BLE-Devdienst.
+Die frühere Handy-Testfirmware bleibt ein
 eigenes Ziel und wird durch einen Build nicht ersetzt.
 
 ## Verhalten ohne Handy
@@ -85,6 +87,43 @@ den S3 übertragen. Zwei S3 wurden inzwischen chipgebunden identifiziert,
 gesichert und installiert: [Geräteeinrichtung vom 31.10.2026](../../docs/led/s3-nearglow-pair-2026-10-31.md).
 
 ## Einmalige USB-Einrichtung
+
+Die ursprüngliche Paarung/ARM-Einrichtung unten bleibt erhalten. Für
+**Larp Dev 0.3: Näheglut live** ergänzt der
+[PROX-BLE/1-Vertrag](../../docs/led/prox-ble-v1.md) zwei individuelle
+Handyzugänge und eine gespeicherte Kennlinie pro Station. Das vorhandene
+ESP-NOW-Paargeheimnis wird dafür weder exportiert noch in die App importiert.
+Aufruf nach geprüftem Upload der Livefirmware:
+
+```powershell
+python scripts/provision_s3_nearglow.py export-ble-access --port PORT_A --mac MAC_A --output PRIVATE_STATION_A_JSON
+python scripts/provision_s3_nearglow.py export-ble-access --port PORT_B --mac MAC_B --output PRIVATE_STATION_B_JSON
+python scripts/provision_s3_nearglow.py ble-info --port PORT_A --mac MAC_A
+```
+
+Neue private Dateien außerhalb von Git wählen. Der Export prüft die bekannte
+Stationsidentität und schreibt das Credential ausschließlich in die Datei,
+nie ins Terminal. `BLE-ACCESS` ist ein ausdrücklicher vertrauenswürdiger
+USB-Auftrag: Er richtet fehlende individuelle Zugänge und eine fehlende
+Defaultkennlinie einmalig mit Readback ein; wiederholtes Lesen rotiert keine
+Schlüssel. Beschädigte gespeicherte Daten werden nicht still ersetzt.
+Die App importiert jede Datei in ihren eigenen verschlüsselten A/B-Slot.
+
+Die App empfängt anschließend passive authentisierte Livewerte beider
+Stationen. Vier monotone Stützpunkte ordnen Funknähe in dBm gewünschten
+Helligkeiten zu; gleiche Helligkeiten erlauben Plateaus. „Auf beide Stationen
+übernehmen“ schreibt zwei getrennte bestätigungspflichtige Konfigurationen,
+ohne die Szene neu zu starten oder ihre Quellenfrische zu erneuern.
+Die Speicherung bleibt bei Handyabbruch erhalten. Der Handyabbruch löst
+weder ARM/STOP noch weitere Konfigurationsaufträge aus.
+
+Normales USB-INFO bleibt unverändert. `BLE-INFO` zeigt gesondert BLE-/
+Konfigurationsstatus, gespeicherte und angewandte Revision. In der Live-
+Telemetrie ist die Konfigurationsrevision vom zuletzt eingereichten und
+bestätigten LED-Frame getrennt; ein neues Helligkeitsziel ist noch nicht die
+bereits ausgegebene LED-Farbe. Elektrische/optische Messung folgt daraus nicht.
+[Bedienbrief](../../docs/ui-ux/s3-nearglow-live.md) und
+[aktueller Integrationsprüfstand](../../docs/led/s3-nearglow-live-integration-2026-10-31.md).
 
 Der Hosthelfer benötigt Python und für tatsächliche USB-Verwendung PySerial.
 Er flasht und löscht nichts. Die hier verwendeten Platzhalter für Ports,

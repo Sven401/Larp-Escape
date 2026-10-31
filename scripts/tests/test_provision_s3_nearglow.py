@@ -447,5 +447,60 @@ class SetupTests(unittest.TestCase):
             setup.validate_mac(A + "\nSTOP")
 
 
+
+class BleExportTests(unittest.TestCase):
+    def setUp(self):
+        self.directory = tempfile.TemporaryDirectory(prefix="s3-ble-export-")
+        self.addCleanup(self.directory.cleanup)
+        self.path = Path(self.directory.name) / "ble-access.json"
+        self.factory = Factory()
+        self.a = self.factory.devices["COM-A"]
+        self.a.info.update(peer=B, paired=True, armed=True, persistedArmed=True, black=False, rgb=[12,4,0])
+        self.access = {"schemaVersion":1,"protocol":"LARP-PROX-BLE/1","deviceId":"101112131415161718191a1b1c1d1e1f","secret":bytes(range(32)).hex(),"name":"Larp Naeheglut","stationMac":A}
+        self.a.hooks["BLE-ACCESS"] = lambda unused: deepcopy(self.access)
+
+    def export(self):
+        return setup.export_ble_access("COM-A", A, self.path, **self.factory.options())
+
+    def test_explicit_private_export_preserves_autonomous_run(self):
+        self.assertEqual(self.export(), {"exported":True,"stationMac":A})
+        self.assertEqual(json.loads(self.path.read_text(encoding="utf-8")), self.access)
+        self.assertEqual(self.a.operations(), ["INFO","BLE-ACCESS","INFO"])
+        self.assertTrue(self.a.info["armed"])
+        with self.assertRaises(setup.SetupError): self.export()
+        self.assertEqual(self.a.operations(), ["INFO","BLE-ACCESS","INFO"])
+
+    def test_bad_credential_or_changed_node_never_writes(self):
+        for change in ({"schemaVersion":True},{"protocol":"wrong"},{"stationMac":B},{"secret":"00"*32},{"deviceId":"0"*32},{"extra":PRIVATE}):
+            invalid = dict(self.access, **change)
+            self.a.hooks["BLE-ACCESS"] = lambda unused, invalid=invalid: invalid
+            with self.assertRaises(setup.SetupError): self.export()
+            self.assertFalse(self.path.exists())
+        self.a.hooks["BLE-ACCESS"] = lambda unused: (self.a.info.update(mac=B) or deepcopy(self.access))
+        with self.assertRaises(setup.SetupError): self.export()
+        self.assertFalse(self.path.exists())
+
+    def test_no_serial_or_secret_output_on_cli_error(self):
+        self.a.hooks["BLE-ACCESS"] = lambda unused: {"type":"error","reason":self.access["secret"]}
+        output,error = io.StringIO(),io.StringIO()
+        with patch.object(setup,"_serial_factory",self.factory),redirect_stdout(output),redirect_stderr(error):
+            result=setup.main(["export-ble-access","--port","COM-A","--mac",A,"--output",str(self.path)])
+        self.assertEqual(result,1)
+        self.assertNotIn(self.access["secret"],output.getvalue()+error.getvalue())
+        self.assertFalse(self.path.exists())
+
+    def test_repository_destination_rejected_before_port_open(self):
+        (Path(self.directory.name)/".git").mkdir()
+        with self.assertRaises(setup.SetupError): self.export()
+        self.assertFalse(self.factory.opens)
+
+    def test_public_ble_info_separate_strict_schema(self):
+        value={"type":"ble-info","protocol":1,"ready":True,"fault":0,"curveRevision":1,"appliedRevision":1,"curveDurableKnown":True,"points":[[-90,0],[-75,30],[-60,60],[-40,100]]}
+        self.a.hooks["BLE-INFO"] = lambda unused: deepcopy(value)
+        self.assertEqual(setup.station_ble_info("COM-A",A,factory=self.factory,clock=self.factory.clock),value)
+        for change in ({"ready":1},{"protocol":True},{"curveRevision":0},{"secret":PRIVATE},{"points":[[-90,0],[-90,30],[-60,60],[-40,100]]}):
+            invalid=dict(value,**change)
+            with self.assertRaises(setup.SetupError): setup.validate_ble_info(invalid)
+
 if __name__ == "__main__":
     unittest.main()

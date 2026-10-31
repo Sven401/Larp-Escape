@@ -3,7 +3,7 @@ find_package(Python3 REQUIRED COMPONENTS Interpreter)
 execute_process(COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_LIST_DIR}/../../scripts/check_idf_sources.py" "$ENV{IDF_PATH}" COMMAND_ERROR_IS_FATAL ANY)
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
 set(COMPONENTS main)
-set(PROJECT_VER "s3-proximity-bench-v1")
+set(PROJECT_VER "s3-proximity-live-v1")
 project(larp_s3_proximity)
 if(NOT IDF_VERSION_MAJOR EQUAL 6 OR NOT IDF_VERSION_MINOR EQUAL 1 OR
    NOT IDF_VERSION_PATCH EQUAL 0 OR NOT IDF_TARGET STREQUAL "esp32s3")

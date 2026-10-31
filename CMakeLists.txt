@@ -88,6 +88,21 @@ if(BUILD_TESTING AND LARP_PSA_IDF_PATH)
     target_compile_options(native-proximity-psa PRIVATE -Wall -Wextra -Wpedantic -Werror)
     target_link_libraries(native-proximity-psa PRIVATE tfpsacrypto)
     add_test(NAME native-proximity-psa COMMAND native-proximity-psa)
+    add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/ble_vectors.h"
+        COMMAND "${Python3_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/test/test_proximity/write_ble_vectors.py"
+            --output "${CMAKE_CURRENT_BINARY_DIR}/ble_vectors.h"
+        DEPENDS test/test_proximity/write_ble_vectors.py test/test_proximity/ble_vectors.json VERBATIM)
+    add_executable(native-proximity-ble-psa test/test_proximity/ble.cpp test/test_proximity/psa_key_stats.c
+        firmware/idf-proximity/main/ProximityBleProtocol.cpp firmware/idf-proximity/main/ProximityBleCrypto.cpp
+        firmware/led/src/NearGlow.cpp "${CMAKE_CURRENT_BINARY_DIR}/ble_vectors.h")
+    target_include_directories(native-proximity-ble-psa PRIVATE test/test_proximity/stubs
+        firmware/idf-proximity/main firmware/led/include "${CMAKE_CURRENT_BINARY_DIR}")
+    target_compile_definitions(native-proximity-ble-psa PRIVATE LARP_PROXIMITY_REAL_PSA=1 LARP_PROXIMITY_REAL_BLE_PSA=1
+        LARP_PROXIMITY_PSA_HEADER="${LARP_PSA_IDF_PATH}/components/mbedtls/mbedtls/tf-psa-crypto/include/psa/crypto.h")
+    target_compile_features(native-proximity-ble-psa PRIVATE cxx_std_17)
+    target_compile_options(native-proximity-ble-psa PRIVATE -Wall -Wextra -Wpedantic -Werror)
+    target_link_libraries(native-proximity-ble-psa PRIVATE tfpsacrypto)
+    add_test(NAME native-proximity-ble-psa COMMAND native-proximity-ble-psa)
     add_executable(native-empty-ecc test/test_native_tls/test_empty_ecc.cpp)
     target_link_libraries(native-empty-ecc PRIVATE tfpsacrypto)
     add_test(NAME native-empty-ecc COMMAND native-empty-ecc)

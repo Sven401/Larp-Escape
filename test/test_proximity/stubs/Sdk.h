@@ -6,6 +6,7 @@
 #include <cstring>
 #include <deque>
 #include <functional>
+#include <map>
 #include <string>
 #include <vector>
 using esp_err_t=int;constexpr int ESP_OK=0,ESP_ERR_NVS_NOT_FOUND=1;
@@ -34,11 +35,33 @@ static std::array<std::uint8_t,6> peerAddress{};
 static bool peerEncrypted=false;
 static int peerChannel=0,peerInterface=-1;
 static unsigned pmkCalls=0;
+static bool multipleNvs=false,incrementalRandom=false;
+static std::uint32_t commitAdvanceMs=0;
+#ifndef LARP_PROXIMITY_REAL_PSA
+static bool psaHashOk=false,destroyFail=false;
+static unsigned keyCounter=0,activeKeys=0,destroyCalls=0;
+#endif
+static std::map<std::string,std::vector<std::uint8_t>> records,staged;
+static std::map<unsigned,std::string> handles;
 }
-using nvs_handle_t=unsigned;constexpr int NVS_READWRITE=0;
+using nvs_handle_t=unsigned;constexpr int NVS_READWRITE=0,NVS_READONLY=1;
 inline int nvs_flash_init(){return fake::initFail?-1:0;}
-inline int nvs_open(const char*,int,nvs_handle_t *h){*h=1;return fake::openFail?-1:0;}
-inline int nvs_get_blob(nvs_handle_t,const char*,void *out,std::size_t *n){
+inline int nvs_open(const char *space,int mode,nvs_handle_t *h){
+    if(fake::openFail)return -1;
+    if(!fake::multipleNvs){*h=1;return 0;}
+    bool found=false;for(const auto &entry:fake::handles)if(entry.second==space){*h=entry.first;found=true;break;}
+    if(!found){if(mode==NVS_READONLY)return ESP_ERR_NVS_NOT_FOUND;*h=fake::handles.size()+1;fake::handles[*h]=space;}
+    return 0;
+}
+inline void nvs_close(nvs_handle_t){}
+inline int nvs_get_blob(nvs_handle_t handle,const char *name,void *out,std::size_t *n){
+    if(fake::multipleNvs){
+        if(fake::readFail)return -1;
+        const auto key=fake::handles[handle]+":"+name;const auto entry=fake::records.find(key);if(entry==fake::records.end())return ESP_ERR_NVS_NOT_FOUND;
+        const auto &value=entry->second;if(!out){*n=value.size();return 0;}if(*n<value.size())return -1;*n=value.size();std::memcpy(out,value.data(),*n);
+        if(fake::readCorrupt&&*n)static_cast<std::uint8_t*>(out)[0]^=1;
+        return 0;
+    }
     if(fake::readFail)return -1;
     if(fake::missing)return ESP_ERR_NVS_NOT_FOUND;
     if(!out){*n=fake::committed.size();return 0;}
@@ -47,8 +70,11 @@ inline int nvs_get_blob(nvs_handle_t,const char*,void *out,std::size_t *n){
     if(fake::readCorrupt&&*n)static_cast<std::uint8_t*>(out)[0]^=1;
     return 0;
 }
-inline int nvs_set_blob(nvs_handle_t,const char*,const void *p,std::size_t n){++fake::writes;if(fake::setFail)return -1;auto b=static_cast<const std::uint8_t*>(p);fake::pending.assign(b,b+n);return 0;}
-inline int nvs_commit(nvs_handle_t){++fake::commits;if(fake::commitFail)return -1;fake::committed=fake::pending;fake::missing=false;return 0;}
+inline int nvs_set_blob(nvs_handle_t handle,const char *name,const void *p,std::size_t n){++fake::writes;if(fake::setFail)return -1;auto b=static_cast<const std::uint8_t*>(p);
+    if(fake::multipleNvs)fake::staged[fake::handles[handle]+":"+name]=std::vector<std::uint8_t>(b,b+n);else fake::pending.assign(b,b+n);return 0;}
+inline int nvs_commit(nvs_handle_t handle){++fake::commits;fake::now+=fake::commitAdvanceMs;if(fake::commitFail)return -1;
+    if(fake::multipleNvs){const auto prefix=fake::handles[handle]+":";for(const auto &item:fake::staged)if(item.first.compare(0,prefix.size(),prefix)==0)fake::records[item.first]=item.second;fake::staged.clear();}
+    else{fake::committed=fake::pending;fake::missing=false;}return 0;}
 struct rmt_symbol_word_t{unsigned duration0=0,level0=0,duration1=0,level1=0;};
 struct FakeRmt;using rmt_channel_handle_t=FakeRmt*;using rmt_encoder_handle_t=int*;
 struct rmt_tx_done_event_data_t{};
@@ -84,7 +110,9 @@ constexpr int PSA_SUCCESS=0,PSA_KEY_TYPE_HMAC=0,PSA_KEY_USAGE_SIGN_MESSAGE=0,PSA
 #define PSA_ALG_HMAC(a) (a)
 inline int psa_crypto_init(){return 0;}inline void psa_set_key_type(psa_key_attributes_t*,int){}inline void psa_set_key_bits(psa_key_attributes_t*,int){}
 inline void psa_set_key_usage_flags(psa_key_attributes_t*,int){}inline void psa_set_key_algorithm(psa_key_attributes_t*,int){}
-inline int psa_import_key(psa_key_attributes_t*,const void*,std::size_t,mbedtls_svc_key_id_t *id){*id=1;return 0;}
+inline int psa_import_key(psa_key_attributes_t*,const void*,std::size_t,mbedtls_svc_key_id_t *id){*id=++fake::keyCounter;++fake::activeKeys;return 0;}
+inline int psa_destroy_key(mbedtls_svc_key_id_t){++fake::destroyCalls;if(fake::destroyFail)return -1;if(fake::activeKeys)--fake::activeKeys;return 0;}
+inline int psa_hash_compute(int,const void*,std::size_t,void *out,std::size_t capacity,std::size_t *length){if(!fake::psaHashOk||capacity<32)return -1;std::memset(out,7,32);*length=32;return 0;}
 inline void psa_reset_key_attributes(psa_key_attributes_t*){}
 inline int psa_mac_compute(unsigned,int,const void*,std::size_t,void *out,std::size_t size,std::size_t *length){if(!fake::psaMacOk||size<32)return -1;std::memset(out,7,32);*length=32;return 0;}
 #endif
@@ -93,7 +121,7 @@ inline int usb_serial_jtag_driver_install(const usb_serial_jtag_driver_config_t*
 inline int usb_serial_jtag_write_bytes(const void *p,std::size_t n,int){fake::serial.append(static_cast<const char*>(p),n);return n;}
 inline int usb_serial_jtag_read_bytes(void *out,std::size_t capacity,int){const auto n=std::min(capacity,fake::input.size());std::memcpy(out,fake::input.data(),n);fake::input.erase(0,n);return n;}
 inline std::int64_t esp_timer_get_time(){return fake::now*1000;}
-inline void esp_fill_random(void *p,std::size_t n){std::memset(p,7,n);}
+inline void esp_fill_random(void *p,std::size_t n){if(fake::incrementalRandom){for(std::size_t i=0;i<n;++i)static_cast<std::uint8_t*>(p)[i]=i+1;}else std::memset(p,7,n);}
 inline void esp_restart(){fake::restarted=true;}
 inline void vTaskDelay(int){++fake::now;if(fake::tick)fake::tick();}
 constexpr int ESP_MAC_WIFI_STA=0;

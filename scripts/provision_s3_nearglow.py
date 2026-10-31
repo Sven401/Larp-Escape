@@ -170,8 +170,8 @@ class Station:
                 pass
             self.connection = None
 
-    def exchange(self, command, operation=None, timeout=3, boot_readiness=False):
-        allowed = command in ("INFO", "ARM", "STOP", "REBOOT") or re.fullmatch(
+    def exchange(self, command, operation=None, timeout=3, boot_readiness=False, response_parser=None):
+        allowed = command in ("INFO", "ARM", "STOP", "REBOOT", "BLE-ACCESS", "BLE-INFO") or re.fullmatch(
             r"PAIR (?:[0-9A-F]{2}:){5}[0-9A-F]{2} [0-9a-f]{64}", command)
         if not allowed or len(command.encode("ascii")) > MAX_COMMAND:
             raise SetupError("Unsupported USB command.")
@@ -202,7 +202,7 @@ class Station:
                     raise SetupError("Station rejected the USB command.")
                 if operation:
                     return _validate_ack(value, operation)
-                return validate_info(value)
+                return (response_parser or validate_info)(value)
             raise ConnectionProblem("Station response timed out.")
         except SetupError:
             raise
@@ -438,6 +438,84 @@ def stop_stations(port_a, port_b, pair_file, factory=None, clock=None, sleep=Non
             station.close()
 
 
+
+BLE_ACCESS_FIELDS = {"schemaVersion", "protocol", "deviceId", "secret", "name", "stationMac"}
+BLE_INFO_FIELDS = {"type", "protocol", "ready", "fault", "curveRevision", "appliedRevision", "curveDurableKnown", "points"}
+
+
+def validate_ble_access(value):
+    if set(value) != BLE_ACCESS_FIELDS or type(value["schemaVersion"]) is not int or value["schemaVersion"] != 1 or value["protocol"] != "LARP-PROX-BLE/1":
+        raise SetupError("Unsupported BLE access schema.")
+    for field, length in (("deviceId", 32), ("secret", 64)):
+        if type(value[field]) is not str or not re.fullmatch("[0-9a-f]{" + str(length) + "}", value[field]) or not any(bytes.fromhex(value[field])):
+            raise SetupError("Invalid BLE access identity or key.")
+    if len(set(bytes.fromhex(value["secret"]))) == 1:
+        raise SetupError("Invalid BLE access key.")
+    if type(value["name"]) is not str or not 1 <= len(value["name"]) <= 64 or any(ord(c) < 32 for c in value["name"]):
+        raise SetupError("Invalid BLE access name.")
+    result = dict(value)
+    result["stationMac"] = validate_mac(value["stationMac"])
+    return result
+
+
+def validate_ble_info(value):
+    if set(value) != BLE_INFO_FIELDS or value["type"] != "ble-info" or type(value["protocol"]) is not int or value["protocol"] != 1:
+        raise SetupError("Unsupported BLE status schema.")
+    if any(type(value[f]) is not bool for f in ("ready", "curveDurableKnown")) or not _integer(value["fault"], 0, 65535):
+        raise SetupError("Invalid BLE status flags.")
+    if not _integer(value["curveRevision"], 1, 0xffffffff) or not _integer(value["appliedRevision"], 0, 0xffffffff):
+        raise SetupError("Invalid BLE curve revision.")
+    points = value["points"]
+    if type(points) is not list or len(points) != 4:
+        raise SetupError("Invalid BLE curve points.")
+    for i, point in enumerate(points):
+        if type(point) is not list or len(point) != 2 or not _integer(point[0], -127, -1) or not _integer(point[1], 0, 100):
+            raise SetupError("Invalid BLE curve points.")
+        if i and (point[0] <= points[i-1][0] or point[1] < points[i-1][1]):
+            raise SetupError("Invalid BLE curve order.")
+    return dict(value)
+
+
+def _ble_destination(path):
+    destination = _private_destination(path)
+    for ancestor in (destination.parent, *destination.parent.parents):
+        if (ancestor / ".git").exists() or (ancestor / ".git").is_symlink():
+            raise SetupError("BLE access files must be outside Git repositories.")
+    return destination
+
+
+@safe_operation
+def export_ble_access(port, mac, output, factory=None, clock=None, sleep=None):
+    destination = _ble_destination(output)
+    station = Station(port, validate_mac(mac), factory, clock or time.monotonic)
+    try:
+        station.open()
+        before = station.info()
+        if before["fault"] or not before["paired"] or not before["radio"] or not before["durableKnown"] or before["restartRequired"]:
+            raise SetupError("Station is not ready for explicit BLE setup.")
+        access = station.exchange("BLE-ACCESS", response_parser=validate_ble_access)
+        after = station.info()
+        context = ("mac", "peer", "paired", "armed", "persistedArmed", "durableKnown", "radio", "restartRequired", "fault")
+        if access["stationMac"] != station.mac or any(before[f] != after[f] for f in context):
+            raise SetupError("Station identity or autonomous authority changed during BLE setup.")
+        _write_prepared(destination, access)
+        return {"exported": True, "stationMac": station.mac}
+    finally:
+        station.close()
+
+
+@safe_operation
+def station_ble_info(port, mac, factory=None, clock=None):
+    station = Station(port, validate_mac(mac), factory, clock or time.monotonic)
+    try:
+        station.open()
+        station.info()
+        result = station.exchange("BLE-INFO", response_parser=validate_ble_info)
+        station.info()
+        return result
+    finally:
+        station.close()
+
 class ArgumentParser(argparse.ArgumentParser):
     def error(self, message):
         self.exit(2, "Invalid command line; use --help.\n")
@@ -449,6 +527,13 @@ def main(argv=None):
     info = commands.add_parser("info", help="Read a known station's public status")
     info.add_argument("--port", required=True)
     info.add_argument("--mac", required=True)
+    ble_info = commands.add_parser("ble-info", help="Read a known station's public BLE/curve status")
+    ble_info.add_argument("--port", required=True)
+    ble_info.add_argument("--mac", required=True)
+    access = commands.add_parser("export-ble-access", help="Explicit private access export; does not arm or stop")
+    access.add_argument("--port", required=True)
+    access.add_argument("--mac", required=True)
+    access.add_argument("--output", required=True, type=Path)
     pair = commands.add_parser("pair", help="Pair two known stations, leaving both disarmed")
     pair.add_argument("--port-a", required=True)
     pair.add_argument("--mac-a", required=True)
@@ -464,6 +549,10 @@ def main(argv=None):
     try:
         if args.command == "info":
             result = station_info(args.port, args.mac)
+        elif args.command == "ble-info":
+            result = station_ble_info(args.port, args.mac)
+        elif args.command == "export-ble-access":
+            result = export_ble_access(args.port, args.mac, args.output)
         elif args.command == "pair":
             result = pair_stations(args.port_a, args.mac_a, args.port_b, args.mac_b, args.output)
         elif args.command == "arm":
