@@ -28,17 +28,21 @@ const ble_uuid128_t inputId = BLE_UUID128_INIT(0x20, 0x47, 0x0f, 0x8a, 0x5f, 0x8
                                                0x4e, 0x55, 0xb3, 0xe1, 0x57, 0x81, 0x6d);
 const ble_uuid128_t outputId = BLE_UUID128_INIT(0x20, 0x47, 0x0f, 0x8a, 0x5f, 0x87, 0x7c, 0x89,
                                                 0x83, 0x4e, 0x55, 0xb3, 0xe2, 0x57, 0x81, 0x6d);
+std::uint64_t monotonicNow() noexcept {
+    return std::uint64_t(esp_timer_get_time() / 1000);
+}
 std::uint32_t now() noexcept {
-    return std::uint32_t(esp_timer_get_time() / 1000);
+    return std::uint32_t(monotonicNow());
 }
 } // namespace
 bool NimblePeerSource::onHost() const noexcept {
     return host_ && xTaskGetCurrentTaskHandle() == host_;
 }
 bool NimblePeerSource::ready() const noexcept {
-    const auto observed = now();
+    const auto observed = monotonicNow();
     portENTER_CRITICAL(&mutex_);
-    if (ready_ && observed - heartbeat_ >= HeartbeatMilliseconds) {
+    // The host may have advanced heartbeat_ after this worker sampled time.
+    if (ready_ && observed >= heartbeat_ && observed - heartbeat_ >= HeartbeatMilliseconds) {
         heartbeatFailed_ = true;
         ready_ = eligible_ = false;
         banned_ = true;
@@ -48,11 +52,18 @@ bool NimblePeerSource::ready() const noexcept {
     return value;
 }
 bool NimblePeerSource::current(const TlsOrigin &v) const noexcept {
-    const auto observed = now();
+    const auto observed = monotonicNow();
     portENTER_CRITICAL(&mutex_);
-    if (eligible_ && observed - heartbeat_ >= HeartbeatMilliseconds) {
+    if (eligible_ && observed >= heartbeat_ && observed - heartbeat_ >= HeartbeatMilliseconds) {
         heartbeatFailed_ = true;
         ready_ = eligible_ = false;
+        banned_ = true;
+    }
+    // open() may still be handing the copied origin to another worker.
+    // The deadline remains visible until the host completes that handoff.
+    if (eligible_ && admissionPending_ && observed >= admissionStarted_ &&
+        observed - admissionStarted_ >= AdmissionMilliseconds) {
+        eligible_ = false;
         banned_ = true;
     }
     const bool value = eligible_ && !banned_ && !heartbeatFailed_ && view_ == v;
@@ -84,6 +95,8 @@ void NimblePeerSource::publish(bool eligible) noexcept {
     if (!(view_ == original_)) {
         view_ = original_;
         banned_ = false;
+        admissionStarted_ = connectedAt_;
+        admissionPending_ = true;
     }
     eligible_ = eligible && !banned_ && !heartbeatFailed_;
     portEXIT_CRITICAL(&mutex_);
@@ -104,18 +117,38 @@ bool NimblePeerSource::secure() const noexcept {
            descriptor.sec_state.encrypted && descriptor.sec_state.authenticated &&
            descriptor.sec_state.bonded && descriptor.sec_state.key_size == 16;
 }
+bool NimblePeerSource::expireAdmission() noexcept {
+    if (live_ && !opened_ && monotonicNow() - connectedAt_ >= AdmissionMilliseconds) {
+        fence();
+        return true;
+    }
+    return false;
+}
 void NimblePeerSource::update() noexcept {
-    if (!live_)
+    if (!live_ || expireAdmission())
         return;
     if (opened_) {
         if (!subscribed_ || !secure() || !current(original_))
             fence();
     } else if (subscribed_ && secure()) {
+        if (expireAdmission())
+            return;
         publish(true);
         if (!current(original_) || !ingress_.open(original_))
             fence();
-        else
-            opened_ = true;
+        else {
+            const auto completed = monotonicNow();
+            portENTER_CRITICAL(&mutex_);
+            const bool admitted = view_ == original_ && !banned_ && !heartbeatFailed_ &&
+                                  completed - admissionStarted_ < AdmissionMilliseconds;
+            if (admitted)
+                admissionPending_ = false;
+            portEXIT_CRITICAL(&mutex_);
+            if (admitted)
+                opened_ = true;
+            else
+                fence();
+        }
     }
 }
 bool NimblePeerSource::begin() noexcept {
@@ -189,7 +222,7 @@ void NimblePeerSource::sync() {
             self->broken_ = true;
         return;
     }
-    const auto syncedAt = now();
+    const auto syncedAt = monotonicNow();
     portENTER_CRITICAL(&self->mutex_);
     self->heartbeat_ = syncedAt;
     portEXIT_CRITICAL(&self->mutex_);
@@ -254,6 +287,7 @@ int NimblePeerSource::gap(ble_gap_event *event, void *argument) {
         self.original_.epoch = ++self.epoch_;
         self.original_.handle = event->connect.conn_handle;
         self.live_ = true;
+        self.connectedAt_ = monotonicNow();
         self.opened_ = self.subscribed_ = self.comparing_ = false;
         self.publish(false);
         if (ble_gap_security_initiate(self.original_.handle))
@@ -284,6 +318,8 @@ int NimblePeerSource::gap(ble_gap_event *event, void *argument) {
         }
         break;
     case BLE_GAP_EVENT_PASSKEY_ACTION:
+        if (self.expireAdmission())
+            break;
         if (!self.live_ || event->passkey.conn_handle != self.original_.handle) {
             ble_gap_terminate(event->passkey.conn_handle, BLE_ERR_REM_USER_CONN_TERM);
             break;
@@ -354,7 +390,7 @@ void NimblePeerSource::poll() noexcept {
         return;
     Confirmation confirmation;
     bool pending = false;
-    const auto observed = now();
+    const auto observed = monotonicNow();
     portENTER_CRITICAL(&mutex_);
     if (observed - heartbeat_ >= HeartbeatMilliseconds)
         heartbeatFailed_ = true;
@@ -376,6 +412,8 @@ void NimblePeerSource::poll() noexcept {
     }
     if (live_ && banned)
         fence();
+    // Before a queued comparison can be injected, not only before TLS open.
+    expireAdmission();
     if (pending && comparing_ && confirmation.origin == original_ &&
         confirmation.number == compareNumber_ && now() - compareAt_ < 30000) {
         ble_sm_io io{};
