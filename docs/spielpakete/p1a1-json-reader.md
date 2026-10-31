@@ -84,5 +84,34 @@ Ein erster nicht erhöhter Windows-Prozessstart für die ergänzende Messung
 scheiterte an einer DLL-Laufumgebungsbeschränkung; derselbe Compiler-/Testpfad
 lief im genehmigten Hostkontext erfolgreich. Kein Produktfehler daraus abgeleitet.
 Lokale Logs, Buildausgaben und Stackbericht liegen regenerierbar unter `private/`.
-Unabhängiger Review und CI werden am veröffentlichten Commit separat zugeordnet.
+Unabhängiger Review von `4d5a97953e2caff8a6387b138f480533d1e22e9b`:
+43 eigene Fixtures und Grenz-/Quellenfälle, **3356 Checks ohne Fehler**, keine
+P1/P2-Befunde im Readerdiff. CI bleibt zusätzlich am veröffentlichten Head gebunden.
 Keine lokale PSA-/SDK-Neuqualifikation, kein Upload, Geräte- oder Gesamtspieltest.
+
+## PlatformIO-Integrationskorrektur
+
+Quality/Host fand auf `4d5a979` im Lauf `41148196445`, Job `124378150710`,
+einen Linkfehler der automatisch entdeckten Suite `test_package_json`.
+`host-regression` baute bisher standardmäßig keine Projektquellen; ältere
+Suiten inkludieren ihre Implementierung direkt. Die neue Suite war dagegen nur
+über CMake mit der Readerquelle verlinkt. Der CMake-Nachweis deckte diesen
+separaten PlatformIO-Pfad nicht ab.
+
+Minimaler Fix auf dieser Basis: `test_build_src = true` und ausschließlich
+`GameConfiguration/CanonicalPackageJson.cpp` im `host-regression`-Quellfilter.
+Keine Suite wird entfernt; keine Toolchain-/Produktpins werden geändert.
+Kein anderes Profil erbt `host-regression`; `host-peer-proof` erbt stattdessen
+`host-configured-control`. Deren vorhandene `GameConfiguration/`-Filter sowie
+`profile-tools` und die Firmwareprofile bleiben unverändert.
+
+Tatsächlich lokal ausgeführt mit **PlatformIO Core 6.2.0** und dem gepinnten
+`windows_x86@1.2.0`/Unity 2.6.1:
+`python -m platformio test -e host-regression -v --junit-output-path private/p1a1-pio-host-regression.xml`.
+**13/13 ausgewählte Suiten, 134/134 Testfälle erfolgreich**, einschließlich aller
+zwölf `test_package_json`-Gruppen. Log und JUnit liegen unter `private/`.
+Damit sind auch sämtliche anderen durch den neuen Quellfilter betroffenen
+Regressionssuiten tatsächlich gelaufen. Reader, Tests und CMake-Dateien wurden
+für diesen Fix nicht verändert; ihre vorstehenden Nachweise wurden deshalb
+nicht ohne Anlass wiederholt. Neue unabhängige Fixprüfung und CI am Fixcommit
+werden separat zugeordnet; SDK-/ABI- und Gerätenachweise bleiben offen.
