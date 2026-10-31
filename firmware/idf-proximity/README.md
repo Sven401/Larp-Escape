@@ -145,6 +145,7 @@ Historischer S3-Handytest und Rückweg: [PR #115](https://github.com/Sven401/Lar
 ## Prüfstand
 
 Softwareprüfung am 31.10.2026, Ausgangsbasis `ec1c52084e286892ada6540159e4c8036a907d04`:
+Implementierungscommit `9f233e41e5c0517add3080f1bea078d3ca01db6f`.
 
 - Nativer ESP-IDF-S3-Build am oben genannten SDK-Pin bestanden;
   Anwendung `0xbf3b0` Byte, 75 % der unveränderten Apppartition frei.
@@ -156,6 +157,11 @@ Softwareprüfung am 31.10.2026, Ausgangsbasis `ec1c52084e286892ada6540159e4c8036
   der zuvor fehlgeschlagene Core gezielt wiederholt.
 - Gemeinsamer LED-Kern: Owner 16, NearGlow 7 mit 2002 Assertions,
   CrystalSeal 11 und RSSI 10 Regressionen bestanden. Architekturprüfung bestanden.
+
+Die reale Host-HMAC prüft den Paketcodec; die Adapterfehlerinjektion ersetzt
+PSA durch einen SDK-Fake. Ein Vektorvergleich der tatsächlich nativen
+PSA-HMAC und Schlüsselableitung ist vor einer Authentisierungs-/Gerätefreigabe
+noch zu erbringen und wird durch den erfolgreichen SDK-Build nicht ersetzt.
 
 Aufteilung: `s3_firmware` verantwortet Firmware, Plattform und Geräteadapter;
 `proximity_concept` den USB-Helfer; `s3_review` prüft unabhängig Sicherheit,
