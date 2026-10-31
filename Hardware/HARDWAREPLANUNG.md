@@ -1,5 +1,11 @@
 # Hardwareplanung nach den geführten Baugruppentests
 
+**Konzeptauftrag PCB · 31.10.2026:** [Architektenempfehlung für reproduzierbar
+bestellbare Platinen](PCB-KONZEPT-2026-10-31.md), [#112](https://github.com/Sven401/Larp-Escape/issues/112).
+Vorschlag zur Entscheidung: gemeinsamer Controller-/I/O-Träger mit steckbaren
+ESP-/Audiomodulen und eigener R1-Pinbelegung; Konzept geliefert, Annahme und
+Folgeumsetzung offen. Keine neue elektrische Prüfung oder Fertigungsfreigabe.
+
 Stand: **18. Oktober 2026**. Status: **belegte Teilbefunde übernommen;
 elektrische Gesamtfreigabe und Fertigungsfreigabe offen**.
 Auftrag: bestätigte Ergebnisse der geführten Tests in die Hardwareplanung übernehmen.
