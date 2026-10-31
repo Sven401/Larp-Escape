@@ -75,9 +75,35 @@ Native CI verwendet den bereits vorhandenen cryptography45.0.7-Pin; lokal wurde
 die vorhandene gebündelte Runtime mit cryptography50.0.2 verwendet. Ein System-
 Python ohne diesen unabhängigen Verifier ist keine grüne Ersatzprüfung.
 
-Der tatsächliche produktive PSA-Signierpositivlauf sowie SDK-/Draftprüfungen
-sind bei Erstellung dieses Commits noch offen. Windows-CNG und API-Stubs ersetzen
-diesen Nachweis nicht. Nachgelagerte Ergebnisse werden dem PR-Head zugeordnet.
+### Nachgelagerte native und PR-Qualifikation · 31.10.2026
+
+Der bei Erstellung offene produktive PSA-Nachweis ist für den veröffentlichten
+Zwischenstand nachgeholt: [Draft #135](https://github.com/Sven401/Larp-Escape/pull/135),
+Head `7a44ac502529cb66b45d6a802ff96b180012e8d3`, Ziel
+`c4f1f824c6274e9a8d7676212a2a96be4d4a77b9`, tatsächlicher Prüfmerge
+`94dc645d140d8a82ad861b6d596eacbaf98e2010` mit exakt diesen Eltern.
+Anderer Qualitätsreviewer `quality_p1` hat alle zwölf tatsächlichen Checkoutlogs,
+`pull_request`, Attempt 1 und GitHub Actions App 15368 sowie abschließend die
+unveränderten Remote-Refs geprüft. Alle zwölf Jobs sind erfolgreich.
+
+[Native 41240436263](https://github.com/Sven401/Larp-Escape/actions/runs/41240436263):
+**72/72 CTests, kein Fehler oder Skip**, beide Writerkorpora mit produktivem
+PSA-Signierer, tatsächlichem Testprivatkeyimport und unabhängiger Python-P256-
+Ausgabeverifikation; 61 vollständige tatsächliche v2-Artefaktsätze. Die 554
+synthetischen Lifecyclechecks bleiben ein getrennter Nachweis. SDK-Commit
+`9a97f6c54ec638111ce55cd36581b3c192f15207` und rekursive Submodule sowie beide
+SDK-Images sind bestätigt; der produktive Writer/Signer wird im Coreimage
+tatsächlich kompiliert. Originalarchiv `13056829309`, SHA-256
+`ddf1d14ba50ec4aa38b8dcd7b835be8efd49afd31a92c8bb52885efbfad2817e`.
+
+[Quality 41240436644](https://github.com/Sven401/Larp-Escape/actions/runs/41240436644)
+prüft auch alle vier Firmwarevarianten erfolgreich. Die weiteren vollständigen
+Pflichtläufe sind [LED](https://github.com/Sven401/Larp-Escape/actions/runs/41240436527),
+[NFC](https://github.com/Sven401/Larp-Escape/actions/runs/41240436337),
+[ESP-NOW](https://github.com/Sven401/Larp-Escape/actions/runs/41240436631) und
+[Rollen](https://github.com/Sven401/Larp-Escape/actions/runs/41240436288).
+Diese Qualifikation gilt für den genannten Zwischenstand, nicht für den unten
+weiterhin offenen vollständigen Besitzer-/Authority-/D1-Pfad oder spätere Quellen.
 
 ## Speicher und Grenzen
 
