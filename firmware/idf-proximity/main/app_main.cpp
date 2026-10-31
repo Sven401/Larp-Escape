@@ -235,6 +235,9 @@ extern "C" void app_main() {
                 else{const char digits[]="0123456789abcdef";char device[33]{},secret[65]{};for(unsigned i=0;i<16;++i){device[i*2]=digits[credential.device[i]>>4];device[i*2+1]=digits[credential.device[i]&15];}for(unsigned i=0;i<32;++i){secret[i*2]=digits[credential.secret[i]>>4];secret[i*2+1]=digits[credential.secret[i]&15];}
                     report("{\"schemaVersion\":1,\"protocol\":\"LARP-PROX-BLE/1\",\"deviceId\":\"%s\",\"secret\":\"%s\",\"name\":\"Larp Naeheglut\",\"stationMac\":\"%02X:%02X:%02X:%02X:%02X:%02X\"}\n",device,secret,local[0],local[1],local[2],local[3],local[4],local[5]);wipe(device,sizeof(device));wipe(secret,sizeof(secret));}
                 wipe(credential.secret.data(),credential.secret.size());
+            }else if(command.kind==UsbCommand::Kind::BleDiag){
+                const auto d=bleBearer.diagnostic();
+                report("{\"type\":\"ble-diag\",\"protocol\":1,\"reason\":%u,\"epoch\":%lu,\"atMs\":%lu,\"messageType\":%u,\"offset\":%u,\"ageMs\":%lu,\"sdkCode\":%d}\n",static_cast<unsigned>(d.reason),static_cast<unsigned long>(d.epoch),static_cast<unsigned long>(d.at),d.type,d.offset,static_cast<unsigned long>(d.age),d.sdk);
             }else if(command.kind==UsbCommand::Kind::BleInfo){
                 const auto &view=bleControl.view();const auto p=view.curve.encode();
                 report("{\"type\":\"ble-info\",\"protocol\":1,\"ready\":%s,\"fault\":%u,\"curveRevision\":%lu,\"appliedRevision\":%lu,\"curveDurableKnown\":%s,\"points\":[[%d,%u],[%d,%u],[%d,%u],[%d,%u]]}\n",bleControl.ready()?"true":"false",bleControl.fault(),static_cast<unsigned long>(view.revision),static_cast<unsigned long>(bleControl.revision()),view.durable?"true":"false",static_cast<std::int8_t>(p[0]),p[1],static_cast<std::int8_t>(p[2]),p[3],static_cast<std::int8_t>(p[4]),p[5],static_cast<std::int8_t>(p[6]),p[7]);

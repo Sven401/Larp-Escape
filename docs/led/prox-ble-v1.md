@@ -164,3 +164,36 @@ Passive2Hz-Telemetrie und zwei parallele Handyverbindungen benötigen echte
 S3-Last-/Funklücken-/Konfigurations-/Reconnect-Nachweise. Ein erfolgreicher
 Host-/SDK-Build ersetzt diese nicht. Diese Vertragsfassung ist erst zusammen
 mit passender App-/Firmwareprüfung als implementiert zu markieren.
+
+
+### Oeffentliche Abbruchdiagnose (USB)
+
+`BLE-DIAG` ist ein separates, lesendes USB-Kommando. Bestehendes `INFO` und
+`BLE-INFO` behalten ihr Schema. Antwort: `type="ble-diag"`, `protocol=1`,
+`reason`, `epoch`, `atMs` (lokale Boot-Millis), `messageType`, `offset`, `ageMs`,
+`sdkCode`. Alle Werte sind oeffentliche Metadaten; keine Payload/Nonce/Schluessel.
+Der erste lokale Abbruchgrund eines Links bleibt bis zum naechsten lokalen
+Abbruch gespeichert, auch nach Disconnect/Reconnect. Grund 0 bedeutet keinen
+aufgezeichneten lokalen Abbruch; ein entfernter Disconnect setzt keinen Grund.
+Zeitwerte sind uint32 mit Wrap, nicht Handyzeit. Alter/Offset/Typ/SDKcode sind
+nur bei passenden Bearer-Ursachen belegt, sonst 0.
+
+| reason | Bedeutung |
+|---|---|
+| 1 | unspezifischer Owner-Abbruch |
+| 2 / 3 | Ingress- / Egress-Queue voll |
+| 4 | absolutes Egress-Nachrichtenalter erreicht |
+| 5 / 6 | Frame-Encoding / Transferzaehler erschoepft |
+| 7 / 8 | Notify-Busy-Frist / anderer Notify-SDKfehler |
+| 9 / 10 | Notify abbestellt / Hostfehler |
+| 11 | Challenge-Erzeugung oder Versand |
+| 12 / 13 | Ingress zu alt / Assembly ungueltig |
+| 14 / 15 | Proof oder AuthOK / Command ungueltig |
+| 16 | Result-Erzeugung oder Versand |
+| 17 / 18 | unauthentisierte 5s-Frist / Telemetrie-Erzeugung oder Versand |
+
+Die Diagnose lockert keine Frist: Telemetrie bleibt maximal 1000ms ab signiertem
+Geraetesnapshot im Egress, andere Nachrichten maximal 2000ms. Die Snapshotzeit
+an Telemetrieoffset24 und Bearer-Zeit stammen beide aus `esp_timer_get_time()/1000`.
+Ein erfolgreicher Notify-SDKaufruf bestaetigt nur die Uebergabe an NimBLE, keinen
+Empfang der App. Die Diagnose ist kein Funk- oder Latenz-Messnachweis.

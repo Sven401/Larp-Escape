@@ -19,7 +19,7 @@ class Runtime {
     bool loaded_=false,hasAccess_=false,hasCurve_=false,started_=false;
     std::uint32_t epoch_=0,sessionAt_=0,lastStatus_=0,lastApply_=0,appliedRevision_=0;
     bool applied_=false;std::uint16_t fault_=0;
-    bool start();void revoke();
+    bool start();void revoke(RevokeReason reason=RevokeReason::Result);
 public:
     explicit Runtime(Transport &bearer):bearer_(bearer){}
     bool begin(Core&,bool radioReady,std::uint32_t now);

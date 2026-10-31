@@ -10,11 +10,13 @@ extern "C" {
 #include "nimble/nimble_port.h"
 }
 namespace larp { namespace proximity { namespace ble {
+struct Revocation { RevokeReason reason=RevokeReason::None;std::uint32_t epoch=0,at=0,age=0;std::uint16_t offset=0;std::uint8_t type=0;int sdk=0; };
 class Bearer final:public Transport {
     struct Link { std::uint32_t epoch=0;std::uint16_t handle=BLE_HS_CONN_HANDLE_NONE;bool connected=false,subscribed=false,abort=false,ready=false,fault=false; };
     struct Egress { std::uint32_t epoch=0,createdAt=0;Message message; };
     mutable portMUX_TYPE lock_=portMUX_INITIALIZER_UNLOCKED;
-    Link link_;
+    Link link_;Revocation last_;
+    void abort(std::uint32_t,RevokeReason,std::uint32_t age=0,std::uint16_t offset=0,std::uint8_t type=0,int sdk=0);
     QueueHandle_t incoming_=nullptr,outgoing_=nullptr;
     Token device_{};std::uint8_t addressType_=0;
     ble_gatt_chr_def characteristics_[3]{};ble_gatt_svc_def services_[2]{};
@@ -37,6 +39,8 @@ public:
     bool send(std::uint32_t,const Message&)override;
     bool current(std::uint32_t)const override;
     void revoke(std::uint32_t)override;
+    void revokeReason(std::uint32_t,RevokeReason)override;
+    Revocation diagnostic()const;
     bool ready()const override;bool fault()const override;
 };
 }}}

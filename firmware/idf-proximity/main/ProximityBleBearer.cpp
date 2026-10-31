@@ -17,15 +17,22 @@ bool Bearer::onHost()const{return host_&&xTaskGetCurrentTaskHandle()==host_;}
 bool Bearer::ready()const{const auto v=snapshot();return v.ready&&!v.fault;}
 bool Bearer::fault()const{return snapshot().fault;}
 bool Bearer::current(std::uint32_t epoch)const{const auto v=snapshot();return v.epoch==epoch&&v.connected&&v.subscribed&&!v.abort&&!v.fault;}
-void Bearer::revoke(std::uint32_t epoch){portENTER_CRITICAL(&lock_);if(link_.epoch==epoch)link_.abort=true;portEXIT_CRITICAL(&lock_);}
-void Bearer::fail(){portENTER_CRITICAL(&lock_);link_.fault=true;link_.abort=true;link_.ready=false;portEXIT_CRITICAL(&lock_);}
-bool Bearer::event(const Ingress &value){if(xQueueSend(incoming_,&value,0)==pdTRUE)return true;revoke(value.epoch);return false;}
+Revocation Bearer::diagnostic()const{portENTER_CRITICAL(&lock_);const auto value=last_;portEXIT_CRITICAL(&lock_);return value;}
+void Bearer::abort(std::uint32_t epoch,RevokeReason reason,std::uint32_t age,std::uint16_t offset,std::uint8_t type,int sdk){
+    const auto at=now();portENTER_CRITICAL(&lock_);
+    if(link_.epoch==epoch){if(last_.reason==RevokeReason::None||last_.epoch!=epoch)last_={reason,epoch,at,age,offset,type,sdk};link_.abort=true;}
+    portEXIT_CRITICAL(&lock_);
+}
+void Bearer::revoke(std::uint32_t epoch){abort(epoch,RevokeReason::Owner);}
+void Bearer::revokeReason(std::uint32_t epoch,RevokeReason reason){abort(epoch,reason);}
+void Bearer::fail(){abort(snapshot().epoch,RevokeReason::HostFault);portENTER_CRITICAL(&lock_);link_.fault=true;link_.abort=true;link_.ready=false;portEXIT_CRITICAL(&lock_);}
+bool Bearer::event(const Ingress &value){if(xQueueSend(incoming_,&value,0)==pdTRUE)return true;abort(value.epoch,RevokeReason::IngressFull);return false;}
 bool Bearer::receive(Ingress &value){return incoming_&&xQueueReceive(incoming_,&value,0)==pdTRUE;}
 bool Bearer::send(std::uint32_t epoch,const Message &message){
     if(!message.size||message.size>message.bytes.size()||!current(epoch))return false;
     Egress e;e.epoch=epoch;e.message=message;e.createdAt=message.bytes[1]==0x84&&message.size==145?get32(message.bytes.data()+24):now();
     if(xQueueSend(outgoing_,&e,0)==pdTRUE)return true;
-    revoke(epoch);return false;
+    abort(epoch,RevokeReason::EgressFull);return false;
 }
 bool Bearer::begin(const Token &device){
     if(attempted_||selected_||!nonzero(device.data(),device.size()))return false;
@@ -81,7 +88,8 @@ int Bearer::gap(ble_gap_event *e,void *arg){
     if(e->type==BLE_GAP_EVENT_SUBSCRIBE&&e->subscribe.attr_handle==self.output_){
         const auto v=self.snapshot();if(v.handle!=e->subscribe.conn_handle)return 0;
         if(v.subscribed&&e->subscribe.cur_notify)return 0;
-        portENTER_CRITICAL(&self.lock_);self.link_.subscribed=e->subscribe.cur_notify!=0;if(!self.link_.subscribed)self.link_.abort=true;portEXIT_CRITICAL(&self.lock_);
+        portENTER_CRITICAL(&self.lock_);self.link_.subscribed=e->subscribe.cur_notify!=0;portEXIT_CRITICAL(&self.lock_);
+        if(!e->subscribe.cur_notify)self.abort(v.epoch,RevokeReason::Unsubscribe);
         if(e->subscribe.cur_notify){Ingress in;in.kind=Ingress::Kind::Subscribed;in.epoch=v.epoch;self.event(in);}return 0;
     }
     if(e->type==BLE_GAP_EVENT_ADV_COMPLETE&&!self.snapshot().connected)self.advertise();
@@ -96,14 +104,14 @@ void Bearer::poll(){
         if(!sending_.size){Egress next;for(unsigned n=0;n<4&&xQueueReceive(outgoing_,&next,0)==pdTRUE;++n)if(next.epoch==v.epoch){sending_=next.message;sendingEpoch_=next.epoch;sendingAt_=next.createdAt;offset_=0;break;}}
         if(sending_.size){
             if(sendingEpoch_!=v.epoch){sending_={};}
-            else if(now()-sendingAt_>=(sending_.bytes[1]==0x84?1000U:2000U)){revoke(v.epoch);sending_={};}
+            else if(now()-sendingAt_>=(sending_.bytes[1]==0x84?1000U:2000U)){abort(v.epoch,RevokeReason::EgressAge,now()-sendingAt_,offset_,sending_.bytes[1]);sending_={};}
             else{std::array<std::uint8_t,20> bytes{};std::size_t size=0;
-                if(!encodeFrame(sending_,transfer_,offset_,bytes,size)){revoke(v.epoch);}
+                if(!encodeFrame(sending_,transfer_,offset_,bytes,size)){abort(v.epoch,RevokeReason::FrameEncode,now()-sendingAt_,offset_,sending_.bytes[1]);}
                 else{auto *buffer=ble_hs_mbuf_from_flat(bytes.data(),size);const int result=buffer?ble_gatts_notify_custom(v.handle,output_,buffer):BLE_HS_ENOMEM;
                     // notify_custom consumes the mbuf on every return, including errors.
-                    if(!result){busy_=false;offset_+=size-8;if(offset_==sending_.size){sending_={};offset_=0;if(transfer_==UINT16_MAX)revoke(v.epoch);else ++transfer_;}}
-                    else if(result==BLE_HS_ENOMEM||result==BLE_HS_EBUSY){if(!busy_){busy_=true;busyAt_=now();}else if(now()-busyAt_>=2000U)revoke(v.epoch);}
-                    else revoke(v.epoch);
+                    if(!result){busy_=false;offset_+=size-8;if(offset_==sending_.size){sending_={};offset_=0;if(transfer_==UINT16_MAX)abort(v.epoch,RevokeReason::TransferExhausted);else ++transfer_;}}
+                    else if(result==BLE_HS_ENOMEM||result==BLE_HS_EBUSY){if(!busy_){busy_=true;busyAt_=now();}else if(now()-busyAt_>=2000U)abort(v.epoch,RevokeReason::NotifyBusy,now()-sendingAt_,offset_,sending_.bytes[1],result);}
+                    else abort(v.epoch,RevokeReason::NotifyError,now()-sendingAt_,offset_,sending_.bytes[1],result);
                 }
             }
         }

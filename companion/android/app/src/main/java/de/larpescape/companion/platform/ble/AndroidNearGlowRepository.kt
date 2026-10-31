@@ -10,6 +10,8 @@ import android.os.Handler
 import android.os.Looper
 import android.os.ParcelUuid
 import android.os.SystemClock
+import android.util.Log
+import de.larpescape.companion.BuildConfig
 import de.larpescape.companion.data.device.*
 import de.larpescape.companion.platform.access.NearGlowAccessStore
 import de.larpescape.protocol.*
@@ -182,21 +184,35 @@ class AndroidNearGlowRepository(private val context: Context) {
         private var lastTelemetry: ProxTelemetry? = null
         private var lastCurve: ProxCurve? = null
         private var telemetryAt = 0L
+        private var openedAt = 0L
+        private var receivedFragments = 0
+        private fun debugMilestone(event: NearGlowHandshakeMilestone, fragments: Int) {
+            try {
+                if (BuildConfig.DEBUG) Log.d(NearGlowCallbackDiagnostics.TAG,
+                    NearGlowCallbackDiagnostics.milestone(slot, event, openedAt, now(), fragments))
+            } catch (_: Exception) { /* Diagnostics never change transport state. */ }
+        }
         private fun current() = alive && sessions[slot] === this
         private val callbackDispatcher = NearGlowCallbackDispatcher(
             post = { action -> handler.post { action() } },
             isCurrent = ::current,
             hasPermission = ::permitted,
-            failed = { fail(slot, "Verbindung oder Datenprüfung fehlgeschlagen · erneut verbinden") },
+            failed = { stage, error ->
+                try {
+                    if (BuildConfig.DEBUG) Log.d(NearGlowCallbackDiagnostics.TAG,
+                        NearGlowCallbackDiagnostics.line(slot, stage, error))
+                } catch (_: Exception) { /* Diagnostics must not replace session cleanup. */ }
+                fail(slot, "Verbindung oder Datenprüfung fehlgeschlagen · erneut verbinden")
+            },
         )
-        private fun dispatchCallback(action: () -> Unit) = callbackDispatcher.dispatch(action)
+        private fun dispatchCallback(stage: NearGlowCallbackStage, action: () -> Unit) = callbackDispatcher.dispatch(stage, action)
         private val callback = object : BluetoothGattCallback() {
-            override fun onConnectionStateChange(connection: BluetoothGatt, status: Int, newState: Int) { this@Session.dispatchCallback {
+            override fun onConnectionStateChange(connection: BluetoothGatt, status: Int, newState: Int) { this@Session.dispatchCallback(NearGlowCallbackStage.CONNECTION) {
                 check(connection === gatt && status == BluetoothGatt.GATT_SUCCESS && newState == BluetoothProfile.STATE_CONNECTED)
                 update(slot) { it.copy(connected = true, message = "Handy verbunden · Station wird geprüft …") }
                 check(connection.discoverServices())
             } }
-            override fun onServicesDiscovered(connection: BluetoothGatt, status: Int) { this@Session.dispatchCallback {
+            override fun onServicesDiscovered(connection: BluetoothGatt, status: Int) { this@Session.dispatchCallback(NearGlowCallbackStage.SERVICES) {
                 check(connection === gatt && status == BluetoothGatt.GATT_SUCCESS)
                 val service = connection.getService(SERVICE) ?: error("service")
                 input = service.getCharacteristic(INPUT) ?: error("input")
@@ -207,11 +223,12 @@ class AndroidNearGlowRepository(private val context: Context) {
                 check(connection.writeDescriptor(output.getDescriptor(CCCD) ?: error("CCCD"),
                     BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE) == BluetoothStatusCodes.SUCCESS)
             } }
-            override fun onDescriptorWrite(connection: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) { this@Session.dispatchCallback {
+            override fun onDescriptorWrite(connection: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) { this@Session.dispatchCallback(NearGlowCallbackStage.DESCRIPTOR) {
                 check(connection === gatt && descriptor.uuid == CCCD && status == BluetoothGatt.GATT_SUCCESS)
+                debugMilestone(NearGlowHandshakeMilestone.CCCD_ACK, 0)
                 subscribed = true; writeNext()
             } }
-            override fun onCharacteristicWrite(connection: BluetoothGatt, characteristic: BluetoothGattCharacteristic, status: Int) { this@Session.dispatchCallback {
+            override fun onCharacteristicWrite(connection: BluetoothGatt, characteristic: BluetoothGattCharacteristic, status: Int) { this@Session.dispatchCallback(NearGlowCallbackStage.WRITE) {
                 check(connection === gatt && characteristic.uuid == INPUT && status == BluetoothGatt.GATT_SUCCESS && writing)
                 outgoing.removeFirst(); writing = false; writeNext()
                 update(slot) { it.copy(busy = pending || outgoing.isNotEmpty()) }
@@ -219,13 +236,15 @@ class AndroidNearGlowRepository(private val context: Context) {
             override fun onCharacteristicChanged(connection: BluetoothGatt, characteristic: BluetoothGattCharacteristic, value: ByteArray) {
                 val bytes = value.copyOf()
                 val fragmentAt = now()
-                this@Session.dispatchCallback {
+                this@Session.dispatchCallback(NearGlowCallbackStage.NOTIFY) {
                     check(connection === gatt && characteristic.uuid == OUTPUT)
+                    ++receivedFragments
                     frames.accept(bytes, fragmentAt)?.let { received(it, checkNotNull(frames.completedStartedAt)) }
                 }
             }
         }
         fun open(device: BluetoothDevice) {
+            openedAt = now()
             update(slot) { it.copy(busy = true, message = "Handyverbindung wird aufgebaut …") }
             gatt = device.connectGatt(context, false, callback, BluetoothDevice.TRANSPORT_LE)
             check(gatt != null)
@@ -244,9 +263,15 @@ class AndroidNearGlowRepository(private val context: Context) {
         private fun received(bytes: ByteArray, firstFragmentAt: Long) {
             check(bytes.size >= 4)
             when (bytes[1].toInt() and 255) {
-                0x81 -> send(protocol.proof(bytes))
+                0x81 -> {
+                    val proof = protocol.proof(bytes)
+                    debugMilestone(NearGlowHandshakeMilestone.CHALLENGE_COMPLETE, receivedFragments)
+                    send(proof)
+                    debugMilestone(NearGlowHandshakeMilestone.PROOF_QUEUED, outgoing.size)
+                }
                 0x82 -> {
                     protocol.auth(bytes); authenticated = true
+                    debugMilestone(NearGlowHandshakeMilestone.AUTH_OK, receivedFragments)
                     update(slot) { it.copy(authenticated = true, message = "Station geprüft · warte auf Livewerte …") }
                 }
                 0x84 -> {

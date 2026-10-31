@@ -64,7 +64,7 @@ bool Runtime::provision(Core &core,bool radioReady,std::uint32_t now){
     appliedRevision_=view_.revision;
     (void)now;return start();
 }
-void Runtime::revoke(){bearer_.revoke(epoch_);session_.reset();assembler_.reset();epoch_=0;}
+void Runtime::revoke(RevokeReason reason){bearer_.revokeReason(epoch_,reason);session_.reset();assembler_.reset();epoch_=0;}
 void Runtime::process(Core &core){
     if(!started_)return;
     if(bearer_.fault()){fault_=3;session_.reset();return;}
@@ -77,17 +77,17 @@ void Runtime::process(Core &core){
         Message reply{};
         if(event.kind==Ingress::Kind::Subscribed){
             epoch_=event.epoch;assembler_.reset();Token link{};esp_fill_random(link.data(),link.size());sessionAt_=now;fault_=0;
-            if(!session_.begin(access_,core.boot(),link,now,view_,reply)||!bearer_.send(epoch_,reply)){fault_=4;revoke();}continue;
+            if(!session_.begin(access_,core.boot(),link,now,view_,reply)||!bearer_.send(epoch_,reply)){fault_=4;revoke(RevokeReason::Challenge);}continue;
         }
         if(event.epoch!=epoch_)continue;
-        if(now-event.at>=2000U){fault_=4;revoke();continue;}
+        if(now-event.at>=2000U){fault_=4;revoke(RevokeReason::IngressAge);continue;}
         Message message{};const auto status=assembler_.accept(event.bytes.data(),event.size,event.at,message);
-        if(status==FrameResult::Rejected){fault_=4;revoke();continue;}if(status!=FrameResult::Complete)continue;
+        if(status==FrameResult::Rejected){fault_=4;revoke(RevokeReason::Assembly);continue;}if(status!=FrameResult::Complete)continue;
         if(!session_.authenticated()){
-            if(!session_.proof(message,now,view_,reply)||!bearer_.send(epoch_,reply)){fault_=4;revoke();}continue;
+            if(!session_.proof(message,now,view_,reply)||!bearer_.send(epoch_,reply)){fault_=4;revoke(RevokeReason::Proof);}continue;
         }
         bool apply=false;ProximityCurve curve;std::uint32_t request=0;
-        if(!session_.command(message,now,view_,apply,curve,request,reply)){fault_=4;revoke();continue;}
+        if(!session_.command(message,now,view_,apply,curve,request,reply)){fault_=4;revoke(RevokeReason::Command);continue;}
         if(apply){
             if(core.fault()||(applied_&&now-lastApply_<250U)){if(!session_.result(request,4,view_,reply)){fault_=4;revoke();continue;}}
             else{CurveView next=view_;next.curve=curve;++next.revision;
@@ -102,13 +102,13 @@ void Runtime::process(Core &core){
         if(reply.size&&!bearer_.send(epoch_,reply)){fault_=4;revoke();}
     }
     const auto now=nowMs();
-    if(epoch_&&!session_.authenticated()&&now-sessionAt_>=5000U){fault_=4;revoke();}
+    if(epoch_&&!session_.authenticated()&&now-sessionAt_>=5000U){fault_=4;revoke(RevokeReason::ProofTimeout);}
  }
 void Runtime::publish(const Telemetry &base){
     const auto now=base.deviceMs;
     if(epoch_&&session_.authenticated()&&bearer_.current(epoch_)&&now-lastStatus_>=500U){
         lastStatus_=now;auto state=base;state.bleFault=fault_;if(view_.durable)state.flags|=1U<<10;
-        Message out;if(!session_.telemetry(state,view_,out)||!bearer_.send(epoch_,out)){fault_=4;revoke();}
+        Message out;if(!session_.telemetry(state,view_,out)||!bearer_.send(epoch_,out)){fault_=4;revoke(RevokeReason::Telemetry);}
     }
 }
 }}}

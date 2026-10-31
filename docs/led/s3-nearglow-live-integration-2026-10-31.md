@@ -110,3 +110,53 @@ oder pauschales Löschen bestehender Appdaten.
 Weitere konkrete Software-/Geräteergebnisse, geprüfte Commits und Einschränkungen
 werden nach der Implementierung ergänzt. Keine erforderliche Abnahme wird aus
 diesen ersten Builds oder dem Vertragsentwurf abgeleitet.
+
+## Konkreter Geräteversuch: Zwischenstand
+
+Firmware-/Featurecommit `deb9ab986c6b74255a1755a2e5d9f3fce0db5b2a` ist nach
+unabhängiger Source-/Securityprüfung und erneutem SDK-Build auf beiden S3
+installiert. Anwendung `s3-proximity-live-v1`, 1.028.576 Byte, SHA-256
+`986514bffb7604a69e0f8290bce43294d5d49bafe494c4b02224d95a6bd76379`.
+Die unveränderten vier Flashadressen und DIO/80MHz/4MiB sind am Buildmanifest
+geprüft, alle Schreibhashes bestätigt; Bootloader, Partitionstabelle und
+Anwendung wurden pro Chip zusätzlich unabhängig verglichen. Keine NVS-Löschung.
+Paarung und ARM blieben erhalten. Neue individuelle Handyzugänge und die
+fehlende Defaultkurve wurden nur durch den ausdrücklichen USB-Export eingerichtet.
+Klartext-Importdateien wurden nach dem Import vom Handy entfernt; die App hält
+getrennte Keystore-geschützte Slots.
+
+Die erste reale beidseitige Anzeige zeigte unterschiedliche aktuelle Werte
+(z.B. A -51dBm/78%, B -49dBm/82%) und passende LED-RGB-Ausgaben. Ein paralleler
+12-Sekunden-USB-Lauf lieferte je 24/24 frische, fehlerfreie Proben. Der Editor
+zeigte für doppelte dBm-Punkte eine gesperrte Übernahme; reine Entwurfsänderungen
+änderten die von USB gelesene Revision 1 nicht.
+
+Ein bewusst übernommenes 20-%-Plateau wurde auf beiden Stationen als Revision2
+dauerhaft bestätigt, einschließlich unabhängiger USB-Abfrage. Der Nutzer
+bestätigte beide LEDs sichtbar dunkler. Nach vollständigem Beenden der App
+blieben beide Stationen je 16/16 Proben frisch, Fehler0, Ziel200 und RGB4/1/0.
+Nach neuem Appverbinden blieb Revision2 erhalten, ohne automatische SET-Wiederholung.
+
+**Geräteabnahme noch offen:** Der Nutzer meldete danach Abstürze beim Verbinden
+von B. Der gezielt gefilterte Crashbericht und unabhängiges `javap` bestätigten
+einen P1: Unqualifiziertes `run` in fünf GATT-Callbacks band an Kotlin-stdlib
+statt an den vorgesehenen Session-Guard. Die bisherigen Zustands-/Protokolltests
+hatten die tatsächliche Callbackbindung nicht ausgeführt. Die erste positive
+Quellbewertung wird deshalb nicht als Callback-Sicherheitsnachweis fortgeführt.
+
+Fixcommit `77065849d1564698d6bfa57f8bdab484d7365f3a`, App0.3.1/code4, bindet
+alle fünf Callbacks explizit an den produktiven geschützten Dispatcher.
+Vier neue Tests einschließlich der tatsächlichen kompilierten Callbackklasse
+sowie unabhängige Bytecodeprüfung bestätigen die Bindung; vollständiger
+Debug-/Release-/Test-/Lint-Lauf erfolgreich. Der erste Testlauf wurde wegen
+der falschen Annahme einer Datei- statt AGP-JAR-Klassenressource verworfen und
+nach portabler Korrektur erfolgreich wiederholt.
+
+Der korrigierte App-Prozess blieb beim nächsten beobachteten Verbindungsfehler
+stabil; beide Links wurden jedoch noch mit einer abgefangenen Fehlermeldung
+geschlossen. Die genaue Ursache wird mit ausschließlich öffentlichen
+Callback-/Exceptionklassen-/Stackframe-Diagnosen eingegrenzt. Kein Payload,
+Schlüssel, Exceptiontext oder fremder Appbericht wird dafür protokolliert.
+Der bisher geplante Funkverlust-Appversuch ist **nicht bestanden/noch offen**:
+Die zugehörigen 237 USB-Proben waren durchgehend frisch, COM7 blieb angeschlossen.
+Er wird nach stabiler Zweier-Verbindung wiederholt.
