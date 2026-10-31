@@ -29,7 +29,7 @@ def slice_part(name):
     digest = hashlib.sha256(stl.read_bytes()).hexdigest()
     destination = ROOT / ".tmp/naehe-glut-sliced" / RUN_ID / name
     destination.mkdir(parents=True, exist_ok=True)
-    filament = "petg_translucent" if name == "diffuser" else "petg_hf"
+    filament = "petg_translucent" if name == "diffuser" else "petg_basic"
     command = [str(SLICER / "python-cli.exe"), str(PACKAGE / "tools/run_bambu.py"),
                str(SLICER), "--datadir", str(ROOT / ".tmp/bambu-config"),
                "--load-settings", f"{PROFILES / 'machine.json'};{PROFILES / 'process.json'}",

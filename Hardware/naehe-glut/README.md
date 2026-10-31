@@ -20,16 +20,25 @@ Es wurde noch nichts bestellt, gedruckt, bestückt oder auf Geräte geladen.
 
 ## Festgelegter Aufbau
 
-ESP32-S3-DevKitC-1-N8R8 von Espressif, Adafruit-1586-Ring mit **24 Pixeln**,
+ESP32-S3-DevKitC-1-N16R8 von Espressif, Adafruit-1586-Ring mit **24 Pixeln**,
 Voltaic-V50-Akku und zweilagige Carrierplatine, 85×80 mm. GPIO15 führt
 LED-Daten, GPIO16 gibt die 5-V-Pufferstufe frei. Der Carrier versorgt keine
 ESP-5V-/3V3-Pins; zwei USB-A-Kabel vom Akku speisen getrennte Pluspfade bei
 gewollt gemeinsamer Masse. Laden erfolgt mit entnommenem Akku.
 
+Beschaffungsänderung vom 31.10.2026 auf Basis `e9e2afe`: Das lieferbare
+Original-N16R8 ersetzt N8R8 mit denselben Carrieranschlüssen. Der Schaltplan
+behält die ursprüngliche N8R8-Bezeichnung; mechanische und elektrische
+Carrierdateien bleiben unverändert. Die Firmware braucht 16 MB Quad-Flash
+und weiterhin 8 MB Octal-PSRAM; eine Geräteprüfung steht aus.
+
 Das PETG-Gehäuse misst 168×148×90 mm ohne Schraubenköpfe. Boden, Träger,
 Deckel, Ringhalter und Diffusor sind getrennt druckbar; ein Coupon prüft
 vorab Schrauben-/Mutternpassung. Drucker: Bambu Lab A1 mini, 0,4-mm-Düse,
-ohne AMS. Vier Nylonbefestiger halten die PCB im Antennenbereich.
+ohne AMS. Vier Nylonbefestiger halten die PCB im Antennenbereich. Schwarze
+Teile verwenden nun **Bambu PETG Basic 30105**, der Diffusor weiter PETG
+Translucent Clear. Alle sechs Druckprojekte sind neu berechnet; etwa 11,7 Stunden
+Maschinenzeit je Station. Beschaffungsquellen und Trocknung stehen in der Bestellliste.
 
 Die Auslegung gilt für trockenen, vor Regen geschützten Einsatz. Eine konkrete
 Mindestlaufzeit wurde nicht vorgegeben; die Bestellliste enthält gekennzeichnete
@@ -47,6 +56,8 @@ Druckerauswahl ausdrücklich delegiert.
 Koordination/Maintainer und Beschaffung: `/root`; Elektronik:
 `/root/hardware_developer`; Mechanik: `/root/enclosure_developer`;
 unabhängige Gegenprüfung Gerätevertrag/Qualität: `/root/hardware_review`.
+Beschaffungsnachtrag: `/root` verantwortlich, `/root/filament_supply` setzt
+Materialprofile um, `/root/supply_review` prüft unabhängig gegen.
 Eigene Umsetzung gilt nicht als unabhängiger Review.
 
 **Zwei funktionierende Exemplare bis Dezember 2026 bleiben das Lieferziel.**

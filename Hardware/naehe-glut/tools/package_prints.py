@@ -34,7 +34,7 @@ def main():
               'mechanik/slicer/LICENSE-AGPL-3.0.txt',
               'mechanik/slicer/profile-sources.json',
               'mechanik/slicer/machine.json', 'mechanik/slicer/process.json',
-              'mechanik/slicer/petg_hf.json', 'mechanik/slicer/petg_translucent.json',
+              'mechanik/slicer/petg_basic.json', 'mechanik/slicer/petg_translucent.json',
               'tools/prepare_slicer_profiles.py', 'tools/run_bambu.py',
               'tools/slice_enclosure.py', 'tools/package_prints.py']
     output = BASE / 'fertigung'

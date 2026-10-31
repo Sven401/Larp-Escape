@@ -8,11 +8,11 @@
     {
       "part": "base",
       "stl_sha256": "24489c78894b55db8a16260e03f4bb1667c10c79b9ecdae25ff8bb98c0dbdbde",
-      "filament": "petg_hf",
+      "filament": "petg_basic",
       "slicer_return_code": 0,
       "warning": "",
-      "estimated_seconds": 24485.599609375,
-      "estimated_grams": 291.77386474609375,
+      "estimated_seconds": 28055.060546875,
+      "estimated_grams": 284.9354248046875,
       "bbox": {
         "depth": 148.0,
         "height": 87.0,
@@ -21,8 +21,8 @@
         "y": 16.000009536743164,
         "z": 0.0
       },
-      "gcode_sha256": "3411fc1654ad52f3b670c16318d28f703ae86a236564a65dffa0f559ea11a969",
-      "project_3mf_sha256": "a79782ef6c0f5481737dd003f5ffa2a148ed09a16a284f5d87246de63b467a8f",
+      "gcode_sha256": "32280dd50256f1cf631f53358246037137994fe7b923e022c1c56e41586d58d6",
+      "project_3mf_sha256": "94f1dd3003011a561aa0ab8e55e7af71529f2ae8dd0e1979debd23f31c090938",
       "wall_loops": 4,
       "infill_percent": 20.0,
       "layer_mm": 0.20000000298023224
@@ -30,11 +30,11 @@
     {
       "part": "tray",
       "stl_sha256": "e29f6c5d87185f736ba59bcbb3e4ddba26a27621e4473a9fcce7fc1308ad4287",
-      "filament": "petg_hf",
+      "filament": "petg_basic",
       "slicer_return_code": 0,
       "warning": "",
-      "estimated_seconds": 2981.87353515625,
-      "estimated_grams": 21.388416290283203,
+      "estimated_seconds": 3215.339111328125,
+      "estimated_grams": 20.887126922607422,
       "bbox": {
         "depth": 136.0,
         "height": 8.0,
@@ -43,8 +43,8 @@
         "y": 22.000009536743164,
         "z": 0.0
       },
-      "gcode_sha256": "819fb975f4b41e15e7bb80cada2f70ca73bf6ef1257192c64b86c93f2f92346c",
-      "project_3mf_sha256": "f1828a2ef5db43df4924111733bc943d51622892e884853cb5899eec6c7b35a0",
+      "gcode_sha256": "ed731c5eaddda887b5dcf0664a382044fc0dc69ae6d08a1b4dc61a95e888cfa2",
+      "project_3mf_sha256": "ae0611276aa5c46c90438f4d178b2a9fdc880e6d328b80103475f24280addb03",
       "wall_loops": 4,
       "infill_percent": 20.0,
       "layer_mm": 0.20000000298023224
@@ -52,11 +52,11 @@
     {
       "part": "lid",
       "stl_sha256": "14cde595fef5623646952850ae36e69ad3426cc2a322164a4794feeda20e049a",
-      "filament": "petg_hf",
+      "filament": "petg_basic",
       "slicer_return_code": 0,
       "warning": "",
-      "estimated_seconds": 5426.845703125,
-      "estimated_grams": 61.420555114746094,
+      "estimated_seconds": 6055.1875,
+      "estimated_grams": 59.98101043701172,
       "bbox": {
         "depth": 148.0,
         "height": 4.5,
@@ -65,8 +65,8 @@
         "y": 16.000009536743164,
         "z": 0.0
       },
-      "gcode_sha256": "98c95d8285cbc48db50db2746b0edb09d52a9f342ad295c90b9c2cb248c8d30d",
-      "project_3mf_sha256": "ae7950e26de74e7c314cdd15edad53b252dc3cb4407528dbc7f5b943ae01e146",
+      "gcode_sha256": "eb39311898b620f94bbde83bb43e9dfd06cf8f6a6aafd32cc57461a344fdbcbb",
+      "project_3mf_sha256": "e447232885274fcf46083fa9056cb705ad41488aeffd856ea83c60972ded8786",
       "wall_loops": 4,
       "infill_percent": 20.0,
       "layer_mm": 0.20000000298023224
@@ -88,7 +88,7 @@
         "z": 0.0
       },
       "gcode_sha256": "ecf5148415004eeca7d9c507ba92bb659b966bfcb496069ffe34b27f960d7bca",
-      "project_3mf_sha256": "4b55bff2ddcc69b4b76d1161dc2e60e5ee73ab3cd2b8a7164f9ff7c5280f52ad",
+      "project_3mf_sha256": "faf191d5c6cbc3b282287ba6f3c570ec4b81311ae471a0d60e3204ee9d917502",
       "wall_loops": 4,
       "infill_percent": 20.0,
       "layer_mm": 0.20000000298023224
@@ -96,11 +96,11 @@
     {
       "part": "ring_holder",
       "stl_sha256": "c9fde4bf903e05e7393d47377e787ae374441aaf9e295916dc649ba229802968",
-      "filament": "petg_hf",
+      "filament": "petg_basic",
       "slicer_return_code": 0,
       "warning": "",
-      "estimated_seconds": 1583.93310546875,
-      "estimated_grams": 8.301265716552734,
+      "estimated_seconds": 1835.661865234375,
+      "estimated_grams": 8.106703758239746,
       "bbox": {
         "depth": 112.1662826538086,
         "height": 12.399999618530273,
@@ -109,8 +109,8 @@
         "y": 25.710039138793945,
         "z": 0.0
       },
-      "gcode_sha256": "1b4f95d6b735bbb3cf5c4d78684c75eeb6dcbcd9b6ff94488cde8729510b3dbd",
-      "project_3mf_sha256": "5ca2518baae4cc5e094d46a4d4d36ca812789e44b717d90b6294f0c98660673e",
+      "gcode_sha256": "4be2eb4630da9192f221d2d12c0089f9ee7946b82adbd5c0927e7c90eb0c66ae",
+      "project_3mf_sha256": "3ada30e5cab3bba5c5fc4e71f503a4e8ba2aa2b5c9d5416b7124f847ed89321f",
       "wall_loops": 4,
       "infill_percent": 20.0,
       "layer_mm": 0.20000000298023224
@@ -118,11 +118,11 @@
     {
       "part": "coupon",
       "stl_sha256": "1a8085c77efb3622a9646242f2a6ba1775ab047ca5adf65e23d4794c59553c6f",
-      "filament": "petg_hf",
+      "filament": "petg_basic",
       "slicer_return_code": 0,
       "warning": "",
-      "estimated_seconds": 1109.4246826171875,
-      "estimated_grams": 5.222868919372559,
+      "estimated_seconds": 1300.26953125,
+      "estimated_grams": 5.100457668304443,
       "bbox": {
         "depth": 24.0,
         "height": 10.0,
@@ -131,8 +131,8 @@
         "y": 78.0,
         "z": 0.0
       },
-      "gcode_sha256": "4ad7a55531c38a70962de0dd70a3c9d64f7929b6a57963102a70a35bc460062a",
-      "project_3mf_sha256": "9219348689029e856e0f0c96be512d754a952b6e58db55048dced59c6f3688d9",
+      "gcode_sha256": "dbd833b9eb98185b693ece7abe3d6741131326a2b8aef4dd442ea1556e6556b4",
+      "project_3mf_sha256": "0afd21e4f76a3e18ee6c289ef72d626c43e1ecbfdccef247e7e12cff6e17302a",
       "wall_loops": 4,
       "infill_percent": 20.0,
       "layer_mm": 0.20000000298023224

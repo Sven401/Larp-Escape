@@ -1,5 +1,91 @@
 # NG-R1: unabhängiger Hardware- und Fertigungsreview
 
+## Aktueller Beschaffungsnachtrag · 31.10.2026
+
+Prüfer: `/root/supply_review`, unabhängig von Beschaffungsentscheidung und
+Material-/Slicerumsetzung. Geprüfter Ausgangscommit:
+`e9e2afe7b847f4ce8b9e44c8a2007274854c5df1`; der Nachtrag gilt für die unten
+über SHA-256 gebundenen Arbeitsdateien.
+
+**Ergebnis: N16R8 als dokumentierte Beschaffungsvariante und die neu geslicten
+PETG-Basic-Druckdateien digital gegengeprüft; keine offenen Blocker dieser
+Änderung.** Der folgende historische R1-Review bleibt Beleg seiner damaligen
+Dateien. Seine PETG-HF-Projekte und abweichenden Paket-Hashes sind durch
+diesen Nachtrag ersetzt. Physische Abnahme und Firmwareportierung bleiben offen.
+
+Selbst ausgeführte Gegenprüfungen:
+
+- Das originale N16R8 wird in der [Espressif-Produktübersicht](https://www.espressif.com/en/products/devkits/esp32-s3-series/esp32-s3-devkitc-1)
+  ausdrücklich angeboten. Tabelle 1-1 im [WROOM-1-Datenblatt](https://www.espressif.com/sites/default/files/documentation/esp32-s3-wroom-1_wroom-1u_datasheet_en.pdf)
+  bestätigt 16 MB Quad-Flash und 8 MB Octal-PSRAM sowie dieselbe
+  18,0×25,5×3,1-mm-Modulhülle wie N8R8. Die genutzten GPIO15/16 und GND,
+  Micro-USB und PCB-Antenne wurden mit den offiziellen DevKitC-1-Anleitungen
+  für [v1.1](https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s3/esp32-s3-devkitc-1/user_guide_v1.1.html)
+  und [v1.0](https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s3/esp32-s3-devkitc-1/user_guide_v1.0.html)
+  abgeglichen. Der Wechsel setzt keine neue Carrierverdrahtung voraus.
+- Die [v1.1-Maßzeichnung](https://dl.espressif.com/dl/schematics/esp_idf/DXF_ESP32-S3-DevKitC-1_V1.1_20220429.pdf)
+  als Bild gesichtet: 25,40 mm Breite, 1,27 mm Randabstand je Headerseite,
+  daraus 22,86 mm Reihenabstand und 2,54 mm Raster. 62,74 mm bezeichnet
+  die Basisplatine ohne Antennenüberstand. Die vorhandene Antennenhülle bis
+  Y=143 deckt den Überstand zur Pin-1-Lage Y=135 ab; sie ist weiterhin ein
+  vereinfachter Referenzkörper. Wareneingangs- und Passprüfung bleiben nötig.
+  Der Händler-MPN wird keine unbestätigte v1.1-Lieferzusage zugeschrieben.
+- Der noch erforderliche Firmwareauftrag nennt nun 16 MB Quad-Flash,
+  8 MB Octal-PSRAM, tatsächliche Speichererkennung und Partitionierung.
+  Es wurde kein N16R8-Build, Upload oder Gerätelauf durchgeführt; eine
+  Speicher-/Pinprüfung ist kein Nachweis fertiger R1-Firmware.
+- Materialauswahl, Profilauflösung und die drei geänderten Werkzeuge gelesen.
+  Alle sechs STL-/3MF-Hashes gegen `slice-report.json` selbst berechnet;
+  alle sechs 3MF geöffnet, CRC und enthaltenen G-Code-Hash geprüft.
+  Tatsächlicher G-Code: fünf schwarze Teile mit Bambu PETG Basic für A1 mini,
+  245 °C Düse, 70 °C Textured PEI, Dichte 1,25 und 13 mm³/s; Diffusor
+  weiter PETG Translucent mit 250/245 °C und 6 mm³/s. Vier Wände und Gyroid
+  bestätigt. Die warnungsfreien Sliceläufe stammen vom Materialentwickler.
+- Aus den Ergebniswerten selbst addiert: 11,72 Stunden je Station,
+  für beide 758,02 g Basic und 16,57 g Translucent einschließlich Passproben.
+  Das [PETG-Basic-Datenblatt V3.0](https://store.bblcdn.com/s1/default/cb94589bf7994fdcbfa833badefae9cd/Bambu_PETG_Basic_Technical_Data_Sheet.pdf)
+  bestätigt Dichte, 65 °C/8 h Trocknung und die Spule Ø200×67 mm.
+  Der ergänzte S2 nimmt laut verlinktem Händler Ø210×85 mm auf und erreicht
+  70 °C; die manuelle Einstellung auf 65 °C/8 h ist dokumentiert.
+- Druck-ZIP selbst geöffnet: alle 26 Nutzdateien plus Manifest, CRC,
+  SHA-256 und bytegenauer Vergleich zum Arbeitsbaum bestanden. PCB-Manifest
+  mit 51 Dateien selbst nachgerechnet; alle elf PCB-ZIP-Einträge ebenfalls
+  CRC-/bytegenau geprüft. Native PCB-, CAM-, STEP- und STL-Geometrie sind
+  gegenüber dem Ausgangscommit unverändert. Deshalb keine erneute
+  geometrische Berechnung oder ERC-/DRC-Ausführung behauptet.
+- Bestellliste, Montage-/Druckanleitung und Terminansatz gegengelesen.
+  Die Teilsummen 66,07 EUR bzw. 110,12 EUR einschließlich der bezeichneten
+  Versandwege sind rechnerisch richtig. Bürklin-Livebestand stammt von
+  `/root`; Welectron-Produktdaten wurden zusätzlich direkt abgerufen.
+  Lieferanzeigen sind keine Reservierung. Bestellansatz 02.11., interner
+  Eingangskontrollpunkt 13.11.2026 und sofortige Umplanung bei späterer
+  Bestätigung schützen das Dezemberziel; der PCB-Rückfallweg bleibt erhalten.
+
+Keine Bestellung oder Druckübertragung. Die physischen Prüfungen aus dem
+historischen Review gelten weiter. Das Beschaffungsfenster ist plausibel,
+aber weder Lieferzusage noch Nachweis zweier funktionierender Exemplare.
+
+Aktuelle Revisionsbindung, Pfade relativ zu `Hardware/naehe-glut/`:
+
+| Datei | SHA-256 |
+| --- | --- |
+| `BESTELLUNG.md` | `76e1dadab5cc20434d2d4c2f087d5f2542d02e18cbe6526051453016b6f4f19c` |
+| `README.md` | `a4dfbb5f6448cf1eb4a260c1b50346231512efdb8fee6b54f4e8765e3663c458` |
+| `pcb/FERTIGUNG.md` | `ab87bb793417aee2f3ee55cf998aa748d30df255d96dd47080e93e32a6994556` |
+| `pcb/SHA256SUMS.txt` | `5293733ece92a6bf330c27fde513dca02fb9bdebad9e6fd05b7e21aeb12a47b2` |
+| `pcb/exports/naehe-glut-r1-fertigung.zip` | `8c6bfef63651d85d21443767e3e80453d091eaf4883d107b8c68a9c78e2fa74b` |
+| `fertigung/NG-R1-Druckpaket.zip` | `2d78a8af9b4b4f19a6be4ce1a8067fa800c50f26ae48b561d8b2351c2c3d0cb9` |
+| `mechanik/DRUCK.md` | `ef247706b6c71c9c218f8482f917b849e1ebe340a3460daaf47f618be89df29f` |
+| `mechanik/MONTAGE.md` | `db60ba73c2a653d4245edf8e53924b3888249d904ff191e71381f1fa318cd694` |
+| `mechanik/slice-report.json` | `c55974c4b04a9c2af10d78876e3ca97466d3778d64dc1d3daf1b4aabbe6e647f` |
+| `mechanik/slicer/petg_basic.json` | `42ec7d001f76c5c339803eb702d5e9cd7b7466bb2798771072f76149ab09b37c` |
+| `mechanik/slicer/profile-sources.json` | `ac666e8afe78db0c94d5e30d5300fd11b5149110b9507f4362e80f93e0e4d364` |
+| `tools/prepare_slicer_profiles.py` | `99e146d1fa436fc804d4b7bf2709d0daffd1fc9aee593d0cb61c37241a561efe` |
+| `tools/slice_enclosure.py` | `e27b850b5fe9470bbd2ab2380ae15539c1c58c5e82ed44bdd9ec037fe1b8f82a` |
+| `tools/package_prints.py` | `f638050f8a9fcdf10bd1999b2e4f62d5a95268eb75929ee3dd8b6f6e455828e6` |
+
+## Historischer R1-Review vor N16R8-/PETG-Basic-Wechsel
+
 Prüfer: `/root/hardware_review`, getrennt von Elektronik-, Mechanik- und
 Slicerimplementierung. Datum: 31.10.2026. Basiscommit des Auftrags:
 `63477d08e160d1b1f81b37bbd16593c1a2087624`; geprüft werden die unten über

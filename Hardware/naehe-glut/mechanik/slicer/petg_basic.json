@@ -1,6 +1,6 @@
 {
   "type": "filament",
-  "name": "Bambu PETG HF @BBL A1M",
+  "name": "Bambu PETG Basic @BBL A1M 0.4 nozzle",
   "from": "system",
   "instantiation": "true",
   "activate_air_filtration": [
@@ -58,7 +58,7 @@
     "70"
   ],
   "fan_cooling_layer_time": [
-    "15"
+    "30"
   ],
   "fan_max_speed": [
     "50"
@@ -94,10 +94,10 @@
     "-1"
   ],
   "filament_cost": [
-    "19.99"
+    "17.99"
   ],
   "filament_density": [
-    "1.28"
+    "1.25"
   ],
   "filament_deretraction_speed": [
     "nil"
@@ -161,7 +161,7 @@
     "nil"
   ],
   "filament_max_volumetric_speed": [
-    "18"
+    "13"
   ],
   "filament_metal_stickiness": [
     "High"
@@ -176,7 +176,7 @@
     "0"
   ],
   "filament_prime_volume": [
-    "30"
+    "45"
   ],
   "filament_prime_volume_nc": [
     "60"
@@ -209,7 +209,7 @@
     "nil"
   ],
   "filament_retraction_length": [
-    "nil"
+    "0.4"
   ],
   "filament_retraction_minimum_travel": [
     "nil"
@@ -236,16 +236,16 @@
     "Bambu Lab"
   ],
   "filament_wipe": [
-    "nil"
+    "1"
   ],
   "filament_wipe_distance": [
-    "nil"
+    "1"
   ],
   "filament_z_hop": [
     "nil"
   ],
   "filament_z_hop_types": [
-    "nil"
+    "Spiral Lift"
   ],
   "full_fan_speed_layer": [
     "0"
@@ -290,7 +290,7 @@
     "25"
   ],
   "filament_change_length": [
-    "12"
+    "10"
   ],
   "filament_velocity_adaptation_factor": [
     "1"
@@ -320,7 +320,7 @@
     "0.088"
   ],
   "impact_strength_z": [
-    "10.6"
+    "13.6"
   ],
   "long_retractions_when_ec": [
     "0"
@@ -329,10 +329,10 @@
     "0"
   ],
   "nozzle_temperature": [
-    "240"
+    "245"
   ],
   "nozzle_temperature_initial_layer": [
-    "230"
+    "245"
   ],
   "nozzle_temperature_range_high": [
     "270"
@@ -341,7 +341,7 @@
     "230"
   ],
   "overhang_fan_speed": [
-    "100"
+    "50"
   ],
   "overhang_fan_threshold": [
     "10%"
@@ -368,7 +368,7 @@
     "10"
   ],
   "slow_down_layer_time": [
-    "7"
+    "12"
   ],
   "slow_down_min_speed": [
     "10"
@@ -380,7 +380,7 @@
     "70"
   ],
   "temperature_vitrification": [
-    "70"
+    "60"
   ],
   "textured_plate_temp": [
     "70"
@@ -403,8 +403,15 @@
   "filament_adhesiveness_category": [
     "300"
   ],
-  "filament_id": "GFG02",
-  "setting_id": "GFSG02_06",
+  "filament_id": "GFG00",
+  "description": "To get better transparent or translucent results with the corresponding filament, please refer to this wiki: Printing tips for transparent PETG.",
+  "filament_change_length_nc": [
+    "10"
+  ],
+  "first_x_layer_fan_speed": [
+    "0"
+  ],
+  "setting_id": "GFSG00_03",
   "pre_start_fan_time": [
     "2"
   ]

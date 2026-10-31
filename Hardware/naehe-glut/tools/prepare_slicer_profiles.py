@@ -34,7 +34,7 @@ def main():
     selections = {
         "machine": ("machine", "Bambu Lab A1 mini 0.4 nozzle"),
         "process": ("process", "0.20mm Standard @BBL A1M"),
-        "petg_hf": ("filament", "Bambu PETG HF @BBL A1M"),
+        "petg_basic": ("filament", "Bambu PETG Basic @BBL A1M 0.4 nozzle"),
         "petg_translucent": ("filament", "Bambu PETG Translucent @BBL A1M"),
     }
     for target, (kind, name) in selections.items():

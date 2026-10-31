@@ -125,7 +125,10 @@ Die Verkabelung muss das vollständige Herausheben des Trägers erlauben.
   ohne Bohrung durch die LED-Platine vorgesehen. Farbe/LED-Typ können nach
   Herstellerlieferung variieren; dies ändert nicht die mechanische Teilenummer.
 - ESP32-S3-DevKitC-1 v1.1: [Herstellerzeichnung](https://dl.espressif.com/dl/schematics/PCB_ESP32-S3-DevKitC-1_V1.1_20220429.pdf),
-  62,74 × 25,40 mm. Die PCB-Schnittstelle stammt vom zuständigen PCB-Entwickler:
+  62,74 × 25,40 mm Basisplatine, ohne Antennenüberstand. Die vereinfachte
+  Antennenhülle deckt den Überstand ab; die reale Passprobe bleibt erforderlich.
+  N16R8 ersetzt N8R8 gemäß `../pcb/FERTIGUNG.md` ohne Änderung der Carrierpins.
+  Die PCB-Schnittstelle stammt vom zuständigen PCB-Entwickler:
   Carrier 85 × 80 mm; Bohrungen (5,5), (80,5), (5,75), (80,75), Ø3,2 mm.
   Transformation Carrier → Gehäuse: **X=45+u, Y=137−v, Z-Unterseite=46 mm**.
 - Der konservative äußere Metallfreiraum um den Antennenreferenzkörper beträgt

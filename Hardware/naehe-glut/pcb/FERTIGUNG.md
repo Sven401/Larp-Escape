@@ -29,10 +29,22 @@ bestandener Regelcheck ist kein physischer Last-/Funknachweis.
 
 ## Anschluss und Versorgung
 
-Der ESP32-S3-DevKitC-1-N8R8 v1.1 sitzt mit Antenne zum Ausschnitt und Micro-USB
+Der originale ESP32-S3-DevKitC-1 sitzt mit Antenne zum Ausschnitt und Micro-USB
 zum gegenüberliegenden Ende. J1 und J3 sind im Plan die gleichnamigen Reihen
 des Espressif-Boards. Carrierkontakte zu J1: GPIO15/Pin8, GPIO16/Pin9,
 GND/Pin22; J3: GND/Pin1,21,22. **Kein ESP-5V- oder 3V3-Pin ist verbunden.**
+
+**Bestückungsvariante ab 31.10.2026: ESP32-S3-DevKitC-1-N16R8.** Der
+Schaltplan nennt die ursprüngliche N8R8-Ausgangsbasis. N16R8 hat denselben
+WROOM-1-/Headervertrag und dieselben hier benutzten Pins, aber 16 statt 8 MB
+Quad-SPI-Flash; 8 MB Octal-PSRAM bleiben gleich. PCB, Gerber und Bohrdaten
+werden hierfür nicht geändert. Quellen: [Espressif-Variantenübersicht](https://www.espressif.com/en/products/devkits/esp32-s3-series/esp32-s3-devkitc-1),
+[WROOM-1-Datenblatt, Tabelle 1-1](https://www.espressif.com/sites/default/files/documentation/esp32-s3-wroom-1_wroom-1u_datasheet_en.pdf),
+[DevKitC-1-v1.1-Pins](https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s3/esp32-s3-devkitc-1/user_guide_v1.1.html).
+Die Händler-MPN garantiert keine v1.1-Revision; tatsächliche Revision,
+Modulaufdruck, Micro-USB, PCB-Antenne und zwei 22-polige Reihen mit
+2,54-mm-Raster/22,86-mm-Reihenabstand vor Montage prüfen. Die hier unbenutzte
+Onboard-RGB-LED unterscheidet sich zwischen Boardrevisionen.
 
 Das ESP-Board erhält ein eigenes USB-A→Micro-B-Kabel von der Powerbank.
 Der zweite 5-V-USB-A-Port speist über ein USB-A→USB-C-Kabel J2. J2 ist nur
@@ -57,6 +69,9 @@ leistungsstärkere Quelle allein anhand der Sicherungsaufschrift einsetzen.
 
 ## Firmware- und Einschaltvertrag
 
+- N16R8: 16 MB Quad-SPI-Flash, 8 MB Octal-PSRAM; tatsächliche Flash-Erkennung
+  und Partitionierung prüfen. Ein vorhandenes N8R8-Binary ist kein Nachweis
+  einer getesteten N16R8-/R1-Firmware.
 - GPIO15 liefert Daten für **24** Pixel; der alte 23-Pixel-Aufbau ist getrennt.
 - GPIO16 bleibt beim Boot LOW/hochohmig. Q1 sperrt, R7 zieht /OE auf LED5V,
   R4 hält DIN bei deaktiviertem Buffer LOW.
