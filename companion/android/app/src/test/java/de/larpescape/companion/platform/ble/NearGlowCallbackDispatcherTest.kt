@@ -98,6 +98,13 @@ class NearGlowCallbackDispatcherTest {
         }
     }
 
+    @Test fun rejectedWriteMetadataSeparatesSdkStatusQueueAndIdentityWithoutPayload() {
+        assertEquals("slot=1 event=WRITE_REJECTED sdkStatus=133 writing=true queued=2 connectionMatches=true inputMatches=true",
+            NearGlowCallbackDiagnostics.writeRejected(1, 133, true, 2, true, true))
+        assertEquals("slot=0 event=WRITE_REJECTED sdkStatus=0 writing=false queued=0 connectionMatches=false inputMatches=false",
+            NearGlowCallbackDiagnostics.writeRejected(0, 0, false, 0, false, false))
+    }
+
     @Test fun everyCompiledAndroidGattCallbackReallyInvokesTheExplicitSessionDispatcher() {
         // Guard-only tests miss kotlin.run shadowing: inspect the actual emitted app callbacks.
         val binaryName = "de.larpescape.companion.platform.ble.AndroidNearGlowRepository\$Session\$callback\$1"

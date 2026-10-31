@@ -160,3 +160,42 @@ Schlüssel, Exceptiontext oder fremder Appbericht wird dafür protokolliert.
 Der bisher geplante Funkverlust-Appversuch ist **nicht bestanden/noch offen**:
 Die zugehörigen 237 USB-Proben waren durchgehend frisch, COM7 blieb angeschlossen.
 Er wird nach stabiler Zweier-Verbindung wiederholt.
+
+Diagnosecommit `9a49ffd` ergänzt begrenzte öffentliche Abbruchmetadaten über
+`BLE-DIAG` sowie ausschließlich im Debugbuild Handshakephasen der App.
+Unabhängig geprüfte Hostläufe: Core400, Adapter165, Protokoll319, Runtime60,
+zehn tatsächliche Bearerfälle mit 828 Assertions; sechs Callbacktests erfolgreich.
+Der erste Diagnoseentwurf konnte bei Disconnect mit voller Ingressqueue den
+ursächlichen Fehler überschreiben. Ein epochbezogener Latch und der konkrete
+Gegenfall korrigieren dies vor dem Geräteupload. SDK-Build erfolgreich.
+Beide S3 erhielten nur das Anwendungsimage an `0x10000` (1.029.232 Byte,
+SHA256 `fa3c0ab5d5e4e557ced9b7c4b30196a997eb770f0fe91cde6540dd929d7b3043`).
+Anwendung und zusätzlich gesicherte aktuelle `larpkeys`-Partition wurden danach
+jeweils durch `verify-flash` bestätigt; Paarung, Zugänge und Revision2 unverändert.
+
+Der wiederholte Geräteversuch bestätigt bei beiden Stationen Grund4
+(absolutes Telemetriealter), Nachrichtentyp132: A Offset84/Alter1000ms,
+B Offset144/Alter1006ms. Die App hatte vorher auf beiden echte AuthOK erhalten
+(A1976ms/B2827ms nach Verbindungsanforderung). Android meldet danach Status19;
+der App-Prozess bleibt erhalten. Die ausgehandelten Verbindungsintervalle waren
+45ms. Der Befund belegt das erreichte Sendebudget einschließlich FIFO-Wartezeit,
+keine reine Funkdurchsatzmessung. `sdkCode=0` ist für diesen Abbruchgrund der
+Default und schließt vorangehende Busy-Retries nicht aus. Nächster gezielter
+Vergleich ist eine Android-Anfrage höherer Verbindungspriorität mit identischer
+Firmware und unveränderten Fristen. Eine Anfrage allein gilt nicht als Erfolg.
+
+Der HIGH-Vergleich handelt nach Discovery auf beiden Links tatsächlich 15ms
+statt 45ms aus. Nach einem abgefangenen WRITE-Fehler bei B und bewusstem erneutem
+Verbinden bleiben beide echten Liveanzeigen über drei Minuten verbunden.
+Parallel sind je 350/350 USB-Proben frisch und Fehler0; die gespeicherten
+Abbruch-Epochen/-Zeitwerte bleiben unverändert. Dies ist ein begrenzter positiver
+Dauerlauf, keine erfolgreiche Serie von Neuverbindungen.
+
+App0.3.2/code5 ergänzt begrenzte DEBUG-Metadaten für abgewiesene Schreibcallbacks.
+Vollständige Protokoll-/App-Tests, Debug-/Release-Build und beide Lints bestehen.
+Der erste anschließende Neuverbindungsversuch zeigt A live, B dagegen erneut
+kontrolliert abgewiesen: SDKstatus17, `writing=true`, vier ausstehende Fragmente,
+passende Session-/Characteristicidentität, etwa 2,55s nach AuthOK. Die Station
+meldet nur das anschließende Abbestellen durch Appcleanup, keinen früheren
+lokalen Abbruch. Ressourcendruck im ATT-/NimBLE-Pfad wird untersucht; automatische
+Schreibwiederholung und Lockerung der Schutzprüfungen sind nicht implementiert.

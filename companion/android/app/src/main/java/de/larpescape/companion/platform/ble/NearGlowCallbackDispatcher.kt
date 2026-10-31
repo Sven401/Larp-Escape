@@ -1,7 +1,7 @@
 package de.larpescape.companion.platform.ble
 
 internal enum class NearGlowCallbackStage { CONNECTION, SERVICES, DESCRIPTOR, WRITE, NOTIFY }
-internal enum class NearGlowHandshakeMilestone { CCCD_ACK, CHALLENGE_COMPLETE, PROOF_QUEUED, AUTH_OK }
+internal enum class NearGlowHandshakeMilestone { HIGH_PRIORITY_REQUESTED, CCCD_ACK, CHALLENGE_COMPLETE, PROOF_QUEUED, AUTH_OK }
 
 /** The production callback boundary. Predicates are evaluated on the serialized queue. */
 internal class NearGlowCallbackDispatcher(
@@ -36,4 +36,8 @@ internal object NearGlowCallbackDiagnostics {
         require(slot in 0..1 && eventAt >= openedAt && fragments >= 0)
         return "slot=$slot milestone=${event.name} elapsedMs=${eventAt - openedAt} fragments=$fragments"
     }
+    fun writeRejected(slot: Int, sdkStatus: Int, writing: Boolean, queued: Int,
+        connectionMatches: Boolean, inputMatches: Boolean): String =
+        "slot=$slot event=WRITE_REJECTED sdkStatus=$sdkStatus writing=$writing queued=$queued " +
+            "connectionMatches=$connectionMatches inputMatches=$inputMatches"
 }

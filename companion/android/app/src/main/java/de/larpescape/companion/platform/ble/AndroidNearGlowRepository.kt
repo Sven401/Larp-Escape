@@ -202,7 +202,9 @@ class AndroidNearGlowRepository(private val context: Context) {
                     if (BuildConfig.DEBUG) Log.d(NearGlowCallbackDiagnostics.TAG,
                         NearGlowCallbackDiagnostics.line(slot, stage, error))
                 } catch (_: Exception) { /* Diagnostics must not replace session cleanup. */ }
-                fail(slot, "Verbindung oder Datenprüfung fehlgeschlagen · erneut verbinden")
+                fail(slot, if (error is NearGlowPriorityRequestRejected)
+                    "Schnelle Handyverbindung nicht verfügbar · erneut verbinden"
+                    else "Verbindung oder Datenprüfung fehlgeschlagen · erneut verbinden")
             },
         )
         private fun dispatchCallback(stage: NearGlowCallbackStage, action: () -> Unit) = callbackDispatcher.dispatch(stage, action)
@@ -210,7 +212,11 @@ class AndroidNearGlowRepository(private val context: Context) {
             override fun onConnectionStateChange(connection: BluetoothGatt, status: Int, newState: Int) { this@Session.dispatchCallback(NearGlowCallbackStage.CONNECTION) {
                 check(connection === gatt && status == BluetoothGatt.GATT_SUCCESS && newState == BluetoothProfile.STATE_CONNECTED)
                 update(slot) { it.copy(connected = true, message = "Handy verbunden · Station wird geprüft …") }
-                check(connection.discoverServices())
+                beginNearGlowConnection(
+                    requestHighPriority = { connection.requestConnectionPriority(BluetoothGatt.CONNECTION_PRIORITY_HIGH) },
+                    discoverServices = { connection.discoverServices() },
+                )
+                debugMilestone(NearGlowHandshakeMilestone.HIGH_PRIORITY_REQUESTED, 0)
             } }
             override fun onServicesDiscovered(connection: BluetoothGatt, status: Int) { this@Session.dispatchCallback(NearGlowCallbackStage.SERVICES) {
                 check(connection === gatt && status == BluetoothGatt.GATT_SUCCESS)
@@ -229,7 +235,14 @@ class AndroidNearGlowRepository(private val context: Context) {
                 subscribed = true; writeNext()
             } }
             override fun onCharacteristicWrite(connection: BluetoothGatt, characteristic: BluetoothGattCharacteristic, status: Int) { this@Session.dispatchCallback(NearGlowCallbackStage.WRITE) {
-                check(connection === gatt && characteristic.uuid == INPUT && status == BluetoothGatt.GATT_SUCCESS && writing)
+                val connectionMatches = connection === gatt
+                val inputMatches = characteristic.uuid == INPUT
+                val accepted = connectionMatches && inputMatches && status == BluetoothGatt.GATT_SUCCESS && writing
+                if (!accepted) try {
+                    if (BuildConfig.DEBUG) Log.d(NearGlowCallbackDiagnostics.TAG,
+                        NearGlowCallbackDiagnostics.writeRejected(slot, status, writing, outgoing.size, connectionMatches, inputMatches))
+                } catch (_: Exception) { /* Diagnostics never change ACK admission. */ }
+                check(accepted)
                 outgoing.removeFirst(); writing = false; writeNext()
                 update(slot) { it.copy(busy = pending || outgoing.isNotEmpty()) }
             } }
