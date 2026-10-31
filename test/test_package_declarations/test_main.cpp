@@ -6,13 +6,11 @@ using namespace larp::configuration;
 namespace {
 const std::string hex(64, 'a');
 std::string root(const std::string &stations = "[]", const std::string &modules = "[]",
-                 const std::string &requires = "[]", const std::string &resources = "[]",
+                 const std::string &requirements = "[]", const std::string &resources = "[]",
                  const std::string &subjects = "[]", const std::string &label = "x") {
     return "{\"format\":\"larp.package.v1\",\"label\":\"" + label + "\",\"modules\":" + modules +
-           ",\"packageId\":\"pkg\",\"requires\":" +
-               requires +
-           ",\"resources\":" + resources + ",\"revision\":1,\"stations\":" + stations +
-           ",\"subjects\":" + subjects + "}";
+           ",\"packageId\":\"pkg\",\"requires\":" + requirements + ",\"resources\":" + resources +
+           ",\"revision\":1,\"stations\":" + stations + ",\"subjects\":" + subjects + "}";
 }
 std::string station(const std::string &values = "[]", const std::string &timers = "[]",
                     const std::string &ports = "[]", const std::string &rules = "[]") {
