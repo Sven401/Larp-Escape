@@ -1,0 +1,11 @@
+cmake_minimum_required(VERSION 3.24)
+find_package(Python3 REQUIRED COMPONENTS Interpreter)
+execute_process(COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_LIST_DIR}/../../scripts/check_idf_sources.py" "$ENV{IDF_PATH}" COMMAND_ERROR_IS_FATAL ANY)
+include($ENV{IDF_PATH}/tools/cmake/project.cmake)
+set(COMPONENTS main)
+set(PROJECT_VER "s3-proximity-bench-v1")
+project(larp_s3_proximity)
+if(NOT IDF_VERSION_MAJOR EQUAL 6 OR NOT IDF_VERSION_MINOR EQUAL 1 OR
+   NOT IDF_VERSION_PATCH EQUAL 0 OR NOT IDF_TARGET STREQUAL "esp32s3")
+    message(FATAL_ERROR "This isolated bench requires pinned ESP-IDF 6.1.0 / ESP32-S3")
+endif()
