@@ -225,6 +225,8 @@ PackageDeclarationReader::Kind PackageDeclarationReader::child(bool array) {
     return Kind::Skip;
 }
 void PackageDeclarationReader::token(CanonicalJsonToken value, std::size_t offset) {
+    if (downstream_)
+        downstream_->token(value, offset);
     if (result_.error != DeclarationError::None)
         return;
     tokenOffset_ = offset;
@@ -290,13 +292,17 @@ void PackageDeclarationReader::token(CanonicalJsonToken value, std::size_t offse
     text_[0] = '\0';
 }
 void PackageDeclarationReader::scalarByte(std::uint8_t byte) {
+    if (downstream_)
+        downstream_->scalarByte(byte);
     if (result_.error != DeclarationError::None)
         return;
     if (length_ < sizeof(text_) - 1)
         text_[length_] = static_cast<char>(byte);
     ++length_;
 }
-void PackageDeclarationReader::scalarEnd(std::size_t) {
+void PackageDeclarationReader::scalarEnd(std::size_t offset) {
+    if (downstream_)
+        downstream_->scalarEnd(offset);
     if (result_.error != DeclarationError::None)
         return;
     text_[length_ < sizeof(text_) ? length_ : sizeof(text_) - 1] = '\0';
@@ -412,13 +418,21 @@ DeclarationResult PackageDeclarationReader::finish(CanonicalJsonResult canonical
     }
     return result_;
 }
-DeclarationResult PackageDeclarationReader::validate(IPackageByteSource &source) {
+DeclarationResult PackageDeclarationReader::validate(IPackageByteSource &source,
+                                                     ICanonicalJsonObserver *observer) {
     reset();
-    return finish(canonical_.validate(source, this));
+    downstream_ = observer;
+    const DeclarationResult result = finish(canonical_.validate(source, this));
+    downstream_ = nullptr;
+    return result;
 }
-DeclarationResult PackageDeclarationReader::validate(const char *bytes, std::size_t count) {
+DeclarationResult PackageDeclarationReader::validate(const char *bytes, std::size_t count,
+                                                     ICanonicalJsonObserver *observer) {
     reset();
-    return finish(canonical_.validate(bytes, count, this));
+    downstream_ = observer;
+    const DeclarationResult result = finish(canonical_.validate(bytes, count, this));
+    downstream_ = nullptr;
+    return result;
 }
 } // namespace configuration
 } // namespace larp
