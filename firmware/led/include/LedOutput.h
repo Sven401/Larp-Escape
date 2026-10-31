@@ -2,6 +2,7 @@
 #include <array>
 #include <cstddef>
 #include <cstdint>
+#include "StationBoard.h"
 
 namespace larp { namespace led {
 
@@ -46,7 +47,7 @@ public:
     OutputSnapshot snapshot() const { return status_; }
 
     static constexpr std::uint16_t LedCount = PixelCount;
-    static constexpr std::uint8_t LedPin = 15, Brightness = 32;
+    static constexpr std::uint8_t LedPin = board::LedPin, Brightness = 32;
     static constexpr std::uint16_t Milliamps = 1000;
     static constexpr std::uint32_t BurstMilliseconds = 1600, RippleMilliseconds = 1400;
     static constexpr std::uint32_t FrameMilliseconds = 33, TransferTimeoutMilliseconds = 2000;
