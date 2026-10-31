@@ -179,6 +179,28 @@ Commit und nachgelagerte PR-Nachweise werden im veröffentlichten PR zugeordnet.
 
 ## Offene Nachweise und Eigentümergrenzen
 
+### Zusammenführung mit parallel integrierten D1-/D2-Bausteinen
+
+Während dieser Umsetzung wurde der Integrationsbranch auf
+`111b2a8aba6342025acc938aff5ba310baaa7c78` fortgeführt (#126 Transportkern,
+#128 Speicherkern sowie die Vorgängerschritte). Die Zusammenführung in den
+eigenen Planerbranch hatte ausschließlich Buildkonflikte in `CMakeLists.txt`
+und `platformio.ini`. Beide Seiten wurden vollständig vereinigt: neue
+Journal-/Partition-/Transporttests und Quellen ebenso wie sämtliche Modul-,
+Planer-, Budget- und PSA-Ziele. Keine Testabwahl oder Änderung fremder
+Produktquellen; die separate Partition-Stubprüfung bleibt CTest.
+
+Der kombinierte Stand ist zusätzlich frisch geprüft: **12/12 CTest-Ziele**,
+**19 PlatformIO-Suiten / 217 Fälle**, Architektur **159 Dateien / 335 Includes**,
+**93 unabhängige Header**, Formatbaseline **349 Dateien** erfolgreich.
+`quality_p1` hat die Konfliktauflösung gegen beide Eltern geprüft sowie in einem
+separaten frischen Build alle 105 Objekte und 12/12 CTest-Ziele erfolgreich
+gebaut/geprüft. Die Planerquellhashes oben bleiben unverändert. Dies ist eine
+Integrationsprüfung der Softwarebausteine, noch keine Kopplung des Planerzustands
+an das neue dauerhafte Journal und kein Transport-/Gerätenachweis.
+
+### Nachgelagerte PR- und Geräteprüfungen
+
 Der native Target `rules-planner-review-psa` baut den produktiven PSA-Adapter
 und führt dieselben Referenz-/Gegenfälle und den Budgettreiber aus. Dessen
 tatsächlicher Lauf am qualifizierten SDK und die zwölf aktuellen PR-Checks
