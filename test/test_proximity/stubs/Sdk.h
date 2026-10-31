@@ -1,5 +1,6 @@
 #pragma once
 #include <algorithm>
+#include <array>
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
@@ -23,8 +24,16 @@ static bool missing=true,initFail=false,openFail=false,setFail=false,commitFail=
 static unsigned writes=0,commits=0;
 static std::string serial,input;
 static std::function<void()> tick;
-static bool restarted=false,psaMacOk=false;
+static bool restarted=false;
+#ifndef LARP_PROXIMITY_REAL_PSA
+static bool psaMacOk=false;
+#endif
 static unsigned sends=0;
+static std::array<std::uint8_t,16> pmk{},lmk{};
+static std::array<std::uint8_t,6> peerAddress{};
+static bool peerEncrypted=false;
+static int peerChannel=0,peerInterface=-1;
+static unsigned pmkCalls=0;
 }
 using nvs_handle_t=unsigned;constexpr int NVS_READWRITE=0;
 inline int nvs_flash_init(){return fake::initFail?-1:0;}
@@ -68,6 +77,7 @@ inline int rmt_transmit(rmt_channel_handle_t,rmt_encoder_handle_t,const void *p,
     if(fake::rmtTransmitFail)return -1;
     fake::retained=static_cast<const rmt_symbol_word_t*>(p);fake::symbols.assign(fake::retained,fake::retained+size/sizeof(rmt_symbol_word_t));return 0;
 }
+#ifndef LARP_PROXIMITY_REAL_PSA
 using mbedtls_svc_key_id_t=unsigned;struct psa_key_attributes_t{};
 #define PSA_KEY_ATTRIBUTES_INIT {}
 constexpr int PSA_SUCCESS=0,PSA_KEY_TYPE_HMAC=0,PSA_KEY_USAGE_SIGN_MESSAGE=0,PSA_ALG_SHA_256=0;
@@ -77,6 +87,7 @@ inline void psa_set_key_usage_flags(psa_key_attributes_t*,int){}inline void psa_
 inline int psa_import_key(psa_key_attributes_t*,const void*,std::size_t,mbedtls_svc_key_id_t *id){*id=1;return 0;}
 inline void psa_reset_key_attributes(psa_key_attributes_t*){}
 inline int psa_mac_compute(unsigned,int,const void*,std::size_t,void *out,std::size_t size,std::size_t *length){if(!fake::psaMacOk||size<32)return -1;std::memset(out,7,32);*length=32;return 0;}
+#endif
 struct usb_serial_jtag_driver_config_t{unsigned rx_buffer_size=0,tx_buffer_size=0;};
 inline int usb_serial_jtag_driver_install(const usb_serial_jtag_driver_config_t*){return 0;}
 inline int usb_serial_jtag_write_bytes(const void *p,std::size_t n,int){fake::serial.append(static_cast<const char*>(p),n);return n;}
@@ -99,7 +110,8 @@ inline int esp_wifi_init(const wifi_init_config_t*){return 0;}
 inline int esp_event_handler_register(int,int,void(*)(void*,esp_event_base_t,std::int32_t,void*),void*){return 0;}
 inline int esp_wifi_set_storage(int){return 0;}inline int esp_wifi_set_mode(int){return 0;}inline int esp_wifi_start(){return 0;}
 inline int esp_wifi_set_channel(int,int){return 0;}inline int esp_wifi_set_ps(int){return 0;}inline int esp_now_init(){return 0;}
-inline int esp_now_set_pmk(const std::uint8_t*){return 0;}inline int esp_now_add_peer(const esp_now_peer_info_t*){return 0;}
+inline int esp_now_set_pmk(const std::uint8_t *key){++fake::pmkCalls;std::copy(key,key+16,fake::pmk.begin());return 0;}
+inline int esp_now_add_peer(const esp_now_peer_info_t *peer){std::copy(peer->lmk,peer->lmk+16,fake::lmk.begin());std::copy(peer->peer_addr,peer->peer_addr+6,fake::peerAddress.begin());fake::peerEncrypted=peer->encrypt;fake::peerChannel=peer->channel;fake::peerInterface=peer->ifidx;return 0;}
 inline int esp_now_register_send_cb(void(*)(const esp_now_send_info_t*,esp_now_send_status_t)){return 0;}
 inline int esp_now_register_recv_cb(void(*)(const esp_now_recv_info_t*,const std::uint8_t*,int)){return 0;}
 inline int esp_now_send(const std::uint8_t*,const std::uint8_t*,std::size_t){++fake::sends;return 0;}
