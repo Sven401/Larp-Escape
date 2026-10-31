@@ -57,7 +57,8 @@ class NimblePeerSource final : public ITlsLifetime {
     mutable portMUX_TYPE mutex_ = portMUX_INITIALIZER_UNLOCKED;
     TlsOrigin view_;
     mutable bool eligible_ = false, banned_ = false, ready_ = false, heartbeatFailed_ = false;
-    std::uint32_t heartbeat_ = 0;
+    std::uint64_t heartbeat_ = 0, admissionStarted_ = 0;
+    bool admissionPending_ = false;
     static const std::uint32_t HeartbeatMilliseconds = 100;
     struct Confirmation {
         TlsOrigin origin;
@@ -73,7 +74,10 @@ class NimblePeerSource final : public ITlsLifetime {
     TlsOrigin original_;
     bool attempted_ = false, live_ = false, opened_ = false, subscribed_ = false;
     bool comparing_ = false, broken_ = false;
+    // Absolute CONNECT-to-open budget, never renewed by GAP activity.
+    static const std::uint32_t AdmissionMilliseconds = 30000;
     std::uint32_t epoch_ = 0, compareNumber_ = 0, compareAt_ = 0;
+    std::uint64_t connectedAt_ = 0;
     std::uint16_t receiveHandle_ = 0, transmitHandle_ = 0;
     std::uint8_t addressType_ = 0;
     ble_gatt_chr_def characteristics_[3]{};
@@ -82,6 +86,7 @@ class NimblePeerSource final : public ITlsLifetime {
     static NimblePeerSource *selected_;
     bool onHost() const noexcept;
     bool secure() const noexcept;
+    bool expireAdmission() noexcept;
     void publish(bool) noexcept;
     void fence() noexcept;
     void update() noexcept;
