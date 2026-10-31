@@ -37,7 +37,27 @@ ESP32-S3-Exemplare für „Nähe Glut“. Eine eigene PCB darf den Termin nicht
 gefährden.“ Dokumentbasis: `b8472542230c5834d9664e98a89eb46c1cba6e57`;
 Prüfweg: bestehende Hardwareplanung gelesen und Nutzerauftrag abgeglichen.
 
-**Umsetzung R1 · 31. Oktober 2026:** Die beauftragte Hardwareentwicklung wird
+**Neue verbindliche Kompaktanforderungen · 31. Oktober 2026:** Der Nutzer
+fordert den kleinstmöglichen Gesamtformfaktor, bestätigt **vier Stunden
+Akkulaufzeit als Auslegungsziel** und begrenzt ESP-Boards auf **höchstens
+25 × 20 mm**. Vollständig bestückte Platinen sind gefordert; die Vorbereitung
+soll bis zur konkreten Bestellautorisierung geführt werden. Die bisherigen
+DevKitC-/V50-/85×80-mm-Carrier- und 168×148×90-mm-Gehäuseauswahlen sind damit
+**keine aktuelle Bestellbasis**. Keine R1-Bestellung oder Fertigung auslösen.
+Die Grenze gilt bei einer eigenen integrierten ESP-Platine für deren gesamte
+PCB, nicht lediglich für das darauf eingesetzte Funkmodul. Weitere Licht-/
+Versorgungsplatinen und das Gesamtgehäuse müssen mit ihren tatsächlichen
+Abmessungen ausgewiesen und ebenfalls auf Kompaktheit optimiert werden.
+
+Die Entwicklung läuft unter [Kompaktplanung](naehe-glut/kompakt/PLANUNG.md).
+Vier Stunden brauchen ein definiertes Licht-/Funkprofil und anschließend
+einen gemessenen Dauerlauf; die Bestätigung ist keine Zusage vier Stunden
+Dauer-Vollweiß. Das Dezemberziel und der Rückfallweg mit fertigen kleinen
+Modulen gelten weiter. Die Zahl von24 Pixeln aus R1 soll zunächst erhalten
+bleiben; eine Verringerung wird nicht stillschweigend zur Größenoptimierung
+angenommen.
+
+**Historische Umsetzung R1 · 31. Oktober 2026:** Die bisherige Hardwareentwicklung wird
 unter [Nähe Glut R1](naehe-glut/README.md) geführt, einschließlich
 [Bestellliste](naehe-glut/BESTELLUNG.md), Akkukonzept, PCB und Gehäuse.
 Der Nutzer hat Komponenten-, Akku- und Druckerauswahl ausdrücklich delegiert.

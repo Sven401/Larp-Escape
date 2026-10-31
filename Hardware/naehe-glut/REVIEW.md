@@ -1,5 +1,11 @@
 # NG-R1: unabhängiger Hardware- und Fertigungsreview
 
+**Historischer R1-Prüfstand, seit dem Kompaktauftrag vom31.10.2026 keine
+aktuelle Bestellfreigabe.** Koordinationshinweis `/root`: Die neue ESP-Board-
+Grenze25×20mm und der kleinste Gesamtformfaktor ersetzen die R1-Teilewahl.
+Aktueller begrenzter Beschaffungsreview: [Kompakt](kompakt/REVIEW.md).
+Die folgenden datierten Befunde und Hashes bleiben historische Belege.
+
 ## Aktueller Beschaffungsnachtrag · 31.10.2026
 
 Prüfer: `/root/supply_review`, unabhängig von Beschaffungsentscheidung und

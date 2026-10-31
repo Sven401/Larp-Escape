@@ -1,5 +1,13 @@
 # Nähe Glut R1: Beschaffung für zwei Stationen
 
+**BESTELLSTOPP R1 · 31.10.2026:** Die nachfolgenden Auswahlen sind durch den
+neuen Nutzerauftrag zur [Kompaktentwicklung](kompakt/PLANUNG.md) überholt:
+kleinstmöglicher Gesamtformfaktor, ESP-Board höchstens25×20mm, vier Stunden
+Akkulaufzeit als Auslegungsziel und fertig bestückte Platinen. DevKitC-N16R8,
+85×80-mm-Carrier, V50 und das große R1-Gehäuse nicht auf Basis dieser Liste
+bestellen. R1 bleibt historische Entwicklungsunterlage. Eine neue kompakte
+Bestellliste mit konkretem Fertigerangebot wird vorbereitet.
+
 Stand: 31.10.2026. **Beschaffungsliste für Revision R1; keine ausgelöste Bestellung.**
 Der Nutzer hat Komponentenwahl, Akkukonzept und Auswahl eines 3D-Druckers
 ausdrücklich delegiert (Sitzung `01a192e5-6a3d-7ce2-a9e1-bfacd9a97e3b`).

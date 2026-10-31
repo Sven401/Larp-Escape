@@ -1,5 +1,12 @@
 # Nähe Glut R1: Platine, Gehäuse und Beschaffung
 
+**Historischer R1-Stand, keine aktuelle Bestellbasis:** Der Nutzer verlangt
+seit31.10.2026 kleinsten Gesamtformfaktor, ESP-Boards höchstens25×20mm,
+vier Stunden Akkulaufzeit als Auslegungsziel und vollständig bestückte Platinen.
+Die [Kompaktplanung](kompakt/PLANUNG.md) ersetzt die bisherige Größen-/Teilewahl.
+R1 bleibt für Bestellung und Fertigung gesperrt. Eine spätere Autorisierung
+der neuen Kompaktvariante hebt diesen R1-Bestellstopp nicht auf.
+
 Stand: **31. Oktober 2026**. Prototyprevision für zwei ESP32-S3-Stationen.
 Digitale Fertigungsunterlagen sind erstellt; der abschließende Freigabestand
 und konkrete Prüfgrenzen stehen im [unabhängigen Review](REVIEW.md).
