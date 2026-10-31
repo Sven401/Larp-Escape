@@ -183,18 +183,20 @@ class AndroidNearGlowRepository(private val context: Context) {
         private var lastCurve: ProxCurve? = null
         private var telemetryAt = 0L
         private fun current() = alive && sessions[slot] === this
-        private fun run(action: () -> Unit) {
-            if (!current()) return
-            try { check(permitted()); action() }
-            catch (_: Exception) { fail(slot, "Verbindung oder Datenprüfung fehlgeschlagen · erneut verbinden") }
-        }
+        private val callbackDispatcher = NearGlowCallbackDispatcher(
+            post = { action -> handler.post { action() } },
+            isCurrent = ::current,
+            hasPermission = ::permitted,
+            failed = { fail(slot, "Verbindung oder Datenprüfung fehlgeschlagen · erneut verbinden") },
+        )
+        private fun dispatchCallback(action: () -> Unit) = callbackDispatcher.dispatch(action)
         private val callback = object : BluetoothGattCallback() {
-            override fun onConnectionStateChange(connection: BluetoothGatt, status: Int, newState: Int) { handler.post { run {
+            override fun onConnectionStateChange(connection: BluetoothGatt, status: Int, newState: Int) { this@Session.dispatchCallback {
                 check(connection === gatt && status == BluetoothGatt.GATT_SUCCESS && newState == BluetoothProfile.STATE_CONNECTED)
                 update(slot) { it.copy(connected = true, message = "Handy verbunden · Station wird geprüft …") }
                 check(connection.discoverServices())
-            } } }
-            override fun onServicesDiscovered(connection: BluetoothGatt, status: Int) { handler.post { run {
+            } }
+            override fun onServicesDiscovered(connection: BluetoothGatt, status: Int) { this@Session.dispatchCallback {
                 check(connection === gatt && status == BluetoothGatt.GATT_SUCCESS)
                 val service = connection.getService(SERVICE) ?: error("service")
                 input = service.getCharacteristic(INPUT) ?: error("input")
@@ -204,23 +206,23 @@ class AndroidNearGlowRepository(private val context: Context) {
                 check(connection.setCharacteristicNotification(output, true))
                 check(connection.writeDescriptor(output.getDescriptor(CCCD) ?: error("CCCD"),
                     BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE) == BluetoothStatusCodes.SUCCESS)
-            } } }
-            override fun onDescriptorWrite(connection: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) { handler.post { run {
+            } }
+            override fun onDescriptorWrite(connection: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) { this@Session.dispatchCallback {
                 check(connection === gatt && descriptor.uuid == CCCD && status == BluetoothGatt.GATT_SUCCESS)
                 subscribed = true; writeNext()
-            } } }
-            override fun onCharacteristicWrite(connection: BluetoothGatt, characteristic: BluetoothGattCharacteristic, status: Int) { handler.post { run {
+            } }
+            override fun onCharacteristicWrite(connection: BluetoothGatt, characteristic: BluetoothGattCharacteristic, status: Int) { this@Session.dispatchCallback {
                 check(connection === gatt && characteristic.uuid == INPUT && status == BluetoothGatt.GATT_SUCCESS && writing)
                 outgoing.removeFirst(); writing = false; writeNext()
                 update(slot) { it.copy(busy = pending || outgoing.isNotEmpty()) }
-            } } }
+            } }
             override fun onCharacteristicChanged(connection: BluetoothGatt, characteristic: BluetoothGattCharacteristic, value: ByteArray) {
                 val bytes = value.copyOf()
                 val fragmentAt = now()
-                handler.post { run {
+                this@Session.dispatchCallback {
                     check(connection === gatt && characteristic.uuid == OUTPUT)
                     frames.accept(bytes, fragmentAt)?.let { received(it, checkNotNull(frames.completedStartedAt)) }
-                } }
+                }
             }
         }
         fun open(device: BluetoothDevice) {

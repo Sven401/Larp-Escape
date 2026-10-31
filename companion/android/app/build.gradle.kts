@@ -7,7 +7,7 @@ android {
     namespace = "de.larpescape.companion"
     compileSdk = 35
     buildToolsVersion = "35.0.0"
-    defaultConfig { applicationId = "de.larpescape.companion"; minSdk = 33; targetSdk = 35; versionCode = 3; versionName = "0.3" }
+    defaultConfig { applicationId = "de.larpescape.companion"; minSdk = 33; targetSdk = 35; versionCode = 4; versionName = "0.3.1" }
     buildFeatures { compose = true; buildConfig = true }
     buildTypes {
         getByName("debug") { buildConfigField("boolean", "ALLOW_CONTRACT_LAB", "true") }

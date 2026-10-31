@@ -1,12 +1,12 @@
 # Näheglut live in Larp Dev
 
-Status: implementierter Android-Kandidat 0.3/code3, 31.10.2026; Basis `b3e3693`.
+Status: Android-Korrekturkandidat 0.3.1/code4, 31.10.2026; Basis `deb9ab9`.
 Gerätevertrag: [PROX-BLE/1](../led/prox-ble-v1.md). Native Build-, Screenshot-
 und Gerätebelege werden separat geführt; dieser Brief behauptet keine Abnahme.
 
 ## Ziel und Zuständigkeit
 
-Larp Dev 0.3 beobachtet zwei autonome S3-Stationen gleichzeitig und ändert ihre
+Larp Dev 0.3.1 beobachtet zwei autonome S3-Stationen gleichzeitig und ändert ihre
 Nähe-Helligkeitskennlinie bewusst während eines laufenden Versuchs. Die Station
 bleibt Eigentümer ihrer Messung, Glutausgabe und dauerhaft gespeicherten Parameter.
 Der Handyabbruch beendet ihre autonome Funktion nicht.
