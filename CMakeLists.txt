@@ -24,6 +24,21 @@ if(BUILD_TESTING)
         GIT_TAG cbcd08fa7de711053a3deec6339ee89cad5d2697
         GIT_SHALLOW FALSE)
     FetchContent_MakeAvailable(unity)
+    add_executable(d0-fact test/test_d0_fact/test_main.cpp)
+    target_link_libraries(d0-fact PRIVATE larp_core unity)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        target_compile_options(d0-fact PRIVATE -Wall -Wextra -Wpedantic -Werror)
+    endif()
+    add_test(NAME d0-fact COMMAND d0-fact)
+    # Negative-only backend lifecycle injection; not a signature acceptance proof.
+    add_executable(d0-crypto-lifecycle test/fixtures/d0-crypto-faults/main.cpp
+        lib/PsaD0FactCrypto/PsaD0FactCrypto.cpp)
+    target_include_directories(d0-crypto-lifecycle PRIVATE test/fixtures/d0-crypto-faults/stubs
+        include lib/PsaD0FactCrypto)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        target_compile_options(d0-crypto-lifecycle PRIVATE -Wall -Wextra -Wpedantic -Werror)
+    endif()
+    add_test(NAME d0-crypto-lifecycle COMMAND d0-crypto-lifecycle)
     add_executable(package-artifacts test/test_package_artifacts/test_main.cpp)
     target_link_libraries(package-artifacts PRIVATE larp_core unity)
     if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
@@ -31,6 +46,12 @@ if(BUILD_TESTING)
     endif()
     add_test(NAME package-artifacts COMMAND package-artifacts)
     if(WIN32)
+        add_executable(d0-fact-review test/fixtures/d0-fact-review/cli.cpp)
+        target_link_libraries(d0-fact-review PRIVATE larp_core bcrypt)
+        target_compile_options(d0-fact-review PRIVATE -Wall -Wextra -Wpedantic -Werror)
+        add_test(NAME d0-fact-review COMMAND "${Python3_EXECUTABLE}"
+            "${CMAKE_SOURCE_DIR}/test/fixtures/d0-fact-review/run.py"
+            --binary "$<TARGET_FILE:d0-fact-review>")
         add_executable(package-artifacts-review test/fixtures/package-artifacts-review/cli.cpp)
         target_link_libraries(package-artifacts-review PRIVATE larp_core bcrypt)
         target_compile_options(package-artifacts-review PRIVATE -Wall -Wextra -Wpedantic -Werror)
@@ -142,6 +163,15 @@ if(BUILD_TESTING AND LARP_PSA_IDF_PATH)
     # ESP-only port. Host tests forward them to the identical private headers.
     target_include_directories(builtin PRIVATE "${CMAKE_SOURCE_DIR}/test/psa_host_compat")
     target_include_directories(tfpsacrypto PRIVATE "${CMAKE_SOURCE_DIR}/test/psa_host_compat")
+    add_executable(d0-fact-review-psa test/fixtures/d0-fact-review/cli.cpp
+        lib/PsaPackageDigest/PsaPackageDigest.cpp lib/PsaD0FactCrypto/PsaD0FactCrypto.cpp)
+    target_include_directories(d0-fact-review-psa PRIVATE lib/PsaPackageDigest lib/PsaD0FactCrypto)
+    target_compile_definitions(d0-fact-review-psa PRIVATE D0_FACT_REVIEW_PSA=1)
+    target_link_libraries(d0-fact-review-psa PRIVATE larp_core tfpsacrypto)
+    target_compile_options(d0-fact-review-psa PRIVATE -Wall -Wextra -Wpedantic -Werror)
+    add_test(NAME d0-fact-review-psa COMMAND "${Python3_EXECUTABLE}"
+        "${CMAKE_SOURCE_DIR}/test/fixtures/d0-fact-review/run.py"
+        --binary "$<TARGET_FILE:d0-fact-review-psa>")
     add_executable(package-artifacts-review-psa test/fixtures/package-artifacts-review/cli.cpp
         lib/PsaPackageDigest/PsaPackageDigest.cpp)
     target_include_directories(package-artifacts-review-psa PRIVATE lib/PsaPackageDigest)
