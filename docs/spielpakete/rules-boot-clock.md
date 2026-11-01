@@ -1,7 +1,7 @@
 # Native Startkennung und Rules-Zeitquelle
 
-Status: **implementiert und unabhängig am SDK-Nahtprofil geprüft; echte SDK-
-und Gerätequalifikation dieses Folgestands offen**, 01.11.2026. Folgearbeit zu
+Status: **Host und beide SDK-Varianten unabhängig geprüft; Gerätequalifikation
+offen**, 01.11.2026. Folgearbeit zu
 [#93](https://github.com/Sven401/Larp-Escape/issues/93) und dem
 [semantischen Fortschrittsbesitzer](rules-progress-owner-v1.md).
 Plattform/Implementierung: developer_p1a3; andere SDK-/Lifecyclegegenprüfung:
@@ -81,8 +81,40 @@ Source-SHA256:
 - Unveränderter Entropieadapter
   `12e25f8d772cdfb122abc506d439c211154653d3e74ee6277862fbf39b669c3a`.
 
+## Nachgelagerte native Qualifikation
+
+Head `da4d4095424aec927524f8eafd7103a55cb9e787`: zwölf erfolgreiche PR-Jobs
+in sechs Workflows, alle tatsächlichen Originalcheckouts auf Prüfmerge
+`fd85ec533613c68b0c0f1a7497986791531b724c`. Dessen Eltern sind exakt
+Zielbasis `c4f1f824c6274e9a8d7676212a2a96be4d4a77b9` und genannter Head.
+pull_request, Attempt 1, Actions-App und abschließend unveränderte Refs bestätigt.
+
+[Native 41266590666](https://github.com/Sven401/Larp-Escape/actions/runs/41266590666),
+Originaljob 124730553880: **92/92 CTests ohne Fehler, Disabled oder Skips**.
+Beide Clockziele laufen vollständig mit sechs Prozessen/192 Assertions und
+15 Prozessen/426 Assertions; dazu Ordering 830 und Owner-PSA 300 mit dessen
+vollständigen Artefakt-/Signatur-/Bindingprüfungen. Beide tatsächlichen SDK-
+Images kompilieren `larp_boot_clock` mit Clock und unverändertem Entropieadapter
+gegen bootloader_support, esp_hw_support und esp_timer. Originaldescriptor und
+Buildlogs enthalten keine test/fixtures- oder Stubpfade in den aktiven Quellen/
+Includes der Images. Pin `9a97f6c54ec638111ce55cd36581b3c192f15207` mit
+rekursiven Submodulen bestätigt.
+
+Originalarchiv 13067760853, SHA256
+`d97d25070193f6060417bd114e6ff351d17ac55c105daccf01775611be30ec96`,
+lokal `private/pr135-da4d4095-quality`. `quality_p1` prüfte den tiefen nativen
+Archivbeleg; `module_digest_review` separat alle zwölf Jobs/Checkouts/Refs.
+Quality 41266590637, LED 41266590689, NFC 41266590655, ESP-NOW 41266590663
+und Rollen 41266590748 sind ebenfalls vollständig erfolgreich. CI-XML:
+GM 35/Worker 9, Protokoll 111/fünf V1-Tests, Dev-App 77 ohne Fehler oder Skips.
+Androidarchiv 13068275620, SHA256
+`282eb92d2c9e1f113a619c06553175c6d9c467b73f8383ea62679300f15f0713`.
+Der frühere offene SDK-Nachweis ist damit für genau da4d4095 ergänzt;
+nachfolgende Eingangsänderungen sind davon nicht erfasst. PR bleibt Draft.
+
 Geräteentropie, Ausschluss realer Ressourcenkonflikte, Schlaf-/Resetbeobachtung,
 SMP, tatsächliche Eingabe-/Installations-/OriginKeybesitzer, Event-/GM-Rechte
-und Running sind nicht durch diese Prüfung belegt. Die Local-/Timer-
-Korrelationsregel bleibt beim kommenden OriginalInputvertrag offen.
+und Running sind nicht durch diese Prüfung belegt. Tatsächliche OriginalInput-
+produzenten mit dauerhafter lokaler Generation bleiben offen; die vom P0
+festgelegte Korrelationssemantik wird durch die Clockquelle nicht umgesetzt.
 Keine Geräteaktion, kein Upload oder Release; #93 bleibt offen.

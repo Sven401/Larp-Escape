@@ -200,10 +200,14 @@ Eigentums- und Veröffentlichungszusage erneut belegen; eine fallible Queue ist
 kein Ersatz für die nicht fehlschlagende Veröffentlichung.
 
 Die native Qualifikation gilt ausschließlich für den genannten Head und seine
-ausdrücklichen Testgrenzen. Bei Local-/Timereingängen ist vor tatsächlichen
-OriginalInputproduzenten noch festzulegen, ob eine stabile Anwendungsoperation
-verbindlich abgeleitet wird oder eine neue Korrelation ebenfalls auf das Original
-aufzulösen ist; die neue Factauflösung legt das nicht still fest.
+ausdrücklichen Testgrenzen. Für Local-/Timereingänge wurde die beim ee5-Stand
+noch offene Korrelationsfrage anschließend am P0-Vertrag geklärt: Die
+Eingangsidentität bleibt unabhängig von einer neuen Anwendungskorrelation,
+innerhalb event/run/station. Die entsprechende Ownererweiterung ist ein eigener
+nachfolgender Prüfstand; die obige ee5-Qualifikation bescheinigt sie nicht.
+Dauerhaft vor Nutzung vergebene lokale Bootgeneration und tatsächliche
+OriginalInputproduzenten bleiben Pflicht; die 128-Bit-Clockkennung ist
+ausdrücklich kein Ersatz dafür.
 Produktive Quellenadapter, nativer Ingress,
 F5a, Gerätebudgets, echte Stromausfälle und Hardwarewirkung bleiben offen.
 Kein Upload, Release, Merge oder Abschluss von #93 folgt aus diesem Stand.
