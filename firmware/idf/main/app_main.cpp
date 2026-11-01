@@ -1,3 +1,4 @@
+#include "Esp32RulesBootClock.h"
 // Build qualification only: real queues, no physical owners or authorisation.
 #include "Esp32ProgressPartition.h"
 #include "FreeRtosGameControlChannel.h"
@@ -15,6 +16,12 @@ Esp32ProgressPartition progressStore;
 } // namespace
 
 extern "C" void app_main() {
+    // Only startup entropy; must finish before any ADC/I2S/RF/device owner.
+    // Failure is permanent for this process and opens no runtime/authority.
+    if (!Esp32RulesBootClock::instance().beginEarlyStartup()) {
+        ESP_LOGE("larp-boot-clock", "startup clock unavailable; startup closed");
+        return;
+    }
     // Force the actual adapter into the SDK image without opening/reading flash.
     ESP_LOGI("larp-idf-probe", "unopened progress capacity=%u",
              static_cast<unsigned>(progressStore.capacity()));

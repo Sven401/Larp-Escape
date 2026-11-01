@@ -207,3 +207,8 @@ aufzulösen ist; die neue Factauflösung legt das nicht still fest.
 Produktive Quellenadapter, nativer Ingress,
 F5a, Gerätebudgets, echte Stromausfälle und Hardwarewirkung bleiben offen.
 Kein Upload, Release, Merge oder Abschluss von #93 folgt aus diesem Stand.
+
+Der nachfolgende [native Boot-/Clockanschluss](rules-boot-clock.md) implementiert
+eine gemeinsame Startupkennung und Zeitquelle als eigenen begrenzten Schritt.
+Seine Host-/SDK-/Gerätenachweise bleiben getrennt vom hier qualifizierten
+ee5-Ownerstand. Er instanziiert keine Runtimebesitzer und erzeugt keine Rechte.

@@ -174,6 +174,35 @@ if(BUILD_TESTING)
             "${CMAKE_SOURCE_DIR}/test/fixtures/package-artifacts-review/run_metadata.py"
             --binary "$<TARGET_FILE:package-metadata-review>")
     endif()
+    # Lifecycle-only SDK seams: image targets compile the actual SDK backend.
+    add_executable(rules-boot-clock-own test/fixtures/rules-boot-clock-own/main.cpp
+        lib/Esp32RulesBootClock/Esp32RulesBootClock.cpp
+        lib/Esp32DeviceIdentityStore/Esp32StartupIdentityEntropy.cpp)
+    target_include_directories(rules-boot-clock-own PRIVATE
+        test/fixtures/rules-boot-clock-own/stubs lib/Esp32RulesBootClock lib/Esp32DeviceIdentityStore)
+    target_link_libraries(rules-boot-clock-own PRIVATE larp_core)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        target_compile_options(rules-boot-clock-own PRIVATE -O2 -Wall -Wextra -Wpedantic -Werror)
+    endif()
+    add_test(NAME rules-boot-clock-own COMMAND "${Python3_EXECUTABLE}" -B
+        "${CMAKE_SOURCE_DIR}/test/fixtures/rules-boot-clock-own/run.py"
+        --binary "$<TARGET_FILE:rules-boot-clock-own>")
+    set_tests_properties(rules-boot-clock-own PROPERTIES TIMEOUT 90)
+    add_executable(esp32-rules-boot-clock-review
+        test/fixtures/esp32-rules-boot-clock-review/main.cpp
+        lib/Esp32RulesBootClock/Esp32RulesBootClock.cpp
+        lib/Esp32DeviceIdentityStore/Esp32StartupIdentityEntropy.cpp)
+    target_include_directories(esp32-rules-boot-clock-review PRIVATE
+        test/fixtures/esp32-rules-boot-clock-review/stubs
+        lib/Esp32RulesBootClock lib/Esp32DeviceIdentityStore)
+    target_link_libraries(esp32-rules-boot-clock-review PRIVATE larp_core)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        target_compile_options(esp32-rules-boot-clock-review PRIVATE -O2 -Wall -Wextra -Wpedantic -Werror)
+    endif()
+    add_test(NAME esp32-rules-boot-clock-review COMMAND "${Python3_EXECUTABLE}" -B
+        "${CMAKE_SOURCE_DIR}/test/fixtures/esp32-rules-boot-clock-review/run.py"
+        --binary "$<TARGET_FILE:esp32-rules-boot-clock-review>")
+    set_tests_properties(esp32-rules-boot-clock-review PROPERTIES TIMEOUT 90)
     add_executable(rules-commit-ordering-review test/fixtures/rules-commit-ordering-review/main.cpp)
     target_link_libraries(rules-commit-ordering-review PRIVATE larp_core)
     if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
