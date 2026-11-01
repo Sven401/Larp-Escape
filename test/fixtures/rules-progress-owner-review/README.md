@@ -4,9 +4,13 @@ Status: actual fresh strict C++11/-O2/-Wall/-Wextra/-Wpedantic/-Werror run passe
 2026-11-01: **252 C++ assertions, two complete actual artifact sets, ten directly
 exported COSE packets plus nine envelope proof/outbox occurrences independently
 verified with Python P-256, and seven full original transaction/catalog byte
-oracles.** Occurrences are not asserted to be distinct signatures. The native
-production-PSA run of THIS Owner corpus remains a separate mandatory gate.
-Earlier component CI87/87 does not qualify this unpublished Owner integration.
+oracles.** Occurrences are not asserted to be distinct signatures. Published
+head e821a548 is independently qualified by Native run41268754756: 93/93 CTests,
+including this full PSA corpus (300 assertions) and both actual SDK images.
+The additional Local/Timer PSA corpus reports 37+54=91 assertions; its later
+successful destroy checks are not included in those JSON counters. See the
+[commit-specific qualification](../../../docs/spielpakete/rules-progress-owner-v1.md#nachfolgende-local-timer-korrelationskorrektur).
+Earlier component CI87/87 is not used to qualify this Owner integration.
 
 ## Actual chain and bounded synthetic assumptions
 

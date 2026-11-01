@@ -1,7 +1,7 @@
 # Semantischer Rules-Fortschrittsbesitzer
 
-Status: **Ownerbasis Host/nativ geprüft; Local-/Timer-Folgekorrektur am Host geprüft,
-native Folgequalifikation offen; Produktanschlüsse offen**,
+Status: **Ownerbasis und Local-/Timer-Folgekorrektur Host/nativ geprüft;
+Produktanschlüsse offen**,
 01.11.2026. Dieser Folgecheckpoint ergänzt Owner-/Orderingquellen in
 [Draft #135](https://github.com/Sven401/Larp-Escape/pull/135).
 Dieser Text beschreibt den zu prüfenden Anschluss der bereits qualifizierten
@@ -222,8 +222,46 @@ Testgeneration ist ausdrücklich synthetisch und nie aus Clockboot128 gekürzt.
 Gemeinsamer frischer Hostlauf: 44/44 CTests, PIO 263/263, Header 109,
 Architektur 190 Dateien/416 Includes, Formatbaseline 380 und neue Fixture sauber.
 Der zusätzliche CNG-/PSA-Korpus verlangt den tatsächlichen Artefaktcompiler und
-führt im Standardgate beide Fälle aus. **Native PSA-/SDK-/PR-Nachweis dieses
-Deltas ist noch offen; da4/ee5-Ergebnisse werden nicht übertragen.**
+führt im Standardgate beide Fälle aus.
+
+**Nachgelagerte unabhängige Qualifikation von e821a548 am 01.11.2026:**
+Alle zwölf PR-Jobs in sechs Workflows erfolgreich. Alle Originalcheckoutlogs
+zeigen Prüfmerge `7011a31db0b07f3d9ffba4c468426c9d83312eb1` mit exakt
+Basis `c4f1f824c6274e9a8d7676212a2a96be4d4a77b9` und
+Head `e821a54898e74e0377fd3a6d743db5819c309374` als Eltern;
+pull_request, Attempt 1, Actions-App und abschließend unveränderte Refs geprüft.
+
+[Native 41268754756](https://github.com/Sven401/Larp-Escape/actions/runs/41268754756),
+Originaljob `124736963645`: **93/93 CTests**, null Fehler, Disabled oder Skips.
+Der neue Local-/Timer-PSA-Korpus führt beide tatsächlichen Artefaktsätze und
+vollständigen Katalogvergleiche aus, ohne verkürzendes `--case`. Beobachtete
+JSON-Zähler: **Local 37 + Timer 54 = 91 Assertions**. Die vier gegenüber CNG
+zusätzlichen gezählten Prüfungen betreffen PSA-Initialisierung/Import pro World;
+erfolgreiche Destroyprüfungen folgen erst nach JSON und sind nicht darin gezählt.
+Der bestehende Owner-PSA-Korpus bleibt vollständig mit 300 Assertions,
+zehn direkten und neun eingebetteten Signaturvorkommen sowie sieben kanonischen
+Blob-/Bindingprüfungen; Ordering 830, Clock sechs Prozesse/192 und 15/426.
+Beide echten SDK-Images am Pin `9a97f6c54ec638111ce55cd36581b3c192f15207`
+samt rekursiven Submodulen erfolgreich; aktive SDK-Quellen/Includes ohne
+Testfixture-/Stubpfade. Originalarchiv `13068389068`, SHA256
+`fc7606657d3d0ed6e05edb77d555a20156e77356d054cc424fbd089c392804ad`.
+
+Der tatsächliche LF-Gitblob des Ownerbodys hat SHA256
+`fd11731c70381470cbd63469232a0ec06bdaef3d00031c95ab40b4ac1e555149`;
+die oben genannte Windows-CRLF-Datei `2db205d8…` unterscheidet sich ausschließlich
+in Quelltextzeilenenden. Keine Normalisierung signierter oder kanonischer Bytes.
+
+[Quality 41268754781](https://github.com/Sven401/Larp-Escape/actions/runs/41268754781)
+3/3, [LED 41268754759](https://github.com/Sven401/Larp-Escape/actions/runs/41268754759)
+4/4, [NFC 41268754769](https://github.com/Sven401/Larp-Escape/actions/runs/41268754769)
+2/2, [ESP-NOW 41268754782](https://github.com/Sven401/Larp-Escape/actions/runs/41268754782)
+1/1 und [Rollen 41268754760](https://github.com/Sven401/Larp-Escape/actions/runs/41268754760)
+1/1. Tatsächliche Android-XML: GM 35/Worker 9, Protokoll 111/fünf V1-Tests,
+Dev-App 77, null Fehler/Skips. Androidarchiv `13068452207`, SHA256
+`9f7dc2b5e3095cbaccde603260190920839ae62b1f87611b41957f6c6fe9a4d2`.
+Andere Gegenprüfer: quality_p1 für den tiefen Nativekorpus,
+module_digest_review für alle Originalcheckoutlogs, Android und Schlussrefs.
+Keine Übertragung auf nachfolgende Änderungen, Geräte, Rechte oder SMP.
 
 Die konkrete Orderingklasse ist ausschließlich für das beschriebene exklusive
 Single-Worker-Profil ausgelegt. Alle tatsächlichen relevanten Metadatenwriter
