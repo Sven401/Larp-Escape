@@ -18,9 +18,13 @@ tatsächliche Artefaktsätze. Die genaue Orakelgrenze und aktuellen Quellenhashe
 stehen im verlinkten Ownerbericht. Eigene frische Regression: 40 CTests plus
 ein neuer Gesamttarget, PIO 263, Header 109 und Architektur 190 Dateien/416 Includes.
 
-Die native PSA-/SDK-Prüfung dieses Folgestands steht noch aus. Produktive
+Der veröffentlichte Head `ee5c87a541088fe734559ea010355a8aac343527` ist inzwischen
+mit zwölf PR-Jobs und 90 nativen CTests unabhängig qualifiziert. Der tatsächliche
+Owner-PSA-Korpus umfasst 300 Assertions (252 gemeinsame plus 48 PSA-Lifecycle-
+prüfungen); beide SDK-Images am exakten Pin sind bestätigt. Originalcheckouts,
+Artefakt-IDs/-SHAs und genaue Grenzen stehen im Ownerbericht. Produktive
 ursprüngliche Quellen, Setup-/Eventautorität, F5a und echte Gerätewirkung bleiben
-offen. Die vollständig qualifizierte ältere Basis unten ersetzt diese Gates nicht.
+offen; die neue Qualifikation ersetzt diese Gates nicht.
 
 ## Qualifizierte Basis c183dd0f · 01.11.2026
 

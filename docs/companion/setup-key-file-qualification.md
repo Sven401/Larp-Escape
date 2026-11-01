@@ -329,3 +329,13 @@ LED 41261595450, NFC 41261595667, ESP 41261595390 und Rollen 41261595453 sind
 ebenfalls vollständig erfolgreich. Diese Prüfungen ersetzen keine neue
 Android-Geräteausführung und qualifizieren nicht den nachfolgenden Ownercheckpoint.
 PR #135 bleibt Draft, unmerged, ohne Approval-/Merge-/Geräteaktion.
+
+Der nachfolgende Head `ee5c87a541088fe734559ea010355a8aac343527` enthält denselben
+Dateikern und Worker und ist ebenfalls mit allen zwölf PR-Jobs unabhängig
+qualifiziert. [Quality 41263905631](https://github.com/Sven401/Larp-Escape/actions/runs/41263905631)
+bestätigt erneut tatsächliche XML mit GM 35/Worker 9, Protokoll 111/fünf V1-Tests
+und Dev-App 77 ohne Fehler/Skips. Androidarchiv 13066970897, SHA256
+`8dc9cf17bac549306b35fa4b95fa0e2b677a41e38330d86f6433f6f0f191c445`,
+lokal `private/ci-ee5-review`. Den neuen nativen Ownerbeleg dokumentiert der
+[eigene Bericht](../spielpakete/rules-progress-owner-v1.md); auch dieser Lauf
+ersetzt keine neue Android-Geräteausführung oder physische Erstbereitstellung.

@@ -1,6 +1,6 @@
 # Semantischer Rules-Fortschrittsbesitzer
 
-Status: **Hostimplementierung unabhängig geprüft; native Qualifikation offen**,
+Status: **Host und native Implementierung unabhängig geprüft; Produktanschlüsse offen**,
 01.11.2026. Dieser Folgecheckpoint ergänzt Owner-/Orderingquellen in
 [Draft #135](https://github.com/Sven401/Larp-Escape/pull/135).
 Dieser Text beschreibt den zu prüfenden Anschluss der bereits qualifizierten
@@ -138,8 +138,8 @@ Autorisierungsannotations, keine Größe vollständiger produktiver Nachweise od
 Zusage für alle Sprach-/Gerätegrenzen.
 
 Installation, Eingabe, Control, GM-/Intentzulässigkeit und Zeitquelle sind
-ausdrücklich synthetische Testports. Native PSA, vollständiges SDK-Wiring und
-Produktquellen des neuen Owners sind mit diesem Hostlauf nicht qualifiziert.
+ausdrücklich synthetische Testports. Der folgende nachgelagerte native Lauf
+ergänzt diesen Hostbeleg; produktive Quellen werden dadurch nicht qualifiziert.
 [Unabhängiger Korpus und Reproduktion](../../test/fixtures/rules-progress-owner-review/README.md).
 Geprüfte Owner-SHA256: Header
 `745d5a7ca4aaa346f08ae71c744b960e7f3bb57ac74205c7843ea10c7d62d438`,
@@ -161,14 +161,49 @@ Geprüfte SHA256: Header
 `1ba658f6c797a28c952796d4e35ca831c5adfe0990628dde4deadfe47451c5a7`,
 Body `9d6861b8b10e33a03126fcc98e22b73374d90f1a2db49826b963f7caf8a6ec78`.
 
+### Tatsächliche native Qualifikation des veröffentlichten Heads
+
+Head `ee5c87a541088fe734559ea010355a8aac343527` ist mit zwölf PR-Jobs in sechs
+Workflows unabhängig qualifiziert. Alle zwölf Originalcheckoutlogs bestätigen
+Prüfmerge `f02e033ef1183c3d0654ed348856554bb44ad106`, dessen Eltern exakt
+Zielbasis `c4f1f824c6274e9a8d7676212a2a96be4d4a77b9` und Head sind.
+pull_request, Attempt 1, Actions-App und abschließend unveränderte Refs bestätigt.
+
+[Native 41263905608](https://github.com/Sven401/Larp-Escape/actions/runs/41263905608),
+Originaljob 124722581457: **90/90 CTests ohne Skips/Disabled**. Der neue
+`rules-progress-owner-review-psa` führt tatsächlich **300 Assertions** aus:
+252 gemeinsame Fälle plus 48 PSA-Setup-/Cleanupprüfungen. Beide vollständigen
+Artefaktsätze, zehn direkte und neun eingebettete COSE-Vorkommen sowie sieben
+kanonische Blob-/Bindingprüfungen laufen im selben vollständigen Runner mit
+verpflichtendem echtem `--artifact-binary`; kein verkürzter Modus oder neues
+Goldenschreiben. Ordering führt separat seine 830 Assertions aus.
+
+Tatsächliche Digest-, Verifier- und Signeradapter am Ownerziel sowie Owner/
+Ordering und die Adapter im Coreimage sind anhand der Originalbuildlogs und
+project_description bestätigt. Beide SDK-Images bauen am Pin
+`9a97f6c54ec638111ce55cd36581b3c192f15207` mit rekursiven Submodulen.
+Originalarchiv 13066732163, SHA256
+`bebe28fb77b11797a9e5c4e6fa6592e00e83e0dfee1e275d9931f5bbda1085c1`,
+lokal `private/pr135-ee5c87a5-quality`.
+
+`quality_p1` prüfte diesen tiefen nativen Korpusbeleg; `module_digest_review`
+prüfte getrennt alle zwölf Jobs, ursprünglichen Checkouts und Refs. Die
+anderen vollständigen Läufe sind Quality 41263905631, LED 41263905584,
+NFC 41263905630, ESP-NOW 41263905632 und Rollen 41263905610. Android-XML
+dieses Heads: GM 35/Worker 9, Protokoll 111/fünf V1-Tests, Dev-App 77 ohne
+Fehler oder Skips. Keine Geräte-/Approval-/Mergeaktion; PR bleibt Draft.
+
 Die konkrete Orderingklasse ist ausschließlich für das beschriebene exklusive
 Single-Worker-Profil ausgelegt. Alle tatsächlichen relevanten Metadatenwriter
 müssen dessen Sperre beachten. Ein späterer SDK-/Taskbridge muss die gesamte
 Eigentums- und Veröffentlichungszusage erneut belegen; eine fallible Queue ist
 kein Ersatz für die nicht fehlschlagende Veröffentlichung.
 
-Die gemeinsame native PSA-/SDK-Qualifikation und die abschließende Zuordnung
-des vollständigen Runtimekorpus stehen noch aus. Frühere Bausteinprüfungen oder
-eigene Smokes ersetzen diese Kampagne nicht. Produktive Quellenadapter, nativer Ingress,
+Die native Qualifikation gilt ausschließlich für den genannten Head und seine
+ausdrücklichen Testgrenzen. Bei Local-/Timereingängen ist vor tatsächlichen
+OriginalInputproduzenten noch festzulegen, ob eine stabile Anwendungsoperation
+verbindlich abgeleitet wird oder eine neue Korrelation ebenfalls auf das Original
+aufzulösen ist; die neue Factauflösung legt das nicht still fest.
+Produktive Quellenadapter, nativer Ingress,
 F5a, Gerätebudgets, echte Stromausfälle und Hardwarewirkung bleiben offen.
 Kein Upload, Release, Merge oder Abschluss von #93 folgt aus diesem Stand.
