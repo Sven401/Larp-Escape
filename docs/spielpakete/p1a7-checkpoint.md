@@ -7,13 +7,41 @@ qualifizierten D0-Integration `c4f1f824c6274e9a8d7676212a2a96be4d4a77b9`.
 Der [bestätigte Erweiterungsvertrag](p0-manual-override-v2.md) bleibt der
 vollständige Auftrag; dieser Prüfstand ersetzt ihn nicht.
 
-## Folgecheckpoint · 01.11.2026
+## Semantischer Owner-Folgecheckpoint · 01.11.2026
+
+Der neue [semantische Fortschrittsbesitzer](rules-progress-owner-v1.md) ergänzt
+vollständigen Replay, Status, Finalisierung, Once-/Freigabeübernahme und die
+einmalige Claim-/Resultübergabe mit exakter serialisierter Recoverybindung.
+Unabhängiger Hostkorpus: 252 Assertions, zehn direkte echte COSE-Belege sowie
+kanonische/Bindungsprüfungen vollständiger ursprünglicher Blobs und zwei
+tatsächliche Artefaktsätze. Die genaue Orakelgrenze und aktuellen Quellenhashes
+stehen im verlinkten Ownerbericht. Eigene frische Regression: 40 CTests plus
+ein neuer Gesamttarget, PIO 263, Header 109 und Architektur 190 Dateien/416 Includes.
+
+Die native PSA-/SDK-Prüfung dieses Folgestands steht noch aus. Produktive
+ursprüngliche Quellen, Setup-/Eventautorität, F5a und echte Gerätewirkung bleiben
+offen. Die vollständig qualifizierte ältere Basis unten ersetzt diese Gates nicht.
+
+## Qualifizierte Basis c183dd0f · 01.11.2026
+
+Der separat bestätigte [Einrichtungsschlüssel-Dateikern v1](../companion/setup-key-file-profile-proposal.md)
+und sein besitzender Android-Dateikoordinator sind inzwischen in Draft #135
+veröffentlicht. Head `c183dd0f14fa23f183fd13dd87b81cfc26f819a9` ist mit zwölf
+PR-Jobs, 87 nativen CTests und beiden SDK-Images unabhängig qualifiziert;
+[genaue neue Quellen-, Archiv- und CI-Zuordnung](../companion/setup-key-file-qualification.md).
+Das ersetzt keine produktive Setup-/Eventautorität oder physische Erstbereitstellung.
+
+c183dd0f enthält den späteren semantischen Gesamtkoordinator samt Ordering-/
+Recoveryintegration nicht. Die folgenden Abschnitte bewahren den früheren
+Komponentencheckpoint samt seinen eigenen Nachweisen.
+
+## Komponentencheckpoint 0e9f7ad3 · 01.11.2026
 
 Die folgenden zusätzlichen Komponenten sind auf dem Arbeitsbranch vorbereitet.
 Der tatsächliche Gesamtkoordinator `RulesProgressOwner`, produktive ursprüngliche
 Installations-/Eingangs-/Uhrbelege, Einrichtung und F5a bleiben offen. Sein noch
 unveröffentlichter Header/Body und der separate Schlüsseldatei-Kandidat gehören
-ausdrücklich nicht zu diesem Komponentencheckpoint. Der aktuelle veröffentlichte
+ausdrücklich nicht zu diesem Komponentencheckpoint. Der damalige veröffentlichte
 Komponentenstand `0e9f7ad3…` ist einschließlich eigenem nativen PSA-/SDK-/PR-Lauf
 qualifiziert; die genaue Zuordnung steht im nachgelagerten Abschnitt. Frühere
 Prüfstände bleiben ausdrücklich historische Belege.

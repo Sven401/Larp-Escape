@@ -14,7 +14,7 @@ Anlass: der vollständige manuelle Ersatzweg aus #93 benötigt tatsächlich
 veranstaltungsbezogene GM-Rechte. Der bestehende Device-Registerkern beweist
 diese Zuordnung noch nicht. Nutzerziel, Schlüsselwechsel und Recovery folgen
 dem [bereits bestätigten Zugangskonzept](../companion/veranstaltungszugang.md);
-Schlüsselformat und Erstbereitstellung sind dort ausdrücklich offen.
+Der physische Erstnachweis bleibt ausdrücklich offen.
 
 Arbeitsbasis `7a44ac502529cb66b45d6a802ff96b180012e8d3` mit
 [Draft #135](https://github.com/Sven401/Larp-Escape/pull/135). Entwurf und

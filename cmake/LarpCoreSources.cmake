@@ -30,6 +30,8 @@ set(LARP_CORE_SOURCES
     "${LARP_ROOT}/src/DeviceRuntime/ProfileJournal.cpp"
     "${LARP_ROOT}/src/DeviceRuntime/ProgressJournal.cpp"
     "${LARP_ROOT}/src/DeviceRuntime/RulesBundleJournal.cpp"
+    "${LARP_ROOT}/src/DeviceRuntime/RulesCommitOrdering.cpp"
+    "${LARP_ROOT}/src/DeviceRuntime/RulesProgressOwner.cpp"
     "${LARP_ROOT}/src/DeviceRuntime/RulesProgressControl.cpp"
     "${LARP_ROOT}/src/DeviceRuntime/RulesProgressTransaction.cpp"
     "${LARP_ROOT}/src/DeviceRuntime/RulesProgressEffect.cpp"

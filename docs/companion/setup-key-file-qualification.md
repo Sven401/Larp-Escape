@@ -138,8 +138,9 @@ steht unten. Weiterhin fehlen die echte Datei-Wiederauswahl
 und eine neue Boxchallenge aus dem importierten Schlüsselbesitzer. Die interne
 Paarprobe und erfolgreiches Öffnen verleihen keine Verwaltungs- oder GM-Rechte.
 
-Dieser Softwareprüfstand wählt noch kein verbindliches Container-/KDF-Produktprofil
-und erteilt keine Integrations- oder physische Erstbereitstellungsfreigabe.
+Dieser historische Softwareprüfstand begründete für sich noch keine verbindliche
+Container-/KDF-Produktwahl. Die ausdrückliche Nutzerentscheidung folgte später;
+Integrations- und physische Erstbereitstellungsfreigabe entstehen aus dem Test nicht.
 
 ## Begrenzte Android-13-Sourcegegenprobe · 01.11.2026
 
@@ -211,8 +212,9 @@ Abwesenheitsabfrage ist im Summary festgehalten, nicht als eigener roher pm-Log.
 Dies qualifiziert exakt diese synthetische Probe auf diesem API34-Gerät. Es ist
 kein ausgeführter API33-/anderer OEM-/Entropie-/Latenz-/Heaplöschungsnachweis,
 kein nativer Dokumentpicker-/Coroutine-/UI-Lifecycletest, keine neue Boxchallenge
-und keine physische Erstbereitstellung. Container-/KDF-Produktwahl und neue
-Setup-/Event-/GM-Vertrauensgrenzen bleiben weiterhin gesondert freizugeben.
+und keine physische Erstbereitstellung. Die konkrete Container-/KDF-Wahl wurde
+erst anschließend ausdrücklich bestätigt. Neue produktive Setup-/Event-/
+GM-Vertrauensgrenzen bleiben weiterhin gesondert auszuarbeiten und freizugeben.
 
 ### Ergänzte tatsächliche Android-Authentisierungsfehlerpfade
 
@@ -299,3 +301,31 @@ eigenen Test- oder Gerätelauf aus. Nativer
 Dokumentpicker, gerenderte Oberfläche, Prozessneustart, neue Androidausführung,
 frische Boxchallenge und physische Erstbereitstellung bleiben offen. Ein normaler
 HMAC-Zugangsimport wird durch diesen Dateikern weder verändert noch privilegiert.
+
+### Nachgelagerte Prüfung des veröffentlichten Commits
+
+Commit `c183dd0f14fa23f183fd13dd87b81cfc26f819a9` enthält exakt neun
+Setup-/Android-Dateien. Ein reines Git-Archiv unter
+`private/setup-key-c183dd0f-source` schließt sämtliche lokalen neuen Owner-/
+Ordering-/Wiringdateien aus. Dort wurden alle 27 Gradletasks neu ausgeführt:
+GM 35 einschließlich Worker 9 und Protokoll 111 einschließlich fünf V1-Tests, jeweils
+ohne Fehler oder Skips. Der andere Reviewer prüfte Dateiliste und Archiv-XML.
+
+Anschließend unabhängig qualifiziert: **zwölf erfolgreiche PR-Jobs in sechs
+Workflows**, alle Originalcheckoutlogs auf Prüfmerge
+`b2ae7b93233ec1e0df1585979060b472dbc30c15`. Seine Eltern sind exakt Zielbasis
+`c4f1f824c6274e9a8d7676212a2a96be4d4a77b9` und Head c183dd0f. Ereignis
+pull_request, Attempt 1, Actions-App und abschließend unveränderte Refs bestätigt.
+
+[Quality 41261595360](https://github.com/Sven401/Larp-Escape/actions/runs/41261595360)
+enthält tatsächliche JVM-XML mit GM 35/Worker 9, Protokoll 111/fünf V1-Tests und
+Dev-App 77 ohne Fehler oder Skips sowie vier erfolgreiche Firmwarevarianten.
+Android-Artefakt 13064734474, SHA256
+`acbdf2a30e1ecbd0b1181e988d95ef62c91c6b51c8a7ff479d85b29eaa1ddfdb`,
+lokal `private/ci-c183-review`. Native 41261595352 bestätigt 87/87 CTests ohne
+Skips, tatsächliche PSA-Komponenten und beide SDK-Images am Pin
+`9a97f6c54ec638111ce55cd36581b3c192f15207` samt rekursiven Submodulen.
+LED 41261595450, NFC 41261595667, ESP 41261595390 und Rollen 41261595453 sind
+ebenfalls vollständig erfolgreich. Diese Prüfungen ersetzen keine neue
+Android-Geräteausführung und qualifizieren nicht den nachfolgenden Ownercheckpoint.
+PR #135 bleibt Draft, unmerged, ohne Approval-/Merge-/Geräteaktion.
