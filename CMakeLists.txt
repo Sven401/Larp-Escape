@@ -180,6 +180,39 @@ if(BUILD_TESTING)
             "${CMAKE_SOURCE_DIR}/test/fixtures/package-artifacts-review/run_metadata.py"
             --binary "$<TARGET_FILE:package-metadata-review>")
     endif()
+    # Actual allocator/backend against target-local SDK faults; NOT provisioning.
+    add_executable(local-generation-own test/fixtures/local-generation-own/main.cpp
+        lib/Esp32LocalGeneration/Esp32LocalGeneration.cpp
+        lib/Esp32LocalGeneration/Esp32LocalGenerationStore.cpp
+        lib/Esp32RulesBootClock/Esp32RulesBootClock.cpp
+        lib/Esp32DeviceIdentityStore/Esp32StartupIdentityEntropy.cpp)
+    target_include_directories(local-generation-own PRIVATE
+        test/fixtures/local-generation-own/stubs test/fixtures/rules-boot-clock-own/stubs
+        lib/Esp32LocalGeneration lib/Esp32RulesBootClock lib/Esp32DeviceIdentityStore)
+    target_link_libraries(local-generation-own PRIVATE larp_core)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        target_compile_options(local-generation-own PRIVATE -O2 -Wall -Wextra -Wpedantic -Werror)
+    endif()
+    add_test(NAME local-generation-own COMMAND "${Python3_EXECUTABLE}" -B
+        "${CMAKE_SOURCE_DIR}/test/fixtures/local-generation-own/run.py"
+        --binary "$<TARGET_FILE:local-generation-own>")
+    set_tests_properties(local-generation-own PROPERTIES TIMEOUT 180)
+    add_executable(local-generation-review test/fixtures/local-generation-review/main.cpp
+        lib/Esp32LocalGeneration/Esp32LocalGeneration.cpp
+        lib/Esp32LocalGeneration/Esp32LocalGenerationStore.cpp
+        lib/Esp32RulesBootClock/Esp32RulesBootClock.cpp
+        lib/Esp32DeviceIdentityStore/Esp32StartupIdentityEntropy.cpp)
+    target_include_directories(local-generation-review PRIVATE
+        test/fixtures/local-generation-review/stubs
+        lib/Esp32LocalGeneration lib/Esp32RulesBootClock lib/Esp32DeviceIdentityStore)
+    target_link_libraries(local-generation-review PRIVATE larp_core)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        target_compile_options(local-generation-review PRIVATE -O2 -Wall -Wextra -Wpedantic -Werror)
+    endif()
+    add_test(NAME local-generation-review COMMAND "${Python3_EXECUTABLE}" -B
+        "${CMAKE_SOURCE_DIR}/test/fixtures/local-generation-review/run.py"
+        --binary "$<TARGET_FILE:local-generation-review>")
+    set_tests_properties(local-generation-review PROPERTIES TIMEOUT 180)
     # Lifecycle-only SDK seams: image targets compile the actual SDK backend.
     add_executable(rules-boot-clock-own test/fixtures/rules-boot-clock-own/main.cpp
         lib/Esp32RulesBootClock/Esp32RulesBootClock.cpp

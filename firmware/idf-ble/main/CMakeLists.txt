@@ -1,1 +1,1 @@
-idf_component_register(SRCS app_main.cpp REQUIRES larp_boot_clock larp_ble_source)
+idf_component_register(SRCS app_main.cpp REQUIRES larp_local_generation larp_boot_clock larp_ble_source)

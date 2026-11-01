@@ -1,5 +1,6 @@
+#include "Esp32LocalGeneration.h"
 #include "Esp32RulesBootClock.h"
-// Compile qualification first: no radio start, enrollment or authority.
+// Native qualification: real counter NVS, no radio start/enrollment/authority.
 #include "NimblePeerSource.h"
 #include "esp_log.h"
 namespace {
@@ -24,6 +25,13 @@ extern "C" void app_main() {
         ESP_LOGE("larp-boot-clock", "startup clock unavailable; startup closed");
         return;
     }
+    // Counter availability gates ONLY future Local identity production. A missing
+    // COUNTER RECORD is never created. NVS init may internally recover pages;
+    // unavailable reservation does not disable communication/setup.
+    if (Esp32LocalGeneration::instance().reserveEarlyStartup(Esp32RulesBootClock::instance()) !=
+        larp::devices::LocalGenerationStatus::Reserved)
+        ESP_LOGW("larp-local-generation", "local generation unavailable; no Local input admission");
+
     ESP_LOGI("native-ble-probe", "source compiled; ready=%d; radio/enrollment disabled",
              source.ready());
 }

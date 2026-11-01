@@ -1,5 +1,6 @@
+#include "Esp32LocalGeneration.h"
 #include "Esp32RulesBootClock.h"
-// Build qualification only: real queues, no physical owners or authorisation.
+// Native qualification: real counter NVS/queues, no physical owners or authority.
 #include "Esp32ProgressPartition.h"
 #include "FreeRtosGameControlChannel.h"
 #include "FreeRtosProfileChannel.h"
@@ -22,7 +23,14 @@ extern "C" void app_main() {
         ESP_LOGE("larp-boot-clock", "startup clock unavailable; startup closed");
         return;
     }
-    // Force the actual adapter into the SDK image without opening/reading flash.
+    // Counter availability gates ONLY future Local identity production. A missing
+    // COUNTER RECORD is never created. NVS init may internally recover pages;
+    // unavailable reservation does not disable communication/setup.
+    if (Esp32LocalGeneration::instance().reserveEarlyStartup(Esp32RulesBootClock::instance()) !=
+        larp::devices::LocalGenerationStatus::Reserved)
+        ESP_LOGW("larp-local-generation", "local generation unavailable; no Local input admission");
+
+    // The progress partition stays unopened. Counter NVS above is actual IO.
     ESP_LOGI("larp-idf-probe", "unopened progress capacity=%u",
              static_cast<unsigned>(progressStore.capacity()));
     const larp::companion::PeerPublicKey invalidKey{};

@@ -1,1 +1,1 @@
-idf_component_register(SRCS app_main.cpp REQUIRES larp_boot_clock larp_core larp_rtos larp_crypto larp_tls larp_progress)
+idf_component_register(SRCS app_main.cpp REQUIRES larp_local_generation larp_boot_clock larp_core larp_rtos larp_crypto larp_tls larp_progress)
