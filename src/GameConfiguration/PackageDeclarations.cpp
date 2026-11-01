@@ -342,6 +342,8 @@ void PackageDeclarationReader::scalar() {
     if ((f.kind == Kind::Root && f.field == 3) || std::strcmp(key, "originStation") == 0) {
         valid = identifier();
     } else if (std::strcmp(key, "id") == 0 || (f.kind == Kind::Requirement && f.field == 0)) {
+        if (f.kind == Kind::Requirement)
+            f.manualRequirement = equals("rules_manual_override");
         identity();
         return;
     } else if (f.kind == Kind::Module && f.field == 1) {
@@ -352,7 +354,8 @@ void PackageDeclarationReader::scalar() {
         valid = string() && length_ >= 1 && length_ <= 96;
         error = DeclarationError::Range;
     } else if (std::strcmp(key, "format") == 0) {
-        valid = string() && equals("larp.package.v1");
+        valid = string() && (equals("larp.package.v1") || (allowV2_ && equals("larp.package.v2")));
+        result_.language = equals("larp.package.v2") ? 2 : 1;
     } else if (std::strcmp(key, "digest") == 0) {
         valid = digest();
         if (valid && f.kind == Kind::Module)
@@ -366,6 +369,8 @@ void PackageDeclarationReader::scalar() {
         // Positive major has no specified upper bound. Canonical lexical rules
         // guarantee decimal digits, so no potentially overflowing conversion.
         valid = typed && length_ != 0 && text_[0] >= '1' && text_[0] <= '9';
+        if (f.manualRequirement)
+            result_.manualOverride = typed && equals("1");
         error = DeclarationError::Range;
     } else if (std::strcmp(key, "revision") == 0 || std::strcmp(key, "bytes") == 0) {
         typed = scalar_ == CanonicalJsonToken::Integer;
@@ -407,7 +412,10 @@ DeclarationResult PackageDeclarationReader::finish(CanonicalJsonResult canonical
         result_.offset = canonical.offset;
         result_.path[0] = '\0';
     } else if (result_.error == DeclarationError::None) {
-        if (canonical.offset - skippedBytes_ > MetadataBytes) {
+        if (result_.language == 2 && !result_.manualOverride) {
+            result_.error = DeclarationError::Value;
+            result_.offset = canonical.offset;
+        } else if (canonical.offset - skippedBytes_ > MetadataBytes) {
             result_.error = DeclarationError::MetadataLimit;
             result_.offset = canonical.offset;
         } else {
@@ -419,16 +427,20 @@ DeclarationResult PackageDeclarationReader::finish(CanonicalJsonResult canonical
     return result_;
 }
 DeclarationResult PackageDeclarationReader::validate(IPackageByteSource &source,
-                                                     ICanonicalJsonObserver *observer) {
+                                                     ICanonicalJsonObserver *observer,
+                                                     bool allowManualOverrideV2) {
     reset();
+    allowV2_ = allowManualOverrideV2;
     downstream_ = observer;
     const DeclarationResult result = finish(canonical_.validate(source, this));
     downstream_ = nullptr;
     return result;
 }
 DeclarationResult PackageDeclarationReader::validate(const char *bytes, std::size_t count,
-                                                     ICanonicalJsonObserver *observer) {
+                                                     ICanonicalJsonObserver *observer,
+                                                     bool allowManualOverrideV2) {
     reset();
+    allowV2_ = allowManualOverrideV2;
     downstream_ = observer;
     const DeclarationResult result = finish(canonical_.validate(bytes, count, this));
     downstream_ = nullptr;

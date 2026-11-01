@@ -1,9 +1,13 @@
 # Native ESP-IDF qualification
 
-This is the first native build of the existing hardware-independent core and
-real FreeRTOS channels. The entry point only creates channels: no Bluetooth,
-GPIO, I2C, UART, Wi-Fi, NVS erase or game authorisation is started. It is a
-qualification image, not a replacement for the installed box firmware.
+This qualification image builds the hardware-independent core and actual
+FreeRTOS/native adapters. Startup now initializes the boot/clock service and
+performs real `larpkeys` NVS initialization plus a generation-counter update when
+a valid counter record is already present. NVS initialization/GC/recovery may
+internally rewrite or erase shared partition pages; a missing counter record
+is not created by our wrapper. It does not start Bluetooth, GPIO, I2C, UART,
+Wi-Fi or game authorisation. It is not a replacement for installed box firmware.
+Earlier clock/queue-only probe assumptions do not authorize an upload.
 
 Target: classic ESP32, 4 MiB flash. Candidate SDK: ESP-IDF v6.1 manufacturer maintenance commit
 `9a97f6c54ec638111ce55cd36581b3c192f15207`; use its submodule/tool versions.

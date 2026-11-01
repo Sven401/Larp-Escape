@@ -101,7 +101,8 @@ enum class Op : std::uint8_t {
     Arm,
     Cancel,
     Emit,
-    Effect
+    Effect,
+    Override
 };
 enum class SymbolKind : std::uint8_t {
     Parameter,
@@ -146,6 +147,7 @@ struct Action {
 struct Rule {
     Location location;
     Id owner = 0, id = 0, guard = 0, firstAction = 0, firstTrigger = 0, timer = 0, fallback = 0;
+    Id group = 0; // Computed original-rule index, never an author-supplied claim.
     std::uint32_t generation = 0;
     std::uint16_t priority = 0, actionCount = 0, triggerCount = 0;
     std::uint8_t trigger = 0, policy = 0;
@@ -155,6 +157,7 @@ struct Definition {
     Location location;
     Id id = 0, version = 0;
     bool module = false;
+    std::uint8_t language = 1;
 };
 struct Instance {
     Location location;
@@ -185,12 +188,18 @@ struct ExpandedSymbol {
 };
 struct ExpandedRule {
     Name name;
+    Name fallbackName;
     Rule rule;
 };
+// Checks the complete action/trigger/mode shape; callers additionally verify
+// the resolved same-scope link and unique one-to-one group membership.
+bool manualReleasePair(const Pool<Action> &actions, const Rule &original, const Rule &replacement);
 } // namespace module_ir
 // Storage belongs to the caller. Capacities are explicit operating limits;
 // exhaustion never truncates a semantically valid document into another one.
 struct ModuleCompileWorkspace {
+    std::uint8_t language = 1;
+    bool manualOverride = false;
     module_ir::Pool<char> strings;
     module_ir::Pool<std::uint32_t> stringOffsets;
     module_ir::Pool<module_ir::Node> nodes;
@@ -204,6 +213,7 @@ struct ModuleCompileWorkspace {
     module_ir::Pool<module_ir::Id> triggers;
 };
 struct ExpandedStationWorkspace {
+    std::uint8_t language = 1;
     module_ir::Pool<module_ir::Node> nodes;
     module_ir::Pool<module_ir::Action> actions;
     module_ir::Pool<module_ir::ExpandedRule> rules;

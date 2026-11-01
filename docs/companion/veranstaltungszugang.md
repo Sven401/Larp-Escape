@@ -15,6 +15,18 @@ Planungsaufgaben: [F2 #28](https://github.com/Sven401/Larp-Escape/issues/28),
 [Androidanschluss #37](https://github.com/Sven401/Larp-Escape/issues/37),
 [Produktplan #25](https://github.com/Sven401/Larp-Escape/issues/25).
 
+**Fortschreibung 01.11.2026:** Der Nutzer hat die separate kennwortgeschützte
+Einrichtungsschlüsseldatei pro Box und anschließend das konkret geprüfte
+[Dateiformat v1](setup-key-file-profile-proposal.md) bestätigt. Der begrenzte
+Dateikern und sein besitzender Stream-/Coroutine-Koordinator sind in
+[Draft #135](https://github.com/Sven401/Larp-Escape/pull/135) bei `c183dd0f`
+veröffentlicht; [tatsächliche Nachweise und Grenzen](setup-key-file-qualification.md).
+Das implementiert weder Rechtevergabe noch Schlüsselwechsel, Boxchallenge,
+physischen Erstnachweis oder vollständige Wiederherstellung. Die unten genannten
+Rollen und fachlichen Fehlerregeln bleiben unverändert. Frühere offene Hinweise
+zum Dateiformat werden durch diese ausdrücklich bestätigte Teilentscheidung
+ergänzt, nicht als neue Produktabnahme ausgegeben.
+
 ## 1. Geltungsbereich und Rollen
 
 Das freie, weiterverteilbare Projekt ermöglicht unabhängig betriebene
@@ -211,8 +223,9 @@ Der bestehende Baugruppen-USB-/HMAC-Zugang bleibt ein eigener begrenzter Umfang.
 
 Vor Implementierung sind insbesondere festzulegen:
 
-- Einrichtungsschlüsselformat, sichere Erzeugung/Aufbewahrung, gegenseitige
-  Geräteprüfung und konkreter Nachweis der Verfügbarkeit des Ersatzschlüssels;
+- Das inzwischen bestätigte Dateiformat v1 in tatsächliche native Dateiabläufe
+  einbinden; gegenseitige Geräteprüfung und konkreten Nachweis der Verfügbarkeit
+  des Ersatzschlüssels über frische Boxchallenge qualifizieren;
 - dauerhafte Veranstaltungs-/Berechtigungs-/Schlüsselstände, Transaktions- und
   Vorgangskennung, Konkurrenzprüfung, Schutz vor alten Aufträgen und Rollback;
 - technische Sicherung von Übernahme, Rücklesung, Abbruch, beschädigtem Speicher,

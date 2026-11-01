@@ -430,6 +430,18 @@ void test_peer_duplicate_does_not_refresh_age_or_renew_key_proof() {
     peer.verified();
     VerifiedPeerProof first;
     TEST_ASSERT_TRUE(peer.owner.readVerified(peer.context.binding, first));
+    AcceptedPeerProof original;
+    TEST_ASSERT_TRUE(peer.owner.readVerifiedEvidence(peer.context.binding, original));
+    TEST_ASSERT_TRUE(original.verified.original == first.original);
+    TEST_ASSERT_TRUE(original.verified.credential == first.credential);
+    TEST_ASSERT_EQUAL(first.issuedAt, original.verified.issuedAt);
+    TEST_ASSERT_EQUAL(first.verifiedAt, original.verified.verifiedAt);
+    TEST_ASSERT_TRUE(original.transcript == peer.crypto.seen);
+    TEST_ASSERT_TRUE(original.signature == peer.proof().signature);
+    original.signature.fill(7); // Caller modification cannot change owner evidence.
+    AcceptedPeerProof ownedAgain;
+    TEST_ASSERT_TRUE(peer.owner.readVerifiedEvidence(peer.context.binding, ownedAgain));
+    TEST_ASSERT_TRUE(ownedAgain.signature == peer.proof().signature);
     f->now += 100;
     peerOutcome(PeerProofOutcome::Duplicate, peer.owner.verify(peer.context.binding, peer.proof()));
     VerifiedPeerProof repeat;
@@ -438,6 +450,8 @@ void test_peer_duplicate_does_not_refresh_age_or_renew_key_proof() {
     TEST_ASSERT_EQUAL(first.verifiedAt, repeat.verifiedAt);
     f->now = issuedAt + 30000;
     TEST_ASSERT_FALSE(peer.owner.readVerified(peer.context.binding, repeat));
+    TEST_ASSERT_FALSE(peer.owner.readVerifiedEvidence(peer.context.binding, original));
+    TEST_ASSERT_EQUAL(7, original.signature[0]); // Failure preserves previous caller output.
 }
 void test_peer_counter_exhaustion_never_wraps_and_wrong_sequence_preserves() {
     PeerFixture peer(nullptr, UINT32_MAX - 1);

@@ -13,11 +13,89 @@ file(GLOB profile_tool_sources CONFIGURE_DEPENDS src/ProfileTool/*.cpp)
 add_executable(larp-profile ${profile_tool_sources})
 target_link_libraries(larp-profile PRIVATE larp_core)
 include(CTest)
+# Independent original-byte/runtime integration audits. PSA variant is mandatory
+# in the existing qualified native job; Windows uses its real BCrypt backend.
+function(larp_progress_audits suffix backend)
+    set(catalog "rules-progress-independent-review${suffix}")
+    set(trace "rules-progress-traces-review${suffix}")
+    set(owner "manual-owner-review${suffix}")
+    set(own "signed-rules-evidence-own${suffix}")
+    set(real "signed-rules-evidence-independent${suffix}")
+    set(aux "rules-bundle-aux-review${suffix}")
+    set(runtime_own "rules-progress-owner-own${suffix}")
+    set(runtime "rules-progress-owner-review${suffix}")
+    set(local_timer "rules-progress-owner-local-timer-review${suffix}")
+    add_executable(${catalog} test/fixtures/rules-progress-independent-review/cli.cpp)
+    add_executable(${trace} test/fixtures/rules-progress-independent-review/trace.cpp)
+    add_executable(${owner} test/fixtures/manual-owner-review/cli.cpp)
+    add_executable(${own} test/fixtures/signed-rules-evidence-own/main.cpp)
+    add_executable(${real} test/fixtures/signed-rules-evidence-independent/trace.cpp)
+    add_executable(${aux} test/fixtures/rules-bundle-aux-review/main.cpp)
+    add_executable(${runtime_own} test/fixtures/rules-progress-owner-own/main.cpp)
+    add_executable(${runtime} test/fixtures/rules-progress-owner-review/main.cpp)
+    add_executable(${local_timer} test/fixtures/rules-progress-owner-review/LocalTimer.cpp)
+    foreach(target IN ITEMS ${catalog} ${trace} ${owner} ${own} ${real} ${aux} ${runtime_own} ${runtime} ${local_timer})
+        target_link_libraries(${target} PRIVATE larp_core)
+        target_compile_options(${target} PRIVATE -O2 -Wall -Wextra -Wpedantic -Werror)
+    endforeach()
+    if("${backend}" STREQUAL "PSA")
+        foreach(target IN ITEMS ${catalog} ${trace} ${owner} ${own} ${real} ${aux} ${runtime_own} ${runtime} ${local_timer})
+            target_sources(${target} PRIVATE lib/PsaPackageDigest/PsaPackageDigest.cpp)
+            target_include_directories(${target} PRIVATE lib/PsaPackageDigest)
+            target_link_libraries(${target} PRIVATE tfpsacrypto)
+        endforeach()
+        foreach(target IN ITEMS ${trace} ${own} ${real} ${runtime} ${local_timer})
+            target_sources(${target} PRIVATE lib/PsaD0FactCrypto/PsaD0FactCrypto.cpp
+                lib/PsaD0FactSigner/PsaD0FactSigner.cpp)
+            target_include_directories(${target} PRIVATE lib/PsaD0FactCrypto lib/PsaD0FactSigner)
+        endforeach()
+        target_compile_definitions(${catalog} PRIVATE RULES_PROGRESS_REVIEW_PSA=1)
+        target_compile_definitions(${trace} PRIVATE RULES_PROGRESS_REVIEW_PSA=1)
+        target_compile_definitions(${owner} PRIVATE MANUAL_OWNER_REVIEW_PSA=1)
+        target_compile_definitions(${own} PRIVATE D0_FACT_REVIEW_PSA=1)
+        target_compile_definitions(${real} PRIVATE SIGNED_RULES_REVIEW_PSA=1)
+        target_compile_definitions(${aux} PRIVATE PACKAGE_MODULE_REVIEW_PSA=1)
+        target_compile_definitions(${runtime_own} PRIVATE PACKAGE_MODULE_REVIEW_PSA=1)
+        target_compile_definitions(${runtime} PRIVATE RULES_PROGRESS_OWNER_REVIEW_PSA=1)
+        target_compile_definitions(${local_timer} PRIVATE RULES_PROGRESS_OWNER_REVIEW_PSA=1)
+    else()
+        foreach(target IN ITEMS ${catalog} ${trace} ${owner} ${own} ${real} ${aux} ${runtime_own} ${runtime} ${local_timer})
+            target_link_libraries(${target} PRIVATE bcrypt)
+        endforeach()
+    endif()
+    add_test(NAME ${catalog} COMMAND "${Python3_EXECUTABLE}"
+        "${CMAKE_SOURCE_DIR}/test/fixtures/rules-progress-independent-review/run.py" --binary "$<TARGET_FILE:${catalog}>")
+    add_test(NAME ${trace} COMMAND "${Python3_EXECUTABLE}"
+        "${CMAKE_SOURCE_DIR}/test/fixtures/rules-progress-independent-review/run_traces.py" --binary "$<TARGET_FILE:${trace}>")
+    add_test(NAME "rules-progress-malformed-review${suffix}" COMMAND "${Python3_EXECUTABLE}"
+        "${CMAKE_SOURCE_DIR}/test/fixtures/rules-progress-independent-review/run_malformed.py"
+        --catalog-binary "$<TARGET_FILE:${catalog}>" --trace-binary "$<TARGET_FILE:${trace}>")
+    add_test(NAME ${owner} COMMAND "${Python3_EXECUTABLE}"
+        "${CMAKE_SOURCE_DIR}/test/fixtures/manual-owner-review/run.py" --binary "$<TARGET_FILE:${owner}>")
+    add_test(NAME ${own} COMMAND "${Python3_EXECUTABLE}"
+        "${CMAKE_SOURCE_DIR}/test/fixtures/signed-rules-evidence-own/run.py" --binary "$<TARGET_FILE:${own}>")
+    add_test(NAME ${real} COMMAND "${Python3_EXECUTABLE}"
+        "${CMAKE_SOURCE_DIR}/test/fixtures/signed-rules-evidence-independent/run.py" --binary "$<TARGET_FILE:${real}>")
+    add_test(NAME ${aux} COMMAND "${Python3_EXECUTABLE}"
+        "${CMAKE_SOURCE_DIR}/test/fixtures/rules-bundle-aux-review/run.py" --binary "$<TARGET_FILE:${aux}>")
+    add_test(NAME ${runtime_own} COMMAND "${Python3_EXECUTABLE}"
+        "${CMAKE_SOURCE_DIR}/test/fixtures/rules-progress-owner-own/run.py" --binary "$<TARGET_FILE:${runtime_own}>")
+    add_test(NAME ${runtime} COMMAND "${Python3_EXECUTABLE}" -B
+        "${CMAKE_SOURCE_DIR}/test/fixtures/rules-progress-owner-review/run.py"
+        --binary "$<TARGET_FILE:${runtime}>" --artifact-binary "$<TARGET_FILE:${catalog}>")
+    add_test(NAME ${local_timer} COMMAND "${Python3_EXECUTABLE}" -B
+        "${CMAKE_SOURCE_DIR}/test/fixtures/rules-progress-owner-review/run_local_timer.py"
+        --binary "$<TARGET_FILE:${local_timer}>" --artifact-binary "$<TARGET_FILE:${catalog}>")
+    set_tests_properties(${catalog} ${trace} "rules-progress-malformed-review${suffix}" ${owner} ${own} ${real} ${aux} ${runtime_own} ${runtime} ${local_timer}
+        PROPERTIES TIMEOUT 300)
+endfunction()
 if(BUILD_TESTING)
     find_package(Python3 REQUIRED COMPONENTS Interpreter)
     add_test(NAME native-journal COMMAND "${Python3_EXECUTABLE}"
         "${CMAKE_SOURCE_DIR}/test/test_configured_control/check_native_journal.py"
         "$<TARGET_FILE:larp-profile>")
+    add_test(NAME manual-override-v2-model COMMAND "${Python3_EXECUTABLE}" -B -m unittest discover
+        -s "${CMAKE_SOURCE_DIR}/scripts/tests" -p test_p0_manual_override_v2_model.py)
     include(FetchContent)
     FetchContent_Declare(unity
         GIT_REPOSITORY https://github.com/ThrowTheSwitch/Unity.git
@@ -39,6 +117,14 @@ if(BUILD_TESTING)
         target_compile_options(d0-crypto-lifecycle PRIVATE -Wall -Wextra -Wpedantic -Werror)
     endif()
     add_test(NAME d0-crypto-lifecycle COMMAND d0-crypto-lifecycle)
+    add_executable(d0-signer-lifecycle test/fixtures/d0-signer-faults/main.cpp
+        lib/PsaD0FactSigner/PsaD0FactSigner.cpp)
+    target_include_directories(d0-signer-lifecycle PRIVATE test/fixtures/d0-signer-faults/stubs
+        include lib/PsaD0FactSigner)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        target_compile_options(d0-signer-lifecycle PRIVATE -Wall -Wextra -Wpedantic -Werror)
+    endif()
+    add_test(NAME d0-signer-lifecycle COMMAND d0-signer-lifecycle)
     add_executable(package-artifacts test/test_package_artifacts/test_main.cpp)
     target_link_libraries(package-artifacts PRIVATE larp_core unity)
     if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
@@ -46,6 +132,35 @@ if(BUILD_TESTING)
     endif()
     add_test(NAME package-artifacts COMMAND package-artifacts)
     if(WIN32)
+        larp_progress_audits("" "WINDOWS")
+        add_executable(rules-bundle-review test/fixtures/rules-bundle-review/cli.cpp
+            src/DeviceRuntime/ProgressJournal.cpp src/DeviceRuntime/RulesBundleJournal.cpp
+            src/DeviceRuntime/RulesProgressControl.cpp)
+        target_include_directories(rules-bundle-review PRIVATE include)
+        target_link_libraries(rules-bundle-review PRIVATE larp_core bcrypt)
+        target_compile_options(rules-bundle-review PRIVATE -O2 -Wall -Wextra -Wpedantic -Werror)
+        add_test(NAME rules-bundle-review COMMAND "${Python3_EXECUTABLE}"
+            "${CMAKE_SOURCE_DIR}/test/fixtures/rules-bundle-review/run.py"
+            --binary "$<TARGET_FILE:rules-bundle-review>")
+        set_tests_properties(rules-bundle-review PROPERTIES TIMEOUT 300)
+        add_executable(manual-override-v2-review test/fixtures/manual-override-v2-review/cli.cpp)
+        target_link_libraries(manual-override-v2-review PRIVATE larp_core bcrypt)
+        target_compile_options(manual-override-v2-review PRIVATE -Wall -Wextra -Wpedantic -Werror)
+        add_test(NAME manual-override-v2-review COMMAND "${Python3_EXECUTABLE}"
+            "${CMAKE_SOURCE_DIR}/test/fixtures/manual-override-v2-review/run.py"
+            --binary "$<TARGET_FILE:manual-override-v2-review>")
+        add_executable(manual-override-v2-writer-review test/fixtures/manual-override-v2-review/WriterFaults.cpp)
+        target_link_libraries(manual-override-v2-writer-review PRIVATE larp_core bcrypt)
+        target_compile_options(manual-override-v2-writer-review PRIVATE -Wall -Wextra -Wpedantic -Werror)
+        add_test(NAME manual-override-v2-writer-review COMMAND "${Python3_EXECUTABLE}"
+            "${CMAKE_SOURCE_DIR}/test/fixtures/manual-override-v2-review/run_writer.py"
+            --binary "$<TARGET_FILE:manual-override-v2-writer-review>")
+        add_executable(d0-writer-review test/fixtures/d0-writer-review/cli.cpp)
+        target_link_libraries(d0-writer-review PRIVATE larp_core bcrypt)
+        target_compile_options(d0-writer-review PRIVATE -Wall -Wextra -Wpedantic -Werror)
+        add_test(NAME d0-writer-review COMMAND "${Python3_EXECUTABLE}"
+            "${CMAKE_SOURCE_DIR}/test/fixtures/d0-writer-review/run.py"
+            --binary "$<TARGET_FILE:d0-writer-review>")
         add_executable(d0-fact-review test/fixtures/d0-fact-review/cli.cpp)
         target_link_libraries(d0-fact-review PRIVATE larp_core bcrypt)
         target_compile_options(d0-fact-review PRIVATE -Wall -Wextra -Wpedantic -Werror)
@@ -65,6 +180,127 @@ if(BUILD_TESTING)
             "${CMAKE_SOURCE_DIR}/test/fixtures/package-artifacts-review/run_metadata.py"
             --binary "$<TARGET_FILE:package-metadata-review>")
     endif()
+    # Actual allocator/backend against target-local SDK faults; NOT provisioning.
+    add_executable(local-generation-own test/fixtures/local-generation-own/main.cpp
+        lib/Esp32LocalGeneration/Esp32LocalGeneration.cpp
+        lib/Esp32LocalGeneration/Esp32LocalGenerationStore.cpp
+        lib/Esp32RulesBootClock/Esp32RulesBootClock.cpp
+        lib/Esp32DeviceIdentityStore/Esp32StartupIdentityEntropy.cpp)
+    target_include_directories(local-generation-own PRIVATE
+        test/fixtures/local-generation-own/stubs test/fixtures/rules-boot-clock-own/stubs
+        lib/Esp32LocalGeneration lib/Esp32RulesBootClock lib/Esp32DeviceIdentityStore)
+    target_link_libraries(local-generation-own PRIVATE larp_core)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        target_compile_options(local-generation-own PRIVATE -O2 -Wall -Wextra -Wpedantic -Werror)
+    endif()
+    add_test(NAME local-generation-own COMMAND "${Python3_EXECUTABLE}" -B
+        "${CMAKE_SOURCE_DIR}/test/fixtures/local-generation-own/run.py"
+        --binary "$<TARGET_FILE:local-generation-own>")
+    set_tests_properties(local-generation-own PROPERTIES TIMEOUT 180)
+    add_executable(local-generation-review test/fixtures/local-generation-review/main.cpp
+        lib/Esp32LocalGeneration/Esp32LocalGeneration.cpp
+        lib/Esp32LocalGeneration/Esp32LocalGenerationStore.cpp
+        lib/Esp32RulesBootClock/Esp32RulesBootClock.cpp
+        lib/Esp32DeviceIdentityStore/Esp32StartupIdentityEntropy.cpp)
+    target_include_directories(local-generation-review PRIVATE
+        test/fixtures/local-generation-review/stubs
+        lib/Esp32LocalGeneration lib/Esp32RulesBootClock lib/Esp32DeviceIdentityStore)
+    target_link_libraries(local-generation-review PRIVATE larp_core)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        target_compile_options(local-generation-review PRIVATE -O2 -Wall -Wextra -Wpedantic -Werror)
+    endif()
+    add_test(NAME local-generation-review COMMAND "${Python3_EXECUTABLE}" -B
+        "${CMAKE_SOURCE_DIR}/test/fixtures/local-generation-review/run.py"
+        --binary "$<TARGET_FILE:local-generation-review>")
+    set_tests_properties(local-generation-review PROPERTIES TIMEOUT 180)
+    # Lifecycle-only SDK seams: image targets compile the actual SDK backend.
+    add_executable(rules-boot-clock-own test/fixtures/rules-boot-clock-own/main.cpp
+        lib/Esp32RulesBootClock/Esp32RulesBootClock.cpp
+        lib/Esp32DeviceIdentityStore/Esp32StartupIdentityEntropy.cpp)
+    target_include_directories(rules-boot-clock-own PRIVATE
+        test/fixtures/rules-boot-clock-own/stubs lib/Esp32RulesBootClock lib/Esp32DeviceIdentityStore)
+    target_link_libraries(rules-boot-clock-own PRIVATE larp_core)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        target_compile_options(rules-boot-clock-own PRIVATE -O2 -Wall -Wextra -Wpedantic -Werror)
+    endif()
+    add_test(NAME rules-boot-clock-own COMMAND "${Python3_EXECUTABLE}" -B
+        "${CMAKE_SOURCE_DIR}/test/fixtures/rules-boot-clock-own/run.py"
+        --binary "$<TARGET_FILE:rules-boot-clock-own>")
+    set_tests_properties(rules-boot-clock-own PROPERTIES TIMEOUT 90)
+    add_executable(esp32-rules-boot-clock-review
+        test/fixtures/esp32-rules-boot-clock-review/main.cpp
+        lib/Esp32RulesBootClock/Esp32RulesBootClock.cpp
+        lib/Esp32DeviceIdentityStore/Esp32StartupIdentityEntropy.cpp)
+    target_include_directories(esp32-rules-boot-clock-review PRIVATE
+        test/fixtures/esp32-rules-boot-clock-review/stubs
+        lib/Esp32RulesBootClock lib/Esp32DeviceIdentityStore)
+    target_link_libraries(esp32-rules-boot-clock-review PRIVATE larp_core)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        target_compile_options(esp32-rules-boot-clock-review PRIVATE -O2 -Wall -Wextra -Wpedantic -Werror)
+    endif()
+    add_test(NAME esp32-rules-boot-clock-review COMMAND "${Python3_EXECUTABLE}" -B
+        "${CMAKE_SOURCE_DIR}/test/fixtures/esp32-rules-boot-clock-review/run.py"
+        --binary "$<TARGET_FILE:esp32-rules-boot-clock-review>")
+    set_tests_properties(esp32-rules-boot-clock-review PROPERTIES TIMEOUT 90)
+    add_executable(rules-commit-ordering-review test/fixtures/rules-commit-ordering-review/main.cpp)
+    target_link_libraries(rules-commit-ordering-review PRIVATE larp_core)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        target_compile_options(rules-commit-ordering-review PRIVATE -O2 -Wall -Wextra -Wpedantic -Werror)
+    endif()
+    add_test(NAME rules-commit-ordering-review COMMAND "${Python3_EXECUTABLE}"
+        "${CMAKE_SOURCE_DIR}/test/fixtures/rules-commit-ordering-review/run.py"
+        --binary "$<TARGET_FILE:rules-commit-ordering-review>")
+    set_tests_properties(rules-commit-ordering-review PROPERTIES TIMEOUT 300)
+    add_executable(rules-progress-codec-review test/fixtures/rules-progress-codec-review/main.cpp)
+    target_link_libraries(rules-progress-codec-review PRIVATE larp_core)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        target_compile_options(rules-progress-codec-review PRIVATE -Wall -Wextra -Wpedantic -Werror)
+    endif()
+    add_test(NAME rules-progress-codec-review COMMAND "${Python3_EXECUTABLE}"
+        "${CMAKE_SOURCE_DIR}/test/fixtures/rules-progress-codec-review/run.py"
+        --binary "$<TARGET_FILE:rules-progress-codec-review>")
+    add_executable(rules-effect-own test/fixtures/rules-effect-own/main.cpp)
+    target_link_libraries(rules-effect-own PRIVATE larp_core)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        target_compile_options(rules-effect-own PRIVATE -Wall -Wextra -Wpedantic -Werror)
+    endif()
+    add_test(NAME rules-effect-own COMMAND "${Python3_EXECUTABLE}"
+        "${CMAKE_SOURCE_DIR}/test/fixtures/rules-effect-own/run.py" --binary "$<TARGET_FILE:rules-effect-own>")
+    add_executable(rules-effect-independent-review test/fixtures/rules-effect-independent-review/main.cpp)
+    target_link_libraries(rules-effect-independent-review PRIVATE larp_core)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        target_compile_options(rules-effect-independent-review PRIVATE -O2 -Wall -Wextra -Wpedantic -Werror)
+    endif()
+    add_test(NAME rules-effect-independent-review COMMAND "${Python3_EXECUTABLE}"
+        "${CMAKE_SOURCE_DIR}/test/fixtures/rules-effect-independent-review/run.py"
+        --binary "$<TARGET_FILE:rules-effect-independent-review>")
+    add_executable(rules-progress-transaction test/test_rules_progress_transaction/test_main.cpp)
+    target_link_libraries(rules-progress-transaction PRIVATE larp_core unity)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        target_compile_options(rules-progress-transaction PRIVATE -Wall -Wextra -Wpedantic -Werror)
+    endif()
+    add_test(NAME rules-progress-transaction COMMAND rules-progress-transaction)
+    add_executable(rules-progress-control test/test_rules_progress_control/test_main.cpp)
+    target_link_libraries(rules-progress-control PRIVATE larp_core unity)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        target_compile_options(rules-progress-control PRIVATE -Wall -Wextra -Wpedantic -Werror)
+    endif()
+    add_test(NAME rules-progress-control COMMAND rules-progress-control)
+    add_executable(event-authority test/test_event_authority/test_main.cpp)
+    target_link_libraries(event-authority PRIVATE larp_core unity)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        target_compile_options(event-authority PRIVATE -Wall -Wextra -Wpedantic -Werror)
+    endif()
+    add_test(NAME event-authority COMMAND event-authority)
+    add_executable(manual-override-owner test/test_manual_override_owner/test_main.cpp)
+    target_link_libraries(manual-override-owner PRIVATE larp_core unity)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        target_compile_options(manual-override-owner PRIVATE -Wall -Wextra -Wpedantic -Werror)
+    endif()
+    add_test(NAME manual-override-owner COMMAND manual-override-owner)
+    set_tests_properties(rules-progress-codec-review rules-effect-own rules-effect-independent-review
+        rules-progress-transaction rules-progress-control event-authority manual-override-owner
+        PROPERTIES TIMEOUT 300)
     add_executable(rules-planner test/test_rules_planner/test_main.cpp)
     target_link_libraries(rules-planner PRIVATE larp_core unity)
     if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
@@ -163,6 +399,49 @@ if(BUILD_TESTING AND LARP_PSA_IDF_PATH)
     # ESP-only port. Host tests forward them to the identical private headers.
     target_include_directories(builtin PRIVATE "${CMAKE_SOURCE_DIR}/test/psa_host_compat")
     target_include_directories(tfpsacrypto PRIVATE "${CMAKE_SOURCE_DIR}/test/psa_host_compat")
+    larp_progress_audits("-psa" "PSA")
+    add_executable(rules-bundle-review-psa test/fixtures/rules-bundle-review/cli.cpp
+        src/DeviceRuntime/ProgressJournal.cpp src/DeviceRuntime/RulesBundleJournal.cpp
+        src/DeviceRuntime/RulesProgressControl.cpp lib/PsaPackageDigest/PsaPackageDigest.cpp)
+    target_include_directories(rules-bundle-review-psa PRIVATE include lib/PsaPackageDigest)
+    target_compile_definitions(rules-bundle-review-psa PRIVATE RULES_BUNDLE_REVIEW_PSA=1)
+    target_link_libraries(rules-bundle-review-psa PRIVATE larp_core tfpsacrypto)
+    target_compile_options(rules-bundle-review-psa PRIVATE -O2 -Wall -Wextra -Wpedantic -Werror)
+    add_test(NAME rules-bundle-review-psa COMMAND "${Python3_EXECUTABLE}"
+        "${CMAKE_SOURCE_DIR}/test/fixtures/rules-bundle-review/run.py"
+        --binary "$<TARGET_FILE:rules-bundle-review-psa>")
+    set_tests_properties(rules-bundle-review-psa PROPERTIES TIMEOUT 300)
+    add_executable(manual-override-v2-review-psa test/fixtures/manual-override-v2-review/cli.cpp
+        lib/PsaPackageDigest/PsaPackageDigest.cpp)
+    target_include_directories(manual-override-v2-review-psa PRIVATE lib/PsaPackageDigest)
+    target_compile_definitions(manual-override-v2-review-psa PRIVATE MANUAL_OVERRIDE_V2_REVIEW_PSA=1)
+    target_link_libraries(manual-override-v2-review-psa PRIVATE larp_core tfpsacrypto)
+    target_compile_options(manual-override-v2-review-psa PRIVATE -Wall -Wextra -Wpedantic -Werror)
+    add_test(NAME manual-override-v2-review-psa COMMAND "${Python3_EXECUTABLE}"
+        "${CMAKE_SOURCE_DIR}/test/fixtures/manual-override-v2-review/run.py"
+        --binary "$<TARGET_FILE:manual-override-v2-review-psa>")
+    add_executable(manual-override-v2-writer-review-psa test/fixtures/manual-override-v2-review/WriterFaults.cpp
+        lib/PsaPackageDigest/PsaPackageDigest.cpp lib/PsaD0FactCrypto/PsaD0FactCrypto.cpp
+        lib/PsaD0FactSigner/PsaD0FactSigner.cpp)
+    target_include_directories(manual-override-v2-writer-review-psa PRIVATE lib/PsaPackageDigest
+        lib/PsaD0FactCrypto lib/PsaD0FactSigner)
+    target_compile_definitions(manual-override-v2-writer-review-psa PRIVATE MANUAL_OVERRIDE_V2_REVIEW_PSA=1)
+    target_link_libraries(manual-override-v2-writer-review-psa PRIVATE larp_core tfpsacrypto)
+    target_compile_options(manual-override-v2-writer-review-psa PRIVATE -Wall -Wextra -Wpedantic -Werror)
+    add_test(NAME manual-override-v2-writer-review-psa COMMAND "${Python3_EXECUTABLE}"
+        "${CMAKE_SOURCE_DIR}/test/fixtures/manual-override-v2-review/run_writer.py"
+        --binary "$<TARGET_FILE:manual-override-v2-writer-review-psa>")
+    add_executable(d0-writer-review-psa test/fixtures/d0-writer-review/cli.cpp
+        lib/PsaPackageDigest/PsaPackageDigest.cpp lib/PsaD0FactCrypto/PsaD0FactCrypto.cpp
+        lib/PsaD0FactSigner/PsaD0FactSigner.cpp)
+    target_include_directories(d0-writer-review-psa PRIVATE lib/PsaPackageDigest
+        lib/PsaD0FactCrypto lib/PsaD0FactSigner)
+    target_compile_definitions(d0-writer-review-psa PRIVATE D0_FACT_REVIEW_PSA=1)
+    target_link_libraries(d0-writer-review-psa PRIVATE larp_core tfpsacrypto)
+    target_compile_options(d0-writer-review-psa PRIVATE -Wall -Wextra -Wpedantic -Werror)
+    add_test(NAME d0-writer-review-psa COMMAND "${Python3_EXECUTABLE}"
+        "${CMAKE_SOURCE_DIR}/test/fixtures/d0-writer-review/run.py"
+        --binary "$<TARGET_FILE:d0-writer-review-psa>")
     add_executable(d0-fact-review-psa test/fixtures/d0-fact-review/cli.cpp
         lib/PsaPackageDigest/PsaPackageDigest.cpp lib/PsaD0FactCrypto/PsaD0FactCrypto.cpp)
     target_include_directories(d0-fact-review-psa PRIVATE lib/PsaPackageDigest lib/PsaD0FactCrypto)

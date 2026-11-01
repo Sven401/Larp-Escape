@@ -22,6 +22,8 @@ struct DeclarationResult {
     CanonicalJsonResult canonical;
     std::size_t offset = 0;
     char path[256] = {};
+    std::uint8_t language = 1;
+    bool manualOverride = false;
     // Deliberately no bool conversion: this is never full package validity.
 };
 // Synchronous declaration-only validation, with no accepted package output.
@@ -31,9 +33,11 @@ struct DeclarationResult {
 class PackageDeclarationReader : private ICanonicalJsonObserver {
   public:
     DeclarationResult validate(IPackageByteSource &source,
-                               ICanonicalJsonObserver *observer = nullptr);
+                               ICanonicalJsonObserver *observer = nullptr,
+                               bool allowManualOverrideV2 = false);
     DeclarationResult validate(const char *bytes, std::size_t count,
-                               ICanonicalJsonObserver *observer = nullptr);
+                               ICanonicalJsonObserver *observer = nullptr,
+                               bool allowManualOverrideV2 = false);
     static const std::size_t MetadataBytes = 32768;
 
   private:
@@ -66,6 +70,7 @@ class PackageDeclarationReader : private ICanonicalJsonObserver {
         char previous[49] = {};
         CanonicalJsonToken initialType = CanonicalJsonToken::ObjectBegin;
         bool booleanValue = false;
+        bool manualRequirement = false;
     };
     struct ModuleIdentity {
         char id[49] = {};
@@ -77,6 +82,7 @@ class PackageDeclarationReader : private ICanonicalJsonObserver {
     std::size_t moduleCount_ = 0;
     CanonicalPackageJsonReader canonical_;
     ICanonicalJsonObserver *downstream_ = nullptr;
+    bool allowV2_ = false;
     DeclarationResult result_;
     Frame frames_[CanonicalPackageJsonReader::ContainerDepth];
     std::size_t depth_ = 0;

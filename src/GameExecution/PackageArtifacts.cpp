@@ -115,6 +115,9 @@ bool digestText(const char *s, Digest &out) {
     return true;
 }
 constexpr std::uint16_t BindingRole = 1, RulesRole = 2, LegacyRole = 4, ResourceRole = 8;
+bool rulesProfile(ProfileFormat format) {
+    return format == ProfileFormat::Rules || format == ProfileFormat::RulesV2;
+}
 } // namespace
 const char *name(const Catalog &c, Id id) {
     if (!id || id > c.offsets.count || !c.offsets.data || !c.strings.data)
@@ -705,9 +708,10 @@ void Validator::scalar() {
             number(4294967295ULL, true);
             p.bytes = static_cast<std::uint32_t>(value);
         } else if (!std::strcmp(k, "format")) {
-            p.format = equals("larp.rules.v1") ? ProfileFormat::Rules
-                       : equals("profile.v1")  ? ProfileFormat::Legacy
-                                               : ProfileFormat::Invalid;
+            p.format = equals("larp.rules.v1")   ? ProfileFormat::Rules
+                       : equals("larp.rules.v2") ? ProfileFormat::RulesV2
+                       : equals("profile.v1")    ? ProfileFormat::Legacy
+                                                 : ProfileFormat::Invalid;
             if (p.format == ProfileFormat::Invalid)
                 fail(Error::Value);
         } else
@@ -836,7 +840,7 @@ void Validator::close() {
         fields(31);
         auto &p = catalog_->profiles.data[f.index - 1];
         p.artifact = path(p.artifact, p.digest, p.bytes, true,
-                          p.format == ProfileFormat::Rules ? RulesRole : LegacyRole, p.station);
+                          rulesProfile(p.format) ? RulesRole : LegacyRole, p.station);
         break;
     }
     case Kind::Resource: {
@@ -917,11 +921,12 @@ bool Validator::resolve() {
             return false;
         }
         auto &a = catalog_->artifacts.data[p.artifact - 1];
-        if (p.format == ProfileFormat::Rules) {
+        if (rulesProfile(p.format)) {
+            v2_ |= p.format == ProfileFormat::RulesV2;
             a.irStation = p.station;
             for (std::size_t j = 0; j < i; ++j)
                 if (catalog_->profiles.data[j].station == p.station &&
-                    catalog_->profiles.data[j].format == ProfileFormat::Rules)
+                    rulesProfile(catalog_->profiles.data[j].format))
                     fail(Error::Conflict);
         }
         if (i) {
@@ -938,9 +943,21 @@ bool Validator::resolve() {
         unsigned count = 0;
         for (std::size_t i = 0; i < catalog_->profiles.count; ++i)
             count += catalog_->profiles.data[i].station == s + 1 &&
-                     catalog_->profiles.data[i].format == ProfileFormat::Rules;
+                     rulesProfile(catalog_->profiles.data[i].format);
         if (count != 1)
             fail(Error::Reference);
+    }
+    if (v2_) {
+        bool capability = false;
+        for (std::size_t i = 0; i < catalog_->requirements.count; ++i)
+            capability |= !std::strcmp(string(catalog_->requirements.data[i].name),
+                                       "rules_manual_override") &&
+                          !std::strcmp(string(catalog_->requirements.data[i].major), "1");
+        if (!capability)
+            fail(Error::Unsupported);
+        for (std::size_t i = 0; i < catalog_->profiles.count; ++i)
+            if (catalog_->profiles.data[i].format == ProfileFormat::Rules)
+                fail(Error::ProfileMismatch);
     }
     for (std::size_t i = 0; i < catalog_->resources.count; ++i) {
         auto &r = catalog_->resources.data[i];
@@ -964,13 +981,13 @@ bool Validator::resolve() {
             fail(Error::Reference);
             return false;
         }
-        if (r.policy == 3) {
+        if (r.policy == 3 && !v2_) {
             fail(Error::Unsupported);
             return false;
         }
         for (std::size_t j = 0; j < i; ++j) {
             const auto &old = catalog_->rules.data[j];
-            if (old.station == r.station && equal(old.id, r.id))
+            if (!v2_ && old.station == r.station && equal(old.id, r.id))
                 fail(Error::Conflict);
         }
         if (i) {
@@ -1636,6 +1653,10 @@ bool qualified(const configuration::ModuleCompileWorkspace &s,
 } // namespace
 bool Validator::expanded(const configuration::ModuleCompileWorkspace &s,
                          const configuration::ExpandedStationWorkspace &e, Id definition) {
+    if ((s.language == 2) != v2_ || e.language != s.language || (v2_ && !s.manualOverride)) {
+        fail(Error::ProfileMismatch);
+        return false;
+    }
     if (!contentCatalog(s))
         return false;
     const Id stationId = findStation(intern(sourceName(s, s.definitions.data[definition - 1].id)));
@@ -1649,6 +1670,61 @@ bool Validator::expanded(const configuration::ModuleCompileWorkspace &s,
         return false;
     }
     station.generated = true;
+    auto rowFor = [&](const configuration::module_ir::Name &n) -> Rule * {
+        char text[486];
+        if (!qualified(s, n, text)) {
+            fail(Error::Reference);
+            return nullptr;
+        }
+        const Id id = intern(text);
+        for (std::size_t i = 0; i < catalog_->rules.count; ++i)
+            if (catalog_->rules.data[i].station == stationId &&
+                catalog_->rules.data[i].expanded == id)
+                return &catalog_->rules.data[i];
+        fail(Error::Reference);
+        return nullptr;
+    };
+    // Independently verify the entire pair and actual stable-ID rows before any
+    // subject/physical-resource exclusivity exception is applied.
+    for (std::size_t i = 0; i < e.rules.count && result_.error == Error::None; ++i) {
+        const auto &r = e.rules.data[i].rule;
+        auto *row = rowFor(e.rules.data[i].name);
+        if (!row)
+            break;
+        row->group = r.group;
+        if (!r.group)
+            continue;
+        if (!v2_ || r.group > e.rules.count) {
+            fail(Error::Conflict);
+            break;
+        }
+        const auto &original = e.rules.data[r.group - 1];
+        const auto target = original.rule.fallback;
+        if (!target || target > e.rules.count || (i + 1 != r.group && i + 1 != target)) {
+            fail(Error::Conflict);
+            break;
+        }
+        const auto &replacement = e.rules.data[target - 1];
+        if (original.rule.group != r.group || replacement.rule.group != r.group ||
+            !configuration::module_ir::manualReleasePair(e.actions, original.rule,
+                                                         replacement.rule)) {
+            fail(Error::Conflict);
+            break;
+        }
+        auto *a = rowFor(original.name);
+        auto *b = rowFor(replacement.name);
+        if (!a || !b || !equal(a->id, b->id)) {
+            fail(Error::BindingMismatch);
+            break;
+        }
+    }
+    for (std::size_t i = 0; i < catalog_->rules.count && result_.error == Error::None; ++i)
+        if (catalog_->rules.data[i].station == stationId)
+            for (std::size_t j = 0; j < i; ++j) {
+                const auto &a = catalog_->rules.data[i], &b = catalog_->rules.data[j];
+                if (b.station == stationId && equal(a.id, b.id) && (!a.group || a.group != b.group))
+                    fail(Error::Conflict);
+            }
     for (std::size_t i = 0; i < s.symbols.count && result_.error == Error::None; ++i) {
         const auto &v = s.symbols.data[i];
         if (v.owner != definition || v.kind != SymbolKind::Port)
@@ -1704,9 +1780,18 @@ bool Validator::expanded(const configuration::ModuleCompileWorkspace &s,
             ++found;
             row.used = true;
             where("rules", j, row.offset);
-            if (row.generation != r.generation || row.policy != r.policy || row.fallback)
+            Id fallback = 0;
+            if (r.policy == 3) {
+                char name[486];
+                if (!qualified(s, e.rules.data[i].fallbackName, name))
+                    fail(Error::Reference);
+                else
+                    fallback = intern(name);
+            }
+            if (row.generation != r.generation || row.policy != r.policy ||
+                row.fallback != fallback)
                 fail(Error::BindingMismatch);
-            auto permission = [&](Id subject, bool emit) {
+            auto permission = [&](Id subject, unsigned type) {
                 const Id subjectName = intern(sourceName(s, subject));
                 Id origin = 0;
                 Identity actual;
@@ -1720,26 +1805,32 @@ bool Validator::expanded(const configuration::ModuleCompileWorkspace &s,
                 bool allowed = false;
                 for (std::size_t k = 0; k < catalog_->permissions.count; ++k)
                     allowed |= catalog_->permissions.data[k].station == origin &&
-                               (catalog_->permissions.data[k].type == 1 ||
-                                (!emit && catalog_->permissions.data[k].type == 2)) &&
+                               (type ? catalog_->permissions.data[k].type == type
+                                     : (catalog_->permissions.data[k].type == 1 ||
+                                        catalog_->permissions.data[k].type == 2)) &&
                                equal(catalog_->permissions.data[k].subject, actual);
-                if (!origin || !allowed)
+                if (!origin || !allowed || (type && origin != stationId))
                     fail(Error::BindingMismatch);
             };
             for (unsigned k = 0; k < r.triggerCount; ++k)
                 if (r.trigger == 3)
-                    permission(e.triggers.data[r.firstTrigger + k], false);
+                    permission(e.triggers.data[r.firstTrigger + k], 0);
             for (unsigned k = 0; k < r.actionCount; ++k) {
                 const auto &a = e.actions.data[r.firstAction + k];
-                if (a.op == configuration::module_ir::Op::Emit) {
-                    permission(a.target, true);
+                if (a.op == configuration::module_ir::Op::Emit ||
+                    a.op == configuration::module_ir::Op::Override) {
+                    permission(a.target, a.op == configuration::module_ir::Op::Override ? 2 : 1);
                     if (!r.once)
                         fail(Error::Reference);
                     for (std::size_t prior = 0; prior < i; ++prior) {
                         const auto &other = e.rules.data[prior].rule;
+                        if (r.group && r.group == other.group)
+                            continue;
                         for (unsigned l = 0; l < other.actionCount; ++l) {
                             const auto &b = e.actions.data[other.firstAction + l];
-                            if (b.op == configuration::module_ir::Op::Emit && b.target == a.target)
+                            if ((b.op == configuration::module_ir::Op::Emit ||
+                                 b.op == configuration::module_ir::Op::Override) &&
+                                b.target == a.target)
                                 fail(Error::Conflict);
                         }
                     }
@@ -1758,6 +1849,8 @@ bool Validator::expanded(const configuration::ModuleCompileWorkspace &s,
                         for (std::size_t prior = 0; prior < i; ++prior) {
                             const auto &other = e.rules.data[prior].rule;
                             if (r.trigger != 3 && other.trigger != 3)
+                                continue;
+                            if (r.group && r.group == other.group)
                                 continue;
                             for (unsigned l = 0; l < other.actionCount; ++l) {
                                 const auto &b = e.actions.data[other.firstAction + l];
@@ -1840,6 +1933,14 @@ bool Validator::expanded(const configuration::ModuleCompileWorkspace &s,
         binding.epochs.data =
             origin.epochCount ? catalog_->epochs.data + origin.firstEpoch : nullptr;
         binding.epochs.count = origin.epochCount;
+        binding.epochsComplete = true;
+        binding.factTypes = 0;
+        for (std::size_t p = 0; p < catalog_->permissions.count; ++p) {
+            const auto &permission = catalog_->permissions.data[p];
+            if (permission.station == content.station && equal(permission.subject, subject) &&
+                (permission.type == 1 || permission.type == 2))
+                binding.factTypes |= static_cast<std::uint8_t>(1u << permission.type);
+        }
     }
     for (std::size_t i = 0; i < catalog_->ports.count; ++i) {
         const auto &row = catalog_->ports.data[i];
@@ -1882,6 +1983,7 @@ bool Validator::expanded(const configuration::ModuleCompileWorkspace &s,
     context.deployment = result_.deployment;
     context.content = content_;
     context.sourceEpoch = selection_.epoch;
+    context.bindingGeneration = station.generation;
     rules::Span<rules::RuleBinding> rb;
     rb.data = catalog_->runtimeRules.data;
     rb.count = catalog_->runtimeRules.count;
@@ -2153,7 +2255,7 @@ bool Validator::ByteSink::beginStation(const char *station) {
     v.currentProfile_ = 0;
     for (std::size_t i = 0; i < v.catalog_->profiles.count; ++i)
         if (v.catalog_->profiles.data[i].station == id &&
-            v.catalog_->profiles.data[i].format == ProfileFormat::Rules)
+            rulesProfile(v.catalog_->profiles.data[i].format))
             v.currentProfile_ = static_cast<Id>(i + 1);
     if (!v.currentProfile_) {
         v.fail(Error::Reference);
@@ -2309,6 +2411,7 @@ Result Validator::validate(configuration::IPackageByteSource &deployment,
                            Limits limits) {
     programStaging.ready = false;
     result_ = {};
+    v2_ = false;
     catalog_ = &catalog;
     provider_ = &artifacts;
     hash_ = &artifactHash;
