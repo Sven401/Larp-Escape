@@ -1,0 +1,136 @@
+{
+  "parameters": {
+    "length": 66.0,
+    "width": 34.0,
+    "height": 38.4,
+    "wall": 1.6,
+    "base_height": 36.4,
+    "cell_diameter_max": 18.75,
+    "cell_length_nominal": 38.7,
+    "cell_length_min": 38.4,
+    "cell_length_max": 39.0,
+    "cell_axis_y": 17.0,
+    "cell_axis_z": 11.5,
+    "contact_free_left": 10.0,
+    "contact_free_right": 47.4,
+    "contact_height": 5.0038,
+    "contact_tail": 1.7526,
+    "contact_full_stroke_nominal": 1.397,
+    "contact_full_stroke_min": 1.27,
+    "contact_length_tolerance_each": 0.1524,
+    "pcb_bottom": 23.3,
+    "qtpy_x": 42.0,
+    "qtpy_y": 2.0,
+    "led_bottom": 30.2
+  },
+  "source": "483c3320 + confirmed compact-module brief",
+  "parts": {
+    "base": {
+      "valid": true,
+      "solids": 1,
+      "volume_mm3": 17660.0895,
+      "stl_closed": true,
+      "non_manifold": false,
+      "self_intersections": false,
+      "step_valid": true,
+      "step_solids": 1,
+      "bounds_mm": [
+        66.0,
+        34.0,
+        36.4
+      ]
+    },
+    "tray": {
+      "valid": true,
+      "solids": 1,
+      "volume_mm3": 1220.4631,
+      "stl_closed": true,
+      "non_manifold": false,
+      "self_intersections": false,
+      "step_valid": true,
+      "step_solids": 1,
+      "bounds_mm": [
+        54.3,
+        26.2,
+        7.8
+      ]
+    },
+    "lid": {
+      "valid": true,
+      "solids": 1,
+      "volume_mm3": 3751.2619,
+      "stl_closed": true,
+      "non_manifold": false,
+      "self_intersections": false,
+      "step_valid": true,
+      "step_solids": 1,
+      "bounds_mm": [
+        66.0,
+        34.0,
+        2.7
+      ]
+    },
+    "diffuser": {
+      "valid": true,
+      "solids": 1,
+      "volume_mm3": 310.0005,
+      "stl_closed": true,
+      "non_manifold": false,
+      "self_intersections": false,
+      "step_valid": true,
+      "step_solids": 1,
+      "bounds_mm": [
+        19.5,
+        19.9,
+        0.8
+      ]
+    },
+    "contact_cap_negative": {
+      "valid": true,
+      "solids": 1,
+      "volume_mm3": 138.1792,
+      "stl_closed": true,
+      "non_manifold": false,
+      "self_intersections": false,
+      "step_valid": true,
+      "step_solids": 1,
+      "bounds_mm": [
+        5.0,
+        13.6,
+        2.4
+      ]
+    },
+    "contact_cap_positive": {
+      "valid": true,
+      "solids": 1,
+      "volume_mm3": 140.4965,
+      "stl_closed": true,
+      "non_manifold": false,
+      "self_intersections": false,
+      "step_valid": true,
+      "step_solids": 1,
+      "bounds_mm": [
+        5.0,
+        13.6,
+        2.4
+      ]
+    }
+  },
+  "collisions_mm3": {},
+  "module_collisions_mm3": {},
+  "fit_prototype_only": true,
+  "open_physical_items": [
+    "positive-button guard geometry unverified; no reverse-polarity protection claimed",
+    "contact flange seating/stroke/cell extraction and FDM tolerance coupon",
+    "actual board revisions, solder, wire routing and USB plug shape",
+    "RF in enclosure and carry position; no generic15mm module rule applied to chip antenna",
+    "temperature, optical diffusion and4h runtime"
+  ],
+  "powered_assembly_released": false,
+  "nominal_contact_compression_each_mm": 0.6500000000000021,
+  "assumed_tolerance_contact_compression_range_mm": [
+    0.1476,
+    1.1524
+  ],
+  "geometric_passed": true
+}

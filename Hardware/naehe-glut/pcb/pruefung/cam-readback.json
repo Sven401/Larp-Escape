@@ -1,0 +1,24 @@
+{
+  "reader": "gerbonara 1.6.3",
+  "board_bounds_mm": [
+    [
+      -0.025,
+      -80.025
+    ],
+    [
+      85.025,
+      0.025
+    ]
+  ],
+  "graphic_layers": [
+    "bottom/copper",
+    "bottom/mask",
+    "bottom/silk",
+    "mechanical/outline",
+    "top/copper",
+    "top/mask",
+    "top/silk"
+  ],
+  "pth_objects": 99,
+  "npth_objects": 4
+}
