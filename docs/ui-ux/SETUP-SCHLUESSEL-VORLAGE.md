@@ -3,8 +3,13 @@
 Status: **Aufbewahrungsweg A vom Nutzer bestätigt, Umsetzung offen**, 31.10.2026.
 Quelle: Antwort „Schlüsseldatei pro Box umsetzen (empfohlen)“ auf die konkrete
 Aufbewahrungsfrage in Sitzung `01a192a7-694c-73b2-b7b4-05d67b091cf5`.
-Container/KDF/Providerdetails und der physische Erstnachweis waren ausdrücklich
-ausgenommen und bleiben eigenständige offene Ausarbeitungen.
+Container/KDF/Providerdetails und der physische Erstnachweis waren bei dieser
+ersten Wahl ausdrücklich ausgenommen. Am 01.11.2026 bestätigte der Nutzer
+anschließend „Geprüftes Dateiformat v1 übernehmen (empfohlen)“:
+[festes JWE-Profil v1 und tatsächliche Prüfgrenzen](../companion/setup-key-file-profile-proposal.md).
+Physische Ersteinrichtung, UI-/Dateidialoganschluss und produktive Rechtevergabe
+bleiben offen. Diese spätere Formatwahl ist keine Nutzer-/Geräteabnahme des
+vollständigen Einrichtungsablaufs.
 Anlass: der vollständige manuelle Ersatzweg aus #93 benötigt tatsächlich
 veranstaltungsbezogene GM-Rechte. Der bestehende Device-Registerkern beweist
 diese Zuordnung noch nicht. Nutzerziel, Schlüsselwechsel und Recovery folgen
@@ -51,9 +56,10 @@ Datei und Kennwort verfügbar halten; Offlineverfügbarkeit eines Cloudanbieters
 ist nicht zugesichert. Eine Datei auf demselben Gerät belegt keine physische
 Trennung des Backups.
 
-Der konkrete standardisierte Verschlüsselungscontainer, KDF, Kennwortbehandlung
-und Android-Providerweg werden vor Implementierung fachlich qualifiziert. Diese
-Vorlage behauptet keine bereits getroffene Algorithmus-/Parameterentscheidung.
+Der konkrete standardisierte Verschlüsselungscontainer, KDF und die
+Kennwortbehandlung sind inzwischen im verlinkten Profil v1 bestätigt. Die
+unabhängigen Byte-/Hostprüfungen und die isolierte API34-Funktionsprobe belegen
+den begrenzten Dateikern, nicht den vollständigen nativen Einrichtungsablauf.
 
 ## Alternative B: separat aufbewahrter Papier-/QR-Schlüssel
 
