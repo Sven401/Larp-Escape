@@ -164,3 +164,71 @@ Owned files: main.cpp, Memory.h, Ports.h, run.py, catalog.json,
 generate_inputs.py, norelease-artifact.json, norelease-catalog.json,
 owner-goldens.json and this README. No product/wiring edits, commits or pushes
 by this independent reviewer. No third reference game is introduced.
+
+## Local/Timer new-correlation delta (01.11.2026)
+
+Separate actual CNG campaign: **Local 35 + Timer 52 = 87 assertions**, two full
+mechanical variants of the existing two-station artifact fixture, not a third
+acceptance game. Original main.cpp/252-case campaign and its goldens remain
+unchanged. LocalTimer.cpp reuses its actual runtime/crypto ports and helpers;
+the renamed, uncalled preserved main has only its implicit-main-return warning
+locally suppressed. Product sources retain strict C++11/O2/Werror compilation.
+
+Actual compiler/artifact acceptance precedes every runtime probe. Complete
+resulting catalogs are preserved in local-timer-catalogs.json and compared byte
+for byte with freshly compiled artifacts, plus independent canonical CBOR
+reconstruction of the complete model. The catalogs are identified as actual
+compiler outputs, not independently derived full semantic expected trees.
+Only the raw JSON source-provenance guard normalizes CRLF to LF for a Git/Windows
+checkout; artifact content/IR/CBOR/hash inputs are never normalized.
+
+Both FIRST uptakes are explicitly Committed before testing new correlation.
+Local creates its real own solved subject/latch/one effect and issued Fact1;
+original Final is op401/revision7/range1:1. Timer is armed by an actual committed
+Local plan, its actual generation/deadline is read, the synthetic monotone clock
+advances to that deadline, and the real Timer plan commits, consumes the arm and
+creates one effect; original Final op402/revision8/range0:0. No ready bits or
+positive TimerState are manually installed.
+
+The actual unchanged pre-fix owner43518a73805cf03c2b66815f8fa9b75ebc80913a11e99a41078f1ff0d10ed11b
+was compiled and both new-correlation probes failed AFTER those confirmed first
+commits: Admission9, originalApplication zero. Preserved source is
+private/p1a7-local-timer-dedupe/RulesProgressOwner-before.cpp; raw observations
+private/rules-progress-owner-local-timer-red/{local,timer}-output.txt. This is a
+real old-body reproduction, not a mutation or the earlier withdrawn Fact test.
+
+Fix body2db205d8af85336874085809578da58d9fb305e692b2e5ec822a28c6c8486e10,
+header unchanged745d5a7c..., passes new correlations/different request returning
+only exact original Final identity/revision/index/range, no new write/lease/
+source/signing/intent/receipt. Changed value/knownness conflict; Control and
+reserved Claim operations conflict; foreign event/run/station never alias.
+Actual cancel/rearm advances generation, old consumed duplicate cannot consume
+new arm, cancelled unconsumed generation is stale, next genuine due generation
+commits its own second effect. New Local generation/sequence are distinct
+commits while once release remains singular. A genuine new backend session
+reopens all durable history without today's source lookup and still resolves
+the original input. This remains the synthetic durable-medium/authority boundary
+of the original campaign, not a power-cut or real input-device proof.
+
+Local bootGeneration0x100000005 is an explicit synthetic OriginalInput label.
+It is NOT derived by truncating the 128-bit BootClock identity and does not
+implement the still-missing production Local input-generation owner.
+
+```powershell
+python -B test/fixtures/rules-progress-owner-review/run_local_timer.py --compiler C:/Users/seide/.platformio/packages/toolchain-gccmingw32/bin/g++.exe --artifact-binary private/rules-progress-owner-review-quality/catalog.exe
+```
+
+Portable full CTest mode: --binary <local-timer-target> --artifact-binary
+<rules-progress-independent-review[-psa]>. No --case in the complete gate.
+--case local|timer exists only for isolated reproductions; --owner-source
+selects the explicitly preserved original product source for a separate build.
+Own build private/rules-progress-owner-local-timer; old-body build uses the
+separate ...-red directory. Link LocalTimer.cpp identically to existing Owner
+review, including RULES_PROGRESS_OWNER_REVIEW_PSA for real native adapters.
+Each of two worlds adds actual PSA setup/cleanup assertions on native; native
+counts must be read from that new run, not inferred as already green here.
+
+Additional owned files: LocalTimer.cpp, run_local_timer.py,
+generate_local_timer.py, local-timer-artifacts.json, local-timer-catalogs.json.
+This delta changes only these five own fixtures and this README. Existing
+published da4d4095 native92/92 is separate and does not cover the new delta.

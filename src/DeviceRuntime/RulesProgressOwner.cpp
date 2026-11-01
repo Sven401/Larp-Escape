@@ -1275,18 +1275,35 @@ Result Owner::submit(const rules::Input &source, const rules::Identity &operatio
     // reserved physical phase. It is NOT installed as an alias/receipt below.
     if (!uniquePhase(op))
         return fail(Error::Conflict);
-    if (input.kind == rules::InputKind::Fact) {
+    if (input.kind == rules::InputKind::Fact || input.kind == rules::InputKind::Local ||
+        input.kind == rules::InputKind::Timer) {
         for (std::size_t i = 0; i < work_.applications.count; ++i) {
             const ApplicationEntry entry = work_.applications.data[i];
             if (!loadApplication(entry))
                 return fail(Error::Recovery, true);
             const auto &prior = work_.decoded.plan.receipt.input;
-            if (prior.kind != rules::InputKind::Fact)
+            if (prior.kind != input.kind)
                 continue;
-            const auto &a = input.fact.ref.id;
-            const auto &b = prior.fact.ref.id;
-            if (!bytesEqual(a.event, b.event) || !bytesEqual(a.origin, b.origin) ||
-                !bytesEqual(a.epoch, b.epoch) || a.sequence != b.sequence)
+            bool originalInput = false;
+            if (input.kind == rules::InputKind::Fact) {
+                const auto &a = input.fact.ref.id;
+                const auto &b = prior.fact.ref.id;
+                originalInput = bytesEqual(a.event, b.event) && bytesEqual(a.origin, b.origin) &&
+                                bytesEqual(a.epoch, b.epoch) && a.sequence == b.sequence;
+            } else {
+                // Local/timer operation IDs are scoped to event/run/station,
+                // never global FactIDs and never truncated clock-boot labels.
+                if (!bytesEqual(input.context.event, prior.context.event) ||
+                    !bytesEqual(input.context.run, prior.context.run) ||
+                    !bytesEqual(input.context.station, prior.context.station))
+                    continue;
+                originalInput =
+                    input.kind == rules::InputKind::Local
+                        ? input.bootGeneration == prior.bootGeneration &&
+                              input.sequence == prior.sequence
+                        : input.timer == prior.timer && input.armGeneration == prior.armGeneration;
+            }
+            if (!originalInput)
                 continue;
             if (!sameInput(input, prior))
                 return fail(Error::Conflict);

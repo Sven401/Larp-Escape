@@ -1,6 +1,7 @@
 # Semantischer Rules-Fortschrittsbesitzer
 
-Status: **Host und native Implementierung unabhängig geprüft; Produktanschlüsse offen**,
+Status: **Ownerbasis Host/nativ geprüft; Local-/Timer-Folgekorrektur am Host geprüft,
+native Folgequalifikation offen; Produktanschlüsse offen**,
 01.11.2026. Dieser Folgecheckpoint ergänzt Owner-/Orderingquellen in
 [Draft #135](https://github.com/Sven401/Larp-Escape/pull/135).
 Dieser Text beschreibt den zu prüfenden Anschluss der bereits qualifizierten
@@ -69,12 +70,14 @@ späteres Original nicht umgeschrieben. Die signierte Outbox benötigt weiterhin
 einen eigenen aktuellen D0-Anschluss für eine produktive Nutzung.
 
 Eine unveränderte normale Anwendungswiederholung nennt den ursprünglichen
-Finalstand. Auch ein inhaltlich identischer bereits verarbeiteter Fact mit
+Finalstand. Auch ein inhaltlich identischer bereits verarbeiteter Eingang mit
 neuer Korrelationsoperation nennt seine ursprüngliche Anwendung über
 `Result.originalApplication`, deren physische Revision, Index und Factrange.
 Die neue Korrelation und ihr Request werden dadurch weder gespeichert noch
 als neue übernommene Operation bestätigt. Es entstehen keine neue Planung,
-Signatur, Lease oder Wirkung. Dieselbe FactId mit geändertem vollständigem
+Signatur, Lease oder Wirkung. Facts verwenden die globale D0-FactId. Local
+verwendet Bootgeneration/Folge, Timer die Timer-ID/Arm-Generation, jeweils
+innerhalb event/run/station. Dieselbe Eingangsidentität mit geändertem vollständigem
 Input oder eine mit fremden Phasen kollidierende Anfragekennung ist ein
 Konflikt. Diese Antworten setzen vollständig veröffentlichte/recoverte Historie
 und passenden aktuellen Kontext voraus; ein unbekannter Ausgang wird dadurch
@@ -192,6 +195,35 @@ anderen vollständigen Läufe sind Quality 41263905631, LED 41263905584,
 NFC 41263905630, ESP-NOW 41263905632 und Rollen 41263905610. Android-XML
 dieses Heads: GM 35/Worker 9, Protokoll 111/fünf V1-Tests, Dev-App 77 ohne
 Fehler oder Skips. Keine Geräte-/Approval-/Mergeaktion; PR bleibt Draft.
+
+### Nachfolgende Local-/Timer-Korrelationskorrektur
+
+Body `2db205d8af85336874085809578da58d9fb305e692b2e5ec822a28c6c8486e10`,
+Header unverändert `745d5a7c…`: Der ursprüngliche Finalstand wird nun auch für
+Local-/Timerwiederholungen unter neuer Korrelation aufgelöst. Der unveränderte
+Vorbody `43518a73…` wurde tatsächlich mit beiden Fällen rot geprüft, jeweils
+nach explizit nachgewiesenem Erstcommit. Keine Mutation als Vorfixbeleg.
+
+Unabhängig **35 Local- und 52 Timerassertions** gegen zwei vollständige,
+tatsächlich validierte/kompilierte Artefaktsätze. Frische Katalogbytes werden
+gegen erhaltene Compilerresultate und unabhängige kanonische Rekonstruktion
+verglichen; daraus folgt kein vollständiges unabhängiges semantisches Sollmodell.
+Local erzeugt zuerst seinen echten Fact, Latch und Intent. Der Timer wird durch
+einen tatsächlichen Localplan gearmt und erst nach seiner Deadline konsumiert.
+Keine handgesetzten Readybits oder positiven Timerzustände.
+
+Geprüft sind ursprüngliche ID/Revision/Range, keine neuen Belege, Leases,
+Signaturen oder Schreibvorgänge, geänderte Eingabedaten, Phasenkollision, Namespacegrenzen,
+Cancel/Rearm, alter konsumierter Timer neben neuem Arm und vollständiger kalter
+Replay ohne heutige Quellen. Eine neue synthetische Localgeneration/Folge ist
+ein anderer Eingang; der Once-Latch bleibt dennoch einmalig. Die lokale
+Testgeneration ist ausdrücklich synthetisch und nie aus Clockboot128 gekürzt.
+
+Gemeinsamer frischer Hostlauf: 44/44 CTests, PIO 263/263, Header 109,
+Architektur 190 Dateien/416 Includes, Formatbaseline 380 und neue Fixture sauber.
+Der zusätzliche CNG-/PSA-Korpus verlangt den tatsächlichen Artefaktcompiler und
+führt im Standardgate beide Fälle aus. **Native PSA-/SDK-/PR-Nachweis dieses
+Deltas ist noch offen; da4/ee5-Ergebnisse werden nicht übertragen.**
 
 Die konkrete Orderingklasse ist ausschließlich für das beschriebene exklusive
 Single-Worker-Profil ausgelegt. Alle tatsächlichen relevanten Metadatenwriter
