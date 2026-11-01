@@ -1,4 +1,9 @@
 # Hardware-Quelleninventar vom 10. Oktober 2026
+**Zusätzliche Designressource · 1. November 2026:** Das vom Nutzer bereitgestellte
+[GPIO-Expander-Fertigungspaket von 2024](references/gpio-expander-2024-11-12/README.md)
+ist als Referenz für zukünftiges Hardwaredesign gesichert. Herkunft, SHA-256,
+Inhalt und offene Prüfungen stehen dort; keine Zuordnung zur Originalbox oder
+Fertigungsfreigabe. Das historische Inventar unten bleibt unverändert.
 
 **Fortschreibung vom 18. Oktober 2026:** Dieser Bericht bewahrt den Quellen-
 und Prüfstand vom 10. Oktober. Spätere funktionale LED-/Wake-/Matrix-/Audio-/NFC-
