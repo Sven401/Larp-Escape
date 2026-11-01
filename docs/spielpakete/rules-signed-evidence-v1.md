@@ -1,8 +1,8 @@
 # Ursprüngliche Rules-Belege v1
 
-Status: implementiert und unabhängig auf dem Host gegen signierte Originalbytes
-und Fehlerfälle geprüft; **kein vollständiger produktiver Trust-/Owner-/D1-Anschluss**,
-01.11.2026. Der native PSA-Nachweis steht für diesen Stand noch aus.
+Status: implementiert und unabhängig auf dem Host sowie mit produktivem PSA gegen
+signierte Originalbytes und Fehlerfälle geprüft; **kein vollständiger produktiver
+Trust-/Owner-/D1-Anschluss**, 01.11.2026.
 Root implementiert `CompanionIntegration/RulesSignedEvidence`,
 `module_digest_review` prüft die Quelle, `quality_p1` die getrennten Kryptogegenfälle.
 Das Fachmandat bleibt innerhalb des
@@ -154,6 +154,13 @@ hält die tatsächlichen signierten Kategorien, Originalbytes und Reproduktion f
 Installations-/Input-/Clock-/Finalmetadaten sind dabei ausdrücklich synthetische
 begrenzte Testannahmen, keine echte GM-/Event-/D1-Annahme.
 
-Offen: produktive Herkunfts-/Key-/Inputowner, derselbe Korpus mit nativem PSA,
+Nachgelagert ist derselbe Korpus tatsächlich mit produktivem PsaPackageDigest,
+PsaD0FactCrypto und PsaD0FactSigner ausgeführt: native **2732+137 Assertions**,
+vollständige aktuelle CI87/87 und beide SDK-Images. [Exakter Head0e9f7ad3,
+Originalarchiv und unabhängige Zuordnung](p1a7-checkpoint.md). Die zusätzlichen
+PSA-Backendchecks erklären die höhere Assertionzahl; die synthetischen Install-/
+Input-/Clock-/Finalports werden dadurch keine produktiven Originalowner.
+
+Offen: produktive Herkunfts-/Key-/Inputowner,
 vollständiger D1-/Control-/Effectanschluss, Gesamtbudget, Geräte- und Powerloss-
 Nachweis. Kein Upload, Release, main-Merge oder Abschluss von #93.

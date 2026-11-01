@@ -1,8 +1,8 @@
 # Manuelle Ersatzfreigabe v2: Komponentenprüfstand
 
-Status: **laufender vollständiger Umsetzungsauftrag; vorbereitender Draft**,
-31.10.2026. Ziel [#93](https://github.com/Sven401/Larp-Escape/issues/93).
-Arbeitsbasis `27a8a5d4a5fb2ba77790997fc09c4a4f583ae6e1`, einschließlich der
+Status: **laufender vollständiger Umsetzungsauftrag; geprüfter Komponenten-Draft**,
+01.11.2026. Ziel [#93](https://github.com/Sven401/Larp-Escape/issues/93).
+Ausgangsbasis `27a8a5d4a5fb2ba77790997fc09c4a4f583ae6e1`, einschließlich der
 qualifizierten D0-Integration `c4f1f824c6274e9a8d7676212a2a96be4d4a77b9`.
 Der [bestätigte Erweiterungsvertrag](p0-manual-override-v2.md) bleibt der
 vollständige Auftrag; dieser Prüfstand ersetzt ihn nicht.
@@ -13,9 +13,10 @@ Die folgenden zusätzlichen Komponenten sind auf dem Arbeitsbranch vorbereitet.
 Der tatsächliche Gesamtkoordinator `RulesProgressOwner`, produktive ursprüngliche
 Installations-/Eingangs-/Uhrbelege, Einrichtung und F5a bleiben offen. Sein noch
 unveröffentlichter Header/Body und der separate Schlüsseldatei-Kandidat gehören
-ausdrücklich nicht zu diesem Komponentencheckpoint. Die grüne PR-CI weiter unten
-bezieht sich ausschließlich auf den früheren Head `7a44ac50…`; der neue Stand
-braucht einen eigenen nativen PSA-/SDK-/PR-Lauf.
+ausdrücklich nicht zu diesem Komponentencheckpoint. Der aktuelle veröffentlichte
+Komponentenstand `0e9f7ad3…` ist einschließlich eigenem nativen PSA-/SDK-/PR-Lauf
+qualifiziert; die genaue Zuordnung steht im nachgelagerten Abschnitt. Frühere
+Prüfstände bleiben ausdrücklich historische Belege.
 
 Kern-/Integrationsentwickler bleibt `developer_p1a3`; Root implementiert zusätzlich
 den [Katalog-/Plancodec](rules-progress-codec-v1.md),
@@ -77,8 +78,9 @@ und Formatbaseline **376 Dateien/19.1.7** sind an einer separaten Kopie des exak
 vorgemerkten Komponentenbaums geprüft. Darin sind Coordinatorheader/-body und
 Schlüsseldatei-Kandidat nachweislich abwesend. Der reine spätere Aux-Testtarget-
 Nachtrag ändert diese Guardflächen nicht.
-Alle Quellen bleiben unter den unveränderten Pflichtprüfungen; endgültige
-commitbezogene CI und Geräte-/Speicher-/Lastnachweise stehen noch aus.
+Alle Quellen bleiben unter den unveränderten Pflichtprüfungen. Die nachgelagerte
+commitbezogene CI steht im folgenden Abschnitt; Geräte-/Speicher-/Lastnachweise
+bleiben weiterhin offen.
 
 Die zwei bisherigen Referenzspiele und sechs Traces bleiben erhalten; keine
 neue dritte Abnahmemechanik. Kein Upload, Release, main-Merge oder Abschluss #93.
@@ -122,7 +124,27 @@ Der minimale Folgefix erweitert genau diese Prüfung auf Auxiliary; ein Final
 behält weiterhin seine eigene Parentkennung. Der vollständige neue lokale
 Auxkorpus umfasst 468 Assertions, die acht isolierten Fälle sind mit Fix grün.
 Kein Authority-/Schema-/Lowlevelwechsel. **Diese Änderung ist nicht im grünen
-1d54cd7c-Nachweis enthalten und benötigt einen eigenen neuen CI-Lauf.**
+1d54cd7c-Nachweis enthalten und benötigte einen eigenen neuen CI-Lauf.**
+
+Dieser neue Lauf ist inzwischen unabhängig qualifiziert: Head
+`0e9f7ad3446c0b7b9c8387c98f5034ba5488f6fb`, Prüfmerge
+`4243abf5d539112c3ffcc253d1d367044e1c3b85`, exakt unverändertes Ziel `c4f1f824…`
+und Head als Eltern; Tree `b7eb0c56559df9f8979d7d18272ee7287cde3502`.
+**12/12 PR-Jobs, 87/87 native CTests, null übersprungen und beide SDK-Images grün.**
+`quality_p1` prüfte alle zwölf Originalcheckoutlogs, sechs Workflowpfade,
+pull_request/Attempt1/Actions-App15368 sowie frische REST-/Git-Refs.
+[Native41253986154](https://github.com/Sven401/Larp-Escape/actions/runs/41253986154)
+enthält tatsächlich den neuen Auxkorpus mit 468 Assertions und acht Parentfällen,
+806 ManualOwner-Automatenchecks mit synthetischen Authority-/Transactionports
+und realer PSA-SHA, SignedEvidence2732+137, Codec-Traces620, Effect3160 und
+Bundle167269/16390Cuts. SDK9a97…/rekursive Submodule und die drei tatsächlichen
+PSA-Adapter im Coreimage sind bestätigt. Originalarchiv13061723868, SHA256
+`1fcaa4664b28293d50e954e6d76346450d69bb1521e50f825c943fa5edaf94e4`.
+[Quality41253986284](https://github.com/Sven401/Larp-Escape/actions/runs/41253986284)
+einschließlich vier Firmwarevarianten/Android, LED41253986142, NFC41253986136,
+ESP41253986222 und Rollen41253986171 sind ebenfalls erfolgreich.
+Die qualifizierten Komponenten erzeugen dadurch weder eine produktive
+Setup-/GM-Autorität noch einen fertigen semantischen Gesamtowner oder Gerätebeleg.
 
 Nutzerfreigabe am 01.11.2026: „Testfix und geprüfte Folgestände freigeben“.
 Sie gilt für unabhängig geprüfte Folgestände im bereits beauftragten Umfang,

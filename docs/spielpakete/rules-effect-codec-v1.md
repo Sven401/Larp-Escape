@@ -81,3 +81,8 @@ Header `09f72004a76c116aba6f903dc9107b1b95242ca9fab8cc64b74d0401796ca975`.
 [Eigene unabhängige Quellen und Reproduktion](../../test/fixtures/rules-effect-independent-review/README.md).
 Auch diese Gegenprüfung behauptet keine tatsächliche Claimreihenfolge im Owner,
 Speicherschreibung, Geräteausgabe oder physische Beobachtung.
+
+Die [nachgelagerte native Qualifikation am Head0e9f7ad3](p1a7-checkpoint.md) führt
+die 3160 Codecassertions tatsächlich erneut aus; vollständige CI87/87 und beide
+SDK-Builds sind unabhängig zugeordnet. Diese getrennten Compile-/Laufzeitbelege
+ersetzen weiterhin keinen tatsächlichen Effektowner oder physische Beobachtung.

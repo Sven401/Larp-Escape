@@ -1,11 +1,16 @@
 # Vollständige Rules-Speicherblobs v1
 
-Status: implementiert und unabhängig auf dem Host geprüft, 01.11.2026;
-nativer PSA-Nachweis für diesen Stand noch offen. Bestandteil des
+Status: implementiert, unabhängig auf dem Host und im nativen PSA-Korpus geprüft,
+01.11.2026. Bestandteil des
 vollständigen manuellen Ersatzwegs in [Draft #135](https://github.com/Sven401/Larp-Escape/pull/135),
 kein abgeschlossener Owner-/Authority-/F5a-Pfad. Root implementiert
 `RulesProgressCodec`, `module_digest_review` prüft unabhängig die Byte-/Sicherheits-
 grenzen; `quality_p1` führt davon getrennte unabhängige Integrationsgegenfälle.
+
+Die [native Qualifikation am Head 0e9f7ad3](p1a7-checkpoint.md) umfasst denselben
+vollständigen Codec-/Trace-/Fehlkorpus, 87/87 CTests und beide SDK-Builds.
+Das Decodergebnis bleibt `DecodedUnauthenticated`, Plan.ready false und Admission
+inaktiv; diese Nachweise verleihen keine aktuelle Autorität oder D1-Publikation.
 
 Diese inneren Blobs werden vom [Bundlevertrag §7](p0-manual-override-v2.md)
 vollständig gebunden. Unveränderte physische Journal-ABI, keine zusätzlichen
