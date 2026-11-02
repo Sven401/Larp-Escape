@@ -1,0 +1,46 @@
+{
+  "status": "native manufacturer-distance screen; not fabrication release",
+  "date": "2026-11-02",
+  "kicad": "10.0.8",
+  "input_sha256": {
+    "clearance-screen-8b383237/screen.kicad_pcb": "8b383237c2a90d4270685943619f579258b213815a4f9e6838f9993665eba590",
+    "clearance-screen-8b383237/screen.kicad_pro": "21edd368db533b1de0727e4b4a2cba077256bfb625adf76d03e70f1da0225098",
+    "clearance-screen-8b383237/screen.kicad_dru": "eacaf95b9971133a5f3171c48e5b195d43dab3103fd1dc74570041c5c8d4f514",
+    "clearance-screen-8b383237/positive-control.kicad_dru": "0a80f1a94a48c1506c56c208cebc9ff7ec431852e3fc9345a9c9d26e09096aba",
+    "clearance-screen-8b383237/drc-all-layers.json": "8875ce4d0bd885dfafb1efdab529853b623a09c4ee5736abe39a64aac53a418b",
+    "clearance-screen-8b383237/positive-control.json": "36e9b781fddf11f0d9589b04094df6d7ac6ace19e717d01aa4cdee95546d6b5e"
+  },
+  "frozen_pcb_sha256": "8b383237c2a90d4270685943619f579258b213815a4f9e6838f9993665eba590",
+  "copy_byte_identical": true,
+  "tests": [
+    {
+      "item": "PTH foreign-copper clearance",
+      "layers": "all; inner rule overrides",
+      "threshold_mm": 0.28,
+      "inner_threshold_mm": 0.3
+    },
+    {
+      "item": "Via foreign-copper clearance",
+      "layers": "all six copper layers",
+      "threshold_mm": 0.2
+    }
+  ],
+  "new_rule_violations": 0,
+  "known_npth_violations": 4,
+  "unconnected": 0,
+  "positive_control": {
+    "inner_pth_threshold_mm": 3.0,
+    "rule_triggered_count": 26,
+    "reported_gaps_mm": []
+  },
+  "other_violations": {
+    "track_not_centered_on_via": 8,
+    "lib_footprint_issues": 109
+  },
+  "limitations": [
+    "109 lib_footprint_issues are missing library resolution in isolated copy, not new geometry errors and not equivalent to original two library mismatch warnings",
+    "Uses frozen zone fills; does not refill or change native geometry",
+    "hole_clearance checks foreign-net copper, not same-net copper",
+    "Does not qualify dimensional tolerances, plating, solderability, panelization or supplier CAM acceptance"
+  ]
+}

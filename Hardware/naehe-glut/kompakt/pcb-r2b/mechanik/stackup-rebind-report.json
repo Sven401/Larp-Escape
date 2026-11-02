@@ -1,0 +1,93 @@
+{
+  "checked_utc": "2026-11-02T01:49:42.804143+00:00",
+  "status": "promoted_stackup_internal_copper_change_no_mechanical_geometry_change",
+  "previous_pcb_sha256": "7af39dbe807ed82f905622cce0c6b93f2cd650c61eafb224970e9f49eec15868",
+  "current_pcb_sha256": "8b383237c2a90d4270685943619f579258b213815a4f9e6838f9993665eba590",
+  "previous_manifest_sha256": "2d1374231989c40671824f46f29114c3dbdbf207467cc2666feca7561953947d",
+  "interface_sha256": "3a7336d7caa31b01987aad646c28f174d69091ae8d22db57fd11c81bd8357e75",
+  "interface_comparison": "Only pcb_sha256 differs, verified by exact previous interface hash after reverting it.",
+  "exact_geometry_comparison": {
+    "footprint": {
+      "count": 109,
+      "exact_blocks_identical": true,
+      "sorted_blocks_sha256": "c12bd4c46d59a78f3172c883790ef7d9918b9e09ce6a56a65b06f00c12b6695f"
+    },
+    "via": {
+      "count": 230,
+      "exact_blocks_identical": true,
+      "sorted_blocks_sha256": "bbbff373df5fd649b6da86586c45dea18bb9023e9c14edad994b828acc1dc8f2"
+    },
+    "general": {
+      "count": 1,
+      "exact_blocks_identical": true,
+      "sorted_blocks_sha256": "d80a569eb88918e3d4d54d0d08cac804a6a145d6a8980ccaa1c0e0c384c1367b"
+    },
+    "gr_line": {
+      "count": 8,
+      "exact_blocks_identical": true,
+      "sorted_blocks_sha256": "3b6152dea213b2e305557c07a80291a03ac8b6e8cb12fc6eff3004da3b1cfc93"
+    },
+    "gr_arc": {
+      "count": 0,
+      "exact_blocks_identical": true,
+      "sorted_blocks_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "gr_rect": {
+      "count": 0,
+      "exact_blocks_identical": true,
+      "sorted_blocks_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "gr_poly": {
+      "count": 0,
+      "exact_blocks_identical": true,
+      "sorted_blocks_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "zone": {
+      "count": 7,
+      "exact_blocks_identical": true,
+      "sorted_blocks_sha256": "f2a715306960707806121f5e2f1598a2e4c137aa197b54c267286996019d2207"
+    }
+  },
+  "native_kicad_read_check": {
+    "both_nominal_board_thickness_mm": 1.0,
+    "both_copper_layers": 6
+  },
+  "internal_segment_change": {
+    "removed": [
+      "(segment\r\n\t\t(start 8.25 34.8)\r\n\t\t(end 9.85 32.575)\r\n\t\t(width 0.15)\r\n\t\t(locked yes)\r\n\t\t(layer \"In3.Cu\")\r\n\t\t(net \"/USB_DP_HOST\")\r\n\t\t(uuid \"13e5dec7-ab48-417d-918c-c6765a7bcb13\")\r\n\t)"
+    ],
+    "added": [
+      "(segment\r\n\t\t(start 8.238365 34.092769)\r\n\t\t(end 9.083564 33.111736)\r\n\t\t(width 0.15)\r\n\t\t(locked yes)\r\n\t\t(layer \"In3.Cu\")\r\n\t\t(net \"/USB_DP_HOST\")\r\n\t\t(uuid \"0bdc3114-1822-4f1e-9a91-1c2a94beac34\")\r\n\t)",
+      "(segment\r\n\t\t(start 8.25 34.8)\r\n\t\t(end 8.238365 34.092769)\r\n\t\t(width 0.15)\r\n\t\t(locked yes)\r\n\t\t(layer \"In3.Cu\")\r\n\t\t(net \"/USB_DP_HOST\")\r\n\t\t(uuid \"6da8cc31-6ae8-4996-a78f-ad9b3088c0d3\")\r\n\t)",
+      "(segment\r\n\t\t(start 9.083564 33.111736)\r\n\t\t(end 9.85 32.575)\r\n\t\t(width 0.15)\r\n\t\t(locked yes)\r\n\t\t(layer \"In3.Cu\")\r\n\t\t(net \"/USB_DP_HOST\")\r\n\t\t(uuid \"77b42484-0176-45ce-bdf2-d2b6fbe06f91\")\r\n\t)"
+    ],
+    "mechanical_effect": "None; same internal layer, unchanged board/component geometry. Electrical/stackup acceptance handled by independent hardware review."
+  },
+  "unchanged_payload_sha256": {
+    "mechanik/base.step": "785c70502a4d3d48a3ebbfe475e46422dde6f46866779612df05c5fdd830e86a",
+    "mechanik/base.stl": "62c81989315d8e694adefc1a3c1c62025461cf8fdba6ae0cde0555f12f8166f8",
+    "mechanik/insert_r2b.step": "96bc434c50ff948b1769d71bca4bfa66a08cb970b0624b82af9d6a92438e37f4",
+    "mechanik/insert_r2b.stl": "01e29478424767fb0e7e202360739fb721f9ba3f6ca0d6e31814d230c95f32d0",
+    "mechanik/clamp_left.step": "75b2e3f79f127922c963d33b82b38ce91ad54e29fcbaf486803c5fd8bc8c52b8",
+    "mechanik/clamp_left.stl": "f428aaf7ca186675bdf7ebc37ff7cdaf0f807131aac33a4d83f3487e639f8b9a",
+    "mechanik/clamp_right.step": "6085b39e31d64273f4b46dadc71b71a0d708d9674929ee7a6801df3aeecefe8b",
+    "mechanik/clamp_right.stl": "2a40d2e110641b744c9a55f63470b7475309da2d9f1953e5c9e9793bfb198fc6",
+    "mechanik/usb_tie_bar.step": "baf3d4a029d3af078a720eb3657997a14e51c08e7a453e3afe1b0dfa0734b095",
+    "mechanik/usb_tie_bar.stl": "06c107cd184d4a784fdf92a566b08a44c6a1c9ccf93fd4aebfd7bbc94eb6f5d5",
+    "mechanik/jtag_tie_bar.step": "13a4a0efbc1792e5bb1801642442568c9f80d904c3e2548933c81c43388fc1e6",
+    "mechanik/jtag_tie_bar.stl": "36c1f787a2f2914430d49489faddf538039be702a939c7ab115b7c6fea34346c",
+    "mechanik/R2b-service-draft.FCStd": "0c42ea353000052771b087618298bca04fba21a005c9eca8ec0f1c3a075fb87e",
+    "mechanik/assembly-draft.step": "60f8f1fd19d43847965b79cd807ffcc8eb54e7bf5f3b69b0848bdb8227c56150",
+    "mechanik/R2b-service-P1S-PETG-draft.3mf": "320ad5a7e27d06a0aeaa29452a3df2940b79139ac429dc5809d6c3e07e02337d",
+    "mechanik/assembled-draft.png": "fce4bb94a5b3d7724e6f900fe9dfb69e9b3f07abc7492faefeeaaf134a305766",
+    "mechanik/exploded-draft.png": "ff2abff692fbc3e9fd12dcf2ddda7cc5268aaebc44573f4865c70a4d389515cb",
+    "mechanik/underside-draft.png": "f9680fbc744217e36ddf306260a807c1b80836577e5e9e6903f80795b8aa7348"
+  },
+  "unchanged_geometry_report_sha256": "71b8904c4f8508ec757e5cb569bb17947453cc6ad899bab0c30d4859f2bdcf37",
+  "unchanged_slice_report_sha256": "e4bfb77a99d0fb6e75675b3758adda19be834ceed4202324a1206652bd56195f",
+  "limits": [
+    "Nominal geometry only; manufacturer finished board thickness tolerances and physical fit remain open.",
+    "No new CAD construction, slicing, physical printing or electrical test performed.",
+    "Previous collision screening evidence retained for identical geometry; prior exact-MPN tolerance limitations remain."
+  ]
+}

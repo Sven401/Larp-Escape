@@ -1,0 +1,79 @@
+(footprint "Switch_2WirePads"
+	(version 20260206)
+	(generator "pcbnew")
+	(generator_version "10.0")
+	(layer "F.Cu")
+	(descr "R2a reviewed-source geometry; not independently released")
+	(property "Reference" "REF**"
+		(at 0 -2.5 0)
+		(layer "F.Fab")
+		(uuid "83663bdc-64f2-4470-92e7-fd67bb56af4a")
+		(effects
+			(font
+				(size 0.5 0.5)
+				(thickness 0.08)
+			)
+		)
+	)
+	(property "Value" "Switch_2WirePads"
+		(at 0 2.5 0)
+		(layer "F.Fab")
+		(uuid "1c97181d-5cd8-45ab-9090-86909dadfef2")
+		(effects
+			(font
+				(size 0.6 0.6)
+				(thickness 0.1)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "98a962d9-6de8-4891-9d50-29b126eec2a7")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "af037a71-4432-4500-be6e-8885771c20a6")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(attr smd)
+	(duplicate_pad_numbers_are_jumpers no)
+	(fp_rect
+		(start -1.15 -1.5)
+		(end 3.65 1.5)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "b7d8e6c1-a342-4a69-9109-2877d0099f95")
+	)
+	(pad "1" smd rect
+		(at 0 0)
+		(size 1.2 2.5)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(solder_mask_margin 0)
+		(uuid "8931def9-a415-4958-9304-d90e30e4e4b6")
+	)
+	(pad "2" smd rect
+		(at 2.5 0)
+		(size 1.2 2.5)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(solder_mask_margin 0)
+		(uuid "4eca94e3-cc64-472b-94a6-d78e84a8505f")
+	)
+	(embedded_fonts no)
+)

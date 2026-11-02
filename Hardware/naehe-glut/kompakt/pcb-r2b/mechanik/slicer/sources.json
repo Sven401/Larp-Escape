@@ -1,0 +1,24 @@
+{
+  "source": "Official Bambu Studio portable profiles bundled v02.08.02.61",
+  "upstream": "https://github.com/bambulab/BambuStudio/tree/v02.08.02.61/resources/profiles/BBL",
+  "sha256": {
+    "resources\\profiles\\BBL\\machine\\Bambu Lab P1S 0.4 nozzle.json": "df86ba7669bb9a41f1323fa2f649f8a5bb0127d24d882adb4f4969014fce426d",
+    "resources\\profiles\\BBL\\machine\\fdm_bbl_3dp_001_common.json": "aa5b0148c3131965ab2bb1d377b43301304030c3d87b339897cef98809a9004f",
+    "resources\\profiles\\BBL\\machine\\fdm_machine_common.json": "aef949f605e74bd7370dab061d9cb9f6b7fde5ae92e7fe3b34d98c0a7746c514",
+    "resources\\profiles\\BBL\\machine\\Bambu Lab P1S 0.4 nozzle template machine_start_gcode.json": "ba5fa982179abd2c7c893e643be2fd91377a042368aa609420690f819cd4bbc0",
+    "resources\\profiles\\BBL\\machine\\Bambu Lab P1S 0.4 nozzle template machine_end_gcode.json": "71d15baae3109651565caa6a41ab1b546f1f3a579e2b82a3e49139ed0319ebfa",
+    "resources\\profiles\\BBL\\machine\\Bambu Lab P1S 0.4 nozzle template time_lapse_gcode.json": "fe558ba9c89711cda6b7179689da9ffe279e87a432bcb947f05e1037652ccdb3",
+    "resources\\profiles\\BBL\\machine\\Bambu Lab P1S 0.4 nozzle template change_filament_gcode.json": "d51462ed02f2ef075bc73463aa98a9bcba340331a3c814431e5dc78926926d41",
+    "resources\\profiles\\BBL\\machine\\Bambu Lab P1S 0.4 nozzle template layer_change_gcode.json": "88fd5f1a0d71e737966d8b411c03c8735b6f9b5a762726c017b6fb5b9f66f542",
+    "resources\\profiles\\BBL\\process\\0.20mm Standard @BBL X1C.json": "9cfd44e7378d6fed4b3507e6bd01d618662837bf1cce9a1a0bc30f8b89454512",
+    "resources\\profiles\\BBL\\process\\fdm_process_single_0.20.json": "dc32f236bb0ae0d19560954a1beb87701dac4db85877f5f7c92b3a67315431c5",
+    "resources\\profiles\\BBL\\process\\fdm_process_single_common.json": "b589e22e3a9f3513dd71d0a1061181c6f24a2e330b73b1cf7f63a292d7d6a37b",
+    "resources\\profiles\\BBL\\process\\fdm_process_common.json": "ff2c0e49a424f70319e52eff6e84c57604b5b86deb883bb4d5614ff448d0c107",
+    "resources\\profiles\\BBL\\filament\\Generic PETG.json": "ab46eb25d4c8ce37a2505644c1fe6ef183f91a24a27a6e35e91d462870b58e0c",
+    "resources\\profiles\\BBL\\filament\\Generic PETG @base.json": "cae86cd8a45f7baed08206f0863045e99ab638894a39d118f7c77da9eb5ba82d",
+    "resources\\profiles\\BBL\\filament\\fdm_filament_pet.json": "33ce64c25a626455eecf244ddd2e75022c08f95a074ba0d1690ab63802fab9d7",
+    "resources\\profiles\\BBL\\filament\\fdm_filament_common.json": "55573eb37c4031a58e939c4a2c281d62e234192509cac525d4f8d911e8a85c09"
+  },
+  "license": "AGPL-3.0",
+  "process_note": "X1C is the official default process named by the P1S machine; actual printer is P1S."
+}

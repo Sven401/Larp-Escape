@@ -1,0 +1,1944 @@
+{
+  "revision": "R2a",
+  "status": "routed laboratory prototype pending independent CAD CAM and supplier review",
+  "board_mm": [
+    19.8,
+    19.35
+  ],
+  "assembly_xy_nominal_mm": [
+    19.8,
+    24.55
+  ],
+  "max_assembly_mm": [
+    20,
+    25
+  ],
+  "copper_layers": 6,
+  "parts": [
+    {
+      "ref": "U1",
+      "value": "ESP32-S3-MINI-1-N4R2",
+      "mpn": "ESP32-S3-MINI-1-N4R2",
+      "footprint": "RF_Module:ESP32-S2-MINI-1",
+      "pins": {
+        "1": "GND",
+        "2": "GND",
+        "3": "+3V3",
+        "4": "BOOT0",
+        "5": null,
+        "6": null,
+        "7": null,
+        "8": null,
+        "9": null,
+        "10": null,
+        "11": null,
+        "12": "GPIO8_DATA",
+        "13": "GPIO9_OE",
+        "14": "GPIO10_LED_EN",
+        "15": "FAULT_N",
+        "16": null,
+        "17": null,
+        "18": null,
+        "19": null,
+        "20": null,
+        "21": null,
+        "22": null,
+        "23": null,
+        "24": null,
+        "25": null,
+        "26": null,
+        "27": null,
+        "28": null,
+        "29": null,
+        "30": null,
+        "31": null,
+        "32": null,
+        "33": null,
+        "34": null,
+        "35": null,
+        "36": null,
+        "37": null,
+        "38": null,
+        "39": "UART_TX",
+        "40": "UART_RX",
+        "41": null,
+        "42": "GND",
+        "43": "GND",
+        "44": "GPIO46_STRAP",
+        "45": "CHIP_EN",
+        "46": "GND",
+        "47": "GND",
+        "48": "GND",
+        "49": "GND",
+        "50": "GND",
+        "51": "GND",
+        "52": "GND",
+        "53": "GND",
+        "54": "GND",
+        "55": "GND",
+        "56": "GND",
+        "57": "GND",
+        "58": "GND",
+        "59": "GND",
+        "60": "GND",
+        "61": "GND",
+        "62": "GND",
+        "63": "GND",
+        "64": "GND",
+        "65": "GND"
+      },
+      "pin_count": 65,
+      "pin_numbers": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37",
+        "38",
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52",
+        "53",
+        "54",
+        "55",
+        "56",
+        "57",
+        "58",
+        "59",
+        "60",
+        "61",
+        "62",
+        "63",
+        "64",
+        "65"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {
+        "1": "GND",
+        "2": "GND",
+        "3": "3V3",
+        "4": "IO0",
+        "5": "IO1",
+        "6": "IO2",
+        "7": "IO3",
+        "8": "IO4",
+        "9": "IO5",
+        "10": "IO6",
+        "11": "IO7",
+        "12": "IO8",
+        "13": "IO9",
+        "14": "IO10",
+        "15": "IO11",
+        "16": "IO12",
+        "17": "IO13",
+        "18": "IO14",
+        "19": "IO15",
+        "20": "IO16",
+        "21": "IO17",
+        "22": "IO18",
+        "23": "USB_D-",
+        "24": "USB_D+",
+        "25": "IO21",
+        "26": "IO26",
+        "27": "IO47",
+        "28": "IO33",
+        "29": "IO34",
+        "30": "IO48",
+        "31": "IO35",
+        "32": "IO36",
+        "33": "IO37",
+        "34": "IO38",
+        "35": "IO39",
+        "36": "IO40",
+        "37": "IO41",
+        "38": "IO42",
+        "39": "TXD0",
+        "40": "RXD0",
+        "41": "IO45",
+        "42": "GND",
+        "43": "GND",
+        "44": "IO46",
+        "45": "EN",
+        "46": "GND",
+        "47": "GND",
+        "48": "GND",
+        "49": "GND",
+        "50": "GND",
+        "51": "GND",
+        "52": "GND",
+        "53": "GND",
+        "54": "GND",
+        "55": "GND",
+        "56": "GND",
+        "57": "GND",
+        "58": "GND",
+        "59": "GND",
+        "60": "GND",
+        "61": "GND",
+        "62": "GND",
+        "63": "GND",
+        "64": "GND",
+        "65": "GND"
+      },
+      "types": {
+        "1": "power_in",
+        "2": "passive",
+        "3": "power_in",
+        "4": "bidirectional",
+        "5": "bidirectional",
+        "6": "bidirectional",
+        "7": "bidirectional",
+        "8": "bidirectional",
+        "9": "bidirectional",
+        "10": "bidirectional",
+        "11": "bidirectional",
+        "12": "bidirectional",
+        "13": "bidirectional",
+        "14": "bidirectional",
+        "15": "bidirectional",
+        "16": "bidirectional",
+        "17": "bidirectional",
+        "18": "bidirectional",
+        "19": "bidirectional",
+        "20": "bidirectional",
+        "21": "bidirectional",
+        "22": "bidirectional",
+        "23": "bidirectional",
+        "24": "bidirectional",
+        "25": "bidirectional",
+        "26": "bidirectional",
+        "27": "bidirectional",
+        "28": "bidirectional",
+        "29": "bidirectional",
+        "30": "bidirectional",
+        "31": "bidirectional",
+        "32": "bidirectional",
+        "33": "bidirectional",
+        "34": "bidirectional",
+        "35": "bidirectional",
+        "36": "bidirectional",
+        "37": "bidirectional",
+        "38": "bidirectional",
+        "39": "bidirectional",
+        "40": "bidirectional",
+        "41": "bidirectional",
+        "42": "passive",
+        "43": "passive",
+        "44": "bidirectional",
+        "45": "input",
+        "46": "passive",
+        "47": "passive",
+        "48": "passive",
+        "49": "passive",
+        "50": "passive",
+        "51": "passive",
+        "52": "passive",
+        "53": "passive",
+        "54": "passive",
+        "55": "passive",
+        "56": "passive",
+        "57": "passive",
+        "58": "passive",
+        "59": "passive",
+        "60": "passive",
+        "61": "passive",
+        "62": "passive",
+        "63": "passive",
+        "64": "passive",
+        "65": "passive"
+      },
+      "note": "S3 body20.5mm and GND61..65 bound to Espressif v1.7; stock S2 courtyard/model not S3 body proof"
+    },
+    {
+      "ref": "U2",
+      "value": "5.1V LED boost",
+      "mpn": "TPS61023DRLR",
+      "footprint": "Package_TO_SOT_SMD:SOT-563",
+      "pins": {
+        "1": "BOOST_FB",
+        "2": "GPIO10_LED_EN",
+        "3": "BAT_LIMITED",
+        "4": "GND",
+        "5": "BOOST_SW",
+        "6": "+5V"
+      },
+      "pin_count": 6,
+      "pin_numbers": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {
+        "1": "FB",
+        "2": "EN",
+        "3": "VIN",
+        "4": "GND",
+        "5": "SW",
+        "6": "VOUT"
+      },
+      "types": {
+        "1": "input",
+        "2": "input",
+        "3": "power_in",
+        "4": "power_in",
+        "5": "passive",
+        "6": "power_out"
+      }
+    },
+    {
+      "ref": "U3",
+      "value": "3V3 independent buck-boost",
+      "mpn": "TPS63070RNMR",
+      "footprint": "NearGlowR2a:TI_RNM0015A",
+      "pins": {
+        "1": "MCU_PS",
+        "2": "CHIP_EN",
+        "3": "MCU_VAUX",
+        "4": "GND",
+        "5": "MCU_FB",
+        "6": null,
+        "7": "+3V3",
+        "8": "+3V3",
+        "9": "MCU_L2",
+        "10": "GND",
+        "11": "MCU_L1",
+        "12": "BAT_FUSED",
+        "13": "BAT_FUSED",
+        "14": "MCU_REG_EN",
+        "15": "GND"
+      },
+      "pin_count": 15,
+      "pin_numbers": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {
+        "1": "PS_SYNC",
+        "2": "PG",
+        "3": "VAUX",
+        "4": "GND",
+        "5": "FB",
+        "6": "FB2",
+        "7": "VOUT",
+        "8": "VOUT",
+        "9": "L2",
+        "10": "PGND",
+        "11": "L1",
+        "12": "VIN",
+        "13": "VIN",
+        "14": "EN",
+        "15": "VSEL"
+      },
+      "types": {
+        "1": "input",
+        "2": "open_collector",
+        "3": "passive",
+        "4": "power_in",
+        "5": "input",
+        "6": "open_collector",
+        "7": "power_out",
+        "8": "passive",
+        "9": "passive",
+        "10": "power_in",
+        "11": "passive",
+        "12": "power_in",
+        "13": "power_in",
+        "14": "input",
+        "15": "input"
+      }
+    },
+    {
+      "ref": "U4",
+      "value": "UVLO with hysteresis",
+      "mpn": "TPS3700DDCR",
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "pins": {
+        "1": "SYS_EN",
+        "2": "GND",
+        "3": "UV_SENSE",
+        "4": "GND",
+        "5": "BAT_FUSED",
+        "6": null
+      },
+      "pin_count": 6,
+      "pin_numbers": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {
+        "1": "OUTA",
+        "2": "GND",
+        "3": "INA+",
+        "4": "INB-",
+        "5": "VDD",
+        "6": "OUTB"
+      },
+      "types": {
+        "1": "open_collector",
+        "2": "power_in",
+        "3": "input",
+        "4": "input",
+        "5": "power_in",
+        "6": "open_collector"
+      }
+    },
+    {
+      "ref": "U5",
+      "value": "LED input current limiter latch-off",
+      "mpn": "TPS2553DBVR-1",
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "pins": {
+        "1": "BAT_FUSED",
+        "2": "GND",
+        "3": "GPIO10_LED_EN",
+        "4": "FAULT_N",
+        "5": "ILIM",
+        "6": "BAT_LIMITED"
+      },
+      "pin_count": 6,
+      "pin_numbers": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {
+        "1": "IN",
+        "2": "GND",
+        "3": "EN",
+        "4": "FAULT",
+        "5": "ILIM",
+        "6": "OUT"
+      },
+      "types": {
+        "1": "power_in",
+        "2": "power_in",
+        "3": "input",
+        "4": "open_collector",
+        "5": "passive",
+        "6": "power_out"
+      }
+    },
+    {
+      "ref": "U6",
+      "value": "LED translating data buffer",
+      "mpn": "SN74LV1T125DCKR",
+      "footprint": "Package_TO_SOT_SMD:SOT-353_SC-70-5",
+      "pins": {
+        "1": "LED_OE_N",
+        "2": "LED_A",
+        "3": "GND",
+        "4": "LED_Y",
+        "5": "LED5V"
+      },
+      "pin_count": 5,
+      "pin_numbers": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {
+        "1": "OE_N",
+        "2": "A",
+        "3": "GND",
+        "4": "Y",
+        "5": "VCC"
+      },
+      "types": {
+        "1": "input",
+        "2": "input",
+        "3": "power_in",
+        "4": "tri_state",
+        "5": "power_in"
+      }
+    },
+    {
+      "ref": "U7",
+      "value": "LED load switch",
+      "mpn": "TPS22918DBVR",
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "pins": {
+        "1": "+5V",
+        "2": "GND",
+        "3": "GPIO10_LED_EN",
+        "4": "LED_CT",
+        "5": "LED_QOD",
+        "6": "LED5V"
+      },
+      "pin_count": 6,
+      "pin_numbers": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {
+        "1": "VIN",
+        "2": "GND",
+        "3": "ON",
+        "4": "CT",
+        "5": "QOD",
+        "6": "VOUT"
+      },
+      "types": {
+        "1": "power_in",
+        "2": "power_in",
+        "3": "input",
+        "4": "passive",
+        "5": "passive",
+        "6": "power_out"
+      }
+    },
+    {
+      "ref": "Q1",
+      "value": "MMBT3904 NPN OE pull-down",
+      "mpn": "MMBT3904WT1G",
+      "footprint": "Package_TO_SOT_SMD:SOT-323_SC-70",
+      "pins": {
+        "1": "OE_GATE",
+        "2": "GND",
+        "3": "LED_OE_N"
+      },
+      "pin_count": 3,
+      "pin_numbers": [
+        "1",
+        "2",
+        "3"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {
+        "1": "B",
+        "2": "E",
+        "3": "C"
+      },
+      "types": {
+        "1": "input",
+        "2": "passive",
+        "3": "passive"
+      }
+    },
+    {
+      "ref": "J1",
+      "value": "BAT JST PH2 vertical",
+      "mpn": "B2B-PH-SM4-TB(LF)(SN)",
+      "footprint": "Connector_JST:JST_PH_B2B-PH-SM4-TB_1x02-1MP_P2.00mm_Vertical",
+      "pins": {
+        "1": "BAT_RAW",
+        "2": "GND"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      },
+      "note": "PIN1 positive requires actual EEMB connector polarity check; mechanical MP pad has no net; 7.95x5mm body6.6mm high plus mate/cable"
+    },
+    {
+      "ref": "J2",
+      "value": "LED wire pads",
+      "mpn": "PCB integral solder pads",
+      "footprint": "NearGlowR2a:LED_3WirePads",
+      "pins": {
+        "1": "LED5V",
+        "2": "GND",
+        "3": "LED_DATA"
+      },
+      "pin_count": 3,
+      "pin_numbers": [
+        "1",
+        "2",
+        "3"
+      ],
+      "dnp": false,
+      "in_bom": false,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive",
+        "3": "passive"
+      },
+      "status": "solder-pad geometry and wire strain relief review required"
+    },
+    {
+      "ref": "J3",
+      "value": "External EG1218 EN switch",
+      "mpn": "PCB integral solder pads",
+      "footprint": "NearGlowR2a:Switch_2WirePads",
+      "pins": {
+        "1": "SYS_EN",
+        "2": "GND"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": false,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      },
+      "status": "solder-pad geometry and wire strain relief review required"
+    },
+    {
+      "ref": "F1",
+      "value": "2A fast fuse",
+      "mpn": "0467002.NRHF",
+      "footprint": "Fuse:Fuse_0603_1608Metric",
+      "pins": {
+        "1": "BAT_RAW",
+        "2": "BAT_FUSED"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      }
+    },
+    {
+      "ref": "L1",
+      "value": "1uH",
+      "mpn": "XEL4030-102MEC",
+      "footprint": "Inductor_SMD:L_Coilcraft_XxL4030",
+      "pins": {
+        "1": "BAT_LIMITED",
+        "2": "BOOST_SW"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      }
+    },
+    {
+      "ref": "L2",
+      "value": "1.5uH",
+      "mpn": "XFL4020-152MEC",
+      "footprint": "Inductor_SMD:L_Coilcraft_XAL4020-XXX",
+      "pins": {
+        "1": "MCU_L1",
+        "2": "MCU_L2"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      },
+      "status": "XFL4020 manufacturer pads0.98x3.4mm at+/-1.185mm match stock XAL4020 land; model is not XFL geometry proof"
+    },
+    {
+      "ref": "R1",
+      "value": "33.2k",
+      "mpn": "0402WGF3322TCE",
+      "footprint": "Resistor_SMD:R_0402_1005Metric",
+      "pins": {
+        "1": "ILIM",
+        "2": "GND"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      },
+      "tolerance": "1%",
+      "tcr_ppm_per_K": 100,
+      "rated_power_W": 0.0625,
+      "rated_voltage_V": 50,
+      "substitution_review": "pruefung/substitution-review.json",
+      "status": "Approved laboratory substitute: same 33.2k/1%/0402; current-limit initial tolerance unchanged; temperature and lifetime qualification remain"
+    },
+    {
+      "ref": "R2",
+      "value": "100k",
+      "mpn": "RT0402BRD07100KL",
+      "footprint": "Resistor_SMD:R_0402_1005Metric",
+      "pins": {
+        "1": "BAT_FUSED",
+        "2": "UV_SENSE"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      },
+      "tolerance": "0.1%"
+    },
+    {
+      "ref": "R3",
+      "value": "12.1k",
+      "mpn": "RT0402BRD0712K1L",
+      "footprint": "Resistor_SMD:R_0402_1005Metric",
+      "pins": {
+        "1": "UV_SENSE",
+        "2": "GND"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      },
+      "tolerance": "0.1%"
+    },
+    {
+      "ref": "R4",
+      "value": "750k",
+      "mpn": "MCS0402MD7503BE000",
+      "footprint": "Resistor_SMD:R_0402_1005Metric",
+      "pins": {
+        "1": "SYS_EN",
+        "2": "UV_SENSE"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      },
+      "tolerance": "0.1%",
+      "tcr_ppm_per_K": 25,
+      "source": "https://www.vishay.com/docs/28952/mcs0402at-mct0603at-mcu0805at-mca1206at.pdf",
+      "status": "Approved exact-MPN substitution: same resistance/0.1%/25ppm/0402; native stock land compared against Vishay28950; assembly review remains"
+    },
+    {
+      "ref": "R5",
+      "value": "22k",
+      "mpn": "RC0402FR-0722KL",
+      "footprint": "Resistor_SMD:R_0402_1005Metric",
+      "pins": {
+        "1": "BAT_FUSED",
+        "2": "SYS_EN"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      },
+      "tolerance": "1%"
+    },
+    {
+      "ref": "R6",
+      "value": "750k",
+      "mpn": "MCS0402MD7503BE000",
+      "footprint": "Resistor_SMD:R_0402_1005Metric",
+      "pins": {
+        "1": "+5V",
+        "2": "BOOST_FB"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      },
+      "tolerance": "0.1%",
+      "tcr_ppm_per_K": 25,
+      "source": "https://www.vishay.com/docs/28952/mcs0402at-mct0603at-mcu0805at-mca1206at.pdf",
+      "status": "Approved exact-MPN substitution: same resistance/0.1%/25ppm/0402; native stock land compared against Vishay28950; assembly review remains"
+    },
+    {
+      "ref": "R7",
+      "value": "100k",
+      "mpn": "RT0402BRD07100KL",
+      "footprint": "Resistor_SMD:R_0402_1005Metric",
+      "pins": {
+        "1": "BOOST_FB",
+        "2": "GND"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      },
+      "tolerance": "0.1%"
+    },
+    {
+      "ref": "R8",
+      "value": "10k",
+      "mpn": "RC0402FR-0710KL",
+      "footprint": "Resistor_SMD:R_0402_1005Metric",
+      "pins": {
+        "1": "+3V3",
+        "2": "CHIP_EN"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      },
+      "tolerance": "1%"
+    },
+    {
+      "ref": "R9",
+      "value": "10k",
+      "mpn": "RC0402FR-0710KL",
+      "footprint": "Resistor_SMD:R_0402_1005Metric",
+      "pins": {
+        "1": "+3V3",
+        "2": "BOOT0"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      },
+      "tolerance": "1%"
+    },
+    {
+      "ref": "R10",
+      "value": "10k",
+      "mpn": "RC0402FR-0710KL",
+      "footprint": "Resistor_SMD:R_0402_1005Metric",
+      "pins": {
+        "1": "GPIO46_STRAP",
+        "2": "GND"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      },
+      "tolerance": "1%"
+    },
+    {
+      "ref": "R11",
+      "value": "10k",
+      "mpn": "RC0402FR-0710KL",
+      "footprint": "Resistor_SMD:R_0402_1005Metric",
+      "pins": {
+        "1": "+3V3",
+        "2": "FAULT_N"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      },
+      "tolerance": "1%"
+    },
+    {
+      "ref": "R12",
+      "value": "100k",
+      "mpn": "RC0402FR-07100KL",
+      "footprint": "Resistor_SMD:R_0402_1005Metric",
+      "pins": {
+        "1": "GPIO10_LED_EN",
+        "2": "GND"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      },
+      "tolerance": "1%"
+    },
+    {
+      "ref": "R13",
+      "value": "100",
+      "mpn": "RC0402FR-07100RL",
+      "footprint": "Resistor_SMD:R_0402_1005Metric",
+      "pins": {
+        "1": "GPIO8_DATA",
+        "2": "LED_A"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      },
+      "tolerance": "1%"
+    },
+    {
+      "ref": "R14",
+      "value": "100k",
+      "mpn": "RC0402FR-07100KL",
+      "footprint": "Resistor_SMD:R_0402_1005Metric",
+      "pins": {
+        "1": "LED_A",
+        "2": "GND"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      },
+      "tolerance": "1%"
+    },
+    {
+      "ref": "R15",
+      "value": "330",
+      "mpn": "RC0402FR-07330RL",
+      "footprint": "Resistor_SMD:R_0402_1005Metric",
+      "pins": {
+        "1": "LED_Y",
+        "2": "LED_DATA"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      },
+      "tolerance": "1%"
+    },
+    {
+      "ref": "R16",
+      "value": "100k",
+      "mpn": "RC0402FR-07100KL",
+      "footprint": "Resistor_SMD:R_0402_1005Metric",
+      "pins": {
+        "1": "LED_DATA",
+        "2": "GND"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      },
+      "tolerance": "1%"
+    },
+    {
+      "ref": "R17",
+      "value": "470 ohm 0.1W",
+      "mpn": "RC0603FR-07470RL",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "pins": {
+        "1": "LED5V",
+        "2": "LED_OE_N"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      },
+      "tolerance": "1%"
+    },
+    {
+      "ref": "R18",
+      "value": "680",
+      "mpn": "RC0402FR-07680RL",
+      "footprint": "Resistor_SMD:R_0402_1005Metric",
+      "pins": {
+        "1": "GPIO9_OE",
+        "2": "OE_GATE"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      },
+      "tolerance": "1%"
+    },
+    {
+      "ref": "R19",
+      "value": "100k",
+      "mpn": "RC0402FR-07100KL",
+      "footprint": "Resistor_SMD:R_0402_1005Metric",
+      "pins": {
+        "1": "OE_GATE",
+        "2": "GND"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      },
+      "tolerance": "1%"
+    },
+    {
+      "ref": "R22",
+      "value": "470k",
+      "mpn": "MCS0402MD4703BE000",
+      "footprint": "Resistor_SMD:R_0402_1005Metric",
+      "pins": {
+        "1": "+3V3",
+        "2": "MCU_FB"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      },
+      "tolerance": "0.1%",
+      "tcr_ppm_per_K": 25,
+      "source": "https://www.vishay.com/docs/28952/mcs0402at-mct0603at-mcu0805at-mca1206at.pdf",
+      "status": "Approved exact-MPN substitution: same resistance/0.1%/25ppm/0402; native stock land compared against Vishay28950; assembly review remains"
+    },
+    {
+      "ref": "R23",
+      "value": "150k",
+      "mpn": "RT0402BRD07150KL",
+      "footprint": "Resistor_SMD:R_0402_1005Metric",
+      "pins": {
+        "1": "MCU_FB",
+        "2": "GND"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      },
+      "tolerance": "0.1%"
+    },
+    {
+      "ref": "R24",
+      "value": "10k",
+      "mpn": "RC0402FR-0710KL",
+      "footprint": "Resistor_SMD:R_0402_1005Metric",
+      "pins": {
+        "1": "SYS_EN",
+        "2": "MCU_REG_EN"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      },
+      "tolerance": "1%"
+    },
+    {
+      "ref": "R25",
+      "value": "6.8k",
+      "mpn": "RC0402FR-076K8L",
+      "footprint": "Resistor_SMD:R_0402_1005Metric",
+      "pins": {
+        "1": "CHIP_EN",
+        "2": "RC_EN"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      },
+      "tolerance": "1%"
+    },
+    {
+      "ref": "R26",
+      "value": "10k",
+      "mpn": "RC0402FR-0710KL",
+      "footprint": "Resistor_SMD:R_0402_1005Metric",
+      "pins": {
+        "1": "BAT_FUSED",
+        "2": "MCU_PS"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      },
+      "tolerance": "1%"
+    },
+    {
+      "ref": "R27",
+      "value": "1k",
+      "mpn": "RC0402FR-071KL",
+      "footprint": "Resistor_SMD:R_0402_1005Metric",
+      "pins": {
+        "1": "LED5V",
+        "2": "LED_QOD"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      },
+      "tolerance": "1%"
+    },
+    {
+      "ref": "C1",
+      "value": "10uF 10V X5R",
+      "mpn": "GRM21BR61A106KE19L",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "pins": {
+        "1": "BAT_FUSED",
+        "2": "GND"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      }
+    },
+    {
+      "ref": "C2",
+      "value": "10uF 10V X5R",
+      "mpn": "GRM21BR61A106KE19L",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "pins": {
+        "1": "BAT_LIMITED",
+        "2": "GND"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      }
+    },
+    {
+      "ref": "C3",
+      "value": "22uF 16V X6S",
+      "mpn": "GRM21BC81C226ME44L",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "pins": {
+        "1": "+5V",
+        "2": "GND"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      },
+      "tolerance": "20%"
+    },
+    {
+      "ref": "C4",
+      "value": "22uF 16V X6S",
+      "mpn": "GRM21BC81C226ME44L",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "pins": {
+        "1": "+5V",
+        "2": "GND"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      },
+      "tolerance": "20%"
+    },
+    {
+      "ref": "C5",
+      "value": "10uF 25V X5R",
+      "mpn": "TMK107BBJ106MA-T",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "pins": {
+        "1": "BAT_FUSED",
+        "2": "GND"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      },
+      "tolerance": "20%"
+    },
+    {
+      "ref": "C6",
+      "value": "22uF 16V X6S",
+      "mpn": "GRM21BC81C226ME44L",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "pins": {
+        "1": "+3V3",
+        "2": "GND"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      },
+      "tolerance": "20%"
+    },
+    {
+      "ref": "C7",
+      "value": "10uF 25V X5R",
+      "mpn": "TMK107BBJ106MA-T",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "pins": {
+        "1": "+3V3",
+        "2": "GND"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      },
+      "tolerance": "20%"
+    },
+    {
+      "ref": "C8",
+      "value": "100nF 16V X7R",
+      "mpn": "GRM155R71C104KA88D",
+      "footprint": "Capacitor_SMD:C_0402_1005Metric",
+      "pins": {
+        "1": "+3V3",
+        "2": "GND"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      }
+    },
+    {
+      "ref": "C9",
+      "value": "100nF 16V X7R",
+      "mpn": "GRM155R71C104KA88D",
+      "footprint": "Capacitor_SMD:C_0402_1005Metric",
+      "pins": {
+        "1": "BAT_FUSED",
+        "2": "GND"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      }
+    },
+    {
+      "ref": "C10",
+      "value": "1uF 10V X5R",
+      "mpn": "GRM155R61A105KE15D",
+      "footprint": "Capacitor_SMD:C_0402_1005Metric",
+      "pins": {
+        "1": "RC_EN",
+        "2": "GND"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      }
+    },
+    {
+      "ref": "C11",
+      "value": "100nF 16V X7R",
+      "mpn": "GRM155R71C104KA88D",
+      "footprint": "Capacitor_SMD:C_0402_1005Metric",
+      "pins": {
+        "1": "LED5V",
+        "2": "GND"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      }
+    },
+    {
+      "ref": "C12",
+      "value": "1uF 10V X5R",
+      "mpn": "GRM155R61A105KE15D",
+      "footprint": "Capacitor_SMD:C_0402_1005Metric",
+      "pins": {
+        "1": "+5V",
+        "2": "GND"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      }
+    },
+    {
+      "ref": "C13",
+      "value": "22nF 50V X7R",
+      "mpn": "GRM155R71H223KA12D",
+      "footprint": "Capacitor_SMD:C_0402_1005Metric",
+      "pins": {
+        "1": "LED_CT",
+        "2": "GND"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      }
+    },
+    {
+      "ref": "C14",
+      "value": "22uF 10V X5R",
+      "mpn": "GRM21BR61A226ME44L",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "pins": {
+        "1": "LED5V",
+        "2": "GND"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      }
+    },
+    {
+      "ref": "C16",
+      "value": "470uF 6.3V polymer10mOhm",
+      "mpn": "T530X477M006ATE010",
+      "footprint": "Capacitor_Tantalum_SMD:CP_EIA-7343-43_Kemet-X",
+      "pins": {
+        "1": "LED5V",
+        "2": "GND"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      },
+      "tolerance": "20%",
+      "effective_min_uF": 376,
+      "rated_voltage_V": 6.3,
+      "esr_max_100kHz_25C_ohm": 0.01,
+      "lab_body_temperature_max_C": 85,
+      "lab_measured_LED5V_range_V": [
+        0,
+        5.5
+      ],
+      "substitution_review": "pruefung/substitution-review.json",
+      "status": "Laboratory only: body <=85C; measured LED5V 0..5.5V including transients. No 125C/5V, product or battery approval; PWM/step response and assembly qualification remain"
+    },
+    {
+      "ref": "C17",
+      "value": "22uF 16V X6S",
+      "mpn": "GRM21BC81C226ME44L",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "pins": {
+        "1": "+3V3",
+        "2": "GND"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      },
+      "tolerance": "20%"
+    },
+    {
+      "ref": "C18",
+      "value": "22uF 16V X6S",
+      "mpn": "GRM21BC81C226ME44L",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "pins": {
+        "1": "+3V3",
+        "2": "GND"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      },
+      "tolerance": "20%"
+    },
+    {
+      "ref": "C19",
+      "value": "100nF 16V X7R",
+      "mpn": "GRM155R71C104KA88D",
+      "footprint": "Capacitor_SMD:C_0402_1005Metric",
+      "pins": {
+        "1": "MCU_VAUX",
+        "2": "GND"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      }
+    },
+    {
+      "ref": "C20",
+      "value": "10uF 25V X5R",
+      "mpn": "TMK107BBJ106MA-T",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "pins": {
+        "1": "BAT_FUSED",
+        "2": "GND"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      },
+      "tolerance": "20%"
+    },
+    {
+      "ref": "C21",
+      "value": "1uF 10V X5R startup delay",
+      "mpn": "GRM188R61A105KA61D",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "pins": {
+        "1": "MCU_REG_EN",
+        "2": "GND"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      },
+      "status": "prototype delay; bias/temperature minimum and full coupled RC/startup/bounce qualification mandatory, not guaranteed POR delay"
+    },
+    {
+      "ref": "C22",
+      "value": "220pF 50V C0G feedforward",
+      "mpn": "GRM1555C1H221JA01D",
+      "footprint": "Capacitor_SMD:C_0402_1005Metric",
+      "pins": {
+        "1": "+5V",
+        "2": "BOOST_FB"
+      },
+      "pin_count": 2,
+      "pin_numbers": [
+        "1",
+        "2"
+      ],
+      "dnp": false,
+      "in_bom": true,
+      "pin_names": {},
+      "types": {
+        "1": "passive",
+        "2": "passive"
+      },
+      "tolerance": "5%",
+      "status": "TPS61023 Eq10: fz~965Hz with750k; large-Cout recommendation, actual load-switch/current-limit loop qualification remains"
+    },
+    {
+      "ref": "TP1",
+      "value": "UART0_TX_GPIO43",
+      "mpn": "PCB integral test pad",
+      "footprint": "NearGlowR2a:TestPad_1mm",
+      "pins": {
+        "1": "UART_TX"
+      },
+      "pin_count": 1,
+      "pin_numbers": [
+        "1"
+      ],
+      "dnp": false,
+      "in_bom": false,
+      "pin_names": {},
+      "types": {
+        "1": "passive"
+      }
+    },
+    {
+      "ref": "TP2",
+      "value": "UART0_RX_GPIO44",
+      "mpn": "PCB integral test pad",
+      "footprint": "NearGlowR2a:TestPad_1mm",
+      "pins": {
+        "1": "UART_RX"
+      },
+      "pin_count": 1,
+      "pin_numbers": [
+        "1"
+      ],
+      "dnp": false,
+      "in_bom": false,
+      "pin_names": {},
+      "types": {
+        "1": "passive"
+      }
+    },
+    {
+      "ref": "TP3",
+      "value": "ROM_BOOT0",
+      "mpn": "PCB integral test pad",
+      "footprint": "NearGlowR2a:TestPad_1mm",
+      "pins": {
+        "1": "BOOT0"
+      },
+      "pin_count": 1,
+      "pin_numbers": [
+        "1"
+      ],
+      "dnp": false,
+      "in_bom": false,
+      "pin_names": {},
+      "types": {
+        "1": "passive"
+      }
+    },
+    {
+      "ref": "TP4",
+      "value": "RESET_EN",
+      "mpn": "PCB integral test pad",
+      "footprint": "NearGlowR2a:TestPad_1mm",
+      "pins": {
+        "1": "CHIP_EN"
+      },
+      "pin_count": 1,
+      "pin_numbers": [
+        "1"
+      ],
+      "dnp": false,
+      "in_bom": false,
+      "pin_names": {},
+      "types": {
+        "1": "passive"
+      }
+    },
+    {
+      "ref": "TP5",
+      "value": "GND",
+      "mpn": "PCB integral test pad",
+      "footprint": "NearGlowR2a:TestPad_1mm",
+      "pins": {
+        "1": "GND"
+      },
+      "pin_count": 1,
+      "pin_numbers": [
+        "1"
+      ],
+      "dnp": false,
+      "in_bom": false,
+      "pin_names": {},
+      "types": {
+        "1": "passive"
+      }
+    },
+    {
+      "ref": "TP6",
+      "value": "SENSE_ONLY_NO_POWER_IN",
+      "mpn": "PCB integral test pad",
+      "footprint": "NearGlowR2a:TestPad_1mm",
+      "pins": {
+        "1": "+3V3"
+      },
+      "pin_count": 1,
+      "pin_numbers": [
+        "1"
+      ],
+      "dnp": false,
+      "in_bom": false,
+      "pin_names": {},
+      "types": {
+        "1": "passive"
+      }
+    }
+  ],
+  "power_flags": [
+    "BAT_RAW",
+    "BAT_FUSED",
+    "GND"
+  ],
+  "open_gates": [
+    "exact pack continuous/peak/PCM thresholds",
+    "external4410 charger qualification",
+    "UVLO worst-case independent review",
+    "capacitor DC-bias minimums",
+    "IC start-up and rail discharge sequencing",
+    "LED24 PWM peak/MCU survival",
+    "routing/DRC/manufacturing review"
+  ]
+}

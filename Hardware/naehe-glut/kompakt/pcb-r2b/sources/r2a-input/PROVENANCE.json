@@ -1,0 +1,130 @@
+{
+  "status": "immutable_generator_input_snapshot_not_release",
+  "date": "2026-11-02",
+  "source_directory": "Hardware/naehe-glut/kompakt/pcb-r2a",
+  "source_worktree_head": "9c9181a7c22de0be56671bce39e8ece5f072d01d",
+  "source_tracking_note": "R2a source files were untracked at entry; HEAD is context, not claimed content identity.",
+  "purpose": "Explicit R2b generator inputs; originals unchanged; licensing retained.",
+  "files": [
+    {
+      "path": "circuit.json",
+      "sha256": "347b96f8f0a019422b85f2d742029f3f41c80e5ded2f489096a598f974afc17c"
+    },
+    {
+      "path": "naehe-glut-r2a.kicad_pcb",
+      "sha256": "e3665c6a52dabb974844767966b1bd272feeef6fdbb83670745b53980404de8d"
+    },
+    {
+      "path": "naehe-glut-r2a.kicad_pro",
+      "sha256": "ff43696aa2dcdd3c46089a60ad712dc8ea183eb2eaecdf05def7e028c98ce590"
+    },
+    {
+      "path": "KICAD-LIBRARY-LICENSE.md",
+      "sha256": "45d2bce75e5a4208f5afb01b8fb2c406e700371c4fe2b5f5cd5c443d46db4d8f"
+    },
+    {
+      "path": "LIBRARY-SOURCES.json",
+      "sha256": "781ddea51889600c8b16c9c1317432890fb44287f2af542e9be65cfa18b199b3"
+    },
+    {
+      "path": "tools/build_schematic.py",
+      "sha256": "cc604f4167b68b7bcb43572aa7a585c52ecc5b9a2bbefe1e71b65f097f101cb4"
+    },
+    {
+      "path": "NearGlowR2a.pretty/LED_3WirePads.kicad_mod",
+      "sha256": "3e2eca69cab2752804f05ceecccbf6221855f0b17330ff1e59fd252b469a1dcc"
+    },
+    {
+      "path": "NearGlowR2a.pretty/Switch_2WirePads.kicad_mod",
+      "sha256": "bbb276f7f3fb3715187a2794feea487df48265acc131be86066baac8612dde0a"
+    },
+    {
+      "path": "NearGlowR2a.pretty/TestPad_1mm.kicad_mod",
+      "sha256": "0e6035205e78b2749e48164142d16b1ac7475c03054cc62a6845b8b32a95879d"
+    },
+    {
+      "path": "NearGlowR2a.pretty/TI_RNM0015A.kicad_mod",
+      "sha256": "4a48fbb606f6787389fd6fbcdbb9161faa3c7c6cd85427dd17017a8d08eee6b5"
+    },
+    {
+      "path": "footprints/Capacitor_SMD.pretty/C_0402_1005Metric.kicad_mod",
+      "sha256": "243b2fa0c59b7a010d77decd160264a91f80d111089f5bcff2462b8c1e1f45ce"
+    },
+    {
+      "path": "footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "a118870a5422b605b5db49235750676f53ca9173a0be2dd7165effdee83d876d"
+    },
+    {
+      "path": "footprints/Capacitor_SMD.pretty/C_0805_2012Metric.kicad_mod",
+      "sha256": "0a99f8774e4a369e1c5b6b0d65563f6e698fea302bb38cb599a224390269d11f"
+    },
+    {
+      "path": "footprints/Capacitor_Tantalum_SMD.pretty/CP_EIA-7343-43_Kemet-X.kicad_mod",
+      "sha256": "5788845f45c3b297f69d70498c97185ff818cca0232438a6c3caeaee3af111db"
+    },
+    {
+      "path": "footprints/Connector_JST.pretty/JST_PH_B2B-PH-SM4-TB_1x02-1MP_P2.00mm_Vertical.kicad_mod",
+      "sha256": "120dac48a6f3e1c803f0def82e311973dbefe155b8018fb5ffb0e42da872919d"
+    },
+    {
+      "path": "footprints/Fuse.pretty/Fuse_0603_1608Metric.kicad_mod",
+      "sha256": "13f4c70de80a6903e338ce2146ff02cb4662405ed3032e797423026e06e16b2b"
+    },
+    {
+      "path": "footprints/Inductor_SMD.pretty/L_Coilcraft_XAL4020-XXX.kicad_mod",
+      "sha256": "2169fe20aa1da0cf19e2c436cf1807ca79d1f3dc5aa04367345d32ba091f82fc"
+    },
+    {
+      "path": "footprints/Inductor_SMD.pretty/L_Coilcraft_XxL4030.kicad_mod",
+      "sha256": "af7197f9e8b1543a946b2301aebb2bc9eda2866f2c21666b9e8a7d9f26614627"
+    },
+    {
+      "path": "footprints/NearGlowR2a.pretty/LED_3WirePads.kicad_mod",
+      "sha256": "0995775bfa3bbf4a6c0ffebb95409482c333fd1da5d6a1e75223ac30d0f9b593"
+    },
+    {
+      "path": "footprints/NearGlowR2a.pretty/Switch_2WirePads.kicad_mod",
+      "sha256": "327eb6d7daab23aab3e88fc724537c7dd75316973ef2324ed8e3d42795b1ff82"
+    },
+    {
+      "path": "footprints/NearGlowR2a.pretty/TestPad_1mm.kicad_mod",
+      "sha256": "1720843b85438a42ac0884eafc3b82163d2ee4823d6488ac4a6f87b3fb58580a"
+    },
+    {
+      "path": "footprints/NearGlowR2a.pretty/TI_RNM0015A.kicad_mod",
+      "sha256": "b5f5246cfd7e42034d25f65cd455accdb066d97431fa8e40c48721f6c78b4e4c"
+    },
+    {
+      "path": "footprints/Package_TO_SOT_SMD.pretty/SOT-23-6.kicad_mod",
+      "sha256": "888c1777c3d0922d83a3734300bfc419845c72778fe28df6d8f5e69688421a8d"
+    },
+    {
+      "path": "footprints/Package_TO_SOT_SMD.pretty/SOT-323_SC-70.kicad_mod",
+      "sha256": "a16b8a40f1a0d1aaf7c052b24ee9a1e601e2985c8cd77078b1aedd91d3031251"
+    },
+    {
+      "path": "footprints/Package_TO_SOT_SMD.pretty/SOT-353_SC-70-5.kicad_mod",
+      "sha256": "ce1375c2df18c8a28494252b18459a05c5c3b5f5c5d223ebec2d07b84f57a211"
+    },
+    {
+      "path": "footprints/Package_TO_SOT_SMD.pretty/SOT-563.kicad_mod",
+      "sha256": "329db42f84db429adcfbc29fe178e4b460b6ffab7326b2e114b86390ebc1d965"
+    },
+    {
+      "path": "footprints/Resistor_SMD.pretty/R_0402_1005Metric.kicad_mod",
+      "sha256": "bf5b8e034668d8d3cec75b00ce60999d935f3e0fa4f4ec966ef4a317034a1d6b"
+    },
+    {
+      "path": "footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "2a67b7bdd91ea20646a9f85edefd083033470a9990a60d2b4900605b1745b0e2"
+    },
+    {
+      "path": "footprints/RF_Module.pretty/ESP32-S2-MINI-1.kicad_mod",
+      "sha256": "2a2e069c81b24e5c5d56d0244e05f48df5089e946b711e606545cf966118cc61"
+    },
+    {
+      "path": "footprints/TestPoint.pretty/TestPoint_Pad_D1.0mm.kicad_mod",
+      "sha256": "b93c5e46f0ea1710c672431901a6f03b2bd9a4791e6eb5fbb5fc6ff36cf36ba5"
+    }
+  ]
+}

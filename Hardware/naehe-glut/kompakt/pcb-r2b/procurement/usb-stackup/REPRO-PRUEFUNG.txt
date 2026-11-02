@@ -1,0 +1,27 @@
+Begrenzte Wiederholungsprüfung, Root, 02.11.2026
+Kein erneuter Fertigungs-/SI-Nachweis und keine Änderung der Hauptplatine.
+
+Bei der Paketkontrolle wurde eine veraltete Eingabe in build_host_pair_trial.py
+gefunden: Nach Übernahme enthält die Hauptplatine das alte lange DP-Segment
+nicht mehr. Das Script liest nun ausdrücklich den archivierten7af39d-Vorstand
+unter procurement/clearance-screen/screen.kicad_pcb und prüft dessen SHA256.
+Text-/JSON-Eingaben der beiden Versuchsgeneratoren werden ausdrücklich UTF8
+gelesen, unabhängig von der Windows-Standardsprache.
+
+In einer neuen isolierten Arbeitskopie .tmp/r2b-trial-reproduction wurden
+build_host_pair_trial.py und danach build_stackup_trial.py mit KiCad10.0.8-
+Python ausgeführt; beide erfolgreich. Die Arbeitskopie enthielt historische
+PCB, Projekt/Bibliothekstabelle, öffentliche Stackup-Rohdaten und die Scripts.
+Keine kanonischen Trialdateien oder Berichte wurden dabei überschrieben.
+
+Zur Kontrolle wurde jedes native Top-Level-Objekt der
+frischen Ergebnisse mit dem gespeicherten Host- bzw. Stackupkandidaten
+verglichen. Nach Ausblenden der UUID-Werte stimmen sämtliche Objekte als
+Multimenge exakt überein. Genau drei neue Track-UUIDs unterscheiden sich;
+KiCad ordnet dadurch teilweise Segmente anders. Keine andere Objektänderung.
+Der zweite native Stackup-Roundtrip der neuen Arbeitskopie war bytegleich.
+Dies ist ein geometrischer/struktureller Wiederholungsnachweis, kein Anspruch
+auf bytegleiche Neuerzeugung zufälliger UUIDs und kein erneuter DRC-Lauf.
+
+Haupt-PCB nach beiden Läufen weiterhin:
+8b383237c2a90d4270685943619f579258b213815a4f9e6838f9993665eba590.

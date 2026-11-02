@@ -1,0 +1,102 @@
+Reference,Value,MPN,Footprint,Quantity,Status
+U1,ESP32-S3-MINI-1-N4R2,ESP32-S3-MINI-1-N4R2,RF_Module:ESP32-S2-MINI-1,1,inherited R2a
+U2,5.1V LED boost,TPS61023DRLR,Package_TO_SOT_SMD:SOT-563,1,inherited R2a
+U3,3V3 independent buck-boost,TPS63070RNMR,NearGlowR2a:TI_RNM0015A,1,inherited R2a
+U4,UVLO with hysteresis,TPS3700DDCR,Package_TO_SOT_SMD:SOT-23-6,1,inherited R2a
+U5,LED input current limiter latch-off,TPS2553DBVR-1,Package_TO_SOT_SMD:SOT-23-6,1,inherited R2a
+U6,LED translating data buffer,SN74LV1T125DCKR,Package_TO_SOT_SMD:SOT-353_SC-70-5,1,inherited R2a
+U7,LED load switch,TPS22918DBVR,Package_TO_SOT_SMD:SOT-23-6,1,inherited R2a
+Q1,MMBT3904 NPN OE pull-down,MMBT3904WT1G,Package_TO_SOT_SMD:SOT-323_SC-70,1,inherited R2a
+J1,BAT JST PH2 vertical,B2B-PH-SM4-TB(LF)(SN),Connector_JST:JST_PH_B2B-PH-SM4-TB_1x02-1MP_P2.00mm_Vertical,1,inherited R2a
+F1,2A fast fuse,0467002.NRHF,Fuse:Fuse_0603_1608Metric,1,inherited R2a
+L1,1uH,XEL4030-102MEC,Inductor_SMD:L_Coilcraft_XxL4030,1,inherited R2a
+L2,1.5uH,XFL4020-152MEC,Inductor_SMD:L_Coilcraft_XAL4020-XXX,1,XFL4020 manufacturer pads0.98x3.4mm at+/-1.185mm match stock XAL4020 land; model is not XFL geometry proof
+R1,33.2k,0402WGF3322TCE,Resistor_SMD:R_0402_1005Metric,1,Approved laboratory substitute: same 33.2k/1%/0402; current-limit initial tolerance unchanged; temperature and lifetime qualification remain
+R2,100k,RT0402BRD07100KL,Resistor_SMD:R_0402_1005Metric,1,inherited R2a
+R3,12.1k,RT0402BRD0712K1L,Resistor_SMD:R_0402_1005Metric,1,inherited R2a
+R4,750k,MCS0402MD7503BE000,Resistor_SMD:R_0402_1005Metric,1,Approved exact-MPN substitution: same resistance/0.1%/25ppm/0402; native stock land compared against Vishay28950; assembly review remains
+R5,22k,RC0402FR-0722KL,Resistor_SMD:R_0402_1005Metric,1,inherited R2a
+R6,750k,MCS0402MD7503BE000,Resistor_SMD:R_0402_1005Metric,1,Approved exact-MPN substitution: same resistance/0.1%/25ppm/0402; native stock land compared against Vishay28950; assembly review remains
+R7,100k,RT0402BRD07100KL,Resistor_SMD:R_0402_1005Metric,1,inherited R2a
+R8,10k,RC0402FR-0710KL,Resistor_SMD:R_0402_1005Metric,1,inherited R2a
+R9,10k,RC0402FR-0710KL,Resistor_SMD:R_0402_1005Metric,1,inherited R2a
+R10,10k,RC0402FR-0710KL,Resistor_SMD:R_0402_1005Metric,1,inherited R2a
+R11,10k,RC0402FR-0710KL,Resistor_SMD:R_0402_1005Metric,1,inherited R2a
+R12,100k,RC0402FR-07100KL,Resistor_SMD:R_0402_1005Metric,1,inherited R2a
+R13,100,RC0402FR-07100RL,Resistor_SMD:R_0402_1005Metric,1,inherited R2a
+R14,100k,RC0402FR-07100KL,Resistor_SMD:R_0402_1005Metric,1,inherited R2a
+R15,330,RC0402FR-07330RL,Resistor_SMD:R_0402_1005Metric,1,inherited R2a
+R16,100k,RC0402FR-07100KL,Resistor_SMD:R_0402_1005Metric,1,inherited R2a
+R17,470 ohm 0.1W,RC0603FR-07470RL,Resistor_SMD:R_0603_1608Metric,1,inherited R2a
+R18,680,RC0402FR-07680RL,Resistor_SMD:R_0402_1005Metric,1,inherited R2a
+R19,100k,RC0402FR-07100KL,Resistor_SMD:R_0402_1005Metric,1,inherited R2a
+R22,470k,MCS0402MD4703BE000,Resistor_SMD:R_0402_1005Metric,1,Approved exact-MPN substitution: same resistance/0.1%/25ppm/0402; native stock land compared against Vishay28950; assembly review remains
+R23,150k,RT0402BRD07150KL,Resistor_SMD:R_0402_1005Metric,1,inherited R2a
+R24,10k,RC0402FR-0710KL,Resistor_SMD:R_0402_1005Metric,1,inherited R2a
+R25,6.8k,RC0402FR-076K8L,Resistor_SMD:R_0402_1005Metric,1,inherited R2a
+R26,10k,RC0402FR-0710KL,Resistor_SMD:R_0402_1005Metric,1,inherited R2a
+R27,1k,RC0402FR-071KL,Resistor_SMD:R_0402_1005Metric,1,inherited R2a
+C1,10uF 10V X5R,GRM21BR61A106KE19L,Capacitor_SMD:C_0805_2012Metric,1,inherited R2a
+C2,10uF 10V X5R,GRM21BR61A106KE19L,Capacitor_SMD:C_0805_2012Metric,1,inherited R2a
+C3,22uF 16V X6S,GRM21BC81C226ME44L,Capacitor_SMD:C_0805_2012Metric,1,inherited R2a
+C4,22uF 16V X6S,GRM21BC81C226ME44L,Capacitor_SMD:C_0805_2012Metric,1,inherited R2a
+C5,10uF 25V X5R,TMK107BBJ106MA-T,Capacitor_SMD:C_0603_1608Metric,1,inherited R2a
+C6,22uF 16V X6S,GRM21BC81C226ME44L,Capacitor_SMD:C_0805_2012Metric,1,inherited R2a
+C7,10uF 25V X5R,TMK107BBJ106MA-T,Capacitor_SMD:C_0603_1608Metric,1,inherited R2a
+C8,100nF 16V X7R,GRM155R71C104KA88D,Capacitor_SMD:C_0402_1005Metric,1,inherited R2a
+C9,100nF 16V X7R,GRM155R71C104KA88D,Capacitor_SMD:C_0402_1005Metric,1,inherited R2a
+C10,1uF 10V X5R,GRM155R61A105KE15D,Capacitor_SMD:C_0402_1005Metric,1,inherited R2a
+C11,100nF 16V X7R,GRM155R71C104KA88D,Capacitor_SMD:C_0402_1005Metric,1,inherited R2a
+C12,1uF 10V X5R,GRM155R61A105KE15D,Capacitor_SMD:C_0402_1005Metric,1,inherited R2a
+C13,22nF 50V X7R,GRM155R71H223KA12D,Capacitor_SMD:C_0402_1005Metric,1,inherited R2a
+C14,22uF 10V X5R,GRM21BR61A226ME44L,Capacitor_SMD:C_0805_2012Metric,1,inherited R2a
+C16,470uF 6.3V polymer10mOhm,T530X477M006ATE010,Capacitor_Tantalum_SMD:CP_EIA-7343-43_Kemet-X,1,"Laboratory only: body <=85C; measured LED5V 0..5.5V including transients. No 125C/5V, product or battery approval; PWM/step response and assembly qualification remain"
+C17,22uF 16V X6S,GRM21BC81C226ME44L,Capacitor_SMD:C_0805_2012Metric,1,inherited R2a
+C18,22uF 16V X6S,GRM21BC81C226ME44L,Capacitor_SMD:C_0805_2012Metric,1,inherited R2a
+C19,100nF 16V X7R,GRM155R71C104KA88D,Capacitor_SMD:C_0402_1005Metric,1,inherited R2a
+C20,10uF 25V X5R,TMK107BBJ106MA-T,Capacitor_SMD:C_0603_1608Metric,1,inherited R2a
+C21,1uF 10V X5R startup delay,GRM188R61A105KA61D,Capacitor_SMD:C_0603_1608Metric,1,"prototype delay; bias/temperature minimum and full coupled RC/startup/bounce qualification mandatory, not guaranteed POR delay"
+C22,220pF 50V C0G feedforward,GRM1555C1H221JA01D,Capacitor_SMD:C_0402_1005Metric,1,"TPS61023 Eq10: fz~965Hz with750k; large-Cout recommendation, actual load-switch/current-limit loop qualification remains"
+J4,USB-C DATA ONLY / external target supply,USB4105-GF-A,Connector_USB:USB_C_Receptacle_GCT_USB4105-xx-A_16P_TopMnt_Horizontal,1,R2b selection; supplier/land review pending
+J5,GPIO JTAG / VTref reference only,FTSH-105-01-L-DV-007-K,NearGlowR2b:FTSH105_007_K,1,R2b selection; supplier/land review pending
+JP1,OPEN USB / CLOSED GPIO after authorized eFuse,TSW-102-07-G-S,Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical,1,R2b selection; supplier/land review pending
+SW1,BOOT,KMR221NGLFS,Button_Switch_SMD:SW_Push_1P1T_NO_CK_KMR2,1,R2b selection; supplier/land review pending
+SW2,RESET,KMR221NGLFS,Button_Switch_SMD:SW_Push_1P1T_NO_CK_KMR2,1,R2b selection; supplier/land review pending
+U8,USB hardware disconnect,TS3USB221ARSER,Package_DFN_QFN:Texas_UQFN-10_1.5x2mm_P0.5mm,1,R2b selection; supplier/land review pending
+U9,USB attach supervisor,TPS389001DSER,NearGlowR2b:TI_DSE0006A,1,R2b selection; supplier/land review pending
+U10,USB attach supervisor,TPS389001DSER,NearGlowR2b:TI_DSE0006A,1,R2b selection; supplier/land review pending
+U11,USB interface ONLY / no target power,TPS70933DBVR,Package_TO_SOT_SMD:SOT-23-5,1,R2b selection; supplier/land review pending
+U12,USB ready Schmitt inverter,SN74LVC1G14DCKR,Package_TO_SOT_SMD:SOT-353_SC-70-5,1,R2b selection; supplier/land review pending
+D1,rail-free ESD array,TPD2EUSB30DRTR,Package_TO_SOT_SMD:Texas_DRT-3,1,R2b selection; supplier/land review pending
+D2,rail-free ESD array,TPD2EUSB30DRTR,Package_TO_SOT_SMD:Texas_DRT-3,1,R2b selection; supplier/land review pending
+D3,rail-free ESD array,TPD2EUSB30DRTR,Package_TO_SOT_SMD:Texas_DRT-3,1,R2b selection; supplier/land review pending
+D4,rail-free ESD array,TPD2EUSB30DRTR,Package_TO_SOT_SMD:Texas_DRT-3,1,R2b selection; supplier/land review pending
+D5,rail-free ESD array,TPD2EUSB30DRTR,Package_TO_SOT_SMD:Texas_DRT-3,1,R2b selection; supplier/land review pending
+R28,5K1,RC0402FR-075K1L,Resistor_SMD:R_0402_1005Metric,1,R2b selection; supplier/land review pending
+R29,5K1,RC0402FR-075K1L,Resistor_SMD:R_0402_1005Metric,1,R2b selection; supplier/land review pending
+R30,22R,RC0402FR-0722RL,Resistor_SMD:R_0402_1005Metric,1,R2b selection; supplier/land review pending
+R31,22R,RC0402FR-0722RL,Resistor_SMD:R_0402_1005Metric,1,R2b selection; supplier/land review pending
+R32,10K,RC0402FR-0710KL,Resistor_SMD:R_0402_1005Metric,1,R2b selection; supplier/land review pending
+R33,10K,RC0402FR-0710KL,Resistor_SMD:R_0402_1005Metric,1,R2b selection; supplier/land review pending
+R34,10K,RC0402FR-0710KL,Resistor_SMD:R_0402_1005Metric,1,R2b selection; supplier/land review pending
+R35,10K,RC0402FR-0710KL,Resistor_SMD:R_0402_1005Metric,1,R2b selection; supplier/land review pending
+R36,33R,RC0402FR-0733RL,Resistor_SMD:R_0402_1005Metric,1,R2b selection; supplier/land review pending
+R37,33R,RC0402FR-0733RL,Resistor_SMD:R_0402_1005Metric,1,R2b selection; supplier/land review pending
+R38,33R,RC0402FR-0733RL,Resistor_SMD:R_0402_1005Metric,1,R2b selection; supplier/land review pending
+R39,33R,RC0402FR-0733RL,Resistor_SMD:R_0402_1005Metric,1,R2b selection; supplier/land review pending
+R40,200K,RT0402BRD07200KL,Resistor_SMD:R_0402_1005Metric,1,R2b selection; supplier/land review pending
+R41,75K,RT0402BRD0775KL,Resistor_SMD:R_0402_1005Metric,1,R2b selection; supplier/land review pending
+R42,47K,RC0402FR-0747KL,Resistor_SMD:R_0402_1005Metric,1,R2b selection; supplier/land review pending
+R45,47K,RC0402FR-0747KL,Resistor_SMD:R_0402_1005Metric,1,R2b selection; supplier/land review pending
+R46,10K,RC0402FR-0710KL,Resistor_SMD:R_0402_1005Metric,1,R2b selection; supplier/land review pending
+R47,169K,RT0402BRD07169KL,Resistor_SMD:R_0402_1005Metric,1,R2b selection; supplier/land review pending
+R48,100K,RT0402BRD07100KL,Resistor_SMD:R_0402_1005Metric,1,R2b selection; supplier/land review pending
+C23,100n,GRM188R71C104KA01D,Capacitor_SMD:C_0603_1608Metric,1,R2b selection; supplier/land review pending
+C24,100n,GRM188R71C104KA01D,Capacitor_SMD:C_0603_1608Metric,1,R2b selection; supplier/land review pending
+C25,100n,GRM188R71C104KA01D,Capacitor_SMD:C_0603_1608Metric,1,R2b selection; supplier/land review pending
+C26,10n,GRM188R71H103KA01D,Capacitor_SMD:C_0603_1608Metric,1,R2b selection; supplier/land review pending
+C27,10n,GRM188R71H103KA01D,Capacitor_SMD:C_0603_1608Metric,1,R2b selection; supplier/land review pending
+C28,100n 16V X7R / input not stability-critical,GRM188R71C104KA01D,Capacitor_SMD:C_0603_1608Metric,1,R2b selection; supplier/land review pending
+C29,4.7u 16V X7R / two parallel for bias reserve,GRM21BR71C475KE51L,Capacitor_SMD:C_0805_2012Metric,1,R2b selection; supplier/land review pending
+C30,4.7u 16V X7R / two parallel for bias reserve,GRM21BR71C475KE51L,Capacitor_SMD:C_0805_2012Metric,1,R2b selection; supplier/land review pending
+C31,100n inverter bypass,GRM188R71C104KA01D,Capacitor_SMD:C_0603_1608Metric,1,R2b selection; supplier/land review pending

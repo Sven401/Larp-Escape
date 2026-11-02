@@ -1,0 +1,128 @@
+{
+  "status": "RFQ preparation only, not submitted or released",
+  "date": "2026-11-02",
+  "context_commit": "bad8abfbdab64aa7c5b2641b3b07789191a98a41 plus reviewed draft promotion",
+  "input_sha256": {
+    "naehe-glut-r2b.kicad_pcb": "8b383237c2a90d4270685943619f579258b213815a4f9e6838f9993665eba590",
+    "circuit.json": "b8adb47a048849bc23e5384c4230514bd4ba75c0055c0d28544233c209a99fca",
+    "bom.csv": "0da0adbfea16ed33a8b3c14c45c7d27d4b010d42240d7d9a3154b20c285f0a24",
+    "pruefung/bestueckung-draft/8b383237c2a9-50vo4of3/CPL-DRAFT.csv": "13ad90a33dd442ffcdabbe74941dc25e172693e7e38a5abd4bf227bb1e4f7fc5",
+    "pruefung/bestueckung-draft/8b383237c2a9-50vo4of3/BOM-DRAFT.csv": "28556d76715fce22bf83946f89cbec63be1518bd2e7df6973e74a174edf507ad"
+  },
+  "via_count": 230,
+  "via_sizes": {
+    "0.2/0.45": 99,
+    "0.15/0.35": 131
+  },
+  "placement_count": 101,
+  "placement_side_counts": {
+    "Bottom": 67,
+    "Top": 34
+  },
+  "native_process_metadata": {
+    "capping": "yes",
+    "filling": "yes",
+    "tenting_front_back": [
+      "yes",
+      "yes"
+    ],
+    "material_contract": "Defaults filling/capping yes now corrected; all vias require NONCONDUCTIVE epoxy and copper cap, not merely soldermask tenting"
+  },
+  "open_usb_errors": [
+    {
+      "description": "Loch-Freiraum-Verstoß (Einschränkungen aus Platinenkonfiguration zu Löchern Freiraum 0,2000 mm; tatsächlich 0,1944 mm)",
+      "items": [
+        {
+          "description": "Pad A1 [/GND] von J4 auf F.Cu",
+          "pos": {
+            "x": 4.3,
+            "y": 35.645
+          },
+          "uuid": "748829e3-b950-4e1b-8b64-d2b2214b60cd"
+        },
+        {
+          "description": "NPTH-Pad von J4",
+          "pos": {
+            "x": 4.61,
+            "y": 36.72
+          },
+          "uuid": "d5cc92cc-c469-4829-8898-35b20018b2d0"
+        }
+      ],
+      "severity": "error",
+      "type": "hole_clearance"
+    },
+    {
+      "description": "Loch-Freiraum-Verstoß (Einschränkungen aus Platinenkonfiguration zu Löchern Freiraum 0,2000 mm; tatsächlich 0,1944 mm)",
+      "items": [
+        {
+          "description": "Pad A12 [/GND] von J4 auf F.Cu",
+          "pos": {
+            "x": 10.7,
+            "y": 35.645
+          },
+          "uuid": "64d981ec-2f51-4213-adf2-afe0ed41048f"
+        },
+        {
+          "description": "NPTH-Pad von J4",
+          "pos": {
+            "x": 10.39,
+            "y": 36.72
+          },
+          "uuid": "cd2970eb-29ba-4a9e-8fee-242f4df0cffc"
+        }
+      ],
+      "severity": "error",
+      "type": "hole_clearance"
+    },
+    {
+      "description": "Loch-Freiraum-Verstoß (Einschränkungen aus Platinenkonfiguration zu Löchern Freiraum 0,2000 mm; tatsächlich 0,1944 mm)",
+      "items": [
+        {
+          "description": "Pad B1 [/GND] von J4 auf F.Cu",
+          "pos": {
+            "x": 10.7,
+            "y": 35.645
+          },
+          "uuid": "830ec9e1-7fbf-47fb-a619-9617e859edfa"
+        },
+        {
+          "description": "NPTH-Pad von J4",
+          "pos": {
+            "x": 10.39,
+            "y": 36.72
+          },
+          "uuid": "cd2970eb-29ba-4a9e-8fee-242f4df0cffc"
+        }
+      ],
+      "severity": "error",
+      "type": "hole_clearance"
+    },
+    {
+      "description": "Loch-Freiraum-Verstoß (Einschränkungen aus Platinenkonfiguration zu Löchern Freiraum 0,2000 mm; tatsächlich 0,1944 mm)",
+      "items": [
+        {
+          "description": "Pad B12 [/GND] von J4 auf F.Cu",
+          "pos": {
+            "x": 4.3,
+            "y": 35.645
+          },
+          "uuid": "20b74dbd-9d5a-4305-b413-66248b618367"
+        },
+        {
+          "description": "NPTH-Pad von J4",
+          "pos": {
+            "x": 4.61,
+            "y": 36.72
+          },
+          "uuid": "d5cc92cc-c469-4829-8898-35b20018b2d0"
+        }
+      ],
+      "severity": "error",
+      "type": "hole_clearance"
+    }
+  ],
+  "outputs_sha256": {
+    "VIA-FILL-INVENTORY.csv": "863bc10189c0a6f77cf9eafdb006c1152d6bd326ff69ac85edaa024144f120b3"
+  }
+}

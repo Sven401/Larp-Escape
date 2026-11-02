@@ -1,0 +1,183 @@
+{
+  "status": "engineering_draft_not_fit_released",
+  "editable_parameters": {
+    "support_radius": 1.25,
+    "screw_clearance": 2.3,
+    "nut_af": 4.2,
+    "nut_depth": 1.8
+  },
+  "fixed_layout_contract": {
+    "pcb_origin_x": 25.0,
+    "pcb_origin_y": 20.0,
+    "pcb_bottom_z": 12.0,
+    "pcb_thickness": 1.0,
+    "pcb_bounds_local": [
+      0.0,
+      5.2,
+      30.0,
+      43.0
+    ],
+    "supports_local": [
+      [
+        1.5,
+        22.0
+      ],
+      [
+        28.5,
+        22.0
+      ],
+      [
+        15.0,
+        41.0
+      ]
+    ],
+    "key_notch_local": [
+      0.0,
+      28.0,
+      1.5,
+      30.0
+    ],
+    "base_footprint_mm": [
+      80.0,
+      120.0
+    ],
+    "base_plate_thickness_mm": 13.0,
+    "table_z_mm": -10.0,
+    "integrated_foot_height_mm": 10.0,
+    "base_nut_pocket_depth_mm": 4.3,
+    "side_clearance_mm": 0.3,
+    "cable_clamp_y": 108.0,
+    "usb_axis_z": 14.73,
+    "jtag_ribbon_seat_z": 20.0,
+    "status": "fixed engineering placement draft; changing layout requires rebuilding coordinated geometry"
+  },
+  "parts": {
+    "base": {
+      "quantity": 1,
+      "brep_valid": true,
+      "solids": 1,
+      "step_valid": true,
+      "step_solids": 1,
+      "stl_closed": true,
+      "non_manifold": false,
+      "self_intersections": false,
+      "orientation_error": false,
+      "degenerate_facets": 0,
+      "bounds_mm": [
+        80.0,
+        120.0,
+        30.0
+      ],
+      "volume_mm3": 89956.73780099535,
+      "stl_volume_mm3": 89956.7734375
+    },
+    "insert_r2b": {
+      "quantity": 1,
+      "brep_valid": true,
+      "solids": 1,
+      "step_valid": true,
+      "step_solids": 1,
+      "stl_closed": true,
+      "non_manifold": false,
+      "self_intersections": false,
+      "orientation_error": false,
+      "degenerate_facets": 0,
+      "bounds_mm": [
+        42.99865729685051,
+        33.0,
+        10.0
+      ],
+      "volume_mm3": 2534.9510995663004,
+      "stl_volume_mm3": 2534.790771484375
+    },
+    "clamp_left": {
+      "quantity": 1,
+      "brep_valid": true,
+      "solids": 1,
+      "step_valid": true,
+      "step_solids": 1,
+      "stl_closed": true,
+      "non_manifold": false,
+      "self_intersections": false,
+      "orientation_error": false,
+      "degenerate_facets": 0,
+      "bounds_mm": [
+        8.75,
+        6.0,
+        3.0
+      ],
+      "volume_mm3": 117.58573114688248,
+      "stl_volume_mm3": 117.59307861328125
+    },
+    "clamp_right": {
+      "quantity": 1,
+      "brep_valid": true,
+      "solids": 1,
+      "step_valid": true,
+      "step_solids": 1,
+      "stl_closed": true,
+      "non_manifold": false,
+      "self_intersections": false,
+      "orientation_error": false,
+      "degenerate_facets": 0,
+      "bounds_mm": [
+        8.75,
+        6.0,
+        3.0
+      ],
+      "volume_mm3": 117.58573114688257,
+      "stl_volume_mm3": 117.59313201904297
+    },
+    "usb_tie_bar": {
+      "quantity": 1,
+      "brep_valid": true,
+      "solids": 1,
+      "step_valid": true,
+      "step_solids": 1,
+      "stl_closed": true,
+      "non_manifold": false,
+      "self_intersections": false,
+      "orientation_error": false,
+      "degenerate_facets": 0,
+      "bounds_mm": [
+        12.0,
+        9.0,
+        3.0
+      ],
+      "volume_mm3": 223.20000000000007,
+      "stl_volume_mm3": 223.20005798339844
+    },
+    "jtag_tie_bar": {
+      "quantity": 1,
+      "brep_valid": true,
+      "solids": 1,
+      "step_valid": true,
+      "step_solids": 1,
+      "stl_closed": true,
+      "non_manifold": false,
+      "self_intersections": false,
+      "orientation_error": false,
+      "degenerate_facets": 0,
+      "bounds_mm": [
+        14.0,
+        9.0,
+        3.0
+      ],
+      "volume_mm3": 277.2000000000001,
+      "stl_volume_mm3": 277.2000732421875
+    }
+  },
+  "printed_part_collisions": {},
+  "physical_fit_test": "not_performed",
+  "final_component_collision_test": "frozen_PCB_screened_exact_MPN_tolerance_qualification_incomplete",
+  "nominal_pcb_collisions": {},
+  "reversed_180_nominal_interference_mm3": 1.2599999999999967,
+  "connector_and_mate_collisions": {},
+  "metal_in_15mm_antenna_zone": {},
+  "pcba_screening_collisions": {
+    "fixture_collisions": {},
+    "mate_collisions": {},
+    "access_collisions": {}
+  },
+  "mesh_and_nominal_geometry_pass": true
+}

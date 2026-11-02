@@ -1,0 +1,52 @@
+{
+  "status": "conditional_dimension_comparison_not_cross_vendor_mating_release",
+  "chain": [
+    "Olimex ARM-USB-OCD-H",
+    "Olimex ARM-JTAG-20-10 RevC",
+    "Samtec FFSD-05-D-06.00-01-N",
+    "Samtec FTSH-105-01-L-DV-007-K"
+  ],
+  "adapter_header": "Morethanall HAB-VCR-010-LF",
+  "sources": {
+    "adapter_bom": "https://www.olimex.com/Products/ARM/JTAG/ARM-JTAG-20-10/resources/ARM-JTAG-20-10_latest-schematic.pdf",
+    "header": {
+      "url": "https://www.morethanall.com/MoreThanAll.NET/Drawing/HAB-VCR-xxx.pdf",
+      "revision": "drawing has no printed revision or date",
+      "sha256": "6fc1a8725e731dcb6f30912a18cf18dbc03da54789afb4306825cae0f9d1f92d"
+    },
+    "cable": {
+      "url": "https://suddendocs.samtec.com/prints/ffsd-xx-x-xx.xx-01-x-x-xxx-mkt.pdf",
+      "revision": "AW",
+      "sha256": "aa2f465fbed3ad313227a1ade17d0e52d743a8d4e1a96ca6e04afc4aa5fe71dc"
+    }
+  },
+  "header_cavity_nominal_mm": [
+    11.15,
+    3.6
+  ],
+  "header_cavity_min_mm": [
+    10.95,
+    3.4
+  ],
+  "header_key_opening_nominal_min_mm": [
+    2.4,
+    2.2
+  ],
+  "ffsd_length_nominal_max_mm": [
+    10.54,
+    10.67
+  ],
+  "length_residual_mm": 0.28,
+  "ffsd_width_REF_mm": 3.05,
+  "ffsd_key_width_REF_mm": 1.91,
+  "nominal_width_key_gaps_mm": [
+    0.55,
+    0.49
+  ],
+  "limits": [
+    "Length result assumes general0.20mm tolerance applies to formula-defined cavity dimension; drawing carries no dedicated stack tolerance.",
+    "FFSD width/key width are REF; no guaranteed min/max fit from these drawings.",
+    "Insertion depth, contact wipe and key orientation require cross-vendor mating confirmation.",
+    "No physical mating, continuity or probe target-off test performed."
+  ]
+}

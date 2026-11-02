@@ -1,0 +1,29 @@
+{
+  "status": "isolated proposal, not promoted",
+  "source_sha256": "7af39dbe807ed82f905622cce0c6b93f2cd650c61eafb224970e9f49eec15868",
+  "trial_sha256": "0c2fd71bdf7f609b7c2b1c7ab093af88ed35511e12591447a28d89227ea70ea9",
+  "change": "replace exactly one DP_HOST In3 segment with three .15mm segments; DM and all vias unchanged",
+  "dp_vertices_mm": [
+    [
+      8.25,
+      34.8
+    ],
+    [
+      8.238366,
+      34.092769
+    ],
+    [
+      9.083564,
+      33.111737
+    ],
+    [
+      9.85,
+      32.575
+    ]
+  ],
+  "source_dp_segment_length_mm": 2.7405519517060792,
+  "new_dp_segment_length_mm": 2.937920729284876,
+  "paired_middle_center_spacing_mm": 0.3,
+  "paired_middle_edge_gap_mm": 0.15,
+  "stackup_candidate": "JLC061011-3313A; not a stackup/USB approval"
+}

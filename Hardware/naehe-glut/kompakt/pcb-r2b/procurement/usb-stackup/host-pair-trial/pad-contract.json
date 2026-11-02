@@ -1,0 +1,76 @@
+{
+  "status": "pass",
+  "pcb_path": "C:\\Users\\seide\\.codex\\worktrees\\naehe-glut-r2b-review\\Larp Escape\\Hardware\\naehe-glut\\kompakt\\pcb-r2b\\procurement\\usb-stackup\\host-pair-trial\\host-pair.kicad_pcb",
+  "checker_sha256": "b30a33a8e1cf297ea228d50a50d52e561159d9fff40773af820e15602b8885fd",
+  "kicad_version": "10.0.8",
+  "input_sha256": {
+    "pcb": "0c2fd71bdf7f609b7c2b1c7ab093af88ed35511e12591447a28d89227ea70ea9",
+    "circuit": "b8adb47a048849bc23e5384c4230514bd4ba75c0055c0d28544233c209a99fca"
+  },
+  "reference_count_expected": 109,
+  "reference_count_pcb": 109,
+  "physical_numbered_pads_checked": 373,
+  "mechanical_pads_without_net": 4,
+  "isolated_named_nc_nets": [
+    "unconnected-(U1-IO6-Pad10)",
+    "unconnected-(U1-IO7-Pad11)",
+    "unconnected-(U1-IO12-Pad16)",
+    "unconnected-(U1-IO13-Pad17)",
+    "unconnected-(U1-IO14-Pad18)",
+    "unconnected-(U1-IO15-Pad19)",
+    "unconnected-(U1-IO16-Pad20)",
+    "unconnected-(U1-IO17-Pad21)",
+    "unconnected-(U1-IO18-Pad22)",
+    "unconnected-(U1-IO21-Pad25)",
+    "unconnected-(U1-IO26-Pad26)",
+    "unconnected-(U1-IO47-Pad27)",
+    "unconnected-(U1-IO33-Pad28)",
+    "unconnected-(U1-IO34-Pad29)",
+    "unconnected-(U1-IO48-Pad30)",
+    "unconnected-(U1-IO35-Pad31)",
+    "unconnected-(U1-IO36-Pad32)",
+    "unconnected-(U1-IO37-Pad33)",
+    "unconnected-(U1-IO38-Pad34)",
+    "unconnected-(U1-IO45-Pad41)",
+    "unconnected-(U1-IO1-Pad5)",
+    "unconnected-(U1-IO2-Pad6)",
+    "unconnected-(U1-IO4-Pad8)",
+    "unconnected-(U1-IO5-Pad9)",
+    "unconnected-(U3-FB2-Pad6)",
+    "unconnected-(U4-OUTB-Pad6)"
+  ],
+  "duplicate_pad_groups": [
+    {
+      "ref": "J4",
+      "pad": "SH",
+      "count": 4
+    },
+    {
+      "ref": "SW1",
+      "pad": "1",
+      "count": 2
+    },
+    {
+      "ref": "SW1",
+      "pad": "2",
+      "count": 2
+    },
+    {
+      "ref": "SW2",
+      "pad": "1",
+      "count": 2
+    },
+    {
+      "ref": "SW2",
+      "pad": "2",
+      "count": 2
+    },
+    {
+      "ref": "U1",
+      "pad": "61",
+      "count": 9
+    }
+  ],
+  "issues": [],
+  "limits": "Pad net assignments only; no routed connectivity, DRC, manufacturing or functional release."
+}

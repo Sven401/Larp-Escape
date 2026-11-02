@@ -1,0 +1,72 @@
+UNABHAENGIGER USB-ENTWURFSREVIEW - 2026-11-02
+Status: isolierter Routingvorschlag fachlich zur Entwurfsuebernahme empfohlen;
+keine Fertigungs-, Impedanz- oder USB-SI-Freigabe. Hauptplatine unveraendert.
+
+Pruefweg: unabhaengiger Vergleich aller nativen Top-Level-S-Ausdruecke (nur
+Whitespace normalisiert) zwischen Hauptplatine 7af39dbe807ed82f905622cce0c6b93f2cd650c61eafb224970e9f49eec15868
+und Kandidat 0c2fd71bdf7f609b7c2b1c7ab093af88ed35511e12591447a28d89227ea70ea9.
+Exakt ein DP_HOST-In3-Segment entfernt, drei 0,15-mm-Segmente hinzugefuegt.
+Alle anderen Objekte unveraendert, insbesondere DM, Vias, GND und Leistung.
+Gelesener nativer DRC: vier bekannte J4-NPTH-Fehler, zehn Warnungen,
+null unverbundene Punkte. Kein eigener erneuter KiCad-DRC-Lauf behauptet.
+
+Geometrische Verbesserung und Reststrecken:
+Der mittlere parallele Abschnitt ist 1,294907 mm lang, Mittenabstand 0,30 mm,
+Kupferabstand 0,15 mm. DP-In3 insgesamt 2,937921 mm (alt 2,740552), DM-In3
+2,144907 mm. DP-Faecherungen zusammen 1,643014 mm bleiben nicht parallel.
+Sie umgehen bestehende Via-Lands: eine bis zu den Viaenden unveraendert
+fortgesetzte 0,30-mm-Mittenteilung unterschritte bei 0,35-mm-Vialand und
+0,15-mm-Track den geforderten 0,127-mm-Kupferabstand. Eigener 2D-Screen
+fand am DP-Kandidaten minimal 0,150 mm zu DM-Track bzw. ca.0,15154 mm
+zum DM-Endvia; native DRC liefert keinen neuen Verstoss.
+Die Fronttrunks bleiben je 4,401136 mm, mit variierendem Abstand; USB-C-
+Padzusammenfuehrungen und Viauebergaenge bleiben unveraendert.
+Steckerfanout DP=0,845 mm, DM=1,445 mm: zusammenhaengender Hostpfad hat
+nun DP-minus-DM +0,193014 mm statt -0,004355 mm. Die alternative Padroute
+addiert jeweils 1 mm, daher gleiche Laengendifferenz. Summen aller verzweigten
+Netzsegmente waeren keine korrekte elektrische Pfadlaenge.
+Die neue Laengenschiefe ist eine reale Gegenwirkung; kein unbelegter Verstoss.
+Nachgewiesen sind engere Parallelfuehrung und keine neue native DRC-Kollision,
+nicht eine messtechnisch oder per 3D-Feldloeser nachgewiesene Gesamtverbesserung.
+
+Referenz-/Stoerkupfergrenzen:
+Hardware-Screen GEOMETRY-REFERENCE prueft 917 Punkte der gesamten mittleren
+Paarhuelle auf In1- und In4-GND: alle bedeckt. Eigener vorheriger Rohgeometrie-
+Screen bestaetigte Mittelkorridor und fand keine In2-Signaltracks innerhalb
+0,30 mm seitlicher Naehe im Hostkorridor. Via-Antipads und Faecherungen bleiben
+Uebergangsstellen. Rasterabdeckung ist keine exakte Polygoninklusion und
+keine 3D-SI-Freigabe. Auf In2 und In3 gibt es keine GND-Zonen.
+Tatsaechliches In2-Kupfer im MCU-Korridor, vom fernen In1-Referenzmodell ignoriert:
+BAT_RAW fd9eb838-1955-4b3c-8ea6-b8d3efce1a7c, (13,35;20,7)-(14,4;20,7),0,5mm;
+LED5V 3b44f829-a8ff-4787-a7c7-37712791b9ce,(14,6;21,35)-(13,55;21,35),0,4mm;
+LED5V 25b9bde0-3d1e-47dc-90fa-3b5511fe42fe,(13,5;21,4)-(12,75;21,4),0,4mm.
+Nahe LED_OE_N 9a6330b8-2e51-4cf9-9a15-e22ad8125013 und JTAG_TDO
+848cb76d-6e4e-4427-a1f4-ea2781128f89 sind ebenfalls lokale Leiter.
+Das sind konkrete Modellabweichungen fuer Fertiger-/SI-Pruefung, keine
+nachgewiesenen elektrischen Fehler; kein Power/GND-Umbau daraus abgeleitet.
+
+Stackup:
+3313A ist plausibler Entwurfskandidat. Gespeicherte JLC-Ergebnisse: aussen
+W0,15/S0,15=85,09 Ohm; S0,25/0,35/0,55=91,35/93,96/96,01 Ohm.
+In3 mit unterem In4-GND und fernem oberem In1-GND bei ignoriertem In2-
+Signalkupfer 90,59 Ohm; hypothetische obere Vollplane 85,62 Ohm.
+Alte breite Host-In3-Fuehrung lag idealisiert 107,82..115,35 Ohm.
+Diese Querschnittswerte gelten nicht automatisch fuer Faecherungen/Vias.
+mm/mil-Umrechnung /0,0254 und gespeicherte Tabellenparameter nachvollzogen.
+H2=0,444 mm und arithmetisches Er-Mittel folgen laut Hardware-Primaerquellen-
+provenienz dem Herstellerfrontend; dessen minifizierter Quelltext wurde in
+diesem Abschlusscheck nicht unabhaengig erneut abgerufen. Kein Material-
+Homogenisierungsnachweis. 3313A-Tabellensumme ohne Masken 0,958 mm versus
+Nennstufe 1,0 mm: Differenz nicht mit erfundenen Masken auffuellen.
+Nativer vollstaendiger Stackup-Roundtrip ist ein separater noch offener Check.
+
+Gepruefte Dateibindungen (SHA256):
+0c2fd71bdf7f609b7c2b1c7ab093af88ed35511e12591447a28d89227ea70ea9  usb-stackup/host-pair-trial/host-pair.kicad_pcb
+e92bbd834b92700457628f96c0c1082634f417cc8237d02b5d678ea4258f49dd  usb-stackup/host-pair-trial/TRIAL.json
+9d66aca58f76b8ef9ab115b8b56a9a67964a84587af5671904c22727c65e9d81  usb-stackup/host-pair-trial/GEOMETRY-REFERENCE.json
+6ebfb6cf731d52ca7ec0f3746a1bf8728633b21c2bfd4b1428f528c50d7036dc  usb-stackup/host-pair-trial/drc.json
+2ed45c557a331452168b84feb6447b9cb501924f97304685491f3a04cfa63b82  usb-stackup/host-pair-trial/pad-contract.json
+e2242da1222f2fb412c122d54cf86467c3f69a30f4ab994688f6730006500d05  usb-stackup/calculator-results.json
+7c809fbe37df1820ea3b102ac32825b120c2d7ac00e90031dadb817ec9deb8d3  usb-stackup/calculator-host-extra.json
+846dde25f77f43ca2508ef71f5537f39f2e509a9d70c80bf57104d108f958b3c  usb-stackup/jlc-stackups.json
+0c7b99cd5be7d123c8ee08b85dd711c08125bf87bbd5fae998e137c342915ca7  usb-stackup/SOURCE-PROVENANCE.json

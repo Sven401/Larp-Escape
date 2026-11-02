@@ -1,0 +1,15 @@
+R2b — Fortsetzungsprüfung der Firmwareabhängigkeit
+02.11.2026, Commit 909e25653edafb2cd5e60ed6349356c0f905f916.
+Prüfweg: aktuelle Dateien gelesen; keine Firmwareänderung und kein Geräteupload.
+
+Firmware/led/platformio.ini verwendet weiterhin az-delivery-devkit-v4 für
+larp-led-product. Firmware/idf/main/app_main.cpp bezeichnet und implementiert
+weiterhin ein Qualifikationsimage ohne produktive Geräteansteuerung;
+Firmware/idf/sdkconfig.defaults enthält keine explizite USB-Konsolenauswahl.
+Die in TERMIN-UND-ABNAHME.txt am älteren Basiscommit beschriebene Abhängigkeit
+besteht somit auch in den hier geprüften Einstiegspunkten des neuen PR-Standes.
+Das ist keine vollständige Suche nach allen denkbaren Firmwarevarianten.
+
+Erfolgreiche bestehende CI-Builds belegen daher noch kein einsatzfähiges
+R2b-/ESP32-S3-N4R2-Produktimage. Für P6–P8 müssen ausgewählte Firmware,
+Pinbelegung, Service-/Produktprofil und chipgebundener Flash-Rückweg feststehen.

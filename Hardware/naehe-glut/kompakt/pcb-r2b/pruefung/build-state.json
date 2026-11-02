@@ -1,0 +1,9 @@
+{
+  "status": "routed_engineering_draft_NOT_manufacturing_release",
+  "part_count": 109,
+  "unrouted_new_service_nets": false,
+  "baseline_routing_preserved": false,
+  "baseline_preservation_scope": "See exact per-net track/via delta in layout-freeze.json; selected control routes and Q1 placement deliberately changed. No blanket preservation claim.",
+  "layout_freeze_sha256": "2e6dfd640e8f6b7cf86ddba62d755a98b7106454eda61fd9a5512a9e032dd33c",
+  "pcb_sha256": "8b383237c2a90d4270685943619f579258b213815a4f9e6838f9993665eba590"
+}

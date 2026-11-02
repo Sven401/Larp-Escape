@@ -1,0 +1,34 @@
+JLC-Kalkulator — direkte UI-Beobachtung am 02.11.2026
+Status: unverbindliche Bare-PCB-Vorprüfung; kein Angebot für die Baugruppe.
+Quelle: https://cart.jlcpcb.com/quote (Browser, nicht angemeldet)
+Geprüfter Entwurf: Commit 909e25653edafb2cd5e60ed6349356c0f905f916.
+
+Eingaben: FR4, 6 Lagen, 30 x 37,8 mm, 5 PCBs, 1,0 mm,
+1 oz Außen-/Innenkupfer, Epoxy Filled & Capped, kleinste Via-Bohrung 0,15 mm.
+0,15-mm-Auswahl fordert laut UI zusätzlich Tg155 und 4-Wire-Kelvin-Test.
+Nach abgeschlossener Neuberechnung: Webpreis 102,02 USD, Desktoppreis 72,02 USD.
+Aufschlüsselung: Special Offer 32,00; Material 3,34; Entgraten 0,10;
+Innenkupfer 16,59; Via-Bohrgröße 33,37; Kelvin-Test 16,62 USD.
+Angezeigte reguläre Fertigungszeit 7–8 Tage. Eine angezeigte Versandvorschau
+23,44 USD / DHL / 2–4 Geschäftstage ist OHNE geprüfte Lieferadresse und daher
+keine belastbare Versandzusage. Preise, Aktionen und Zeiten sind veränderlich.
+
+Bei Specify Stackup / Yes werden für diese Kombination angeboten:
+JLC061011-2116, -2116A, -1080A, -1080, -7628, -2313 und -3313A.
+JLC061011-2116 zur Prüfung ausgewählt; Dialog bestätigt 6 Lagen, 1,0 mm,
+Außenkupfer 1 oz, Innenkupfer 1 oz. Das belegt die auswählbare Kombination,
+noch keine Freigabe dieses Aufbaus für die vorhandenen Leiterbahnen.
+Nach Bestätigung des Aufbaus lässt sich ±10% Impedanzkontrolle auswählen.
+Tooltip: ±10% oberhalb 50 Ohm, ±5 Ohm bis einschließlich 50 Ohm.
+Erforderlich: Signal-/Referenzlage, Impedanzart, Breite/Abstand, Zielwert und
+konkrete Leiterbahnpositionen als JPG oder Excel im Gerberpaket.
+Vorlage: https://jlcpcb.com/Required_impedance_control.xlsx
+Der Anbieter beschreibt ausdrücklich eigene Leiterbahnbreitenanpassungen und
+aktiviert automatisch Confirm Production File. Diese Änderungen wären erst
+nach erneuter unabhängiger Layoutprüfung akzeptabel; keine CAM-Freigabe erteilt.
+
+Grenzen: Einzelplatinen statt bestückbares Trägerpanel, keine Bestückung,
+keine BOM-Beschaffung, keine DFM-Annahme der vier USB-Abstände, kein Testcoupon-
+oder konkreter 90-Ohm-Nachweis. Dieser Betrag ist KEIN Gesamtpreis für zwei
+einsatzbereite Geräte. Keine Dateien hochgeladen, keine Herstelleranfrage,
+kein Warenkorb und keine Bestellung erzeugt. Bestehende Bestellung unangetastet.

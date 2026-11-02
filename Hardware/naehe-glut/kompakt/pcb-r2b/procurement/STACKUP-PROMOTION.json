@@ -1,0 +1,21 @@
+{
+  "status": "reviewed engineering draft promoted; NOT manufacturing release",
+  "pcb_sha256": "8b383237c2a90d4270685943619f579258b213815a4f9e6838f9993665eba590",
+  "source_candidate_sha256": "8b383237c2a90d4270685943619f579258b213815a4f9e6838f9993665eba590",
+  "changes": [
+    "one HOST_DP In3 track replaced by three tracks",
+    "published proposed3313A stackup; Df softwaredefault UNVERIFIED",
+    "ENIG and draft revision"
+  ],
+  "checks_sha256": {
+    "pruefung/drc.json": "1a484eac55aa35ad74d84b06b71487af5e0dfd6fdc6221a549ac7912374a7005",
+    "pruefung/erc.json": "051514565f904c34b3e8942e92ad04cba8e69c65b90014a9154f97082dca0e23",
+    "pruefung/pcb-pad-contract.json": "8711f30400c3e5725aaa1d99cf8b21c4e11d636f81958b4055ff6efe4ed38932",
+    "pruefung/layout-freeze.json": "2e6dfd640e8f6b7cf86ddba62d755a98b7106454eda61fd9a5512a9e032dd33c",
+    "pruefung/usb-route-final.json": "153f6b936a2bff35d437f87f3873cb82e6cf855d842e0686bd7904a3649f208f",
+    "procurement/CLEARANCE-SCREEN.json": "7fca2438a1506ac35b4885f070de0d315a86947b1d21cc99ce209ef8ac2ffaf5",
+    "procurement/RFQ-INPUTS.json": "4cf05a4cc62f4406aa58e8fa1e0295de3e72f492042c81219a132efee5a8896a"
+  },
+  "assembly_directory": "pruefung/bestueckung-draft/8b383237c2a9-50vo4of3",
+  "historical_two_flag_promotion": "METADATA-PROMOTION.json at bad8abfb; not reinterpreted"
+}

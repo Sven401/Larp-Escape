@@ -1,0 +1,138 @@
+{
+  "license": "CC-BY-SA-4.0 with KiCad design exception; own geometry separately described",
+  "sources": [
+    {
+      "footprint": "Capacitor_SMD:C_0402_1005Metric",
+      "source": ".tmp/cad-tools/kicad/share/kicad/footprints/Capacitor_SMD.pretty/C_0402_1005Metric.kicad_mod",
+      "source_sha256": "3d8a1dc70b71dbc3a5786560f7f9d0cabe99f1182653b072cde5046e4e3f6fc4",
+      "local_sha256": "243b2fa0c59b7a010d77decd160264a91f80d111089f5bcff2462b8c1e1f45ce",
+      "change": "Silkscreen body graphics moved to Fab; copper/paste unchanged"
+    },
+    {
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "source": ".tmp/cad-tools/kicad/share/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "source_sha256": "d45eebd5cb9faace255d4ec95a0f9484efde898359507b02e2ba9bbb3ef6d857",
+      "local_sha256": "a118870a5422b605b5db49235750676f53ca9173a0be2dd7165effdee83d876d",
+      "change": "Silkscreen body graphics moved to Fab; copper/paste unchanged"
+    },
+    {
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "source": ".tmp/cad-tools/kicad/share/kicad/footprints/Capacitor_SMD.pretty/C_0805_2012Metric.kicad_mod",
+      "source_sha256": "e890bdf55fa18fc6df6878eb1b5251a991e1b93985509175eb269d3d002880b4",
+      "local_sha256": "0a99f8774e4a369e1c5b6b0d65563f6e698fea302bb38cb599a224390269d11f",
+      "change": "Silkscreen body graphics moved to Fab; copper/paste unchanged"
+    },
+    {
+      "footprint": "Capacitor_Tantalum_SMD:CP_EIA-7343-43_Kemet-X",
+      "source": ".tmp/cad-tools/kicad/share/kicad/footprints/Capacitor_Tantalum_SMD.pretty/CP_EIA-7343-43_Kemet-X.kicad_mod",
+      "source_sha256": "f2ddb8f633dd2f47baa862a0e44dd3c7437fb05d6c4b009c5378edaa0a685afc",
+      "local_sha256": "5788845f45c3b297f69d70498c97185ff818cca0232438a6c3caeaee3af111db",
+      "change": "Silkscreen body graphics moved to Fab; copper/paste unchanged"
+    },
+    {
+      "footprint": "Connector_JST:JST_PH_B2B-PH-SM4-TB_1x02-1MP_P2.00mm_Vertical",
+      "source": ".tmp/cad-tools/kicad/share/kicad/footprints/Connector_JST.pretty/JST_PH_B2B-PH-SM4-TB_1x02-1MP_P2.00mm_Vertical.kicad_mod",
+      "source_sha256": "5b8f373647b4c48257aeddbdc458a1202ed3c773228493f464ec967550913419",
+      "local_sha256": "120dac48a6f3e1c803f0def82e311973dbefe155b8018fb5ffb0e42da872919d",
+      "change": "Silkscreen body graphics moved to Fab; copper/paste unchanged"
+    },
+    {
+      "footprint": "Fuse:Fuse_0603_1608Metric",
+      "source": ".tmp/cad-tools/kicad/share/kicad/footprints/Fuse.pretty/Fuse_0603_1608Metric.kicad_mod",
+      "source_sha256": "f0ed27220a49fdaa023f6a0f6ea2abb0871770fe68e44cf90dd852ba7ffe3da8",
+      "local_sha256": "13f4c70de80a6903e338ce2146ff02cb4662405ed3032e797423026e06e16b2b",
+      "change": "Silkscreen body graphics moved to Fab; copper/paste unchanged"
+    },
+    {
+      "footprint": "Inductor_SMD:L_Coilcraft_XAL4020-XXX",
+      "source": ".tmp/cad-tools/kicad/share/kicad/footprints/Inductor_SMD.pretty/L_Coilcraft_XAL4020-XXX.kicad_mod",
+      "source_sha256": "2a45a4ea4dbccfc1e2f744c4225f65c4ddc37e555feb81a2021ac838ab920bbd",
+      "local_sha256": "2169fe20aa1da0cf19e2c436cf1807ca79d1f3dc5aa04367345d32ba091f82fc",
+      "change": "Silkscreen body graphics moved to Fab; copper/paste unchanged"
+    },
+    {
+      "footprint": "Inductor_SMD:L_Coilcraft_XxL4030",
+      "source": ".tmp/cad-tools/kicad/share/kicad/footprints/Inductor_SMD.pretty/L_Coilcraft_XxL4030.kicad_mod",
+      "source_sha256": "f79d0c3795a2128a9e4beff63911e686d47d69574adeea4e19446570b311111b",
+      "local_sha256": "af7197f9e8b1543a946b2301aebb2bc9eda2866f2c21666b9e8a7d9f26614627",
+      "change": "Silkscreen body graphics moved to Fab; copper/paste unchanged"
+    },
+    {
+      "footprint": "NearGlowR2a:LED_3WirePads",
+      "source": "C:/Users/seide/.codex/worktrees/naehe-glut-lieferziel/Larp Escape/Hardware/naehe-glut/kompakt/pcb-r2a/NearGlowR2a.pretty/LED_3WirePads.kicad_mod",
+      "source_sha256": "3e2eca69cab2752804f05ceecccbf6221855f0b17330ff1e59fd252b469a1dcc",
+      "local_sha256": "0995775bfa3bbf4a6c0ffebb95409482c333fd1da5d6a1e75223ac30d0f9b593",
+      "change": "Silkscreen body graphics moved to Fab; copper/paste unchanged"
+    },
+    {
+      "footprint": "NearGlowR2a:Switch_2WirePads",
+      "source": "C:/Users/seide/.codex/worktrees/naehe-glut-lieferziel/Larp Escape/Hardware/naehe-glut/kompakt/pcb-r2a/NearGlowR2a.pretty/Switch_2WirePads.kicad_mod",
+      "source_sha256": "bbb276f7f3fb3715187a2794feea487df48265acc131be86066baac8612dde0a",
+      "local_sha256": "327eb6d7daab23aab3e88fc724537c7dd75316973ef2324ed8e3d42795b1ff82",
+      "change": "Silkscreen body graphics moved to Fab; copper/paste unchanged"
+    },
+    {
+      "footprint": "NearGlowR2a:TI_RNM0015A",
+      "source": "C:/Users/seide/.codex/worktrees/naehe-glut-lieferziel/Larp Escape/Hardware/naehe-glut/kompakt/pcb-r2a/NearGlowR2a.pretty/TI_RNM0015A.kicad_mod",
+      "source_sha256": "4a48fbb606f6787389fd6fbcdbb9161faa3c7c6cd85427dd17017a8d08eee6b5",
+      "local_sha256": "b5f5246cfd7e42034d25f65cd455accdb066d97431fa8e40c48721f6c78b4e4c",
+      "change": "Silkscreen body graphics moved to Fab; copper/paste unchanged"
+    },
+    {
+      "footprint": "NearGlowR2a:TestPad_1mm",
+      "source": "C:/Users/seide/.codex/worktrees/naehe-glut-lieferziel/Larp Escape/Hardware/naehe-glut/kompakt/pcb-r2a/NearGlowR2a.pretty/TestPad_1mm.kicad_mod",
+      "source_sha256": "0e6035205e78b2749e48164142d16b1ac7475c03054cc62a6845b8b32a95879d",
+      "local_sha256": "1720843b85438a42ac0884eafc3b82163d2ee4823d6488ac4a6f87b3fb58580a",
+      "change": "Silkscreen body graphics moved to Fab; copper/paste unchanged"
+    },
+    {
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "source": ".tmp/cad-tools/kicad/share/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23-6.kicad_mod",
+      "source_sha256": "ea29040bed73e5dfa455e36f2c9324b0de7782c5a6cf79040b7d885ff766fdb4",
+      "local_sha256": "888c1777c3d0922d83a3734300bfc419845c72778fe28df6d8f5e69688421a8d",
+      "change": "Silkscreen body graphics moved to Fab; copper/paste unchanged"
+    },
+    {
+      "footprint": "Package_TO_SOT_SMD:SOT-323_SC-70",
+      "source": ".tmp/cad-tools/kicad/share/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-323_SC-70.kicad_mod",
+      "source_sha256": "d944d8b36dce2475c6b5243ba93565fe71a904fbe0ec0ef52d5650c8c66443a8",
+      "local_sha256": "a16b8a40f1a0d1aaf7c052b24ee9a1e601e2985c8cd77078b1aedd91d3031251",
+      "change": "Silkscreen body graphics moved to Fab; copper/paste unchanged"
+    },
+    {
+      "footprint": "Package_TO_SOT_SMD:SOT-353_SC-70-5",
+      "source": ".tmp/cad-tools/kicad/share/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-353_SC-70-5.kicad_mod",
+      "source_sha256": "6466c1c6509bf1a16dff576fe03f532036734259c9cbda358ef9bde3cba6c052",
+      "local_sha256": "ce1375c2df18c8a28494252b18459a05c5c3b5f5c5d223ebec2d07b84f57a211",
+      "change": "Silkscreen body graphics moved to Fab; copper/paste unchanged"
+    },
+    {
+      "footprint": "Package_TO_SOT_SMD:SOT-563",
+      "source": ".tmp/cad-tools/kicad/share/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-563.kicad_mod",
+      "source_sha256": "5db336475df2eb434a83572346092efba42569eff34d06282fa8f90bf3b786a4",
+      "local_sha256": "329db42f84db429adcfbc29fe178e4b460b6ffab7326b2e114b86390ebc1d965",
+      "change": "Silkscreen body graphics moved to Fab; copper/paste unchanged"
+    },
+    {
+      "footprint": "RF_Module:ESP32-S2-MINI-1",
+      "source": ".tmp/cad-tools/kicad/share/kicad/footprints/RF_Module.pretty/ESP32-S2-MINI-1.kicad_mod",
+      "source_sha256": "a4cd1e688ea76824d132b3a58eb9bbb51613cae4b6186d77d60e5ec8946ea88c",
+      "local_sha256": "2a2e069c81b24e5c5d56d0244e05f48df5089e946b711e606545cf966118cc61",
+      "change": "Silkscreen body graphics moved to Fab; copper/paste unchanged; S3 body top -10.25mm and antenna keepout to -5.20mm; S2 STEP illustrative"
+    },
+    {
+      "footprint": "Resistor_SMD:R_0402_1005Metric",
+      "source": ".tmp/cad-tools/kicad/share/kicad/footprints/Resistor_SMD.pretty/R_0402_1005Metric.kicad_mod",
+      "source_sha256": "6ed88b70926af431471c0ccaf6a55485f8cedab01cce4d1d4f3298a6cb6cef2c",
+      "local_sha256": "bf5b8e034668d8d3cec75b00ce60999d935f3e0fa4f4ec966ef4a317034a1d6b",
+      "change": "Silkscreen body graphics moved to Fab; copper/paste unchanged"
+    },
+    {
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "source": ".tmp/cad-tools/kicad/share/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "source_sha256": "03fc7902b2661df01b4d828fdb6eab9eddf974e7130ed2b98892607387a50c4b",
+      "local_sha256": "2a67b7bdd91ea20646a9f85edefd083033470a9990a60d2b4900605b1745b0e2",
+      "change": "Silkscreen body graphics moved to Fab; copper/paste unchanged"
+    }
+  ]
+}

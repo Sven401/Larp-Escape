@@ -1,0 +1,30 @@
+Kanonischer Hardwareumfang fuer Review und ausdrueckliches Staging
+
+Native Quellen:
+naehe-glut-r2b.kicad_pcb, .kicad_sch, .kicad_pro,
+naehe-glut-r2b.net.xml, circuit.json, bom.csv, mechanical-interface.json,
+fp-lib-table, sym-lib-table, NearGlowR2b.kicad_sym,
+NearGlowR2b.pretty/*.kicad_mod, NearGlowR2a.pretty/*.kicad_mod und footprints/* (jeweils einzelne Dateien stagen).
+Lizenzen und Herkunft: KICAD-LIBRARY-LICENSE.md, R2A-LIBRARY-SOURCES.json,
+SOURCES.json, sources/r2a-input/PROVENANCE.json samt dort einzeln gelisteten
+30 Inputs; sources/layout-evidence/route-base.kicad_pcb und usb-paired.kicad_pcb.
+Diese zwei Layoutbelege sind gehashte Vergleichseingaben, keine Freigabestaende.
+
+Vertraege: SCHALTUNGSVERTRAG.txt, REPRODUKTION.txt; bestehende PLANUNG.txt,
+PLANUNGSREVIEW.json und Nutzer-CSV unveraendert erhalten.
+
+Pruefwerkzeuge: tools/cad_environment.py, build_r2b.py, build_schematic.py,
+check_pcb_pad_contract.py, export_assembly_draft.py, analyze_usb_route.py,
+freeze_layout.py. build_r2b ist ausschliesslich Vorroute-Generator.
+
+Aktuelle Hardwarebelege: pruefung/layout-freeze.json, build-state.json,
+routing-progress.json, drc.json, erc.json, usb-route-final.json;
+zusaetzlich vom Root/Reviewer erstellte finale Pad-/BOM-/Analog-/DFM-Berichte
+und der hashgebundene finale Bestueckungs-Draft. Mechanik separat uebernehmen.
+
+Nicht als kanonische Lieferquelle aufnehmen: routing/* (Trialstaende),
+__pycache__, kicad-config, *.log, Router-DSN/SES, Screenshots von Zwischenstaenden,
+alle *_trial/route-/escape-/cleanup-/relocate-Hilfsskripte ohne expliziten Bedarf.
+Native geroutete PCB ist die editierbare Layoutquelle; keine Behauptung einer
+vollautomatischen Wiedererzeugung aus dem Vorroute-Generator.
+

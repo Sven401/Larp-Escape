@@ -1,0 +1,85 @@
+DRAFT ONLY — NOT SENT
+Recipient: support@jlcpcb.com (JLCPCB technical / PCB assembly support)
+Subject: R2b engineering draft — DFM feasibility and complete PCBA quotation
+
+Hello JLCPCB team,
+
+Please assess feasibility and advise the quotation process for two fully
+assembled R2b boards. We need two qualified devices for an event on 4 December
+2026; our preferred PCBA arrival is by 16 November to allow assembly and testing.
+Please state achievable production and arrival dates separately. This is a
+preliminary engineering inquiry, not an order or manufacturing authorization.
+Our existing R2a order must remain unchanged.
+
+The current PCB is 30 x 37.8 mm, six layers, 1.0 mm FR4, ENIG, with nominal 1 oz
+copper on ALL six layers. The fitted module extends the assembly to 30 x 43 mm.
+There are 101 fitted positions: 34 top and 67 bottom.
+
+Please address these points explicitly:
+
+1. USB connector land exception. We retained the original GCT USB4105-GF-A land.
+Coordinates below are native PCB coordinates (Y downward), not CPL coordinates.
+Two 0.65-mm NPTHs at (4.61,36.72) and (10.39,36.72) mm have 0.1944-mm clearance
+to adjacent copper, versus the 0.2000-mm rule. Four reported pairs are left
+NPTH–A1/B12 and right NPTH–A12/B1 (overlapping A/B pads). Can you accept this
+exact geometry without copper trimming, hole movement or loss of connector
+fit/solderability? If not, please reject the exception and identify the required
+change; do not apply an automatic CAM correction.
+
+2. Via treatment. All 230 through vias require NONCONDUCTIVE epoxy filling and
+copper capping, including vias in pads: 131 are 0.15-mm drill / 0.35-mm copper,
+and 99 are 0.20 / 0.45 mm. Please confirm capability, solderable flatness and
+pricing. Tented or soldermask-plugged vias are not substitutes. Component PTHs
+and NPTHs must remain open. A complete via inventory is available.
+
+3. Stackup and impedance. We propose JLC061011-3313A for the stated
+6-layer/1-mm/1-oz combination after screening the available stackups and
+adjusting a short inner-layer USB pair section. This is not a confirmed
+impedance design. Please confirm the actual pressed thickness and tolerance,
+finished copper/dielectric thicknesses, Dk, material/frequency-specific Df,
+and soldermask construction, and assess 90-ohm differential impedance with
+±10% tolerance. Your published copper/dielectric values total 0.958 mm against
+the nominal 1.0-mm board; please explain the delivered construction. Native
+CAD Df=0.02 entries are explicitly unverified software defaults, not a material
+requirement. Please propose an alternative stackup if necessary.
+The main USB pair uses In3.Cu referenced to In4.GND, 0.15-mm tracks and 0.15-mm
+edge gap; outer-layer sections and transitions also need assessment. Please
+specify the coupon/test report and cost. Any CAM width/spacing change requires
+our prior layout review and approval of production files.
+
+4. Complete assembly. Please propose Standard PCBA panelization, rails,
+fiducials and depanelization for this small board without new product holes
+or interference with the antenna overhang, connectors or locating notch.
+Include all SMT parts on both sides, all USB J4 hybrid contacts/anchors and
+JP1 THT soldering. No parts should be left for customer soldering. Deliver JP1
+open; supply its SNT-100-BK-T shunt separately. No firmware programming or eFuse
+changes. Please list inspection/X-ray coverage and all assembly/process charges.
+
+Please also confirm minimum order/panel quantities, exact-MPN sourcing and
+availability, any substitutions requiring approval, and total costs including
+panel/tooling, parts, assembly, inspection and shipping. The web calculator's
+bare-PCB price is not a complete PCBA quotation.
+
+We have not supplied manufacturing-ready Gerbers. The engineering draft still
+has the stated DFM exception and electrical/physical qualification gates.
+Please advise the smallest file set needed for a preliminary review; subsequent
+file submission and manufacturing approval will be handled separately.
+
+Thank you.
+
+PROPOSED INITIAL ATTACHMENTS — NOT SENT
+1. RFQ-INPUTS.json: current PCB hash, exact DRC pairs and process inventory counts.
+2. ../pruefung/bestueckung-draft/8b383237c2a9-50vo4of3/BOM-DRAFT.csv
+3. ../pruefung/bestueckung-draft/8b383237c2a9-50vo4of3/CPL-DRAFT.csv
+CPL uses the auxiliary origin (0,43 mm), with Y upward: X_CPL=X_PCB and
+Y_CPL=43−Y_PCB, plus the documented J1/JP1 body-centroid corrections.
+These are review drafts, not a placement/manufacturing release. The full
+engineering ZIP, native CAD and Gerbers are intentionally not proposed for
+this initial inquiry. VIA-FILL-INVENTORY.csv can follow if requested.
+No files have been transmitted. Current PCB SHA256:
+8b383237c2a90d4270685943619f579258b213815a4f9e6838f9993665eba590
+
+Official recipient source (outside email body):
+https://jlcpcb.com/help/article/how-do-i-get-support
+Verified by Root on 2026-11-02. No message sent.
+

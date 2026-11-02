@@ -1,0 +1,106 @@
+{
+  "candidate_sha256": "8b383237c2a90d4270685943619f579258b213815a4f9e6838f9993665eba590",
+  "gerberjob_sha256": "85bb0e46f3f6251fd9b1aaedc96af18c72e6718b27784a38fa188044b24b65d8",
+  "general_specs": {
+    "ProjectId": {
+      "Name": "proposed-3313A-roundtrip",
+      "GUID": "70726f70-6f73-4656-942d-33333133412d",
+      "Revision": "R2b engineering draft"
+    },
+    "Size": {
+      "X": 30.05,
+      "Y": 37.85
+    },
+    "LayerNumber": 6,
+    "BoardThickness": 1.0,
+    "Finish": "ENIG"
+  },
+  "material_stackup": [
+    {
+      "Type": "Legend",
+      "Name": "Top Silk Screen"
+    },
+    {
+      "Type": "SolderPaste",
+      "Name": "Top Solder Paste"
+    },
+    {
+      "Type": "SolderMask",
+      "Name": "Top Solder Mask"
+    },
+    {
+      "Type": "Copper",
+      "Name": "F.Cu"
+    },
+    {
+      "Type": "Dielectric",
+      "Material": "NP-155F 1x 3313 RC57% 4.2mil [Df0.02 SOFTWAREDEFAULT UNVERIFIED]",
+      "Name": "F.Cu/In1.Cu",
+      "Notes": "Type: dielectric layer 1 (from F.Cu to In1.Cu)"
+    },
+    {
+      "Type": "Copper",
+      "Name": "In1.Cu"
+    },
+    {
+      "Type": "Dielectric",
+      "Material": "NP-155F 0.2mm 1/1OZ without copper [Df0.02 SOFTWAREDEFAULT UNVERIFIED]",
+      "Name": "In1.Cu/In2.Cu",
+      "Notes": "Type: dielectric layer 2 (from In1.Cu to In2.Cu)"
+    },
+    {
+      "Type": "Copper",
+      "Name": "In2.Cu"
+    },
+    {
+      "Type": "Dielectric",
+      "Material": "NP-155F 2x 3313 RC57% 4.2mil [Df0.02 SOFTWAREDEFAULT UNVERIFIED]",
+      "Name": "In2.Cu/In3.Cu",
+      "Notes": "Type: dielectric layer 3 (from In2.Cu to In3.Cu)"
+    },
+    {
+      "Type": "Copper",
+      "Name": "In3.Cu"
+    },
+    {
+      "Type": "Dielectric",
+      "Material": "NP-155F 0.2mm 1/1OZ without copper [Df0.02 SOFTWAREDEFAULT UNVERIFIED]",
+      "Name": "In3.Cu/In4.Cu",
+      "Notes": "Type: dielectric layer 4 (from In3.Cu to In4.Cu)"
+    },
+    {
+      "Type": "Copper",
+      "Name": "In4.Cu"
+    },
+    {
+      "Type": "Dielectric",
+      "Material": "NP-155F 1x 3313 RC57% 4.2mil [Df0.02 SOFTWAREDEFAULT UNVERIFIED]",
+      "Name": "In4.Cu/B.Cu",
+      "Notes": "Type: dielectric layer 5 (from In4.Cu to B.Cu)"
+    },
+    {
+      "Type": "Copper",
+      "Name": "B.Cu"
+    },
+    {
+      "Type": "SolderMask",
+      "Name": "Bottom Solder Mask"
+    },
+    {
+      "Type": "SolderPaste",
+      "Name": "Bottom Solder Paste"
+    },
+    {
+      "Type": "Legend",
+      "Name": "Bottom Silk Screen"
+    }
+  ],
+  "drc_sha256": "7671b20f432a1b6b7705a7aba9707abf3f2c22e0916f6358987dc3587d97f091",
+  "drc_counts": {
+    "error:hole_clearance": 4,
+    "warning:track_not_centered_on_via": 8,
+    "warning:lib_footprint_mismatch": 2
+  },
+  "unconnected_count": 0,
+  "status": "inspection only; not fabrication package; Df defaults not supplier qualified"
+}

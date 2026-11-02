@@ -1,0 +1,90 @@
+R2b — EXTERNER JTAG-PROBE UND KABEL, AUSWAHLPRÜFUNG
+02.11.2026, Root. Status: Kandidaten konkretisiert; keine Kauf-/Betriebsfreigabe.
+Basis: PLANUNG.txt / SERVICE-INTERFACE.csv, HEAD9c9181a plus lokale R2b.
+
+VORZUGSKANDIDAT ZUR QUALIFIKATION
+Olimex ARM-USB-OCD-H plus ARM-JTAG-20-10 RevisionC, inklusive dessen10cm
+1.27mm-Flachbandkabel. Die separate20polige Leitung des Probe bleibt vor dem
+Adapter. Exakte mechanische Gegensteckerausführung muss zur FTSH-K-Variante
+passen; die Produktbezeichnung allein ist kein Verpolschutz-/Passungsnachweis.
+Hersteller nennt3.3V innerhalb seines1.65..5V-Arbeitsbereichs und OpenOCD.
+Der tatsächliche ESP32-S3-Test mit der Projektversion von Espressif-OpenOCD
+steht aus. Olimex unterstützt offiziell ARM; Nicht-ARM-Nutzung hängt von der Software ab.
+Keine Aussage, jedes ARM-Werkzeug unterstütze Xtensa/S3 oder SWD.
+
+VERDRAHTUNGSVERTRAG (20pol Probe -> R2b10pol)
+1 VREF ->1 VTref;7 TMS ->2;4/6 GND ->3/5;9 TCK ->4;
+13 TDO ->6;5 TDI ->8;15 SRST ->10 CHIP_EN.
+R2b7 mechanischer Schlüssel, R2b9 NC. Probe3 TRST wird NICHT mit CHIP_EN
+verbunden. Probe19 TARGET SUPPLY und Hohlsteckerausgang bleiben unverbunden.
+Olimex-Handbuch S.10 unterscheidet ausdrücklich15 SRST von3 TRST.
+Adapterseite9 ist ab Werk überR2 geerdet; R2b9 bleibt unbeschaltet.
+Hersteller beschreibt Zielversorgung durch den Adapter als standardmäßig aus.
+Den tatsächlichen RevC-Bestückstand und Durchgang19->Ziel vor Nutzung prüfen.
+
+BELEGTE GRENZEN UND OFFENE ENTSCHEIDUNG
+Der Probe kann bei fehlendem VREF automatisch5V an20polPin19 bereitstellen.
+Darum reicht ein Software-Schalter nicht als Ersatz für die offene Leitung.
+OpenOCD-Originalkonfiguration olimex-arm-usb-ocd-h.cfg enthält nSRST als
+Output-enable-Signal (0x0200). Das belegt die Treiberabsicht low/freigeben,
+aber keinen gemessenen elektrischen Reset-Pegel am konkreten Probe.
+Öffentliche Herstellertexte belegen nicht lückenlos hochohmige TMS/TDI/TCK/
+Reset-Ausgänge über alle Ziel-aus-/Anlaufzustände. Dieser Pflichtnachweis
+bleibt offen; vor elektrischem R2b-Anschluss an einem geeigneten Prüfaufbau
+oder durch ausdrückliche Herstellerbestätigung schließen. Kein Betrieb mit
+unqualifiziertem Probe aus diesem Kandidatenbericht ableiten.
+VTref nur als Referenz verwenden, keine feste intern erzwungene Zielspannung.
+JTAG-Reset und Breakpoints erst nach separat autorisierter eFuse-Auswahl und
+bestehender Hardware-/Firmwarequalifikation. Keine eFusebefehle enthalten.
+
+ALTERNATIVEN
+SEGGER J-Link BASE V12: Hersteller nennt1.2..5V-Interface und expliziten
+Open-drain-Reset (low oder tristate). Benötigt20->9/10polAdapter; genaue
+Version, tatsächliche Ziel-aus-Treiberzustände und S3/OpenOCD-Kombination
+bleiben auch hier zu prüfen. Kein Preis-/Liefervergleich abgeschlossen.
+J-Link EDU Mini V2:1.8/3.3V,9polFTSH,Open-drainReset mit150Ohm; daraus folgt
+keine pauschale Eignung der Nutzungsbedingungen/unterstützten Kerne für dieses
+Projekt. Deshalb keine stillschweigende Auswahl der EDU-Lizenzvariante.
+ARM-USB-TINY-H nicht als gleichwertiger geschützter Probe übernommen:
+Hersteller-FAQ beschreibt TINY ohne Ausgangspuffer, nur Schutzwiderstände.
+
+KOSTEN/TERMIN (nur gelesene Kataloganzeige02.11.2026)
+Olimex-Seiten zeigen54.95EUR für ARM-USB-OCD-H und4.95EUR für Adapter,
+beide In Stock.59.90EUR ist nur deren Summe; Steuer, Versand, konkreteRevision,
+USB-Kabel und Lieferdatum04.12.2026 sind damit nicht bestätigt. Kein Warenkorb,
+keine Bestellung und kein Kontakt zum Hersteller ausgelöst.
+
+PRIMÄRQUELLEN, AM02.11.2026 GELESEN
+https://www.olimex.com/Products/ARM/JTAG/ARM-USB-OCD-H/
+https://www.olimex.com/Products/ARM/JTAG/_resources/ARM-USB-OCD_and_OCD_H_manual.pdf
+  Ausgabe2025, S.7/10: automatische Pin19-Versorgung und Steckerbelegung.
+https://www.olimex.com/Products/ARM/JTAG/ARM-JTAG-20-10/
+https://www.olimex.com/Products/ARM/JTAG/ARM-JTAG-20-10/resources/ARM-JTAG-20-10_latest-schematic.pdf
+  RevisionC; Produktseite nennt ausgeschalteten Versorgungspfad und R2/Pin9.
+https://github.com/openocd-org/openocd/blob/master/tcl/interface/ftdi/olimex-arm-usb-ocd-h.cfg
+  Beweglicher master-Lesestand, noch kein Projektversionsnachweis.
+https://docs.espressif.com/projects/esp-idf/en/stable/esp32s3/api-guides/jtag-debugging/index.html
+  v6.1, Selecting JTAG Adapter: JTAG/3.3V/OpenOCD, kein SWD/TRST nötig.
+https://kb.segger.com/J-Link_BASE_V12
+https://kb.segger.com/J-Link_EDU_Mini_V2
+https://www.olimex.com/Products/ARM/JTAG/ARM-USB-TINY-H/
+
+LOKALER WERKZEUGSTAND, TATSÄCHLICH ABGEFRAGT02.11.2026
+C:/Users/seide/.platformio/packages/tool-openocd-esp32/bin/openocd.exe
+--version: v0.11.0-esp32-20220706; Paket2.1100.20220706.
+MitgelieferteDateien enthalteninterface/ftdi/olimex-arm-usb-ocd-h.cfg
+(nSRST-oe0x0200) undtarget/esp32s3.cfg (JTAG,CPUTAPID0x120034e5).
+Dasbelegt nurInstallation/Konfigurationsvorhandensein. KeinProbe angeschlossen,
+keinTarget initialisiert, keinChip gelesen/geflasht. Die altePlatformIO-Version
+wirdnichtalsVersionfürdasneueIDF6.1-Serviceprofilfestgeschrieben; dafür später
+denSDK-WerkzeugsatzunddessenS3-Konfigurationqualifizieren. KeinToolupdate.
+
+AKTUELLER MECHANIKABGLEICH 02.11.2026
+Für die Halter-Zugentlastung ist der Ersatzstrang Samtec FFSD-05-D-06.00-01-N
+vorgesehen. Das mitgelieferte Olimex-Kabel ist nicht automatisch geometrisch
+identisch. Vergleich des konkreten Morethanall HAB-VCR-010-LF am Olimex-
+Adapter mit FFSD siehe mechanik/adapter-mating-report.json. Die Längenmaße
+lassen unter den dort benannten Toleranzannahmen 0,28mm Restspiel; Breite und
+Schlüsselmaße bei Samtec sind REF. Daher nur bedingte Maßpassung, keine
+herstellerübergreifend garantierte Steckfreigabe. Einstecktiefe, Orientierung,
+Kontaktüberdeckung und Durchgang sind am echten Kabel/Adapter zu prüfen.

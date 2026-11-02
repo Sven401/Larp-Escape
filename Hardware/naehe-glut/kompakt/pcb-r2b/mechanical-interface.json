@@ -1,0 +1,66 @@
+{
+  "status": "Final routed geometry binding; independent fit report remains authoritative",
+  "pcb_bounds_mm": [
+    0,
+    5.2,
+    30,
+    43
+  ],
+  "pcb_thickness_mm": 1,
+  "assembly_xy_mm": [
+    30,
+    43
+  ],
+  "core_translation_mm": [
+    5.1,
+    0
+  ],
+  "support_centres_mm": [
+    [
+      1.5,
+      22
+    ],
+    [
+      28.5,
+      22
+    ],
+    [
+      15,
+      41
+    ]
+  ],
+  "support_radius_mm": 1.25,
+  "support_keepout_squares_mm": 3,
+  "polarity_notch_mm": [
+    0,
+    28,
+    1.5,
+    30
+  ],
+  "ports": {
+    "USB": {
+      "mpn": "USB4105-GF-A",
+      "origin_mm": [
+        7.5,
+        39.325
+      ],
+      "rotation_deg": 0,
+      "entry": "+Y",
+      "front_y_mm": 43
+    },
+    "JTAG": {
+      "mpn": "FTSH-105-01-L-DV-007-K",
+      "origin_mm": [
+        23.5,
+        33
+      ],
+      "entry": "+Z",
+      "geometry_status": "manufacturer footprint Rev H, series Rev FZ; mating CAD open"
+    }
+  },
+  "pcb_sha256": "8b383237c2a90d4270685943619f579258b213815a4f9e6838f9993665eba590",
+  "jumper_origin_mm": [
+    18.3,
+    38.7
+  ]
+}

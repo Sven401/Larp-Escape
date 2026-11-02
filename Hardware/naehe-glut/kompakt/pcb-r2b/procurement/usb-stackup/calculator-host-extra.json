@@ -1,0 +1,146 @@
+[
+  {
+    "stackup": "3313A",
+    "case": "L4_host_gap_0.25",
+    "model": "DiffOffsetStripline1B1A",
+    "parameters_mil_and_Er": {
+      "H1": 7.874015748031497,
+      "Er1": 4.36,
+      "H2": 17.480314960629926,
+      "Er2": 4.19,
+      "W1": 5.905511811023622,
+      "W2": 5.11,
+      "S1": 9.84251968503937,
+      "T1": 1.2,
+      "W2LinkW1Incr": 0.8,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "accessId": "4cd3c560-dec6-485c-81ef-853c84a93bab",
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffOffsetStripline1B1A",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 6895.31548347,
+        "dErEff": 4.27316645336,
+        "dImpedance": 101.796786526,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 47,
+      "paramMd5": "af112dd7aa9879c35b1748446b7699a8",
+      "uuid": "c751af4d-2194-4964-96fb-b55d962c0425"
+    }
+  },
+  {
+    "stackup": "3313A",
+    "case": "L4_host_gap_0.35",
+    "model": "DiffOffsetStripline1B1A",
+    "parameters_mil_and_Er": {
+      "H1": 7.874015748031497,
+      "Er1": 4.36,
+      "H2": 17.480314960629926,
+      "Er2": 4.19,
+      "W1": 5.905511811023622,
+      "W2": 5.11,
+      "S1": 13.779527559055119,
+      "T1": 1.2,
+      "W2LinkW1Incr": 0.8,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "accessId": "23e1e926-b74f-4e9f-b22d-2500f840a940",
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffOffsetStripline1B1A",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 6897.32334557,
+        "dErEff": 4.27565544119,
+        "dImpedance": 107.816187022,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 62,
+      "paramMd5": "a296544dd6940cb83168806b6600ab0b",
+      "uuid": "c751af4d-2194-4964-96fb-b55d962c0425"
+    }
+  },
+  {
+    "stackup": "3313A",
+    "case": "L4_host_gap_0.55",
+    "model": "DiffOffsetStripline1B1A",
+    "parameters_mil_and_Er": {
+      "H1": 7.874015748031497,
+      "Er1": 4.36,
+      "H2": 17.480314960629926,
+      "Er2": 4.19,
+      "W1": 5.905511811023622,
+      "W2": 5.11,
+      "S1": 21.65354330708662,
+      "T1": 1.2,
+      "W2LinkW1Incr": 0.8,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "accessId": "1ddd0e8a-61e3-4f3b-8f0f-9a4b4aa6016b",
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffOffsetStripline1B1A",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 6899.74833814,
+        "dErEff": 4.2786624788,
+        "dImpedance": 113.263310116,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 63,
+      "paramMd5": "f18110b57226cca5d245630bea069e9c",
+      "uuid": "c751af4d-2194-4964-96fb-b55d962c0425"
+    }
+  },
+  {
+    "stackup": "3313A",
+    "case": "L4_host_gap_0.782",
+    "model": "DiffOffsetStripline1B1A",
+    "parameters_mil_and_Er": {
+      "H1": 7.874015748031497,
+      "Er1": 4.36,
+      "H2": 17.480314960629926,
+      "Er2": 4.19,
+      "W1": 5.905511811023622,
+      "W2": 5.11,
+      "S1": 30.78740157480315,
+      "T1": 1.2,
+      "W2LinkW1Incr": 0.8,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "accessId": "6d89a75f-d009-448f-a8f3-0dcb73bf6054",
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffOffsetStripline1B1A",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 6901.06351661,
+        "dErEff": 4.2802937676,
+        "dImpedance": 115.34889085,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 62,
+      "paramMd5": "2c5c4745ea8bce1bd974a90ff4a7fc75",
+      "uuid": "c751af4d-2194-4964-96fb-b55d962c0425"
+    }
+  }
+]

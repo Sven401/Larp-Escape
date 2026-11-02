@@ -1,0 +1,111 @@
+UNABHAENGIGER PROCUREMENT-ABSCHLUSSREVIEW - 02.11.2026
+Kontextcommit bad8abfbdab64aa7c5b2641b3b07789191a98a41, aktueller Arbeitsbaum.
+Status: reviewed engineering draft, keine Fertigungs-/Betriebsfreigabe.
+Kein Versand/Upload/Bestellung durch diesenReviewer.
+
+AktuellePCB 8b383237c2a90d4270685943619f579258b213815a4f9e6838f9993665eba590.
+Historie: ab68->7af39 korrigierte ausschliesslich zweiPOFV-Flags. Dieser Beleg
+METADATA-PROMOTION/VIA-METADATA-CANDIDATE sowie clearance-screen/ und alter
+Gerberexport bleiben historisch. Jetzt1DP-In3-Segment durch3 ersetzt, dazu
+vorgeschlagener3313A-Stackup/ENIG/Entwurfskommentar. Unabhaengige Delta- und
+Stackupbewertungen stehen in USB-STACKUP-REVIEW und STACKUP-NATIV-REVIEW.
+Kein pauschaler Anspruch unveraenderterUSB-Geometrie gegen Altstand.
+
+Aktuell:109Referenzen/373Pads/0Issues, ERC0, DRC4bekannteNPTH/10Warnungen/
+0unverbunden.101/101BOM-CPL,34Top/67Bottom; CPLbytes unveraendert.
+230Vias unveraendert,131x0,15/0,35 und99x0,20/0,45. NichtleitendesEpoxid+
+Kupferkappe ausdruecklicheFertigerforderung; boolescheFlags definieren keinHarz.
+41Mechanikartefakte und6Inputbindungen selbst hashgeprueft. PhysischePassung
+und Druck/Produktabnahme wurden dadurch nicht nachgewiesen.
+
+AktuellerCLEARANCE-SCREEN bindet clearance-screen-8b383237; alleInputhashes
+selbstgeprueft:0neueRegelverstoesse,4bekannteNPTH,26Positivkontrolltreffer.
+RegelnPTH0,28/all+0,30/innen,Via0,20/all; isolierte109Bibliotheksmeldungen
+sind nicht die2Hauptlayout-Abweichungen. Keine kompletteCAM-Freigabe.
+
+Beide17Datei-Gerbermanifeste geprueft; aktuelles12/13Layergleich und einziges
+DP-In3-Delta, identischeBohrgeometrie. Der aktuelleJob enthaeltENIG/Draft,
+aber keine13altenThicknessfelder mehr. Nicht als numerischvollstaendiger
+Stackupbeleg behandeln. Details GERBER-CURRENT-REVIEW; Altbericht historisch.
+
+JLC-Anfragetext abschliessend gelesen:3313A nurVorschlag,0,958vs1,0mm/Df/
+Masken offen, aktuelle8b383Hash+Assemblypfade,2komplettbestueckteBoards fuer
+04.12.2026, bestehendeR2aOrder unangetastet. Empfaengerquelle vonRootverifiziert;
+nicht selbst kontaktiert. Initialanhaenge nurRFQ+BOM+CPL, keineGerberfreigabe.
+TIH1-H3 stimmen mit QUALIFIKATION-OFFEN und realenLasten/Anschluessen ueberein.
+QUALIFIKATION-Zeichenfehler zeilenweise mit reversiblerCP1252/UTF8-Korrektur
+repariert; historischeNachtraege erhalten, aktuellerStand alsNachtrag ergaenzt.
+KALKULATOR bleibt historischeRoot-UI-Beobachtung, kein vollstaendigesAngebot.
+
+Paketcode gelesen: begrenzteProjektpfade, aktuelleReview-/Mechanik-/RFQ-/Screen-/
+Promotion-/Gerberbindungen und Quellenhashes, explizitekuratiereDateien,
+ArchivCRC+SHA-Ruecklesen. Keine neuenkonkretenRegel-/Parserfehler festgestellt.
+Paketlauf liegt beiRoot, nicht hier vorweggenommen. freeze_layout vergleicht
+manual_usb_geometry_unchanged mit dem akzeptiertenHosttrial0c2fd71b (Quellhash
+imBericht), NICHT mit dem urspruenglichenUSB-Paarstand. DieseSemantik ist
+imaktuellenGesamtreview explizit. Keine eigeneImplementierung alsunabhaengig
+gepruefteFremdimplementierung ausgegeben.
+
+Offen:4NPTH-Ausnahmen,verbindlicheStackup/SI/Pressdaten,Panel/CAM/POFV und
+Bestueckerprozess,Preis/Termin,Versorgungs-/Probequalifikation,Produktfirmware,
+realePassung undZwei-Geraete-Laufzeitabnahme. KeinAbschluss dieserGates behauptet.
+
+DATEIBINDUNGEN SHA256 relativ zu pcb-r2b; alte clearance-screen/-Dateien,
+VIA-METADATA-CANDIDATE/METADATA-PROMOTION sind ausschliesslichHistorie:
+a8678d243dff1bd38bb7ae0cd2220994212b177b53c4ee8cb5895b396b53bf70  procurement/DFM-ANGEBOT.txt
+522e4ee98c55f854aa7df305922b207a2eb65d96b6a63e199038f1a7a3937b24  procurement/QUELLEN.txt
+4cf05a4cc62f4406aa58e8fa1e0295de3e72f492042c81219a132efee5a8896a  procurement/RFQ-INPUTS.json
+863bc10189c0a6f77cf9eafdb006c1152d6bd326ff69ac85edaa024144f120b3  procurement/VIA-FILL-INVENTORY.csv
+a2232effe97967d270b4883184d36fe17fc859d2933882d36bcb4583250bcbca  procurement/QUALIFIKATION-OFFEN.txt
+2d824344bcda9ad39a86914e05ce04ec1b4248f64a1f490c734889bbeb4e8cb4  procurement/KALKULATOR.txt
+b2c18a1a971ee4e9fc5811ab7027930cc829188dd6d2d6f0878dd849d9b1e908  procurement/FIRMWARE-ABGLEICH.txt
+024fd9640e3602d45f72d3f77e8701ea9ab42fc5eaad402e30d9a6e15ef6c5bd  procurement/TECHNISCHE-PRAEZISIERUNG.txt
+7fca2438a1506ac35b4885f070de0d315a86947b1d21cc99ce209ef8ac2ffaf5  procurement/CLEARANCE-SCREEN.json
+b67efb3f0248dd83bc1817531dc5303d7d593a6c3f03653e4061a45e201dbdb2  procurement/VIA-METADATA-CANDIDATE.json
+391d27cf4de5b578761eea7540024ef613d8493670aaa10314c43b2fb0e301aa  procurement/METADATA-PROMOTION.json
+b75378b0d21e11c295755ee8e4fa46d021ee699ab4bba2808d39f3a91d38c2f7  procurement/extract_rfq_inputs.py
+3c9248e2ed2cd025416a528148eb8bb8c796bc24516ea783f60ac2bb593e3169  procurement/prepare_metadata_candidate.py
+3423405866cf7ea33b042645cebf5c88a4c8904eda83d4a9f35efa4e990af113  procurement/record_promotion.py
+3bbad940159c36c27564653477a40d0dbb2d1789a37280fb5005546419a5980b  procurement/run-clearance-screen.ps1
+ffab8539775a10a85412441bd0064ef7c552c533a16dc66482c4d6c7a35117c3  procurement/summarize_clearance.py
+7af39dbe807ed82f905622cce0c6b93f2cd650c61eafb224970e9f49eec15868  procurement/clearance-screen/screen.kicad_pcb
+21edd368db533b1de0727e4b4a2cba077256bfb625adf76d03e70f1da0225098  procurement/clearance-screen/screen.kicad_pro
+b1b495d4d618e7c43cc5277c549181b2dad18a99f3c5592f13c77265c2298039  procurement/clearance-screen/screen.kicad_dru
+0a80f1a94a48c1506c56c208cebc9ff7ec431852e3fc9345a9c9d26e09096aba  procurement/clearance-screen/positive-control.kicad_dru
+eacaf95b9971133a5f3171c48e5b195d43dab3103fd1dc74570041c5c8d4f514  procurement/clearance-screen/production-screen-rules.txt
+3a89a814f6a722ba62d49fc76550a737ac5b06bc1cffe7916a3e9f3275174423  procurement/clearance-screen/drc-all-layers.json
+30d79ae85b1169c89079d16792685d4fa985a2b38159497d37a463d1f13efdc2  procurement/clearance-screen/positive-control.json
+7af39dbe807ed82f905622cce0c6b93f2cd650c61eafb224970e9f49eec15868  procurement/clearance-screen/metadata-candidate.kicad_pcb
+8b383237c2a90d4270685943619f579258b213815a4f9e6838f9993665eba590  naehe-glut-r2b.kicad_pcb
+c4344bfa11524619e46d58a3cb6a826b52d344ae7a4e4ec9044f901f9631b686  tools/build_r2b.py
+625f32df80ba78cf627393c74578acda2f4729d44bfed0ba29f3f1d7dce9a1b2  tools/package_review_bundle.py
+f5c54f66e07859ae06f7ba2111d13abeb9bfa7561745685d055c1a7d93b3e508  pruefung/ANALOG-REVIEW.json
+0fac203e3d6706e316a708cb4f2dc063ad27d2445ba18158ac2f8d19a49c739b  mechanik/MANIFEST.json
+dd52630620ca0ed82bd4378bb4641c481d752ed087fff0297e5969164d09f756  mechanik/metadata-rebind-report.json
+9914533e397746d0ad17e96daeb48cc4cdb8af6f6ee436efcfc9df3629650bac  procurement/STACKUP-PROMOTION.json
+998ab845db6af7b035dde3b36bb92daeb39d5892f5033e0ed0bf69900aef491a  procurement/USB-STACKUP-REVIEW.txt
+15c355b87f8fa546769ca6db9993e320e16b602f1ef8d85b462712d4bb75cc3c  procurement/STACKUP-NATIV-REVIEW.txt
+6fb8e6fd7f6ddc9ee268f528df553217ec54625633918f962536551147e7702f  procurement/GERBER-CURRENT-REVIEW.txt
+ae27e58b2af7e547c0c775a5ab7f108e7f14355fd1869663f17ad2224685c061  procurement/GERBER-CURRENT-MANIFEST.json
+f1068b29198dc0713a23df9e19aa6061c5b77c1d2f3478e51b11fd351949161c  procurement/GERBER-EXPORT-MANIFEST.json
+63279b09c1447f647661c181a9b96170fbe406208e42a60063d4bf4e4242a3e0  procurement/JLC-ANFRAGE-ENTWURF.txt
+0ce5b18ed52a8fa5a424a5aa896b045336de12620bdd983d62e4e9e853ae0b46  procurement/TI-ANFRAGE-ENTWURF.txt
+b4a85ee6660c6be27a392c50335daec37d2758cea3cf214147db7a49c4b6aae9  mechanik/stackup-rebind-report.json
+7aa63a21f93293d4c9c49d63c1899c1e2aa6bb952bfebf67171c17587818faa2  tools/apply_proposed_stackup.py
+5ed465edf1448013440b4e965cf05a2cac29d686908ea206fa3e0ad676b9d554  tools/freeze_layout.py
+8b383237c2a90d4270685943619f579258b213815a4f9e6838f9993665eba590  procurement/clearance-screen-8b383237/screen.kicad_pcb
+21edd368db533b1de0727e4b4a2cba077256bfb625adf76d03e70f1da0225098  procurement/clearance-screen-8b383237/screen.kicad_pro
+eacaf95b9971133a5f3171c48e5b195d43dab3103fd1dc74570041c5c8d4f514  procurement/clearance-screen-8b383237/screen.kicad_dru
+0a80f1a94a48c1506c56c208cebc9ff7ec431852e3fc9345a9c9d26e09096aba  procurement/clearance-screen-8b383237/positive-control.kicad_dru
+8875ce4d0bd885dfafb1efdab529853b623a09c4ee5736abe39a64aac53a418b  procurement/clearance-screen-8b383237/drc-all-layers.json
+36e9b781fddf11f0d9589b04094df6d7ac6ace19e717d01aa4cdee95546d6b5e  procurement/clearance-screen-8b383237/positive-control.json
+
+Begrenzter Reproduktionsnachtrag: Hosttrialgenerator liest nun den gehashten
+historischen7af39d-Vorstand; beide Generatoren lesen Text explizitUTF8.
+Rootlauf in isolierterArbeitskopie gelesen und dessen beide Ergebnis-PCBs
+selbst objektweise gegen Kandidaten verglichen: exakt drei neue Track-UUIDs,
+sonst identische Objekte; kein eigener CAD-/DRC-Lauf. Haupt8b383 unveraendert.
+c315c98bed96bddac58743cbcdbc12184ee748700af9a27708958c271d1aee07  procurement/usb-stackup/build_host_pair_trial.py
+c29dd2f6c023b1f4b213be07935ae758ddfa3fe76fe36b1a7b08686261698526  procurement/usb-stackup/build_stackup_trial.py
+8743e5d602b527a561957004fa2acebf2a4daac24a7d9da154a40fa0b3afc4b3  procurement/usb-stackup/REPRO-PRUEFUNG.txt
+0632819d5554cf5a04b317504ce6f434e6bbb4a4ff7d329c86ea4fa2b3172d38  procurement/usb-stackup/REPRODUKTION.txt

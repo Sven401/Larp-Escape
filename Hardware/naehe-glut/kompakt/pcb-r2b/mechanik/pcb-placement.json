@@ -1,0 +1,4670 @@
+{
+  "pcb_sha256": "8b383237c2a90d4270685943619f579258b213815a4f9e6838f9993665eba590",
+  "read_only": true,
+  "kicad": "10.0.8",
+  "footprints": [
+    {
+      "ref": "C1",
+      "value": "10uF 10V X5R",
+      "footprint": "C_0805_2012Metric",
+      "position_mm": [
+        10.47,
+        13.0
+      ],
+      "rotation_deg": -90.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        9.675,
+        11.95,
+        11.265,
+        14.05
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            10.47,
+            12.05
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            10.47,
+            13.95
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "C10",
+      "value": "1uF 10V X5R",
+      "footprint": "C_0402_1005Metric",
+      "position_mm": [
+        11.91,
+        14.05
+      ],
+      "rotation_deg": 90.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        11.49,
+        13.5,
+        12.33,
+        14.6
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            11.91,
+            14.53
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            11.91,
+            13.57
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "C11",
+      "value": "100nF 16V X7R",
+      "footprint": "C_0402_1005Metric",
+      "position_mm": [
+        19.3,
+        23.35
+      ],
+      "rotation_deg": 90.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        18.88,
+        22.8,
+        19.72,
+        23.9
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            19.3,
+            23.83
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            19.3,
+            22.87
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "C12",
+      "value": "1uF 10V X5R",
+      "footprint": "C_0402_1005Metric",
+      "position_mm": [
+        19.4,
+        19.5
+      ],
+      "rotation_deg": 90.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        18.98,
+        18.95,
+        19.82,
+        20.05
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            19.4,
+            19.98
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            19.4,
+            19.02
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "C13",
+      "value": "22nF 50V X7R",
+      "footprint": "C_0402_1005Metric",
+      "position_mm": [
+        23.52,
+        21.46
+      ],
+      "rotation_deg": 0.0,
+      "side": "top",
+      "fab_aabb_mm": [
+        22.97,
+        21.04,
+        24.07,
+        21.88
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            23.04,
+            21.46
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            24.0,
+            21.46
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "C14",
+      "value": "22uF 10V X5R",
+      "footprint": "C_0805_2012Metric",
+      "position_mm": [
+        14.97,
+        22.45
+      ],
+      "rotation_deg": 90.0,
+      "side": "top",
+      "fab_aabb_mm": [
+        14.175,
+        21.4,
+        15.765,
+        23.5
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            14.97,
+            23.4
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            14.97,
+            21.5
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "C16",
+      "value": "470uF 6.3V polymer10mOhm",
+      "footprint": "CP_EIA-7343-43_Kemet-X",
+      "position_mm": [
+        22.27,
+        20.15
+      ],
+      "rotation_deg": 90.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        19.95,
+        16.44,
+        24.59,
+        24.625
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            22.27,
+            23.27
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            22.27,
+            17.03
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "C17",
+      "value": "22uF 16V X6S",
+      "footprint": "C_0805_2012Metric",
+      "position_mm": [
+        15.85,
+        17.1
+      ],
+      "rotation_deg": -90.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        15.055,
+        16.05,
+        16.645,
+        18.15
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            15.85,
+            16.15
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            15.85,
+            18.05
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "C18",
+      "value": "22uF 16V X6S",
+      "footprint": "C_0805_2012Metric",
+      "position_mm": [
+        17.9,
+        17.1
+      ],
+      "rotation_deg": -90.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        17.105,
+        16.05,
+        18.695,
+        18.15
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            17.9,
+            16.15
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            17.9,
+            18.05
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "C19",
+      "value": "100nF 16V X7R",
+      "footprint": "C_0402_1005Metric",
+      "position_mm": [
+        17.85,
+        14.875
+      ],
+      "rotation_deg": 180.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        17.3,
+        14.455,
+        18.4,
+        15.295
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            18.33,
+            14.875
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            17.37,
+            14.875
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "C2",
+      "value": "10uF 10V X5R",
+      "footprint": "C_0805_2012Metric",
+      "position_mm": [
+        11.75,
+        10.3
+      ],
+      "rotation_deg": 180.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        10.7,
+        9.505,
+        12.8,
+        11.095
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            12.7,
+            10.3
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            10.8,
+            10.3
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "C20",
+      "value": "10uF 25V X5R",
+      "footprint": "C_0603_1608Metric",
+      "position_mm": [
+        22.9,
+        6.28
+      ],
+      "rotation_deg": 180.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        22.05,
+        5.71,
+        23.75,
+        6.85
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            23.675,
+            6.28
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            22.125,
+            6.28
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "C21",
+      "value": "1uF 10V X5R startup delay",
+      "footprint": "C_0603_1608Metric",
+      "position_mm": [
+        23.68,
+        8.11
+      ],
+      "rotation_deg": 90.0,
+      "side": "top",
+      "fab_aabb_mm": [
+        23.11,
+        7.26,
+        24.25,
+        8.96
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            23.68,
+            8.885
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            23.68,
+            7.335
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "C22",
+      "value": "220pF 50V C0G feedforward",
+      "footprint": "C_0402_1005Metric",
+      "position_mm": [
+        14.47,
+        7.8
+      ],
+      "rotation_deg": 180.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        13.92,
+        7.38,
+        15.02,
+        8.22
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            14.95,
+            7.8
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            13.99,
+            7.8
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "C23",
+      "value": "100n",
+      "footprint": "C_0603_1608Metric",
+      "position_mm": [
+        3.0,
+        31.5
+      ],
+      "rotation_deg": 180.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        2.15,
+        30.93,
+        3.85,
+        32.07
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            3.775,
+            31.5
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            2.225,
+            31.5
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "C24",
+      "value": "100n",
+      "footprint": "C_0603_1608Metric",
+      "position_mm": [
+        6.5,
+        31.5
+      ],
+      "rotation_deg": 180.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        5.65,
+        30.93,
+        7.35,
+        32.07
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            7.275,
+            31.5
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            5.725,
+            31.5
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "C25",
+      "value": "100n",
+      "footprint": "C_0603_1608Metric",
+      "position_mm": [
+        10.0,
+        31.5
+      ],
+      "rotation_deg": 180.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        9.15,
+        30.93,
+        10.85,
+        32.07
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            10.775,
+            31.5
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            9.225,
+            31.5
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "C26",
+      "value": "10n",
+      "footprint": "C_0603_1608Metric",
+      "position_mm": [
+        17.0,
+        31.5
+      ],
+      "rotation_deg": 180.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        16.15,
+        30.93,
+        17.85,
+        32.07
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            17.775,
+            31.5
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            16.225,
+            31.5
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "C27",
+      "value": "10n",
+      "footprint": "C_0603_1608Metric",
+      "position_mm": [
+        20.5,
+        31.5
+      ],
+      "rotation_deg": 180.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        19.65,
+        30.93,
+        21.35,
+        32.07
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            21.275,
+            31.5
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            19.725,
+            31.5
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "C28",
+      "value": "100n 16V X7R / input not stability-critical",
+      "footprint": "C_0603_1608Metric",
+      "position_mm": [
+        14.5,
+        35.0
+      ],
+      "rotation_deg": 180.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        13.65,
+        34.43,
+        15.35,
+        35.57
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            15.275,
+            35.0
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            13.725,
+            35.0
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "C29",
+      "value": "4.7u 16V X7R / two parallel for bias reserve",
+      "footprint": "C_0805_2012Metric",
+      "position_mm": [
+        18.0,
+        34.5
+      ],
+      "rotation_deg": 180.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        16.95,
+        33.705,
+        19.05,
+        35.295
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            18.95,
+            34.5
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            17.05,
+            34.5
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "C3",
+      "value": "22uF 16V X6S",
+      "footprint": "C_0805_2012Metric",
+      "position_mm": [
+        11.75,
+        6.35
+      ],
+      "rotation_deg": 0.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        10.7,
+        5.555,
+        12.8,
+        7.145
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            10.8,
+            6.35
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            12.7,
+            6.35
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "C30",
+      "value": "4.7u 16V X7R / two parallel for bias reserve",
+      "footprint": "C_0805_2012Metric",
+      "position_mm": [
+        21.7,
+        36.5
+      ],
+      "rotation_deg": 180.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        20.65,
+        35.705,
+        22.75,
+        37.295
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            22.65,
+            36.5
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            20.75,
+            36.5
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "C31",
+      "value": "100n inverter bypass",
+      "footprint": "C_0603_1608Metric",
+      "position_mm": [
+        18.5,
+        30.0
+      ],
+      "rotation_deg": 180.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        17.65,
+        29.43,
+        19.35,
+        30.57
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            19.275,
+            30.0
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            17.725,
+            30.0
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "C4",
+      "value": "22uF 16V X6S",
+      "footprint": "C_0805_2012Metric",
+      "position_mm": [
+        14.5,
+        10.4
+      ],
+      "rotation_deg": -90.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        13.705,
+        9.35,
+        15.295,
+        11.45
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            14.5,
+            9.45
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            14.5,
+            11.35
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "C5",
+      "value": "10uF 25V X5R",
+      "footprint": "C_0603_1608Metric",
+      "position_mm": [
+        21.8,
+        12.45
+      ],
+      "rotation_deg": 0.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        20.95,
+        11.88,
+        22.65,
+        13.02
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            21.025,
+            12.45
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            22.575,
+            12.45
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "C6",
+      "value": "22uF 16V X6S",
+      "footprint": "C_0805_2012Metric",
+      "position_mm": [
+        14.4,
+        13.1
+      ],
+      "rotation_deg": 180.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        13.35,
+        12.305,
+        15.45,
+        13.895
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            15.35,
+            13.1
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            13.45,
+            13.1
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "C7",
+      "value": "10uF 25V X5R",
+      "footprint": "C_0603_1608Metric",
+      "position_mm": [
+        6.05,
+        11.0
+      ],
+      "rotation_deg": -90.0,
+      "side": "top",
+      "fab_aabb_mm": [
+        5.48,
+        10.15,
+        6.62,
+        11.85
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            6.05,
+            10.225
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            6.05,
+            11.775
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "C8",
+      "value": "100nF 16V X7R",
+      "footprint": "C_0402_1005Metric",
+      "position_mm": [
+        5.95,
+        8.55
+      ],
+      "rotation_deg": 90.0,
+      "side": "top",
+      "fab_aabb_mm": [
+        5.53,
+        8.0,
+        6.37,
+        9.1
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            5.95,
+            9.03
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            5.95,
+            8.07
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "C9",
+      "value": "100nF 16V X7R",
+      "footprint": "C_0402_1005Metric",
+      "position_mm": [
+        24.25,
+        8.5
+      ],
+      "rotation_deg": 90.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        23.83,
+        7.95,
+        24.67,
+        9.05
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            24.25,
+            8.98
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            24.25,
+            8.02
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "D1",
+      "value": "rail-free ESD array",
+      "footprint": "Texas_DRT-3",
+      "position_mm": [
+        9.5,
+        33.0
+      ],
+      "rotation_deg": 180.0,
+      "side": "top",
+      "fab_aabb_mm": [
+        8.95,
+        32.55,
+        10.05,
+        33.45
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            9.85,
+            32.575
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            9.15,
+            32.575
+          ]
+        },
+        {
+          "number": "3",
+          "position_mm": [
+            9.5,
+            33.425
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "D2",
+      "value": "rail-free ESD array",
+      "footprint": "Texas_DRT-3",
+      "position_mm": [
+        20.0,
+        25.8
+      ],
+      "rotation_deg": 0.0,
+      "side": "top",
+      "fab_aabb_mm": [
+        19.45,
+        25.35,
+        20.55,
+        26.25
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            19.65,
+            26.225
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            20.35,
+            26.225
+          ]
+        },
+        {
+          "number": "3",
+          "position_mm": [
+            20.0,
+            25.375
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "D3",
+      "value": "rail-free ESD array",
+      "footprint": "Texas_DRT-3",
+      "position_mm": [
+        23.0,
+        25.8
+      ],
+      "rotation_deg": 0.0,
+      "side": "top",
+      "fab_aabb_mm": [
+        22.45,
+        25.35,
+        23.55,
+        26.25
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            22.65,
+            26.225
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            23.35,
+            26.225
+          ]
+        },
+        {
+          "number": "3",
+          "position_mm": [
+            23.0,
+            25.375
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "D4",
+      "value": "rail-free ESD array",
+      "footprint": "Texas_DRT-3",
+      "position_mm": [
+        28.7,
+        31.0
+      ],
+      "rotation_deg": 0.0,
+      "side": "top",
+      "fab_aabb_mm": [
+        28.15,
+        30.55,
+        29.25,
+        31.45
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            28.35,
+            31.425
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            29.05,
+            31.425
+          ]
+        },
+        {
+          "number": "3",
+          "position_mm": [
+            28.7,
+            30.575
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "D5",
+      "value": "rail-free ESD array",
+      "footprint": "Texas_DRT-3",
+      "position_mm": [
+        2.0,
+        25.5
+      ],
+      "rotation_deg": 0.0,
+      "side": "top",
+      "fab_aabb_mm": [
+        1.45,
+        25.05,
+        2.55,
+        25.95
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            1.65,
+            25.925
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            2.35,
+            25.925
+          ]
+        },
+        {
+          "number": "3",
+          "position_mm": [
+            2.0,
+            25.075
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "F1",
+      "value": "2A fast fuse",
+      "footprint": "Fuse_0603_1608Metric",
+      "position_mm": [
+        23.68,
+        11.07
+      ],
+      "rotation_deg": 90.0,
+      "side": "top",
+      "fab_aabb_mm": [
+        23.11,
+        10.22,
+        24.25,
+        11.92
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            23.68,
+            11.8575
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            23.68,
+            10.2825
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "J1",
+      "value": "BAT JST PH2 vertical",
+      "footprint": "JST_PH_B2B-PH-SM4-TB_1x02-1MP_P2.00mm_Vertical",
+      "position_mm": [
+        10.1,
+        20.8
+      ],
+      "rotation_deg": 180.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        5.955,
+        16.38,
+        14.245,
+        24.11
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            11.1,
+            21.3
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            9.1,
+            21.3
+          ]
+        },
+        {
+          "number": "MP",
+          "position_mm": [
+            13.5,
+            19.05
+          ]
+        },
+        {
+          "number": "MP",
+          "position_mm": [
+            6.7,
+            19.05
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "J2",
+      "value": "LED wire pads",
+      "footprint": "LED_3WirePads",
+      "position_mm": [
+        6.5,
+        23.1
+      ],
+      "rotation_deg": 0.0,
+      "side": "top",
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            6.5,
+            23.1
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            9.0,
+            23.1
+          ]
+        },
+        {
+          "number": "3",
+          "position_mm": [
+            11.5,
+            23.1
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "J3",
+      "value": "External EG1218 EN switch",
+      "footprint": "Switch_2WirePads",
+      "position_mm": [
+        17.1,
+        23.1
+      ],
+      "rotation_deg": 0.0,
+      "side": "top",
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            17.1,
+            23.1
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            19.6,
+            23.1
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "J4",
+      "value": "USB-C DATA ONLY / external target supply",
+      "footprint": "USB_C_Receptacle_GCT_USB4105-xx-A_16P_TopMnt_Horizontal",
+      "position_mm": [
+        7.5,
+        39.325
+      ],
+      "rotation_deg": 0.0,
+      "side": "top",
+      "fab_aabb_mm": [
+        2.98,
+        35.6,
+        12.02,
+        43.05
+      ],
+      "pads": [
+        {
+          "number": "",
+          "position_mm": [
+            4.61,
+            36.72
+          ]
+        },
+        {
+          "number": "",
+          "position_mm": [
+            10.39,
+            36.72
+          ]
+        },
+        {
+          "number": "A1",
+          "position_mm": [
+            4.3,
+            35.645
+          ]
+        },
+        {
+          "number": "A4",
+          "position_mm": [
+            5.1,
+            35.645
+          ]
+        },
+        {
+          "number": "A5",
+          "position_mm": [
+            6.25,
+            35.645
+          ]
+        },
+        {
+          "number": "A6",
+          "position_mm": [
+            7.25,
+            35.645
+          ]
+        },
+        {
+          "number": "A7",
+          "position_mm": [
+            7.75,
+            35.645
+          ]
+        },
+        {
+          "number": "A8",
+          "position_mm": [
+            8.75,
+            35.645
+          ]
+        },
+        {
+          "number": "A9",
+          "position_mm": [
+            9.9,
+            35.645
+          ]
+        },
+        {
+          "number": "A12",
+          "position_mm": [
+            10.7,
+            35.645
+          ]
+        },
+        {
+          "number": "B1",
+          "position_mm": [
+            10.7,
+            35.645
+          ]
+        },
+        {
+          "number": "B4",
+          "position_mm": [
+            9.9,
+            35.645
+          ]
+        },
+        {
+          "number": "B5",
+          "position_mm": [
+            9.25,
+            35.645
+          ]
+        },
+        {
+          "number": "B6",
+          "position_mm": [
+            8.25,
+            35.645
+          ]
+        },
+        {
+          "number": "B7",
+          "position_mm": [
+            6.75,
+            35.645
+          ]
+        },
+        {
+          "number": "B8",
+          "position_mm": [
+            5.75,
+            35.645
+          ]
+        },
+        {
+          "number": "B9",
+          "position_mm": [
+            5.1,
+            35.645
+          ]
+        },
+        {
+          "number": "B12",
+          "position_mm": [
+            4.3,
+            35.645
+          ]
+        },
+        {
+          "number": "SH",
+          "position_mm": [
+            3.18,
+            36.22
+          ]
+        },
+        {
+          "number": "SH",
+          "position_mm": [
+            3.18,
+            40.4
+          ]
+        },
+        {
+          "number": "SH",
+          "position_mm": [
+            11.82,
+            36.22
+          ]
+        },
+        {
+          "number": "SH",
+          "position_mm": [
+            11.82,
+            40.4
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "J5",
+      "value": "GPIO JTAG / VTref reference only",
+      "footprint": "FTSH105_007_K",
+      "position_mm": [
+        23.5,
+        33.0
+      ],
+      "rotation_deg": 0.0,
+      "side": "top",
+      "fab_aabb_mm": [
+        20.275,
+        30.41,
+        26.725,
+        35.59
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            20.96,
+            35.035
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            20.96,
+            30.965
+          ]
+        },
+        {
+          "number": "3",
+          "position_mm": [
+            22.23,
+            35.035
+          ]
+        },
+        {
+          "number": "4",
+          "position_mm": [
+            22.23,
+            30.965
+          ]
+        },
+        {
+          "number": "5",
+          "position_mm": [
+            23.5,
+            35.035
+          ]
+        },
+        {
+          "number": "6",
+          "position_mm": [
+            23.5,
+            30.965
+          ]
+        },
+        {
+          "number": "8",
+          "position_mm": [
+            24.77,
+            30.965
+          ]
+        },
+        {
+          "number": "9",
+          "position_mm": [
+            26.04,
+            35.035
+          ]
+        },
+        {
+          "number": "10",
+          "position_mm": [
+            26.04,
+            30.965
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "JP1",
+      "value": "OPEN USB / CLOSED GPIO after authorized eFuse",
+      "footprint": "PinHeader_1x02_P2.54mm_Vertical",
+      "position_mm": [
+        18.3,
+        38.7
+      ],
+      "rotation_deg": 0.0,
+      "side": "top",
+      "fab_aabb_mm": [
+        16.86,
+        37.26,
+        19.74,
+        42.68
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            18.3,
+            38.7
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            18.3,
+            41.24
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "L1",
+      "value": "1uH",
+      "footprint": "L_Coilcraft_XxL4030",
+      "position_mm": [
+        7.75,
+        8.3
+      ],
+      "rotation_deg": 0.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        5.536,
+        6.086,
+        9.964,
+        10.514
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            6.565,
+            8.3
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            8.935,
+            8.3
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "L2",
+      "value": "1.5uH",
+      "footprint": "L_Coilcraft_XAL4020-XXX",
+      "position_mm": [
+        17.9,
+        8.2
+      ],
+      "rotation_deg": 180.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        15.58,
+        5.88,
+        20.22,
+        10.52
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            19.085,
+            8.2
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            16.715,
+            8.2
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "Q1",
+      "value": "MMBT3904 NPN OE pull-down",
+      "footprint": "SOT-323_SC-70",
+      "position_mm": [
+        26.7,
+        14.5
+      ],
+      "rotation_deg": 0.0,
+      "side": "top",
+      "fab_aabb_mm": [
+        25.32,
+        13.305,
+        27.495,
+        15.695
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            25.8125,
+            13.85
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            25.8125,
+            15.15
+          ]
+        },
+        {
+          "number": "3",
+          "position_mm": [
+            27.5875,
+            14.5
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R1",
+      "value": "33.2k",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        6.58,
+        6.71
+      ],
+      "rotation_deg": 90.0,
+      "side": "top",
+      "fab_aabb_mm": [
+        6.14,
+        6.135,
+        7.02,
+        7.285
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            6.58,
+            7.22
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            6.58,
+            6.2
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R10",
+      "value": "10k",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        21.68,
+        23.1
+      ],
+      "rotation_deg": 0.0,
+      "side": "top",
+      "fab_aabb_mm": [
+        21.105,
+        22.66,
+        22.255,
+        23.54
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            21.17,
+            23.1
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            22.19,
+            23.1
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R11",
+      "value": "10k",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        12.23,
+        12.21
+      ],
+      "rotation_deg": 90.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        11.79,
+        11.635,
+        12.67,
+        12.785
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            12.23,
+            12.72
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            12.23,
+            11.7
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R12",
+      "value": "100k",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        13.52,
+        21.68
+      ],
+      "rotation_deg": 90.0,
+      "side": "top",
+      "fab_aabb_mm": [
+        13.08,
+        21.105,
+        13.96,
+        22.255
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            13.52,
+            22.19
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            13.52,
+            21.17
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R13",
+      "value": "100",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        24.22,
+        12.95
+      ],
+      "rotation_deg": 90.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        23.78,
+        12.375,
+        24.66,
+        13.525
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            24.22,
+            13.46
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            24.22,
+            12.44
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R14",
+      "value": "100k",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        6.8,
+        15.48
+      ],
+      "rotation_deg": 180.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        6.225,
+        15.04,
+        7.375,
+        15.92
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            7.31,
+            15.48
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            6.29,
+            15.48
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R15",
+      "value": "330",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        13.12,
+        23.57
+      ],
+      "rotation_deg": 90.0,
+      "side": "top",
+      "fab_aabb_mm": [
+        12.68,
+        22.995,
+        13.56,
+        24.145
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            13.12,
+            24.08
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            13.12,
+            23.06
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R16",
+      "value": "100k",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        9.56,
+        15.58
+      ],
+      "rotation_deg": 0.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        8.985,
+        15.14,
+        10.135,
+        16.02
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            9.05,
+            15.58
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            10.07,
+            15.58
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R17",
+      "value": "470 ohm 0.1W",
+      "footprint": "R_0603_1608Metric",
+      "position_mm": [
+        23.68,
+        19.52
+      ],
+      "rotation_deg": 90.0,
+      "side": "top",
+      "fab_aabb_mm": [
+        23.0975,
+        18.67,
+        24.2625,
+        20.37
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            23.68,
+            20.345
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            23.68,
+            18.695
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R18",
+      "value": "680",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        6.58,
+        18.97
+      ],
+      "rotation_deg": 90.0,
+      "side": "top",
+      "fab_aabb_mm": [
+        6.14,
+        18.395,
+        7.02,
+        19.545
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            6.58,
+            19.48
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            6.58,
+            18.46
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R19",
+      "value": "100k",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        23.54,
+        22.39
+      ],
+      "rotation_deg": 180.0,
+      "side": "top",
+      "fab_aabb_mm": [
+        22.965,
+        21.95,
+        24.115,
+        22.83
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            24.05,
+            22.39
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            23.03,
+            22.39
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R2",
+      "value": "100k",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        6.09,
+        17.57
+      ],
+      "rotation_deg": 0.0,
+      "side": "top",
+      "fab_aabb_mm": [
+        5.515,
+        17.13,
+        6.665,
+        18.01
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            5.58,
+            17.57
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            6.6,
+            17.57
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R22",
+      "value": "470k",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        15.2,
+        14.6
+      ],
+      "rotation_deg": 0.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        14.625,
+        14.16,
+        15.775,
+        15.04
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            14.69,
+            14.6
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            15.71,
+            14.6
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R23",
+      "value": "150k",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        13.3,
+        14.6
+      ],
+      "rotation_deg": 180.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        12.725,
+        14.16,
+        13.875,
+        15.04
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            13.81,
+            14.6
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            12.79,
+            14.6
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R24",
+      "value": "10k",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        19.4,
+        15.13
+      ],
+      "rotation_deg": -90.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        18.96,
+        14.555,
+        19.84,
+        15.705
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            19.4,
+            14.62
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            19.4,
+            15.64
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R25",
+      "value": "6.8k",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        11.42,
+        15.58
+      ],
+      "rotation_deg": 180.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        10.845,
+        15.14,
+        11.995,
+        16.02
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            11.93,
+            15.58
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            10.91,
+            15.58
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R26",
+      "value": "10k",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        24.23,
+        14.81
+      ],
+      "rotation_deg": -90.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        23.79,
+        14.235,
+        24.67,
+        15.385
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            24.23,
+            14.3
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            24.23,
+            15.32
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R27",
+      "value": "1k",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        19.4,
+        21.45
+      ],
+      "rotation_deg": 90.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        18.96,
+        20.875,
+        19.84,
+        22.025
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            19.4,
+            21.96
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            19.4,
+            20.94
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R28",
+      "value": "5K1",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        3.0,
+        25.5
+      ],
+      "rotation_deg": 180.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        2.425,
+        25.06,
+        3.575,
+        25.94
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            3.51,
+            25.5
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            2.49,
+            25.5
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R29",
+      "value": "5K1",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        5.5,
+        25.5
+      ],
+      "rotation_deg": 180.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        4.925,
+        25.06,
+        6.075,
+        25.94
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            6.01,
+            25.5
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            4.99,
+            25.5
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R3",
+      "value": "12.1k",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        21.68,
+        22.16
+      ],
+      "rotation_deg": 0.0,
+      "side": "top",
+      "fab_aabb_mm": [
+        21.105,
+        21.72,
+        22.255,
+        22.6
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            21.17,
+            22.16
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            22.19,
+            22.16
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R30",
+      "value": "22R",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        14.5,
+        25.2
+      ],
+      "rotation_deg": 180.0,
+      "side": "top",
+      "fab_aabb_mm": [
+        13.925,
+        24.76,
+        15.075,
+        25.64
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            15.01,
+            25.2
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            13.99,
+            25.2
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R31",
+      "value": "22R",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        14.5,
+        26.2
+      ],
+      "rotation_deg": 180.0,
+      "side": "top",
+      "fab_aabb_mm": [
+        13.925,
+        25.76,
+        15.075,
+        26.64
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            15.01,
+            26.2
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            13.99,
+            26.2
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R32",
+      "value": "10K",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        13.0,
+        25.5
+      ],
+      "rotation_deg": 180.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        12.425,
+        25.06,
+        13.575,
+        25.94
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            13.51,
+            25.5
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            12.49,
+            25.5
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R33",
+      "value": "10K",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        15.5,
+        25.5
+      ],
+      "rotation_deg": 180.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        14.925,
+        25.06,
+        16.075,
+        25.94
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            16.01,
+            25.5
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            14.99,
+            25.5
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R34",
+      "value": "10K",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        18.0,
+        25.5
+      ],
+      "rotation_deg": 180.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        17.425,
+        25.06,
+        18.575,
+        25.94
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            18.51,
+            25.5
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            17.49,
+            25.5
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R35",
+      "value": "10K",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        20.5,
+        25.5
+      ],
+      "rotation_deg": 180.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        19.925,
+        25.06,
+        21.075,
+        25.94
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            21.01,
+            25.5
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            19.99,
+            25.5
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R36",
+      "value": "33R",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        23.0,
+        25.5
+      ],
+      "rotation_deg": 180.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        22.425,
+        25.06,
+        23.575,
+        25.94
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            23.51,
+            25.5
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            22.49,
+            25.5
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R37",
+      "value": "33R",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        25.5,
+        25.5
+      ],
+      "rotation_deg": 180.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        24.925,
+        25.06,
+        26.075,
+        25.94
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            26.01,
+            25.5
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            24.99,
+            25.5
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R38",
+      "value": "33R",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        3.0,
+        28.5
+      ],
+      "rotation_deg": 180.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        2.425,
+        28.06,
+        3.575,
+        28.94
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            3.51,
+            28.5
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            2.49,
+            28.5
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R39",
+      "value": "33R",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        5.5,
+        28.5
+      ],
+      "rotation_deg": 180.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        4.925,
+        28.06,
+        6.075,
+        28.94
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            6.01,
+            28.5
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            4.99,
+            28.5
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R4",
+      "value": "750k",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        23.54,
+        23.33
+      ],
+      "rotation_deg": 180.0,
+      "side": "top",
+      "fab_aabb_mm": [
+        22.965,
+        22.89,
+        24.115,
+        23.77
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            24.05,
+            23.33
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            23.03,
+            23.33
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R40",
+      "value": "200K",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        8.0,
+        28.5
+      ],
+      "rotation_deg": 180.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        7.425,
+        28.06,
+        8.575,
+        28.94
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            8.51,
+            28.5
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            7.49,
+            28.5
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R41",
+      "value": "75K",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        10.5,
+        28.5
+      ],
+      "rotation_deg": 180.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        9.925,
+        28.06,
+        11.075,
+        28.94
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            11.01,
+            28.5
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            9.99,
+            28.5
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R42",
+      "value": "47K",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        13.0,
+        28.5
+      ],
+      "rotation_deg": 180.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        12.425,
+        28.06,
+        13.575,
+        28.94
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            13.51,
+            28.5
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            12.49,
+            28.5
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R45",
+      "value": "47K",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        15.5,
+        28.5
+      ],
+      "rotation_deg": 180.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        14.925,
+        28.06,
+        16.075,
+        28.94
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            16.01,
+            28.5
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            14.99,
+            28.5
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R46",
+      "value": "10K",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        18.0,
+        28.5
+      ],
+      "rotation_deg": 180.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        17.425,
+        28.06,
+        18.575,
+        28.94
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            18.51,
+            28.5
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            17.49,
+            28.5
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R47",
+      "value": "169K",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        25.0,
+        38.0
+      ],
+      "rotation_deg": 180.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        24.425,
+        37.56,
+        25.575,
+        38.44
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            25.51,
+            38.0
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            24.49,
+            38.0
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R48",
+      "value": "100K",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        27.0,
+        36.0
+      ],
+      "rotation_deg": 180.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        26.425,
+        35.56,
+        27.575,
+        36.44
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            27.51,
+            36.0
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            26.49,
+            36.0
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R5",
+      "value": "22k",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        24.23,
+        10.34
+      ],
+      "rotation_deg": 90.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        23.79,
+        9.765,
+        24.67,
+        10.915
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            24.23,
+            10.85
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            24.23,
+            9.83
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R6",
+      "value": "750k",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        14.47,
+        6.8
+      ],
+      "rotation_deg": 180.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        13.895,
+        6.36,
+        15.045,
+        7.24
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            14.98,
+            6.8
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            13.96,
+            6.8
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R7",
+      "value": "100k",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        14.47,
+        5.8
+      ],
+      "rotation_deg": 0.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        13.895,
+        5.36,
+        15.045,
+        6.24
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            13.96,
+            5.8
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            14.98,
+            5.8
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R8",
+      "value": "10k",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        23.91,
+        17.57
+      ],
+      "rotation_deg": 0.0,
+      "side": "top",
+      "fab_aabb_mm": [
+        23.335,
+        17.13,
+        24.485,
+        18.01
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            23.4,
+            17.57
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            24.42,
+            17.57
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "R9",
+      "value": "10k",
+      "footprint": "R_0402_1005Metric",
+      "position_mm": [
+        19.4,
+        16.99
+      ],
+      "rotation_deg": -90.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        18.96,
+        16.415,
+        19.84,
+        17.565
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            19.4,
+            16.48
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            19.4,
+            17.5
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "SW1",
+      "value": "BOOT",
+      "footprint": "SW_Push_1P1T_NO_CK_KMR2",
+      "position_mm": [
+        4.7,
+        28.8
+      ],
+      "rotation_deg": 0.0,
+      "side": "top",
+      "fab_aabb_mm": [
+        2.55,
+        27.35,
+        6.85,
+        30.25
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            2.65,
+            28.0
+          ]
+        },
+        {
+          "number": "1",
+          "position_mm": [
+            6.75,
+            28.0
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            2.65,
+            29.6
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            6.75,
+            29.6
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "SW2",
+      "value": "RESET",
+      "footprint": "SW_Push_1P1T_NO_CK_KMR2",
+      "position_mm": [
+        27.0,
+        27.0
+      ],
+      "rotation_deg": 0.0,
+      "side": "top",
+      "fab_aabb_mm": [
+        24.85,
+        25.55,
+        29.15,
+        28.45
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            24.95,
+            26.2
+          ]
+        },
+        {
+          "number": "1",
+          "position_mm": [
+            29.05,
+            26.2
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            24.95,
+            27.8
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            29.05,
+            27.8
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "TP1",
+      "value": "UART0_TX_GPIO43",
+      "footprint": "TestPad_1mm",
+      "position_mm": [
+        6.05,
+        13.3
+      ],
+      "rotation_deg": 0.0,
+      "side": "top",
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            6.05,
+            13.3
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "TP2",
+      "value": "UART0_RX_GPIO44",
+      "footprint": "TestPad_1mm",
+      "position_mm": [
+        6.05,
+        14.82
+      ],
+      "rotation_deg": 0.0,
+      "side": "top",
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            6.05,
+            14.82
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "TP3",
+      "value": "ROM_BOOT0",
+      "footprint": "TestPad_1mm",
+      "position_mm": [
+        6.05,
+        16.34
+      ],
+      "rotation_deg": 0.0,
+      "side": "top",
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            6.05,
+            16.34
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "TP4",
+      "value": "RESET_EN",
+      "footprint": "TestPad_1mm",
+      "position_mm": [
+        23.95,
+        13.3
+      ],
+      "rotation_deg": 0.0,
+      "side": "top",
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            23.95,
+            13.3
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "TP5",
+      "value": "GND",
+      "footprint": "TestPad_1mm",
+      "position_mm": [
+        23.95,
+        14.82
+      ],
+      "rotation_deg": 0.0,
+      "side": "top",
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            23.95,
+            14.82
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "TP6",
+      "value": "SENSE_ONLY_NO_POWER_IN",
+      "footprint": "TestPad_1mm",
+      "position_mm": [
+        23.95,
+        16.34
+      ],
+      "rotation_deg": 0.0,
+      "side": "top",
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            23.95,
+            16.34
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "U1",
+      "value": "ESP32-S3-MINI-1-N4R2",
+      "footprint": "ESP32-S2-MINI-1",
+      "position_mm": [
+        15.0,
+        10.25
+      ],
+      "rotation_deg": 0.0,
+      "side": "top",
+      "fab_aabb_mm": [
+        6.629,
+        -0.41,
+        22.86,
+        20.66
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            8.0,
+            6.85
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            8.0,
+            7.7
+          ]
+        },
+        {
+          "number": "3",
+          "position_mm": [
+            8.0,
+            8.55
+          ]
+        },
+        {
+          "number": "4",
+          "position_mm": [
+            8.0,
+            9.4
+          ]
+        },
+        {
+          "number": "5",
+          "position_mm": [
+            8.0,
+            10.25
+          ]
+        },
+        {
+          "number": "6",
+          "position_mm": [
+            8.0,
+            11.1
+          ]
+        },
+        {
+          "number": "7",
+          "position_mm": [
+            8.0,
+            11.95
+          ]
+        },
+        {
+          "number": "8",
+          "position_mm": [
+            8.0,
+            12.8
+          ]
+        },
+        {
+          "number": "9",
+          "position_mm": [
+            8.0,
+            13.65
+          ]
+        },
+        {
+          "number": "10",
+          "position_mm": [
+            8.0,
+            14.5
+          ]
+        },
+        {
+          "number": "11",
+          "position_mm": [
+            8.0,
+            15.35
+          ]
+        },
+        {
+          "number": "12",
+          "position_mm": [
+            8.0,
+            16.2
+          ]
+        },
+        {
+          "number": "13",
+          "position_mm": [
+            8.0,
+            17.05
+          ]
+        },
+        {
+          "number": "14",
+          "position_mm": [
+            8.0,
+            17.9
+          ]
+        },
+        {
+          "number": "15",
+          "position_mm": [
+            8.0,
+            18.75
+          ]
+        },
+        {
+          "number": "16",
+          "position_mm": [
+            9.05,
+            19.8
+          ]
+        },
+        {
+          "number": "17",
+          "position_mm": [
+            9.9,
+            19.8
+          ]
+        },
+        {
+          "number": "18",
+          "position_mm": [
+            10.75,
+            19.8
+          ]
+        },
+        {
+          "number": "19",
+          "position_mm": [
+            11.6,
+            19.8
+          ]
+        },
+        {
+          "number": "20",
+          "position_mm": [
+            12.45,
+            19.8
+          ]
+        },
+        {
+          "number": "21",
+          "position_mm": [
+            13.3,
+            19.8
+          ]
+        },
+        {
+          "number": "22",
+          "position_mm": [
+            14.15,
+            19.8
+          ]
+        },
+        {
+          "number": "23",
+          "position_mm": [
+            15.0,
+            19.8
+          ]
+        },
+        {
+          "number": "24",
+          "position_mm": [
+            15.85,
+            19.8
+          ]
+        },
+        {
+          "number": "25",
+          "position_mm": [
+            16.7,
+            19.8
+          ]
+        },
+        {
+          "number": "26",
+          "position_mm": [
+            17.55,
+            19.8
+          ]
+        },
+        {
+          "number": "27",
+          "position_mm": [
+            18.4,
+            19.8
+          ]
+        },
+        {
+          "number": "28",
+          "position_mm": [
+            19.25,
+            19.8
+          ]
+        },
+        {
+          "number": "29",
+          "position_mm": [
+            20.1,
+            19.8
+          ]
+        },
+        {
+          "number": "30",
+          "position_mm": [
+            20.95,
+            19.8
+          ]
+        },
+        {
+          "number": "31",
+          "position_mm": [
+            22.0,
+            18.75
+          ]
+        },
+        {
+          "number": "32",
+          "position_mm": [
+            22.0,
+            17.9
+          ]
+        },
+        {
+          "number": "33",
+          "position_mm": [
+            22.0,
+            17.05
+          ]
+        },
+        {
+          "number": "34",
+          "position_mm": [
+            22.0,
+            16.2
+          ]
+        },
+        {
+          "number": "35",
+          "position_mm": [
+            22.0,
+            15.35
+          ]
+        },
+        {
+          "number": "36",
+          "position_mm": [
+            22.0,
+            14.5
+          ]
+        },
+        {
+          "number": "37",
+          "position_mm": [
+            22.0,
+            13.65
+          ]
+        },
+        {
+          "number": "38",
+          "position_mm": [
+            22.0,
+            12.8
+          ]
+        },
+        {
+          "number": "39",
+          "position_mm": [
+            22.0,
+            11.95
+          ]
+        },
+        {
+          "number": "40",
+          "position_mm": [
+            22.0,
+            11.1
+          ]
+        },
+        {
+          "number": "41",
+          "position_mm": [
+            22.0,
+            10.25
+          ]
+        },
+        {
+          "number": "42",
+          "position_mm": [
+            22.0,
+            9.4
+          ]
+        },
+        {
+          "number": "43",
+          "position_mm": [
+            22.0,
+            8.55
+          ]
+        },
+        {
+          "number": "44",
+          "position_mm": [
+            22.0,
+            7.7
+          ]
+        },
+        {
+          "number": "45",
+          "position_mm": [
+            22.0,
+            6.85
+          ]
+        },
+        {
+          "number": "46",
+          "position_mm": [
+            20.95,
+            5.8
+          ]
+        },
+        {
+          "number": "47",
+          "position_mm": [
+            20.1,
+            5.8
+          ]
+        },
+        {
+          "number": "48",
+          "position_mm": [
+            19.25,
+            5.8
+          ]
+        },
+        {
+          "number": "49",
+          "position_mm": [
+            18.4,
+            5.8
+          ]
+        },
+        {
+          "number": "50",
+          "position_mm": [
+            17.55,
+            5.8
+          ]
+        },
+        {
+          "number": "51",
+          "position_mm": [
+            16.7,
+            5.8
+          ]
+        },
+        {
+          "number": "52",
+          "position_mm": [
+            15.85,
+            5.8
+          ]
+        },
+        {
+          "number": "53",
+          "position_mm": [
+            15.0,
+            5.8
+          ]
+        },
+        {
+          "number": "54",
+          "position_mm": [
+            14.15,
+            5.8
+          ]
+        },
+        {
+          "number": "55",
+          "position_mm": [
+            13.3,
+            5.8
+          ]
+        },
+        {
+          "number": "56",
+          "position_mm": [
+            12.45,
+            5.8
+          ]
+        },
+        {
+          "number": "57",
+          "position_mm": [
+            11.6,
+            5.8
+          ]
+        },
+        {
+          "number": "58",
+          "position_mm": [
+            10.75,
+            5.8
+          ]
+        },
+        {
+          "number": "59",
+          "position_mm": [
+            9.9,
+            5.8
+          ]
+        },
+        {
+          "number": "60",
+          "position_mm": [
+            9.05,
+            5.8
+          ]
+        },
+        {
+          "number": "61",
+          "position_mm": [
+            13.35,
+            11.15
+          ]
+        },
+        {
+          "number": "61",
+          "position_mm": [
+            13.35,
+            12.8
+          ]
+        },
+        {
+          "number": "61",
+          "position_mm": [
+            13.35,
+            14.45
+          ]
+        },
+        {
+          "number": "61",
+          "position_mm": [
+            15.0,
+            11.15
+          ]
+        },
+        {
+          "number": "61",
+          "position_mm": [
+            15.0,
+            12.8
+          ]
+        },
+        {
+          "number": "61",
+          "position_mm": [
+            15.0,
+            14.45
+          ]
+        },
+        {
+          "number": "61",
+          "position_mm": [
+            16.65,
+            11.15
+          ]
+        },
+        {
+          "number": "61",
+          "position_mm": [
+            16.65,
+            12.8
+          ]
+        },
+        {
+          "number": "61",
+          "position_mm": [
+            16.65,
+            14.45
+          ]
+        },
+        {
+          "number": "62",
+          "position_mm": [
+            8.0,
+            5.8
+          ]
+        },
+        {
+          "number": "63",
+          "position_mm": [
+            8.0,
+            19.8
+          ]
+        },
+        {
+          "number": "64",
+          "position_mm": [
+            22.0,
+            19.8
+          ]
+        },
+        {
+          "number": "65",
+          "position_mm": [
+            22.0,
+            5.8
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "U10",
+      "value": "USB attach supervisor",
+      "footprint": "TI_DSE0006A",
+      "position_mm": [
+        21.5,
+        34.0
+      ],
+      "rotation_deg": 180.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        20.7,
+        33.2,
+        22.3,
+        34.8
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            22.1,
+            33.5
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            22.1,
+            34.0
+          ]
+        },
+        {
+          "number": "3",
+          "position_mm": [
+            22.1,
+            34.5
+          ]
+        },
+        {
+          "number": "4",
+          "position_mm": [
+            21.15,
+            34.5
+          ]
+        },
+        {
+          "number": "5",
+          "position_mm": [
+            20.9,
+            34.0
+          ]
+        },
+        {
+          "number": "6",
+          "position_mm": [
+            20.9,
+            33.5
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "U11",
+      "value": "USB interface ONLY / no target power",
+      "footprint": "SOT-23-5",
+      "position_mm": [
+        13.0,
+        29.0
+      ],
+      "rotation_deg": 90.0,
+      "side": "top",
+      "fab_aabb_mm": [
+        11.5,
+        28.15,
+        14.5,
+        29.85
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            12.05,
+            30.1375
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            13.0,
+            30.1375
+          ]
+        },
+        {
+          "number": "3",
+          "position_mm": [
+            13.95,
+            30.1375
+          ]
+        },
+        {
+          "number": "4",
+          "position_mm": [
+            13.95,
+            27.8625
+          ]
+        },
+        {
+          "number": "5",
+          "position_mm": [
+            12.05,
+            27.8625
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "U12",
+      "value": "USB ready Schmitt inverter",
+      "footprint": "SOT-353_SC-70-5",
+      "position_mm": [
+        17.5,
+        31.0
+      ],
+      "rotation_deg": 0.0,
+      "side": "top",
+      "fab_aabb_mm": [
+        16.12,
+        29.66,
+        18.295,
+        32.17
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            16.6625,
+            30.35
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            16.6625,
+            31.0
+          ]
+        },
+        {
+          "number": "3",
+          "position_mm": [
+            16.6625,
+            31.65
+          ]
+        },
+        {
+          "number": "4",
+          "position_mm": [
+            18.3375,
+            31.65
+          ]
+        },
+        {
+          "number": "5",
+          "position_mm": [
+            18.3375,
+            30.35
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "U2",
+      "value": "5.1V LED boost",
+      "footprint": "SOT-563",
+      "position_mm": [
+        11.4,
+        8.3
+      ],
+      "rotation_deg": 180.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        10.63,
+        7.11,
+        12.32,
+        9.295
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            12.1125,
+            7.8
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            12.1125,
+            8.3
+          ]
+        },
+        {
+          "number": "3",
+          "position_mm": [
+            12.1125,
+            8.8
+          ]
+        },
+        {
+          "number": "4",
+          "position_mm": [
+            10.6875,
+            8.8
+          ]
+        },
+        {
+          "number": "5",
+          "position_mm": [
+            10.6875,
+            8.3
+          ]
+        },
+        {
+          "number": "6",
+          "position_mm": [
+            10.6875,
+            7.8
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "U3",
+      "value": "3V3 independent buck-boost",
+      "footprint": "TI_RNM0015A",
+      "position_mm": [
+        18.1,
+        12.5
+      ],
+      "rotation_deg": 90.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        16.575,
+        11.225,
+        19.625,
+        14.35
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            18.85,
+            13.65
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            18.35,
+            13.65
+          ]
+        },
+        {
+          "number": "3",
+          "position_mm": [
+            17.85,
+            13.65
+          ]
+        },
+        {
+          "number": "4",
+          "position_mm": [
+            17.35,
+            13.65
+          ]
+        },
+        {
+          "number": "5",
+          "position_mm": [
+            16.7,
+            13.225
+          ]
+        },
+        {
+          "number": "6",
+          "position_mm": [
+            16.7,
+            12.725
+          ]
+        },
+        {
+          "number": "7",
+          "position_mm": [
+            16.7,
+            12.225
+          ]
+        },
+        {
+          "number": "8",
+          "position_mm": [
+            16.7,
+            11.725
+          ]
+        },
+        {
+          "number": "9",
+          "position_mm": [
+            17.6,
+            11.725
+          ]
+        },
+        {
+          "number": "10",
+          "position_mm": [
+            18.1,
+            11.9
+          ]
+        },
+        {
+          "number": "11",
+          "position_mm": [
+            18.6,
+            11.725
+          ]
+        },
+        {
+          "number": "12",
+          "position_mm": [
+            19.5,
+            11.725
+          ]
+        },
+        {
+          "number": "13",
+          "position_mm": [
+            19.5,
+            12.225
+          ]
+        },
+        {
+          "number": "14",
+          "position_mm": [
+            19.5,
+            12.725
+          ]
+        },
+        {
+          "number": "15",
+          "position_mm": [
+            19.5,
+            13.225
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "U4",
+      "value": "UVLO with hysteresis",
+      "footprint": "SOT-23-6",
+      "position_mm": [
+        22.05,
+        9.4
+      ],
+      "rotation_deg": 90.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        20.43,
+        8.43,
+        23.95,
+        11.15
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            23.0,
+            10.5375
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            22.05,
+            10.5375
+          ]
+        },
+        {
+          "number": "3",
+          "position_mm": [
+            21.1,
+            10.5375
+          ]
+        },
+        {
+          "number": "4",
+          "position_mm": [
+            21.1,
+            8.2625
+          ]
+        },
+        {
+          "number": "5",
+          "position_mm": [
+            22.05,
+            8.2625
+          ]
+        },
+        {
+          "number": "6",
+          "position_mm": [
+            23.0,
+            8.2625
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "U5",
+      "value": "LED input current limiter latch-off",
+      "footprint": "SOT-23-6",
+      "position_mm": [
+        7.4,
+        12.5
+      ],
+      "rotation_deg": 180.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        6.43,
+        10.6,
+        9.15,
+        14.12
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            8.5375,
+            11.55
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            8.5375,
+            12.5
+          ]
+        },
+        {
+          "number": "3",
+          "position_mm": [
+            8.5375,
+            13.45
+          ]
+        },
+        {
+          "number": "4",
+          "position_mm": [
+            6.2625,
+            13.45
+          ]
+        },
+        {
+          "number": "5",
+          "position_mm": [
+            6.2625,
+            12.5
+          ]
+        },
+        {
+          "number": "6",
+          "position_mm": [
+            6.2625,
+            11.55
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "U6",
+      "value": "LED translating data buffer",
+      "footprint": "SOT-353_SC-70-5",
+      "position_mm": [
+        17.0,
+        23.35
+      ],
+      "rotation_deg": 0.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        15.62,
+        22.18,
+        17.795,
+        24.69
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            16.1625,
+            24.0
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            16.1625,
+            23.35
+          ]
+        },
+        {
+          "number": "3",
+          "position_mm": [
+            16.1625,
+            22.7
+          ]
+        },
+        {
+          "number": "4",
+          "position_mm": [
+            17.8375,
+            22.7
+          ]
+        },
+        {
+          "number": "5",
+          "position_mm": [
+            17.8375,
+            24.0
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "U7",
+      "value": "LED load switch",
+      "footprint": "SOT-23-6",
+      "position_mm": [
+        16.85,
+        20.55
+      ],
+      "rotation_deg": 180.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        15.88,
+        18.65,
+        18.6,
+        22.17
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            17.9875,
+            19.6
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            17.9875,
+            20.55
+          ]
+        },
+        {
+          "number": "3",
+          "position_mm": [
+            17.9875,
+            21.5
+          ]
+        },
+        {
+          "number": "4",
+          "position_mm": [
+            15.7125,
+            21.5
+          ]
+        },
+        {
+          "number": "5",
+          "position_mm": [
+            15.7125,
+            20.55
+          ]
+        },
+        {
+          "number": "6",
+          "position_mm": [
+            15.7125,
+            19.6
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "U8",
+      "value": "USB hardware disconnect",
+      "footprint": "Texas_UQFN-10_1.5x2mm_P0.5mm",
+      "position_mm": [
+        9.5,
+        27.5
+      ],
+      "rotation_deg": -90.0,
+      "side": "top",
+      "fab_aabb_mm": [
+        8.45,
+        26.7,
+        10.55,
+        28.3
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            10.25,
+            26.825
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            9.75,
+            26.825
+          ]
+        },
+        {
+          "number": "3",
+          "position_mm": [
+            9.25,
+            26.825
+          ]
+        },
+        {
+          "number": "4",
+          "position_mm": [
+            8.75,
+            26.825
+          ]
+        },
+        {
+          "number": "5",
+          "position_mm": [
+            8.6,
+            27.5
+          ]
+        },
+        {
+          "number": "6",
+          "position_mm": [
+            8.75,
+            28.175
+          ]
+        },
+        {
+          "number": "7",
+          "position_mm": [
+            9.25,
+            28.175
+          ]
+        },
+        {
+          "number": "8",
+          "position_mm": [
+            9.75,
+            28.175
+          ]
+        },
+        {
+          "number": "9",
+          "position_mm": [
+            10.25,
+            28.175
+          ]
+        },
+        {
+          "number": "10",
+          "position_mm": [
+            10.4,
+            27.5
+          ]
+        }
+      ]
+    },
+    {
+      "ref": "U9",
+      "value": "USB attach supervisor",
+      "footprint": "TI_DSE0006A",
+      "position_mm": [
+        25.5,
+        34.0
+      ],
+      "rotation_deg": 180.0,
+      "side": "bottom",
+      "fab_aabb_mm": [
+        24.7,
+        33.2,
+        26.3,
+        34.8
+      ],
+      "pads": [
+        {
+          "number": "1",
+          "position_mm": [
+            26.1,
+            33.5
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            26.1,
+            34.0
+          ]
+        },
+        {
+          "number": "3",
+          "position_mm": [
+            26.1,
+            34.5
+          ]
+        },
+        {
+          "number": "4",
+          "position_mm": [
+            25.15,
+            34.5
+          ]
+        },
+        {
+          "number": "5",
+          "position_mm": [
+            24.9,
+            34.0
+          ]
+        },
+        {
+          "number": "6",
+          "position_mm": [
+            24.9,
+            33.5
+          ]
+        }
+      ]
+    }
+  ],
+  "metadata_rebind_note": "Promoted 3313A stackup/ENIG metadata and one internal USB_DP_HOST segment replaced by three. Exact complete footprint/pad/via/outline/general blocks unchanged; prior collision results apply unchanged. See stackup-rebind-report.json."
+}

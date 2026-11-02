@@ -1,0 +1,34 @@
+R2b — nativer RFQ-Prüfexport, NICHT für Produktion freigegeben
+02.11.2026, Quellcommit bad8abfbdab64aa7c5b2641b3b07789191a98a41.
+Native PCB SHA256:
+7af39dbe807ed82f905622cce0c6b93f2cd650c61eafb224970e9f49eec15868
+
+KiCad CLI10.0.8 aus der vorhandenen lokalen Werkzeuginstallation verwendet.
+KICAD_CONFIG_HOME auf das vorhandene pruefung/kicad-config gesetzt; dadurch
+kein Konfigurationsverzeichnis im Benutzerprofil angelegt. Die CLI meldete
+weiterhin verweigerten Registryzugriff auf HKCU/Software/kicad-cli, beendete
+beide Exporte aber mit Exit0. Ausgabe und Eingangsprüfsumme separat kontrolliert.
+PCB-Datei vor/nach Export unverändert. Keine Zonen-Neufüllung angefordert;
+die bereits geprüften vorhandenen Füllpolygone wurden exportiert.
+
+Aufrufe (aus pcb-r2b, <CLI> durch vorhandenes kicad-cli.exe ersetzen):
+<CLI> pcb export gerbers --output procurement/rfq-gerber-draft/ --layers F.Cu,In1.Cu,In2.Cu,In3.Cu,In4.Cu,B.Cu,F.Mask,B.Mask,F.Silkscreen,B.Silkscreen,F.Paste,B.Paste,Edge.Cuts --use-drill-file-origin naehe-glut-r2b.kicad_pcb
+<CLI> pcb export drill --output procurement/rfq-gerber-draft/ --format excellon --drill-origin plot --excellon-units mm --excellon-separate-th --generate-report naehe-glut-r2b.kicad_pcb
+Für eine Wiederholung ein neues Ausgabeverzeichnis verwenden, historische
+Prüfdateien und MANIFEST nicht stillschweigend überschreiben.
+
+13 Gerberlagen, getrennte PTH-/NPTH-Bohrdateien, Bohrbericht und native
+Gerberjob-Datei. Maß-/Ursprungsprüfung siehe GERBER-REVIEW.txt.
+GERBER-EXPORT-MANIFEST.json bindet die tatsächlich entstandenen17Ausgabedateien.
+
+Die native .gbrjob-Datei enthält derzeit Finish=None und einen generischen,
+nicht vom Fertiger bestätigten FR4-Lagenaufbau. Sie ist als Befund aufbewahrt,
+darf aber NICHT als ENIG-Auftrag oder bestätigter Impedanzstackup übermittelt
+werden. Ein späteres externes Gerberpaket muss diese Diskrepanz auflösen oder
+die irreführende Jobdatei auslassen und verbindliche geprüfte Angaben enthalten.
+Die Datei wurde weder stillschweigend korrigiert noch als fertigungstauglich erklärt.
+
+Weitere Sperren unverändert: vier lokale USB-NPTH-Abstände, angenommener
+90-Ohm-Aufbau, Panel-/Bestückprozess und elektrische/physische Qualifikation.
+Kein Upload, Versand oder Produktionsauftrag. Dieser Export ist nicht Teil
+des zuvor veröffentlichten R2b-Entwurf.zip und ändert dessen Prüfsumme nicht.

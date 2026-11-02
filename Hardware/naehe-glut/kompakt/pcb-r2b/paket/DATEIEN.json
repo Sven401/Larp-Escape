@@ -1,0 +1,1329 @@
+{
+  "status": "reviewed_engineering_draft_NOT_manufacturing_or_operation_release",
+  "date": "2026-11-02",
+  "entry_point": "UMSETZUNGSSTAND.txt",
+  "pcb_sha256": "8b383237c2a90d4270685943619f579258b213815a4f9e6838f9993665eba590",
+  "files": [
+    {
+      "path": "HARDWARE-DATEIEN.txt",
+      "sha256": "8b28a8524fd908a24d81faf1b2d2a88653916979c93332b6280f0accb1f753dd",
+      "bytes": 1722
+    },
+    {
+      "path": "JTAG-PROBE-AUSWAHL.txt",
+      "sha256": "c7a535c641499892d3448188aeb6c8cc2b356fe1dab76f515acf2ae33ff99b67",
+      "bytes": 5759
+    },
+    {
+      "path": "KICAD-LIBRARY-LICENSE.md",
+      "sha256": "45d2bce75e5a4208f5afb01b8fb2c406e700371c4fe2b5f5cd5c443d46db4d8f",
+      "bytes": 2101
+    },
+    {
+      "path": "NearGlowR2a.pretty/LED_3WirePads.kicad_mod",
+      "sha256": "3e2eca69cab2752804f05ceecccbf6221855f0b17330ff1e59fd252b469a1dcc",
+      "bytes": 825
+    },
+    {
+      "path": "NearGlowR2a.pretty/Switch_2WirePads.kicad_mod",
+      "sha256": "bbb276f7f3fb3715187a2794feea487df48265acc131be86066baac8612dde0a",
+      "bytes": 727
+    },
+    {
+      "path": "NearGlowR2a.pretty/TI_RNM0015A.kicad_mod",
+      "sha256": "4a48fbb606f6787389fd6fbcdbb9161faa3c7c6cd85427dd17017a8d08eee6b5",
+      "bytes": 25229
+    },
+    {
+      "path": "NearGlowR2a.pretty/TestPad_1mm.kicad_mod",
+      "sha256": "0e6035205e78b2749e48164142d16b1ac7475c03054cc62a6845b8b32a95879d",
+      "bytes": 576
+    },
+    {
+      "path": "NearGlowR2b.kicad_sym",
+      "sha256": "7c82e2f97fd4561670409592ad3273bacb5f8fa731cae7f6d9a402fe4351ba8a",
+      "bytes": 102692
+    },
+    {
+      "path": "NearGlowR2b.pretty/FTSH105_007_K.kicad_mod",
+      "sha256": "d99f5fa9c7fec38e12dccd888246d0d1bbc6682aa39b3c047a2cc8d3f4766b6c",
+      "bytes": 1387
+    },
+    {
+      "path": "NearGlowR2b.pretty/FTSH105_KEYED_DRAFT.kicad_mod",
+      "sha256": "f0dba559c629a0c10e90f36b846bbe148e1b4cb8456417867cab4564e87a6d98",
+      "bytes": 7516
+    },
+    {
+      "path": "NearGlowR2b.pretty/TI_DSE0006A.kicad_mod",
+      "sha256": "6fb7781d6321cf60e8511412577a3aa0583c6627ff8c027f81b6ad2ffb741824",
+      "bytes": 974
+    },
+    {
+      "path": "PLANUNG.txt",
+      "sha256": "aaa570d3c17d4d5287c01c8276f7034cff9596550586a8875c52ce94457c1045",
+      "bytes": 18345
+    },
+    {
+      "path": "PLANUNGSREVIEW.json",
+      "sha256": "9a018e3e09652960adbbf38a484275779da028ebb91c79081f4260c9126b4e69",
+      "bytes": 9178
+    },
+    {
+      "path": "R2A-LIBRARY-SOURCES.json",
+      "sha256": "781ddea51889600c8b16c9c1317432890fb44287f2af542e9be65cfa18b199b3",
+      "bytes": 8929
+    },
+    {
+      "path": "REPRODUKTION.txt",
+      "sha256": "551771a17da2466f167564338a576936bc093fae0d5bbfa020a652d8c5699454",
+      "bytes": 3256
+    },
+    {
+      "path": "SCHALTUNGSVERTRAG.txt",
+      "sha256": "47dbc8f3c0a14099ad89dc523364ae87a6c9120d4b09b99f39001803abcd07d2",
+      "bytes": 13969
+    },
+    {
+      "path": "SERVICE-INTERFACE.csv",
+      "sha256": "7b5c7004e9290f34f15b07415e01f8adac1cef7f52c4b40251b45e498c85c6b8",
+      "bytes": 1002
+    },
+    {
+      "path": "SOURCES.json",
+      "sha256": "526bdd5ff0e455c9ab2592d0247387fffc0f8f8ef3ba517e35c1d6c110e5ea2c",
+      "bytes": 3341
+    },
+    {
+      "path": "TERMIN-UND-ABNAHME.txt",
+      "sha256": "d95e3c8c4294eefa4b40fdfe2098fbfd100a0b2ac7297d7ff18f9fb11a04aea6",
+      "bytes": 5430
+    },
+    {
+      "path": "UMSETZUNGSSTAND.txt",
+      "sha256": "2ac0af1e0e8f6a685ed91c27204c3f9f19cd5943b714122656b80e5cc1109776",
+      "bytes": 7370
+    },
+    {
+      "path": "bom.csv",
+      "sha256": "0da0adbfea16ed33a8b3c14c45c7d27d4b010d42240d7d9a3154b20c285f0a24",
+      "bytes": 10646
+    },
+    {
+      "path": "circuit.json",
+      "sha256": "b8adb47a048849bc23e5384c4230514bd4ba75c0055c0d28544233c209a99fca",
+      "bytes": 67823
+    },
+    {
+      "path": "footprints/Button_Switch_SMD.pretty/SW_Push_1P1T_NO_CK_KMR2.kicad_mod",
+      "sha256": "615aefe4786313a5f3d6ca898f0df8325cc5ae252d0b97e5c3107c359cdbeed4",
+      "bytes": 4388
+    },
+    {
+      "path": "footprints/Capacitor_SMD.pretty/C_0402_1005Metric.kicad_mod",
+      "sha256": "243b2fa0c59b7a010d77decd160264a91f80d111089f5bcff2462b8c1e1f45ce",
+      "bytes": 2912
+    },
+    {
+      "path": "footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "a118870a5422b605b5db49235750676f53ca9173a0be2dd7165effdee83d876d",
+      "bytes": 2904
+    },
+    {
+      "path": "footprints/Capacitor_SMD.pretty/C_0805_2012Metric.kicad_mod",
+      "sha256": "0a99f8774e4a369e1c5b6b0d65563f6e698fea302bb38cb599a224390269d11f",
+      "bytes": 3006
+    },
+    {
+      "path": "footprints/Capacitor_Tantalum_SMD.pretty/CP_EIA-7343-43_Kemet-X.kicad_mod",
+      "sha256": "5788845f45c3b297f69d70498c97185ff818cca0232438a6c3caeaee3af111db",
+      "bytes": 3742
+    },
+    {
+      "path": "footprints/Connector_JST.pretty/JST_PH_B2B-PH-SM4-TB_1x02-1MP_P2.00mm_Vertical.kicad_mod",
+      "sha256": "120dac48a6f3e1c803f0def82e311973dbefe155b8018fb5ffb0e42da872919d",
+      "bytes": 8149
+    },
+    {
+      "path": "footprints/Connector_PinHeader_2.54mm.pretty/PinHeader_1x02_P2.54mm_Vertical.kicad_mod",
+      "sha256": "e5c0d699660a4479fa2414cc5be1835c6f52a38630dd85a2d18aab4dcd3ff8e5",
+      "bytes": 2994
+    },
+    {
+      "path": "footprints/Connector_USB.pretty/USB_C_Receptacle_GCT_USB4105-xx-A_16P_TopMnt_Horizontal.kicad_mod",
+      "sha256": "012da5bac71f8e9d4f59d0f7041c3cd8e1e5af3a3d297354b974f61ab24e8691",
+      "bytes": 7170
+    },
+    {
+      "path": "footprints/Fuse.pretty/Fuse_0603_1608Metric.kicad_mod",
+      "sha256": "13f4c70de80a6903e338ce2146ff02cb4662405ed3032e797423026e06e16b2b",
+      "bytes": 2865
+    },
+    {
+      "path": "footprints/Inductor_SMD.pretty/L_Coilcraft_XAL4020-XXX.kicad_mod",
+      "sha256": "2169fe20aa1da0cf19e2c436cf1807ca79d1f3dc5aa04367345d32ba091f82fc",
+      "bytes": 3156
+    },
+    {
+      "path": "footprints/Inductor_SMD.pretty/L_Coilcraft_XxL4030.kicad_mod",
+      "sha256": "af7197f9e8b1543a946b2301aebb2bc9eda2866f2c21666b9e8a7d9f26614627",
+      "bytes": 3523
+    },
+    {
+      "path": "footprints/NearGlowR2a.pretty/LED_3WirePads.kicad_mod",
+      "sha256": "0995775bfa3bbf4a6c0ffebb95409482c333fd1da5d6a1e75223ac30d0f9b593",
+      "bytes": 1719
+    },
+    {
+      "path": "footprints/NearGlowR2a.pretty/Switch_2WirePads.kicad_mod",
+      "sha256": "327eb6d7daab23aab3e88fc724537c7dd75316973ef2324ed8e3d42795b1ff82",
+      "bytes": 1558
+    },
+    {
+      "path": "footprints/NearGlowR2a.pretty/TI_RNM0015A.kicad_mod",
+      "sha256": "b5f5246cfd7e42034d25f65cd455accdb066d97431fa8e40c48721f6c78b4e4c",
+      "bytes": 27623
+    },
+    {
+      "path": "footprints/NearGlowR2a.pretty/TestPad_1mm.kicad_mod",
+      "sha256": "1720843b85438a42ac0884eafc3b82163d2ee4823d6488ac4a6f87b3fb58580a",
+      "bytes": 1343
+    },
+    {
+      "path": "footprints/Package_DFN_QFN.pretty/Texas_UQFN-10_1.5x2mm_P0.5mm.kicad_mod",
+      "sha256": "a2752b989056edafdd183323ff090d2521b73c967db4e6ff07c6587a29e2d7fa",
+      "bytes": 5720
+    },
+    {
+      "path": "footprints/Package_TO_SOT_SMD.pretty/SOT-23-5.kicad_mod",
+      "sha256": "684a94089f59798a46492dac8dd0242edfa4d915e76a210abdca369e4faa4f9b",
+      "bytes": 5072
+    },
+    {
+      "path": "footprints/Package_TO_SOT_SMD.pretty/SOT-23-6.kicad_mod",
+      "sha256": "888c1777c3d0922d83a3734300bfc419845c72778fe28df6d8f5e69688421a8d",
+      "bytes": 6378
+    },
+    {
+      "path": "footprints/Package_TO_SOT_SMD.pretty/SOT-323_SC-70.kicad_mod",
+      "sha256": "a16b8a40f1a0d1aaf7c052b24ee9a1e601e2985c8cd77078b1aedd91d3031251",
+      "bytes": 6399
+    },
+    {
+      "path": "footprints/Package_TO_SOT_SMD.pretty/SOT-353_SC-70-5.kicad_mod",
+      "sha256": "ce1375c2df18c8a28494252b18459a05c5c3b5f5c5d223ebec2d07b84f57a211",
+      "bytes": 7226
+    },
+    {
+      "path": "footprints/Package_TO_SOT_SMD.pretty/SOT-563.kicad_mod",
+      "sha256": "329db42f84db429adcfbc29fe178e4b460b6ffab7326b2e114b86390ebc1d965",
+      "bytes": 5687
+    },
+    {
+      "path": "footprints/Package_TO_SOT_SMD.pretty/Texas_DRT-3.kicad_mod",
+      "sha256": "2e055139cf9d3d6dd51ac4dc7bbaf19f2961db9a43714b23820df391c7a3374f",
+      "bytes": 4552
+    },
+    {
+      "path": "footprints/RF_Module.pretty/ESP32-S2-MINI-1.kicad_mod",
+      "sha256": "2a2e069c81b24e5c5d56d0244e05f48df5089e946b711e606545cf966118cc61",
+      "bytes": 20182
+    },
+    {
+      "path": "footprints/Resistor_SMD.pretty/R_0402_1005Metric.kicad_mod",
+      "sha256": "bf5b8e034668d8d3cec75b00ce60999d935f3e0fa4f4ec966ef4a317034a1d6b",
+      "bytes": 2913
+    },
+    {
+      "path": "footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "2a67b7bdd91ea20646a9f85edefd083033470a9990a60d2b4900605b1745b0e2",
+      "bytes": 2919
+    },
+    {
+      "path": "footprints/TestPoint.pretty/TestPoint_Pad_D1.0mm.kicad_mod",
+      "sha256": "b93c5e46f0ea1710c672431901a6f03b2bd9a4791e6eb5fbb5fc6ff36cf36ba5",
+      "bytes": 1846
+    },
+    {
+      "path": "fp-lib-table",
+      "sha256": "d910bc9a490a381be82d43437923361d1d407412871aacd1795b516e70162747",
+      "bytes": 1825
+    },
+    {
+      "path": "mechanical-interface.json",
+      "sha256": "3a7336d7caa31b01987aad646c28f174d69091ae8d22db57fd11c81bd8357e75",
+      "bytes": 1134
+    },
+    {
+      "path": "mechanik-tools/HELPER-HERKUNFT.txt",
+      "sha256": "670c1e4470a6ee5509854d10fa32346d711e52ed1642088c0210f83409a74ccf",
+      "bytes": 988
+    },
+    {
+      "path": "mechanik-tools/build_fixture.py",
+      "sha256": "bde17934af669134caa4b3548df475e9b2b0b56417d9b20087063eadda1cce80",
+      "bytes": 10297
+    },
+    {
+      "path": "mechanik-tools/build_manifest.py",
+      "sha256": "1132ca415118fd78532fb2900980f849129078fb1c77c7e5c429f77283ba9055",
+      "bytes": 2078
+    },
+    {
+      "path": "mechanik-tools/component_envelopes.py",
+      "sha256": "519a337d17db38b7cae2ce80aa2b576a0003c2c30faa3f62169dfd50c99470ad",
+      "bytes": 5941
+    },
+    {
+      "path": "mechanik-tools/extract_pcba.py",
+      "sha256": "aba9a44f592e20b88674cba8eb7e72234fa78984efdc1fe56a3ccd787cfb37ca",
+      "bytes": 1554
+    },
+    {
+      "path": "mechanik-tools/pcba_envelopes.py",
+      "sha256": "4dc989a861225a209ea0d4ba523baf9c1c6df94512515ab0f6851f1767fb4738",
+      "bytes": 6158
+    },
+    {
+      "path": "mechanik-tools/render_fixture.py",
+      "sha256": "075482ac828ea0a9096e1b4587d4909be888a6684e4e6866ebf2b2ee27c7c15b",
+      "bytes": 2613
+    },
+    {
+      "path": "mechanik-tools/run_bambu.py",
+      "sha256": "7fc3e3139f9091e5d46ddc10f0968e06a86e629161a5818dfd275ab5150934de",
+      "bytes": 1189
+    },
+    {
+      "path": "mechanik-tools/slice_fixture.py",
+      "sha256": "095a4ba103516462084a2f55dd873a95b0bc760d5d540ee7ee87f3b7f7e830b3",
+      "bytes": 4514
+    },
+    {
+      "path": "mechanik/DRUCK-UND-MONTAGE.txt",
+      "sha256": "0869feed1787321db41e57d97e59d7449e36c2e118a65e28aceb19088dd7366d",
+      "bytes": 8350
+    },
+    {
+      "path": "mechanik/MANIFEST.json",
+      "sha256": "0fac203e3d6706e316a708cb4f2dc063ad27d2445ba18158ac2f8d19a49c739b",
+      "bytes": 5798
+    },
+    {
+      "path": "mechanik/R2b-service-P1S-PETG-draft.3mf",
+      "sha256": "320ad5a7e27d06a0aeaa29452a3df2940b79139ac429dc5809d6c3e07e02337d",
+      "bytes": 1290612
+    },
+    {
+      "path": "mechanik/R2b-service-draft.FCStd",
+      "sha256": "0c42ea353000052771b087618298bca04fba21a005c9eca8ec0f1c3a075fb87e",
+      "bytes": 143245
+    },
+    {
+      "path": "mechanik/adapter-mating-report.json",
+      "sha256": "ba5e1ba99bcfe1e28d6b6af08abcf85de9923be09046c81a8a57312ab9efaa3c",
+      "bytes": 1746
+    },
+    {
+      "path": "mechanik/assembled-draft.png",
+      "sha256": "fce4bb94a5b3d7724e6f900fe9dfb69e9b3f07abc7492faefeeaaf134a305766",
+      "bytes": 1282750
+    },
+    {
+      "path": "mechanik/assembly-draft.step",
+      "sha256": "60f8f1fd19d43847965b79cd807ffcc8eb54e7bf5f3b69b0848bdb8227c56150",
+      "bytes": 921451
+    },
+    {
+      "path": "mechanik/base.step",
+      "sha256": "785c70502a4d3d48a3ebbfe475e46422dde6f46866779612df05c5fdd830e86a",
+      "bytes": 69612
+    },
+    {
+      "path": "mechanik/base.stl",
+      "sha256": "62c81989315d8e694adefc1a3c1c62025461cf8fdba6ae0cde0555f12f8166f8",
+      "bytes": 59484
+    },
+    {
+      "path": "mechanik/clamp_left.step",
+      "sha256": "75b2e3f79f127922c963d33b82b38ce91ad54e29fcbaf486803c5fd8bc8c52b8",
+      "bytes": 13294
+    },
+    {
+      "path": "mechanik/clamp_left.stl",
+      "sha256": "f428aaf7ca186675bdf7ebc37ff7cdaf0f807131aac33a4d83f3487e639f8b9a",
+      "bytes": 22684
+    },
+    {
+      "path": "mechanik/clamp_right.step",
+      "sha256": "6085b39e31d64273f4b46dadc71b71a0d708d9674929ee7a6801df3aeecefe8b",
+      "bytes": 13306
+    },
+    {
+      "path": "mechanik/clamp_right.stl",
+      "sha256": "2a40d2e110641b744c9a55f63470b7475309da2d9f1953e5c9e9793bfb198fc6",
+      "bytes": 22684
+    },
+    {
+      "path": "mechanik/component-envelope-report.json",
+      "sha256": "1525b5ef1c763b6e9b5ab95337b51e1b1e115fe8737933fe434223560612f11e",
+      "bytes": 4422
+    },
+    {
+      "path": "mechanik/exploded-draft.png",
+      "sha256": "ff2abff692fbc3e9fd12dcf2ddda7cc5268aaebc44573f4865c70a4d389515cb",
+      "bytes": 1253321
+    },
+    {
+      "path": "mechanik/geometry-report.json",
+      "sha256": "71b8904c4f8508ec757e5cb569bb17947453cc6ad899bab0c30d4859f2bdcf37",
+      "bytes": 4467
+    },
+    {
+      "path": "mechanik/insert_r2b.step",
+      "sha256": "96bc434c50ff948b1769d71bca4bfa66a08cb970b0624b82af9d6a92438e37f4",
+      "bytes": 91019
+    },
+    {
+      "path": "mechanik/insert_r2b.stl",
+      "sha256": "01e29478424767fb0e7e202360739fb721f9ba3f6ca0d6e31814d230c95f32d0",
+      "bytes": 218684
+    },
+    {
+      "path": "mechanik/jtag_tie_bar.step",
+      "sha256": "13a4a0efbc1792e5bb1801642442568c9f80d904c3e2548933c81c43388fc1e6",
+      "bytes": 17114
+    },
+    {
+      "path": "mechanik/jtag_tie_bar.stl",
+      "sha256": "36c1f787a2f2914430d49489faddf538039be702a939c7ab115b7c6fea34346c",
+      "bytes": 2684
+    },
+    {
+      "path": "mechanik/metadata-rebind-report.json",
+      "sha256": "dd52630620ca0ed82bd4378bb4641c481d752ed087fff0297e5969164d09f756",
+      "bytes": 3487
+    },
+    {
+      "path": "mechanik/pcb-placement.json",
+      "sha256": "516aee4199348c815f0404bc256dd66c029561bc61bcbada10f9e278e12b25ec",
+      "bytes": 85909
+    },
+    {
+      "path": "mechanik/pcba-envelope-report.json",
+      "sha256": "4ab35c2f1e2864ba8b4ce725db73ff1acf71fc8f448b9acf6d6b6b8b0b7f1a2e",
+      "bytes": 41002
+    },
+    {
+      "path": "mechanik/slice-report.json",
+      "sha256": "e4bfb77a99d0fb6e75675b3758adda19be834ceed4202324a1206652bd56195f",
+      "bytes": 6417
+    },
+    {
+      "path": "mechanik/slicer/LICENSE-AGPL-3.0.txt",
+      "sha256": "57c8ff33c9c0cfc3ef00e650a1cc910d7ee479a8bc509f6c9209a7c2a11399d6",
+      "bytes": 34520
+    },
+    {
+      "path": "mechanik/slicer/machine.json",
+      "sha256": "8183293408fa7b61ae76cd34ffee1e7402a62f13d84fa995d6863f18abf4f76a",
+      "bytes": 20562
+    },
+    {
+      "path": "mechanik/slicer/petg.json",
+      "sha256": "0d4d15320b828990ed2f2332e74979a2b403dd4d507c92ec5dda327b99799008",
+      "bytes": 7799
+    },
+    {
+      "path": "mechanik/slicer/process.json",
+      "sha256": "0bd050a42c8bec2047f06c5864221915e1fb5a3c154fc2c0698c91a241641064",
+      "bytes": 8211
+    },
+    {
+      "path": "mechanik/slicer/sources.json",
+      "sha256": "78d2fe1d243220f53cb30aaf96588eb41a224f258613cf5db45e9dfb64d5d8b9",
+      "bytes": 2690
+    },
+    {
+      "path": "mechanik/stackup-rebind-report.json",
+      "sha256": "b4a85ee6660c6be27a392c50335daec37d2758cea3cf214147db7a49c4b6aae9",
+      "bytes": 5871
+    },
+    {
+      "path": "mechanik/underside-draft.png",
+      "sha256": "f9680fbc744217e36ddf306260a807c1b80836577e5e9e6903f80795b8aa7348",
+      "bytes": 1283418
+    },
+    {
+      "path": "mechanik/usb_tie_bar.step",
+      "sha256": "baf3d4a029d3af078a720eb3657997a14e51c08e7a453e3afe1b0dfa0734b095",
+      "bytes": 17088
+    },
+    {
+      "path": "mechanik/usb_tie_bar.stl",
+      "sha256": "06c107cd184d4a784fdf92a566b08a44c6a1c9ccf93fd4aebfd7bbc94eb6f5d5",
+      "bytes": 2684
+    },
+    {
+      "path": "naehe-glut-r2b.kicad_pcb",
+      "sha256": "8b383237c2a90d4270685943619f579258b213815a4f9e6838f9993665eba590",
+      "bytes": 2136985
+    },
+    {
+      "path": "naehe-glut-r2b.kicad_pro",
+      "sha256": "21edd368db533b1de0727e4b4a2cba077256bfb625adf76d03e70f1da0225098",
+      "bytes": 9689
+    },
+    {
+      "path": "naehe-glut-r2b.kicad_sch",
+      "sha256": "91f638ee1d52b9be80695f5e59fd8fa313e136c23fa4e5fbe77f8aa373871bef",
+      "bytes": 282546
+    },
+    {
+      "path": "naehe-glut-r2b.net.xml",
+      "sha256": "f926429d1df73826ad1e14570bd48ef497cb7406bdc65ab4a923916446a2ac68",
+      "bytes": 181950
+    },
+    {
+      "path": "procurement/CLEARANCE-SCREEN.json",
+      "sha256": "7fca2438a1506ac35b4885f070de0d315a86947b1d21cc99ce209ef8ac2ffaf5",
+      "bytes": 2090
+    },
+    {
+      "path": "procurement/DFM-ANGEBOT.txt",
+      "sha256": "a8678d243dff1bd38bb7ae0cd2220994212b177b53c4ee8cb5895b396b53bf70",
+      "bytes": 10151
+    },
+    {
+      "path": "procurement/FIRMWARE-ABGLEICH.txt",
+      "sha256": "b2c18a1a971ee4e9fc5811ab7027930cc829188dd6d2d6f0878dd849d9b1e908",
+      "bytes": 972
+    },
+    {
+      "path": "procurement/GERBER-CURRENT-MANIFEST.json",
+      "sha256": "ae27e58b2af7e547c0c775a5ab7f108e7f14355fd1869663f17ad2224685c061",
+      "bytes": 3505
+    },
+    {
+      "path": "procurement/GERBER-CURRENT-REVIEW.txt",
+      "sha256": "6fb8e6fd7f6ddc9ee268f528df553217ec54625633918f962536551147e7702f",
+      "bytes": 3192
+    },
+    {
+      "path": "procurement/GERBER-CURRENT.txt",
+      "sha256": "0daafab94720ef98b3495d46cf20d4818f10d3524fee8bdbd6c414371416986f",
+      "bytes": 1802
+    },
+    {
+      "path": "procurement/GERBER-EXPORT-MANIFEST.json",
+      "sha256": "f1068b29198dc0713a23df9e19aa6061c5b77c1d2f3478e51b11fd351949161c",
+      "bytes": 3448
+    },
+    {
+      "path": "procurement/GERBER-EXPORT.txt",
+      "sha256": "d2c071f63aa93d5af1d6c8c55f2ae8d4c4fdea7d3d36ca37e0915d128ff7cb42",
+      "bytes": 2393
+    },
+    {
+      "path": "procurement/GERBER-REVIEW.txt",
+      "sha256": "e275854c6b88665ce3186a56bf46efaa7f2c1611318d5b75bb1cca2831b07193",
+      "bytes": 7098
+    },
+    {
+      "path": "procurement/JLC-ANFRAGE-ENTWURF.txt",
+      "sha256": "63279b09c1447f647661c181a9b96170fbe406208e42a60063d4bf4e4242a3e0",
+      "bytes": 5029
+    },
+    {
+      "path": "procurement/KALKULATOR.txt",
+      "sha256": "2d824344bcda9ad39a86914e05ce04ec1b4248f64a1f490c734889bbeb4e8cb4",
+      "bytes": 2272
+    },
+    {
+      "path": "procurement/METADATA-PROMOTION.json",
+      "sha256": "391d27cf4de5b578761eea7540024ef613d8493670aaa10314c43b2fb0e301aa",
+      "bytes": 2061
+    },
+    {
+      "path": "procurement/QUALIFIKATION-OFFEN.txt",
+      "sha256": "a2232effe97967d270b4883184d36fe17fc859d2933882d36bcb4583250bcbca",
+      "bytes": 10980
+    },
+    {
+      "path": "procurement/QUELLEN.txt",
+      "sha256": "522e4ee98c55f854aa7df305922b207a2eb65d96b6a63e199038f1a7a3937b24",
+      "bytes": 2469
+    },
+    {
+      "path": "procurement/REVIEW.txt",
+      "sha256": "a2776359499a094da6731f07225bec3d84569af4f765ba34e54e5d46457a28aa",
+      "bytes": 9313
+    },
+    {
+      "path": "procurement/RFQ-INPUTS.json",
+      "sha256": "4cf05a4cc62f4406aa58e8fa1e0295de3e72f492042c81219a132efee5a8896a",
+      "bytes": 4137
+    },
+    {
+      "path": "procurement/STACKUP-NATIV-REVIEW.txt",
+      "sha256": "15c355b87f8fa546769ca6db9993e320e16b602f1ef8d85b462712d4bb75cc3c",
+      "bytes": 3341
+    },
+    {
+      "path": "procurement/STACKUP-PROMOTION.json",
+      "sha256": "9914533e397746d0ad17e96daeb48cc4cdb8af6f6ee436efcfc9df3629650bac",
+      "bytes": 1363
+    },
+    {
+      "path": "procurement/TECHNISCHE-PRAEZISIERUNG.txt",
+      "sha256": "024fd9640e3602d45f72d3f77e8701ea9ab42fc5eaad402e30d9a6e15ef6c5bd",
+      "bytes": 5594
+    },
+    {
+      "path": "procurement/TI-ANFRAGE-ENTWURF.txt",
+      "sha256": "0ce5b18ed52a8fa5a424a5aa896b045336de12620bdd983d62e4e9e853ae0b46",
+      "bytes": 6267
+    },
+    {
+      "path": "procurement/USB-STACKUP-PRUEFUNG.txt",
+      "sha256": "113610309a8ab640d26fd817b0db1f2fc59f44e0199deb8f3a1dad0f1f146ff7",
+      "bytes": 9233
+    },
+    {
+      "path": "procurement/USB-STACKUP-REVIEW.txt",
+      "sha256": "998ab845db6af7b035dde3b36bb92daeb39d5892f5033e0ed0bf69900aef491a",
+      "bytes": 5122
+    },
+    {
+      "path": "procurement/VIA-FILL-INVENTORY.csv",
+      "sha256": "863bc10189c0a6f77cf9eafdb006c1152d6bd326ff69ac85edaa024144f120b3",
+      "bytes": 25555
+    },
+    {
+      "path": "procurement/VIA-METADATA-CANDIDATE.json",
+      "sha256": "b67efb3f0248dd83bc1817531dc5303d7d593a6c3f03653e4061a45e201dbdb2",
+      "bytes": 935
+    },
+    {
+      "path": "procurement/clearance-screen-8b383237/drc-all-layers.json",
+      "sha256": "8875ce4d0bd885dfafb1efdab529853b623a09c4ee5736abe39a64aac53a418b",
+      "bytes": 69851
+    },
+    {
+      "path": "procurement/clearance-screen-8b383237/positive-control.json",
+      "sha256": "36e9b781fddf11f0d9589b04094df6d7ac6ace19e717d01aa4cdee95546d6b5e",
+      "bytes": 92989
+    },
+    {
+      "path": "procurement/clearance-screen-8b383237/positive-control.kicad_dru",
+      "sha256": "0a80f1a94a48c1506c56c208cebc9ff7ec431852e3fc9345a9c9d26e09096aba",
+      "bytes": 337
+    },
+    {
+      "path": "procurement/clearance-screen-8b383237/screen.kicad_dru",
+      "sha256": "eacaf95b9971133a5f3171c48e5b195d43dab3103fd1dc74570041c5c8d4f514",
+      "bytes": 329
+    },
+    {
+      "path": "procurement/clearance-screen-8b383237/screen.kicad_pcb",
+      "sha256": "8b383237c2a90d4270685943619f579258b213815a4f9e6838f9993665eba590",
+      "bytes": 2136985
+    },
+    {
+      "path": "procurement/clearance-screen-8b383237/screen.kicad_pro",
+      "sha256": "21edd368db533b1de0727e4b4a2cba077256bfb625adf76d03e70f1da0225098",
+      "bytes": 9689
+    },
+    {
+      "path": "procurement/clearance-screen/HISTORICAL-SCREEN.json",
+      "sha256": "938eb1e3dafb2995058cf48ba1da48d349e355e62091b8297f0578e50b1fe107",
+      "bytes": 2157
+    },
+    {
+      "path": "procurement/clearance-screen/drc-all-layers.json",
+      "sha256": "3a89a814f6a722ba62d49fc76550a737ac5b06bc1cffe7916a3e9f3275174423",
+      "bytes": 69851
+    },
+    {
+      "path": "procurement/clearance-screen/metadata-candidate.kicad_pcb",
+      "sha256": "7af39dbe807ed82f905622cce0c6b93f2cd650c61eafb224970e9f49eec15868",
+      "bytes": 2134832
+    },
+    {
+      "path": "procurement/clearance-screen/positive-control.json",
+      "sha256": "30d79ae85b1169c89079d16792685d4fa985a2b38159497d37a463d1f13efdc2",
+      "bytes": 92989
+    },
+    {
+      "path": "procurement/clearance-screen/positive-control.kicad_dru",
+      "sha256": "0a80f1a94a48c1506c56c208cebc9ff7ec431852e3fc9345a9c9d26e09096aba",
+      "bytes": 337
+    },
+    {
+      "path": "procurement/clearance-screen/production-screen-rules.txt",
+      "sha256": "eacaf95b9971133a5f3171c48e5b195d43dab3103fd1dc74570041c5c8d4f514",
+      "bytes": 329
+    },
+    {
+      "path": "procurement/clearance-screen/screen.kicad_dru",
+      "sha256": "b1b495d4d618e7c43cc5277c549181b2dad18a99f3c5592f13c77265c2298039",
+      "bytes": 483
+    },
+    {
+      "path": "procurement/clearance-screen/screen.kicad_pcb",
+      "sha256": "7af39dbe807ed82f905622cce0c6b93f2cd650c61eafb224970e9f49eec15868",
+      "bytes": 2134832
+    },
+    {
+      "path": "procurement/clearance-screen/screen.kicad_pro",
+      "sha256": "21edd368db533b1de0727e4b4a2cba077256bfb625adf76d03e70f1da0225098",
+      "bytes": 9689
+    },
+    {
+      "path": "procurement/extract_rfq_inputs.py",
+      "sha256": "b75378b0d21e11c295755ee8e4fa46d021ee699ab4bba2808d39f3a91d38c2f7",
+      "bytes": 2399
+    },
+    {
+      "path": "procurement/prepare_metadata_candidate.py",
+      "sha256": "3c9248e2ed2cd025416a528148eb8bb8c796bc24516ea783f60ac2bb593e3169",
+      "bytes": 1181
+    },
+    {
+      "path": "procurement/record_promotion.py",
+      "sha256": "3423405866cf7ea33b042645cebf5c88a4c8904eda83d4a9f35efa4e990af113",
+      "bytes": 1344
+    },
+    {
+      "path": "procurement/rfq-gerber-8b383237/naehe-glut-r2b-B_Cu.gbl",
+      "sha256": "f1a339db14051ac452e2ce6ba496cad44cdc4aee6d1b20b271de7cbcab9572cb",
+      "bytes": 351440
+    },
+    {
+      "path": "procurement/rfq-gerber-8b383237/naehe-glut-r2b-B_Mask.gbs",
+      "sha256": "6f5fb2a2f422f7b653481a46b9d6618b36d540199b6f4ad95123864bf10b39d9",
+      "bytes": 14922
+    },
+    {
+      "path": "procurement/rfq-gerber-8b383237/naehe-glut-r2b-B_Paste.gbp",
+      "sha256": "b2e7199c6492a36de831e14aeb83e2c9fffe189efc61caf594c2377f15374fb6",
+      "bytes": 24264
+    },
+    {
+      "path": "procurement/rfq-gerber-8b383237/naehe-glut-r2b-B_Silkscreen.gbo",
+      "sha256": "82a9daabe76c278b475988dda1a78977779532cadff9e5232b1a8bbd799d1c29",
+      "bytes": 492
+    },
+    {
+      "path": "procurement/rfq-gerber-8b383237/naehe-glut-r2b-Edge_Cuts.gm1",
+      "sha256": "a2c944e3994661cbfc3e42dc726deb5bd1daa32bb69b54d310589413f1e1b23d",
+      "bytes": 820
+    },
+    {
+      "path": "procurement/rfq-gerber-8b383237/naehe-glut-r2b-F_Cu.gtl",
+      "sha256": "908487345969b4532a6f1da4119508cc39ed6776df4c7fe2c867831581f88418",
+      "bytes": 304897
+    },
+    {
+      "path": "procurement/rfq-gerber-8b383237/naehe-glut-r2b-F_Mask.gts",
+      "sha256": "b30a82fbb89feac47626e3b7bcb01225a64759ac67911b3ef2d9ca956bfd4ec2",
+      "bytes": 10832
+    },
+    {
+      "path": "procurement/rfq-gerber-8b383237/naehe-glut-r2b-F_Paste.gtp",
+      "sha256": "0a851a93e9a8850315950d77fb14651e80fd0ea8f66145dfce854e06ce5cc334",
+      "bytes": 10318
+    },
+    {
+      "path": "procurement/rfq-gerber-8b383237/naehe-glut-r2b-F_Silkscreen.gto",
+      "sha256": "47ca327bc111695b879aabb036455b3fe12b5a517f5214ff23fe40e5d4292f3c",
+      "bytes": 15679
+    },
+    {
+      "path": "procurement/rfq-gerber-8b383237/naehe-glut-r2b-In1_Cu.g1",
+      "sha256": "793611eeae7aa568b19cf5c905f34fcd569d520cc45857ff89c530f46b8b4e85",
+      "bytes": 210778
+    },
+    {
+      "path": "procurement/rfq-gerber-8b383237/naehe-glut-r2b-In2_Cu.g2",
+      "sha256": "f6770094f2850f22f82a090e6fcce91b8e84e0610e7adb2e58dcb7a709be0546",
+      "bytes": 44222
+    },
+    {
+      "path": "procurement/rfq-gerber-8b383237/naehe-glut-r2b-In3_Cu.g3",
+      "sha256": "838ce1cf382569f5ad07baa0ebb51c1a980a92ccbbaaeeff4addd67bfd31a9cf",
+      "bytes": 52091
+    },
+    {
+      "path": "procurement/rfq-gerber-8b383237/naehe-glut-r2b-In4_Cu.g4",
+      "sha256": "e271c5ef6cb1ead5806a07a5db937a6dc3a2e50b844fcaedf8fbef5e7ba1e018",
+      "bytes": 210778
+    },
+    {
+      "path": "procurement/rfq-gerber-8b383237/naehe-glut-r2b-NPTH.drl",
+      "sha256": "cb24cd0fb3029ee568285b07366c1836dacf0c3db88b6a543da7a44d56a85c1e",
+      "bytes": 368
+    },
+    {
+      "path": "procurement/rfq-gerber-8b383237/naehe-glut-r2b-PTH.drl",
+      "sha256": "dd79b0902d80d19c8cb48059edb4724aba279a200b079c582d9eb047fdb4f04b",
+      "bytes": 3873
+    },
+    {
+      "path": "procurement/rfq-gerber-8b383237/naehe-glut-r2b-drill.rpt",
+      "sha256": "f0aff4866b710ccd5656e2c23da00d94ae2df213632d511433aaae9c75695697",
+      "bytes": 957
+    },
+    {
+      "path": "procurement/rfq-gerber-8b383237/naehe-glut-r2b-job.gbrjob",
+      "sha256": "6fdaa4fff88925342bb7888a2b70e151ff1fe62576908fa3ef551dd796c847e6",
+      "bytes": 4766
+    },
+    {
+      "path": "procurement/rfq-gerber-draft/naehe-glut-r2b-B_Cu.gbl",
+      "sha256": "60d886dcf15fba346257b189f219cf17b1a4656d38dbde5601d3bc4f7c168603",
+      "bytes": 351423
+    },
+    {
+      "path": "procurement/rfq-gerber-draft/naehe-glut-r2b-B_Mask.gbs",
+      "sha256": "bd9b059b84429f80f453aac9bd44d617cc3cb330ff58c4cc5777f271357c3171",
+      "bytes": 14905
+    },
+    {
+      "path": "procurement/rfq-gerber-draft/naehe-glut-r2b-B_Paste.gbp",
+      "sha256": "0b5b7f14f2b5a8ffcfa9f9aabf3c650ec9e8e679067151d3e0f04596a19c4905",
+      "bytes": 24247
+    },
+    {
+      "path": "procurement/rfq-gerber-draft/naehe-glut-r2b-B_Silkscreen.gbo",
+      "sha256": "a8c415535c942fd4effc13341aa27e8c9100899223bf8e15566f052bfba96537",
+      "bytes": 475
+    },
+    {
+      "path": "procurement/rfq-gerber-draft/naehe-glut-r2b-Edge_Cuts.gm1",
+      "sha256": "8217c16b2fa4a2056a991227f9ba0204c22ddb1df937d4c19cc42d9aba07fe8d",
+      "bytes": 803
+    },
+    {
+      "path": "procurement/rfq-gerber-draft/naehe-glut-r2b-F_Cu.gtl",
+      "sha256": "64d5188931edcaf2864e00f396c116243b7f59e05d060ed678352a13821fdfd5",
+      "bytes": 304880
+    },
+    {
+      "path": "procurement/rfq-gerber-draft/naehe-glut-r2b-F_Mask.gts",
+      "sha256": "0a12858c0403ae333b143109b3bdba2e899832e6a154cb76543e933dfa8446cd",
+      "bytes": 10815
+    },
+    {
+      "path": "procurement/rfq-gerber-draft/naehe-glut-r2b-F_Paste.gtp",
+      "sha256": "c91ce9c2f45950aa4efe7b97dc82239e665ea852243e3ed4123328393a9550f2",
+      "bytes": 10301
+    },
+    {
+      "path": "procurement/rfq-gerber-draft/naehe-glut-r2b-F_Silkscreen.gto",
+      "sha256": "4a7edc8534b19724ee15faea25a005b3a162e10d54b99457c5d94f83a136921a",
+      "bytes": 15662
+    },
+    {
+      "path": "procurement/rfq-gerber-draft/naehe-glut-r2b-In1_Cu.g1",
+      "sha256": "d6a25ddb0a29f8924bd7d8c85f0e6b69391f2c0e0043d940b98f105b60b2fa11",
+      "bytes": 210761
+    },
+    {
+      "path": "procurement/rfq-gerber-draft/naehe-glut-r2b-In2_Cu.g2",
+      "sha256": "b239af9ce4c7521f677b768e1012bc49002e03831ea078315c51c1e4f9fd1cb0",
+      "bytes": 44205
+    },
+    {
+      "path": "procurement/rfq-gerber-draft/naehe-glut-r2b-In3_Cu.g3",
+      "sha256": "d13db76381d0d0551d33f06d75f7b9f1ad8acc933b7380f6db6288c8e58f6209",
+      "bytes": 51986
+    },
+    {
+      "path": "procurement/rfq-gerber-draft/naehe-glut-r2b-In4_Cu.g4",
+      "sha256": "8401481459f8051e665126a36415259637e9fe3848817a985fcbd4afb3b66489",
+      "bytes": 210761
+    },
+    {
+      "path": "procurement/rfq-gerber-draft/naehe-glut-r2b-NPTH.drl",
+      "sha256": "fa322589e1fe1bb653a69d91d598c6712a1e8530b58634311577469eb0b1fcae",
+      "bytes": 368
+    },
+    {
+      "path": "procurement/rfq-gerber-draft/naehe-glut-r2b-PTH.drl",
+      "sha256": "463e554aff3543e51f3fa5210ef0504ecc2b7eb117deb1c4aa57843f9db1160c",
+      "bytes": 3873
+    },
+    {
+      "path": "procurement/rfq-gerber-draft/naehe-glut-r2b-drill.rpt",
+      "sha256": "48197769b7acc2db98ce3a4a3aba252dce48c0ef8d7b5b335713b6c2e106b05d",
+      "bytes": 957
+    },
+    {
+      "path": "procurement/rfq-gerber-draft/naehe-glut-r2b-job.gbrjob",
+      "sha256": "f4e87426f4e5e7ad3937763b8d7ab486d7760142d69bdba4b3a6a576b3bb9b7b",
+      "bytes": 4781
+    },
+    {
+      "path": "procurement/run-clearance-screen.ps1",
+      "sha256": "3bbad940159c36c27564653477a40d0dbb2d1789a37280fb5005546419a5980b",
+      "bytes": 1829
+    },
+    {
+      "path": "procurement/summarize_clearance.py",
+      "sha256": "ffab8539775a10a85412441bd0064ef7c552c533a16dc66482c4d6c7a35117c3",
+      "bytes": 2537
+    },
+    {
+      "path": "procurement/usb-stackup/ENIG-PRUEFUNG.txt",
+      "sha256": "e04d807bd0e66d27c0bd01ecb6e04a055c1e211cf44482e0252555787a44cbbe",
+      "bytes": 1865
+    },
+    {
+      "path": "procurement/usb-stackup/REPRO-PRUEFUNG.txt",
+      "sha256": "8743e5d602b527a561957004fa2acebf2a4daac24a7d9da154a40fa0b3afc4b3",
+      "bytes": 1644
+    },
+    {
+      "path": "procurement/usb-stackup/REPRODUKTION.txt",
+      "sha256": "0632819d5554cf5a04b317504ce6f434e6bbb4a4ff7d329c86ea4fa2b3172d38",
+      "bytes": 1950
+    },
+    {
+      "path": "procurement/usb-stackup/SOURCE-PROVENANCE.json",
+      "sha256": "0c7b99cd5be7d123c8ee08b85dd711c08125bf87bbd5fae998e137c342915ca7",
+      "bytes": 2473
+    },
+    {
+      "path": "procurement/usb-stackup/STACKUP-ENTWURF.txt",
+      "sha256": "df55e829d99f65a09bfc3918e7807153f0f34d054247968874e93ccdf9760181",
+      "bytes": 3378
+    },
+    {
+      "path": "procurement/usb-stackup/build_host_pair_trial.py",
+      "sha256": "c315c98bed96bddac58743cbcdbc12184ee748700af9a27708958c271d1aee07",
+      "bytes": 2048
+    },
+    {
+      "path": "procurement/usb-stackup/build_stackup_trial.py",
+      "sha256": "c29dd2f6c023b1f4b213be07935ae758ddfa3fe76fe36b1a7b08686261698526",
+      "bytes": 3250
+    },
+    {
+      "path": "procurement/usb-stackup/calculator-host-extra.json",
+      "sha256": "7c809fbe37df1820ea3b102ac32825b120c2d7ac00e90031dadb817ec9deb8d3",
+      "bytes": 4201
+    },
+    {
+      "path": "procurement/usb-stackup/calculator-results.json",
+      "sha256": "e2242da1222f2fb412c122d54cf86467c3f69a30f4ab994688f6730006500d05",
+      "bytes": 45200
+    },
+    {
+      "path": "procurement/usb-stackup/check_trial_reference.py",
+      "sha256": "78fb79528297f15dbce4279995d5a6d4b2fbb07ccc8bc06423c13924e0439c66",
+      "bytes": 2097
+    },
+    {
+      "path": "procurement/usb-stackup/extract_geometry.py",
+      "sha256": "d836f63577f5e340af763b6c31283181f4f876a8cd9ba6ddb112c0fe2f5aa5b9",
+      "bytes": 1852
+    },
+    {
+      "path": "procurement/usb-stackup/host-pair-trial/GEOMETRY-REFERENCE.json",
+      "sha256": "9d66aca58f76b8ef9ab115b8b56a9a67964a84587af5671904c22727c65e9d81",
+      "bytes": 1772
+    },
+    {
+      "path": "procurement/usb-stackup/host-pair-trial/TRIAL.json",
+      "sha256": "e92bbd834b92700457628f96c0c1082634f417cc8237d02b5d678ea4258f49dd",
+      "bytes": 799
+    },
+    {
+      "path": "procurement/usb-stackup/host-pair-trial/drc.json",
+      "sha256": "6ebfb6cf731d52ca7ec0f3746a1bf8728633b21c2bfd4b1428f528c50d7036dc",
+      "bytes": 11779
+    },
+    {
+      "path": "procurement/usb-stackup/host-pair-trial/host-pair.kicad_pcb",
+      "sha256": "0c2fd71bdf7f609b7c2b1c7ab093af88ed35511e12591447a28d89227ea70ea9",
+      "bytes": 2135228
+    },
+    {
+      "path": "procurement/usb-stackup/host-pair-trial/pad-contract.json",
+      "sha256": "2ed45c557a331452168b84feb6447b9cb501924f97304685491f3a04cfa63b82",
+      "bytes": 2231
+    },
+    {
+      "path": "procurement/usb-stackup/jlc-copper-trace-width.json",
+      "sha256": "9060147e8b1054a0515e0bd39087ecc41ebc270637d5a95a7963fffa12d6f9cd",
+      "bytes": 1752
+    },
+    {
+      "path": "procurement/usb-stackup/jlc-coverlay.json",
+      "sha256": "12f48355281e5f0da8542eeb938d0849d85ddccb1b041cfc0782eabc3957fb5f",
+      "bytes": 1967
+    },
+    {
+      "path": "procurement/usb-stackup/jlc-pictures.json",
+      "sha256": "20721a7d7f51e4eca1861d8c0d21700e2b18fc8e41dd28399da51a5482fdbd43",
+      "bytes": 45857
+    },
+    {
+      "path": "procurement/usb-stackup/jlc-stackups.json",
+      "sha256": "846dde25f77f43ca2508ef71f5537f39f2e509a9d70c80bf57104d108f958b3c",
+      "bytes": 279841
+    },
+    {
+      "path": "procurement/usb-stackup/query_calculator.py",
+      "sha256": "0c963daad518b87271e48769cc560685f41899889fbf8045aaa56b8ade8c8026",
+      "bytes": 2623
+    },
+    {
+      "path": "procurement/usb-stackup/query_host_extra.py",
+      "sha256": "7398b022c92b6556aa84da849c07721f33ae112af008ba9403981fae85c9845a",
+      "bytes": 1581
+    },
+    {
+      "path": "procurement/usb-stackup/stackup-trial/EXPORT-INSPECTION.json",
+      "sha256": "4920cf9772af94989f70e6681dd86d57ac4ceb6b2b5442384ff3dfcb8d5b12b0",
+      "bytes": 2894
+    },
+    {
+      "path": "procurement/usb-stackup/stackup-trial/STACKUP-ROUNDTRIP.json",
+      "sha256": "eec9638d3a85db3fe301656be721cd8f14465033fba66064313f642f6045799b",
+      "bytes": 11440
+    },
+    {
+      "path": "procurement/usb-stackup/stackup-trial/drc.json",
+      "sha256": "7671b20f432a1b6b7705a7aba9707abf3f2c22e0916f6358987dc3587d97f091",
+      "bytes": 11794
+    },
+    {
+      "path": "procurement/usb-stackup/stackup-trial/gerber-inspection/proposed-3313A-roundtrip-job.gbrjob",
+      "sha256": "85bb0e46f3f6251fd9b1aaedc96af18c72e6718b27784a38fa188044b24b65d8",
+      "bytes": 6626
+    },
+    {
+      "path": "procurement/usb-stackup/stackup-trial/proposed-3313A-input.kicad_pcb",
+      "sha256": "e138e8007f703224cef94bffadbfe75bd1798a493d3f3a6953e15abe0871370e",
+      "bytes": 2136402
+    },
+    {
+      "path": "procurement/usb-stackup/stackup-trial/proposed-3313A-roundtrip.kicad_pcb",
+      "sha256": "8b383237c2a90d4270685943619f579258b213815a4f9e6838f9993665eba590",
+      "bytes": 2136985
+    },
+    {
+      "path": "procurement/usb-stackup/usb-geometries.json",
+      "sha256": "e9237d98a986c57e827c6d27065d6c3f4b378d490fb1393032cb2eff2830e443",
+      "bytes": 19678
+    },
+    {
+      "path": "pruefung/ANALOG-REVIEW.json",
+      "sha256": "f5c54f66e07859ae06f7ba2111d13abeb9bfa7561745685d055c1a7d93b3e508",
+      "bytes": 11034
+    },
+    {
+      "path": "pruefung/AUSGANGSSTAND.json",
+      "sha256": "7ecc28095cbabbe538f81ed07f9fb267abe7a736b50944f4d9927a9dab1f7547",
+      "bytes": 1084
+    },
+    {
+      "path": "pruefung/J1-KABEL-REVIEW.json",
+      "sha256": "ee61073785f6c35dadef406a473db35fb37b5c90d419dc663ff93413db635960",
+      "bytes": 3925
+    },
+    {
+      "path": "pruefung/UNABHAENGIGES-REVIEW.json",
+      "sha256": "43ae43c07fcc86d51c980bc192f939b3b7c2de095801eb9d0cd14342a7c3dfcc",
+      "bytes": 14890
+    },
+    {
+      "path": "pruefung/USB-KAPAZITAET.txt",
+      "sha256": "4c4f065727217ce990c62c2300f669971c01aef187b4554b9e3dcc134975a75d",
+      "bytes": 2264
+    },
+    {
+      "path": "pruefung/USB4105-GEOMETRIE.txt",
+      "sha256": "9a8427567c218d1abcb2776195c87f2a00454f6dcc3528102b9ae7b4400ff9af",
+      "bytes": 3216
+    },
+    {
+      "path": "pruefung/bestueckung-draft/8b383237c2a9-50vo4of3/ASSEMBLY-DRAFT.json",
+      "sha256": "a168ab14dfe90a0517f059c5da8822a2888061a483ae316dd018357076678847",
+      "bytes": 4986
+    },
+    {
+      "path": "pruefung/bestueckung-draft/8b383237c2a9-50vo4of3/BOM-DRAFT.csv",
+      "sha256": "28556d76715fce22bf83946f89cbec63be1518bd2e7df6973e74a174edf507ad",
+      "bytes": 3414
+    },
+    {
+      "path": "pruefung/bestueckung-draft/8b383237c2a9-50vo4of3/CPL-DRAFT.csv",
+      "sha256": "13ad90a33dd442ffcdabbe74941dc25e172693e7e38a5abd4bf227bb1e4f7fc5",
+      "bytes": 4546
+    },
+    {
+      "path": "pruefung/bestueckung-draft/8b383237c2a9-50vo4of3/positions-kicad-global.csv",
+      "sha256": "c2f2efe185b858181de70b2c7dca68e5dbc70f1d442a662ad71e24f7912df504",
+      "bytes": 7962
+    },
+    {
+      "path": "pruefung/build-state.json",
+      "sha256": "ed2d2c42cc2b3c52aba91568c61eec7f9ae1d15395a4fee568feb9d3a14b6614",
+      "bytes": 541
+    },
+    {
+      "path": "pruefung/drc.json",
+      "sha256": "1a484eac55aa35ad74d84b06b71487af5e0dfd6fdc6221a549ac7912374a7005",
+      "bytes": 11784
+    },
+    {
+      "path": "pruefung/erc.json",
+      "sha256": "051514565f904c34b3e8942e92ad04cba8e69c65b90014a9154f97082dca0e23",
+      "bytes": 1023
+    },
+    {
+      "path": "pruefung/layout-freeze.json",
+      "sha256": "2e6dfd640e8f6b7cf86ddba62d755a98b7106454eda61fd9a5512a9e032dd33c",
+      "bytes": 3289
+    },
+    {
+      "path": "pruefung/pcb-pad-contract.json",
+      "sha256": "8711f30400c3e5725aaa1d99cf8b21c4e11d636f81958b4055ff6efe4ed38932",
+      "bytes": 2193
+    },
+    {
+      "path": "pruefung/routing-progress.json",
+      "sha256": "71bc5e1be2135e3b8c6ef01bc3e20e205428afd5fdfac24bb2d6a57a3321e71f",
+      "bytes": 307
+    },
+    {
+      "path": "pruefung/usb-route-final.json",
+      "sha256": "153f6b936a2bff35d437f87f3873cb82e6cf855d842e0686bd7904a3649f208f",
+      "bytes": 1695
+    },
+    {
+      "path": "sources/layout-evidence/route-base.kicad_pcb",
+      "sha256": "b4050b8530ed8081c97763461275dd7f46e6ecc1da4f2886cb3a58fa6f3f0eb6",
+      "bytes": 1652580
+    },
+    {
+      "path": "sources/layout-evidence/usb-paired.kicad_pcb",
+      "sha256": "7c23d12e7cf89a597f16276002b6cd9fb471408a6174628b42ad41fc045e1cf5",
+      "bytes": 1524048
+    },
+    {
+      "path": "sources/r2a-input/KICAD-LIBRARY-LICENSE.md",
+      "sha256": "45d2bce75e5a4208f5afb01b8fb2c406e700371c4fe2b5f5cd5c443d46db4d8f",
+      "bytes": 2101
+    },
+    {
+      "path": "sources/r2a-input/LIBRARY-SOURCES.json",
+      "sha256": "781ddea51889600c8b16c9c1317432890fb44287f2af542e9be65cfa18b199b3",
+      "bytes": 8929
+    },
+    {
+      "path": "sources/r2a-input/NearGlowR2a.pretty/LED_3WirePads.kicad_mod",
+      "sha256": "3e2eca69cab2752804f05ceecccbf6221855f0b17330ff1e59fd252b469a1dcc",
+      "bytes": 825
+    },
+    {
+      "path": "sources/r2a-input/NearGlowR2a.pretty/Switch_2WirePads.kicad_mod",
+      "sha256": "bbb276f7f3fb3715187a2794feea487df48265acc131be86066baac8612dde0a",
+      "bytes": 727
+    },
+    {
+      "path": "sources/r2a-input/NearGlowR2a.pretty/TI_RNM0015A.kicad_mod",
+      "sha256": "4a48fbb606f6787389fd6fbcdbb9161faa3c7c6cd85427dd17017a8d08eee6b5",
+      "bytes": 25229
+    },
+    {
+      "path": "sources/r2a-input/NearGlowR2a.pretty/TestPad_1mm.kicad_mod",
+      "sha256": "0e6035205e78b2749e48164142d16b1ac7475c03054cc62a6845b8b32a95879d",
+      "bytes": 576
+    },
+    {
+      "path": "sources/r2a-input/PROVENANCE.json",
+      "sha256": "58578d239f0c13d41e6a13f9d04283a40a4206b9b70f5abac1dcc7bfeac2e2d4",
+      "bytes": 5472
+    },
+    {
+      "path": "sources/r2a-input/circuit.json",
+      "sha256": "347b96f8f0a019422b85f2d742029f3f41c80e5ded2f489096a598f974afc17c",
+      "bytes": 42769
+    },
+    {
+      "path": "sources/r2a-input/footprints/Capacitor_SMD.pretty/C_0402_1005Metric.kicad_mod",
+      "sha256": "243b2fa0c59b7a010d77decd160264a91f80d111089f5bcff2462b8c1e1f45ce",
+      "bytes": 2912
+    },
+    {
+      "path": "sources/r2a-input/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "a118870a5422b605b5db49235750676f53ca9173a0be2dd7165effdee83d876d",
+      "bytes": 2904
+    },
+    {
+      "path": "sources/r2a-input/footprints/Capacitor_SMD.pretty/C_0805_2012Metric.kicad_mod",
+      "sha256": "0a99f8774e4a369e1c5b6b0d65563f6e698fea302bb38cb599a224390269d11f",
+      "bytes": 3006
+    },
+    {
+      "path": "sources/r2a-input/footprints/Capacitor_Tantalum_SMD.pretty/CP_EIA-7343-43_Kemet-X.kicad_mod",
+      "sha256": "5788845f45c3b297f69d70498c97185ff818cca0232438a6c3caeaee3af111db",
+      "bytes": 3742
+    },
+    {
+      "path": "sources/r2a-input/footprints/Connector_JST.pretty/JST_PH_B2B-PH-SM4-TB_1x02-1MP_P2.00mm_Vertical.kicad_mod",
+      "sha256": "120dac48a6f3e1c803f0def82e311973dbefe155b8018fb5ffb0e42da872919d",
+      "bytes": 8149
+    },
+    {
+      "path": "sources/r2a-input/footprints/Fuse.pretty/Fuse_0603_1608Metric.kicad_mod",
+      "sha256": "13f4c70de80a6903e338ce2146ff02cb4662405ed3032e797423026e06e16b2b",
+      "bytes": 2865
+    },
+    {
+      "path": "sources/r2a-input/footprints/Inductor_SMD.pretty/L_Coilcraft_XAL4020-XXX.kicad_mod",
+      "sha256": "2169fe20aa1da0cf19e2c436cf1807ca79d1f3dc5aa04367345d32ba091f82fc",
+      "bytes": 3156
+    },
+    {
+      "path": "sources/r2a-input/footprints/Inductor_SMD.pretty/L_Coilcraft_XxL4030.kicad_mod",
+      "sha256": "af7197f9e8b1543a946b2301aebb2bc9eda2866f2c21666b9e8a7d9f26614627",
+      "bytes": 3523
+    },
+    {
+      "path": "sources/r2a-input/footprints/NearGlowR2a.pretty/LED_3WirePads.kicad_mod",
+      "sha256": "0995775bfa3bbf4a6c0ffebb95409482c333fd1da5d6a1e75223ac30d0f9b593",
+      "bytes": 1719
+    },
+    {
+      "path": "sources/r2a-input/footprints/NearGlowR2a.pretty/Switch_2WirePads.kicad_mod",
+      "sha256": "327eb6d7daab23aab3e88fc724537c7dd75316973ef2324ed8e3d42795b1ff82",
+      "bytes": 1558
+    },
+    {
+      "path": "sources/r2a-input/footprints/NearGlowR2a.pretty/TI_RNM0015A.kicad_mod",
+      "sha256": "b5f5246cfd7e42034d25f65cd455accdb066d97431fa8e40c48721f6c78b4e4c",
+      "bytes": 27623
+    },
+    {
+      "path": "sources/r2a-input/footprints/NearGlowR2a.pretty/TestPad_1mm.kicad_mod",
+      "sha256": "1720843b85438a42ac0884eafc3b82163d2ee4823d6488ac4a6f87b3fb58580a",
+      "bytes": 1343
+    },
+    {
+      "path": "sources/r2a-input/footprints/Package_TO_SOT_SMD.pretty/SOT-23-6.kicad_mod",
+      "sha256": "888c1777c3d0922d83a3734300bfc419845c72778fe28df6d8f5e69688421a8d",
+      "bytes": 6378
+    },
+    {
+      "path": "sources/r2a-input/footprints/Package_TO_SOT_SMD.pretty/SOT-323_SC-70.kicad_mod",
+      "sha256": "a16b8a40f1a0d1aaf7c052b24ee9a1e601e2985c8cd77078b1aedd91d3031251",
+      "bytes": 6399
+    },
+    {
+      "path": "sources/r2a-input/footprints/Package_TO_SOT_SMD.pretty/SOT-353_SC-70-5.kicad_mod",
+      "sha256": "ce1375c2df18c8a28494252b18459a05c5c3b5f5c5d223ebec2d07b84f57a211",
+      "bytes": 7226
+    },
+    {
+      "path": "sources/r2a-input/footprints/Package_TO_SOT_SMD.pretty/SOT-563.kicad_mod",
+      "sha256": "329db42f84db429adcfbc29fe178e4b460b6ffab7326b2e114b86390ebc1d965",
+      "bytes": 5687
+    },
+    {
+      "path": "sources/r2a-input/footprints/RF_Module.pretty/ESP32-S2-MINI-1.kicad_mod",
+      "sha256": "2a2e069c81b24e5c5d56d0244e05f48df5089e946b711e606545cf966118cc61",
+      "bytes": 20182
+    },
+    {
+      "path": "sources/r2a-input/footprints/Resistor_SMD.pretty/R_0402_1005Metric.kicad_mod",
+      "sha256": "bf5b8e034668d8d3cec75b00ce60999d935f3e0fa4f4ec966ef4a317034a1d6b",
+      "bytes": 2913
+    },
+    {
+      "path": "sources/r2a-input/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "2a67b7bdd91ea20646a9f85edefd083033470a9990a60d2b4900605b1745b0e2",
+      "bytes": 2919
+    },
+    {
+      "path": "sources/r2a-input/footprints/TestPoint.pretty/TestPoint_Pad_D1.0mm.kicad_mod",
+      "sha256": "b93c5e46f0ea1710c672431901a6f03b2bd9a4791e6eb5fbb5fc6ff36cf36ba5",
+      "bytes": 1846
+    },
+    {
+      "path": "sources/r2a-input/naehe-glut-r2a.kicad_pcb",
+      "sha256": "e3665c6a52dabb974844767966b1bd272feeef6fdbb83670745b53980404de8d",
+      "bytes": 1354611
+    },
+    {
+      "path": "sources/r2a-input/naehe-glut-r2a.kicad_pro",
+      "sha256": "ff43696aa2dcdd3c46089a60ad712dc8ea183eb2eaecdf05def7e028c98ce590",
+      "bytes": 10011
+    },
+    {
+      "path": "sources/r2a-input/tools/build_schematic.py",
+      "sha256": "cc604f4167b68b7bcb43572aa7a585c52ecc5b9a2bbefe1e71b65f097f101cb4",
+      "bytes": 7622
+    },
+    {
+      "path": "sym-lib-table",
+      "sha256": "c7eac7aeab71476b387100f41f89183242174a8c6d8c7a3b1912c9a1fe66674f",
+      "bytes": 166
+    },
+    {
+      "path": "tools/analyze_usb_route.py",
+      "sha256": "ad2f9c3b4ac219d8f4f9e08a7717c48a4d99dbc4dea7542a3624f022281cda66",
+      "bytes": 1350
+    },
+    {
+      "path": "tools/apply_proposed_stackup.py",
+      "sha256": "7aa63a21f93293d4c9c49d63c1899c1e2aa6bb952bfebf67171c17587818faa2",
+      "bytes": 1254
+    },
+    {
+      "path": "tools/build_r2b.py",
+      "sha256": "c4344bfa11524619e46d58a3cb6a826b52d344ae7a4e4ec9044f901f9631b686",
+      "bytes": 15617
+    },
+    {
+      "path": "tools/build_schematic.py",
+      "sha256": "55a0e6af8d9358f8727625be8d1dd5fa138cfb1a1b84df94350fa12feca64b92",
+      "bytes": 7652
+    },
+    {
+      "path": "tools/cad_environment.py",
+      "sha256": "9216f8e7c52f98522daf74a21f19ad9fe20d0a45ab6940d84f8dce1b2a7bd924",
+      "bytes": 209
+    },
+    {
+      "path": "tools/check_pcb_pad_contract.py",
+      "sha256": "b30a33a8e1cf297ea228d50a50d52e561159d9fff40773af820e15602b8885fd",
+      "bytes": 5041
+    },
+    {
+      "path": "tools/export_assembly_draft.py",
+      "sha256": "2cb3c781415615bca9da0cecec3b020fbcd9a896070d2a13fa9b96c7edfeaf80",
+      "bytes": 8346
+    },
+    {
+      "path": "tools/freeze_layout.py",
+      "sha256": "5ed465edf1448013440b4e965cf05a2cac29d686908ea206fa3e0ad676b9d554",
+      "bytes": 3735
+    },
+    {
+      "path": "tools/package_review_bundle.py",
+      "sha256": "625f32df80ba78cf627393c74578acda2f4729d44bfed0ba29f3f1d7dce9a1b2",
+      "bytes": 10045
+    }
+  ],
+  "checks": {
+    "independent_review_bindings": 35,
+    "mechanical_file_bindings": 41,
+    "python_syntax_files": 28
+  },
+  "open_gates": "Four USB-NPTH DFM errors, documented warnings, stackup, supply/probe qualification, physical fit and two-device operation/runtime acceptance."
+}

@@ -1,0 +1,131 @@
+R2b-Servicehalter - digitaler Entwurf, 02.11.2026
+
+STATUS
+Druckbare Entwurfsdateien, keine physische Passungs-, Betriebs- oder
+Fertigungsfreigabe. CAD und Slicer wurden digital ausgefuehrt. Kein Drucker
+wurde angesteuert. Reale Druck-, Zug-, Klemm-, Elektro- und RF-Pruefungen fehlen.
+
+DATEIEN
+Je einmal base, insert_r2b, clamp_left, clamp_right, usb_tie_bar, jtag_tie_bar.
+Alle sechs Teile liegen als STEP/STL in mm vor. FCStd/assembly STEP enthalten
+Montagekoordinaten, STL sind auf Z=0 normalisiert; Klemmen liegen auf der
+flachen Oberseite. Nur die Druck-STL oder das geslicte P1S-Projekt verwenden.
+assembled-draft.png zeigt Bauteilhuellen, underside-draft.png die Unterseite;
+exploded-draft.png blendet elektrische Huellen aus und trennt die Druckteile.
+
+MASSBEZUG
+PCB lokal x0..30, y5.2..43, Dicke1mm, somit30x37.8mm Substrat. Bestueckung
+inklusive Antenne30x43mm. Montageversatz +25mmX/+20mmY, PCB-UnterseiteZ12.
+Tisch liegt beiZ-10 durch integrierten10mm-U-Sockel. PCB-Unterseite22mm ueber
+Tisch. Basis80x120x30mm inklusive Kabelauflagen; Montagehoehe33.74mm.
+Drei Auflagen Radius1.25 bei PCB(1.5,22),(28.5,22),(15,41); Klemmen greifen
+nur reservierte Seitenstreifen x0..3/27..30 bei y20.5..23.5. Kerbe links
+x0..1.5/y28..30 und passende Nase verhindern nominale180-Grad-Falscheinlage:
+CAD-Interferenz1.26mm3; richtige Lage hat0.3mm Spiel an geschlossenen Seiten.
+Die PCB muss diese Flaechen auf allen Lagen und beiden Seiten freihalten.
+USB4105-GF-A Ursprung(7.5,39.325), Fronty43 (Fab-Edge+3.675, nicht Text+3.1).
+FTSH-105-01-L-DV-007-K bei(23.5,33), JP1 bei(18.3,38.7), RESET bei(27,27).
+
+PARAMETRISCHE QUELLE
+mechanik-tools/build_fixture.py mit FreeCAD1.0.2-Python ist editierbare Quelle.
+P enthaelt wirksame begrenzte Parameter fuer Stuetzradius, Schraubenloch,
+Muttern-Schluesselweite und Einsatz-Taschentiefe. C ist fester Layoutvertrag,
+kein unabhaengiger Skalierungsparameter. Layoutaenderung erfordert abgestimmte
+Konstruktion. FCStd enthaelt BREP-Koerper und Metadaten. Danach CAD/STL/STEP,
+Render, Slicer und Manifest neu erzeugen. extract_pcba.py liest die PCB mit
+KiCad10-Python ohne Aenderung. PCBA-Auswertung verlangt unveraenderten PCB-Hash.
+
+DRUCK
+Bambu Lab P1S,0.4mm Duese, Generic PETG, Textured PEI,0.20mm Schichten,
+4 Waende,20% Gyroid,5 Deck-/Bodenschichten, aussen3mm Brim, kein Support.
+Der offiziell vom P1S benannte Standardprozess heisst @BBL X1C; Maschine ist
+wirklich P1S. Profile mit Herkunft/Hash/Lizenz unter slicer/. Konkretes PETG,
+Trocknung und reale Masse pruefen; Slicer-Erfolg ist keine Materialfreigabe.
+Der3mm breite offene J1-Unterseitenkanal und Mutternsenkungen werden ueber-
+brueckt. Nach Druck Brim entfernen und Kanal/Mutternpassung ohne Gewalt pruefen.
+
+ZUKAUF UND MONTAGE
+4x M2x14 Zylinderschraube, ISO4762, Kopf maximal Durchmesser3.8/Hoehe2mm.
+4x M2-Sechskantmutter SW4mm, Hoehe1.6mm. Taschen SW4.2mm, Basis4.3mm tief,
+Einsatz1.8mm tief. Keine Unterlegscheiben oder Gewindeeinsaetze erforderlich.
+2x loesbarer Kabelbinder, Breite<=2mm, Dicke<=1mm, Laenge150mm.
+1x Samtec SNT-100-BK-T Jumperkappe, ohne Griff; USB-Werkseinstellung offen.
+
+1. Zwei Muttern unten in Basis einsetzen, zwei in Einsatz. Einsatz an Basis
+   mit zwei M2x14 bei global(21.5,68)/(58.5,68) befestigen.
+2. Stromlose PCB mit linker Kerbe einlegen. Unterseite und Auflagen mit Lupe
+   kontrollieren; keine Last auf C16, Modul, Antenne oder Stecker geben.
+3. Klemmen mit weiteren M2x14 bei(21.5,43)/(58.5,43) bis Anlage befestigen.
+   Keine Verformung erzwingen, kein Drehmoment ohne Musterpruefung behaupten.
+4. USB/JTAG getrennt auf erhoehte Kabelsitze bei globaly104..113 legen.
+   USB-AchseZ14.73, JTAG-SitzZ20. Leisten ueber Mantel, je ein Binder durch
+   Basis/Leiste. Geringe Kraft, kein Quetschen. Binder vor Ausstecken loesen.
+5. J1-Serviceleitung vor Tischaufstellung in Unterseitenkanal einlegen. Der
+   externe Netzteiluebergang muss zugfrei abgestuetzt werden. Nicht amJ1 ziehen.
+6. BOOT/RESET sind digital fuer senkrechten2mm-Isolierstift erreichbar; freie
+   Fingerbedienung wird nicht behauptet. Jumperkappe hat10mm Abziehraum.
+
+SCHRAUBENLAENGEN UND TISCHFREIHEIT
+Basis: KopfsitzZ6, M2x14-SpitzeZ-8, TischZ-10 =>2mm nominale Tischfreiheit.
+Mutter oben an4.3mm-Tasche: Z-7.3..-5.7; Spitze0.7mm hinter Mutter. Auch eine
+0.4mm kuerzere Schraube reicht0.3mm durch die ganze Mutter. Seitenklemmen:
+KopfsitzZ16, SpitzeZ2,12mm Tischabstand; MutterZ3.2..4.8. Am realen Druck
+Mutteranschlag, vollen Eingriff und Tischfreiheit pruefen, kein blindes Anziehen.
+
+STECKER UND KABEL
+USB: ASSMANN WSW A-USB31C-20A-100,1m USB-A/C USB2-Daten. ZeichnungRev08:
+Ueberformung maximal12x25x7mm, Modell+0.2mm je Seite; Kabel maximal4.3mm.
+Mindestabstand Ueberformung vor Buchsenfront1.85mm. Modell globaly64.85..90.25;
+Abfangung greift erst dahinter am geraden Kabel. Keine beliebigen Ersatzkabel.
+JTAG-Kette zur Qualifikation: Olimex ARM-USB-OCD-H -> ARM-JTAG-20-10 RevC ->
+Samtec FFSD-05-D-06.00-01-N -> FTSH-105-01-L-DV-007-K. FFSD152.4+/-3.175mm;
+Korridor63.4mm, rechnerisch85.825mm Rest vor zweitem Stecker/Serviceschlaufe.
+Flachbandbreite maximal6.5278mm, Dicke0.7366mm. Olimex10cm-Beipackkabel hat
+keine hier gepruefte Masszeichnung und ist kein automatischer Ersatz.
+Adapterbuchse laut RevC ist Morethanall HAB-VCR-010-LF. Herstellerzeichnung
+nennt Innenlaenge11.15, Innenweite3.60, Schluessel2.40mm. Laengenrechnung zu
+FFSD ergibt bedingt0.28mm Restspiel; FFSD-Breite/Schluessel sind REF und keine
+garantierten Maxmasse. adapter-mating-report.json legt Quellen und Grenzen offen.
+Kontaktueberdeckung, Schluesselrichtung und1:1-Durchgang bleiben Musterpruefung.
+
+J1-SERVICELEITUNG
+PHR-2 +2xSPH-002T-P0.5S. JST-SMT-Steckhoehe8.6mm REF, Huelle9.2mm.
+Kandidat MEDI Kabel LiY0.22mm2: rot101022-07/schwarz101022-08, je<=0.15m.
+Hersteller: nominaler Durchmesser1.1mm, statischer Mindestbogen5xDurchmesser.
+Eingangskontrolle muss Durchmesser<=1.3mm bestaetigen. Modell reserviert1.5mm.
+Zwei Boegen R8/R10mm Mittellinie gleichen2mm-Pinversatz aus; innerer Radius
+7.25/9.25mm >5x1.3=6.5mm. Austritt links bei globaly41.3 durch3mm-Kanal.
+Kleinste Tischfreiheit1.05mm, Antennenzone digital frei. Nur feste geschuetzte
+Verdrahtung, kein Dauerbiegenachweis. Strom-/Spannungsabfall-/Crimp-/Temperatur-
+pruefung bleibt erforderlich; kein2A-Nachweis allein aus geometrischer Passung.
+SPH-002T-P0.5S:0.05..0.22mm2, Isolationsdurchmesser0.8..1.5mm; nicht0.25mm2.
+https://www.medikabel.de/de/product-overview/pvc/liy-in-anlehnung-an-vde-0812/p/12
+https://www.medikabel.de/de/technische-informationen/farbcodes/einzeladern-farbcode
+
+BELEGUMFANG UND GRENZEN
+geometry-report.json: valide BREP/STEP, geschlossene STL, keine nichtmanifold-
+Kanten/Selbstschnitte, Druckteil-/PCB-/Steckerhuellenkollisionen, Falscheinlage.
+pcba-envelope-report.json:109 erfasste Footprints; C16, Spulen, Modul, Taster
+mit Hersteller-Maxmassen+Pose/Lotreserve. JST/TSW/SNT teilweise REF mit expliziten
+Engineering-Reserven. Uebrige Fab+0.3mm/2mm-Hoehe sind nur SCREENING, kein
+exakter MPN-Freigabenachweis. Keine generischen STEP-Modelle als Fit-Beleg.
+component-envelope-report.json bindet Quellen/Revisionen/Hashes. GCT-Original
+liegt als Herstellerzeichnung RevB1 ueber Octopart vor; aktuelle Revision offen.
+Samtec REF-Masse sind keine zugesicherten Toleranzen. Gesamte15mm-Antennenzone
+wird fuer Haltermetall/J1-Litzen geprueft; RF-Wirkung bleibt real zu messen.
+MANIFEST.json bindet Artefakte, PCB/BOM-Verweise und Quellenstand; Routing-
+aenderungen brauchen erneute Hashbindung und identische Platzierungspruefung.
+
+ELEKTRISCHE GRENZEN
+Akku im Service abziehen, Ziel separat ueberJ1 speisen. USB ist Datenanschluss,
+keine Lade-/Zielversorgung. Halter ist keine nachgewiesene ESD-Loesung.
+JTAG laut SERVICE-INTERFACE.csv:1 VTref3V3,2 TMS,3 GND,4 TCK,5 GND,
+6 TDO,7 Schluessel,8 TDI,9 NC,10 nRESET. Ziel-aus-Verhalten/OpenOCD und
+Debugmoduswechsel sind eigene Hardware-Gates. Keine eFuse-Aenderung ableiten.
+
+VORGESCHLAGENE MUSTER-ABNAHME, NOCH NICHT GEMESSEN
+50 Einlege-/Klemmzyklen ohne Riss/Abrieb; geklemmtes Seitenspiel<=0.2mm.
+PCB-Klemmverformung<=0.15mm. Je USB/JTAG5N fuer10s an Zugentlastung, danach
+bleibende PCB-Verschiebung<=0.2mm, kein Lastuebergang auf Buchsen. Je10 stromlose
+Steckzyklen ohne Beruehrung/Abheben/Schaden. Hersteller-Kraftgrenzen haben Vorrang.
+Diese Werte sind Entwurfsziele zur unabhaengigen Musterpruefung, keine Lastfreigabe.

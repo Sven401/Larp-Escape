@@ -1,0 +1,82 @@
+HISTORISCH: Zwei-Flag-Stufe im Gitstand bad8abfb; unten genannte damalige
+aktuelle Prüfhashes sind seit der Host-/Stackupübernahme historische Belege.
+Aktueller Abstandsscreen: CLEARANCE-SCREEN.json / clearance-screen-8b383237.
+
+KICAD-10-PROZESSMETADATEN UND SEPARATER CLEARANCE-SCREEN
+HISTORISCHER KANDIDATENPRÜFSTAND vom02.11.2026; Runtime10.0.8; damals Haupt-PCB ab68d385... . Aktuelle Übernahme siehe METADATA-PROMOTION.json und Aktualisierung unten.
+
+Bedeutung und vorbereitete Korrektur
+KiCad10-Handbuch, Abschnitt Via protection (IPC-4761), beschreibt Boarddefaults,
+objektbezogene Overrides und Type VII als filled+capped. Tenting betrifft
+Lötmaskenabdeckung. Die beiden booleschen Angaben identifizieren KEIN Harz.
+Das Handbuch nennt bei Filling leitendes Material; unser Vertrag verlangt
+nichtleitendes Epoxid. Deshalb darf der Materialvertrag nicht durch das GUI-
+Label ersetzt werden; das Material bleibt explizit im Fertigungshinweis.
+Quelle: https://docs.kicad.org/10.0/en/pcbnew/pcbnew.html#_via_protection_ipc_4761
+Dokumentbasis10.0.8, Revisionfbe3d967.
+
+prepare_metadata_candidate.py lädt nur die Haupt-PCB und speichert ausschließlich
+clearance-screen/metadata-candidate.kicad_pcb. Boarddesignsettings m_FillVias und
+m_CapVias werden true gesetzt. Der vollständige Textvergleich in
+VIA-METADATA-CANDIDATE.json zeigt exakt zwei geänderte Zeilen:
+(capping no)→(capping yes), (filling no)→(filling yes).
+Kupfer, Bohrungen, Füllpolygone, Masken, Einzelvias und Netze bleiben bytegleich
+außer diesen zwei Angaben. Kandidat-SHA:
+7af39dbe807ed82f905622cce0c6b93f2cd650c61eafb224970e9f49eec15868.
+Tenting bleibt bewusst wie im eingefrorenen Stand; keine pauschale Umstellung
+der Lötmaskengeometrie auf einen anderen GUI-Preset. Keine zusätzlichen
+Plugging-/Covering-Flags setzen. Verwendete Quelle trägt keine individuellen
+Filling-/Capping-Overrides. Die positive boolesche Kennzeichnung plus expliziter
+230-Via-Epoxid/Kupfer-Füllplan ist der vorbereitete Korrekturvorschlag.
+
+Zum historischen Kandidatenprüfzeitpunkt noch nicht übernommen: die gebundene Hauptdatei und ihr Hash bleiben unverändert.
+Eine spätere Übernahme braucht neue Hashbindung aller abhängigen Berichte,
+Exportkontrolle und unabhängige Gegenprüfung. Weder zwei Flags noch ein
+Gerberbild bestellen oder garantieren POFV; Fertiger muss Material/Plan bestätigen.
+SWIGs std::optional<bool>-Getter lieferten nicht sinnvoll serialisierbare Objekte;
+deshalb ist die Aussage durch den vollständigen Textdiff belegt, nicht durch
+vermeintlich ausgelesene boolesche Werte. Keine solche SWIG-Ausgabe als Nachweis.
+
+Quantitative zusätzliche Abstandsprüfung
+clearance-screen/screen.kicad_pcb ist byteidentisch zur eingefrorenen Haupt-PCB.
+Separate Projektkopie und Custom Rules, keine Neufüllung/Änderung der Geometrie.
+Geprüft nativ KiCad10.0.8 auf allen sechs Kupferlagen:
+- PTH-Bohrung zu Fremdkupfer mindestens0,28mm; innen verschärft auf0,30mm.
+- Via-Bohrung zu Fremdkupfer mindestens0,20mm.
+Ergebnis: KEIN zusätzlicher Verstoß gegen diese Regeln;0 unverbundene Elemente.
+Vier bekannte J4-NPTH-Verstöße bleiben. Eine absichtlich auf3,00mm verschärfte
+Innenlagen-PTH-Regel erzeugt26 zusätzliche Lochabstandsbefunde: Positivkontrolle
+belegt, dass die Pad_Type/inner-Bedingung tatsächlich greift.
+CLEARANCE-SCREEN.json bindet Regeln, Kopie, Projekt und beide DRC-Berichte.
+109 lib_footprint_issues entstehen aus fehlender Bibliotheksauflösung in der
+isolierten Kopie. Sie sind weder neue Geometriefehler noch die zwei originalen
+Library-Mismatch-Warnungen. Acht Via-Zentrierwarnungen bleiben separat bestehen.
+
+Grenzen: KiCad hole_clearance betrifft Fremdnetze, nicht verbundenes Kupfer
+auf demselben Netz. Die Auswertung nutzt die vorhandenen Füllpolygone; sie ist
+kein physikalischer Toleranz-/Bohrversatznachweis und keine Hersteller-CAM-Abnahme.
+Eigene Quelle zur Regelbedeutung: KiCad10-Handbuch, Custom design rules,
+hole_clearance. Abgeleiteter Satz und Laufbelege liegen vollständig daneben.
+
+AKTUALISIERUNG 02.11.2026 — autorisierte Metadatenkorrektur übernommen
+Der oben historisch dokumentierte no/no-Konflikt wurde nach Root-Auftrag mit
+exakt dem geprüften Zwei-Zeilen-Kandidaten behoben. Die Haupt-PCB lautet nun
+7af39dbe807ed82f905622cce0c6b93f2cd650c61eafb224970e9f49eec15868.
+Kupfer, Masken, Bohrungen und Netze unverändert. filling/capping jetzt yes;
+nichtleitendes Epoxid bleibt ausdrückliche Fertigungsanforderung.
+Native ERC0, DRC4 bekannteNPTH/10Warnungen/0unverbunden, Padvertrag109Refs/
+373Pads/0Issues frisch geprüft. Neuer vollständiger Bestückungs-Draft:
+../pruefung/bestueckung-draft/7af39dbe807e-jq7zjlqp (101BOM/101CPL).
+Frischer herstellerspezifischer Abstandsscreen an neuer bytegleicher Kopie
+bestätigt weiterhin0 zusätzliche Regelverstöße. Neue Hashes in CLEARANCE-SCREEN.
+build_r2b.py setzt beide Defaults auch bei künftigem Vorroute-Neuaufbau.
+Unabhängiger Review und Mechanik-Rebind sind angefordert, nicht vorweggenommen.
+
+Prüflauf eingefroren: CLEARANCE-SCREEN.json und clearance-screen-Berichte sind
+Belege des aktuellen7af39d...-Standes. run-clearance-screen.ps1 verweigert die
+Wiederholung in diesem belegten Verzeichnis. Wiederholung nur in separater
+Arbeitskopie des R2b-Verzeichnisses; dort erzeugte Berichtdateien entfernen,
+nicht den kanonischen Nachweis überschreiben. Die ersten ab68d...-Prüfläufe
+wurden vor Übernahme durch den frischen7af39d...-Prüflauf ersetzt; sie sind
+keine separat weiterbestehenden aktuellen Freigaben.
+

@@ -1,0 +1,51 @@
+3313A-STACKUP: NATIVER ENTWURFSVERSUCH, KEINE FERTIGUNGSFREIGABE
+02.11.2026; KiCad 10.0.8; Haupt-PCB unverändert 7af39dbe807ed82f905622cce0c6b93f2cd650c61eafb224970e9f49eec15868.
+
+Kandidat: stackup-trial/proposed-3313A-roundtrip.kicad_pcb
+SHA256 8b383237c2a90d4270685943619f579258b213815a4f9e6838f9993665eba590.
+Basierend auf unabhängig geprüftem Host-Paarversuch 0c2fd71b..., mit ENIG,
+Revision R2b engineering draft und Kommentar proposed JLC061011-3313A;
+supplier approval pending. Zweiter nativer Roundtrip bytegleich.
+
+Veröffentlichte Daten: jlc-stackups.json, JLC061011-3313A, basicDataList.
+Von oben nach unten, mm:
+Cu .035 / PP .092 / Cu .030 / Core .200 / Cu .030 /
+2x PP .092=.184 / Cu .030 / Core .200 / Cu .030 / PP .092 / Cu .035.
+PP NP-155F 3313 RC57% 4.2mil, Dk4.1; Core NP-155F 0.2mm 1/1OZ without copper,
+Dk4.36. Gleichartige mittlere PP-Lagen als .184mm zusammengefasst.
+Alle sechs Cu-Lagen gehören zur Hersteller-Nennoption 1oz. Die Quelle nennt
+physisch .035mm außen/.030mm innen; dies ist keine Zusage für überall35µm.
+Calculator-Prozesswerte T1=1.6mil außen/1.2mil innen sind wiederum andere
+Modellparameter und werden nicht als native Stackupdicke ausgegeben.
+
+Summe der veröffentlichten Cu-/Dielektrikadicken .958mm, Nenn-PCB1.000mm.
+Differenz .042mm bleibt sichtbar; keine Dicke künstlich angepasst. Masken-
+Stackupschichten fehlen bewusst: Quelle liefert kein eindeutiges homogenes
+Maskendickenmaß. Calculator C1/C3=.0254mm und C2=.01524mm sind verschiedene
+Querschnittshöhen, keine belegte gleichförmige Maskenschicht. Vorhandenes
+Maskenartwork wurde nicht verändert. DRC meldet keinen zusätzlichen Fehler
+wegen dieser unvollständigen Stackupdarstellung; das ist kein Dickenbeweis.
+
+Native Darstellungsgrenze: KiCad setzt für Dielektrika ohne Verlustfaktor
+Df automatisch0.02 und speichert ihn zusammen mit Material/Dk. Eingabe ließ
+Df absichtlich aus; die fünf ergänzten Zahlen sind SOFTWAREDEFAULT UNVERIFIED,
+in jedem Materiallabel und zusätzlich im CAD-Kommentar ausdrücklich markiert.
+Sie sind kein NP-155F-Nachweis und wurden im Hersteller-Impedanzscreen nicht
+als Eingabe benutzt. Primärcode: BOARD_STACKUP_ITEM-Konstruktor und
+FormatBoardStackup, https://raw.githubusercontent.com/KiCad/kicad-source-mirror/10.0/pcbnew/board_stackup_manager/board_stackup.cpp .
+Kein Nullwert, keine erfundene Maskendicke und kein künstlicher Ausgleich.
+
+Nachweis: STACKUP-ROUNDTRIP.json bindet Eingabe, Quelle und beide nativen
+Ausgaben; EXPORT-INSPECTION.json bindet den tatsächlich erzeugten Gerberjob
+und DRC. Job: ENIG, sechs Kupferlagen, BoardThickness1.0, Draftrevision.
+Der Job enthält Materialnamen, jedoch keine hier behauptete vollständige
+Dicken-/SI-Freigabe. DRC unverändert4 bekannte USB-NPTH-Abstandsfehler,
+8 Via-Zentrierwarnungen,2 Librarywarnungen,0 unverbundene Elemente.
+Export gerber-inspection ist nur lokaler Inspektionsbeleg, kein Bestellpaket.
+
+Nächster konkreter Schritt: unabhängige Kandidatprüfung; Hersteller muss für
+3313A die tatsächlich lieferbare Pressdicke/Nenntoleranz, fertige Kupferdicke,
+Maskenaufbau und den zum konkreten Material/Frequenzbereich gehörenden Df
+bestätigen. Danach native Materialdaten korrigieren und Stackup/SI gezielt
+neu prüfen. Bis dahin höchstens ausdrücklich unfertiger Engineering-Entwurf;
+keine automatische CAM-Breitenänderung und keine Impedanzfreigabe.

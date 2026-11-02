@@ -1,0 +1,46 @@
+UNABHAENGIGER AKTUELLER GERBERREVIEW - 02.11.2026
+Status: lokaler RFQ-Entwurf, keine Fertigungsfreigabe, nicht versandt.
+Aktuelle PCB 8b383237c2a90d4270685943619f579258b213815a4f9e6838f9993665eba590.
+Beide Exportmanifeste unabhaengig gegen je17Dateihashes und Dateigroessen
+geprueft. Aktuell rfq-gerber-8b383237; rfq-gerber-draft bleibt historisch.
+13Zeichenlagen:6Kupfer,2Maske,2Paste,2Siebdruck,EdgeCuts; dazu PTH/NPTH,
+Bohrbericht und Job. Native10.0.8, aktuellerZeitstempel02:50:11+01:00.
+
+Eigener Vergleich: nur G04-Kommentare sowie TF.CreationDate/TF.ProjectId
+von Gerberzeilen getrennt; Aperturen, Modal-/Zeichenbefehle und andere
+Attribute erhalten.12/13Lagen identisch. In3.Cu zeigt ausschliesslich
+USB_DP_HOST/D16(0,15mm): alteLinie(8,25;8,2)->(9,85;10,425) ersetzt durch
+(8,25;8,2)->(8,238365;8,907231)->(9,083564;9,888264)->(9,85;10,425).
+Koordinaten sind Exportdatum X=XPCB,Y=43-YPCB; entsprechen exakt nativem
+angenommenem1->3Segmentdelta. Alle Kontur-/Masken-/Padobjekte unveraendert.
+
+PTH und NPTH unterscheiden sich nur zwei Datums-Kommentarzeilen, drill.rpt
+nur Created-on. Damit bleiben230Vias(131x0,15/99x0,20),2JP1-Bohrungen,
+4G85-J4-Slots und2NPTH0,65 unveraendert zum separat geprueften Altbericht.
+Bohr-/Plotdatum(0,43) stimmt weiterhin mit CPL. Frisches101/101CPL ist
+byteidentisch zum vorher unabhaengig geprueften CPL; J1/JP1-Mittenkorrekturen
+bleiben enthalten. Geschlossene30x37,8mm-Kontur und Kerbe unveraendert;
+JobSize30,05x37,85 enthaelt0,05mm-Konturstrich, keine andere Leiterplattengroesse.
+
+Job direkt gelesen: FinishNone->ENIG, Revisionrev?->R2b engineering draft,
+fuenf Materialnamen nun NP-155F-3313/Core mit Df SOFTWAREDEFAULT UNVERIFIED.
+Alle13frueheren Thickness-Felder der MaterialStackup-Eintraege entfallen;
+sie wurden NICHT durch aktuelle Zahlen ersetzt. Maskeneintraege nurTyp/Name.
+GeneralSpecs nennt weiter6L/nominal1mm. Job deshalb kein vollstaendiger
+numerischerStackupbeleg; native .958mm-Summe und offeneMasken/Df/Pressdicke
+siehe STACKUP-NATIV-REVIEW. Kein unbelegter0,042mm-Ausgleich.
+
+Mechanikagent lieferte zusaetzlich unabhaengige lesende Zuarbeit mit gleichem
+12/13-/Drill-/Jobbefund; die oben genannten Hash-/Zeichen-/Drillpruefungen
+wurden durch diesenReviewer selbst wiederholt. Kein eigener KiCadexport oder
+optischerGerberrender behauptet. VierUSB-NPTH-Gates, SI/Stackup sowie kompletter
+Fertigerprozess bleiben offen. Auch aktuellerJob ist lokalerInspektionsbeleg,
+kein freigegebenesBestellpaket.
+
+SHA256-Bindungen:
+ae27e58b2af7e547c0c775a5ab7f108e7f14355fd1869663f17ad2224685c061  procurement/GERBER-CURRENT-MANIFEST.json
+f1068b29198dc0713a23df9e19aa6061c5b77c1d2f3478e51b11fd351949161c  procurement/GERBER-EXPORT-MANIFEST.json
+0daafab94720ef98b3495d46cf20d4818f10d3524fee8bdbd6c414371416986f  procurement/GERBER-CURRENT.txt
+8b383237c2a90d4270685943619f579258b213815a4f9e6838f9993665eba590  naehe-glut-r2b.kicad_pcb
+a168ab14dfe90a0517f059c5da8822a2888061a483ae316dd018357076678847  pruefung/bestueckung-draft/8b383237c2a9-50vo4of3/ASSEMBLY-DRAFT.json
+13ad90a33dd442ffcdabbe74941dc25e172693e7e38a5abd4bf227bb1e4f7fc5  pruefung/bestueckung-draft/8b383237c2a9-50vo4of3/CPL-DRAFT.csv

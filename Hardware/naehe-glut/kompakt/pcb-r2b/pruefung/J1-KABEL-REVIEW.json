@@ -1,0 +1,82 @@
+{
+  "date": "2026-11-02",
+  "reviewer": "independent review",
+  "status": "design_selection_not_physical_harness_release",
+  "rejected_initial_selection": {
+    "wires": [
+      "LAPP4125104S",
+      "LAPP4125001S"
+    ],
+    "cross_section_mm2": 0.14,
+    "manufacturer_Rmax_20C_ohm_per_km": 138,
+    "manufacturer_conductor_temperature_max_C": 70,
+    "reason": "PH2A rating explicitly referencesAWG24.0.14mm2 fits crimp dimensions but does not establish the rated2A combination; use0.22mm2. LAPP0.25mm2 alternative exceeds SPH-002 stated0.22mm2 upper range."
+  },
+  "selected": {
+    "manufacturer": "MEDI Kabel",
+    "family_article": "101022",
+    "ordering_designations": [
+      "101022-07 red",
+      "101022-08 black"
+    ],
+    "designation_note": "Base article101022 plus manufacturer color suffix07 red/08 black; ordering separator formatting must match vendor catalogue.",
+    "conductor_mm2": 0.22,
+    "stranding": "7x0.20mm",
+    "nominal_OD_mm": 1.1,
+    "incoming_OD_max_mm": 1.3,
+    "length_max_each_m": 0.15,
+    "stationary_bend_min_multiple_OD": 5,
+    "conservative_inner_radius_min_mm": 6.5,
+    "centerline_radius_min_mm": 7.15,
+    "recommended_centerline_radii_mm": [
+      8,
+      10
+    ],
+    "temperature_C": [
+      -30,
+      70
+    ],
+    "contact": "SPH-002T-P0.5S",
+    "housing": "PHR-2",
+    "contact_conductor_range_mm2": [
+      0.05,
+      0.22
+    ],
+    "contact_insulation_OD_range_mm": [
+      0.8,
+      1.5
+    ],
+    "PH_rating": "2A withAWG24;100V. Proper crimp and actual temperature rise remain qualification."
+  },
+  "resistance_model": {
+    "manufacturer_reference_20C_ohm_per_km": "approximately85, not guaranteed maximum",
+    "chosen_incoming_acceptance_max_20C_ohm_per_km": 100,
+    "copper_alpha_per_K": 0.00393,
+    "temperature_C": 70,
+    "loop_wire_length_m": 0.3,
+    "loop_wire_R_ohm": 0.035894999999999996,
+    "PH_pair_post_test_resistance_ohm": 0.04,
+    "current_A": 1.4822,
+    "wire_drop_V": 0.05320356899999999,
+    "wire_and_contact_drop_V": 0.11249156899999999,
+    "wire_and_contact_dissipation_W": 0.1667350035718,
+    "at2A_wire_and_contact_drop_V": 0.15178999999999998,
+    "limits": "Screening includes two PH20mOhm after-test contact values, not added terminal/crimp/PSU/fuse/PCB resistance or guaranteed elevated-temperature assembly resistance. Accept actual complete harness by voltage-drop and temperature measurement.100Ohm/km is selected acceptance requirement, not quoted manufacturer guarantee."
+  },
+  "integration": [
+    "Use only current-limited laboratory PSU, battery disconnected. This is not pack wiring approval.",
+    "2A board fuse is neither precise current regulator nor protection for a cable short upstream of the fuse. PSU current limit must be qualified for harness, including output capacitor transients.",
+    "Keep original power/light budget.1.4822A is a budget model, not hardware clamp.",
+    "Measure BAT_RAW/BAT_FUSED at board under load; cable drop can move apparent PSU-side UVLO threshold. Never compensate above permitted board input voltage.",
+    "Longer PSU leads require separate larger-conductor segment and inclusion in voltage-drop measurement;0.15m limit applies each selected thin lead.",
+    "Crimp with proper SPH-002 tool/process; verify retention, polarity J1pin1BAT_RAW/J1pin2GND, insulation and strain relief."
+  ],
+  "sources": [
+    "https://www.jst-mfg.com/product/pdf/eng/ePH.pdf",
+    "https://lapp.co.th/en/products/4125001s",
+    "https://www.medikabel.de/de/product-overview/pvc/liy-in-anlehnung-an-vde-0812/p/12",
+    "https://www.medikabel.de/de/technische-informationen/farbcodes/einzeladern-farbcode",
+    "https://www.medikabel.de/kataloge/medikabel_lieferprogramm.pdf"
+  ],
+  "project_source": "pcb-r2a/pruefung/power-analysis.json and ELECTRICAL-RELEASE.txt section5; no budget modification"
+}

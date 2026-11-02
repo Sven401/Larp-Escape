@@ -1,0 +1,48 @@
+{
+  "date": "2026-11-02",
+  "context_commit": "bad8abfbdab64aa7c5b2641b3b07789191a98a41",
+  "source_page": "https://jlcpcb.com/pcb-impedance-calculator",
+  "frontend": {
+    "url": "https://jlcpcb.com/ssr/js/318020ff5e168671d741.js",
+    "sha256": "c720a9382718d96d25a5942b3b16572813c0f9193191c2d495fda51fb84b7631",
+    "methods_inspected": [
+      "computedBaseMaterialThickness",
+      "judgeH1OrH2",
+      "getThicknessBetween",
+      "getAverageDielectricConstant",
+      "getT1ValueByConfig",
+      "getW2ValueByConfig",
+      "getCoverlayValuesByConfig",
+      "calc"
+    ],
+    "interpretation": "For L4 top copper of core L4/L5: H1 is lower core dielectric; H2 is distance to upper reference plus L4 copper thickness. Average dielectric constant follows arithmetic mean used by frontend, not guaranteed physical homogenization."
+  },
+  "read_only_endpoints": [
+    "https://jlcpcb.com/api/jlcTools/impedance/selectPageImpedanceDefaultTemplate",
+    "https://jlcpcb.com/api/jlcTools/impedance/selectPageImpedancePicture",
+    "https://jlcpcb.com/api/jlcTools/impedance/impedance-config/coverlay/list",
+    "https://jlcpcb.com/api/jlcTools/impedance/impedance-config/copper-trace-width/list"
+  ],
+  "calculator_endpoint": "https://jlcpcb.com/api/jlcTools/impedance/calc",
+  "result_transport": "wss://tools.jlc.com/jlcTools/webSocket/{ephemeral_uuid}",
+  "template_query": {
+    "pageNum": 1,
+    "pageSize": 99999,
+    "plateLayerNumber": 6,
+    "plateThickness": 1,
+    "cuprumThickness": 1,
+    "innerCopperThickness": 1,
+    "boardType": 1,
+    "usePurpose": 1
+  },
+  "transmission": "Only generic stackup and ideal cross-section numerical parameters. No CAD/BOM/files, personal data, order or support request sent.",
+  "hashes": {
+    "calculator-host-extra.json": "7c809fbe37df1820ea3b102ac32825b120c2d7ac00e90031dadb817ec9deb8d3",
+    "calculator-results.json": "e2242da1222f2fb412c122d54cf86467c3f69a30f4ab994688f6730006500d05",
+    "jlc-copper-trace-width.json": "9060147e8b1054a0515e0bd39087ecc41ebc270637d5a95a7963fffa12d6f9cd",
+    "jlc-coverlay.json": "12f48355281e5f0da8542eeb938d0849d85ddccb1b041cfc0782eabc3957fb5f",
+    "jlc-pictures.json": "20721a7d7f51e4eca1861d8c0d21700e2b18fc8e41dd28399da51a5482fdbd43",
+    "jlc-stackups.json": "846dde25f77f43ca2508ef71f5537f39f2e509a9d70c80bf57104d108f958b3c",
+    "usb-geometries.json": "e9237d98a986c57e827c6d27065d6c3f4b378d490fb1393032cb2eff2830e443"
+  }
+}
