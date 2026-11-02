@@ -1,0 +1,17 @@
+Interface,Pin,Signal,ESP32_S3_GPIO,Module_U1_Pad,Direction_at_target,Status
+JTAG_2x5_1.27,1,VTref_3V3,,,Output_reference_only,Planned_not_power_input
+JTAG_2x5_1.27,2,TMS,42,38,Input,Planned
+JTAG_2x5_1.27,3,GND,,,Ground,Planned
+JTAG_2x5_1.27,4,TCK,39,35,Input,Planned
+JTAG_2x5_1.27,5,GND,,,Ground,Planned
+JTAG_2x5_1.27,6,TDO,40,36,Output,Planned
+JTAG_2x5_1.27,7,KEY_NO_PIN,,,None,Planned_mechanical_key
+JTAG_2x5_1.27,8,TDI,41,37,Input,Planned
+JTAG_2x5_1.27,9,NC,,,None,Planned_SEGGER_9_pin_schema
+JTAG_2x5_1.27,10,nRESET_CHIP_EN,,45,Open_drain_input_only,Planned_adapter_must_release_against_PG
+USB_C_2.0,D_minus,USB_D_MINUS,19,23,Bidirectional,Planned
+USB_C_2.0,D_plus,USB_D_PLUS,20,24,Bidirectional,Planned
+JTAG_SELECT,Jumper,JTAG_SEL,3,7,Strap_input,Planned_requires_later_explicit_eFuse_authorization
+UART_RECOVERY,TX,UART_TX,43,39,Output,Preserve_recovery_access
+UART_RECOVERY,RX,UART_RX,44,40,Input,Preserve_recovery_access
+BOOT_RECOVERY,BOOT,BOOT0,0,4,Strap_input_to_GND,Preserve_recovery_access

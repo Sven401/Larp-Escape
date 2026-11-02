@@ -1,0 +1,41 @@
+Status: Editierbare native Quellen; keine Fertigungs- oder Betriebsfreigabe.
+
+Verbindliche Bearbeitungsquelle ist naehe-glut-r2b.kicad_pcb zusammen mit
+naehe-glut-r2b.kicad_sch, circuit.json, bom.csv und den lokalen Bibliotheken.
+Das fertig geroutete PCB wird NICHT durch build_r2b.py reproduziert. Dieser
+Generator erstellt ausschliesslich den Vorroute- und Platzierungsstand.
+Er verweigert nach layout-freeze.json ohne ausdrueckliches Override das
+Ueberschreiben der gerouteten Hauptdatei. Fuer neue Platzierungsversuche eine
+isolierte Kopie verwenden, niemals den finalen Stand ungesichert ersetzen.
+
+Die benoetigten R2a-Generatorinputs sind als unveraenderter, gehashter Snapshot
+unter sources/r2a-input abgelegt. PROVENANCE.json bezeichnet Ursprung und
+Pruefstand; die Nachbardateien pcb-r2a werden nicht mehr als implizite
+Generatorinputs benutzt. Vor der Basiserzeugung werden alle Snapshot-Hashes
+geprueft. Die KiCad-10.0.8-Library bleibt Werkzeugabhaengigkeit fuer neu
+hinzugekommene Standardfootprints; die verwendeten Footprints sind lokal
+vendort und mit Herkunft/Lizenz dokumentiert.
+
+Jeder native KiCad-Aufruf muss KICAD_CONFIG_HOME auf das vorher angelegte
+Verzeichnis pruefung/kicad-config setzen. Keine Benutzerprofile aendern.
+Pruefreihenfolge fuer einen bearbeiteten nativen Stand:
+1. Native ERC, XML-Netzliste und direkte Pin-/BOM-Paritaet aktualisieren.
+2. Zonen fuellen, native DRC als JSON ausgeben; echte offene Verbindungen,
+   Abstandsverletzungen und Warnungen getrennt auswerten.
+3. tools/check_pcb_pad_contract.py --pcb <PCB> --output <Bericht> ausfuehren.
+4. tools/analyze_usb_route.py <PCB> <Bericht> und den geometrischen
+   Paarvergleich im Layoutbericht aktualisieren; dies ist keine Impedanzmessung.
+5. tools/export_assembly_draft.py --pcb <PCB> --require-final-datum ausfuehren.
+   Vollstaendige BOM/CPL inklusive THT/Hybrid; kein Bestell- oder Freigabepaket.
+6. Mechanik und unabhaengigen Review an dieselben finalen Hashes binden.
+
+routing/ enthaelt getrennte Entwicklungsversuche, auch bewusst verworfene
+Varianten mit offenen Verbindungen oder falscher Zwischengeometrie. Sie sind
+KEINE alternativen freigegebenen Fertigungsstaende. Insbesondere die getestete
+R49-Bruecke wurde nicht uebernommen; finale Schaltung/BOM haben keinen R49.
+
+Die kontrollierten Signalkorridore verwenden vier Signallagen innerhalb der
+weiterhin SECHSLAGIGEN PCB: F/In2/In3/B. In1 und In4 bleiben GND-Referenzen.
+Der fruehere Dreilagen-Hilfsrouter ignorierte vorhandenes In2-Kupfer als
+Startflaeche; dieser Fehler ist in route_signals.py durch dynamische
+Lagenanzahl korrigiert. Der fertige native Stand ist der massgebliche Beleg.

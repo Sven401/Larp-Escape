@@ -1,0 +1,89 @@
+R2b — TERMIN UND REALE ABNAHME
+Stand 02.11.2026. Planungsziele, keine Lieferzusage und kein Prüfprotokoll.
+Verbindlicher Einsatz: zwei funktionierende Geräte am 04.12.2026.
+Quelle: Nutzerbestätigung dieser Sitzung. Arbeitsbasis: UMSETZUNGSSTAND.txt.
+
+RÜCKWÄRTS GEPLANTE INTERNEN ZIELTERMINE
+Bis 03.12.: ausschließlich Abschlusskontrolle, Laden und Transportvorbereitung.
+Bis 30.11.: beide Geräte vollständig abgenommen; vier Tage Reserve bis Einsatz.
+Bis 23.11.: beide aufgebauten Geräte verfügbar; eine Woche für Inbetriebnahme,
+Funk-/Licht-/Temperaturprüfung, Fehlerkorrekturen und getrennte Vierstundenläufe.
+Bis 16.11.: bestückte Platinen, Kabel und gedruckte Halter verfügbar; eine Woche
+für Passprobe, Versorgungs-/USB-/Debugqualifikation und mögliche Nachdrucke.
+Diese Daten sind bewusst gesetzte Arbeitsziele. Ein Fertiger hat sie noch nicht
+bestätigt. R2b darf nicht den unabhängig funktionsfähigen Modulgeräte-Fallback
+verdrängen. Eine verpasste Zwischenstufe erfordert einen neuen Terminvergleich,
+keine stillschweigende Verkürzung der abschließenden Geräteprüfung.
+
+ANGEBOTSVERGLEICH ERST MIT GEPRÜFTEM DATEISATZ
+Zu erfassen: Datum und Gültigkeit, konkrete Revision/Dateihashes, Losgröße,
+komplette Bestückung einschließlich THT/Hybridstecker und Jumper, Beschaffung,
+DFM-Rückfragen, Produktionsbeginn/-dauer, Versandart/-dauer, Einfuhr und Puffer.
+Gesamtpreis einschließlich Einrichtung, Teile, Montage, Versand und Steuern
+separat von reinen PCB-Kosten ausweisen. Stackup/USB-Impedanz und die lokalen
+USB-NPTH-Abstände ausdrücklich bestätigen lassen. Der bestehende unbezahlte
+R2a-Auftrag W2026110206020486 bleibt unverändert. Kein Angebot liegt vor.
+Ein zugesagter Versandtag ist kein bestätigter Ankunfts- oder Einsatztermin.
+
+VERFÜGBARKEIT AM 02.11.2026
+PETG noch nicht angekommen. P1S-Drucker und Labornetzteil bei Bekannten verfügbar.
+Zugang, Druckzeit und tatsächliches Materialprofil vor Mustertermin abstimmen.
+Reale R2b-Platine, gewählte Stecker/Kabel und qualifizierter JTAG-Probe sind
+keine aus dem digitalen Dateisatz ableitbare Verfügbarkeit.
+
+PROTOKOLLVORLAGE — FÜR JEDES GERÄT SEPARAT AUSFÜLLEN
+Gerät/Chipidentität: ____  PCB-/Bestückungsstand: ____  Datum/Prüfer: ____
+CAD-/Druckmanifest: ____  Firmware-Commit/Build: ____  Akku/Pack: ____
+Netzteil/Messmittel: ____  Probe/Kabel/OpenOCD: ____
+Ergebnisse nur als bestanden, fehlgeschlagen oder nicht geprüft eintragen.
+Messwerte, Versorgungszustände, Log-/Fotopfad und Abweichungen jeweils beilegen.
+
+1. Stromlose Passprobe: Auflagen, Bauteilfreiheit, Antennenraum, richtige
+Orientierung, Tasterzugang, abziehbarer Jumper, Stecker und Zugentlastungen.
+Mit den echten Kabeln prüfen; digitale Hüllenkollision ist kein Passnachweis.
+Kraft-/Wiederholungsprüfung gemäß mechanik/DRUCK-UND-MONTAGE.txt protokollieren.
+Ergebnis/Messwerte: ____
+
+2. Versorgung: Akku abgezogen, Ziel ausschließlich über J1 mit geeignet
+begrenztem Labornetzteil gemäß Hardwarevertrag. USB-VBUS darf weder BAT noch
+Ziel-3V3 versorgen. Ziel allein, USB allein, beide an, beide aus sowie Ein- und
+Ausschaltfolgen prüfen; Rails, Ströme und Verhalten beim Spannungsabfall messen.
+Die offenen Versorgungssonderfälle im Analogreview zuerst qualifizieren.
+Ergebnis/Messwerte: ____
+
+3. USB: beide Steckerorientierungen, Wiederanstecken, BOOT/RESET, ROM-Rettung
+und anschließend autorisierter Flash/Verify unter identischer Chipzuordnung.
+Vor Upload den dokumentierten chipgebundenen Flash-Rückweg abgleichen.
+ROM-Erkennung beweist noch keine robuste Datenübertragung oder ESD-Festigkeit.
+Ergebnis/Logs: ____
+
+4. JTAG: zunächst Probe-VTref, hochohmige Signale bei ausgeschaltetem Ziel und
+Open-Drain-Reset am echten Aufbau prüfen. GPIO-JTAG erst nach separat
+freigegebener Auswahlkonfiguration testen; keine eFuse-Schreibanweisung hier.
+Dann Kettenerkennung, Halten/Schritt/Breakpoint/Reset, parallele USB-Konsole
+und Kontaktunterbrechungen bei dokumentierter Kabellänge und Taktrate prüfen.
+Ohne genehmigte Fuse-Umstellung bleibt dieser Schritt ausdrücklich offen.
+Ergebnis/Logs: ____
+
+5. Produktbetrieb: bestehende Licht-/Funkfunktion, UVLO und Temperatur mit und
+ohne Debugkabel prüfen. Vier Stunden ohne USB-/Debug-Versorgung und ohne Halter
+im vorgesehenen Produktbetrieb für beide Geräte nachweisen. Testaufbau,
+Lichtprofil, Start-/Endzeit, Packzustand, Temperatur und Ausfälle festhalten.
+Ein früherer Test oder eine Strombudgetrechnung ersetzt diesen Lauf nicht.
+Ergebnis/Messwerte: ____
+
+ABSCHLUSS
+Offene Fehler/Korrekturen und erneute Prüfungen: ____
+Gerät 1 einsatzbereit: ____  Gerät 2 einsatzbereit: ____
+Fallback einsatzbereit und verfügbar: ____
+
+FIRMWARE-ABHÄNGIGKEIT / QUELLCODEABGLEICH 02.11.2026
+Am Basiscommit 9c9181a7c22de0be56671bce39e8ece5f072d01d gelesen:
+Firmware/led/platformio.ini nutzt standardmäßig az-delivery-devkit-v4.
+Firmware/idf/main/app_main.cpp ist ausdrücklich nur ein Qualifikationsimage;
+sdkconfig.defaults legt keine explizite USB-Konsole fest. Die Hardware-README
+führt die S3-Portierung als gesonderte Arbeit. Daraus folgt keine einsatzbereite
+R2b-Firmware. Vor Produktabnahme sind ein konkretes S3-N4R2-Buildprofil, die
+Reservierung der Service-GPIOs, Licht-/Funk-Pinbelegung und getrennte Service-/
+Produktkonfiguration zu prüfen. Hier keine Firmwareänderung, kein neuer Build
+und kein Geräteupload; reine Quelltextprüfung, keine Laufzeitaussage.

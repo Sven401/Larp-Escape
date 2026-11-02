@@ -1,0 +1,38 @@
+USB-INTERFACE — KAPAZITÄTSPRÜFUNG, Root,02.11.2026
+Status: typischeKennlinie+konservativeAuslegung; kein garantierterMin-/Labornachweis.
+
+QUELLEN
+MurataHerstellerblatt2018/03/01,Seite2Kennlinien:
+https://datasheet.octopart.com/GRM21BR71C475KE51K-Murata-datasheet-155345084.pdf
+L/K sind Verpackungsvarianten derselbenGRM21BR71C475KE51-Familie.
+LokaleQuelle:pruefung/sources/murata-4u7-octopart.pdf
+Sichtprüfung:pruefung/sources/murata-4u7-curves.png (ganzeSeite).
+NeuereRatingidentität4.7uF±10%,16V,X7R bestätigt durchHerstellerblatt20.05.2025:
+https://akizukidenshi.com/goodsaffix/GRM21BR71C475KE51L.pdf
+Dessen2Seiten enthalten keineKennlinien. Arrow2025-Kurvenquelle war lokal
+nichtabrufbar; aus ihr wird keine tatsächlicheSichtprüfung behauptet.
+TI TPS709RevH §8.1.1/8.2.2:
+https://www.ti.com/lit/ds/symlink/tps709.pdf
+Bei3.3V mindestens1.5uF effektiv amAusgang, ESR0..0.2Ohm; Eingangscap nicht
+zurStabilität erforderlich,0.1..2.2uF empfohlen. Beispiel1uF/25V Eingang.
+
+ABGELESEN UND BERECHNET
+Typische25C-Kurve:DC0V ungefähr5.15uF,DC3.3V ungefähr4.4uF,AC1Vrms.
+SeparateAC-Kurve beiDC0:bei sehrkleinerAmplitude ungefähr3.4uF,bei1Vrms
+ungefähr5.2uF. Somit ist bloßerDC-Biasabschlag unzureichend.
+KonservativerScreen beiUSB_IF_3V3 bis3.366V:
+4.7uF *0.80Bias *0.65AC *0.90Toleranz *0.85Temperatur *0.90Reserve
+=1.682694uF jeBauteil. ZweiParallelteile ergeben3.365388uF imselbenModell.
+Die10%Reserve ist eineIngenieurannahme fürAlterung/Ableseunsicherheit;
+dieMultiplikation getrenntertypischerKurven ist KEINE Herstelleruntergrenze
+fürkombinierteEinflüsse. Einzel4.7u erreicht das2.2u-Auslegungsziel nicht.
+
+EMPFEHLUNG AN HARDWARE
+Zwei4.7uF-Ausgangsteile vorsehen; C28amVBUS auf100nF reduzieren, sofern
+Inputtransienten/Leitung undInrush unabhängig geprüft werden. LokaleHF-Caps
+beiU8/U9/U10/Inverter bleiben. Ausgangsladung für9.8uFnominal (inklvier100nF),
++10%Toleranz,+15%Temperatur und3.366V ist41.73uC; Eingang100nF trägtbei5.5V
+max0.696uC bei. Dies ist nur einekonservativeLadungsabschätzung, keine
+USB-Normprüfung oderBegrenzung desSpitzenstroms. NativeBOM nachÄnderung
+neu auswerten. PhysischeReglerstabilität/Rampen/Hotplug bleiben offen.
+Kennlinien-PDF SHA256: 5859d8359f9111e322d86c624e39196e920b584b438b410b73a3aff2679a7078

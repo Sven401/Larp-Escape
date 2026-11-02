@@ -1,0 +1,322 @@
+{
+    "$schema": "https://schemas.kicad.org/drc.v1.json",
+    "coordinate_units": "mm",
+    "date": "2026-11-02T01:46:32",
+    "ignored_checks": [],
+    "included_severities": [
+        "error",
+        "warning"
+    ],
+    "kicad_version": "10.0.8",
+    "schematic_parity": [],
+    "source": "cleaned.kicad_pcb",
+    "unconnected_items": [],
+    "violations": [
+        {
+            "description": "Loch-Freiraum-Verstoß (Einschränkungen aus Platinenkonfiguration zu Löchern Freiraum 0,2000 mm; tatsächlich 0,1944 mm)",
+            "items": [
+                {
+                    "description": "Pad A1 [/GND] von J4 auf F.Cu",
+                    "pos": {
+                        "x": 4.3,
+                        "y": 35.645
+                    },
+                    "uuid": "748829e3-b950-4e1b-8b64-d2b2214b60cd"
+                },
+                {
+                    "description": "NPTH-Pad von J4",
+                    "pos": {
+                        "x": 4.61,
+                        "y": 36.72
+                    },
+                    "uuid": "d5cc92cc-c469-4829-8898-35b20018b2d0"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Loch-Freiraum-Verstoß (Einschränkungen aus Platinenkonfiguration zu Löchern Freiraum 0,2000 mm; tatsächlich 0,1944 mm)",
+            "items": [
+                {
+                    "description": "Pad A12 [/GND] von J4 auf F.Cu",
+                    "pos": {
+                        "x": 10.7,
+                        "y": 35.645
+                    },
+                    "uuid": "64d981ec-2f51-4213-adf2-afe0ed41048f"
+                },
+                {
+                    "description": "NPTH-Pad von J4",
+                    "pos": {
+                        "x": 10.39,
+                        "y": 36.72
+                    },
+                    "uuid": "cd2970eb-29ba-4a9e-8fee-242f4df0cffc"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Loch-Freiraum-Verstoß (Einschränkungen aus Platinenkonfiguration zu Löchern Freiraum 0,2000 mm; tatsächlich 0,1944 mm)",
+            "items": [
+                {
+                    "description": "Pad B1 [/GND] von J4 auf F.Cu",
+                    "pos": {
+                        "x": 10.7,
+                        "y": 35.645
+                    },
+                    "uuid": "830ec9e1-7fbf-47fb-a619-9617e859edfa"
+                },
+                {
+                    "description": "NPTH-Pad von J4",
+                    "pos": {
+                        "x": 10.39,
+                        "y": 36.72
+                    },
+                    "uuid": "cd2970eb-29ba-4a9e-8fee-242f4df0cffc"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Loch-Freiraum-Verstoß (Einschränkungen aus Platinenkonfiguration zu Löchern Freiraum 0,2000 mm; tatsächlich 0,1944 mm)",
+            "items": [
+                {
+                    "description": "Pad B12 [/GND] von J4 auf F.Cu",
+                    "pos": {
+                        "x": 4.3,
+                        "y": 35.645
+                    },
+                    "uuid": "20b74dbd-9d5a-4305-b413-66248b618367"
+                },
+                {
+                    "description": "NPTH-Pad von J4",
+                    "pos": {
+                        "x": 4.61,
+                        "y": 36.72
+                    },
+                    "uuid": "d5cc92cc-c469-4829-8898-35b20018b2d0"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Track endpoint not centered on via",
+            "items": [
+                {
+                    "description": "Leiterbahn [/+3V3] auf B.Cu, Länge 1,6617 mm",
+                    "pos": {
+                        "x": 21.525,
+                        "y": 19.85
+                    },
+                    "uuid": "9184ac53-fc86-45e2-9672-556a0c059fff"
+                },
+                {
+                    "description": "Via [/+3V3] auf F.Cu - B.Cu",
+                    "pos": {
+                        "x": 22.8,
+                        "y": 18.5
+                    },
+                    "uuid": "99e68e9f-e93c-4c8d-ab79-4d9d3021d385"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_not_centered_on_via"
+        },
+        {
+            "description": "Track endpoint not centered on via",
+            "items": [
+                {
+                    "description": "Leiterbahn [/GPIO8_DATA] auf In2.Cu, Länge 1,1503 mm",
+                    "pos": {
+                        "x": 7.475,
+                        "y": 16.0469
+                    },
+                    "uuid": "0d10c911-3146-453e-87ed-9729b4a9c754"
+                },
+                {
+                    "description": "Via [/GPIO8_DATA] auf F.Cu - B.Cu",
+                    "pos": {
+                        "x": 7.475,
+                        "y": 16.149999
+                    },
+                    "uuid": "fd6b8237-3a3b-4035-9816-e368be8824aa"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_not_centered_on_via"
+        },
+        {
+            "description": "Track endpoint not centered on via",
+            "items": [
+                {
+                    "description": "Leiterbahn [/GPIO8_DATA] auf In2.Cu, Länge 0,1031 mm",
+                    "pos": {
+                        "x": 7.475,
+                        "y": 16.15
+                    },
+                    "uuid": "ee7262a2-0c59-4634-bf63-b0fc77222fb9"
+                },
+                {
+                    "description": "Via [/GPIO8_DATA] auf F.Cu - B.Cu",
+                    "pos": {
+                        "x": 7.475,
+                        "y": 16.149999
+                    },
+                    "uuid": "fd6b8237-3a3b-4035-9816-e368be8824aa"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_not_centered_on_via"
+        },
+        {
+            "description": "Track endpoint not centered on via",
+            "items": [
+                {
+                    "description": "Leiterbahn [/UART_TX] auf F.Cu, Länge 0,4243 mm",
+                    "pos": {
+                        "x": 20.075,
+                        "y": 11.225
+                    },
+                    "uuid": "18464699-e60d-4c97-a89e-3852130fe1d6"
+                },
+                {
+                    "description": "Via [/UART_TX] auf F.Cu - B.Cu",
+                    "pos": {
+                        "x": 19.75,
+                        "y": 10.775
+                    },
+                    "uuid": "f489597b-f094-482b-a22c-7547416d0b23"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_not_centered_on_via"
+        },
+        {
+            "description": "Track endpoint not centered on via",
+            "items": [
+                {
+                    "description": "Leiterbahn [/GPIO46_STRAP] auf F.Cu, Länge 0,0354 mm",
+                    "pos": {
+                        "x": 21.249999,
+                        "y": 6.975
+                    },
+                    "uuid": "de176383-5469-4349-a137-b06ca59dc93b"
+                },
+                {
+                    "description": "Via [/GPIO46_STRAP] auf F.Cu - B.Cu",
+                    "pos": {
+                        "x": 21.2,
+                        "y": 6.8
+                    },
+                    "uuid": "cf2fbe00-ca20-40ae-98df-ac6f0c436d11"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_not_centered_on_via"
+        },
+        {
+            "description": "Track endpoint not centered on via",
+            "items": [
+                {
+                    "description": "Leiterbahn [/SYS_EN] auf In2.Cu, Länge 0,8132 mm",
+                    "pos": {
+                        "x": 23.775,
+                        "y": 9.6
+                    },
+                    "uuid": "1f447100-ab5e-450a-b89f-b435e64987c4"
+                },
+                {
+                    "description": "Via [/SYS_EN] auf F.Cu - B.Cu",
+                    "pos": {
+                        "x": 24.5,
+                        "y": 10.2
+                    },
+                    "uuid": "73b735cd-9fd1-44fa-838a-63e0a10c07f2"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_not_centered_on_via"
+        },
+        {
+            "description": "Track endpoint not centered on via",
+            "items": [
+                {
+                    "description": "Leiterbahn [/LED_OE_N] auf In2.Cu, Länge 0,9546 mm",
+                    "pos": {
+                        "x": 24.275,
+                        "y": 18.625
+                    },
+                    "uuid": "0250bdb4-a232-4372-9285-80745f860663"
+                },
+                {
+                    "description": "Via [/LED_OE_N] auf F.Cu - B.Cu",
+                    "pos": {
+                        "x": 24.3,
+                        "y": 18.475
+                    },
+                    "uuid": "6fe36627-1bb0-44c2-9780-24e6e9bf2c70"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_not_centered_on_via"
+        },
+        {
+            "description": "Track endpoint not centered on via",
+            "items": [
+                {
+                    "description": "Leiterbahn [/LED_A] auf B.Cu, Länge 0,7071 mm",
+                    "pos": {
+                        "x": 8.75,
+                        "y": 18.325
+                    },
+                    "uuid": "cdc0f6e8-67d9-4767-8cbd-46964d07dce0"
+                },
+                {
+                    "description": "Via [/LED_A] auf F.Cu - B.Cu",
+                    "pos": {
+                        "x": 9.4,
+                        "y": 17.8
+                    },
+                    "uuid": "65bbc6cd-8b99-4ced-bb69-8c375b67603c"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_not_centered_on_via"
+        },
+        {
+            "description": "Footprint \"PinHeader_1x02_P2.54mm_Vertical\" stimmt nicht mit Kopie in Bibliothek \"Connector_PinHeader_2.54mm\" überein.",
+            "items": [
+                {
+                    "description": "Footprint JP1",
+                    "pos": {
+                        "x": 18.3,
+                        "y": 38.7
+                    },
+                    "uuid": "0610fabe-c5f5-47fe-958a-372c04188213"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "Footprint \"TI_RNM0015A\" stimmt nicht mit Kopie in Bibliothek \"NearGlowR2a\" überein.",
+            "items": [
+                {
+                    "description": "Footprint U3",
+                    "pos": {
+                        "x": 18.1,
+                        "y": 12.5
+                    },
+                    "uuid": "47e60a4c-c575-4533-bf6c-21906cbd56d9"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        }
+    ]
+}

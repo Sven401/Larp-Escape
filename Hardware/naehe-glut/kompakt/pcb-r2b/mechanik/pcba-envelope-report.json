@@ -1,0 +1,1747 @@
+{
+  "pcb_sha256": "ab68d3853f49b9e2c8e70272ec0bde0e7acbaacf18eda1008bd91353b010efac",
+  "bom_sha256": "0da0adbfea16ed33a8b3c14c45c7d27d4b010d42240d7d9a3154b20c285f0a24",
+  "sources": {
+    "C16": {
+      "url": "https://search.kemet.com/download/specsheet/T530X477M006ATE010",
+      "revision": "generated2026-10-15",
+      "max_body_mm": [
+        7.6,
+        4.6,
+        4.3
+      ],
+      "sha256": "2e5eeedb4b4e0d96776893dd1b193c469cfd6c6e09dce2f2b975550763e34678"
+    },
+    "L1": {
+      "url": "https://www.coilcraft.com/getmedia/8245f050-f190-4295-8c41-7c03d662ee3d/xel4030.pdf",
+      "revision": "1321-3,2026-02-19",
+      "max_body_mm": [
+        4.3,
+        4.3,
+        3.1
+      ],
+      "sha256": "9764cf540f92fc19453469e99eb9d1a3d2ff1757c25c97e17be82e9a4854626e"
+    },
+    "L2": {
+      "url": "https://www.coilcraft.com/getmedia/50632d43-da1b-4cdb-8ab4-3029cab51df3/xfl4020.pdf",
+      "revision": "745-3,2026-03-10",
+      "max_body_mm": [
+        4.3,
+        4.3,
+        2.1
+      ],
+      "sha256": "6dca915ac1daa47210f7708a7540221ffef4f34a88a8621c94bd50cdf48647e6"
+    },
+    "U1": {
+      "url": "https://documentation.espressif.com/esp32-s3-mini-1_mini-1u_datasheet_en.html",
+      "revision": "v1.7",
+      "max_body_mm": [
+        15.6,
+        20.7,
+        2.55
+      ]
+    },
+    "J1": {
+      "url": "https://www.jst-mfg.com/product/pdf/eng/ePH.pdf",
+      "revision": "PH catalog p4",
+      "nominal_body_mm": [
+        7.95,
+        5,
+        6.6
+      ],
+      "note": "No catalog outside tolerance; use full library Fab bounding rectangle plus0.3mm and7mm height as engineering allowance.",
+      "sha256": "447624f4f2f7d37c58c1eaa7ee314ad757fe7aff48f6186491ef6f69fbc00b96"
+    },
+    "SW1_SW2": {
+      "url": "https://www.ckswitches.com/media/1479/kmr2.pdf",
+      "revision": "VL2026-01-28",
+      "max_body_mm": [
+        4.4,
+        3.0,
+        2.1
+      ],
+      "mpn": "KMR221NGLFS"
+    },
+    "JP1": {
+      "url": "https://suddendocs.samtec.com/prints/tsw-xxx-xx-xxx-x-xx-xxx-mkt.pdf",
+      "revision": "DS",
+      "note": "TSW-102-07-G-S,2.54REFbase,5.842post;6.4x3.2mm XY engineering allowance includes cut flash.",
+      "sha256": "047ecedcc921fb0aed7127f08b9ba0fc1200d92d33fb7ded1b311d0ed8f42063"
+    },
+    "JP1_cap": {
+      "url": "https://suddendocs.samtec.com/prints/snt-100-xx-x-x-mkt.pdf",
+      "revision": "S",
+      "mpn": "SNT-100-BK-T",
+      "nominal_REF_mm": [
+        2.54,
+        5.08,
+        6.1
+      ],
+      "maximum_breakoff_vestige_mm": 0.46,
+      "engineering_bound_mm": [
+        3.4,
+        6.0,
+        7.0
+      ],
+      "sha256": "04b812db965b8acb0f031f0b10a77f18371c8836cdd27e10da5a947c97cbd34f"
+    }
+  },
+  "coverage": [
+    {
+      "ref": "C1",
+      "mpn": "GRM21BR61A106KE19L",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        9.375,
+        11.649999999999999,
+        11.565000000000001,
+        14.350000000000001
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "C10",
+      "mpn": "GRM155R61A105KE15D",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        11.19,
+        13.2,
+        12.63,
+        14.9
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "C11",
+      "mpn": "GRM155R71C104KA88D",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        18.58,
+        22.5,
+        20.02,
+        24.2
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "C12",
+      "mpn": "GRM155R61A105KE15D",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        18.68,
+        18.65,
+        20.12,
+        20.35
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "C13",
+      "mpn": "GRM155R71H223KA12D",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        22.669999999999998,
+        20.74,
+        24.37,
+        22.18
+      ],
+      "assembly_z_mm": [
+        13,
+        15.0
+      ],
+      "side": "top"
+    },
+    {
+      "ref": "C14",
+      "mpn": "GRM21BR61A226ME44L",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        13.875,
+        21.099999999999998,
+        16.065,
+        23.8
+      ],
+      "assembly_z_mm": [
+        13,
+        15.0
+      ],
+      "side": "top"
+    },
+    {
+      "ref": "C16",
+      "mpn": "T530X477M006ATE010",
+      "evidence": "manufacturer_max_plus_0.2mm_pose_solder",
+      "local_xy_bound_mm": [
+        19.77,
+        16.15,
+        24.77,
+        24.15
+      ],
+      "assembly_z_mm": [
+        7.5,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "C17",
+      "mpn": "GRM21BC81C226ME44L",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        14.754999999999999,
+        15.75,
+        16.945,
+        18.45
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "C18",
+      "mpn": "GRM21BC81C226ME44L",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        16.805,
+        15.75,
+        18.995,
+        18.45
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "C19",
+      "mpn": "GRM155R71C104KA88D",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        17.0,
+        14.155,
+        18.7,
+        15.595
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "C2",
+      "mpn": "GRM21BR61A106KE19L",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        10.399999999999999,
+        9.205,
+        13.100000000000001,
+        11.395000000000001
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "C20",
+      "mpn": "TMK107BBJ106MA-T",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        21.75,
+        5.41,
+        24.05,
+        7.1499999999999995
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "C21",
+      "mpn": "GRM188R61A105KA61D",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        22.81,
+        6.96,
+        24.55,
+        9.260000000000002
+      ],
+      "assembly_z_mm": [
+        13,
+        15.0
+      ],
+      "side": "top"
+    },
+    {
+      "ref": "C22",
+      "mpn": "GRM1555C1H221JA01D",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        13.62,
+        7.08,
+        15.32,
+        8.520000000000001
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "C23",
+      "mpn": "GRM188R71C104KA01D",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        1.8499999999999999,
+        30.63,
+        4.15,
+        32.37
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "C24",
+      "mpn": "GRM188R71C104KA01D",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        5.3500000000000005,
+        30.63,
+        7.6499999999999995,
+        32.37
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "C25",
+      "mpn": "GRM188R71C104KA01D",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        8.85,
+        30.63,
+        11.15,
+        32.37
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "C26",
+      "mpn": "GRM188R71H103KA01D",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        15.849999999999998,
+        30.63,
+        18.150000000000002,
+        32.37
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "C27",
+      "mpn": "GRM188R71H103KA01D",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        19.349999999999998,
+        30.63,
+        21.650000000000002,
+        32.37
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "C28",
+      "mpn": "GRM188R71C104KA01D",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        13.35,
+        34.13,
+        15.65,
+        35.87
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "C29",
+      "mpn": "GRM21BR71C475KE51L",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        16.65,
+        33.405,
+        19.35,
+        35.595
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "C3",
+      "mpn": "GRM21BC81C226ME44L",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        10.399999999999999,
+        5.255,
+        13.100000000000001,
+        7.444999999999999
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "C30",
+      "mpn": "GRM21BR71C475KE51L",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        20.349999999999998,
+        35.405,
+        23.05,
+        37.595
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "C31",
+      "mpn": "GRM188R71C104KA01D",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        17.349999999999998,
+        29.13,
+        19.650000000000002,
+        30.87
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "C4",
+      "mpn": "GRM21BC81C226ME44L",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        13.405,
+        9.049999999999999,
+        15.595,
+        11.75
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "C5",
+      "mpn": "TMK107BBJ106MA-T",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        20.65,
+        11.58,
+        22.95,
+        13.32
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "C6",
+      "mpn": "GRM21BC81C226ME44L",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        13.049999999999999,
+        12.004999999999999,
+        15.75,
+        14.195
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "C7",
+      "mpn": "TMK107BBJ106MA-T",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        5.180000000000001,
+        9.85,
+        6.92,
+        12.15
+      ],
+      "assembly_z_mm": [
+        13,
+        15.0
+      ],
+      "side": "top"
+    },
+    {
+      "ref": "C8",
+      "mpn": "GRM155R71C104KA88D",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        5.23,
+        7.7,
+        6.67,
+        9.4
+      ],
+      "assembly_z_mm": [
+        13,
+        15.0
+      ],
+      "side": "top"
+    },
+    {
+      "ref": "C9",
+      "mpn": "GRM155R71C104KA88D",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        23.529999999999998,
+        7.65,
+        24.970000000000002,
+        9.350000000000001
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "D1",
+      "mpn": "TPD2EUSB30DRTR",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        8.649999999999999,
+        32.25,
+        10.350000000000001,
+        33.75
+      ],
+      "assembly_z_mm": [
+        13,
+        15.0
+      ],
+      "side": "top"
+    },
+    {
+      "ref": "D2",
+      "mpn": "TPD2EUSB30DRTR",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        19.15,
+        25.05,
+        20.85,
+        26.55
+      ],
+      "assembly_z_mm": [
+        13,
+        15.0
+      ],
+      "side": "top"
+    },
+    {
+      "ref": "D3",
+      "mpn": "TPD2EUSB30DRTR",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        22.15,
+        25.05,
+        23.85,
+        26.55
+      ],
+      "assembly_z_mm": [
+        13,
+        15.0
+      ],
+      "side": "top"
+    },
+    {
+      "ref": "D4",
+      "mpn": "TPD2EUSB30DRTR",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        27.849999999999998,
+        30.25,
+        29.55,
+        31.75
+      ],
+      "assembly_z_mm": [
+        13,
+        15.0
+      ],
+      "side": "top"
+    },
+    {
+      "ref": "D5",
+      "mpn": "TPD2EUSB30DRTR",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        1.15,
+        24.75,
+        2.8499999999999996,
+        26.25
+      ],
+      "assembly_z_mm": [
+        13,
+        15.0
+      ],
+      "side": "top"
+    },
+    {
+      "ref": "F1",
+      "mpn": "0467002.NRHF",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        22.81,
+        9.92,
+        24.55,
+        12.22
+      ],
+      "assembly_z_mm": [
+        13,
+        15.0
+      ],
+      "side": "top"
+    },
+    {
+      "ref": "J1",
+      "mpn": "B2B-PH-SM4-TB(LF)(SN)",
+      "evidence": "manufacturer_nominal_plus_engineering_allowance_NOT_max_tolerance",
+      "local_xy_bound_mm": [
+        5.655,
+        16.08,
+        14.545,
+        24.41
+      ],
+      "assembly_z_mm": [
+        5.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "J2",
+      "status": "no_body_geometry_testpad_or_graphic",
+      "mpn": null
+    },
+    {
+      "ref": "J3",
+      "status": "no_body_geometry_testpad_or_graphic",
+      "mpn": null
+    },
+    {
+      "ref": "JP1",
+      "mpn": "TSW-102-07-G-S",
+      "evidence": "manufacturer_REF_plus_engineering_allowance_NOT_max_tolerance",
+      "local_xy_bound_mm": [
+        16.7,
+        36.77,
+        19.900000000000002,
+        43.17
+      ],
+      "assembly_z_mm": [
+        13,
+        15.8
+      ],
+      "side": "top"
+    },
+    {
+      "ref": "L1",
+      "mpn": "XEL4030-102MEC",
+      "evidence": "manufacturer_max_plus_0.2mm_pose_solder",
+      "local_xy_bound_mm": [
+        5.3999999999999995,
+        5.95,
+        10.1,
+        10.65
+      ],
+      "assembly_z_mm": [
+        8.7,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "L2",
+      "mpn": "XFL4020-152MEC",
+      "evidence": "manufacturer_max_plus_0.2mm_pose_solder",
+      "local_xy_bound_mm": [
+        15.549999999999999,
+        5.849999999999999,
+        20.249999999999996,
+        10.549999999999999
+      ],
+      "assembly_z_mm": [
+        9.7,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "Q1",
+      "mpn": "MMBT3904WT1G",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        25.02,
+        13.004999999999999,
+        27.795,
+        15.995000000000001
+      ],
+      "assembly_z_mm": [
+        13,
+        15.0
+      ],
+      "side": "top"
+    },
+    {
+      "ref": "R1",
+      "mpn": "0402WGF3322TCE",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        5.84,
+        5.835,
+        7.319999999999999,
+        7.585
+      ],
+      "assembly_z_mm": [
+        13,
+        15.0
+      ],
+      "side": "top"
+    },
+    {
+      "ref": "R10",
+      "mpn": "RC0402FR-0710KL",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        20.805,
+        22.36,
+        22.555,
+        23.84
+      ],
+      "assembly_z_mm": [
+        13,
+        15.0
+      ],
+      "side": "top"
+    },
+    {
+      "ref": "R11",
+      "mpn": "RC0402FR-0710KL",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        11.489999999999998,
+        11.334999999999999,
+        12.97,
+        13.085
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "R12",
+      "mpn": "RC0402FR-07100KL",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        12.78,
+        20.805,
+        14.260000000000002,
+        22.555
+      ],
+      "assembly_z_mm": [
+        13,
+        15.0
+      ],
+      "side": "top"
+    },
+    {
+      "ref": "R13",
+      "mpn": "RC0402FR-07100RL",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        23.48,
+        12.075,
+        24.96,
+        13.825000000000001
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "R14",
+      "mpn": "RC0402FR-07100KL",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        5.925,
+        14.739999999999998,
+        7.675,
+        16.22
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "R15",
+      "mpn": "RC0402FR-07330RL",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        12.379999999999999,
+        22.695,
+        13.860000000000001,
+        24.445
+      ],
+      "assembly_z_mm": [
+        13,
+        15.0
+      ],
+      "side": "top"
+    },
+    {
+      "ref": "R16",
+      "mpn": "RC0402FR-07100KL",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        8.684999999999999,
+        14.84,
+        10.435,
+        16.32
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "R17",
+      "mpn": "RC0603FR-07470RL",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        22.7975,
+        18.37,
+        24.5625,
+        20.67
+      ],
+      "assembly_z_mm": [
+        13,
+        15.0
+      ],
+      "side": "top"
+    },
+    {
+      "ref": "R18",
+      "mpn": "RC0402FR-07680RL",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        5.84,
+        18.095,
+        7.319999999999999,
+        19.845000000000002
+      ],
+      "assembly_z_mm": [
+        13,
+        15.0
+      ],
+      "side": "top"
+    },
+    {
+      "ref": "R19",
+      "mpn": "RC0402FR-07100KL",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        22.665,
+        21.65,
+        24.415,
+        23.13
+      ],
+      "assembly_z_mm": [
+        13,
+        15.0
+      ],
+      "side": "top"
+    },
+    {
+      "ref": "R2",
+      "mpn": "RT0402BRD07100KL",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        5.215,
+        16.83,
+        6.965,
+        18.310000000000002
+      ],
+      "assembly_z_mm": [
+        13,
+        15.0
+      ],
+      "side": "top"
+    },
+    {
+      "ref": "R22",
+      "mpn": "MCS0402MD4703BE000",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        14.325,
+        13.86,
+        16.075,
+        15.34
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "R23",
+      "mpn": "RT0402BRD07150KL",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        12.424999999999999,
+        13.86,
+        14.175,
+        15.34
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "R24",
+      "mpn": "RC0402FR-0710KL",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        18.66,
+        14.254999999999999,
+        20.14,
+        16.005
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "R25",
+      "mpn": "RC0402FR-076K8L",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        10.545,
+        14.84,
+        12.295,
+        16.32
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "R26",
+      "mpn": "RC0402FR-0710KL",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        23.49,
+        13.934999999999999,
+        24.970000000000002,
+        15.685
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "R27",
+      "mpn": "RC0402FR-071KL",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        18.66,
+        20.575,
+        20.14,
+        22.325
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "R28",
+      "mpn": "RC0402FR-075K1L",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        2.125,
+        24.759999999999998,
+        3.875,
+        26.240000000000002
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "R29",
+      "mpn": "RC0402FR-075K1L",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        4.625,
+        24.759999999999998,
+        6.375,
+        26.240000000000002
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "R3",
+      "mpn": "RT0402BRD0712K1L",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        20.805,
+        21.419999999999998,
+        22.555,
+        22.900000000000002
+      ],
+      "assembly_z_mm": [
+        13,
+        15.0
+      ],
+      "side": "top"
+    },
+    {
+      "ref": "R30",
+      "mpn": "RC0402FR-0722RL",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        13.625,
+        24.46,
+        15.375,
+        25.94
+      ],
+      "assembly_z_mm": [
+        13,
+        15.0
+      ],
+      "side": "top"
+    },
+    {
+      "ref": "R31",
+      "mpn": "RC0402FR-0722RL",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        13.625,
+        25.46,
+        15.375,
+        26.94
+      ],
+      "assembly_z_mm": [
+        13,
+        15.0
+      ],
+      "side": "top"
+    },
+    {
+      "ref": "R32",
+      "mpn": "RC0402FR-0710KL",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        12.125,
+        24.759999999999998,
+        13.875,
+        26.240000000000002
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "R33",
+      "mpn": "RC0402FR-0710KL",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        14.625,
+        24.759999999999998,
+        16.375,
+        26.240000000000002
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "R34",
+      "mpn": "RC0402FR-0710KL",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        17.125,
+        24.759999999999998,
+        18.875,
+        26.240000000000002
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "R35",
+      "mpn": "RC0402FR-0710KL",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        19.625,
+        24.759999999999998,
+        21.375,
+        26.240000000000002
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "R36",
+      "mpn": "RC0402FR-0733RL",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        22.125,
+        24.759999999999998,
+        23.875,
+        26.240000000000002
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "R37",
+      "mpn": "RC0402FR-0733RL",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        24.625,
+        24.759999999999998,
+        26.375,
+        26.240000000000002
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "R38",
+      "mpn": "RC0402FR-0733RL",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        2.125,
+        27.759999999999998,
+        3.875,
+        29.240000000000002
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "R39",
+      "mpn": "RC0402FR-0733RL",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        4.625,
+        27.759999999999998,
+        6.375,
+        29.240000000000002
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "R4",
+      "mpn": "MCS0402MD7503BE000",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        22.665,
+        22.59,
+        24.415,
+        24.07
+      ],
+      "assembly_z_mm": [
+        13,
+        15.0
+      ],
+      "side": "top"
+    },
+    {
+      "ref": "R40",
+      "mpn": "RT0402BRD07200KL",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        7.125,
+        27.759999999999998,
+        8.875,
+        29.240000000000002
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "R41",
+      "mpn": "RT0402BRD0775KL",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        9.625,
+        27.759999999999998,
+        11.375,
+        29.240000000000002
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "R42",
+      "mpn": "RC0402FR-0747KL",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        12.125,
+        27.759999999999998,
+        13.875,
+        29.240000000000002
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "R45",
+      "mpn": "RC0402FR-0747KL",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        14.625,
+        27.759999999999998,
+        16.375,
+        29.240000000000002
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "R46",
+      "mpn": "RC0402FR-0710KL",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        17.125,
+        27.759999999999998,
+        18.875,
+        29.240000000000002
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "R47",
+      "mpn": "RT0402BRD07169KL",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        24.125,
+        37.260000000000005,
+        25.875,
+        38.739999999999995
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "R48",
+      "mpn": "RT0402BRD07100KL",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        26.125,
+        35.260000000000005,
+        27.875,
+        36.739999999999995
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "R5",
+      "mpn": "RC0402FR-0722KL",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        23.49,
+        9.465,
+        24.970000000000002,
+        11.215
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "R6",
+      "mpn": "MCS0402MD7503BE000",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        13.594999999999999,
+        6.0600000000000005,
+        15.345,
+        7.54
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "R7",
+      "mpn": "RT0402BRD07100KL",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        13.594999999999999,
+        5.0600000000000005,
+        15.345,
+        6.54
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "R8",
+      "mpn": "RC0402FR-0710KL",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        23.035,
+        16.83,
+        24.785,
+        18.310000000000002
+      ],
+      "assembly_z_mm": [
+        13,
+        15.0
+      ],
+      "side": "top"
+    },
+    {
+      "ref": "R9",
+      "mpn": "RC0402FR-0710KL",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        18.66,
+        16.115,
+        20.14,
+        17.865000000000002
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "SW1",
+      "mpn": "KMR221NGLFS",
+      "evidence": "manufacturer_max_plus_0.2mm_pose_solder",
+      "local_xy_bound_mm": [
+        2.3,
+        27.1,
+        7.1000000000000005,
+        30.5
+      ],
+      "assembly_z_mm": [
+        13,
+        15.3
+      ],
+      "side": "top"
+    },
+    {
+      "ref": "SW2",
+      "mpn": "KMR221NGLFS",
+      "evidence": "manufacturer_max_plus_0.2mm_pose_solder",
+      "local_xy_bound_mm": [
+        24.6,
+        25.3,
+        29.4,
+        28.7
+      ],
+      "assembly_z_mm": [
+        13,
+        15.3
+      ],
+      "side": "top"
+    },
+    {
+      "ref": "TP1",
+      "status": "no_body_geometry_testpad_or_graphic",
+      "mpn": null
+    },
+    {
+      "ref": "TP2",
+      "status": "no_body_geometry_testpad_or_graphic",
+      "mpn": null
+    },
+    {
+      "ref": "TP3",
+      "status": "no_body_geometry_testpad_or_graphic",
+      "mpn": null
+    },
+    {
+      "ref": "TP4",
+      "status": "no_body_geometry_testpad_or_graphic",
+      "mpn": null
+    },
+    {
+      "ref": "TP5",
+      "status": "no_body_geometry_testpad_or_graphic",
+      "mpn": null
+    },
+    {
+      "ref": "TP6",
+      "status": "no_body_geometry_testpad_or_graphic",
+      "mpn": null
+    },
+    {
+      "ref": "U1",
+      "mpn": "ESP32-S3-MINI-1-N4R2",
+      "evidence": "manufacturer_max_plus_0.2mm_pose_solder",
+      "local_xy_bound_mm": [
+        7.0,
+        -0.29999999999999966,
+        23.0,
+        20.8
+      ],
+      "assembly_z_mm": [
+        13,
+        15.75
+      ],
+      "side": "top"
+    },
+    {
+      "ref": "U10",
+      "mpn": "TPS389001DSER",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        20.4,
+        32.900000000000006,
+        22.6,
+        35.099999999999994
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "U11",
+      "mpn": "TPS70933DBVR",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        11.2,
+        27.849999999999998,
+        14.8,
+        30.150000000000002
+      ],
+      "assembly_z_mm": [
+        13,
+        15.0
+      ],
+      "side": "top"
+    },
+    {
+      "ref": "U12",
+      "mpn": "SN74LVC1G14DCKR",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        15.82,
+        29.36,
+        18.595000000000002,
+        32.47
+      ],
+      "assembly_z_mm": [
+        13,
+        15.0
+      ],
+      "side": "top"
+    },
+    {
+      "ref": "U2",
+      "mpn": "TPS61023DRLR",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        10.33,
+        6.8100000000000005,
+        12.620000000000001,
+        9.595
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "U3",
+      "mpn": "TPS63070RNMR",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        16.275,
+        10.924999999999999,
+        19.925,
+        14.65
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "U4",
+      "mpn": "TPS3700DDCR",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        20.13,
+        8.129999999999999,
+        24.25,
+        11.450000000000001
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "U5",
+      "mpn": "TPS2553DBVR-1",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        6.13,
+        10.299999999999999,
+        9.450000000000001,
+        14.42
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "U6",
+      "mpn": "SN74LV1T125DCKR",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        15.319999999999999,
+        21.88,
+        18.095000000000002,
+        24.990000000000002
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "U7",
+      "mpn": "TPS22918DBVR",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        15.58,
+        18.349999999999998,
+        18.900000000000002,
+        22.470000000000002
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    },
+    {
+      "ref": "U8",
+      "mpn": "TS3USB221ARSER",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        8.149999999999999,
+        26.4,
+        10.850000000000001,
+        28.6
+      ],
+      "assembly_z_mm": [
+        13,
+        15.0
+      ],
+      "side": "top"
+    },
+    {
+      "ref": "U9",
+      "mpn": "TPS389001DSER",
+      "evidence": "library_Fab_plus_0.3mm_XY_and_assumed_2mm_height_SCREEN_ONLY",
+      "local_xy_bound_mm": [
+        24.4,
+        32.900000000000006,
+        26.6,
+        35.099999999999994
+      ],
+      "assembly_z_mm": [
+        10.0,
+        12.0
+      ],
+      "side": "bottom"
+    }
+  ],
+  "battery_harness": {
+    "housing": "PHR-2",
+    "contacts": "2x SPH-002T-P0.5S",
+    "wires": [
+      "MEDI101022-08 black",
+      "MEDI101022-07 red"
+    ],
+    "source": "https://www.medikabel.de/de/product-overview/pvc/liy-in-anlehnung-an-vde-0812/p/12",
+    "nominal_wire_od_mm": 1.1,
+    "incoming_max_od_required_mm": 1.3,
+    "static_min_bend_multiplier": 5,
+    "model_centerline_radii_mm": [
+      8,
+      10
+    ],
+    "min_table_clearance_mm": 1.05,
+    "note": "MEDI LiY0.22 service candidate, each<=0.15m, not a2A release. Geometric reserve for0.20..0.22mm2 withOD<=1.5 and stationary inner bend radius<=7.25mm; Specific MEDI selection recorded in J1-KABEL-REVIEW; electrical sample qualification remains open; PSU service only, each lead<=0.15m, incoming OD<=1.3mm, R8/R10."
+  },
+  "limits": [
+    "Library Fab bounds with assumed2mm height are screening only, not exact MPN qualification.",
+    "No generic STEP is used as fit evidence.",
+    "JST mate9.2mm total height is engineering envelope vs8.6mmREF; LiY MEDI wireOD must be measured<=1.3mm; geometricOD1.5mm reserve, static inner bend radii7.25/9.25mm exceed5x1.3=6.5mm. Crimp, dimensional tolerances and physical routing remain qualification.",
+    "Component pairwise screening is separate from fixture/mate clearance."
+  ],
+  "fixture_collisions": {},
+  "mate_collisions": {},
+  "access_collisions": {},
+  "battery_wire_antenna_collisions": {},
+  "battery_wire_table_clearance_mm": {
+    "PCBA_J1_wire_1": 3.05,
+    "PCBA_J1_wire_2": 1.0500000000000007
+  }
+}

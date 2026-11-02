@@ -1,0 +1,179 @@
+R2b SCHALTUNGSVERTRAG — ENTWURF, KEINE FERTIGUNGS-/BETRIEBSFREIGABE
+Stand 02.11.2026. Hardware: /root/hardware; unabhängige Gegenprüfung: /root/review.
+Basis: unveränderte R2a-Dateien; SHA256 in circuit.json/source_r2a_sha256.
+Fester Einsatztermin: beide Geräte 04.12.2026. Keine Termin- oder Lieferzusage.
+
+Verbindlicher aktueller Schaltungsstand
+109 Referenzen, 101 bestückte BOM-Positionen; 66 Referenzen aus R2a erhalten.
+U1 erhält sieben zuvor NC markierte Serviceanschlüsse. circuit.json führt den
+Pinvertrag, native KiCad-Schaltung/XML-Netzliste und BOM sind Ableitungen.
+Serviceleitungen sind vollständig verbunden: native DRC meldet 0 offene Verbindungen. Vier bekannte USB-NPTH-Abstände bleiben offen; keine Fertigungsfreigabe.
+Bestandene ERC-/Pinprüfungen ersetzen keine elektrische Funktionsprüfung.
+
+USB-Daten und Versorgung
+J4 USB4105-GF-A: A6/B6 D+, A7/B7 D-, getrennte CC1/CC2 je5.1k/1%, SBU NC.
+Schirm und Verankerungen direkt GND; Host/Ziel teilen GND. USB-VBUS speist
+nur U11/TPS70933DBVR und die eigene Insel USB_IF_3V3. Kein Versorgungsweg
+nach BAT_RAW/BAT_FUSED/Ziel+3V3; kein Laden. J1 bleibt externe Zielversorgung.
+U11 EN bleibt gemäß Hersteller offen/intern HIGH. Reverse-Current-Protection
+ist vorhanden, unterOUT1.8V kann trotzdem Rückstrom auftreten; keine absolute
+Rückstromfreiheit behaupten. C28=100nF Eingang, C29/C30=je4.7uF/16V X7R Ausgang.
+Vier100nF-Abblockungen C23/24/25/31. Murata-Bias/AC/Temperaturreserve und
+Ladeabschätzung siehe pruefung/USB-KAPAZITAET.txt; zwei4.7uF sind erforderlich,
+ein einzelner nomineller4.7uF wurde wegen AC-/Bias-Derating verworfen.
+
+U8 TS3USB221ARSER: VCC=USB_IF_3V3, S=GND; Host anD+/D-, Ziel an1D+/1D-.
+Zweiter Port NC. R30/R31 je22Ohm nahe Modul als Messstartwert; endgültige
+USB-Signalintegrität inklusive Schalter/ESD/Stackup noch nicht nachgewiesen.
+U9 und U10: beide TPS389001DSER, USB-seitig versorgt, MR anUSB_IF_3V3.
+U9-Zielteiler R47=169k/R48=100k, U10-VBUS-Teiler R40=200k/R41=75k.
+Alle vier YageoRT0.1%/25ppm. Ausgewählte exakte MPNs stehen in BOM.
+Ihre Open-Drain-RESETs bilden USB_READY mit47kPullup. U12 SN74LVC1G14DCKR
+invertiert hardwareseitig aufUSB_OE_N, dort zusätzlicher47kPullup.
+U12:1NC,2A=USB_READY,3GND,4Y=USB_OE_N,5VCC=USB_IF_3V3;100nF lokal.
+Q2 und R43/R44 sind entfernt. R46=10k entlädt dieUSB-Insel und begrenzt
+mögliche Fremdspeisung; die vorige100k-Variante ist verworfen.
+Je10nFCT verzögert Supervisorfreigabe. Keine Firmwarefreigabe erforderlich;
+ROM-Boot/Recovery wird dadurch grundsätzlich unterstützt, physisch noch offen.
+
+Worstcase-Auswahl und Grenzen
+Unabhängige Analogrechnung: pruefung/ANALOG-REVIEW* (genauer Dateiname im Ordner).
+U9 bei45KAbstandzu25C: fall3.037541..3.149731V,rise3.056133..3.168800V.
+Bei100K: fall3.032303..3.155183V,rise3.050863..3.174285V.
+U10 bei45K: fall4.141667..4.292068V,rise4.166998..4.318071V.
+Rechnung enthält1%Sensorschwelle, beidseitig100nA undRtol+TCR; Alterung,
+Lötdrift, Dynamik und Messnachweis bleiben getrennt. Servicebereich−20..60C.
+Die verworfene festeTPS389033-Schwelle hätte bei zulässigerR2a-PFM-Untergrenze
+USB gesperrt halten können. Der1%-267k/100k-VBUS-Teiler war bei4.4Vebenfalls
+nicht über alle Ecken sicher freigegeben. Beide Fehler sind konstruktiv adressiert.
+
+ESD: TPD2EUSB30DRTR an USB-Daten/CC/JTAG/Reset/VTref. Kein Versorgungspin,
+daher kein TVS-Versorgungsklemmpfad nachZiel3V3. Pin1/2IO,Pin3GND.
+Klemmspannung, Ableitlayout und VBUS-Transientenfestigkeit sind Systemprüfungen;
+Bauteilangaben sind kein Nachweis der fertigen Baugruppe.
+
+Konkrete noch offene Zustandsprüftore
+A) Ziel aus/USB an: U8 bleibt gültigUSB-seitig versorgt, U9 sperrt. EinZiel-UVLO
+   erzeugt damit keine eigeneU8-VCC-Rampe. Ziel3V3/BAT aufFremdspeisung messen.
+B) Ziel an/USB aus: U9-SENSE ist überTeiler weiter angeregt. ZulässigerSENSE-Pegel
+   ist belegt, quantitative unversorgteSense-Leckage nicht. R46=10k begrenzt
+   den aus dem169k/100k-Netz konservativ abgeschätzten20.6uA-Pfad auf~0.21V;
+   weitere Pfade kommen dazu. Dies ist keineVCC=0-Garantie und keinIoff-Beweis.
+C) USB-VBUS undUSB_IF_3V3 steigen/fallen: 0<VCC(U8)<2.3V ist nicht durch die
+   vollständigeDaten-Isolationsgarantie abgedeckt. Schmitt/RESET unterVPOR,
+   LDOunter1.8V, Hotplug und gespeicherteKondensatorladung separat prüfen.
+D) ROM-Recovery, beideUSB-Orientierungen, Reset/BOOT, Wiederanstecken, Funk,
+   LED/UVLO/Temperatur, Sleep sowie Rückspeisung mit echten Teilen qualifizieren.
+Diese Punkte bleiben Freigabeblocker. Vorab unabhängige Messgrenzen festlegen;
+keine erfundenen Leckstromwerte alsUSB-/ESP32-Normwerte ausgeben.
+
+USB-Lastbudget (Schaltungsabschätzung, kein Norm-/Messnachweis)
+R46 nimmt maximal etwa0.340mA bei3.366V/9.9k. Beide47k-Pullups zusammen
+konservativ höchstens0.145mA (imstatischenIdealzustand nicht beide gleichzeitig).
+VBUS-Teiler bei5.5V etwa20uA. IC-/Schmitt-Durchgangsstrom undDataSwitch-Verbrauch
+kommen hinzu; tatsächlicheRuhe-/Suspend-/Attachwerte sind zu messen.
+NominaleKondensatoren:0.1uF direktVBUS,9.8uF aufgeregelterUSB-Insel.
+WorstcaseLadungsabschätzung~42.42uC lautUSB-KAPAZITAET, inklusivepositiver
+Kapazitäts-/Spannungsecken. Reglerstart/Stromlimit macht daraus keinen bewiesenen
+USB-Hotplug-Stromverlauf. Anstecken/Abziehen und Leitungseinbruch messen.
+
+JTAG/BOOT/RESET/Strap
+J5 FTSH-105-01-L-DV-007-K:1VTrefZiel3V3,2TMS,3GND,4TCK,5GND,6TDO,
+7abWerkfehlend,8TDI,9NC,10CHIP_EN. SMT-Keying-Variante, keineDIY-Stiftentfernung.
+TCK10kPulldown,TMS/TDI10kPullup,je33OhmSerienwiderstand alsMessstartwert.
+Probe/Kabel-Auswahl und echteZiel-aus-Hochohmigkeit verantwortet Root separat.
+VTref ist ausschließlich Referenz; Reset muss Open-Drain gegen bestehendesU3-PG
+arbeiten. Aus Cortex-Steckerform folgt keine allgemeineJTAG-/SWD-Kompatibilität.
+SW1/SW2 KMR221NGLFS (NG,ohnezusätzlichenGehäuse-GND-Pin), direktBOOT0/CHIP_EN
+nachGND. JP1 TSW-102-07-G-S plus SNT-100-BK-T-Kappe: offenHIGH=USB-JTAG,
+geschlossenLOW=GPIO-JTAG erstNACH separat autorisierter STRAP_JTAG_SEL-eFuse.
+Keine Fuseänderung/Upload/Bestellung wurde vorgenommen oder automatisch vorgesehen.
+
+Geometrie/Bestückung
+Aktueller freigegebener Arbeitsumriss: PCBx0..30/y5.2..43mm,1mm dick;
+Bestückungsarbeitsziel30x43mm. Voriger30x40-Entwurf ist wegenStecker-/Kabel-/
+Tasterabständen ersetzt, keine neueharteObergrenze. R2a-Kern5.1mmnach+X.
+Stützquadrate3x3mm um(1.5,22),(28.5,22),(15,41) sperren alleKupferlagen/Bauteile.
+Kerbe x0..1.5/y28..30 fürFormschluss. GenauePortdaten mechanical-interface.json.
+J4Ursprung(7.5,39.325),Front43 ausF.Fab+3.675;3.1war nurTextposition und istfalsch.
+J5Ursprung(23.5,33). SamtecLandRevH:0.74x2.79mmPads,MittenY±2.035,
+X−2.54,−1.27,0,1.27,2.54;Pin1untenlinks,Pin7fehlt;K ohneAlignmentbohrungen.
+K-Gehäuse/Matinghüllen inklusiveKabel/Grat sieheMechanikbericht, keinSTEP-Ersatz
+fürHerstellertoleranzen. JP1THT undUSB-THT-Schirmanker mussFertiger fertigbestücken;
+--smd-only ist keine vollständigeCPL-Auswahl.
+VierJ4interneNPTH/GND-Pad-Abstände0.1944mm verletzen Projekt0.2mm. Originalland
+bleibt nachMaintainerentscheidung erhalten. ExaktePaare A1/B12↔linkesNPTH,
+A12/B1↔rechtesNPTH. Fertigerzustimmung oderNeuentwurf bleibt ausdrücklich offen;
+keinepauschaleRegelabsenkung, keinegrüneGesamtDRC-Behauptung.
+
+Erzeugen/Prüfen
+build_r2b.py überschreibt R2b-Platzierungsentwurf ausR2a; NICHT blind nachmanuellem
+Routingaufrufen. prepare_route.py erweitert Referenzebenen und erzeugt getrennte
+Versuche, import_route.py belegtErhalt vorhandenerLeiterbahnen/Vias geometrisch.
+NuraktuelleOutputs mit frischenHash-/ERC-/DRC-/XML-Prüfungen gelten. Routingerfolg
+istkein90Ohm-/RF-/Thermal-/Betriebsnachweis. CAD-Konfiguration ist projektlokal,
+vorjedempcbnew-Importgesetzt; persönlicheKiCad-Einstellungen bleibenunverändert.
+
+Fertigungsprozess und aktuelle Servicegeometrie
+Jumper JP1 liegt bei (18.3,38.7), Pin2 bei y41.24. Shunt SNT-100-BK-T ist ein
+separates notwendiges Montageteil, keine bestueckte Schaltungsposition.
+Geerbte Prozessquelle: ../pcb-r2a/pruefung/FERTIGUNGSREGELN.txt und
+../pcb-r2a/BESTUECKUNG.txt. Alle mechanischen Durchkontaktierungen muessen
+mit Epoxid gefuellt UND mit Kupfer verschlossen sein (Type VII / POFV), auch
+Vias in Pads. Offene oder nur mit Loetstopp bedeckte Bohrungen sind unzulaessig.
+Neue Signalvias 0.35mm Kupfer / 0.15mm Bohrung; geerbte Leistungsvias
+0.45/0.20mm. Sechs Lagen, 1oz aussen und innen, FR4 1mm, ENIG; keine Blindvias.
+Fertiger muss Fuellung, Kupferabdeckung und Ebenheit fuer konkrete Bohrungen
+und Stackup bestaetigen. Finale Via-Anzahl und Pad-Schnittmengen anhand des eingefrorenen
+Layouts für den Fertiger prüfen. Diese Prozessanforderung ist noch keine Fertigerzusage.
+Analoge Eckrechnung: pruefung/ANALOG-REVIEW.json. Der 10k-R46 reduziert den
+hypothetischen passiven SENSE-Phantomrailpfad auf etwa0.18V; andere Datenpin-
+und Rampenpfade sind darin nicht begrenzt. Kein Gesamt-Ioff-Nachweis.
+Router-Qualitaetsgrenze: Freerouting v2.5.0 kann im Fanout Mikroverengungen
+unter0.127mm erzeugen. Fuer aktuelle kontrollierte Laeufe sind deshalb
+router.fanout.enabled=false UND router.automatic_neckdown=false gesetzt.
+Primärbeleg: https://raw.githubusercontent.com/freerouting/freerouting/v2.5.0/src/main/java/app/freerouting/autoroute/path/FoundConnectionInserter.java
+Native KiCad-DRC bleibt massgebend; Router-interne Erfolgsmeldungen ersetzen sie nicht.
+
+USB-Paarlayout (nach aktueller nativer DRC, noch ohne Stackup-/Messfreigabe)
+U8: (9.5,27.5),270Grad; D1: (9.5,33),180Grad. R30 liegt F.Cu bei
+(14.5,25.2), R31 F.Cu bei(14.5,26.2), jeweils180Grad. Der MCU-Paarabschnitt
+verlaeuft gemeinsam auf In3.Cu ueber In4-GND, Breite0.15mm, Mittenabstand0.30mm.
+Je zwei gefuellte Durchkontaktierungen, je keine Via im ISO-Abschnitt.
+Ausgangs-Screen: MCU-DM10.5279mm+ISO5.2792mm=15.8071mm,
+MCU-DP12.5223mm+ISO4.0721mm=16.5944mm; geometrische Differenz0.7873mm.
+Das sind Kupferlaengen, keine Laufzeit-, Impedanz- oder Eye-Diagramm-Messungen.
+Hostpaar ESD→Schalter gemeinsam F.Cu; Stecker-Doppelpads mit expliziten kurzen
+Lagenwechseln, je3Vias. Hostgesamt-DM10.4360mm/DP9.8317mm inklusive Merge-Stubs;
+nicht mit einer unverzweigten Punkt-zu-Punkt-Leitung gleichsetzen.
+Finaler Hashbezug, Rueckstromvia-Pruefung und unveraenderter Paargeometrievergleich
+folgen im Layoutbericht. Der alte Einzelnetz-Autorouter-Verlauf ist verworfen.
+
+
+Eingefrorener Layoutstand vom 02.11.2026
+Massgebend: pruefung/layout-freeze.json mit PCB-/Schaltungs-/BOM-/DRC-Hashes.
+Native DRC: 0 offene Verbindungen, 4 bekannte J4-NPTH-Abstandsfehler,
+8 Via-Zentrierwarnungen und 2 Bibliotheksabweichungen. Keine freien Stubs.
+Die Bibliotheksabweichungen betreffen U3 (geerbtes Land) und JP1 (Silk nach Fab).
+Keine pauschale DRC-Freigabe und keine stillschweigende Minima-Absenkung.
+Alle sechs USB-Datennetze sind geometrisch exakt identisch zum manuell
+gepaarten Entwurf (Vergleich aller Track-/Via-Geometrien, nicht nur Laengen).
+Zusaetzliche GND-Rueckstromvias liegen bei (16.6,25.55), (6.2,34.0),
+(10.65,32.6); bestehende MCU-nahe GND-Via (14.975,18.225) und C5-Rueckweg
+(23.025,13.229) sind erhalten. Native Konnektivitaet ist bestanden;
+Referenzkontinuitaet/Stackup und schnelle Strompfade bleiben fachlich zu pruefen.
+
+Gezielte Aenderung des Kernlayouts
+Q1 MMBT3904WT1G ist ein NPN und liegt nun F.Cu bei (26.7,14.5), Rotation0.
+Base OE_GATE, Emitter GND, Kollektor LED_OE_N unveraendert; R18=680 Ohm,
+R19=100k und R17=470 Ohm erhalten. Erforderliches Sinkbudget etwa11mA.
+MCU_PS bleibt unabhaengig ueber R26=10k an BAT_FUSED (PFM); MCU_REG_EN
+bleibt U3.14 mit R24=10k und C21=1uF. Keine zusaetzliche R49-Bruecke.
+Der geometrische Delta-Bericht nennt jede geaenderte Kontrollnetzgruppe.
+Kein urspruengliches Track-/Via-Element der Leistungs-, GND- oder UV_SENSE-
+Netze wurde entfernt; Zonen wurden bewusst um die Serviceflaeche erweitert.
+Diese Aussage betrifft geometrischen Erhalt, nicht eine neue Leistungspruefung.
+LED_QOD wurde gezielt neu gefuehrt; Entladefunktion bleibt Gegenstand der
+Inbetriebnahme. Alle echten abgeschnittenen Enden wurden unter wiederholter
+nativer Konnektivitaetspruefung entfernt; lebende T-Abzweige wurden erhalten.
+

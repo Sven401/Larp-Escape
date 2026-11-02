@@ -1,0 +1,242 @@
+{
+  "date": "2026-11-02",
+  "reviewer": "review",
+  "status": "independent_static_analysis_recommendations_not_physical_release",
+  "method": "Vmon=Vthreshold*(1+Rtop/Rbottom)+Isense*Rtop. Cartesian corners: threshold +/-1%, Isense conservatively +/-100nA, resistance initial tolerance plus independent TCR*deltaT. No assumed matched tracking. SENSE leakage table applies with VDD>=1.5V; does not bound unpowered SENSE backfeed.",
+  "observed_circuit_sha256": "b5db760faa1af3571ee5d8d9eaaa094d56505b1ff8b2a4bfff083c196e8f5d86",
+  "fixed_U9_finding": {
+    "mpn": "TPS389033DSER",
+    "rising_V": [
+      3.15711,
+      3.2208900000000003
+    ],
+    "R2a_regulator_min_minus20_to60_V": 3.216175439425596,
+    "missed_attach_margin_V": -0.004714560574404114,
+    "conclusion": "Valid target supply can remain below worst-case release threshold. Replace with adjustable supervisor and precision divider."
+  },
+  "divider_cases": {
+    "observed_VBUS_267k_100k_1pct": {
+      "0K": {
+        "falling_V": [
+          4.0916680396039595,
+          4.352322606060606
+        ],
+        "rising_V": [
+          4.116734741584158,
+          4.378650857575758
+        ]
+      },
+      "45K": {
+        "falling_V": [
+          4.065088059314933,
+          4.3810503387366815
+        ],
+        "rising_V": [
+          4.089992238762937,
+          4.407552723363775
+        ]
+      },
+      "100K": {
+        "falling_V": [
+          4.032921352941176,
+          4.416518795918368
+        ],
+        "rising_V": [
+          4.057628841176471,
+          4.4432361816326535
+        ]
+      }
+    },
+    "proposed_target_169k_100k_precision": {
+      "0K": {
+        "falling_V": [
+          3.0418376142857144,
+          3.1452816997997997
+        ],
+        "rising_V": [
+          3.060455914285715,
+          3.1643239203203204
+        ]
+      },
+      "45K": {
+        "falling_V": [
+          3.037540976114818,
+          3.1497311517584246
+        ],
+        "rising_V": [
+          3.0561330069368218,
+          3.168800340171302
+        ]
+      },
+      "100K": {
+        "falling_V": [
+          3.032302670179372,
+          3.155182955820371
+        ],
+        "rising_V": [
+          3.0508626742152467,
+          3.1742851876818867
+        ]
+      }
+    },
+    "proposed_VBUS_200k_75k_precision": {
+      "0K": {
+        "falling_V": [
+          4.148454065934065,
+          4.285054200867534
+        ],
+        "rising_V": [
+          4.173827142857143,
+          4.311015278611945
+        ]
+      },
+      "45K": {
+        "falling_V": [
+          4.141666860733441,
+          4.292067532360432
+        ],
+        "rising_V": [
+          4.166998487277036,
+          4.318071162992192
+        ]
+      },
+      "100K": {
+        "falling_V": [
+          4.133392122571002,
+          4.300660817862518
+        ],
+        "rising_V": [
+          4.158673213751869,
+          4.326716588058203
+        ]
+      }
+    }
+  },
+  "recommendations": {
+    "U9": "TPS389001DSER; top RT0402BRD07169KL 169k, bottom RT0402BRD07100KL 100k; 0.1%,25ppm/K. Exact 169k catalogue identity observed; manufacturer family ordering code verified, exact generated 169k specsheet unavailable. Procurement map remains required.",
+    "U10": "Top RT0402BRD07200KL 200k, bottom RT0402BRD0775KL 75k; 0.1%,25ppm/K. Exact manufacturer specs read. This closes static attachment window for an explicitly chosen 4.4V minimum service VBUS; not a USB certification claim."
+  },
+  "CT": {
+    "nominal_F": 1e-08,
+    "nominal_delay_s": 0.010725,
+    "capacitor_model": "Initial +/-10% and X7R temperature +/-15%; DC bias, aging and solder drift not yet included.",
+    "charge_only_interval_s": [
+      0.00663,
+      0.018131666666666667
+    ],
+    "limits": "Charging-current and comparator-threshold corners do not establish total maximum startup/propagation time. Typical base delay25us is not a guaranteed upper bound."
+  },
+  "NPN_logic": {
+    "assumed_USB_IF_range_V": [
+      3.2,
+      3.4
+    ],
+    "assumed_VBE_max_V": 0.95,
+    "resistors_initial_tolerance": 0.01,
+    "two_RESET_output_leakage_A": 5e-07,
+    "min_base_A": 2.9074615356272468e-05,
+    "max_collector_A": 7.407113690092413e-05,
+    "max_base_when_supervisor_low_V": 0.22768259693417492,
+    "scope": "Large engineering margin, not formal full-temperature saturation/leakage guarantee: MMBT3904WT1G limit table specified25C and different current conditions. Optional Schmitt logic inverter would permit guaranteed DC-level review at service temperature.",
+    "POR_correction": "47k pullup current at0.8V supply and0.2V low is12.8uA, below15uA POR test current; earlier17uA no-load simplification was withdrawn."
+  },
+  "open_design_gates": [
+    "Switch supply0<VCC<2.3V isolation not specified",
+    "Target powered / USB unpowered: SENSE backfeed into USB_IF and host VBUS not quantitatively bounded",
+    "TPS709 reverse current belowOUT1.8V",
+    "Actual capacitor effective capacitance and time-constant corners",
+    "Dynamic target collapse vs supervisor glitch immunity/propagation",
+    "Physical USB waveform and both-orientation ROM recovery"
+  ],
+  "sources": [
+    "https://www.ti.com/lit/ds/symlink/tps3890.pdf",
+    "https://www.ti.com/lit/ds/symlink/ts3usb221a.pdf",
+    "https://www.ti.com/lit/ds/symlink/tps709.pdf",
+    "https://www.onsemi.com/download/data-sheet/pdf/mmbt3904wt1-d.pdf",
+    "https://www.yageogroup.com/content/datasheet/asset/file/PYU-RT_1-TO-0-01_ROHS_L",
+    "https://www.yageogroup.com/component-documentation/download/specsheet/RT0402BRD07100KL",
+    "https://www.yageogroup.com/component-documentation/download/specsheet/RT0402BRD07200KL",
+    "https://www.yageogroup.com/component-documentation/download/specsheet/RT0402BRD0775KL",
+    "https://www.ti.com/lit/ds/symlink/sn74lvc1g14.pdf",
+    "https://www.yageogroup.com/component-documentation/download/specsheet/RC0402FR-0710KL",
+    "https://yageogroup.com/component-documentation/download/specsheet/RC0402FR-07100KL"
+  ],
+  "decisions": {
+    "Q2_replacement": "Accepted replacement implemented; circuit/XML/BOM parity independently passed. Native routing still not frozen.",
+    "USB_land": "Root retains original manufacturer land; radius0.40 variant rejected. Local0.1944mm NPTH/copper gap remains explicit supplier DFM gate."
+  },
+  "Schmitt_logic": {
+    "mpn": "SN74LVC1G14DCKR",
+    "datasheet": "SCES218AA October2025",
+    "pins": {
+      "1": "NC",
+      "2": "USB_READY",
+      "3": "GND",
+      "4": "USB_OE_N",
+      "5": "USB_IF_3V3"
+    },
+    "supply_range_V": [
+      1.65,
+      5.5
+    ],
+    "output_low_max_V_at_100uA": 0.1,
+    "output_high_min": "VCC-0.1V at100uA",
+    "RESET_input_leakage_drop_max_V": 0.261085,
+    "status": "Accepted replacement to close full-temperature NPN parameter gap; does not solve switch or gate undervoltage behavior below valid supply. Final pin/net parity must be checked after implementation."
+  },
+  "output_capacitor_screen": {
+    "part": "GRM21BR71C475KE51L",
+    "independent_image_review": "pruefung/sources/murata-4u7-curves.png",
+    "image_sha256": "710d43bc8951ee3c1effa4592fae8bc11a96c57e4f34ead0c74ba0c83cd103ba",
+    "source_observation": "Murata curve dated2018-03-01: DC0 approx5.15..5.2uF;3.3V approx4.4uF. AC near0Vrms approx3.4uF vs1Vrms approx5.2uF. Values visually read, typical not guaranteed.",
+    "factors": {
+      "nominal_uF": 4.7,
+      "DC_bias": 0.8,
+      "initial_tolerance": 0.9,
+      "temperature": 0.85,
+      "low_AC_amplitude": 0.65,
+      "aging_engineering_reserve": 0.9
+    },
+    "single_screen_uF": 1.6826940000000004,
+    "double_screen_uF": 3.3653880000000007,
+    "conclusion": "Single capacitor misses2.2uF design goal in this conservative screen; two parallel parts give3.365388uF. Combining separate typical curves multiplicatively and choosing reserve does not prove a manufacturer guaranteed joint lower bound.",
+    "CIN": "TPS709 RevH8.1.1 recommends0.1..2.2uF input capacitance;100nF is an allowed starting value. Hotplug/inrush/line transients remain separate tests.",
+    "COUT": "TPS7093.3V minimum effective1.5uF, maximum47uF, ESR0..0.2ohm."
+  },
+  "implementation_checkpoint": {
+    "circuit_sha256": "b8adb47a048849bc23e5384c4230514bd4ba75c0055c0d28544233c209a99fca",
+    "observations": [
+      "U9 TPS389001DSER with169k/100k precision divider present",
+      "U10 200k/75k precision divider present",
+      "U12 SN74LVC1G14DCKR pins1NC/2READY/3GND/4OE/5USB_IF correct",
+      "Q2/R43/R44 removed",
+      "C28 input100nF; C29/C30 output2x4.7uF present"
+    ],
+    "export_parity": "PASS: independently compared109 manifest/XML components, all declared pins/nets and101 fitted BOM entries; zero mismatches.",
+    "xml_sha256": "f926429d1df73826ad1e14570bd48ef497cb7406bdc65ab4a923916446a2ac68",
+    "bom_sha256": "0da0adbfea16ed33a8b3c14c45c7d27d4b010d42240d7d9a3154b20c285f0a24",
+    "pcb_sha256": "ab68d3853f49b9e2c8e70272ec0bde0e7acbaacf18eda1008bd91353b010efac",
+    "freeze_note": "Fresh independent109/XML and101/BOM parity passed on2026-11-02 frozen layout; circuit change since prior checkpoint is metadata status only."
+  },
+  "bleeder_comparison": {
+    "observed": "R46 RC0402FR-0710KL 10k in current circuit.json",
+    "assumptions": "Target3.47V; precision divider initial0.1% plus25ppm/K over100K; bleeder1% plus manufacturer100ppm/K over100K. Cout upper-screen12.397uF=9.8uF*1.1*1.15. Exact Yageo generated specs confirm100ppm/K for10k and100k variants.",
+    "cases": {
+      "10000": {
+        "assumed_Rbleeder_max_ohm": 10200.0,
+        "sense_only_ideal_short_upper_bound_V": 0.18083419634059314,
+        "passive_decay_3p366_to_2p3_s": 0.04815395127521368,
+        "nominal_bleeder_current_at3p366_A": 0.0003366,
+        "nominal_bleeder_power_at3p366_W": 0.0011329956000000001
+      },
+      "100000": {
+        "assumed_Rbleeder_max_ohm": 102000.0,
+        "sense_only_ideal_short_upper_bound_V": 0.8015198875466791,
+        "passive_decay_3p366_to_2p3_s": 0.4815395127521368,
+        "nominal_bleeder_current_at3p366_A": 3.366e-05,
+        "nominal_bleeder_power_at3p366_W": 0.00011329956000000001
+      }
+    },
+    "interpretation": "10k reduces passive dwell and sense-only parasitic rail voltage by approximately one order of magnitude. Sense-only bound assumes no external injection except169k target divider and a hypothetical ideal forward short fromSENSE toUSB_IF. It does not bound data-pin injection, active discharge behavior, startup, regulator residual output or other leakage. Switch Ioff atVCC=0 cannot be applied to nonzero rail. No complete isolation guarantee."
+  }
+}

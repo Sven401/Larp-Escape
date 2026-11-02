@@ -1,0 +1,50 @@
+USB4105 — GEOMETRIEGEGENPRÜFUNG, 02.11.2026, Root
+Status: Zeichnung/Footprint geprüft; keine Fertiger-/Lötprozessfreigabe.
+Quelle: GCT USB4105 Zeichnung B1,28.12.2022, Blatt1/2,
+mechanik/sources/usb4105-manufacturer.pdf + usb4105-page1.png.
+Herstellerinhalt gespiegelt unter
+https://datasheet.octopart.com/USB4105-GF-A-060-GCT-datasheet-192318489.pdf
+Aktuelle GCT-Produktseite gelesen; direkte aktuelle Zeichnungsrevision nicht
+bestätigt. Die B1-Zeichnung umfasst das Bestellraster mit Blank=0.95mmStake.
+
+BESTÄTIGTE LAGE UND LANDMASSE
+KiCad-Footprint USB_C_Receptacle_GCT_USB4105-xx-A_16P_TopMnt_Horizontal:
+Körper8.94x7.35mm, Mitte als Ursprung, Front/PCB-Edge-LINIE beiY+3.675.
+Der Text 'PCB Edge' steht beiY+3.1; seine Textposition ist kein mechanischer
+Bezug. Bisheriger UrsprungY36.9 ergab Front40.575. Hardware wurde korrigierend
+auf UrsprungY36.325 für Front40 hingewiesen; finalen PCB-Stand neu prüfen.
+UntereSH-MitteY1.075 = Front−2.60; NPTH-MitteY−2.605 = untereSH−3.68.
+Kontaktpad-UnterkanteY−3.105 = untereSH−4.18; Padlänge1.15mm.
+NPTH x±2.89, Durchmesser0.65; breitePads0.6x1.15; schmalePads0.3x1.15.
+Das entspricht den Nennmaßen der B1-Landzeichnung. Deren Landtoleranz±0.05mm
+ersetzt keine Fertigerzusage oder freie Erlaubnis zum Verschieben von Löchern.
+
+OFFENER NPTH-ABSTAND
+Bei bestehender Rundung ratio0.25 beträgt der Abstand zum kritischen breiten
+Kontaktpad nominell etwa0.1944mm. Die geerbte0.20mm-Regel wird damit verletzt;
+die geringe Differenz ist kein Grund, pauschal die Regel abzuschalten.
+Diskutierte lokale Anpassung: breitePads bei unveränderter0.6x1.15Boundingbox
+stärker runden, ratio0.40 (=Radius0.24). Analytischer Eckabstand:
+sqrt(0.25²+0.74²)−0.24−0.325 = ungefähr0.2161mm.
+Kupferfläche vorher0.6*1.15−(4−pi)*0.15²=0.6707mm²,
+nachher0.6*1.15−(4−pi)*0.24²=0.6406mm²; Verlust etwa4.5%.
+Dies ist eine mögliche kundenspezifische Landänderung, KEINE Aussage der
+Herstellerzeichnung. Hardware und unabhängiger Reviewer müssen Lötfahnen,
+Paste/Masken und resultierende nativeDRC bewerten; Fertiger muss den Prozess
+akzeptieren. Keine geänderte Lochgröße und kein globaler Clearance-Override.
+ENTSCHEIDUNG NACH UNABHÄNGIGER GEGENPRÜFUNG
+Root/Maintainer02.11.2026: Hersteller-/KiCad-Land beibehalten. Rundungsoption
+für diesen Stand nicht übernehmen. Reviewer bestätigte die Flächenrechnung,
+aber daraus folgt keine Lötqualifikation. Bekannte0.1944mm-Abstände bleiben
+konkret dokumentierte DFM-Freigabeanforderungen an den Fertiger; keine globale
+Regelabsenkung, kein behauptetesDRC0. Alle anderen Layoutverstöße unabhängig
+schließen. Eine externe Prozessbestätigung liegt weiterhin nicht vor.
+
+AKTUELLER PLATZIERUNGSSTAND 02.11.2026
+Die Baugruppe wurde inzwischen auf30x43mm erweitert. J4 liegt nun bei
+(7,5;39,325)mm; derselbe aus der Zeichnung hergeleitete Frontversatz+3,675mm
+führt zur FrontkanteY43mm. Die vorherigen Y40-Koordinaten oben dokumentieren
+die Herleitung am früheren Entwurf, nicht den aktuellen Montagebezug.
+Verbindlich bleibt die Prüfung der tatsächlichen nativen PCB beim finalen
+Export. Die Entscheidung für unveränderte Landgeometrie und offenen lokalen
+DFM-Abgleich bleibt bestehen.

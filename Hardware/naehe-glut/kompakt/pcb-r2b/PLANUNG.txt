@@ -1,0 +1,270 @@
+NÄHE GLUT R2b — USB-C, SEPARATES JTAG UND SERVICEHALTERUNG
+Stand 01.11.2026, Planungsrevision, keine Fertigungs- oder Betriebsfreigabe.
+Basiscommit 9c9181a7c22de0be56671bce39e8ece5f072d01d plus geprüfte lokale R2a.
+R2a-PCB SHA256 e3665c6a52dabb974844767966b1bd272feeef6fdbb83670745b53980404de8d.
+Führende Planung: Root. Hardwarekonsultation: hardware_developer.
+Unabhängige Gegenprüfung des Plans: supply_review, Ergebnis separat ablegen.
+
+1. BESTÄTIGTER AUFTRAG UND GRENZEN
+Quelle: Nutzeraufträge dieser Sitzung am01.11.2026:
+Revision mit USB-/JTAG-Debugzugang und passender Haltevorrichtung planen.
+Die frühere maximale Größe25x20mm ist jetzt SOLL, kein Muss.
+JTAG zusätzlich zu einer USB-C-Buchse ist ausdrücklich bevorzugt.
+3D-druckbare Dateien aller benötigten Teile sind zusätzliches verbindliches
+Abnahmekriterium (Nutzerpräzisierung01.11.2026). Eine Beschreibung oder ein
+Bild der Halterung genügt für den Abschluss der Revision nicht.
+Damit geplant: ZWEI physische Anschlüsse, USB-C UND eigener GPIO-JTAG-Port.
+Die Auswahl löst keine Änderung am laufenden R2a-Prüfauftrag aus.
+
+Beibehalten: ESP32-S3-MINI-1-N4R2, bestehende Licht-/Funkfunktion, vier Stunden
+als Abnahmeziel und zwei funktionierende Dezembergeräte. Keine neuen LEDs,
+Ladefunktionen oder Änderung des Strom-/Lichtbudgets aus diesem Auftrag ableiten.
+Alle erforderlichen SMD-Teile und Steckverbinder sollen fertig bestückt kommen.
+Erlaubter Mehrraum dient zugänglichem Service, stabilen Buchsen und sauberem
+Routing. Kein unbelegtes globales Größenminimum behaupten.
+
+2. VORZUGSVARIANTE
+USB-C direkt auf der Zielplatine für native USB-Serial/JTAG des S3.
+Zusätzlich verpolgeschützter 2x5-Kontaktplatz im1,27mm-Raster für GPIO-JTAG.
+Manuelle BOOT- und RESET-Taster sowie ein beschrifteter JTAG-Auswahljumper.
+UART-/BOOT-/Reset-/GND-/3V3-Messkontakte bleiben als Rettungsweg verfügbar.
+Kein zusätzlicher USB-UART-Chip für den normalen USB-C-Betrieb erforderlich.
+
+Vorläufiges Arbeitsziel mit beiden Ports: etwa25x35mm BESTÜCKTE XY-Hülle.
+Untersuchungskorridor etwa25–30x33–40mm. Das sind Planungsannahmen, keine
+belegte Platzierung, freigegebene Außenmaße oder neue harte Größenobergrenze.
+Zuerst tatsächliche Buchsenkörper, Verankerung, Kabelstecker, JTAG-Gegenstecker
+und Halterfreiräume platzieren; danach möglichst verkleinern.
+Höhe samt JTAG-Stecker/Kabelbogen separat ausweisen. Steckerteile können die
+PCB- und Bauteilhülle überragen. Das größere PCB macht den Akku nicht kleiner.
+
+3. USB-C-SCHALTUNGSVERTRAG
+GPIO19 / U1.23 = USB D-, GPIO20 / U1.24 = USB D+; beide inR2a ausdrücklich NC.
+USB-2.0-Datenbuchse, beide Steckerorientierungen korrekt zusammenführen,
+CC1 undCC2 jeweils eigener geeigneter Rd-Pulldown. Kein PD-Schnellladeziel.
+Niedrigkapazitiver ESD-Schutz nahe der Buchse, kurze massebezogene Ableitung.
+Serienwiderstände nahe dem Modul,22/33Ohm als zu prüfende Anfangswerte gemäß
+Espressif. Endgültige Werte erst mit gewählter Schutz-/Schalterkette festlegen.
+USB-Datenpaar möglichst kurz, symmetrisch und mit durchgehender Massereferenz,
+Ziel90Ohm differentiell +/-10% aus tatsächlich bestätigtem Fertiger-Stackup.
+Möglichst wenige Lagenwechsel, Rückstromvias an nötigen Übergängen.
+Keine langen Stichleitungen zu weiteren USB-Testanschlüssen.
+
+Erster Ausbau als SELBSTVERSORGTE DATENSCHNITTSTELLE:
+- Zielversorgung über J1 aus strombegrenztem Netzteil, Akku im Service abgezogen.
+- USB-VBUS versorgt weder BAT_RAW/BAT_FUSED noch3V3 und lädt keinen LiPo.
+- VBUS-Erkennung und hochohmiges Verhalten bei ausgeschalteter Zielversorgung
+  als echte Schaltungsanforderung auslegen, nicht nur als Firmwareannahme.
+- USB-Datenschalter mit passender Full-Speed-Eignung und Schutz bei fehlender
+  Versorgung sowie geeignete Erkennungslogik untersuchen. Freigabe nur bei
+  vorhandenem Host-VBUS und gültiger Zielversorgung. Schutzbeschaltung darf
+  über ihre Klemmpfade keine ausgeschaltete3V3-Schiene rückspeisen.
+- Die Kette muss auch bereits im ROM-Bootloader funktionieren. Software, die
+  erst nach Booten die USB-Leitungen freischaltet, wäre kein belastbarer Rettungsweg.
+- Gehäusemasse/Schirmanschluss, ESD-Rückweg und Hotplug-Verhalten im Review klären.
+Exakte Bauteile für VBUS-/Versorgungszustandslogik und Datenisolierung sind ein
+offenes Auswahlpaket. Ohne konkreten Schaltplan und Prüfung keine USB-Freigabe.
+
+USB-SERVICEVERSORGUNG ist ein getrennter optionaler Ausbau:
+Erfordert geregelten Pfad, hardwareseitige Quellenwahl/Rückstromsperren,
+USB-Strombudget und bewusste Behandlung von UVLO, SYS_EN und LED-Freigabe.
+USB5V niemals einfach auf J1, BAT_FUSED oder3V3 legen. Kein Ladegerät in dieser
+Revision voraussetzen. Für die Vorzugsvariante bleibt zunächst das vorhandene
+Labornetzteil erforderlich, ein einzelnes USB-Kabel versorgt sie nicht.
+
+4. SEPARATER JTAG-ANSCHLUSS
+Signale: TCK GPIO39/U1.35, TDO GPIO40/U1.36, TDI GPIO41/U1.37,
+TMS GPIO42/U1.38. Alle vier liegen inR2a auf NC.
+Verbindungsvorschlag siehe SERVICE-INTERFACE.csv, Orientierung immer Draufsicht
+auf den zu bestückenden Zielstecker, nicht Blick auf die Kabel-Lötseite.
+2x5/1,27mm mit fehlendem Schlüsselkontakt7, Pin1 deutlich markieren.
+Pin1 VTref=3V3 zum Adapter, Pin2 TMS,3 GND,4 TCK,5 GND,6 TDO,
+7 Schlüssel,8 TDI,9 NC,10 nRESET=CHIP_EN.
+Pin9 bewusst NC nach gewähltem SEGGER-9-Pin-Schema, nicht pauschal GND oderTRST.
+Dies beschreibt die elektrische Belegung, keine pauschale Kompatibilität jedes
+ARM-/SWD-Kabels. Der ESP32-S3 verwendet hier JTAG, nicht SWD.
+
+Adapter muss ESP32-S3 mit der gewählten OpenOCD-Version unterstützen und echte
+3V3-Pegel anhand des Ziel-VTref verwenden. VTref ist ausschließlich Referenz,
+keine Versorgungseinspeisung. Adapter-Powerausgänge bleiben unverbunden.
+Ohne Zielversorgung müssen die Adaptersignale freigegeben/hochohmig sein.
+Reset-Ausgang muss CHIP_EN nach GND ziehen und anschließend freigeben können,
+ohne aktiv gegen U3-PG zu treiben. Eignung des konkreten Adapters/Kabels prüfen.
+Definierte TMS/TDI/TCK-Ruhezustände, Takt-Serienterminierung und ESD-Schutz
+im Schaltplan festlegen. Kabellänge und JTAG-Taktrate erst nach Messung freigeben.
+Steckverbinder mit mechanischer Halterung/Verankerung auswählen, bevorzugt
+abgewinkelt oder niedrigbauend, wenn Kabelweg und Gehäuse das tragen.
+
+5. JTAG-AUSWAHL UND EFUSE-GRENZE
+Standardmäßig führt der S3-JTAG-Pfad zum internen USB_SERIAL_JTAG.
+Ein verdrahteter GPIO-Port allein macht deshalb noch keinen externen Debugzugang.
+Geplant: GPIO3/U1.7 (inR2a NC) als JTAG_SEL, etwa10k-Pullup nach3V3 als
+Ausgangspunkt und Jumper nachGND. Änderungen an dieser Vorgabe neu prüfen.
+Nach EINMALIGER, später gesondert autorisierter STRAP_JTAG_SEL-eFuse:
+ Jumper offen/HIGH beim Hardware-Reset: USB-JTAG.
+ Jumper geschlossen/LOW beim Hardware-Reset: externer GPIO-JTAG.
+Die Auswahl wird beim Reset eingelesen; Umschalten bei laufendem ESP genügt nicht.
+USB-CDC-Konsole und USB-Flash bleiben dabei grundsätzlich parallel zum externen
+GPIO-JTAG nutzbar, sofern USB/Firmware/Sicherheitskonfiguration sie nicht sperren.
+Es gibt einen internen JTAG-Pfad, nicht zwei gleichzeitig aktive Debugmaster.
+
+Die eFuse-Programmierung ist IRREVERSIBEL. Nur die anschließende Strap-Auswahl
+ist umschaltbar. Im Plan oder bei der Fertigung wird keine eFuse geschrieben.
+Vor späterer Handlung: Chipidentität und eFuse-Iststand lesen, Rückweggrenzen
+erklären und konkrete Freigabe am Handlungspunkt einholen. Ein Flash-Backup
+stellt eFuses nicht wieder her. DIS_USB_JTAG nicht als Standardlösung vorsehen.
+Ohne Freigabe der Fuse-Umstellung bleibt natives USB-JTAG verfügbar, der separate
+GPIO-JTAG-Port ist dann noch nicht betriebsbereit. Keine Fusebefehle vorbereiten,
+die versehentlich automatisch im Build-/Flashablauf ausgeführt werden.
+
+6. LAYOUT UND VERÄNDERUNGEN GEGENÜBER R2a
+Neue Anschlusszone auf der der Modulantenne gegenüberliegenden Seite planen.
+USB und JTAG räumlich von Antenne und Schaltknoten der Wandler fernhalten.
+Den gewonnenen Platz für saubere Führung/Abblockung und mechanische Freiräume
+verwenden. Sechs Lagen zunächst erhalten; eine zusätzliche Vierlagenoptimierung
+wäre ein eigenes Vorhaben und gehört nicht automatisch zu dieser Service-Revision.
+Bestehenden LED-/GPIO8/9/10/11-Vertrag, UVLO, Reset und Strombegrenzung erhalten.
+Erweiterte Fläche schafft keinen Nachweis der bisherigen C16-/Pack-/Laufzeitgrenzen.
+USB-/JTAG-/JTAG_SEL-GPIOs dauerhaft für Service reservieren, nicht vom Lichtcode
+umkonfigurieren. USB-Konsole/JTAG in ESP-IDF und OpenOCD gezielt konfigurieren.
+BOOT- und RESET-Taster ohne störende zusätzliche Strap-Kapazitäten vorsehen.
+
+7. HALTEVORRICHTUNG
+Geplant: PETG-Grundhalter für den bestellten P1S-Drucker, mit austauschbarem
+Platinen-Einsatz und optional abnehmbarem Federkontaktkopf. Erste Tischhülle
+etwa80x60mm als Arbeitsannahme, kein freigegebenes Druck-/Gehäusemaß.
+Zwei Einsätze statt behaupteter gleicher Passung:
+ A) R2a-Laboraufnahme mit den bekannten sechs UART-/Messkontakten.
+ B) R2b-Aufnahme mit freien Zugängen zu USB-C, JTAG, BOOT/RESET und J1.
+Die mechanische Vorbereitung A macht R2a nicht nachträglich USB-/JTAG-fähig.
+
+Auflageprinzip: drei definierte, bauteilfreie PCB-Stützstellen, seitliche
+formschlüssige Führung und ein Niederhalter an freier Leiterplattenkante.
+Bei R2b bauteil-/routingfreie Stützzonen ausdrücklich im CAD vorsehen, statt
+den fertigen Halter nachträglich auf Kondensatoren oder Leiterbahnen drücken.
+USB-Steckkräfte möglichst nahe der Buchse abfangen. JTAG-Flachband und USB-Kabel
+jeweils eigene Zugentlastung am Sockel. Steckerhüllen und Kabelbögen freihalten.
+Antenne, Modulgehäuse, C16 und JST-Anschluss sind keine Druckauflagen.
+Unterseite für sämtliche Bauteilhöhen und Messzugang ausnehmen.
+Für die Kollisionsprüfung exakte MPN-Abmessungen und Toleranzhüllen verwenden.
+Vereinfachte oder verwandte Bibliotheks-STEP-Modelle sind keine Maßfreigabe;
+insbesondere Buchsen, Kabelgegenstecker, C16, Spulen und Mold-Flash prüfen.
+Keine Metallteile oder Kontaktträger in den Antennenfreiraum setzen; möglichst
+die empfohlene15mm-Freistellung der Antenne berücksichtigen. RF-Prüfung im
+Halter ersetzt keine Messung im endgültigen Produktgehäuse.
+
+Optionaler Federkopf für UART-Rettung/Messung:
+R2a-Pads sind1,00mm rund, auf F.Cu, ohne Paste. Reihen beiX0,95 und18,85mm;
+Y13,30/14,82/16,34mm. TP1/2/3 links, TP4/5/6 rechts. Raster1,52mm,
+Reihenabstand17,90mm. Diese Werte sind Ausgangsdaten des R2a-Einsatzes und
+keine automatisch festgelegten neuen R2b-Koordinaten.
+Prüfspitzen, Kopfform, Hersteller-Arbeitshub und Federkraft passend wählen.
+Geführter Kopf, Anschlag vor Überhub, Kraft über Stützpunkte in die Grundplatte.
+Verpolsichere Einlegegeometrie und gut sichtbare Pin1-/Akku-/USB-Markierungen.
+Kontaktkopf erst nach stromloser Passprobe mit einer echten bestückten Platine
+elektrisch verwenden. Druckmaterial ist keine nachgewiesene ESD-Schutzvorrichtung.
+
+8. BENÖTIGTE NEUTEILE — AUSWAHLPAKETE, NOCH NICHT BESTELLT
+Ziel-PCBA: USB-C-Datenbuchse mit Verankerung, CC-Beschaltung, USB-ESD und
+Serienterminierung, USB-VBUS-/Zielzustandserkennung und ggf.Datenschalter,
+separater JTAG-Stecker, JTAG-Pulls/Schutz, BOOT-/RESET-Taster,
+JTAG_SEL-Pullup und beschrifteter Jumper, zusätzliche Abblockung nach Datenblatt.
+Externe Werkzeuge: ESP32-S3/OpenOCD-geeigneter JTAG-Probe mit VTref-Eingang,
+passendes1,27mm-Kabel/Adapter, USB-C-DATENkabel und Federkontakte für Rettungskopf.
+Bei R2a zusätzlich externer3V3-USB-UART-Adapter nötig; bisher nicht bestellt.
+Mechanik: PETG, M2-Schrauben/Muttern aus vorhandenem bestelltem Sortiment,
+geeignete Gewindeeinsätze nur falls Halterentwurf sie benötigt, Zugentlastungen.
+Vorhanden/bestellt: P1S, PETG, Labornetzteil und Multimeter laut Einkaufsnotiz.
+Lieferung, konkrete Artikel, Stückpreise, Gegenstecker und Kontaktkraft sind
+vor Bestellung frisch zu prüfen. Kein verbindlicher Zusatzpreis aus dieser Planung.
+Hauptkostentreiber: erneute PCBA-Einrichtung, größere Fläche, neue Positionen,
+JTAG-Probe/Kabel und Qualifikation. Keine ungeprüfte Budgetersparnis behaupten.
+
+9. ARBEITSPAKETE UND ABNAHME
+P1 Root/Hardware: konkrete Steckverbinder, Adapter und Schutz-/Trennbauteile
+   wählen, Datenblätter/STEP prüfen, Quellen-/eFuse-/Versorgungsvertrag einfrieren.
+P2 Hardware: R2b in eigenem Verzeichnis aus R2a ableiten. Schaltplan, BOM,
+   Pinvertrag und Leiterplatte ändern. USB- und JTAG-Routing überprüfen.
+P3 Mechanik: reale Bestückungs-/Steckerhüllen übernehmen, Halter und Einsätze
+   parametrisch konstruieren. Das verbindliche Druckdatei-Paket aus Abschnitt11
+   liefern; ohne dieses Paket keine vollständige Abnahme der Revision.
+P4 Unabhängiger Reviewer: ERC/DRC/Netz-/BOM-/CPL-/Geometrieprüfung, USB-/ESD-/
+   ausgeschaltete-Zielzustände, Reset/Straps/eFuse-Grenzen, Halterkollisionen.
+P5 Fertiger: komplett bestückte R2b und neue Montagefolge/Träger kalkulieren.
+   Neuen Endpreis und Termin gegen R2a und Dezemberziel vergleichen.
+P6 Labor: stromlose Passprobe; Kontaktkraft/Kabelzug; externe Versorgung;
+   USB-Erkennung in BEIDEN Steckerorientierungen; Boot/Reset/ROM-Rettung;
+   Flash/Verify und lesender eFuse-Abgleich. Keine Fuseänderung ohne Freigabe.
+P7 Nach freigegebener Auswahlkonfiguration: OpenOCD, JTAG-Kettenerkennung,
+   Breakpoint/Schrittbetrieb/Reset, USB-CDC gleichzeitig, Wiederanstecken,
+   Ziel aus/USB an, USB aus/Ziel an, Kontaktunterbrechung und Rückspeisung prüfen.
+P8 Funk/LED/UVLO/Temperatur erneut mit und ohne Debugkabel qualifizieren;
+   Vierstundenlauf ohne USB-/Debug-Mehrverbrauch und ohne Halter als Produktbetrieb.
+   USB kann in Sleepzuständen verschwinden; Serviceprofil und Produktprofil trennen.
+
+10. DEZEMBER UND LAUFENDER AUFTRAG
+R2a-Auftrag W2026110206020486 ist als unbezahlter File Review dokumentiert.
+Für diese Planungsaufgabe weder stornieren, bezahlen, Dateien ersetzen noch
+Fertigung anstoßen. R2b ist kein stiller Ersatz und keine zusätzliche Bestellung.
+Erst nach belegter R2b-Layout-/Halterreife sowie vollständigem Preis/Termin
+über Wechsel entscheiden. Bestückungslose nicht versehentlich doppelt beauftragen.
+Die bestehenden Modulgeräte bleiben unabhängiger Dezember-Fallback.
+Ein konkreter Veranstaltungstag im Dezember ist hier noch nicht festgelegt.
+Neue Fertigertermine müssen einen gesondert eingeplanten Inbetriebnahme- und
+Korrekturpuffer lassen; reine PCB-/Versandzeit nicht als Gerätefertigtermin nutzen.
+
+11. VERBINDLICHES ABNAHMEKRITERIUM: DRUCKDATEIEN
+Der komplette R2b-Lieferumfang umfasst auch die zur Nutzung notwendigen
+mechanischen Teile als tatsächlich druckbare Dateien, passend zur finalen
+PCB-Revision und den gewählten Steckern. Der vorliegende Plan erfüllt dieses
+Kriterium noch nicht; es wird erst bei Umsetzung und Prüfung geschlossen.
+
+Teileliste vor Export einfrieren, mindestens:
+- Grundhalter mit Kabelabfangung bzw. separaten Zugentlastungen für USB undJTAG.
+- Passender R2b-Platineneinsatz mit Aussparungen und definierten Auflagen.
+- Niederhalter/Deckel bzw.Klemmteile mit zugänglichen BOOT-/RESET-Tastern.
+- Alle gesondert benötigten Abstandshalter, Führungen und Druck-Kleinteile.
+- Falls die freigegebene Serviceausführung den Federkopf verwendet: Kontakt-
+  träger, Führung, Hubanschlag und Kopfaufnahme vollständig mitliefern.
+- R2a-Einsatz/Kopf ebenfalls liefern, wenn dieser für den weiterverfolgten
+  R2a-Inbetriebnahmeweg zur benötigten Ausrüstung gehört. Nicht allein aus
+  einer optionalen Kompatibilitätsidee eine doppelte Teilepflicht ableiten.
+
+Dateien und Begleitdaten:
+A) Editierbare parametrische CAD-Quelle und STEP der Teile/Baugruppe.
+B) Einzel-STL in Millimetern für jedes Druckteil, eindeutig benannt und mit
+   Stückzahl. Geschlossene, manifold Netze ohne Selbstüberschneidungen,
+   verlorene Schalen oder Nullflächen; problematische Geometrie reparieren.
+C) Ein 3MF-Druckprojekt für Bambu Lab P1S, mit festgelegter Düse und Material,
+   Orientierung, Schichthöhe, Wänden, Infill, Brim und Supportentscheidung.
+   Ausgangspunkt0,4mm-Düse/PETG; endgültige Parameter nach Teileprüfung.
+   Kein A1-mini-Profil und kein reines in3MF umbenanntes STL als Druckprojekt.
+D) Kurze Druck-/Montageanleitung, Explosions- oder Montageansicht, nicht
+   druckbare Zukaufteile mit exakten Abmessungen/Mengen und Kabelbelegung.
+E) Versions-/Dateimanifest bindet CAD, STL/3MF und PCB-/Steckerstand zusammen.
+   Maßstab und Orientierung in Vorschau und Druckprojekt müssen übereinstimmen.
+
+Getrennte Nachweise:
+1. Digital: Slicer lädt alle Dateien, Maßstab stimmt, alle Schichten enthalten
+   druckbare Bahnen. Bauteil-/Stecker-/Kabel-/Federweg-/Klemmenkollisionen und
+   Antennenfreiraum am finalen Modell prüfen. Keine geschätzte Maßgarantie.
+2. Gedruckte Muster: Einlegepassung, Auflagen, Schrauben, Kabelzug, Steckerzugang,
+   Kontaktierung/Hub und mechanische Wiederholbarkeit mit realen Teilen prüfen.
+3. Elektrisch: Debug-/Flash-Funktion und sichere Versorgung im fertigen Halter
+   prüfen. Mechanische Passung allein ist kein JTAG-/USB-Funktionsnachweis.
+Keine dieser Stufen als bereits bestanden ausgeben. Die realen Muster-/Geräte-
+prüfungen benötigen gelieferte PCBs und Steckerteile. Notwendige Korrekturen
+in CAD und allen abgeleiteten Druckdateien konsistent nachführen.
+
+QUELLEN UND PRÜFSTAND
+Primärunterlagen am01.11.2026 gelesen; Projektwerte am aktuellen Arbeitsbaum geprüft.
+https://docs.espressif.com/projects/esp-idf/en/stable/esp32s3/api-guides/jtag-debugging/configure-builtin-jtag.html
+https://docs.espressif.com/projects/esp-idf/en/stable/esp32s3/api-guides/jtag-debugging/configure-other-jtag.html
+https://docs.espressif.com/projects/esp-idf/en/stable/esp32s3/api-guides/usb-serial-jtag-console.html
+https://docs.espressif.com/projects/esp-hardware-design-guidelines/en/latest/esp32s3/schematic-checklist.html
+https://docs.espressif.com/projects/esp-hardware-design-guidelines/en/latest/esp32s3/pcb-layout-design.html
+https://www.espressif.com/sites/default/files/documentation/esp32-s3-mini-1_mini-1u_datasheet_en.pdf
+https://kb.segger.com/9-pin_JTAG/SWD_connector
+Projekt: ../pcb-r2a/circuit.json, native PCB, BESTUECKUNG.txt und
+pruefung/JLC-FUENFER-STATUS-2026-11-01.txt. Ältere Planungsnotizen gelten bei
+Widerspruch nicht vor den aktuellen Nutzerentscheidungen und Pinquellen.

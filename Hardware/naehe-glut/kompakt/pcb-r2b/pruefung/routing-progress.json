@@ -1,0 +1,10 @@
+{
+  "status": "connected_and_deadends_removed",
+  "unconnected_items": 0,
+  "drc_counts": {
+    "error:hole_clearance": 4,
+    "warning:track_not_centered_on_via": 8,
+    "warning:lib_footprint_mismatch": 2
+  },
+  "pcb_sha256": "ab68d3853f49b9e2c8e70272ec0bde0e7acbaacf18eda1008bd91353b010efac"
+}

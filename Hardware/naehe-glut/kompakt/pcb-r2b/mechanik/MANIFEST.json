@@ -1,0 +1,75 @@
+{
+  "date": "2026-11-02",
+  "status": "engineering_draft_not_final_fit_or_operation_release",
+  "units": "mm",
+  "print_quantities": {
+    "base": 1,
+    "insert_r2b": 1,
+    "clamp_left": 1,
+    "clamp_right": 1,
+    "usb_tie_bar": 1,
+    "jtag_tie_bar": 1
+  },
+  "pcb_binding": {
+    "PLANUNG.txt": "aaa570d3c17d4d5287c01c8276f7034cff9596550586a8875c52ce94457c1045",
+    "bom.csv": "0da0adbfea16ed33a8b3c14c45c7d27d4b010d42240d7d9a3154b20c285f0a24",
+    "SERVICE-INTERFACE.csv": "7b5c7004e9290f34f15b07415e01f8adac1cef7f52c4b40251b45e498c85c6b8",
+    "circuit.json": "b8adb47a048849bc23e5384c4230514bd4ba75c0055c0d28544233c209a99fca",
+    "naehe-glut-r2b.kicad_pcb": "ab68d3853f49b9e2c8e70272ec0bde0e7acbaacf18eda1008bd91353b010efac",
+    "mechanical-interface.json": "afb441f1526c103a3fa79965a6f380420c17e36b918f366b60ea559e9754229e"
+  },
+  "binding_note": "Hashes bind frozen PCB and digitally screened fixture/PCBA; exact MPN tolerance and cross-vendor mating qualification plus physical fit remain open.",
+  "connectors": [
+    {
+      "mpn": "USB4105-GF-A",
+      "model": "self-modelled conservative tolerance envelope; see component-envelope-report.json",
+      "physical_fit_qualified": false
+    },
+    {
+      "mpn": "FTSH-105-01-L-DV-007-K",
+      "model": "self-modelled conservative tolerance envelope; see component-envelope-report.json",
+      "physical_fit_qualified": false
+    }
+  ],
+  "sha256": {
+    "mechanik/base.step": "785c70502a4d3d48a3ebbfe475e46422dde6f46866779612df05c5fdd830e86a",
+    "mechanik/base.stl": "62c81989315d8e694adefc1a3c1c62025461cf8fdba6ae0cde0555f12f8166f8",
+    "mechanik/insert_r2b.step": "96bc434c50ff948b1769d71bca4bfa66a08cb970b0624b82af9d6a92438e37f4",
+    "mechanik/insert_r2b.stl": "01e29478424767fb0e7e202360739fb721f9ba3f6ca0d6e31814d230c95f32d0",
+    "mechanik/clamp_left.step": "75b2e3f79f127922c963d33b82b38ce91ad54e29fcbaf486803c5fd8bc8c52b8",
+    "mechanik/clamp_left.stl": "f428aaf7ca186675bdf7ebc37ff7cdaf0f807131aac33a4d83f3487e639f8b9a",
+    "mechanik/clamp_right.step": "6085b39e31d64273f4b46dadc71b71a0d708d9674929ee7a6801df3aeecefe8b",
+    "mechanik/clamp_right.stl": "2a40d2e110641b744c9a55f63470b7475309da2d9f1953e5c9e9793bfb198fc6",
+    "mechanik/usb_tie_bar.step": "baf3d4a029d3af078a720eb3657997a14e51c08e7a453e3afe1b0dfa0734b095",
+    "mechanik/usb_tie_bar.stl": "06c107cd184d4a784fdf92a566b08a44c6a1c9ccf93fd4aebfd7bbc94eb6f5d5",
+    "mechanik/jtag_tie_bar.step": "13a4a0efbc1792e5bb1801642442568c9f80d904c3e2548933c81c43388fc1e6",
+    "mechanik/jtag_tie_bar.stl": "36c1f787a2f2914430d49489faddf538039be702a939c7ab115b7c6fea34346c",
+    "mechanik/R2b-service-draft.FCStd": "0c42ea353000052771b087618298bca04fba21a005c9eca8ec0f1c3a075fb87e",
+    "mechanik/assembly-draft.step": "60f8f1fd19d43847965b79cd807ffcc8eb54e7bf5f3b69b0848bdb8227c56150",
+    "mechanik/R2b-service-P1S-PETG-draft.3mf": "320ad5a7e27d06a0aeaa29452a3df2940b79139ac429dc5809d6c3e07e02337d",
+    "mechanik/geometry-report.json": "71b8904c4f8508ec757e5cb569bb17947453cc6ad899bab0c30d4859f2bdcf37",
+    "mechanik/slice-report.json": "e4bfb77a99d0fb6e75675b3758adda19be834ceed4202324a1206652bd56195f",
+    "mechanik/assembled-draft.png": "fce4bb94a5b3d7724e6f900fe9dfb69e9b3f07abc7492faefeeaaf134a305766",
+    "mechanik/exploded-draft.png": "ff2abff692fbc3e9fd12dcf2ddda7cc5268aaebc44573f4865c70a4d389515cb",
+    "mechanik/underside-draft.png": "f9680fbc744217e36ddf306260a807c1b80836577e5e9e6903f80795b8aa7348",
+    "mechanik/DRUCK-UND-MONTAGE.txt": "0869feed1787321db41e57d97e59d7449e36c2e118a65e28aceb19088dd7366d",
+    "mechanik/component-envelope-report.json": "ec6b522e7ed853be26e62d69d68501866c763bdca2036e3a7b6cc12664aff753",
+    "mechanik/pcba-envelope-report.json": "ac9b22f7330cda7305db46a4cf0472f0e3f535a5b5cfa84acb9777f114a32a24",
+    "mechanik/pcb-placement.json": "e48804a9c39e4e691a9f4dc043be7484dce85f02c226c103a3da1962e5a09f03",
+    "mechanik/adapter-mating-report.json": "ba5e1ba99bcfe1e28d6b6af08abcf85de9923be09046c81a8a57312ab9efaa3c",
+    "mechanik-tools/build_fixture.py": "bde17934af669134caa4b3548df475e9b2b0b56417d9b20087063eadda1cce80",
+    "mechanik-tools/build_manifest.py": "d9204ae95fdfcb8f13eae885ea0f34bf2c511481e285d324522cb5002b5871dc",
+    "mechanik-tools/component_envelopes.py": "519a337d17db38b7cae2ce80aa2b576a0003c2c30faa3f62169dfd50c99470ad",
+    "mechanik-tools/extract_pcba.py": "aba9a44f592e20b88674cba8eb7e72234fa78984efdc1fe56a3ccd787cfb37ca",
+    "mechanik-tools/pcba_envelopes.py": "4dc989a861225a209ea0d4ba523baf9c1c6df94512515ab0f6851f1767fb4738",
+    "mechanik-tools/render_fixture.py": "075482ac828ea0a9096e1b4587d4909be888a6684e4e6866ebf2b2ee27c7c15b",
+    "mechanik-tools/run_bambu.py": "7fc3e3139f9091e5d46ddc10f0968e06a86e629161a5818dfd275ab5150934de",
+    "mechanik-tools/slice_fixture.py": "095a4ba103516462084a2f55dd873a95b0bc760d5d540ee7ee87f3b7f7e830b3",
+    "mechanik-tools/HELPER-HERKUNFT.txt": "670c1e4470a6ee5509854d10fa32346d711e52ed1642088c0210f83409a74ccf",
+    "mechanik/slicer/LICENSE-AGPL-3.0.txt": "57c8ff33c9c0cfc3ef00e650a1cc910d7ee479a8bc509f6c9209a7c2a11399d6",
+    "mechanik/slicer/machine.json": "8183293408fa7b61ae76cd34ffee1e7402a62f13d84fa995d6863f18abf4f76a",
+    "mechanik/slicer/petg.json": "0d4d15320b828990ed2f2332e74979a2b403dd4d507c92ec5dda327b99799008",
+    "mechanik/slicer/process.json": "0bd050a42c8bec2047f06c5864221915e1fb5a3c154fc2c0698c91a241641064",
+    "mechanik/slicer/sources.json": "78d2fe1d243220f53cb30aaf96588eb41a224f258613cf5db45e9dfb64d5d8b9"
+  }
+}

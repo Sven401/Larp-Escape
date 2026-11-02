@@ -1,0 +1,89 @@
+R2b — UMSETZUNGSSTAND UND LIEFERTORE
+Stand: 02.11.2026. Sitzung 01a19957-b22c-7190-8aa7-0b83d5e7628f.
+Status: Digitaler Entwicklungsstand umgesetzt und geprüft.
+Keine Fertigungs-, Kauf- oder Betriebsfreigabe. Gesamtziel noch nicht erreicht.
+Auftrag: PLANUNG.txt; ursprünglicher Plan und sein Review bleiben unverändert.
+
+ARBEITSBASIS
+Worktree: C:/Users/seide/.codex/worktrees/naehe-glut-lieferziel/Larp Escape
+Ausgangsbranch: codex/naehe-glut-hardware-r1
+Eigener R2b-Branch: codex/naehe-glut-r2b-service
+Ausgangs-HEAD: 9c9181a7c22de0be56671bce39e8ece5f072d01d
+R2a/R2b lagen beim Einstieg unversioniert vor. R2a-Dateien wurden nicht geändert.
+Ausgangsprüfsummen: pruefung/AUSGANGSSTAND.json.
+Unveränderte R2a-Generatoreingaben: sources/r2a-input/PROVENANCE.json.
+Der bestehende Modulgeräte-PR132 wird nicht durch diesen R2b-Branch geändert.
+
+VERANTWORTUNG
+Root: Koordination, Lieferumfang, Pad-Prüfer, BOM/CPL-Exporter und Abnahmegrenzen.
+hardware: Teileauswahl/Schaltungsvertrag, native Schaltung, PCB und Routing.
+mechanik: parametrischer Halter, STEP/STL, P1S-Druckprojekt und Montageanleitung.
+review: unabhängige Gegenprüfung von Hardware, Mechanik und Root-Prüfwerkzeugen.
+Eigene Umsetzung ersetzt keine unabhängige Gegenprüfung.
+
+EINGEFRORENER DIGITALER STAND
+PCB SHA256 ab68d3853f49b9e2c8e70272ec0bde0e7acbaacf18eda1008bd91353b010efac
+Sechs Kupferlagen; bestückte XY-Hülle30x43mm, Host-PCB30x37,8mm, Dicke1mm.
+109 Referenzen, davon101 bestückte Positionen und8 integrale Kontaktplätze.
+Native ERC ohne Fehler. DRC:0 offene Verbindungen, keine offenen Leiterbahnenden;
+4 bekannte lokale USB-NPTH-Abstandsfehler sowie8 Via-Zentrier- und2 Bibliotheks-
+hinweise. Das ist ausdrücklich KEINE vollständig fehlerfreie Fertigungs-DRC.
+Direkter PCB-Padvertrag:109 Referenzen/373 elektrische Pads,0 Abweichungen.
+Schaltung/XML/BOM unabhängig abgeglichen; Pads mit mehrfachen physischen
+Kontakten und isolierte NC-Netze werden ausdrücklich berücksichtigt.
+
+USB-MCU-Paar gemeinsam aufIn3 mitIn4-Massereferenz, gleiche Viazahl jePartner;
+Host-Paar ebenfalls mitgleicher Viazahl. Geometrischer Vergleich bestätigt den
+manuellen Paarentwurf im Endstand. Tatsächliche90-Ohm-Impedanz und Signalqualität
+sind ohne bestätigten Fertiger-Stackup beziehungsweise Messung nicht freigegeben.
+Q1 wurde aufF.Cu(26,7;14,5) verlegt. Werte/Netze bleiben erhalten. Das Delta
+betrifft Steuersignalkupfer; Leistungs-/GND-/UV_SENSE-Kupfer blieb erhalten.
+Eine untersuchte0-Ohm-Brücke wurde nicht übernommen; kein zusätzlicherR49.
+Belege: pruefung/layout-freeze.json, drc.json, usb-route-final.json,
+pcb-pad-contract.json und UNABHAENGIGES-REVIEW.json.
+
+Vollständige BOM/CPL:101/101 Positionen einschließlich THT-JP1 und Hybrid-J4.
+Koordinatenursprung(0;43), J1- undJP1-Körpermittelpunkte ausdrücklich korrigiert.
+Prüfbarer Entwurf: pruefung/bestueckung-draft/ab68d3853f49-khnyftxd/.
+Kein Gerber-Bestellpaket und keine zugesicherte Bestückerzuordnung daraus.
+
+Mechanik: sechs Druckteile, parametrische FreeCAD-Quelle, Einzel-STEP/STL,
+Baugruppen-STEP, Montage-/Unterseiten-/Explosionsansichten und Anleitung.
+P1S0,4mm/PETG-3MF:150 Schichten mit jeweils mindestens23 positiven XY-
+Extrusionen.39 Manifestdateien und PCB-/Schaltungsbindung unabhängig geprüft.
+Keine modellierten Halter-, Stecker-, Kabel- oder Bedienraumkollisionen.
+Die generischen Hüllen übriger Bauteile sind ausdrücklich ein Screening;
+exakte MPN-Toleranzqualifikation und reale Passprobe bleiben offen.
+Verbindliche Mechanikdateien: mechanik/MANIFEST.json und DRUCK-UND-MONTAGE.txt.
+
+LIEFERTORE
+P1: Konkrete Teile und Schaltung vorhanden; Versorgungssonderfälle und
+    adapterseitiges Verhalten bei ausgeschaltetem Ziel noch zu qualifizieren.
+    Siehe SCHALTUNGSVERTRAG.txt, JTAG-PROBE-AUSWAHL.txt und ANALOG-REVIEW.json.
+P2: Native Schaltung/PCB, Routing, Pinparität und Bestückungsentwurf vorhanden.
+    Vier USB-NPTH-DFM-Abstände, Stackup und Bestückerprüfung bleiben offen.
+P3: Digitales Druckpaket vorhanden und an finalePCB gebunden.
+    Tatsächliches PETG-Muster samt realer Platine/Kabeln noch nicht geprüft.
+P4: Unabhängige digitale Gegenprüfung dokumentiert; Umfang und Grenzen stehen
+    im gebundenen UNABHAENGIGES-REVIEW.json. Keine Gerätefreigabe daraus.
+P5: Vollständiges Fertigerangebot, Beschaffung/Bestückfolge, DFM-Antwort,
+    Endpreis und belastbarer Ankunftstermin fehlen. Keine Bestellung ausgelöst.
+P6/P7: Reale Passprobe, Versorgung, beide USB-Orientierungen, ROM-Rettung,
+    Rückspeisung und Debug offen. Geräteuploads brauchen eigenen Rückwegabgleich;
+    irreversible eFuse-Änderungen weiterhin separat autorisieren.
+P8: Reale Funk-/LED-/UVLO-/Temperatur- und Vierstundenprüfung beider Geräte offen.
+    Konkrete S3-Produktfirmware ist zusätzlich erforderlich, hier nicht geändert.
+
+TERMIN UND VERFÜGBARKEIT
+Nutzer bestätigt: beide Geräte einsatzbereit am04.12.2026.
+PETG noch nicht angekommen; P1S-Drucker und Labornetzteil bei Bekannten verfügbar.
+Zeitplan und ausfüllbare Abnahme: TERMIN-UND-ABNAHME.txt.
+Bestehende Modulgeräte bleiben unabhängiger Dezember-Fallback.
+R2a-AuftragW2026110206020486 unverändert: weder bezahlt noch storniert oder ersetzt.
+
+NÄCHSTER SCHRITT
+Digitalen Entwurf mit offenem DFM-/Versorgungs-/Adapterbefund als konkrete
+Prüfgrundlage verwenden; Fertiger-Stackup, Abstände und vollständige Bestückung
+vor einer Bestellentscheidung klären. Danach echte Muster nach dem Abnahmeplan
+prüfen und notwendige Korrekturen in Quellen und sämtlichen Exporten nachführen.
+

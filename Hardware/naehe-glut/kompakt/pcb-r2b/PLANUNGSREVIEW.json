@@ -1,0 +1,122 @@
+{
+  "schema_version": 1,
+  "status": "plan_review_passed_with_open_implementation_and_physical_gates",
+  "date": "2026-11-01",
+  "reviewer": "supply_review",
+  "additional_reviewer": "assembly_fit: independent mechanical scope, dimensions, deliverables and acceptance boundaries",
+  "base_commit": "9c9181a7c22de0be56671bce39e8ece5f072d01d",
+  "scope": "Independent review of the R2b plan, service pin table and new overriding precision in compact/PLANUNG.md. Planning suitability only; no schematic/layout, firmware, eFuse, procurement, manufacturing or operating release. Existing R2a review order remains unchanged.",
+  "reviewed_sha256": {
+    "PLANUNG.txt": "aaa570d3c17d4d5287c01c8276f7034cff9596550586a8875c52ce94457c1045",
+    "SERVICE-INTERFACE.csv": "7b5c7004e9290f34f15b07415e01f8adac1cef7f52c4b40251b45e498c85c6b8",
+    "../PLANUNG.md": "71a339e967b2c8dfa30af57161b4fd5a49fcccd9eb1a9708dc361a61c1753531",
+    "../pcb-r2a/circuit.json": "347b96f8f0a019422b85f2d742029f3f41c80e5ded2f489096a598f974afc17c",
+    "../pcb-r2a/naehe-glut-r2a.kicad_pcb": "e3665c6a52dabb974844767966b1bd272feeef6fdbb83670745b53980404de8d",
+    "../pcb-r2a/pruefung/r1-c16-cad-review.json": "6ff51b9371fb061621a2cbad8ecc34aefaa882d172eebbac7c009b739fe7e4f9"
+  },
+  "blocking_planning_findings": [],
+  "confirmed_requirements": [
+    "25x20mm is a size objective; provisional25x35mm assembled XY is explicitly an unproven planning assumption. Final PCB/part/connector/mating-cable envelopes and height remain to be measured.",
+    "Direct USB-C plus an additional physical GPIO-JTAG connector are both required. A separate connector is not falsely claimed to create a second simultaneous JTAG master.",
+    "Externally power through J1 with battery removed; USB VBUS supplies neither BAT nor3V3 and does not charge the battery. A single USB cable does not power this initial variant.",
+    "All necessary printable fixture parts are mandatory deliverables. Section11 requires editable parametric CAD/STEP, individually named millimetre STL/quantities, genuine P1S3MF settings, instructions and revision manifest. Optional pogo and R2a compatibility only expand the deliverables if selected/needed.",
+    "R2a order is neither cancelled nor replaced, paid or resubmitted by this plan. December fallback and four-hour physical acceptance goal remain."
+  ],
+  "pin_review": {
+    "csv_module_mappings_checked": 10,
+    "new_pads_confirmed_nc_in_r2a": [
+      "U1.7",
+      "U1.23",
+      "U1.24",
+      "U1.35",
+      "U1.36",
+      "U1.37",
+      "U1.38"
+    ],
+    "usb": "GPIO19/U1.23 D-;GPIO20/U1.24 D+",
+    "jtag": "TCK GPIO39/U1.35;TDO GPIO40/U1.36;TDI GPIO41/U1.37;TMS GPIO42/U1.38",
+    "recovery": "TX43/U1.39;RX44/U1.40;BOOT0/U1.4;CHIP_EN/U1.45 preserved. R2a R10 provides GPIO46 pull-down for joint-download boot.",
+    "connector": "Planned SEGGER9-pin layout matches VTref1,TMS2,GND3,TCK4,GND5,TDO6,key7,TDI8,NC9,nRESET10. This does not establish compatibility with any arbitrary ARM/SWD probe.",
+    "source_ids": [
+      "S1",
+      "S2",
+      "S3"
+    ]
+  },
+  "efuse_review": {
+    "result": "Correct conditional plan: after separately authorized STRAP_JTAG_SEL programming, GPIO3 low at hardware reset selects pad JTAG and high selects USB JTAG. GPIO3 needs its explicit external pull;10k is a candidate, not a measured design. Fuse programming itself is irreversible and is not performed or authorized by this review. USB CDC operation is distinct from JTAG source selection.",
+    "required_future_checks": "Read chip identity and relevant actual eFuses first, including DIS_PAD_JTAG,DIS_USB_JTAG and security/debug/download restrictions. Confirm the source-control truth table for that state; do not assume STRAP_JTAG_SEL alone can undo already disabled paths. Freeze tested ESP-IDF/OpenOCD/probe versions.",
+    "source_ids": [
+      "S1",
+      "S2",
+      "S4"
+    ]
+  },
+  "reset_and_supply_review": {
+    "result": "Open-drain/reset-to-ground requirement is compatible with existing U3-PG on CHIP_EN; no active-high probe drive may fight PG. The plan correctly leaves USB VBUS detection, valid-target-power logic and powered-off data protection as a concrete open design package.",
+    "implementation_checks": [
+      "Preserve GPIO46 low and GPIO0 boot pull. Demonstrate hardware-reset low and supply-stable intervals of at least50us, and strap hold for at least3ms after EN release, with selected adapter, RC network and startup/brownout cases. Do not silently replace the existing qualified topology with generic reset RC values.",
+      "Treat valid3V3 as a measured/computed condition over tolerances. Existing regulator PG is not automatically an independent3.0V supervisor. Include power-off, slow rise/fall and UVLO cycling.",
+      "Choose real data switch/ESD/VBUS detector parts and check all powered/unpowered pin limits and clamp paths. USB attach must depend on host VBUS and valid target supply in hardware, including ROM boot/recovery. Define USB GND, CC1/CC2, shield and no-power-backfeed connections in the complete schematic.",
+      "Choose the actual probe/cable: VTref is reference only, target-off signal behavior and open-drain nRESET must be proven. Set the permitted J1 bench-voltage/current-limit range and verify polarity before powered fixture tests."
+    ],
+    "source_ids": [
+      "S1",
+      "S3",
+      "S4",
+      "S5"
+    ]
+  },
+  "mechanical_review": {
+    "result": "No false finished-geometry or printability claim found. Actual connectors/mates/cable bends, underside heights, supports, strain relief and antenna separation are explicitly deferred to final CAD and real samples. R2a/R2b inserts are not assumed interchangeable.",
+    "implementation_checks": [
+      "Missing contact7 is not by itself proof of reverse-insertion protection; qualify the chosen keyed housing AND mating connector in the assembly model and physical sample.",
+      "Before mechanical freeze, set measurable cable/connector pull loads, permissible movement/clamp deflection and repeat-cycle count. Current plan names these tests without numerical pass limits.",
+      "Bind all actually necessary printed parts, fasteners and purchased contacts to a frozen piece list. Verify every STL/3MF in the selected P1S slicer and then actual fit, support, accessibility and contact working stroke.",
+      "Antenna keepout/RF and service-hardware placement require final-model and product testing. A plastic holder or a15mm planning allowance is not proof of RF performance or ESD safety."
+    ],
+    "source_ids": [
+      "S6"
+    ]
+  },
+  "digital_vs_physical": "No new R2b ERC/DRC, routing, CAM, printed sample, connector fit, ROM recovery, JTAG operation, backfeed/ESD, power/thermal/RF or four-hour test exists from this planning review. Section11 explicitly leaves digital, printed-sample and electrical acceptance separate and incomplete.",
+  "primary_sources": [
+    {
+      "id": "S1",
+      "url": "https://www.espressif.com/sites/default/files/documentation/esp32-s3-mini-1_mini-1u_datasheet_en.pdf",
+      "version": "1.7",
+      "sections": "3 pin definitions;4 boot and JTAG source control;4.5 reset timing",
+      "local_copy_sha256": "4d4b7f1c17b484c627aaa0f806566c48a6124a8e466c6d21d99210e6eacdef04"
+    },
+    {
+      "id": "S2",
+      "url": "https://docs.espressif.com/projects/esp-idf/en/stable/esp32s3/api-guides/jtag-debugging/configure-other-jtag.html",
+      "checked": "2026-11-01",
+      "observed_version": "v6.1; pin/eFuse behavior checked, not a project SDK migration"
+    },
+    {
+      "id": "S3",
+      "url": "https://kb.segger.com/9-pin_JTAG/SWD_connector",
+      "checked": "2026-11-01",
+      "scope": "pinout and VTref, not ESP32-S3 support of a specific probe"
+    },
+    {
+      "id": "S4",
+      "url": "https://docs.espressif.com/projects/esp-idf/en/stable/esp32s3/api-guides/usb-serial-jtag-console.html",
+      "checked": "2026-11-01"
+    },
+    {
+      "id": "S5",
+      "url": "https://docs.espressif.com/projects/esp-hardware-design-guidelines/en/latest/esp32s3/schematic-checklist.html",
+      "checked": "2026-11-01"
+    },
+    {
+      "id": "S6",
+      "url": "https://docs.espressif.com/projects/esp-hardware-design-guidelines/en/latest/esp32s3/pcb-layout-design.html",
+      "checked": "2026-11-01",
+      "scope": "USB differential/reference requirements and module antenna/host/housing separation"
+    }
+  ],
+  "source_changes_by_reviewer": "Only this independent planning review. No plan/CSV/CAD/firmware/eFuse, browser state or R2a-order changes.",
+  "final_plan_recheck": "After the secondary mechanical review, Root added exact-MPN/tolerance-envelope requirements and an explicit December commissioning/correction buffer with event date still unspecified. Lead reviewer reread the complete final plan aaa570d3c17d4d5287c01c8276f7034cff9596550586a8875c52ce94457c1045 and confirms these additions strengthen, not close, the existing acceptance gates. Secondary reviewer mechanical findings were on prior plan899ef824d7b774fbc6783d86e3b7509324f8a505216ba1f08672624e5f3a3e99."
+}

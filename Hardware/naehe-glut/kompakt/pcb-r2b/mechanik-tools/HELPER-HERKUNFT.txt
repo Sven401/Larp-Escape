@@ -1,0 +1,14 @@
+run_bambu.py: unveraenderte Kopie aus Hardware/naehe-glut/tools/run_bambu.py
+Stand:2026-11-02; SHA256:7fc3e3139f9091e5d46ddc10f0968e06a86e629161a5818dfd275ab5150934de
+Der Helper ruft den dokumentierten CLI-Einstieg der installierten offiziellen
+BambuStudio.dll auf; keine Druckerkommunikation. Herstellerbasis im Docstring.
+
+Externe Software bleibt erforderlich: FreeCAD1.0.2-Python, KiCad10-Python,
+Blender4 und Bambu Studio2.08.02.61 mit kompatibler Python-CLI-Laufzeit.
+R2B_BAMBU_STUDIO_DIR kann auf die portable Bambu-Installation zeigen;
+Standard ist .tmp/cad-tools/bambu-studio im Repository. Slicerprofile werden
+aus dieser offiziellen Installation aufgeloest, die AGPL-Lizenz liegt bereits
+im Paket mechanik/slicer. Kein R1-Helfer oder R1-Lizenzpfad mehr erforderlich.
+Alle weiteren Mechaniktools lesen nur pcb-r2b-Inhalte bzw. ihre Laufzeitmodule.
+Hersteller-PDFs unter mechanik/sources sind optionale lokale Kontrollkopien;
+Quellen/Hashes stehen in den Berichten.

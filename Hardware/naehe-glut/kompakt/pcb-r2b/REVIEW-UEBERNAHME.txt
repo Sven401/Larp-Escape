@@ -1,0 +1,21 @@
+R2b — GETRENNTE REVIEW-ÜBERNAHME
+Stand02.11.2026. Keine Fertigungs- oder Betriebsfreigabe.
+Dieser Branch codex/naehe-glut-r2b-review beginnt unmittelbar auf
+Integrationscommit f778cc913cbb60b27e89f0b566c2270a7520da50.
+Er übernimmt ausschließlich das geprüfte R2b-Paket und diesen Übergabebeleg.
+Der bestehende Modulgeräte-PR132 und seine Vorarbeiten werden nicht mitkopiert.
+
+Entwicklungsquelle: Worktree naehe-glut-lieferziel, Branch
+codex/naehe-glut-r2b-service, Ausgangscommit9c9181a7c22de0be56671bce39e8ece5f072d01d.
+Die Git-Angaben im unabhängigen Review bezeichnen diesen Prüfzeitpunkt.
+153 explizite Nutzdateien und3 Paketdateien wurden bytegleich übernommen.
+Die ursprünglichen Entwicklungsdateien bleiben unverändert erhalten.
+Eine lokale .gitattributes schützt die vorhandenen Prüfsummen vor automatischer
+Zeilenendekonvertierung. Alle Paket- und Reviewbindungen gelten für identische
+Dateiinhalte; dieser Transfer erzeugt keine neue Geräte-/Fertigungsfreigabe.
+
+Einstieg: UMSETZUNGSSTAND.txt.
+Komplettes Entwicklungs-/Druckpaket: paket/R2b-Entwurf.zip.
+Archiv-SHA256:5db40c7e54da26e29543d7a80a6ac97f51912c87f691ad66bcef4ffd6dc6d13a.
+Offen: vier USB-NPTH-DFM-Abstände, dokumentierte Warnungen, bestätigter Stackup,
+Versorgungs-/Probe-Qualifikation, Fertigerangebot und reale Muster-/Geräteabnahme.

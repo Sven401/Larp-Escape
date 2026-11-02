@@ -1,0 +1,81 @@
+{
+  "status": "source register for engineering draft, not release",
+  "checked": "2026-11-02",
+  "sources": [
+    {
+      "id": "USB-switch",
+      "url": "https://www.ti.com/lit/ds/symlink/ts3usb221a.pdf",
+      "document": "SCDS277C Rev C October2024",
+      "scope": "pin table, OE truth table, VCC2.3..3.6V, Ioff atVCC0, no guarantee for intermediateVCC"
+    },
+    {
+      "id": "supervisors",
+      "url": "https://www.ti.com/lit/ds/symlink/tps3890.pdf",
+      "document": "SLVSD65A Rev A May2016",
+      "scope": "TPS389001/033 pin table, thresholds, sense independent supply, power-on reset limits"
+    },
+    {
+      "id": "LDO",
+      "url": "https://www.ti.com/lit/ds/symlink/tps709.pdf",
+      "document": "SBVS186H Rev H July2021",
+      "scope": "TPS709 DBV pinout, EN left floating, reverse protection with under1.8V limitation, effective output capacitance"
+    },
+    {
+      "id": "TVS",
+      "url": "https://www.ti.com/lit/ds/symlink/tpd2eusb30.pdf",
+      "document": "SLVSAC2G Rev G June2021",
+      "scope": "DRT pins1/2IO3GND; rail-free TVS topology"
+    },
+    {
+      "id": "USBconnector",
+      "url": "https://gct.co/connector/usb4105",
+      "scope": "Original manufacturer drawing B1 compared against KiCad land by root; four internal 0.1944mm NPTH clearances remain DFM gates; see pruefung/USB4105-GEOMETRIE.txt"
+    },
+    {
+      "id": "JTAGconnector",
+      "url": "https://www.samtec.com/products/ftsh-105-01-l-dv-007-k",
+      "scope": "exact SMT/keying/pin7omitted selection"
+    },
+    {
+      "id": "JTAGseries",
+      "url": "https://suddendocs.samtec.com/prints/ftsh-1xx-xx-xxx-dv-xxx-xxx-x-xx-mkt.pdf",
+      "document": "Rev FZ",
+      "scope": "K housing and tolerances, independently read by mechanik/review"
+    },
+    {
+      "id": "JTAGland",
+      "url": "https://suddendocs.samtec.com/prints/ftsh-1xx-xx-xxx-dv-xxx-footprint.pdf",
+      "document": "Rev H",
+      "scope": "exact SMT pads; K without alignment holes, independently read by mechanik"
+    },
+    {
+      "id": "inverter",
+      "url": "https://www.ti.com/lit/ds/symlink/sn74lvc1g14.pdf",
+      "scope": "SN74LVC1G14DCKR pinout and guaranteed logic corners; independent ANALOG-REVIEW.json"
+    },
+    {
+      "id": "precision-dividers",
+      "url": "https://www.yageogroup.com/content/datasheet/asset/file/PYU-RT_1-TO-0-01_ROHS_L",
+      "scope": "RT 0.1% 25ppm resistors; reviewer exact MPN and threshold corners in ANALOG-REVIEW.json"
+    },
+    {
+      "id": "Murata-output-capacitance",
+      "local": "pruefung/USB-KAPAZITAET.txt",
+      "scope": "Manufacturer DC/AC bias curves, temperature/tolerance screening and two parallel 4.7uF output capacitors"
+    }
+  ],
+  "libraries": {
+    "inherited": "R2A-LIBRARY-SOURCES.json",
+    "license": "KICAD-LIBRARY-LICENSE.md",
+    "new_stock": "local KiCad10.0.8 library, vendored selected footprints",
+    "custom": [
+      "TI_DSE0006A from TPS3890 drawing",
+      "FTSH105_007_K from Samtec land Rev H"
+    ]
+  },
+  "not_yet_qualified": [
+    "Complete source-to-footprint comparison for all new stock packages",
+    "Final assembly process, POFV and supplier acceptance of four USB internal NPTH clearances",
+    "USB host ramps, unpowered leakage and target brownout bench measurements"
+  ]
+}

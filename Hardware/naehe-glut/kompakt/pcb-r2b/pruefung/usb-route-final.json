@@ -1,0 +1,66 @@
+{
+  "status": "geometric screen only; total copper length includes connector merges/ESD branches, not propagation delay or impedance",
+  "pcb": "naehe-glut-r2b.kicad_pcb",
+  "sha256": "ab68d3853f49b9e2c8e70272ec0bde0e7acbaacf18eda1008bd91353b010efac",
+  "nets": {
+    "/USB_DM_MCU": {
+      "track_length_mm": 10.5279,
+      "vias": 2,
+      "layers": {
+        "F.Cu": 1.6595,
+        "In3.Cu": 8.8685
+      },
+      "segments": 17
+    },
+    "/USB_DP_MCU": {
+      "track_length_mm": 12.5223,
+      "vias": 2,
+      "layers": {
+        "F.Cu": 3.4304,
+        "In3.Cu": 9.0919
+      },
+      "segments": 19
+    },
+    "/USB_DP_HOST": {
+      "track_length_mm": 9.8317,
+      "vias": 3,
+      "layers": {
+        "F.Cu": 6.0911,
+        "In3.Cu": 3.7406
+      },
+      "segments": 5
+    },
+    "/USB_DM_HOST": {
+      "track_length_mm": 10.436,
+      "vias": 3,
+      "layers": {
+        "F.Cu": 7.2911,
+        "B.Cu": 1.0,
+        "In3.Cu": 2.1449
+      },
+      "segments": 5
+    },
+    "/USB_DM_ISO": {
+      "track_length_mm": 5.2792,
+      "vias": 0,
+      "layers": {
+        "F.Cu": 5.2792
+      },
+      "segments": 4
+    },
+    "/USB_DP_ISO": {
+      "track_length_mm": 4.0721,
+      "vias": 0,
+      "layers": {
+        "F.Cu": 4.0721
+      },
+      "segments": 3
+    }
+  },
+  "reference_layers": "In1.Cu and In4.Cu GND; final local return continuity and stackup require review",
+  "limitations": [
+    "Manual coupled geometry is documented in layout-freeze.json; no field-solver qualification",
+    "No impedance or eye-diagram qualification",
+    "Branch/stub and return-via geometry require explicit review"
+  ]
+}
