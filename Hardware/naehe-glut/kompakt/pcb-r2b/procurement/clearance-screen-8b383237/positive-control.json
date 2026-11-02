@@ -1,0 +1,2525 @@
+{
+    "$schema": "https://schemas.kicad.org/drc.v1.json",
+    "coordinate_units": "mm",
+    "date": "2026-11-02T02:49:11",
+    "ignored_checks": [],
+    "included_severities": [
+        "error",
+        "warning"
+    ],
+    "kicad_version": "10.0.8",
+    "schematic_parity": [],
+    "source": "screen.kicad_pcb",
+    "unconnected_items": [],
+    "violations": [
+        {
+            "description": "Loch-Freiraum-Verstoß (Regel \"JLC inner PTH drill to foreign copper 3.00mm\" Freiraum 3,0000 mm; tatsächlich 1,9835 mm)",
+            "items": [
+                {
+                    "description": "Leiterbahn [/USB_VBUS] auf In3.Cu, Länge 1,5894 mm",
+                    "pos": {
+                        "x": 13.9764,
+                        "y": 34.7147
+                    },
+                    "uuid": "b317deb8-6965-4c60-8882-e09e07cdbdec"
+                },
+                {
+                    "description": "Durchsteckpad SH [/GND] von J4",
+                    "pos": {
+                        "x": 11.82,
+                        "y": 36.22
+                    },
+                    "uuid": "88fa67c9-a514-4c3b-a66c-0aadaae48b77"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Loch-Freiraum-Verstoß (Regel \"JLC inner PTH drill to foreign copper 3.00mm\" Freiraum 3,0000 mm; tatsächlich 0,5803 mm)",
+            "items": [
+                {
+                    "description": "Leiterbahn [/USB_VBUS] auf In3.Cu, Länge 4,0764 mm",
+                    "pos": {
+                        "x": 9.9,
+                        "y": 34.7147
+                    },
+                    "uuid": "7545098c-19f8-4aff-85e4-509e05848487"
+                },
+                {
+                    "description": "Durchsteckpad SH [/GND] von J4",
+                    "pos": {
+                        "x": 11.82,
+                        "y": 36.22
+                    },
+                    "uuid": "88fa67c9-a514-4c3b-a66c-0aadaae48b77"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Loch-Freiraum-Verstoß (Regel \"JLC inner PTH drill to foreign copper 3.00mm\" Freiraum 3,0000 mm; tatsächlich 1,9650 mm)",
+            "items": [
+                {
+                    "description": "Leiterbahn [/JTAG_SEL] auf In2.Cu, Länge 1,0537 mm",
+                    "pos": {
+                        "x": 18.3,
+                        "y": 38.7
+                    },
+                    "uuid": "4a879b24-62c4-4035-8676-b3951f506680"
+                },
+                {
+                    "description": "Durchsteckpad 2 [/GND] von JP1",
+                    "pos": {
+                        "x": 18.3,
+                        "y": 41.24
+                    },
+                    "uuid": "a939a94c-3c77-4d8c-ab10-af68677f377b"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Loch-Freiraum-Verstoß (Regel \"JLC inner PTH drill to foreign copper 3.00mm\" Freiraum 3,0000 mm; tatsächlich 2,8266 mm)",
+            "items": [
+                {
+                    "description": "Leiterbahn [/+3V3] auf In2.Cu, Länge 3,2226 mm",
+                    "pos": {
+                        "x": 21.6309,
+                        "y": 37.2203
+                    },
+                    "uuid": "0c5fb3df-7aad-48b4-9de2-a711a3849a24"
+                },
+                {
+                    "description": "Durchsteckpad 1 [/JTAG_SEL] von JP1",
+                    "pos": {
+                        "x": 18.3,
+                        "y": 38.7
+                    },
+                    "uuid": "27e9f5c4-18c6-47cb-b968-7e8ed2e1d607"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Loch-Freiraum-Verstoß (Regel \"JLC inner PTH drill to foreign copper 3.00mm\" Freiraum 3,0000 mm; tatsächlich 1,1900 mm)",
+            "items": [
+                {
+                    "description": "Durchsteckpad 1 [/JTAG_SEL] von JP1",
+                    "pos": {
+                        "x": 18.3,
+                        "y": 38.7
+                    },
+                    "uuid": "27e9f5c4-18c6-47cb-b968-7e8ed2e1d607"
+                },
+                {
+                    "description": "Durchsteckpad 2 [/GND] von JP1",
+                    "pos": {
+                        "x": 18.3,
+                        "y": 41.24
+                    },
+                    "uuid": "a939a94c-3c77-4d8c-ab10-af68677f377b"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Loch-Freiraum-Verstoß (Regel \"JLC inner PTH drill to foreign copper 3.00mm\" Freiraum 3,0000 mm; tatsächlich 0,4775 mm)",
+            "items": [
+                {
+                    "description": "Durchsteckpad 1 [/JTAG_SEL] von JP1",
+                    "pos": {
+                        "x": 18.3,
+                        "y": 38.7
+                    },
+                    "uuid": "27e9f5c4-18c6-47cb-b968-7e8ed2e1d607"
+                },
+                {
+                    "description": "Zone [/GND] auf In1.Cu, Priorität 0",
+                    "pos": {
+                        "x": 0.2,
+                        "y": 5.4
+                    },
+                    "uuid": "8707d3c3-8be0-421c-a6c3-0c3bfb820f82"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Loch-Freiraum-Verstoß (Regel \"JLC inner PTH drill to foreign copper 3.00mm\" Freiraum 3,0000 mm; tatsächlich 1,1900 mm)",
+            "items": [
+                {
+                    "description": "Durchsteckpad 1 [/JTAG_SEL] von JP1",
+                    "pos": {
+                        "x": 18.3,
+                        "y": 38.7
+                    },
+                    "uuid": "27e9f5c4-18c6-47cb-b968-7e8ed2e1d607"
+                },
+                {
+                    "description": "Durchsteckpad 2 [/GND] von JP1",
+                    "pos": {
+                        "x": 18.3,
+                        "y": 41.24
+                    },
+                    "uuid": "a939a94c-3c77-4d8c-ab10-af68677f377b"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Loch-Freiraum-Verstoß (Regel \"JLC inner PTH drill to foreign copper 3.00mm\" Freiraum 3,0000 mm; tatsächlich 1,1900 mm)",
+            "items": [
+                {
+                    "description": "Durchsteckpad 1 [/JTAG_SEL] von JP1",
+                    "pos": {
+                        "x": 18.3,
+                        "y": 38.7
+                    },
+                    "uuid": "27e9f5c4-18c6-47cb-b968-7e8ed2e1d607"
+                },
+                {
+                    "description": "Durchsteckpad 2 [/GND] von JP1",
+                    "pos": {
+                        "x": 18.3,
+                        "y": 41.24
+                    },
+                    "uuid": "a939a94c-3c77-4d8c-ab10-af68677f377b"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Loch-Freiraum-Verstoß (Regel \"JLC inner PTH drill to foreign copper 3.00mm\" Freiraum 3,0000 mm; tatsächlich 1,1900 mm)",
+            "items": [
+                {
+                    "description": "Durchsteckpad 1 [/JTAG_SEL] von JP1",
+                    "pos": {
+                        "x": 18.3,
+                        "y": 38.7
+                    },
+                    "uuid": "27e9f5c4-18c6-47cb-b968-7e8ed2e1d607"
+                },
+                {
+                    "description": "Durchsteckpad 2 [/GND] von JP1",
+                    "pos": {
+                        "x": 18.3,
+                        "y": 41.24
+                    },
+                    "uuid": "a939a94c-3c77-4d8c-ab10-af68677f377b"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Loch-Freiraum-Verstoß (Regel \"JLC inner PTH drill to foreign copper 3.00mm\" Freiraum 3,0000 mm; tatsächlich 2,7532 mm)",
+            "items": [
+                {
+                    "description": "Durchsteckpad SH [/GND] von J4",
+                    "pos": {
+                        "x": 11.82,
+                        "y": 40.4
+                    },
+                    "uuid": "f7ebdae2-57ac-47e4-85b4-63aaa65a6ca9"
+                },
+                {
+                    "description": "NPTH-Pad von J4",
+                    "pos": {
+                        "x": 10.39,
+                        "y": 36.72
+                    },
+                    "uuid": "cd2970eb-29ba-4a9e-8fee-242f4df0cffc"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Loch-Freiraum-Verstoß (Regel \"JLC inner PTH drill to foreign copper 3.00mm\" Freiraum 3,0000 mm; tatsächlich 2,7532 mm)",
+            "items": [
+                {
+                    "description": "Durchsteckpad SH [/GND] von J4",
+                    "pos": {
+                        "x": 11.82,
+                        "y": 40.4
+                    },
+                    "uuid": "f7ebdae2-57ac-47e4-85b4-63aaa65a6ca9"
+                },
+                {
+                    "description": "NPTH-Pad von J4",
+                    "pos": {
+                        "x": 10.39,
+                        "y": 36.72
+                    },
+                    "uuid": "cd2970eb-29ba-4a9e-8fee-242f4df0cffc"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Loch-Freiraum-Verstoß (Regel \"JLC inner PTH drill to foreign copper 3.00mm\" Freiraum 3,0000 mm; tatsächlich 2,7532 mm)",
+            "items": [
+                {
+                    "description": "Durchsteckpad SH [/GND] von J4",
+                    "pos": {
+                        "x": 11.82,
+                        "y": 40.4
+                    },
+                    "uuid": "f7ebdae2-57ac-47e4-85b4-63aaa65a6ca9"
+                },
+                {
+                    "description": "NPTH-Pad von J4",
+                    "pos": {
+                        "x": 10.39,
+                        "y": 36.72
+                    },
+                    "uuid": "cd2970eb-29ba-4a9e-8fee-242f4df0cffc"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Loch-Freiraum-Verstoß (Regel \"JLC inner PTH drill to foreign copper 3.00mm\" Freiraum 3,0000 mm; tatsächlich 2,7532 mm)",
+            "items": [
+                {
+                    "description": "Durchsteckpad SH [/GND] von J4",
+                    "pos": {
+                        "x": 11.82,
+                        "y": 40.4
+                    },
+                    "uuid": "f7ebdae2-57ac-47e4-85b4-63aaa65a6ca9"
+                },
+                {
+                    "description": "NPTH-Pad von J4",
+                    "pos": {
+                        "x": 10.39,
+                        "y": 36.72
+                    },
+                    "uuid": "cd2970eb-29ba-4a9e-8fee-242f4df0cffc"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Loch-Freiraum-Verstoß (Einschränkungen aus Platinenkonfiguration zu Löchern Freiraum 0,2000 mm; tatsächlich 0,1944 mm)",
+            "items": [
+                {
+                    "description": "Pad A1 [/GND] von J4 auf F.Cu",
+                    "pos": {
+                        "x": 4.3,
+                        "y": 35.645
+                    },
+                    "uuid": "748829e3-b950-4e1b-8b64-d2b2214b60cd"
+                },
+                {
+                    "description": "NPTH-Pad von J4",
+                    "pos": {
+                        "x": 4.61,
+                        "y": 36.72
+                    },
+                    "uuid": "d5cc92cc-c469-4829-8898-35b20018b2d0"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Loch-Freiraum-Verstoß (Regel \"JLC inner PTH drill to foreign copper 3.00mm\" Freiraum 3,0000 mm; tatsächlich 0,4775 mm)",
+            "items": [
+                {
+                    "description": "Durchsteckpad 1 [/JTAG_SEL] von JP1",
+                    "pos": {
+                        "x": 18.3,
+                        "y": 38.7
+                    },
+                    "uuid": "27e9f5c4-18c6-47cb-b968-7e8ed2e1d607"
+                },
+                {
+                    "description": "Zone [/GND] auf In4.Cu, Priorität 0",
+                    "pos": {
+                        "x": 0.2,
+                        "y": 5.4
+                    },
+                    "uuid": "be7473b9-b653-41eb-9569-12828660ba1e"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Loch-Freiraum-Verstoß (Einschränkungen aus Platinenkonfiguration zu Löchern Freiraum 0,2000 mm; tatsächlich 0,1944 mm)",
+            "items": [
+                {
+                    "description": "Pad A12 [/GND] von J4 auf F.Cu",
+                    "pos": {
+                        "x": 10.7,
+                        "y": 35.645
+                    },
+                    "uuid": "64d981ec-2f51-4213-adf2-afe0ed41048f"
+                },
+                {
+                    "description": "NPTH-Pad von J4",
+                    "pos": {
+                        "x": 10.39,
+                        "y": 36.72
+                    },
+                    "uuid": "cd2970eb-29ba-4a9e-8fee-242f4df0cffc"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Loch-Freiraum-Verstoß (Einschränkungen aus Platinenkonfiguration zu Löchern Freiraum 0,2000 mm; tatsächlich 0,1944 mm)",
+            "items": [
+                {
+                    "description": "Pad B1 [/GND] von J4 auf F.Cu",
+                    "pos": {
+                        "x": 10.7,
+                        "y": 35.645
+                    },
+                    "uuid": "830ec9e1-7fbf-47fb-a619-9617e859edfa"
+                },
+                {
+                    "description": "NPTH-Pad von J4",
+                    "pos": {
+                        "x": 10.39,
+                        "y": 36.72
+                    },
+                    "uuid": "cd2970eb-29ba-4a9e-8fee-242f4df0cffc"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Loch-Freiraum-Verstoß (Einschränkungen aus Platinenkonfiguration zu Löchern Freiraum 0,2000 mm; tatsächlich 0,1944 mm)",
+            "items": [
+                {
+                    "description": "Pad B12 [/GND] von J4 auf F.Cu",
+                    "pos": {
+                        "x": 4.3,
+                        "y": 35.645
+                    },
+                    "uuid": "20b74dbd-9d5a-4305-b413-66248b618367"
+                },
+                {
+                    "description": "NPTH-Pad von J4",
+                    "pos": {
+                        "x": 4.61,
+                        "y": 36.72
+                    },
+                    "uuid": "d5cc92cc-c469-4829-8898-35b20018b2d0"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Loch-Freiraum-Verstoß (Regel \"JLC inner PTH drill to foreign copper 3.00mm\" Freiraum 3,0000 mm; tatsächlich 0,6050 mm)",
+            "items": [
+                {
+                    "description": "Durchsteckpad SH [/GND] von J4",
+                    "pos": {
+                        "x": 3.18,
+                        "y": 36.22
+                    },
+                    "uuid": "017b51f8-1cdf-4b17-a2fc-c83d4598dfef"
+                },
+                {
+                    "description": "NPTH-Pad von J4",
+                    "pos": {
+                        "x": 4.61,
+                        "y": 36.72
+                    },
+                    "uuid": "d5cc92cc-c469-4829-8898-35b20018b2d0"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Loch-Freiraum-Verstoß (Regel \"JLC inner PTH drill to foreign copper 3.00mm\" Freiraum 3,0000 mm; tatsächlich 0,6050 mm)",
+            "items": [
+                {
+                    "description": "Durchsteckpad SH [/GND] von J4",
+                    "pos": {
+                        "x": 3.18,
+                        "y": 36.22
+                    },
+                    "uuid": "017b51f8-1cdf-4b17-a2fc-c83d4598dfef"
+                },
+                {
+                    "description": "NPTH-Pad von J4",
+                    "pos": {
+                        "x": 4.61,
+                        "y": 36.72
+                    },
+                    "uuid": "d5cc92cc-c469-4829-8898-35b20018b2d0"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Loch-Freiraum-Verstoß (Regel \"JLC inner PTH drill to foreign copper 3.00mm\" Freiraum 3,0000 mm; tatsächlich 0,6050 mm)",
+            "items": [
+                {
+                    "description": "Durchsteckpad SH [/GND] von J4",
+                    "pos": {
+                        "x": 3.18,
+                        "y": 36.22
+                    },
+                    "uuid": "017b51f8-1cdf-4b17-a2fc-c83d4598dfef"
+                },
+                {
+                    "description": "NPTH-Pad von J4",
+                    "pos": {
+                        "x": 4.61,
+                        "y": 36.72
+                    },
+                    "uuid": "d5cc92cc-c469-4829-8898-35b20018b2d0"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Loch-Freiraum-Verstoß (Regel \"JLC inner PTH drill to foreign copper 3.00mm\" Freiraum 3,0000 mm; tatsächlich 0,6050 mm)",
+            "items": [
+                {
+                    "description": "Durchsteckpad SH [/GND] von J4",
+                    "pos": {
+                        "x": 3.18,
+                        "y": 36.22
+                    },
+                    "uuid": "017b51f8-1cdf-4b17-a2fc-c83d4598dfef"
+                },
+                {
+                    "description": "NPTH-Pad von J4",
+                    "pos": {
+                        "x": 4.61,
+                        "y": 36.72
+                    },
+                    "uuid": "d5cc92cc-c469-4829-8898-35b20018b2d0"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Loch-Freiraum-Verstoß (Regel \"JLC inner PTH drill to foreign copper 3.00mm\" Freiraum 3,0000 mm; tatsächlich 2,7532 mm)",
+            "items": [
+                {
+                    "description": "Durchsteckpad SH [/GND] von J4",
+                    "pos": {
+                        "x": 3.18,
+                        "y": 40.4
+                    },
+                    "uuid": "b0455dc8-0d73-4fd8-8372-28cc319a5456"
+                },
+                {
+                    "description": "NPTH-Pad von J4",
+                    "pos": {
+                        "x": 4.61,
+                        "y": 36.72
+                    },
+                    "uuid": "d5cc92cc-c469-4829-8898-35b20018b2d0"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Loch-Freiraum-Verstoß (Regel \"JLC inner PTH drill to foreign copper 3.00mm\" Freiraum 3,0000 mm; tatsächlich 2,7532 mm)",
+            "items": [
+                {
+                    "description": "Durchsteckpad SH [/GND] von J4",
+                    "pos": {
+                        "x": 3.18,
+                        "y": 40.4
+                    },
+                    "uuid": "b0455dc8-0d73-4fd8-8372-28cc319a5456"
+                },
+                {
+                    "description": "NPTH-Pad von J4",
+                    "pos": {
+                        "x": 4.61,
+                        "y": 36.72
+                    },
+                    "uuid": "d5cc92cc-c469-4829-8898-35b20018b2d0"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Loch-Freiraum-Verstoß (Regel \"JLC inner PTH drill to foreign copper 3.00mm\" Freiraum 3,0000 mm; tatsächlich 2,7532 mm)",
+            "items": [
+                {
+                    "description": "Durchsteckpad SH [/GND] von J4",
+                    "pos": {
+                        "x": 3.18,
+                        "y": 40.4
+                    },
+                    "uuid": "b0455dc8-0d73-4fd8-8372-28cc319a5456"
+                },
+                {
+                    "description": "NPTH-Pad von J4",
+                    "pos": {
+                        "x": 4.61,
+                        "y": 36.72
+                    },
+                    "uuid": "d5cc92cc-c469-4829-8898-35b20018b2d0"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Loch-Freiraum-Verstoß (Regel \"JLC inner PTH drill to foreign copper 3.00mm\" Freiraum 3,0000 mm; tatsächlich 2,7532 mm)",
+            "items": [
+                {
+                    "description": "Durchsteckpad SH [/GND] von J4",
+                    "pos": {
+                        "x": 3.18,
+                        "y": 40.4
+                    },
+                    "uuid": "b0455dc8-0d73-4fd8-8372-28cc319a5456"
+                },
+                {
+                    "description": "NPTH-Pad von J4",
+                    "pos": {
+                        "x": 4.61,
+                        "y": 36.72
+                    },
+                    "uuid": "d5cc92cc-c469-4829-8898-35b20018b2d0"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Loch-Freiraum-Verstoß (Regel \"JLC inner PTH drill to foreign copper 3.00mm\" Freiraum 3,0000 mm; tatsächlich 0,6050 mm)",
+            "items": [
+                {
+                    "description": "Durchsteckpad SH [/GND] von J4",
+                    "pos": {
+                        "x": 11.82,
+                        "y": 36.22
+                    },
+                    "uuid": "88fa67c9-a514-4c3b-a66c-0aadaae48b77"
+                },
+                {
+                    "description": "NPTH-Pad von J4",
+                    "pos": {
+                        "x": 10.39,
+                        "y": 36.72
+                    },
+                    "uuid": "cd2970eb-29ba-4a9e-8fee-242f4df0cffc"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Loch-Freiraum-Verstoß (Regel \"JLC inner PTH drill to foreign copper 3.00mm\" Freiraum 3,0000 mm; tatsächlich 0,6050 mm)",
+            "items": [
+                {
+                    "description": "Durchsteckpad SH [/GND] von J4",
+                    "pos": {
+                        "x": 11.82,
+                        "y": 36.22
+                    },
+                    "uuid": "88fa67c9-a514-4c3b-a66c-0aadaae48b77"
+                },
+                {
+                    "description": "NPTH-Pad von J4",
+                    "pos": {
+                        "x": 10.39,
+                        "y": 36.72
+                    },
+                    "uuid": "cd2970eb-29ba-4a9e-8fee-242f4df0cffc"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Loch-Freiraum-Verstoß (Regel \"JLC inner PTH drill to foreign copper 3.00mm\" Freiraum 3,0000 mm; tatsächlich 0,6050 mm)",
+            "items": [
+                {
+                    "description": "Durchsteckpad SH [/GND] von J4",
+                    "pos": {
+                        "x": 11.82,
+                        "y": 36.22
+                    },
+                    "uuid": "88fa67c9-a514-4c3b-a66c-0aadaae48b77"
+                },
+                {
+                    "description": "NPTH-Pad von J4",
+                    "pos": {
+                        "x": 10.39,
+                        "y": 36.72
+                    },
+                    "uuid": "cd2970eb-29ba-4a9e-8fee-242f4df0cffc"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Loch-Freiraum-Verstoß (Regel \"JLC inner PTH drill to foreign copper 3.00mm\" Freiraum 3,0000 mm; tatsächlich 0,6050 mm)",
+            "items": [
+                {
+                    "description": "Durchsteckpad SH [/GND] von J4",
+                    "pos": {
+                        "x": 11.82,
+                        "y": 36.22
+                    },
+                    "uuid": "88fa67c9-a514-4c3b-a66c-0aadaae48b77"
+                },
+                {
+                    "description": "NPTH-Pad von J4",
+                    "pos": {
+                        "x": 10.39,
+                        "y": 36.72
+                    },
+                    "uuid": "cd2970eb-29ba-4a9e-8fee-242f4df0cffc"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Track endpoint not centered on via",
+            "items": [
+                {
+                    "description": "Leiterbahn [/+3V3] auf B.Cu, Länge 1,6617 mm",
+                    "pos": {
+                        "x": 21.525,
+                        "y": 19.85
+                    },
+                    "uuid": "9184ac53-fc86-45e2-9672-556a0c059fff"
+                },
+                {
+                    "description": "Via [/+3V3] auf F.Cu - B.Cu",
+                    "pos": {
+                        "x": 22.8,
+                        "y": 18.5
+                    },
+                    "uuid": "99e68e9f-e93c-4c8d-ab79-4d9d3021d385"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_not_centered_on_via"
+        },
+        {
+            "description": "Track endpoint not centered on via",
+            "items": [
+                {
+                    "description": "Leiterbahn [/GPIO8_DATA] auf In2.Cu, Länge 1,1503 mm",
+                    "pos": {
+                        "x": 7.475,
+                        "y": 16.0469
+                    },
+                    "uuid": "0d10c911-3146-453e-87ed-9729b4a9c754"
+                },
+                {
+                    "description": "Via [/GPIO8_DATA] auf F.Cu - B.Cu",
+                    "pos": {
+                        "x": 7.475,
+                        "y": 16.149999
+                    },
+                    "uuid": "fd6b8237-3a3b-4035-9816-e368be8824aa"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_not_centered_on_via"
+        },
+        {
+            "description": "Track endpoint not centered on via",
+            "items": [
+                {
+                    "description": "Leiterbahn [/GPIO8_DATA] auf In2.Cu, Länge 0,1031 mm",
+                    "pos": {
+                        "x": 7.475,
+                        "y": 16.15
+                    },
+                    "uuid": "ee7262a2-0c59-4634-bf63-b0fc77222fb9"
+                },
+                {
+                    "description": "Via [/GPIO8_DATA] auf F.Cu - B.Cu",
+                    "pos": {
+                        "x": 7.475,
+                        "y": 16.149999
+                    },
+                    "uuid": "fd6b8237-3a3b-4035-9816-e368be8824aa"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_not_centered_on_via"
+        },
+        {
+            "description": "Track endpoint not centered on via",
+            "items": [
+                {
+                    "description": "Leiterbahn [/UART_TX] auf F.Cu, Länge 0,4243 mm",
+                    "pos": {
+                        "x": 20.075,
+                        "y": 11.225
+                    },
+                    "uuid": "18464699-e60d-4c97-a89e-3852130fe1d6"
+                },
+                {
+                    "description": "Via [/UART_TX] auf F.Cu - B.Cu",
+                    "pos": {
+                        "x": 19.75,
+                        "y": 10.775
+                    },
+                    "uuid": "f489597b-f094-482b-a22c-7547416d0b23"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_not_centered_on_via"
+        },
+        {
+            "description": "Track endpoint not centered on via",
+            "items": [
+                {
+                    "description": "Leiterbahn [/GPIO46_STRAP] auf F.Cu, Länge 0,0354 mm",
+                    "pos": {
+                        "x": 21.249999,
+                        "y": 6.975
+                    },
+                    "uuid": "de176383-5469-4349-a137-b06ca59dc93b"
+                },
+                {
+                    "description": "Via [/GPIO46_STRAP] auf F.Cu - B.Cu",
+                    "pos": {
+                        "x": 21.2,
+                        "y": 6.8
+                    },
+                    "uuid": "cf2fbe00-ca20-40ae-98df-ac6f0c436d11"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_not_centered_on_via"
+        },
+        {
+            "description": "Track endpoint not centered on via",
+            "items": [
+                {
+                    "description": "Leiterbahn [/SYS_EN] auf In2.Cu, Länge 0,8132 mm",
+                    "pos": {
+                        "x": 23.775,
+                        "y": 9.6
+                    },
+                    "uuid": "1f447100-ab5e-450a-b89f-b435e64987c4"
+                },
+                {
+                    "description": "Via [/SYS_EN] auf F.Cu - B.Cu",
+                    "pos": {
+                        "x": 24.5,
+                        "y": 10.2
+                    },
+                    "uuid": "73b735cd-9fd1-44fa-838a-63e0a10c07f2"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_not_centered_on_via"
+        },
+        {
+            "description": "Track endpoint not centered on via",
+            "items": [
+                {
+                    "description": "Leiterbahn [/LED_OE_N] auf In2.Cu, Länge 0,9546 mm",
+                    "pos": {
+                        "x": 24.275,
+                        "y": 18.625
+                    },
+                    "uuid": "0250bdb4-a232-4372-9285-80745f860663"
+                },
+                {
+                    "description": "Via [/LED_OE_N] auf F.Cu - B.Cu",
+                    "pos": {
+                        "x": 24.3,
+                        "y": 18.475
+                    },
+                    "uuid": "6fe36627-1bb0-44c2-9780-24e6e9bf2c70"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_not_centered_on_via"
+        },
+        {
+            "description": "Track endpoint not centered on via",
+            "items": [
+                {
+                    "description": "Leiterbahn [/LED_A] auf B.Cu, Länge 0,7071 mm",
+                    "pos": {
+                        "x": 8.75,
+                        "y": 18.325
+                    },
+                    "uuid": "cdc0f6e8-67d9-4767-8cbd-46964d07dce0"
+                },
+                {
+                    "description": "Via [/LED_A] auf F.Cu - B.Cu",
+                    "pos": {
+                        "x": 9.4,
+                        "y": 17.8
+                    },
+                    "uuid": "65bbc6cd-8b99-4ced-bb69-8c375b67603c"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_not_centered_on_via"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Package_TO_SOT_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint D5",
+                    "pos": {
+                        "x": 2.0,
+                        "y": 25.5
+                    },
+                    "uuid": "00fc473a-504b-4fc4-b1e8-f927b3b6a028"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"NearGlowR2b\" nicht",
+            "items": [
+                {
+                    "description": "Footprint J5",
+                    "pos": {
+                        "x": 23.5,
+                        "y": 33.0
+                    },
+                    "uuid": "021065bb-f354-4eea-9bca-6df11dbc364b"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Connector_PinHeader_2.54mm\" nicht",
+            "items": [
+                {
+                    "description": "Footprint JP1",
+                    "pos": {
+                        "x": 18.3,
+                        "y": 38.7
+                    },
+                    "uuid": "0610fabe-c5f5-47fe-958a-372c04188213"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R8",
+                    "pos": {
+                        "x": 23.91,
+                        "y": 17.57
+                    },
+                    "uuid": "116eb4d9-b59d-4548-b2be-dc0b3e3e2385"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Capacitor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint C14",
+                    "pos": {
+                        "x": 14.97,
+                        "y": 22.45
+                    },
+                    "uuid": "130b8adf-509a-4c12-b9de-8f760208acaa"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"NearGlowR2a\" nicht",
+            "items": [
+                {
+                    "description": "Footprint TP3",
+                    "pos": {
+                        "x": 6.05,
+                        "y": 16.34
+                    },
+                    "uuid": "13734a1d-2f28-4ca3-97a4-3dadd5858769"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"NearGlowR2a\" nicht",
+            "items": [
+                {
+                    "description": "Footprint TP4",
+                    "pos": {
+                        "x": 23.95,
+                        "y": 13.3
+                    },
+                    "uuid": "282132ed-4d95-427b-bb8a-36c1cbf282f8"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"NearGlowR2a\" nicht",
+            "items": [
+                {
+                    "description": "Footprint TP2",
+                    "pos": {
+                        "x": 6.05,
+                        "y": 14.82
+                    },
+                    "uuid": "30a102b0-c6f1-4550-9d04-ec20bd4729cb"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"RF_Module\" nicht",
+            "items": [
+                {
+                    "description": "Footprint U1",
+                    "pos": {
+                        "x": 15.0,
+                        "y": 10.25
+                    },
+                    "uuid": "3146dc52-85c8-455f-b975-e621e91b8d68"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Package_TO_SOT_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint U12",
+                    "pos": {
+                        "x": 17.5,
+                        "y": 31.0
+                    },
+                    "uuid": "3e19e8d2-076a-4a51-88cf-ac7ea69629fc"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Package_TO_SOT_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint D1",
+                    "pos": {
+                        "x": 9.5,
+                        "y": 33.0
+                    },
+                    "uuid": "48df5500-5499-40c4-a18b-6b2734ce3847"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"NearGlowR2a\" nicht",
+            "items": [
+                {
+                    "description": "Footprint TP6",
+                    "pos": {
+                        "x": 23.95,
+                        "y": 16.34
+                    },
+                    "uuid": "4c5b723a-f8ac-476e-bd30-8d679135bc73"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"NearGlowR2a\" nicht",
+            "items": [
+                {
+                    "description": "Footprint J3",
+                    "pos": {
+                        "x": 17.1,
+                        "y": 23.1
+                    },
+                    "uuid": "59bc754c-e510-424b-ac25-5d4bb4f110c6"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R30",
+                    "pos": {
+                        "x": 14.5,
+                        "y": 25.2
+                    },
+                    "uuid": "5f1999ea-3add-463c-8692-28f423f8224d"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Package_TO_SOT_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint U11",
+                    "pos": {
+                        "x": 13.0,
+                        "y": 29.0
+                    },
+                    "uuid": "6185eb69-5a6b-400d-8973-f808ff9df754"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R31",
+                    "pos": {
+                        "x": 14.5,
+                        "y": 26.2
+                    },
+                    "uuid": "6b33f06d-ea00-4736-be7a-2cce329ad20d"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R12",
+                    "pos": {
+                        "x": 13.52,
+                        "y": 21.68
+                    },
+                    "uuid": "7d752161-d386-43db-8d0f-b3d4568e696e"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"NearGlowR2a\" nicht",
+            "items": [
+                {
+                    "description": "Footprint TP5",
+                    "pos": {
+                        "x": 23.95,
+                        "y": 14.82
+                    },
+                    "uuid": "8542cb23-8331-4f10-bd91-a08f8b0d9c88"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R18",
+                    "pos": {
+                        "x": 6.58,
+                        "y": 18.97
+                    },
+                    "uuid": "87cadf6f-5808-46ad-9fb5-b0892a288292"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Package_TO_SOT_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint D2",
+                    "pos": {
+                        "x": 20.0,
+                        "y": 25.8
+                    },
+                    "uuid": "906f7e4e-6fdf-4763-8714-6d777d0744f6"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R2",
+                    "pos": {
+                        "x": 6.09,
+                        "y": 17.57
+                    },
+                    "uuid": "90aabdb8-ae84-4a4c-b8c2-a922c3928776"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R3",
+                    "pos": {
+                        "x": 21.68,
+                        "y": 22.16
+                    },
+                    "uuid": "9401a2f4-e2dd-46b8-8c64-c2c08e5f2673"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R19",
+                    "pos": {
+                        "x": 23.54,
+                        "y": 22.39
+                    },
+                    "uuid": "97c575d3-5daf-4e0a-9581-6a443bc9d27c"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R4",
+                    "pos": {
+                        "x": 23.54,
+                        "y": 23.33
+                    },
+                    "uuid": "9a418518-447a-464a-a706-464b389bd69e"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Package_TO_SOT_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint D4",
+                    "pos": {
+                        "x": 28.7,
+                        "y": 31.0
+                    },
+                    "uuid": "9a886d52-f4f0-4759-a6db-6292c10feea4"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Package_TO_SOT_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint Q1",
+                    "pos": {
+                        "x": 26.7,
+                        "y": 14.5
+                    },
+                    "uuid": "9ae64349-aa9a-4316-a532-7cf85c5a8437"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R17",
+                    "pos": {
+                        "x": 23.68,
+                        "y": 19.52
+                    },
+                    "uuid": "9e7dc20c-c3ae-4e75-a10e-db514f78650b"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R10",
+                    "pos": {
+                        "x": 21.68,
+                        "y": 23.1
+                    },
+                    "uuid": "a2c4404f-ec38-4063-a31b-2afa86c6b9eb"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"NearGlowR2a\" nicht",
+            "items": [
+                {
+                    "description": "Footprint J2",
+                    "pos": {
+                        "x": 6.5,
+                        "y": 23.1
+                    },
+                    "uuid": "a49aee0c-86cd-49fd-a4e4-a90121efbc8e"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Button_Switch_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint SW1",
+                    "pos": {
+                        "x": 4.7,
+                        "y": 28.8
+                    },
+                    "uuid": "b8175329-1e1a-481e-a354-27cd111e30f0"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Connector_USB\" nicht",
+            "items": [
+                {
+                    "description": "Footprint J4",
+                    "pos": {
+                        "x": 7.5,
+                        "y": 39.325
+                    },
+                    "uuid": "bbefa818-c4aa-4f6c-bdd9-863439f3d408"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Capacitor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint C8",
+                    "pos": {
+                        "x": 5.95,
+                        "y": 8.55
+                    },
+                    "uuid": "be4fdb19-7c66-4590-ba47-2664a5def197"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Package_TO_SOT_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint D3",
+                    "pos": {
+                        "x": 23.0,
+                        "y": 25.8
+                    },
+                    "uuid": "c4d51fc5-bbc9-4261-a84d-fef0e25e4d4a"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R15",
+                    "pos": {
+                        "x": 13.12,
+                        "y": 23.57
+                    },
+                    "uuid": "cdb6e05e-c132-4051-a1a0-9565952f8bd6"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Capacitor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint C7",
+                    "pos": {
+                        "x": 6.05,
+                        "y": 11.0
+                    },
+                    "uuid": "ce36bd36-c6b6-406d-afe4-d76117cbfc93"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R1",
+                    "pos": {
+                        "x": 6.58,
+                        "y": 6.71
+                    },
+                    "uuid": "ced9ea1e-7ffe-4bee-a9d4-8ed70685b3cc"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Fuse\" nicht",
+            "items": [
+                {
+                    "description": "Footprint F1",
+                    "pos": {
+                        "x": 23.68,
+                        "y": 11.07
+                    },
+                    "uuid": "d083299c-ae06-4d7a-a97a-a455aed4ccb7"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Package_DFN_QFN\" nicht",
+            "items": [
+                {
+                    "description": "Footprint U8",
+                    "pos": {
+                        "x": 9.5,
+                        "y": 27.5
+                    },
+                    "uuid": "d0a374b1-1386-4328-bfc6-a1daf6852592"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Capacitor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint C21",
+                    "pos": {
+                        "x": 23.68,
+                        "y": 8.11
+                    },
+                    "uuid": "f2b77fc3-36be-48fc-b86b-fc984824f458"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Button_Switch_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint SW2",
+                    "pos": {
+                        "x": 27.0,
+                        "y": 27.0
+                    },
+                    "uuid": "f56ad45e-e78f-4d19-b2f7-002c27f9156e"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"NearGlowR2a\" nicht",
+            "items": [
+                {
+                    "description": "Footprint TP1",
+                    "pos": {
+                        "x": 6.05,
+                        "y": 13.3
+                    },
+                    "uuid": "f92bef16-978a-4fb4-98d8-689e2aa6120b"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Capacitor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint C13",
+                    "pos": {
+                        "x": 23.52,
+                        "y": 21.46
+                    },
+                    "uuid": "fc7294a3-ef2d-4f7e-825e-25ac3ee2d46e"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R6",
+                    "pos": {
+                        "x": 14.47,
+                        "y": 6.8
+                    },
+                    "uuid": "05a0efc6-a271-47cb-a99e-3287270a8818"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Capacitor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint C22",
+                    "pos": {
+                        "x": 14.47,
+                        "y": 7.8
+                    },
+                    "uuid": "1883d4cc-dd0b-49b0-8e2f-e1bbe1c58ad9"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Package_TO_SOT_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint U5",
+                    "pos": {
+                        "x": 7.4,
+                        "y": 12.5
+                    },
+                    "uuid": "20d2f47d-6e5f-4fc5-91a8-d95cc95ade60"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Capacitor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint C25",
+                    "pos": {
+                        "x": 10.0,
+                        "y": 31.5
+                    },
+                    "uuid": "26c53e15-ed23-4eb5-a9dc-88a8df19dd29"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R45",
+                    "pos": {
+                        "x": 15.5,
+                        "y": 28.5
+                    },
+                    "uuid": "281bb103-d501-4f9e-9fb1-80467e78000f"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Capacitor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint C6",
+                    "pos": {
+                        "x": 14.4,
+                        "y": 13.1
+                    },
+                    "uuid": "2852a9e9-f6ab-4571-8e28-0d5968d4ba1d"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Capacitor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint C12",
+                    "pos": {
+                        "x": 19.4,
+                        "y": 19.5
+                    },
+                    "uuid": "2cabc987-5794-4c3e-8fe3-80de4b709874"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Connector_JST\" nicht",
+            "items": [
+                {
+                    "description": "Footprint J1",
+                    "pos": {
+                        "x": 10.1,
+                        "y": 20.8
+                    },
+                    "uuid": "2db0ea00-ef2b-4a27-ae9d-9d1da4667c3a"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Capacitor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint C31",
+                    "pos": {
+                        "x": 18.5,
+                        "y": 30.0
+                    },
+                    "uuid": "2e3d9752-6bec-4a59-af9f-c2111c21efac"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R32",
+                    "pos": {
+                        "x": 13.0,
+                        "y": 25.5
+                    },
+                    "uuid": "2ee35ee2-52f5-4332-93e6-0371770db36a"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R42",
+                    "pos": {
+                        "x": 13.0,
+                        "y": 28.5
+                    },
+                    "uuid": "30d218e7-6f44-4448-bb11-9c2a7d0008b7"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Package_TO_SOT_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint U7",
+                    "pos": {
+                        "x": 16.85,
+                        "y": 20.55
+                    },
+                    "uuid": "31bbf121-949d-44bc-9113-767d79447edf"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"NearGlowR2b\" nicht",
+            "items": [
+                {
+                    "description": "Footprint U9",
+                    "pos": {
+                        "x": 25.5,
+                        "y": 34.0
+                    },
+                    "uuid": "343fa433-cd88-44ee-b0d4-25512ff17bdc"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Capacitor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint C4",
+                    "pos": {
+                        "x": 14.5,
+                        "y": 10.4
+                    },
+                    "uuid": "3487c56c-69de-4ff4-8b39-12b0aa2522f0"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Package_TO_SOT_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint U6",
+                    "pos": {
+                        "x": 17.0,
+                        "y": 23.35
+                    },
+                    "uuid": "3a44f9d2-29fd-4542-bf9b-84a8dcb43230"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Package_TO_SOT_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint U4",
+                    "pos": {
+                        "x": 22.05,
+                        "y": 9.4
+                    },
+                    "uuid": "3f31edba-c514-4d92-bb1d-70bbb41df5f0"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R36",
+                    "pos": {
+                        "x": 23.0,
+                        "y": 25.5
+                    },
+                    "uuid": "4164ec7c-9232-47b8-bb09-5102b650ca64"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R38",
+                    "pos": {
+                        "x": 3.0,
+                        "y": 28.5
+                    },
+                    "uuid": "45330be1-e761-464c-8ee6-8ae9c45e7409"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Capacitor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint C23",
+                    "pos": {
+                        "x": 3.0,
+                        "y": 31.5
+                    },
+                    "uuid": "457c530e-4b98-44b6-9212-c1e6e41c3b88"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R25",
+                    "pos": {
+                        "x": 11.42,
+                        "y": 15.58
+                    },
+                    "uuid": "465144c4-9f23-4887-979b-4a5f23754f74"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"NearGlowR2a\" nicht",
+            "items": [
+                {
+                    "description": "Footprint U3",
+                    "pos": {
+                        "x": 18.1,
+                        "y": 12.5
+                    },
+                    "uuid": "47e60a4c-c575-4533-bf6c-21906cbd56d9"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Capacitor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint C2",
+                    "pos": {
+                        "x": 11.75,
+                        "y": 10.3
+                    },
+                    "uuid": "4b1a0f7b-0a6a-41f8-a3f6-a5a0bf5238fa"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R34",
+                    "pos": {
+                        "x": 18.0,
+                        "y": 25.5
+                    },
+                    "uuid": "4b7856b5-000a-473a-9cbe-399d64672bd4"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R7",
+                    "pos": {
+                        "x": 14.47,
+                        "y": 5.8
+                    },
+                    "uuid": "4bb9a4f7-0b50-4deb-872b-4634bb4b6576"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Capacitor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint C1",
+                    "pos": {
+                        "x": 10.47,
+                        "y": 13.0
+                    },
+                    "uuid": "4dc61800-0e07-4fcf-95ee-0ea127709532"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R46",
+                    "pos": {
+                        "x": 18.0,
+                        "y": 28.5
+                    },
+                    "uuid": "50cb9a67-2482-427e-b174-0d801e25879d"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Capacitor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint C5",
+                    "pos": {
+                        "x": 21.8,
+                        "y": 12.45
+                    },
+                    "uuid": "54ed9cd5-546c-47a4-9bd4-b0368c79a61b"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R24",
+                    "pos": {
+                        "x": 19.4,
+                        "y": 15.13
+                    },
+                    "uuid": "557f5e5c-0d8c-4066-a2fb-65249f3cca13"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R47",
+                    "pos": {
+                        "x": 25.0,
+                        "y": 38.0
+                    },
+                    "uuid": "55cb676d-f8b9-4eab-9d43-d41e832ced38"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Capacitor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint C9",
+                    "pos": {
+                        "x": 24.25,
+                        "y": 8.5
+                    },
+                    "uuid": "5bcb51ee-7b3b-4c9e-aaf5-e080ce5710c1"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R14",
+                    "pos": {
+                        "x": 6.8,
+                        "y": 15.48
+                    },
+                    "uuid": "5e6173cd-e844-4d27-ac73-ccc0f06f5877"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Capacitor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint C24",
+                    "pos": {
+                        "x": 6.5,
+                        "y": 31.5
+                    },
+                    "uuid": "5ef61706-e067-4118-955e-7eead0f9f98c"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R27",
+                    "pos": {
+                        "x": 19.4,
+                        "y": 21.45
+                    },
+                    "uuid": "5efaea52-0de9-48c6-acc2-430fdbe6eed5"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Capacitor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint C28",
+                    "pos": {
+                        "x": 14.5,
+                        "y": 35.0
+                    },
+                    "uuid": "63c1c904-1b90-45c0-983b-6785fd867f42"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Capacitor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint C11",
+                    "pos": {
+                        "x": 19.3,
+                        "y": 23.35
+                    },
+                    "uuid": "64b3d9a5-c802-4216-9c84-cccc8d9fc498"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R41",
+                    "pos": {
+                        "x": 10.5,
+                        "y": 28.5
+                    },
+                    "uuid": "64f6a50d-ffde-44b1-ba42-b0d73f684f00"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R40",
+                    "pos": {
+                        "x": 8.0,
+                        "y": 28.5
+                    },
+                    "uuid": "67a2ca53-b4a9-4886-abe1-519da01dc86b"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Capacitor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint C17",
+                    "pos": {
+                        "x": 15.85,
+                        "y": 17.1
+                    },
+                    "uuid": "6ef4867e-6a7e-4564-8b52-646757b00c42"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R11",
+                    "pos": {
+                        "x": 12.23,
+                        "y": 12.21
+                    },
+                    "uuid": "7a1855c3-f72a-4f93-8fbd-56c367c0c22f"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R39",
+                    "pos": {
+                        "x": 5.5,
+                        "y": 28.5
+                    },
+                    "uuid": "8a175c12-f5f8-45e6-9b83-6150c351a537"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Capacitor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint C26",
+                    "pos": {
+                        "x": 17.0,
+                        "y": 31.5
+                    },
+                    "uuid": "8cd9bdd0-f73f-47fb-9342-7b1229f58f0a"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R26",
+                    "pos": {
+                        "x": 24.23,
+                        "y": 14.81
+                    },
+                    "uuid": "8d165ac5-d997-46b9-a36e-34c7780edc55"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R23",
+                    "pos": {
+                        "x": 13.3,
+                        "y": 14.6
+                    },
+                    "uuid": "8f0c85ab-a4c7-48ff-b560-7755ac77f3c3"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Capacitor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint C19",
+                    "pos": {
+                        "x": 17.85,
+                        "y": 14.875
+                    },
+                    "uuid": "8f2e8d2c-e41f-4aa2-9a41-f1c6b5e63074"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Package_TO_SOT_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint U2",
+                    "pos": {
+                        "x": 11.4,
+                        "y": 8.3
+                    },
+                    "uuid": "8fa7718b-506d-4c9b-a143-385c12f675d5"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R13",
+                    "pos": {
+                        "x": 24.22,
+                        "y": 12.95
+                    },
+                    "uuid": "90264df2-76fd-437b-bf6b-515cd25c028d"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Capacitor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint C18",
+                    "pos": {
+                        "x": 17.9,
+                        "y": 17.1
+                    },
+                    "uuid": "934b44b8-e537-4805-9de1-30fb90e91bb2"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Capacitor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint C30",
+                    "pos": {
+                        "x": 21.7,
+                        "y": 36.5
+                    },
+                    "uuid": "a9c91cfb-a37e-4f4a-a9ff-19b099accbab"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R35",
+                    "pos": {
+                        "x": 20.5,
+                        "y": 25.5
+                    },
+                    "uuid": "a9d0ced9-2285-484b-9612-4777d357f362"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Capacitor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint C3",
+                    "pos": {
+                        "x": 11.75,
+                        "y": 6.35
+                    },
+                    "uuid": "ae73a1bc-0b25-4268-8caa-a94d72e8be53"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Inductor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint L1",
+                    "pos": {
+                        "x": 7.75,
+                        "y": 8.3
+                    },
+                    "uuid": "b278758b-172e-470d-9c74-c1b8a1a702b5"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R48",
+                    "pos": {
+                        "x": 27.0,
+                        "y": 36.0
+                    },
+                    "uuid": "b3c45226-8ad5-468d-9a88-ab0737b340b6"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R37",
+                    "pos": {
+                        "x": 25.5,
+                        "y": 25.5
+                    },
+                    "uuid": "b7066e79-2a1d-4318-8d1e-d09715d4bc23"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Capacitor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint C29",
+                    "pos": {
+                        "x": 18.0,
+                        "y": 34.5
+                    },
+                    "uuid": "cc3f9cdd-d838-4ce1-80bc-0757c43d3c5f"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Capacitor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint C20",
+                    "pos": {
+                        "x": 22.9,
+                        "y": 6.28
+                    },
+                    "uuid": "d38bf277-d0cd-48f3-aa10-d53b55119206"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R16",
+                    "pos": {
+                        "x": 9.56,
+                        "y": 15.58
+                    },
+                    "uuid": "d45234bb-c152-45a5-ab85-6e16876270d0"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Capacitor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint C10",
+                    "pos": {
+                        "x": 11.91,
+                        "y": 14.05
+                    },
+                    "uuid": "d5799f9f-d6c2-408f-9b38-2fdd2404b092"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R9",
+                    "pos": {
+                        "x": 19.4,
+                        "y": 16.99
+                    },
+                    "uuid": "d75bcb03-d9e8-4e7d-bfaf-b363f46853f4"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"NearGlowR2b\" nicht",
+            "items": [
+                {
+                    "description": "Footprint U10",
+                    "pos": {
+                        "x": 21.5,
+                        "y": 34.0
+                    },
+                    "uuid": "df30612d-03e3-412a-8e6e-c04556b70bb6"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R33",
+                    "pos": {
+                        "x": 15.5,
+                        "y": 25.5
+                    },
+                    "uuid": "dfcc233c-6c00-44ff-9343-fb5b82b6245c"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R28",
+                    "pos": {
+                        "x": 3.0,
+                        "y": 25.5
+                    },
+                    "uuid": "dfdf1be2-976a-4bdc-85e6-9e4f4b20c862"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Inductor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint L2",
+                    "pos": {
+                        "x": 17.9,
+                        "y": 8.2
+                    },
+                    "uuid": "ea7cd752-7dcb-4fb9-850d-aab8fa6d718c"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Capacitor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint C27",
+                    "pos": {
+                        "x": 20.5,
+                        "y": 31.5
+                    },
+                    "uuid": "ec3557a5-0e60-4530-afc0-986e2162f285"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R29",
+                    "pos": {
+                        "x": 5.5,
+                        "y": 25.5
+                    },
+                    "uuid": "f11c9361-1274-446b-8d45-c3e2d88e5827"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Capacitor_Tantalum_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint C16",
+                    "pos": {
+                        "x": 22.27,
+                        "y": 20.15
+                    },
+                    "uuid": "f98efd26-f70e-4c22-bba3-90bdd553465a"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R5",
+                    "pos": {
+                        "x": 24.23,
+                        "y": 10.34
+                    },
+                    "uuid": "fb6e55db-4181-4fb1-91ac-1c6a0a07f1b1"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Die aktuelle Konfiguration enthält die Footprint-Bibliothek \"Resistor_SMD\" nicht",
+            "items": [
+                {
+                    "description": "Footprint R22",
+                    "pos": {
+                        "x": 15.2,
+                        "y": 14.6
+                    },
+                    "uuid": "ffcdf04a-7e74-492e-9217-ce2d20ef732e"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        }
+    ]
+}

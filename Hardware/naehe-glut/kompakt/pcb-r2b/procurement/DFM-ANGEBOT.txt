@@ -1,9 +1,9 @@
 R2b — DFM- UND ANGEBOTSVORBEREITUNG
-Stand: 02.11.2026; geprüfter Kontext 909e25653edafb2cd5e60ed6349356c0f905f916.
+Stand: 02.11.2026; geprüfter Kontext bad8abfb plus unabhängig geprüfte Entwurfsübernahme 8b383237.
 Verantwortlich: Hardware-Unterauftrag; unabhängige Gegenprüfung durch Root/Reviewer.
 Status: lokal vorbereitet, NICHT versendet, kein Upload, keine Bestellung,
-keine Fertigungsfreigabe. Zwei Via-Prozessmetadaten korrigiert und Prüfbelege
-erneuert; Kupfer-, Masken- und Bohrungsgeometrie bleiben unverändert.
+keine Fertigungsfreigabe. Aktueller Entwurf: Host-DP-Paarabschnitt verbessert; vorgeschlagener3313A-
+Stackup und ENIG nativ eingetragen. Keine Material-/SI-Freigabe.
 
 1. Eindeutiger Lieferumfang
 Zwei vollständig bestückte, getrennte Baugruppen für den Einsatz am 04.12.2026.
@@ -15,7 +15,7 @@ Kupfer nominell 1 oz auf ALLEN sechs Lagen. Antennen-/Modulumriss insgesamt
 Quellenhashes und vollständige Eingaben: RFQ-INPUTS.json.
 101 bestückte Referenzen: 34 Top, 67 Bottom. Acht weitere native Referenzen
 sind keine zusätzlichen bestückten BOM-Positionen. Vollständige BOM/CPL:
-../pruefung/bestueckung-draft/7af39dbe807e-jq7zjlqp/BOM-DRAFT.csv und CPL-DRAFT.csv.
+../pruefung/bestueckung-draft/8b383237c2a9-50vo4of3/BOM-DRAFT.csv und CPL-DRAFT.csv.
 Keine SMD-only-Filterung. CPL-Mitte enthält dokumentierte J1-/JP1-Korrekturen.
 
 2. Aktuelle JLC-Eignung und konkrete Konflikte
@@ -115,3 +115,20 @@ P5 bleibt bis dahin fachlich vorbereitet, nicht angebotenseitig abgeschlossen.
 Aktuelle Präzisierung B: Zwei-Zeilen-Metadatenkorrektur übernommen und frisch geprüft; siehe TECHNISCHE-PRAEZISIERUNG.txt. Root beobachtete beim Live-Impedanzdialog automatische CAM-Breitenanpassung als Standardhinweis. Für diesen Entwurf sind solche Anpassungen ausdrücklich bis zum unabhängigen Layoutreview gesperrt; Produktionsdateibestätigung zwingend.
 
 
+
+Aktualisierung 02.11.2026 — geprüfte Entwurfsübernahme PCB8b383237c2a9
+Vorgeschlagener Aufbau JLC061011-3313A; Lieferantenbestätigung ausstehend.
+Veröffentlichte Schichtwerte .035/.092/.030/.200/.030/.184/.030/.200/.030/.092/.035mm
+summieren sich auf .958mm, Hersteller-Nenndicke und PCB-General bleiben1mm.
+Nominell1oz bedeutet in dieser Tabelle .035mm außen und .030mm innen; keine
+Zusage für überall35µm. Dk4.1 PP/Dk4.36 Core aus Herstellerquelle; Df0.02 ist
+in allen CAD-Materiallabels ausdrücklich SOFTWAREDEFAULT UNVERIFIED.
+Keine homogene Maskendicke erfunden. Vertraglich ENIG, nichtleitende
+Epoxidfüllung und Kupferkappen auf allen230Vias bleiben erforderlich.
+Host-In3 DP wurde lokal zum Paar geführt: Hauptspalt .15mm, gleicherVia-Satz;
+Host-Pfadskew nun+0.193014mm. Fanouts, In2-Störkupfer überMCU-Paar und reale
+Signalqualität bleiben separat zu qualifizieren; keine CAM-Breitenänderung
+vor unabhängiger Prüfung. Details procurement/USB-STACKUP-PRUEFUNG.txt,
+USB-STACKUP-REVIEW.txt und usb-stackup/STACKUP-ENTWURF.txt.
+Frische Prüfungen: ERC0, nativeDRC4bekannteNPTH+10Warnungen/0offen,
+Padvertrag109Refs/373Pads/0Issues, vollständigeBOM/CPL101/101.

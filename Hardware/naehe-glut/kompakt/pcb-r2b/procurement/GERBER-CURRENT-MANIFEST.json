@@ -1,0 +1,94 @@
+{
+  "status": "current local native RFQ inspection export NOT production release NOT sent",
+  "base_commit": "bad8abfbdab64aa7c5b2641b3b07789191a98a41",
+  "pcb_sha256": "8b383237c2a90d4270685943619f579258b213815a4f9e6838f9993665eba590",
+  "kicad_version": "10.0.8",
+  "origin": "auxiliary drill/plot origin (0,43 mm)",
+  "files": [
+    {
+      "path": "rfq-gerber-8b383237/naehe-glut-r2b-B_Cu.gbl",
+      "sha256": "f1a339db14051ac452e2ce6ba496cad44cdc4aee6d1b20b271de7cbcab9572cb",
+      "bytes": 351440
+    },
+    {
+      "path": "rfq-gerber-8b383237/naehe-glut-r2b-B_Mask.gbs",
+      "sha256": "6f5fb2a2f422f7b653481a46b9d6618b36d540199b6f4ad95123864bf10b39d9",
+      "bytes": 14922
+    },
+    {
+      "path": "rfq-gerber-8b383237/naehe-glut-r2b-B_Paste.gbp",
+      "sha256": "b2e7199c6492a36de831e14aeb83e2c9fffe189efc61caf594c2377f15374fb6",
+      "bytes": 24264
+    },
+    {
+      "path": "rfq-gerber-8b383237/naehe-glut-r2b-B_Silkscreen.gbo",
+      "sha256": "82a9daabe76c278b475988dda1a78977779532cadff9e5232b1a8bbd799d1c29",
+      "bytes": 492
+    },
+    {
+      "path": "rfq-gerber-8b383237/naehe-glut-r2b-drill.rpt",
+      "sha256": "f0aff4866b710ccd5656e2c23da00d94ae2df213632d511433aaae9c75695697",
+      "bytes": 957
+    },
+    {
+      "path": "rfq-gerber-8b383237/naehe-glut-r2b-Edge_Cuts.gm1",
+      "sha256": "a2c944e3994661cbfc3e42dc726deb5bd1daa32bb69b54d310589413f1e1b23d",
+      "bytes": 820
+    },
+    {
+      "path": "rfq-gerber-8b383237/naehe-glut-r2b-F_Cu.gtl",
+      "sha256": "908487345969b4532a6f1da4119508cc39ed6776df4c7fe2c867831581f88418",
+      "bytes": 304897
+    },
+    {
+      "path": "rfq-gerber-8b383237/naehe-glut-r2b-F_Mask.gts",
+      "sha256": "b30a82fbb89feac47626e3b7bcb01225a64759ac67911b3ef2d9ca956bfd4ec2",
+      "bytes": 10832
+    },
+    {
+      "path": "rfq-gerber-8b383237/naehe-glut-r2b-F_Paste.gtp",
+      "sha256": "0a851a93e9a8850315950d77fb14651e80fd0ea8f66145dfce854e06ce5cc334",
+      "bytes": 10318
+    },
+    {
+      "path": "rfq-gerber-8b383237/naehe-glut-r2b-F_Silkscreen.gto",
+      "sha256": "47ca327bc111695b879aabb036455b3fe12b5a517f5214ff23fe40e5d4292f3c",
+      "bytes": 15679
+    },
+    {
+      "path": "rfq-gerber-8b383237/naehe-glut-r2b-In1_Cu.g1",
+      "sha256": "793611eeae7aa568b19cf5c905f34fcd569d520cc45857ff89c530f46b8b4e85",
+      "bytes": 210778
+    },
+    {
+      "path": "rfq-gerber-8b383237/naehe-glut-r2b-In2_Cu.g2",
+      "sha256": "f6770094f2850f22f82a090e6fcce91b8e84e0610e7adb2e58dcb7a709be0546",
+      "bytes": 44222
+    },
+    {
+      "path": "rfq-gerber-8b383237/naehe-glut-r2b-In3_Cu.g3",
+      "sha256": "838ce1cf382569f5ad07baa0ebb51c1a980a92ccbbaaeeff4addd67bfd31a9cf",
+      "bytes": 52091
+    },
+    {
+      "path": "rfq-gerber-8b383237/naehe-glut-r2b-In4_Cu.g4",
+      "sha256": "e271c5ef6cb1ead5806a07a5db937a6dc3a2e50b844fcaedf8fbef5e7ba1e018",
+      "bytes": 210778
+    },
+    {
+      "path": "rfq-gerber-8b383237/naehe-glut-r2b-job.gbrjob",
+      "sha256": "6fdaa4fff88925342bb7888a2b70e151ff1fe62576908fa3ef551dd796c847e6",
+      "bytes": 4766
+    },
+    {
+      "path": "rfq-gerber-8b383237/naehe-glut-r2b-NPTH.drl",
+      "sha256": "cb24cd0fb3029ee568285b07366c1836dacf0c3db88b6a543da7a44d56a85c1e",
+      "bytes": 368
+    },
+    {
+      "path": "rfq-gerber-8b383237/naehe-glut-r2b-PTH.drl",
+      "sha256": "dd79b0902d80d19c8cb48059edb4724aba279a200b079c582d9eb047fdb4f04b",
+      "bytes": 3873
+    }
+  ]
+}

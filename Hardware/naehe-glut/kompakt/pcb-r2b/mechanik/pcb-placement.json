@@ -1,5 +1,5 @@
 {
-  "pcb_sha256": "7af39dbe807ed82f905622cce0c6b93f2cd650c61eafb224970e9f49eec15868",
+  "pcb_sha256": "8b383237c2a90d4270685943619f579258b213815a4f9e6838f9993665eba590",
   "read_only": true,
   "kicad": "10.0.8",
   "footprints": [
@@ -4666,5 +4666,5 @@
       ]
     }
   ],
-  "metadata_rebind_note": "Only board setup capping/filling changed no->yes; reverting those exact bytes recovers previous PCB SHA256. All placement/geometry bytes and prior collision results unchanged; see metadata-rebind-report.json."
+  "metadata_rebind_note": "Promoted 3313A stackup/ENIG metadata and one internal USB_DP_HOST segment replaced by three. Exact complete footprint/pad/via/outline/general blocks unchanged; prior collision results apply unchanged. See stackup-rebind-report.json."
 }

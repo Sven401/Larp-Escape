@@ -1,0 +1,27 @@
+R2b — aktueller nativer Prüfexport vom 02.11.2026
+NICHT zur Fertigung freigegeben, keine Dateien versandt.
+Quelle: PCB8b383237c2a90d4270685943619f579258b213815a4f9e6838f9993665eba590.
+17 Ausgaben unter rfq-gerber-8b383237/; exakte Bindung in
+GERBER-CURRENT-MANIFEST.json. KiCad10.0.8, gleiche13Lagen und Aufrufparameter
+wie in GERBER-EXPORT.txt, jetzt mit eigenem neuen Ausgabeverzeichnis.
+Beide CLI-Läufe Exit0; Registrywarnung wie beim älteren Export dokumentiert.
+PCB-Prüfsumme vor/nach Export gleich. Keine Zonen-Neufüllung durch Export.
+
+Der aktuelle Gerberjob meldet nun ENIG, sechs Lagen, Nennmaß1,0mm und
+R2b engineering draft. Das frühere Finish=None ist hier behoben.
+Der vorgeschlagene3313A-Materialaufbau enthält ausdrücklich als ungeprüft
+markierte KiCad-Df-Standardwerte; Fertigerbestätigung und SI bleiben offen.
+Die tabellierte0,958-mm-Schichtsumme wurde nicht künstlich auf1mm aufgefüllt.
+Ein korrekter ENIG-Eintrag ersetzt keine Freigabe der übrigen Fertigungsdaten.
+Der aktuelle Job enthält keine numerischen Thickness-Felder mehr in seiner
+MaterialStackup-Liste. Die Zahlen stehen im nativen PCB und Aufbauentwurf;
+der Job allein ist deshalb kein vollständiger numerischer Stackupbeleg.
+Gerberjobgröße30,05×37,85mm enthält die Konturstrichbreite; nominale Kontur
+bleibt30×37,8mm. Kein Skalieren auf diese Boundingboxangabe.
+
+Historie: rfq-gerber-draft/ und GERBER-EXPORT-MANIFEST.json gehören zum
+vorherigen7af39d-Stand. Dessen GERBER-REVIEW.txt ist historischer Beleg;
+er gilt nicht als neuer Review des vorliegenden geänderten In3-Kupfers.
+Aktuelle unabhängige Gegenprüfung: GERBER-CURRENT-REVIEW.txt.
+Keiner dieser Exporte wurde einem Hersteller übermittelt oder als
+Bestellpaket bezeichnet. Vier USB-NPTH-Abstände und übrige Lieferfreigaben offen.

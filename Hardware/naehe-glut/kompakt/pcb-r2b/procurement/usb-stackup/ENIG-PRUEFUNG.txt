@@ -1,0 +1,28 @@
+ENIG-METADATENPRÜFUNG — SEPARATER, NICHT ÜBERNOMMENER VERSUCH
+02.11.2026, KiCad10.0.8. Haupt-PCB bleibt7af39dbe... .
+
+Native C++-Semantik: BOARD_STACKUP::m_FinishType ist dieFinishangabe.
+Parser parseBoardStackup liest (copper_finish "ENIG") in diesesFeld.
+Quelle https://raw.githubusercontent.com/KiCad/kicad-source-mirror/10.0/pcbnew/pcb_io/kicad_sexpr/pcb_io_kicad_sexpr_parser.cpp (T_copper_finish).
+Die verfügbarePython-SWIG-Bindung gibt GetStackupDescriptor nur alsSwigPyObject
+zurück; dasFeld ist nichtnormal viaPython zugänglich. Keine Pointer-Manipulation.
+
+Test: inKopie ohnevorhandenenStackup nurFinishblock eingefügt, dannnativgeladen/
+gespeichert. FormatBoardStackup brichtbei leererLayerliste ab; derFinishblock
+verschwindet. Primärquelle:
+https://raw.githubusercontent.com/KiCad/kicad-source-mirror/10.0/pcbnew/board_stackup_manager/board_stackup.cpp (FormatBoardStackup).
+Der anschließendeTestexport schreibt erneut FinishNone und generischeDefault-
+Dielektrika0,154mm. Das ist KEIN belegter3313A-Aufbau und KEINE brauchbare
+ENIG-Korrektur. Kandidatdatei host-pair-enig.kicad_pcb ist insofern VERWORFEN;
+ENIG-METADATA.json dokumentiert den tatsächlichenDiff (nurRevision bleibt).
+Test-Gerber nicht alsFertigungsdaten verwenden oder paketieren.
+
+Revision wurde mit GetTitleBlock()/SetRevision('R2b engineering draft') und
+SetTitleBlock erfolgreich gesetzt; serialisiert als title_block/rev. Auch dies
+ist nurKandidat, keine Hauptdateiänderung.
+
+Sichere Folgeentscheidung: vollständigen tatsächlichverbindlichenStackup mit
+ENIG konsistentmodellieren, wenn dieserfachlichbestätigt ist; oder expliziten
+separatenFertigungshinweis/prüfbarenJob-Metadatenexport beibehalten. Keine
+Defaultdicken eintragen, nur umFinishpersistenz zuerzwingen. DerVertrag ENIG
+bleibtunverändertgültig; seinMetadatumnachweis ist nochnicht nativgeschlossen.

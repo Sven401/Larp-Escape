@@ -1,7 +1,7 @@
 {
   "status": "geometric screen only; total copper length includes connector merges/ESD branches, not propagation delay or impedance",
   "pcb": "naehe-glut-r2b.kicad_pcb",
-  "sha256": "7af39dbe807ed82f905622cce0c6b93f2cd650c61eafb224970e9f49eec15868",
+  "sha256": "8b383237c2a90d4270685943619f579258b213815a4f9e6838f9993665eba590",
   "nets": {
     "/USB_DM_MCU": {
       "track_length_mm": 10.5279,
@@ -22,13 +22,13 @@
       "segments": 19
     },
     "/USB_DP_HOST": {
-      "track_length_mm": 9.8317,
+      "track_length_mm": 10.0291,
       "vias": 3,
       "layers": {
         "F.Cu": 6.0911,
-        "In3.Cu": 3.7406
+        "In3.Cu": 3.9379
       },
-      "segments": 5
+      "segments": 7
     },
     "/USB_DM_HOST": {
       "track_length_mm": 10.436,

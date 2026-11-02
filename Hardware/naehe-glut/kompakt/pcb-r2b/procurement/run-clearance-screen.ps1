@@ -1,7 +1,7 @@
 param([string]$KicadBin='C:\Users\seide\.codex\worktrees\naehe-glut-lieferziel\Larp Escape\.tmp\cad-tools\kicad\bin')
 if (Test-Path -LiteralPath (Join-Path $PSScriptRoot 'CLEARANCE-SCREEN.json')) { throw 'This folder contains frozen evidence. Copy the entire R2b directory (including parent PCB/PRO inputs) to a separate work area and remove only generated DRC/report files there before rerunning.' }
 $ErrorActionPreference='Stop'
-$screenDir=Join-Path $PSScriptRoot 'clearance-screen'
+$screenDir=Join-Path $PSScriptRoot 'clearance-screen-8b383237'
 $sourceDir=Split-Path $PSScriptRoot -Parent
 New-Item -ItemType Directory -Force -Path (Join-Path $screenDir 'kicad-config') | Out-Null
 $env:KICAD_CONFIG_HOME=Join-Path $screenDir 'kicad-config'

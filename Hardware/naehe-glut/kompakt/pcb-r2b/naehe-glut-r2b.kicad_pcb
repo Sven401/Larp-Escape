@@ -7,6 +7,11 @@
 		(legacy_teardrops no)
 	)
 	(paper "A4")
+	(title_block
+		(rev "R2b engineering draft")
+		(comment 1 "Proposed JLC061011-3313A; supplier approval pending")
+		(comment 2 "Df0.02 SOFTWAREDEFAULT UNVERIFIED; mask thickness unspecified")
+	)
 	(layers
 		(0 "F.Cu" signal)
 		(4 "In1.Cu" signal)
@@ -38,6 +43,69 @@
 		(45 "User.4" user)
 	)
 	(setup
+		(stackup
+			(layer "F.Cu"
+				(type "copper")
+				(thickness 0.035)
+			)
+			(layer "dielectric 1"
+				(type "prepreg")
+				(thickness 0.092 locked)
+				(material "NP-155F 1x 3313 RC57% 4.2mil [Df0.02 SOFTWAREDEFAULT UNVERIFIED]")
+				(epsilon_r 4.1)
+				(loss_tangent 0.02)
+			)
+			(layer "In1.Cu"
+				(type "copper")
+				(thickness 0.03)
+			)
+			(layer "dielectric 2"
+				(type "core")
+				(thickness 0.2 locked)
+				(material "NP-155F 0.2mm 1/1OZ without copper [Df0.02 SOFTWAREDEFAULT UNVERIFIED]")
+				(epsilon_r 4.36)
+				(loss_tangent 0.02)
+			)
+			(layer "In2.Cu"
+				(type "copper")
+				(thickness 0.03)
+			)
+			(layer "dielectric 3"
+				(type "prepreg")
+				(thickness 0.184 locked)
+				(material "NP-155F 2x 3313 RC57% 4.2mil [Df0.02 SOFTWAREDEFAULT UNVERIFIED]")
+				(epsilon_r 4.1)
+				(loss_tangent 0.02)
+			)
+			(layer "In3.Cu"
+				(type "copper")
+				(thickness 0.03)
+			)
+			(layer "dielectric 4"
+				(type "core")
+				(thickness 0.2 locked)
+				(material "NP-155F 0.2mm 1/1OZ without copper [Df0.02 SOFTWAREDEFAULT UNVERIFIED]")
+				(epsilon_r 4.36)
+				(loss_tangent 0.02)
+			)
+			(layer "In4.Cu"
+				(type "copper")
+				(thickness 0.03)
+			)
+			(layer "dielectric 5"
+				(type "prepreg")
+				(thickness 0.092 locked)
+				(material "NP-155F 1x 3313 RC57% 4.2mil [Df0.02 SOFTWAREDEFAULT UNVERIFIED]")
+				(epsilon_r 4.1)
+				(loss_tangent 0.02)
+			)
+			(layer "B.Cu"
+				(type "copper")
+				(thickness 0.035)
+			)
+			(copper_finish "ENIG")
+			(dielectric_constraints no)
+		)
 		(pad_to_mask_clearance 0)
 		(allow_soldermask_bridges_in_footprints no)
 		(tenting
@@ -40789,13 +40857,31 @@
 		(uuid "a1a119a9-d130-4514-bbea-484623264403")
 	)
 	(segment
+		(start 8.238365 34.092769)
+		(end 9.083564 33.111736)
+		(width 0.15)
+		(locked yes)
+		(layer "In3.Cu")
+		(net "/USB_DP_HOST")
+		(uuid "0bdc3114-1822-4f1e-9a91-1c2a94beac34")
+	)
+	(segment
 		(start 8.25 34.8)
+		(end 8.238365 34.092769)
+		(width 0.15)
+		(locked yes)
+		(layer "In3.Cu")
+		(net "/USB_DP_HOST")
+		(uuid "6da8cc31-6ae8-4996-a78f-ad9b3088c0d3")
+	)
+	(segment
+		(start 9.083564 33.111736)
 		(end 9.85 32.575)
 		(width 0.15)
 		(locked yes)
 		(layer "In3.Cu")
 		(net "/USB_DP_HOST")
-		(uuid "13e5dec7-ab48-417d-918c-c6765a7bcb13")
+		(uuid "77b42484-0176-45ce-bdf2-d2b6fbe06f91")
 	)
 	(segment
 		(start 7.25 34.8)

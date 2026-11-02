@@ -1,155 +1,155 @@
-R2b â€” USB-QUALIFIKATION: DATENBLATTBELEG, HERSTELLERFRAGE, MESSUNG
-Stand 02.11.2026; unabhÃ¤ngige FortsetzungsprÃ¼fung, keine Freigabe.
+R2b — USB-QUALIFIKATION: DATENBLATTBELEG, HERSTELLERFRAGE, MESSUNG
+Stand 02.11.2026; unabhängige Fortsetzungsprüfung, keine Freigabe.
 Kontextcommit 909e25653edafb2cd5e60ed6349356c0f905f916.
 PCB ab68d3853f49b9e2c8e70272ec0bde0e7acbaacf18eda1008bd91353b010efac
 Schaltung b8adb47a048849bc23e5384c4230514bd4ba75c0055c0d28544233c209a99fca
-Gebundene Reviews bleiben unverÃ¤ndert. Keine SchaltungsÃ¤nderung oder Anfrage
-an Dritte ausgefÃ¼hrt. Begriffe â€žgeschlossenâ€œ unten gelten nur fÃ¼r die ausdrÃ¼cklich
-bezeichnete digitale Teilfrage, nicht fÃ¼r die gesamte Versorgungsschutzkette.
+Gebundene Reviews bleiben unverändert. Keine Schaltungsänderung oder Anfrage
+an Dritte ausgeführt. Begriffe „geschlossen“ unten gelten nur für die ausdrücklich
+bezeichnete digitale Teilfrage, nicht für die gesamte Versorgungsschutzkette.
 
 ERGEBNIS
 Der stabile versorgte Zustand ist wesentlich besser belegt als die Rampen.
-Die Frage â€ždarf U9 SENSE bei fehlendem VDD angeregt werden?â€œ ist anhand der
-Spannungsangabe beantwortbar. Die andere Frage â€žwie viel Strom flieÃŸt dabei
-in VDD und anschlieÃŸend VBUS?â€œ ist damit noch nicht beantwortet.
+Die Frage „darf U9 SENSE bei fehlendem VDD angeregt werden?“ ist anhand der
+Spannungsangabe beantwortbar. Die andere Frage „wie viel Strom fließt dabei
+in VDD und anschließend VBUS?“ ist damit noch nicht beantwortet.
 Ein Nullvolt-Ioff-Wert belegt keine Isolation bei einer kleinen Phantomspannung.
-Messungen kÃ¶nnen zwei konkrete GerÃ¤te qualifizieren; sie ersetzen keinen
-fehlenden garantierten Halbleitergrenzwert Ã¼ber alle Exemplar-/TemperaturfÃ¤lle.
+Messungen können zwei konkrete Geräte qualifizieren; sie ersetzen keinen
+fehlenden garantierten Halbleitergrenzwert über alle Exemplar-/Temperaturfälle.
 
-1. DIGITAL BELEGBAR â€” STAND DER PRIMÃ„RQUELLEN
+1. DIGITAL BELEGBAR — STAND DER PRIMÄRQUELLEN
 
 A) TPS389001DSER, SLVSD65A Rev A, S.5 und Abschnitte8.3.4/8.4:
-SENSE darf 0..5,5 V unabhÃ¤ngig von der verwendeten Versorgungsspannung sehen;
+SENSE darf 0..5,5 V unabhängig von der verwendeten Versorgungsspannung sehen;
 7 V ist nur absolute Grenze. Der spezifizierte SENSE-Strom100 nA gilt unter
 der Tabellenvoraussetzung VDD1,5..5,5 V. Unterhalb POR ist RESET undefiniert;
-zwischen POR und Mindestversorgung wird RESET gehalten. Der POR-PrÃ¼fpunkt
-0,8 V gilt mit VOL0,2 V und15 ÂµA. Die Tabellenwerte18 Âµs fÃ¼r fallendes SENSE
-bei3,3 V und25 Âµs fÃ¼r steigendes SENSE sind Nominalwerte, keine Maximalzeiten.
-Glitchfilterung hÃ¤ngt vom Ãœbersteuerungsgrad ab.
+zwischen POR und Mindestversorgung wird RESET gehalten. Der POR-Prüfpunkt
+0,8 V gilt mit VOL0,2 V und15 µA. Die Tabellenwerte18 µs für fallendes SENSE
+bei3,3 V und25 µs für steigendes SENSE sind Nominalwerte, keine Maximalzeiten.
+Glitchfilterung hängt vom Übersteuerungsgrad ab.
 Quelle: https://www.ti.com/lit/ds/symlink/tps3890.pdf
 
-Folgerung fÃ¼r den unverÃ¤nderten Entwurf: Der169k/100k-Teiler legt bei3,47 V
+Folgerung für den unveränderten Entwurf: Der169k/100k-Teiler legt bei3,47 V
 Zielspannung nominal1,290 V an SENSE, deutlich innerhalb der Spannungsangabe.
-Damit ist eine fehlende VDD-bezogene Ãœberspannungsfreigabe fÃ¼r diesen Pin kein
+Damit ist eine fehlende VDD-bezogene Überspannungsfreigabe für diesen Pin kein
 offener Punkt mehr. Eine100-nA-Garantie beiVDD=0 ist dagegen nicht ableitbar.
-Die bestehende Eckrechnung fÃ¼r Freigabeschwellen bleibt verwendbar: U9 steigt
-bei45K Abstand zu25Â°C spÃ¤testens bei3,168800 V, gegenÃ¼ber der zuvor geprÃ¼ften
-Zielregler-Untergrenze3,216175 V. U10 steigt spÃ¤testens bei4,318071 V, also unter
-dem ausdrÃ¼cklich gewÃ¤hlten4,4-V-Serviceeingang. Diese statischen Fenster
-benÃ¶tigen keine neue Laborrechnung; reale StabilitÃ¤t und Rampen bleiben separat.
+Die bestehende Eckrechnung für Freigabeschwellen bleibt verwendbar: U9 steigt
+bei45K Abstand zu25°C spätestens bei3,168800 V, gegenüber der zuvor geprüften
+Zielregler-Untergrenze3,216175 V. U10 steigt spätestens bei4,318071 V, also unter
+dem ausdrücklich gewählten4,4-V-Serviceeingang. Diese statischen Fenster
+benötigen keine neue Laborrechnung; reale Stabilität und Rampen bleiben separat.
 
 B) TS3USB221ARSER, SCDS277C Rev C, Tabellen5.3/5.5:
-Arbeitsbereich VCC2,3..3,6 V; OE-High mindestens0,46*VCC, Low hÃ¶chstens0,25*VCC.
-Der ausgeschaltete Datenpfad hat IOZÂ±1 ÂµA bei den genannten2,7-/3,6-V-PrÃ¼fpunkten.
-Ioff beiVCC=0 istÂ±2 ÂµA fÃ¼r Datenpegel bis3,6 V beziehungsweise5,25 V; bei2,7 V
-DatenpegelÂ±1 ÂµA. FÃ¼r0<VCC<2,3 V steht keine entsprechende Isolationsgarantie.
+Arbeitsbereich VCC2,3..3,6 V; OE-High mindestens0,46*VCC, Low höchstens0,25*VCC.
+Der ausgeschaltete Datenpfad hat IOZ±1 µA bei den genannten2,7-/3,6-V-Prüfpunkten.
+Ioff beiVCC=0 ist±2 µA für Datenpegel bis3,6 V beziehungsweise5,25 V; bei2,7 V
+Datenpegel±1 µA. Für0<VCC<2,3 V steht keine entsprechende Isolationsgarantie.
 Quelle: https://www.ti.com/lit/ds/symlink/ts3usb221a.pdf
 
-Folgerung: Ziel-aus bei stabil anliegendem USB unterscheidet sich grundsÃ¤tzlich
+Folgerung: Ziel-aus bei stabil anliegendem USB unterscheidet sich grundsätzlich
 von USB-aus: U8 bleibt aus USB versorgt und U9 kann den abgeschalteten Zielzweig
 sperren. Der statische Schaltungsweg ist vorhanden, keine Zielversorgung des
 Schalters erforderlich. Auch ein Leckstromgrenzwert ist nicht gleich0 A und
 beweist allein keine maximal erreichbare Spannung eines unbelasteten Zielrails.
-Der Grenzwert gilt pro spezifiziertem Anschluss/PrÃ¼fzustand; nicht ungeprÃ¼ft als
-Gesamtstrom des ganzen USB-Steckers oder sÃ¤mtlicher sechs Datenpins verwenden.
+Der Grenzwert gilt pro spezifiziertem Anschluss/Prüfzustand; nicht ungeprüft als
+Gesamtstrom des ganzen USB-Steckers oder sämtlicher sechs Datenpins verwenden.
 
 C) SN74LVC1G14DCKR, SCES218AA Rev AA, Tabellen5.3/5.5:
-Betrieb ab1,65 V; bei100 ÂµA Last sind VOLâ‰¤0,1 V und VOHâ‰¥VCCâˆ’0,1 V angegeben.
-Die Schmitt-Eingangsschwellen und LeckstrÃ¶me erlauben eine DC-Pegelrechnung.
+Betrieb ab1,65 V; bei100 µA Last sind VOL≤0,1 V und VOH≥VCC−0,1 V angegeben.
+Die Schmitt-Eingangsschwellen und Leckströme erlauben eine DC-Pegelrechnung.
 Unter1,65 V ersetzt die Schmitt-Funktion keine garantierte Logikfunktion.
 Quelle: https://www.ti.com/lit/ds/symlink/sn74lvc1g14.pdf
 
-Folgerung: Der frÃ¼here NPN-SÃ¤ttigungsnachweis ist durch den dokumentierten
+Folgerung: Der frühere NPN-Sättigungsnachweis ist durch den dokumentierten
 Logikbaustein ersetzt. Bei3,366 V belastet der47k-OE-Pullup den Low-Ausgang nur
-mit rund72 ÂµA zuzÃ¼glich Eingangsleckstrom. Der10k-R46 verbessert das Entladen,
+mit rund72 µA zuzüglich Eingangsleckstrom. Der10k-R46 verbessert das Entladen,
 erzeugt aber weder eine definierte U8-UVLO noch eine Zwischenrail-Isolation.
-Auch ein gÃ¼ltiges OE-Signal zwischen1,65 und2,3 V lÃ¶st die U8-SpezifikationslÃ¼cke
-nicht. Unter1,65 V sind zusÃ¤tzlich die U12-AusgangszustÃ¤nde nicht garantiert.
+Auch ein gültiges OE-Signal zwischen1,65 und2,3 V löst die U8-Spezifikationslücke
+nicht. Unter1,65 V sind zusätzlich die U12-Ausgangszustände nicht garantiert.
 
 D) TPS70933DBVR, SBVS186H Rev H, Tabelle6.5 und Abschnitte7.3.2/7.3.4/8.1.1:
-EN darf offen bleiben. RÃ¼ckstromschutz wirkt bei hÃ¶herem OUT als IN; unter
-OUT1,8 V kann RÃ¼ckstrom auftreten. 10 nA am IN-Pin sind ausdrÃ¼cklich typisch
-beiOUT3 V undIN=EN=0, kein Vollbereichs-Maximum. FÃ¼r3,3-V-AusgÃ¤nge nennt der
-Text mindestens1,5 ÂµF effektives COUT, hÃ¶chstens47 ÂµF und ESR bis0,2 Ohm.
-Die600-Âµs-Maximalstartzeit hat konkrete EN-/47-Ohm-/KapazitÃ¤tsprÃ¼fbedingungen.
+EN darf offen bleiben. Rückstromschutz wirkt bei höherem OUT als IN; unter
+OUT1,8 V kann Rückstrom auftreten. 10 nA am IN-Pin sind ausdrücklich typisch
+beiOUT3 V undIN=EN=0, kein Vollbereichs-Maximum. Für3,3-V-Ausgänge nennt der
+Text mindestens1,5 µF effektives COUT, höchstens47 µF und ESR bis0,2 Ohm.
+Die600-µs-Maximalstartzeit hat konkrete EN-/47-Ohm-/Kapazitätsprüfbedingungen.
 Quelle: https://www.ti.com/lit/ds/symlink/tps709.pdf
 
-Folgerung: EN-NC ist beabsichtigt und muss nicht â€žrepariertâ€œ werden. Die zwei
-4,7-ÂµF-Ausgangskondensatoren sind eine begrÃ¼ndete Reserve; ihre typische
+Folgerung: EN-NC ist beabsichtigt und muss nicht „repariert“ werden. Die zwei
+4,7-µF-Ausgangskondensatoren sind eine begründete Reserve; ihre typische
 DC-/AC-Kurvenmultiplikation ist keine garantierte gemeinsame Untergrenze.
-600 Âµs dÃ¼rfen nicht als universelle Hotplug-Rampenzeit des aktuellen
-100-nF-Eingangs und9,8-ÂµF-Nennausgangs Ã¼bernommen werden.
+600 µs dürfen nicht als universelle Hotplug-Rampenzeit des aktuellen
+100-nF-Eingangs und9,8-µF-Nennausgangs übernommen werden.
 
-2. KONKRETE HERSTELLERFRAGEN â€” DURCH BESTÃ„TIGTE GRENZEN DIGITAL SCHLIESSBAR
+2. KONKRETE HERSTELLERFRAGEN — DURCH BESTÄTIGTE GRENZEN DIGITAL SCHLIESSBAR
 
-H1 an TI, TS3USB221A: Welche maximalen StrÃ¶me zwischen DatenanschlÃ¼ssen sowie
-von diesen nachVCC gelten fÃ¼r stationÃ¤res und rampendes VCC0..2,3 V, Daten0..3,6 V,
-OE Ã¼ber47k anVCC beziehungsweise von U12 getrieben, S=GND, âˆ’20..60Â°C?
+H1 an TI, TS3USB221A: Welche maximalen Ströme zwischen Datenanschlüssen sowie
+von diesen nachVCC gelten für stationäres und rampendes VCC0..2,3 V, Daten0..3,6 V,
+OE über47k anVCC beziehungsweise von U12 getrieben, S=GND, −20..60°C?
 Besonders0,05/0,2/0,8/1,5/1,8/2,29 V einbeziehen. Gibt es eine garantierte
-powered-off-protection-Schwelle mit Hysterese? BenÃ¶tigt wird eine zugesicherte
-Spezifikation, nicht bloÃŸ typische Simulation oder die Wiederholung von Ioff@0V.
+powered-off-protection-Schwelle mit Hysterese? Benötigt wird eine zugesicherte
+Spezifikation, nicht bloß typische Simulation oder die Wiederholung von Ioff@0V.
 
-H2 an TI, TPS389001: Maximaler SENSEâ†’VDD-Strom und erlaubte Versorgungslast bei
-VDD0..1,5 V, SENSE Ã¼ber169k/100k aus Ziel3,0..3,47 V, MR=VDD, RESET47k anVDD.
-Ist ein oberer Clamp nachVDD ausgeschlossen? Der verÃ¶ffentlichte unabhÃ¤ngige
-SENSE-Spannungsbereich beantwortet nicht die parasitÃ¤re Stromaufteilung.
+H2 an TI, TPS389001: Maximaler SENSE→VDD-Strom und erlaubte Versorgungslast bei
+VDD0..1,5 V, SENSE über169k/100k aus Ziel3,0..3,47 V, MR=VDD, RESET47k anVDD.
+Ist ein oberer Clamp nachVDD ausgeschlossen? Der veröffentlichte unabhängige
+SENSE-Spannungsbereich beantwortet nicht die parasitäre Stromaufteilung.
 
-H3 an TI, TPS70933: Garantierter OUTâ†’IN-Strom beiOUT0..3,366 V undIN0 V oder
+H3 an TI, TPS70933: Garantierter OUT→IN-Strom beiOUT0..3,366 V undIN0 V oder
 hochohmig, EN offen, insbesondere unter1,8 V. Besteht ein Strompfad, der den
-unversorgten Host-VBUS anhebt? BenÃ¶tigt wird ein maximaler Wert oder eine
-bestÃ¤tigte Kennlinie mit GÃ¼ltigkeitsbereich;10 nA typisch genÃ¼gt hierfÃ¼r nicht.
+unversorgten Host-VBUS anhebt? Benötigt wird ein maximaler Wert oder eine
+bestätigte Kennlinie mit Gültigkeitsbereich;10 nA typisch genügt hierfür nicht.
 
-H4 an TI, TPS389001: Maximale fallende SENSEâ†’RESET-Zeit bei vorhandenem10-nF-CT,
-VDD3,2..3,4 V, Temperaturâˆ’20..60Â°C und dem relevanten Ãœbersteuerungsbereich.
-ErgÃ¤nzend minimale Resetfreigabezeit Ã¼ber CT-Toleranz/Alterung. Ohne Grenze kann
-keine maximale zulÃ¤ssige Ziel-Abfallgeschwindigkeit ausgerechnet werden.
-Ist tDIS,max bekannt, lautet die notwendige Bedingung fÃ¼r eine definierte
-Ziel-Untergrenze Vmin: |dVziel/dt|*tDIS,max < Vtrip,minâˆ’Vmin. HinzuzÃ¤hlen sind
-U12-VerzÃ¶gerung, OE-Netzladung und U8-Abschaltzeit; eine plÃ¶tzlich kurzgeschlossene
-Zielversorgung erfÃ¼llt keine bloÃŸe Annahme einer langsamen Rampe.
+H4 an TI, TPS389001: Maximale fallende SENSE→RESET-Zeit bei vorhandenem10-nF-CT,
+VDD3,2..3,4 V, Temperatur−20..60°C und dem relevanten Übersteuerungsbereich.
+Ergänzend minimale Resetfreigabezeit über CT-Toleranz/Alterung. Ohne Grenze kann
+keine maximale zulässige Ziel-Abfallgeschwindigkeit ausgerechnet werden.
+Ist tDIS,max bekannt, lautet die notwendige Bedingung für eine definierte
+Ziel-Untergrenze Vmin: |dVziel/dt|*tDIS,max < Vtrip,min−Vmin. Hinzuzählen sind
+U12-Verzögerung, OE-Netzladung und U8-Abschaltzeit; eine plötzlich kurzgeschlossene
+Zielversorgung erfüllt keine bloße Annahme einer langsamen Rampe.
 
-H5 an Murata/BestÃ¼cker: FÃ¼rGRM21BR71C475KE51L garantierte effektive Untergrenze
+H5 an Murata/Bestücker: FürGRM21BR71C475KE51L garantierte effektive Untergrenze
 bei3,3 V DC, kleiner AC-Anregung, Zieltemperatur und definierter Alterungsdauer;
-ESR und konkrete Lieferung/Substitution mit abdecken. Mit bestÃ¤tigten Grenzen
-lÃ¤sst sich COUT/ESR digital abschlieÃŸen. Die vorhandenen typischen Kurven sind
-Screening, keine unabhÃ¤ngigen garantierten Faktoren.
+ESR und konkrete Lieferung/Substitution mit abdecken. Mit bestätigten Grenzen
+lässt sich COUT/ESR digital abschließen. Die vorhandenen typischen Kurven sind
+Screening, keine unabhängigen garantierten Faktoren.
 
-3. ECHTE SYSTEMMESSUNGEN â€” MIT KONKRETEM ZWECK
+3. ECHTE SYSTEMMESSUNGEN — MIT KONKRETEM ZWECK
 
 M1 stabile Gegenversorgungen: USB an/Ziel aus sowie Ziel an/USB getrennt und
 mit unversorgtem Host. Spannung und Strom an USB_IF_3V3, Ziel3V3 undVBUS messen;
-D+/Dâˆ’ jeweils Low/High/USB-AktivitÃ¤t. Hochohmige Spannung UND Strom unter
-bekannter Last protokollieren, damit kleine LeckstrÃ¶me nicht mit wirksamer
-Fremdspeisung verwechselt werden. JTAG-Probe zunÃ¤chst abziehen, anschlieÃŸend
-als eigenen Gegenfall hinzufÃ¼gen. Kein unbekannter Host als Stromsenke verwenden.
+D+/D− jeweils Low/High/USB-Aktivität. Hochohmige Spannung UND Strom unter
+bekannter Last protokollieren, damit kleine Leckströme nicht mit wirksamer
+Fremdspeisung verwechselt werden. JTAG-Probe zunächst abziehen, anschließend
+als eigenen Gegenfall hinzufügen. Kein unbekannter Host als Stromsenke verwenden.
 
-M2 Rampen: Beide Versorgungen einzeln langsam, schnell und unterbrochen fÃ¼hren;
-USB_IF, Ziel3V3, USB_READY undOE zeitgleich erfassen. ZunÃ¤chst strombegrenztes
+M2 Rampen: Beide Versorgungen einzeln langsam, schnell und unterbrochen führen;
+USB_IF, Ziel3V3, USB_READY undOE zeitgleich erfassen. Zunächst strombegrenztes
 Netzteil und Messlast, dann echter Host in beiden Steckorientierungen. Gesucht
-sind unerwÃ¼nschte Freigabeimpulse, RÃ¼ckspeisung und HÃ¤ngenbleiben. Ein DC-Erfolg
-bei0 V sagt nichts Ã¼ber eine Zwischenrail-Verweilzeit aus.
+sind unerwünschte Freigabeimpulse, Rückspeisung und Hängenbleiben. Ein DC-Erfolg
+bei0 V sagt nichts über eine Zwischenrail-Verweilzeit aus.
 
-M3 scharfer Zielabfall/kurze EinbrÃ¼che: AuslÃ¶sung unter und naheU9-Schwelle,
+M3 scharfer Zielabfall/kurze Einbrüche: Auslösung unter und naheU9-Schwelle,
 mit dokumentierter Steilheit/Dauer. Restzeit bis realer Datentrennung messen;
-CT-VerzÃ¶gerung ist primÃ¤r FreigabeverzÃ¶gerung und darf nicht als garantierte
-Abschaltzeit behandelt werden. Kurzzeitige GlitchunterdrÃ¼ckung kann absichtlich
+CT-Verzögerung ist primär Freigabeverzögerung und darf nicht als garantierte
+Abschaltzeit behandelt werden. Kurzzeitige Glitchunterdrückung kann absichtlich
 RESET verhindern und muss gegen die erlaubte Zielunterspannung bewertet werden.
 
-M4 reale Hotplug- und SignalintegritÃ¤t: USB_IF-Anlauf/Ãœberschwingen, Eingangscharge,
+M4 reale Hotplug- und Signalintegrität: USB_IF-Anlauf/Überschwingen, Eingangscharge,
 Host-Portverhalten, Enumeration und ROM-Rettung in beiden Orientierungen.
 Dabei genaue Host-/Kabelkombination, Temperatur und Firmware/eFuse-Stand erfassen.
-Layout, Kabel, tatsÃ¤chliche KapazitÃ¤t und Hostverhalten lassen sich nicht durch
+Layout, Kabel, tatsächliche Kapazität und Hostverhalten lassen sich nicht durch
 Bauteiltabellen allein freigeben. IEC-System-ESD ist kein Halbleiter-HBM-Nachweis.
 
-Vor einer Abnahme sind zulÃ¤ssige Gesamt-RÃ¼ckspeisung, maximaler Phantomrail und
-zulÃ¤ssige Zielunterspannungsdauer ausdrÃ¼cklich festzulegen. Solche Produktgrenzen
-sind nicht aus den DatenblÃ¤ttern frei erfindbar. Bis dahin Messwerte dokumentieren,
-aber kein bloÃŸes â€žfunktioniert am Laptopâ€œ als bestandene Schutzqualifikation werten.
+Vor einer Abnahme sind zulässige Gesamt-Rückspeisung, maximaler Phantomrail und
+zulässige Zielunterspannungsdauer ausdrücklich festzulegen. Solche Produktgrenzen
+sind nicht aus den Datenblättern frei erfindbar. Bis dahin Messwerte dokumentieren,
+aber kein bloßes „funktioniert am Laptop“ als bestandene Schutzqualifikation werten.
 
-NÃ„CHSTER KONKRETER SCHRITT
+NÄCHSTER KONKRETER SCHRITT
 H1/H2/H3 haben Vorrang vor weiteren typischen Simulationen; sie bestimmen, ob die
-unverÃ¤nderte Architektur eine zugesicherte Schutzfunktion liefern kann. H4/H5
-kÃ¶nnen parallel erfolgen. M1/M2 zuerst an strombegrenzter Musterplatine, danach
+unveränderte Architektur eine zugesicherte Schutzfunktion liefern kann. H4/H5
+können parallel erfolgen. M1/M2 zuerst an strombegrenzter Musterplatine, danach
 M3/M4. Ein negativer Herstellerbefund oder reproduzierbarer Fehler erfordert eine
 neue Schaltungsentscheidung; dieser Bericht nimmt sie nicht vorweg.
 
@@ -158,3 +158,11 @@ FORTSCHREIBUNG DER METADATENREVISION
 Unabhängig gegenüber dem oben genannten elektrischen Prüfstand bestätigt:
 ausschließlich capping/filling no→yes, keine geometrische oder elektrische
 Änderung. Die vorstehenden Schlussfolgerungen gelten unverändert.
+
+FORTSCHREIBUNG DES ENGINEERINGSTANDS 02.11.2026
+Aktuelle PCB 8b383237c2a90d4270685943619f579258b213815a4f9e6838f9993665eba590.
+Schaltung/Netzliste/BOM unveraendert; ein DP_HOST-In3-Segment durch drei
+ersetzt und vorgeschlagener3313A-Stackup samt ENIG/Entwurfsmetadaten ergaenzt.
+Obige Halbleiter-/Versorgungsgrenzen bleiben unveraendert. USB-SI bleibt offen;
+siehe USB-STACKUP-REVIEW.txt und STACKUP-NATIV-REVIEW.txt. Alte PCB-Hashes
+oben sind historische Pruefstaende. UTF8-Zeichendarstellung reversibel repariert.

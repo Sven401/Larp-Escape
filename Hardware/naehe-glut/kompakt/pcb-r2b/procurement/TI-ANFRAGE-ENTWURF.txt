@@ -1,0 +1,119 @@
+TI SUPPORT REQUEST DRAFTS - NOT SENT
+Prepared 2026-11-02 from QUALIFIKATION-OFFEN.txt, priorities H1-H3.
+No recipient/account selected, no files uploaded, no manufacturer contacted.
+Existing reviewed/hashed source documents are unchanged.
+Each numbered draft below can be submitted as a separate TI support question.
+
+H1 - TS3USB221ARSER: guaranteed isolation during partial supply and ramps
+Subject: TS3USB221ARSER - guaranteed leakage/isolation below 2.3 V VCC
+
+Hello TI Support,
+
+We are qualifying a USB data-isolation circuit using TS3USB221ARSER. We have
+reviewed SCDS277C Rev C, including the VCC=0 Ioff and powered IOZ limits. We
+would like to establish which guaranteed limits, if any, apply between these
+specified operating states.
+
+Conditions:
+- Ambient temperature: -20 to +60 degC.
+- VCC held at intermediate levels or ramping between 0 and 2.3 V, especially
+  0.05, 0.2, 0.8, 1.5, 1.8 and 2.29 V.
+- Data-pin voltages: 0 to 3.6 V; one side may remain powered while the other
+  side and/or the switch supply are off.
+- Common GND; host connected to D+/D-, target connected to 1D+/1D-;
+  unused 2D+/2D- left unconnected. The VCC rail has a 10 kohm bleeder.
+- S tied to GND. OE pulled to VCC through 47 kohm, or driven by an
+  SN74LVC1G14DCKR powered from the same rail, with that pull-up still present.
+
+Can TI provide guaranteed maximum currents (a) between data terminals and
+(b) from an externally driven data terminal into VCC under these conditions?
+Please identify per-pin versus aggregate limits, relevant OE states, and any
+required restrictions on supply ramp rate or dwell time. Is there a guaranteed
+power-off protection threshold and hysteresis below which all data paths
+remain isolated?
+
+We are seeking limits applicable across production variation and the stated
+temperature range, rather than a typical simulation or an extrapolation of
+Ioff at exactly VCC=0. If these intermediate-supply states are unspecified,
+please confirm that limitation and any recommended conditions for guaranteed
+isolation.
+
+Thank you.
+
+H2 - TPS389001DSER: SENSE current into an absent or partial VDD supply
+Subject: TPS389001DSER - guaranteed SENSE-to-VDD current for VDD below 1.5 V
+
+Hello TI Support,
+
+We are using TPS389001DSER to monitor an independently powered target rail.
+SLVSD65A Rev A states that SENSE may operate from 0 to 5.5 V independently of
+the supply voltage. We understand this voltage allowance; our question is
+about current paths while VDD is absent or below its operating range.
+
+Conditions:
+- Ambient temperature: -20 to +60 degC.
+- VDD from 0 to 1.5 V, held at intermediate levels or during power ramps;
+  include an unpowered high-impedance supply rail as well as VDD held at 0 V.
+- SENSE connected to a divider: 169 kohm from an independently powered
+  3.0 to 3.47 V target rail, and 100 kohm to GND. Nominal SENSE is therefore
+  approximately 1.115 to 1.290 V.
+- MR tied to VDD; CT=10 nF. VDD has a 10 kohm bleeder and 9.8 uF nominal
+  capacitance. RESET shares a wired-AND net with a second TPS389001DSER
+  and is pulled up to VDD through 47 kohm.
+
+What is the guaranteed maximum current transferred from SENSE into VDD in
+these conditions? Is an upper clamp or other current path from SENSE to VDD
+excluded by design with a guaranteed bound? Please distinguish total SENSE
+input current from the portion delivered to the supply rail, and state any
+required VDD load/discharge path or supply-sequencing restrictions.
+
+The published 100 nA SENSE-current limit appears under the VDD=1.5 to 5.5 V
+table conditions. Can TI confirm whether a guaranteed limit also exists below
+1.5 V, including VDD=0? A typical characterization would be useful separately,
+but would not replace a guaranteed bound for our qualification.
+
+Thank you.
+
+H3 - TPS70933DBVR: reverse current into an unpowered input/USB VBUS
+Subject: TPS70933DBVR - guaranteed OUT-to-IN current below 1.8 V OUT
+
+Hello TI Support,
+
+We are qualifying TPS70933DBVR in a USB interface supply. IN connects to USB
+VBUS and EN is intentionally left open. We have reviewed SBVS186H Rev H,
+including the reverse-current discussion and the typical 10 nA IN current
+at OUT=3 V with IN=EN=0. Our application has EN open and may dwell at lower
+OUT voltages, so we would like to confirm the applicable guaranteed limits.
+
+Conditions:
+- Ambient temperature: -20 to +60 degC.
+- OUT externally biased anywhere from 0 to 3.366 V, including static levels
+  and ramps, particularly below 1.8 V.
+- IN either held at 0 V or connected to an unpowered, high-impedance VBUS node.
+- EN left open. In the actual circuit, IN has 100 nF to GND and a
+  200 kohm/75 kohm VBUS divider (275 kohm total path to GND); OUT has
+  a 10 kohm bleeder and 9.8 uF nominal capacitance. The high-impedance
+  question above also requests the intrinsic device limit; our actual
+  VBUS node is therefore not completely unloaded.
+
+What guaranteed maximum OUT-to-IN current applies over this range? Is there
+an internal path that can raise an unpowered VBUS node, particularly below
+1.8 V OUT? Please specify any required input load, source impedance, sequencing
+or ramp conditions. For a high-impedance IN node, please also clarify whether
+any bound on the resulting IN voltage is specified.
+
+We need a guaranteed maximum or a guaranteed bounded characteristic with its
+validity conditions. Please distinguish this from typical characterization;
+we do not assume the typical 10 nA value covers these different conditions.
+If no guaranteed limit exists for part of this range, confirmation of that
+scope would help us define the remaining design and sample-test requirements.
+
+Thank you.
+
+FOLLOW-UP ROUTING NOTES - NOT PART OF THE THREE REQUEST BODIES
+H4, TI follow-up: TPS389001DSER maximum falling-SENSE-to-RESET assertion time
+with CT=10 nF, VDD=3.2 to 3.4 V, -20 to +60 degC and specified SENSE overdrive;
+also minimum reset-release delay across CT tolerance/aging. Finalize the
+relevant overdrive and capacitor conditions before submitting this follow-up.
+H5, separate supplier follow-up: capacitor effective-capacitance/ESR assurance.
+Route to Murata/assembly supplier separately. Do not send H5 to TI.

@@ -39,3 +39,11 @@ weiterhin SECHSLAGIGEN PCB: F/In2/In3/B. In1 und In4 bleiben GND-Referenzen.
 Der fruehere Dreilagen-Hilfsrouter ignorierte vorhandenes In2-Kupfer als
 Startflaeche; dieser Fehler ist in route_signals.py durch dynamische
 Lagenanzahl korrigiert. Der fertige native Stand ist der massgebliche Beleg.
+
+Aktueller Stackupentwurf: tools/apply_proposed_stackup.py übernimmt ausschließlich
+Stackup/TitleBlock aus dem geprüften procurement/usb-stackup/stackup-trial/
+proposed-3313A-roundtrip.kicad_pcb. build_r2b ruft diesen Schritt nach der
+Vorplatzierung auf; er reproduziert NICHT die finale Route. Native Haupt-PCB
+bleibt die editierbare Routingquelle. Helper an separater Kopie ausgeführt:
+bytegleicher SHA8b383237c2a90d4270685943619f579258b213815a4f9e6838f9993665eba590.
+Vollständiger Basiserzeuger wurde zum Schutz der fertigen Route nicht ausgeführt.

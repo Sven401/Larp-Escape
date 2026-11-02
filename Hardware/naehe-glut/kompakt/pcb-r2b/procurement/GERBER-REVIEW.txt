@@ -1,0 +1,91 @@
+R2b — UNABHÄNGIGE GERBER-/BOHRDATEN-GEGENPRÜFUNG
+02.11.2026; lokaler RFQ-Entwurf, keine Fertigungs- oder Uploadfreigabe.
+Quellcommit bad8abfbdab64aa7c5b2641b3b07789191a98a41.
+PCB7af39dbe807ed82f905622cce0c6b93f2cd650c61eafb224970e9f49eec15868.
+Methode: Dateien unabhängig mit Python/Textparsern gelesen und gegen native
+PCB/Inventar/CPL abgeglichen. Keine erneute KiCad-Ausführung und kein vollständiger
+Gerber-CAM-Render-/Geometrie-Booleanvergleich aller Kupferpolygone durchgeführt.
+
+1. Lagenzuordnung bestanden
+13 Gerberdateien: sechs Kupferlagen in Reihenfolge F.Cu/In1.Cu/In2.Cu/In3.Cu/
+In4.Cu/B.Cu; jeweils zwei Paste, Maske und Siebdruck sowie eine Kontur.
+FileFunction-Attribute und Dateinamen ordnen Top/Bottom/Innenlagen konsistent zu.
+Einheiten mm, absolute 4.6-Koordinaten, native Erzeugung10.0.8. Die leere B.Silkscreen-
+Datei ist plausibel: alle 104 nativen B.SilkS-Einträge sind versteckteProperties,
+keine fehlende gezeichnete Unterseitenbeschriftung in diesem Exportbefund.
+Paste/Masken sind getrennt; diese Prüfung beweist keine Schablonenoptimierung.
+
+2. Datum und Kontur bestanden
+Gerber-Kontur besteht aus 8 geschlossenen Segmenten, jeder Knoten hat Grad 2.
+Mittelliniengrenzen X0..30/Y0..37,8mm. Die linke Kerbe liegt exportiert bei
+X0..1,5/Y13..15mm, entsprechend nativY28..30 beiAux(0,43).
+Transform: Xexport=Xpcb, Yexport=43−Ypcb. GleicherUrsprung wieCPL.
+Das Job-Boundingboxmaß30,05×37,85mm schließt den0,05-mm-Konturstrich ein;
+es ist nicht die nominale Boardgröße. DemFertiger 30×37,8mm und Konturmittel-
+linie nennen, kein Skalieren auf dasJob-Boundingboxmaß.
+
+3. Bohrungen und Slots bestanden
+236 PTH insgesamt:131 ViasØ0,15mm,99 ViasØ0,20mm,2 JP1-LöcherØ1,00mm und4 J4-Slots.
+Alle230 Via-UUIDs/Koordinaten aus demInventar besitzen passenden Exportbohrtreffer
+unterX/Y-Transformation; Abgleich berücksichtigt0,001-mm-Ausgaberundung.
+JP1: (18,3;4,3) und(18,3;1,76), passend zuPin1/2 desnativen Footprints.
+J4-Slots: Fräser Ø0,60mm, zwei Zentrumswege1,10mm→Gesamtlänge1,70mm und
+zwei Zentrumswege0,80mm→Gesamtlänge1,40mm. X3,18 und11,82; Endpunktpaare
+Y7,33→6,23 und3,00→2,20. Native ovale Bohrungen0,6×1,7/0,6×1,4 stimmen.
+G85-Slotcodierung liegt ausdrücklich vor; Fertigerinterpretation bestätigen.
+2NPTHØ0,65mm bei(4,61;6,28)/(10,39;6,28), passend zum nativen J4.
+PTH/NPTH sind getrennt; Viafüllauftrag darf236 PTH nicht mit230Vias verwechseln.
+Die 6 Bauteillöcher und 2 NPTH bleiben offen.
+
+4. BOM/CPL-Passung
+AktuelleBOM/CPL enthalten101 Positionen,34 Top/67 Bottom; frischer Export auf7af39d
+zuvor unabhängig geprüft. CPL-Origin(0,43) passt zuGerber/Bohrdatum. J1-Körper-
+korrektur undJP1-Mittenkorrektur bleiben notwendig; Bohrzentren sind nichtCPL-
+Körperzentren. JP1-CPL(18,3;3,03) liegt genau zwischen beidenBohrungen.
+Keine Bestückerrotations-/Centroidfreigabe allein aus koordinatenrichtigemExport.
+
+5. KONKRETE METADATENBEFUNDE — EXTERN NICHT ÜBERNEHMEN
+naehe-glut-r2b-job.gbrjob meldet GeneralSpecs.Finish='None', während derVertrag
+ENIG fordert. MaterialStackup enthält fünf gleiche0,154-mm-FR4-Dielektrika und
+sechs 0,035-mm-Kupferlagen; das ist kein bestätigter JLC061011-2116-Aufbau und
+kein90-Ohm-Nachweis. ProjectId.Revision='rev?' identifiziert keine freigegebene Revision.
+AufRootentscheidung bleibt dieseJobdatei ausschließlich lokal als nativer Befund;
+NICHT in einexternesRFQ-/Gerberpaket aufnehmen. Nicht vonHand vortäuschen, der
+Stackup sei bereits bestätigt. NeueHerstellerdaten zuerst unabhängig bewerten.
+ENIG/1oz-all/1mm/POFV undPCB-Hash müssen ausdrücklich imAnfragetext stehen.
+
+6. OFFENE FREIGABE
+VierJ4-NPTH-Abstände0,1944mm bleiben unverändert. Kein bestätigterStackup,
+keine akzeptierteCAM-Breitenänderung, keinPanel, kein verbindlicherFüll-/Lötprozess,
+kein Gesamtangebot. Bohrdaten/Gerber enthalten allein keinen Materialauftrag
+fürnichtleitendes Epoxid. ErsterAnhangsatz und jedeDateiübermittlung bleiben
+separat zu entscheiden. DieserPrüfbericht erlaubt wederFertigung nochBestellung.
+
+EXAKT GEPRÜFTE DATEIHASHES — SHA256 relativ zu pcb-r2b
+60d886dcf15fba346257b189f219cf17b1a4656d38dbde5601d3bc4f7c168603  procurement/rfq-gerber-draft/naehe-glut-r2b-B_Cu.gbl
+bd9b059b84429f80f453aac9bd44d617cc3cb330ff58c4cc5777f271357c3171  procurement/rfq-gerber-draft/naehe-glut-r2b-B_Mask.gbs
+0b5b7f14f2b5a8ffcfa9f9aabf3c650ec9e8e679067151d3e0f04596a19c4905  procurement/rfq-gerber-draft/naehe-glut-r2b-B_Paste.gbp
+a8c415535c942fd4effc13341aa27e8c9100899223bf8e15566f052bfba96537  procurement/rfq-gerber-draft/naehe-glut-r2b-B_Silkscreen.gbo
+8217c16b2fa4a2056a991227f9ba0204c22ddb1df937d4c19cc42d9aba07fe8d  procurement/rfq-gerber-draft/naehe-glut-r2b-Edge_Cuts.gm1
+64d5188931edcaf2864e00f396c116243b7f59e05d060ed678352a13821fdfd5  procurement/rfq-gerber-draft/naehe-glut-r2b-F_Cu.gtl
+0a12858c0403ae333b143109b3bdba2e899832e6a154cb76543e933dfa8446cd  procurement/rfq-gerber-draft/naehe-glut-r2b-F_Mask.gts
+c91ce9c2f45950aa4efe7b97dc82239e665ea852243e3ed4123328393a9550f2  procurement/rfq-gerber-draft/naehe-glut-r2b-F_Paste.gtp
+4a7edc8534b19724ee15faea25a005b3a162e10d54b99457c5d94f83a136921a  procurement/rfq-gerber-draft/naehe-glut-r2b-F_Silkscreen.gto
+d6a25ddb0a29f8924bd7d8c85f0e6b69391f2c0e0043d940b98f105b60b2fa11  procurement/rfq-gerber-draft/naehe-glut-r2b-In1_Cu.g1
+b239af9ce4c7521f677b768e1012bc49002e03831ea078315c51c1e4f9fd1cb0  procurement/rfq-gerber-draft/naehe-glut-r2b-In2_Cu.g2
+d13db76381d0d0551d33f06d75f7b9f1ad8acc933b7380f6db6288c8e58f6209  procurement/rfq-gerber-draft/naehe-glut-r2b-In3_Cu.g3
+8401481459f8051e665126a36415259637e9fe3848817a985fcbd4afb3b66489  procurement/rfq-gerber-draft/naehe-glut-r2b-In4_Cu.g4
+fa322589e1fe1bb653a69d91d598c6712a1e8530b58634311577469eb0b1fcae  procurement/rfq-gerber-draft/naehe-glut-r2b-NPTH.drl
+463e554aff3543e51f3fa5210ef0504ecc2b7eb117deb1c4aa57843f9db1160c  procurement/rfq-gerber-draft/naehe-glut-r2b-PTH.drl
+48197769b7acc2db98ce3a4a3aba252dce48c0ef8d7b5b335713b6c2e106b05d  procurement/rfq-gerber-draft/naehe-glut-r2b-drill.rpt
+f4e87426f4e5e7ad3937763b8d7ab486d7760142d69bdba4b3a6a576b3bb9b7b  procurement/rfq-gerber-draft/naehe-glut-r2b-job.gbrjob
+7af39dbe807ed82f905622cce0c6b93f2cd650c61eafb224970e9f49eec15868  naehe-glut-r2b.kicad_pcb
+863bc10189c0a6f77cf9eafdb006c1152d6bd326ff69ac85edaa024144f120b3  procurement/VIA-FILL-INVENTORY.csv
+28556d76715fce22bf83946f89cbec63be1518bd2e7df6973e74a174edf507ad  pruefung/bestueckung-draft/7af39dbe807e-jq7zjlqp/BOM-DRAFT.csv
+13ad90a33dd442ffcdabbe74941dc25e172693e7e38a5abd4bf227bb1e4f7fc5  pruefung/bestueckung-draft/7af39dbe807e-jq7zjlqp/CPL-DRAFT.csv
+
+NACHTRÄGLICH ERGÄNZTE EXPORTBELEGE — unabhängig geprüft:
+GERBER-EXPORT.txt stimmt mit den gelesenen Ausgabeeigenschaften überein.
+Alle 17 Hashes und Dateigrößen aus GERBER-EXPORT-MANIFEST.json stimmen.
+d2c071f63aa93d5af1d6c8c55f2ae8d4c4fdea7d3d36ca37e0915d128ff7cb42  procurement/GERBER-EXPORT.txt
+f1068b29198dc0713a23df9e19aa6061c5b77c1d2f3478e51b11fd351949161c  procurement/GERBER-EXPORT-MANIFEST.json

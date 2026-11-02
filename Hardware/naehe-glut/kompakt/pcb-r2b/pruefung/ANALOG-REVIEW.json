@@ -215,8 +215,8 @@
     "export_parity": "PASS: independently compared109 manifest/XML components, all declared pins/nets and101 fitted BOM entries; zero mismatches.",
     "xml_sha256": "f926429d1df73826ad1e14570bd48ef497cb7406bdc65ab4a923916446a2ac68",
     "bom_sha256": "0da0adbfea16ed33a8b3c14c45c7d27d4b010d42240d7d9a3154b20c285f0a24",
-    "pcb_sha256": "7af39dbe807ed82f905622cce0c6b93f2cd650c61eafb224970e9f49eec15868",
-    "freeze_note": "2026-11-02: Exact independent comparison against previous reviewed archive confirms only board capping/filling no->yes; copper, nets, holes, zones and circuit unchanged. Electrical conclusions unchanged. Fresh assembly101/101 remains coordinate-byte-identical."
+    "pcb_sha256": "8b383237c2a90d4270685943619f579258b213815a4f9e6838f9993665eba590",
+    "freeze_note": "2026-11-02: Circuit/XML/BOM/schematic hashes unchanged. Reviewed promotion replaces one DP_HOST In3 track by three; stackup/title metadata added. Semiconductor/DC conclusions unchanged; this is not an independent implementation claim or SI qualification. See procurement/USB-STACKUP-REVIEW.txt and STACKUP-NATIV-REVIEW.txt. Fresh101/101 CPL remains byte-identical."
   },
   "bleeder_comparison": {
     "observed": "R46 RC0402FR-0710KL 10k in current circuit.json",

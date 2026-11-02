@@ -3,14 +3,14 @@
   "date": "2026-11-02",
   "kicad": "10.0.8",
   "input_sha256": {
-    "clearance-screen/screen.kicad_pcb": "7af39dbe807ed82f905622cce0c6b93f2cd650c61eafb224970e9f49eec15868",
-    "clearance-screen/screen.kicad_pro": "21edd368db533b1de0727e4b4a2cba077256bfb625adf76d03e70f1da0225098",
-    "clearance-screen/screen.kicad_dru": "b1b495d4d618e7c43cc5277c549181b2dad18a99f3c5592f13c77265c2298039",
-    "clearance-screen/positive-control.kicad_dru": "0a80f1a94a48c1506c56c208cebc9ff7ec431852e3fc9345a9c9d26e09096aba",
-    "clearance-screen/drc-all-layers.json": "3a89a814f6a722ba62d49fc76550a737ac5b06bc1cffe7916a3e9f3275174423",
-    "clearance-screen/positive-control.json": "30d79ae85b1169c89079d16792685d4fa985a2b38159497d37a463d1f13efdc2"
+    "clearance-screen-8b383237/screen.kicad_pcb": "8b383237c2a90d4270685943619f579258b213815a4f9e6838f9993665eba590",
+    "clearance-screen-8b383237/screen.kicad_pro": "21edd368db533b1de0727e4b4a2cba077256bfb625adf76d03e70f1da0225098",
+    "clearance-screen-8b383237/screen.kicad_dru": "eacaf95b9971133a5f3171c48e5b195d43dab3103fd1dc74570041c5c8d4f514",
+    "clearance-screen-8b383237/positive-control.kicad_dru": "0a80f1a94a48c1506c56c208cebc9ff7ec431852e3fc9345a9c9d26e09096aba",
+    "clearance-screen-8b383237/drc-all-layers.json": "8875ce4d0bd885dfafb1efdab529853b623a09c4ee5736abe39a64aac53a418b",
+    "clearance-screen-8b383237/positive-control.json": "36e9b781fddf11f0d9589b04094df6d7ac6ace19e717d01aa4cdee95546d6b5e"
   },
-  "frozen_pcb_sha256": "7af39dbe807ed82f905622cce0c6b93f2cd650c61eafb224970e9f49eec15868",
+  "frozen_pcb_sha256": "8b383237c2a90d4270685943619f579258b213815a4f9e6838f9993665eba590",
   "copy_byte_identical": true,
   "tests": [
     {
@@ -31,16 +31,7 @@
   "positive_control": {
     "inner_pth_threshold_mm": 3.0,
     "rule_triggered_count": 26,
-    "reported_gaps_mm": [
-      0.4775,
-      0.5803,
-      0.605,
-      1.19,
-      1.965,
-      1.9835,
-      2.7532,
-      2.8266
-    ]
+    "reported_gaps_mm": []
   },
   "other_violations": {
     "track_not_centered_on_via": 8,

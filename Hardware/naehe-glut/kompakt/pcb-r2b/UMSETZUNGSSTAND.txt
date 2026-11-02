@@ -25,13 +25,20 @@ review: unabhängige Gegenprüfung von Hardware, Mechanik und Root-Prüfwerkzeug
 Eigene Umsetzung ersetzt keine unabhängige Gegenprüfung.
 
 EINGEFRORENER DIGITALER STAND
-PCB SHA256 7af39dbe807ed82f905622cce0c6b93f2cd650c61eafb224970e9f49eec15868
-Fortsetzung: Boarddefaults filling/capping auf yes korrigiert. Gegenüber dem
-ersten eingefrorenen Stand ändern sich ausschließlich diese zwei Metadatenzeilen;
-Kupfer, Masken, Bohrungen und Netze bleiben gleich. Nichtleitendes Epoxid mit
+PCB SHA256 8b383237c2a90d4270685943619f579258b213815a4f9e6838f9993665eba590
+Nach der früheren Zwei-Flag-Korrektur wurde ein USB_DP_HOST-In3-Segment durch
+drei Segmente ersetzt und ein ausdrücklich vorgeschlagener JLC061011-3313A-
+Aufbau mit ENIG und Entwurfskennzeichnung aufgenommen. Andere Kupferobjekte,
+Footprints, Kontur, Maskenartwork und Bohrungen bleiben unverändert.
+Boarddefaults filling/capping stehen weiterhin auf yes. Nichtleitendes Epoxid mit
 Kupferüberdeckung aller230Vias bleibt ausdrücklich gefordert; Flags allein
 legen weder Harzmaterial noch einen bestätigten Fertigungsprozess fest.
 Korrekturbelege und zusätzliche Fertiger-Abstandsprüfung: procurement/.
+Die veröffentlichten Schichtdicken summieren sich auf0,958mm bei1,0mm Nennmaß.
+Unbekannte Maskendicke wurde nicht erfunden; KiCads ergänzter Df0,02 ist in
+Materiallabels und CAD-Kommentar als SOFTWAREDEFAULT UNVERIFIED markiert.
+Damit ist ein prüfbarer Aufbauentwurf vorhanden, keine bestätigte Material-
+oder Impedanzspezifikation. Details: procurement/STACKUP-NATIV-REVIEW.txt.
 Sechs Kupferlagen; bestückte XY-Hülle30x43mm, Host-PCB30x37,8mm, Dicke1mm.
 109 Referenzen, davon101 bestückte Positionen und8 integrale Kontaktplätze.
 Native ERC ohne Fehler. DRC:0 offene Verbindungen, keine offenen Leiterbahnenden;
@@ -45,6 +52,11 @@ USB-MCU-Paar gemeinsam aufIn3 mitIn4-Massereferenz, gleiche Viazahl jePartner;
 Host-Paar ebenfalls mitgleicher Viazahl. Geometrischer Vergleich bestätigt den
 manuellen Paarentwurf im Endstand. Tatsächliche90-Ohm-Impedanz und Signalqualität
 sind ohne bestätigten Fertiger-Stackup beziehungsweise Messung nicht freigegeben.
+Neuer Host-Mittelabschnitt:1,294907mm parallel mit0,15mm Breite/Kantenabstand.
+Die Fächerungen bleiben separat; Host-Pfadlängendifferenz jetzt+0,193014mm.
+Konkrete benachbarte In2-Stromversorgungszüge im MCU-Korridor sind im idealen
+Impedanzmodell nicht enthalten. Siehe procurement/USB-STACKUP-REVIEW.txt;
+keine behauptete vollständige SI-Verbesserung allein aus der Paar-Neuführung.
 Q1 wurde aufF.Cu(26,7;14,5) verlegt. Werte/Netze bleiben erhalten. Das Delta
 betrifft Steuersignalkupfer; Leistungs-/GND-/UV_SENSE-Kupfer blieb erhalten.
 Eine untersuchte0-Ohm-Brücke wurde nicht übernommen; kein zusätzlicherR49.
@@ -53,13 +65,14 @@ pcb-pad-contract.json und UNABHAENGIGES-REVIEW.json.
 
 Vollständige BOM/CPL:101/101 Positionen einschließlich THT-JP1 und Hybrid-J4.
 Koordinatenursprung(0;43), J1- undJP1-Körpermittelpunkte ausdrücklich korrigiert.
-Prüfbarer Entwurf: pruefung/bestueckung-draft/7af39dbe807e-jq7zjlqp/.
+Aktueller Entwurfsordner unter pruefung/bestueckung-draft/ ist über
+pruefung/UNABHAENGIGES-REVIEW.json mit ASSEMBLY-DRAFT.json eindeutig gebunden.
 Kein Gerber-Bestellpaket und keine zugesicherte Bestückerzuordnung daraus.
 
 Mechanik: sechs Druckteile, parametrische FreeCAD-Quelle, Einzel-STEP/STL,
 Baugruppen-STEP, Montage-/Unterseiten-/Explosionsansichten und Anleitung.
 P1S0,4mm/PETG-3MF:150 Schichten mit jeweils mindestens23 positiven XY-
-Extrusionen.39 Manifestdateien und PCB-/Schaltungsbindung unabhängig geprüft.
+Extrusionen. Manifestdateien und PCB-/Schaltungsbindung unabhängig geprüft.
 Keine modellierten Halter-, Stecker-, Kabel- oder Bedienraumkollisionen.
 Die generischen Hüllen übriger Bauteile sind ausdrücklich ein Screening;
 exakte MPN-Toleranzqualifikation und reale Passprobe bleiben offen.
@@ -77,6 +90,8 @@ P4: Unabhängige digitale Gegenprüfung dokumentiert; Umfang und Grenzen stehen
     im gebundenen UNABHAENGIGES-REVIEW.json. Keine Gerätefreigabe daraus.
 P5: Vollständiges Fertigerangebot, Beschaffung/Bestückfolge, DFM-Antwort,
     Endpreis und belastbarer Ankunftstermin fehlen. Keine Bestellung ausgelöst.
+    Konkrete Anfrage und Bauteilfragen: procurement/JLC-ANFRAGE-ENTWURF.txt
+    und TI-ANFRAGE-ENTWURF.txt. Versandauftrag noch offen; nichts versandt.
 P6/P7: Reale Passprobe, Versorgung, beide USB-Orientierungen, ROM-Rettung,
     Rückspeisung und Debug offen. Geräteuploads brauchen eigenen Rückwegabgleich;
     irreversible eFuse-Änderungen weiterhin separat autorisieren.

@@ -2,11 +2,11 @@
   "status": "routed_engineering_draft_NOT_manufacturing_release",
   "date": "2026-11-02",
   "hashes": {
-    "naehe-glut-r2b.kicad_pcb": "7af39dbe807ed82f905622cce0c6b93f2cd650c61eafb224970e9f49eec15868",
+    "naehe-glut-r2b.kicad_pcb": "8b383237c2a90d4270685943619f579258b213815a4f9e6838f9993665eba590",
     "circuit.json": "b8adb47a048849bc23e5384c4230514bd4ba75c0055c0d28544233c209a99fca",
     "naehe-glut-r2b.kicad_sch": "91f638ee1d52b9be80695f5e59fd8fa313e136c23fa4e5fbe77f8aa373871bef",
     "bom.csv": "0da0adbfea16ed33a8b3c14c45c7d27d4b010d42240d7d9a3154b20c285f0a24",
-    "pruefung/drc.json": "b204701c40e262efd993c17efca8a318d8c563044b4ed1a8de7a0f51b71dd586"
+    "pruefung/drc.json": "1a484eac55aa35ad74d84b06b71487af5e0dfd6fdc6221a549ac7912374a7005"
   },
   "copper_layers": 6,
   "aux_origin_mm": [
@@ -20,7 +20,7 @@
     "warning:lib_footprint_mismatch": 2
   },
   "manual_usb_geometry_unchanged": true,
-  "manual_usb_source_sha256": "7c23d12e7cf89a597f16276002b6cd9fb471408a6174628b42ad41fc045e1cf5",
+  "manual_usb_source_sha256": "0c2fd71bdf7f609b7c2b1c7ab093af88ed35511e12591447a28d89227ea70ea9",
   "baseline_geometry_delta": {
     "source": "sources/layout-evidence/route-base.kicad_pcb",
     "source_sha256": "b4050b8530ed8081c97763461275dd7f46e6ecc1da4f2886cb3a58fa6f3f0eb6",
@@ -75,7 +75,7 @@
       "/USB_DM_HOST": 8,
       "/USB_DM_ISO": 4,
       "/USB_DM_MCU": 19,
-      "/USB_DP_HOST": 8,
+      "/USB_DP_HOST": 10,
       "/USB_DP_ISO": 3,
       "/USB_DP_MCU": 21,
       "/USB_IF_3V3": 136,

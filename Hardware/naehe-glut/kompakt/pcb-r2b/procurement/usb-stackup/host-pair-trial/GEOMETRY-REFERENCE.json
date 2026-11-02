@@ -1,0 +1,92 @@
+{
+  "status": "isolated geometry screen, not impedance approval",
+  "pcb_sha256": "0c2fd71bdf7f609b7c2b1c7ab093af88ed35511e12591447a28d89227ea70ea9",
+  "removed_copper_objects": [
+    [
+      "/USB_DP_HOST",
+      "PCB_TRACK",
+      8,
+      150000,
+      [
+        [
+          8250000,
+          34800000
+        ],
+        [
+          9850000,
+          32575000
+        ]
+      ],
+      0
+    ]
+  ],
+  "added_copper_objects": [
+    [
+      "/USB_DP_HOST",
+      "PCB_TRACK",
+      8,
+      150000,
+      [
+        [
+          8238365,
+          34092769
+        ],
+        [
+          9083564,
+          33111736
+        ]
+      ],
+      0
+    ],
+    [
+      "/USB_DP_HOST",
+      "PCB_TRACK",
+      8,
+      150000,
+      [
+        [
+          8238365,
+          34092769
+        ],
+        [
+          8250000,
+          34800000
+        ]
+      ],
+      0
+    ],
+    [
+      "/USB_DP_HOST",
+      "PCB_TRACK",
+      8,
+      150000,
+      [
+        [
+          9083564,
+          33111736
+        ],
+        [
+          9850000,
+          32575000
+        ]
+      ],
+      0
+    ]
+  ],
+  "paired_middle_length_mm": 1.2949067318645002,
+  "reference_checks": [
+    {
+      "reference_layer": "In1.Cu",
+      "samples": 917,
+      "uncovered_count": 0,
+      "uncovered_examples": []
+    },
+    {
+      "reference_layer": "In4.Cu",
+      "samples": 917,
+      "uncovered_count": 0,
+      "uncovered_examples": []
+    }
+  ],
+  "method": "131 longitudinal x7 transverse points across entire paired-copper-width envelope, frozen filled GND polygons, about10um longitudinal sampling. Not an exact polygon containment proof; vias/fanouts not covered by this middle-section screen."
+}

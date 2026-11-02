@@ -1,0 +1,136 @@
+USB-STACKUP-PRÜFUNG — QUANTIFIZIERTER ENTWURFSSCREEN
+02.11.2026; Kontext bad8abfbdab64aa7c5b2641b3b07789191a98a41.
+PCB7af39dbe807ed82f905622cce0c6b93f2cd650c61eafb224970e9f49eec15868.
+Keine PCB-Änderung, keine Fertigungsfreigabe, keine Dateienübermittlung/Bestellung.
+
+Ergebnis und konkrete nächste Layoutentscheidung
+JLC061011-2116 ist für die vorhandene Geometrie kein geeigneter unveränderter
+Gesamtaufbau: der MCU-Innenlagenabschnitt liegt im Hersteller-Idealmodell nur
+bei77,27Ohm, der obere Hostabschnitt bei101,68..104,45Ohm. Gefordertes
+RFQ-Zielfenster90Ohm±10%=81..99Ohm wird damit in beiden Richtungen verfehlt.
+Unter den sieben im Auftrag angebotenen Varianten ist JLC061011-3313A der
+beste Kandidat. MCU-Innenpaar90,59Ohm, oberesISO-Paar91,35Ohm, obererHost
+93,96..96,01Ohm. Dennoch passt auch dieser Aufbau NICHT unverändert überall:
+Stecker→D1 läuft aufIn3 als zwei verschieden geneigte, weit auseinanderliegende
+Züge; dessen lokale Idealquerschnitte liegen deutlich über99Ohm.
+
+Bevorzugter minimaler Änderungsentwurf, noch NICHT umgesetzt:
+- Aufbau3313A vorsehen; schriftliche Fertigerbestätigung dieses konkreten Aufbaus.
+- Host-In3 Steckermerge→D1 als durchgehendes symmetrisches Paar mitW0,15mm und
+  KantenabstandS0,15mm neu führen; Idealwert wie MCU-In3 etwa90,59Ohm.
+- MCU-In3 W/S0,15/0,15, oberesISO-HauptstückW/S0,15/0,25 sowie bestehender
+  obererHostW0,15/Svariabel0,35..0,55 können zunächst bestehen bleiben.
+- Die USB-C-Doppelkontakte brauchen kurze explizite Merge-/Fanoutstrecken;
+  nicht sämtliche Zweige als unendliche kontrollierte Paarleitung deklarieren.
+- Nach Entwurf native DRC, Pin-/Netzparität, gleiche Viaanzahl/kurze Stubs,
+  durchgehende Referenz, Rückstromvias und mechanische Hüllen erneut prüfen.
+- In2/L3 ist SIGNAL, keine durchgehende obere Massefläche. Störkupfer über
+  dem neuen und bestehenden L4-Paar tatsächlich geometrisch prüfen; ggf.
+  Korridor freiräumen oder im realen Feldmodell berücksichtigen. Keine alleinige
+  Freigabe aus den unten idealisierten zwei Masseflächen.
+Dies ist eine konkrete Kandidatenwahl und begrenzte Layoutaufgabe; kein Beweis,
+dass jede alternative Fertigung unmöglich wäre oder USB im Bestand nicht arbeitet.
+
+Was tatsächlich gerechnet wurde
+Direkter öffentlicher JLC-Herstellercalculator, keine eigene Näherungsformel.
+Website https://jlcpcb.com/pcb-impedance-calculator und deren geladene Frontend-
+Definitionen. Die öffentlich verwendeten Read-/Calc-Endpunkte liefern aktuelle
+Stackups/Querschnittsparameter und Rechenergebnisse über WebSocket. Übertragen
+wurden ausschließlich generische Querschnittszahlen, keine Board-/BOMdateien.
+Alle46 Antwortobjekte mit Eingaben stehen in usb-stackup/calculator-results.json
+(42) und calculator-host-extra.json(4), Quelle/Hashes in SOURCE-PROVENANCE.json.
+JLCs calc_status=0 und dResultValid=1 besagen erfolgreiche Modellberechnung,
+keine reale Baugruppenqualifikation. Keine Normgrenzen daraus abgeleitet.
+
+Istgeometrie aus nativerPCB (usb-geometries.json)
+Alle USB-Leiterbahnen sind0,15mm breit. MCU-In3-Paar hat auf den parallelen
+Hauptstücken S0,15mm. OberesISO besitzt2,64mm überlappende Hauptführung mit
+S0,25mm; kurze Fanoutstücke haben größere Abstände0,35/ca0,557mm.
+ObererHost D1→U8: zwei spiegelbildlich geneigte4,401mm-Züge; horizontaler
+Kantenabstand läuft von0,55mm beiD1 auf0,35mm beiU8, kein exakt parallelesPaar.
+Host-In3: DP(8,25;34,8)→(9,85;32,575),2,741mm;
+DM(7,75;34,2)→(9,15;32,575),2,145mm. Diese Richtungen sind verschieden.
+Abstand senkrecht zur verlängertenDP-Achse an den DM-Endpunkten ergibt grob
+S0,42..0,61mm; deshalb ist eine konstante0,15mm-Paarmodellannahme dort falsch.
+B.Cu hat zusätzlich1mm DM-Merge; DP-Merge liegt1mm aufIn3. Je3 Hostvias,
+aber Topologie/Diskontinuitäten sind nicht durch gleiche Viaanzahl qualifiziert.
+
+Vergleich der sieben angebotenen Aufbauten (Ohm, gerundet)
+Name       AußenS.15  AußenS.25  AußenS.35  AußenS.55  L4/L2+L5  L4/L3+L5*
+2116          90,41      98,24     101,68     104,45      77,27      76,63
+2116A         90,41      98,24     101,68     104,45      85,55      82,97
+1080A         75,93      80,09      81,71      82,96      77,27      76,63
+1080          75,93      80,09      81,71      82,96      94,97      84,84
+7628         104,89     119,38     127,26     134,79      77,24      72,36
+2313         104,95     119,06     126,62     133,74      84,05      79,44
+3313A         85,09      91,35      93,96      96,01      90,59      85,62
+AlleW0,15mm; innereSpaltenS0,15mm. *L3 als hypothetische obereMassefläche ist
+nur Sensitivitätsfall, KEIN real vorhandener Referenzaufbau oder strenger
+physikalischer Grenzwert für beliebige störende Signalkupferzüge.
+1080 ist kein sauberer Ausweg: ISO-Hauptführung liegt bereits nominell80,09Ohm
+unter81Ohm und hat keinerlei Prozessreserve. 3313A lässt am meisten Spielraum
+für die tatsächlich benötigten äußeren und inneren Querschnitte.
+
+Zusatzprüfung realistisch größerer Host-In3-Abstände auf3313A
+S(mm)        0,25       0,35       0,55       0,782
+Zdiff(Ohm)  101,80     107,82     113,26     115,35
+Das reale nichtparallele Stück hat keinen einzelnen konstantenZdiff-Wert.
+SchonS0,35 überschreitet99Ohm im gleichen idealisierten Modell; die Tabelle
+begründet deshalb die gezielte Paar-Neuführung statt einer Stackup-Freigabe.
+
+Modellparameter und Layerzuordnung
+KiCad F/In1/In2/In3/In4/B entspricht HerstellerL1/L2/L3/L4/L5/L6.
+Außen: DiffEdgeCoupledCoatedMicrostrip1B, ReferenzL2 bzwL5, Hersteller-
+SoldermaskmodellC1=C3=1mil,C2=0,6mil,CEr3,8. T1=1,6mil,
+W2=W1−0,5mil gemäß aktueller Prozesskonfiguration (Basis0,5oz/Außen1oz).
+Innen: DiffOffsetStripline1B1A, SignalL4, untereReferenzL5, obereL2;
+L3-Signalkupfer für dieses Idealmodell entfernt. T1=1,2mil,W2=W1−0,8mil.
+Für3313A: äußererPP0,092mm/Er4,1; CoreL4/L5 0,200mm/Er4,36;
+mittlerePP2×0,092mm/Er4,1; CoreL2/L3 ebenfalls0,200mm/Er4,36.
+Nach der tatsächlichen JLC-Frontendfunktion computedBaseMaterialThickness
+ist H1=untereCorehöhe0,200mm; H2=obererAbstand einschließlichL4-Kupfer:
+0,184+0,200+0,030+0,030=0,444mm. H2 ist also NICHT lediglich das Dielektrikum.
+Er2=4,19 folgt dem arithmetischen Mittel des Hersteller-Frontends; dies ist
+keine garantierte physikalische Homogenisierung ungleicher Materialschichten.
+Alle Längen werden vorRechnung durch0,0254 vonmm inMil umgerechnet.
+
+Verbleibende echte Nachweise
+Fremd-/Koplanarkupfer aufL3/L4 und gegebenenfallsF/B, gefüllteVias/Padformen,
+Lötmaskenvariation, Traceätzprofil, Fertigungstoleranzen, Stecker/ESD/Switch-
+Diskontinuitäten sowie realerRückstrom sind hier NICHT dreidimensional gelöst.
+Der konkrete Stackup und die Paargeometrie müssen nach einer autorisierten
+Änderung gemeinsam mit dem Fertiger bestätigt werden; Coupon/TDR und echte
+USB-Hotplug-/Signalprüfung bleiben getrennt. CAM-Breitenkorrektur ohne Review
+ist weiterhin gesperrt. Der bestehende eingefrorene PCB-Hash blieb unverändert.
+
+Isolierter Routingversuch nach Root-Auftrag, Haupt-PCB unverändert
+host-pair-trial/host-pair.kicad_pcb, SHA0c2fd71bdf7f609b7c2b1c7ab093af88ed35511e12591447a28d89227ea70ea9.
+Exakt der bisherige DP_HOST-In3-Zug wurde durch drei0,15mm-Züge ersetzt:
+(8,25;34,8)→(8,238366;34,092769)→(9,083564;33,111737)→(9,85;32,575).
+Mittelteil1,295mm parallel zu unverändertemDM, Mitte0,30mm/Kupferspalt0,15mm;
+vor beiden bestehenden Via-Annuli aufgefächert. Keine Via hinzugefügt/verschoben.
+DP-Ersatzstück wächst2,74055→2,93792mm; geometrische Länge ist kein Delaynachweis.
+NativeDRC unverändert4bekannteNPTH-Fehler/10Warnungen/0unverbunden; Padvertrag
+109Referenzen/373Pads/0Abweichungen. Vollständiger Track-/Via-Deltavergleich
+zeigt genau1entfernten/3hinzugefügtenDP-Zug, sonst keine Kupferobjektänderung.
+Ein Raster mit131Längs- und7Querproben über der vollen mittleren Paarhülle
+liegt vollständig in gefülltemGND aufIn1/L2 undIn4/L5 (je917/917). Dies ist
+kein exakter Polygon-/Feldnachweis und umfasst nicht die Endfanouts/Via-Antipads.
+Belege: host-pair-trial/TRIAL.json, drc.json, pad-contract.json,
+GEOMETRY-REFERENCE.json. Gegenprüfung der Übernahme bleibt ausstehend.
+
+Konkreter verbleibender L3-Störkupferbefund (unabhängiger Reviewer02.11.2026)
+Im neuen HOST-Korridor fand sein Track-/Via-Screen keinen In2/L3-Signalzug
+innerhalb0,30mm lateraler Nähe. Anders der bestehende MCU-Trunk:
+- BAT_RAW aufIn2, Breite0,5mm, (13,35;20,7)→(14,4;20,7),
+  UUIDfd9eb838-1955-4b3c-8ea6-b8d3efce1a7c kreuzt oberhalb des MCU-Paars.
+- LED5V aufIn2, Breite0,4mm, (14,6;21,35)→(13,55;21,35),
+  UUID3b44f829-a8ff-4787-a7c7-37712791b9ce; anschließender Zug
+  UUID25b9bde0-3d1e-47dc-90fa-3b5511fe42fe bei(13,5;21,4)→(12,75;21,4).
+- Weitere Nähe: LED_OE_N UUID9a6330b8-2e51-4cf9-9a15-e22ad8125013
+  um(14,7;23,65), JTAG_TDO UUID848cb76d-6e4e-4427-a1f4-ea2781128f89 y25,175.
+Damit ist 'L3 ignorieren' beim MCU-Paar konkret als Idealmodell belegt.
+Es folgt keine bewiesene elektrische Grenzverletzung; Powerkupfer darf nicht
+zur kosmetischen Modellanpassung ungeprüft entfernt oder verschoben werden.
+Nächster Nachweis: diese realen Kreuzungen im Feldmodell oder Messaufbau
+bewerten, bevor eine Impedanz-/Betriebsfreigabe behauptet wird.

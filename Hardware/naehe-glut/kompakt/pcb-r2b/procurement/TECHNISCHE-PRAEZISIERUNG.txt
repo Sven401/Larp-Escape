@@ -1,3 +1,7 @@
+HISTORISCH: Zwei-Flag-Stufe im Gitstand bad8abfb; unten genannte damalige
+aktuelle Prüfhashes sind seit der Host-/Stackupübernahme historische Belege.
+Aktueller Abstandsscreen: CLEARANCE-SCREEN.json / clearance-screen-8b383237.
+
 KICAD-10-PROZESSMETADATEN UND SEPARATER CLEARANCE-SCREEN
 HISTORISCHER KANDIDATENPRÜFSTAND vom02.11.2026; Runtime10.0.8; damals Haupt-PCB ab68d385... . Aktuelle Übernahme siehe METADATA-PROMOTION.json und Aktualisierung unten.
 

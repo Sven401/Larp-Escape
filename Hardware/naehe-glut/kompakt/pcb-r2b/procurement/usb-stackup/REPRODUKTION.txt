@@ -1,0 +1,29 @@
+REPRODUKTION DES HERSTELLERCALCULATOR-SCREENS
+Datum02.11.2026. Lokaler Lauf: CPython3.12, websocket-client1.9.2 ausPyPI,
+zunächst isoliert unter TEMP/jlc-ws-client installiert. Keine Benutzerprofile
+oder globalenPython-Pakete geändert. Paketquelle https://pypi.org/project/websocket-client/1.9.2/.
+Die beigefügten Scripts verwenden jetzt den normalenImport, ohneTemp-Abhängigkeit.
+Empfohlen: eigenePython-venv in Arbeitskopie; dort
+python -m pip install websocket-client==1.9.2
+python query_calculator.py
+python query_host_extra.py
+Es werden nur numerische generischeQuerschnittsparameter an den öffentlichen
+JLC-Rechner gesendet, keinePCB-Dateien. Keine Herstelleranfrage/Bestellung.
+Rohdateien calculator-results.json undcalculator-host-extra.json nicht im
+kanonischen Belegordner überschreiben: Scripts/Rohquellen inArbeitskopie starten.
+Die Endpunkte können sich ändern. Gespeicherte Herstellerantworten und ihre
+Hashes sind der zeitgebundene Beleg, kein Versprechen aufewigeAPI-Verfügbarkeit.
+
+Ausgewertete öffentliche JLC-Frontendfunktionen/Quellhash: SOURCE-PROVENANCE.json.
+Die vollständigenMinified-Webseitenquellen werden nicht insPaket übernommen.
+Geometrie- undVersuchsscripts brauchen pcbnew ausKiCad10.0.8; KICAD_CONFIG_HOME
+wird vorImport inisoliertemArbeitsverzeichnis angelegt. KonkreterlokalerRuntime:
+C:/Users/seide/.codex/worktrees/naehe-glut-lieferziel/Larp Escape/.tmp/cad-tools/kicad/bin/python.exe.
+
+Historische Routingversuche sind keine erneute Bearbeitung der aktuellen Haupt-PCB.
+build_host_pair_trial.py liest den gehashten7af39d-Vorstand unter
+../clearance-screen/screen.kicad_pcb. Erst dieses Script, danach
+build_stackup_trial.py in einer vollständigen Arbeitskopie ausführen.
+Die drei neu erzeugten Track-UUIDs und dadurch die Serialisierungsreihenfolge
+können wechseln; geometrisch gleiche Wiederholung ist nicht automatisch
+bytegleich zum gespeicherten historischen Beleg. Siehe REPRO-PRUEFUNG.txt.

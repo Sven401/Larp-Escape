@@ -1,0 +1,1570 @@
+[
+  {
+    "stackup": "2116",
+    "case": "outer_gap_0.15",
+    "model": "DiffEdgeCoupledCoatedMicrostrip1B",
+    "parameters_mil_and_Er": {
+      "H1": 4.291338582677166,
+      "Er1": 4.16,
+      "W1": 5.905511811023622,
+      "W2": 5.41,
+      "S1": 5.905511811023622,
+      "T1": 1.6,
+      "C1": 1,
+      "C2": 0.6,
+      "C3": 1,
+      "CEr": 3.8,
+      "W2LinkW1Incr": 0.5,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "accessId": "35f0a1b2-0a1d-4234-83b8-9615bfcc5f3d",
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffEdgeCoupledCoatedMicrostrip1B",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 5751.99705066,
+        "dErEff": 2.97357458989,
+        "dImpedance": 90.4060500278,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 93,
+      "paramMd5": "36979e014812b12cd98551bec9697768",
+      "uuid": "6e726713-a4d8-4f72-8c38-86073f8d304d"
+    }
+  },
+  {
+    "stackup": "2116",
+    "case": "outer_gap_0.25",
+    "model": "DiffEdgeCoupledCoatedMicrostrip1B",
+    "parameters_mil_and_Er": {
+      "H1": 4.291338582677166,
+      "Er1": 4.16,
+      "W1": 5.905511811023622,
+      "W2": 5.41,
+      "S1": 9.84251968503937,
+      "T1": 1.6,
+      "C1": 1,
+      "C2": 0.6,
+      "C3": 1,
+      "CEr": 3.8,
+      "W2LinkW1Incr": 0.5,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "accessId": "2cc8afdb-2db9-449c-bb54-635d452cc6a2",
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffEdgeCoupledCoatedMicrostrip1B",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 5810.76938714,
+        "dErEff": 3.03465138455,
+        "dImpedance": 98.2378515537,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 78,
+      "paramMd5": "723b565549ec13d76ebfab0a38f243dc",
+      "uuid": "6e726713-a4d8-4f72-8c38-86073f8d304d"
+    }
+  },
+  {
+    "stackup": "2116",
+    "case": "outer_gap_0.35",
+    "model": "DiffEdgeCoupledCoatedMicrostrip1B",
+    "parameters_mil_and_Er": {
+      "H1": 4.291338582677166,
+      "Er1": 4.16,
+      "W1": 5.905511811023622,
+      "W2": 5.41,
+      "S1": 13.779527559055119,
+      "T1": 1.6,
+      "C1": 1,
+      "C2": 0.6,
+      "C3": 1,
+      "CEr": 3.8,
+      "W2LinkW1Incr": 0.5,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "accessId": "ff2fb1b1-16e0-43b4-a2e8-5596ef890a34",
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffEdgeCoupledCoatedMicrostrip1B",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 5859.32514232,
+        "dErEff": 3.08557938376,
+        "dImpedance": 101.682406295,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 78,
+      "paramMd5": "457d028276d33f31a86df1be200d8ba3",
+      "uuid": "6e726713-a4d8-4f72-8c38-86073f8d304d"
+    }
+  },
+  {
+    "stackup": "2116",
+    "case": "outer_gap_0.55",
+    "model": "DiffEdgeCoupledCoatedMicrostrip1B",
+    "parameters_mil_and_Er": {
+      "H1": 4.291338582677166,
+      "Er1": 4.16,
+      "W1": 5.905511811023622,
+      "W2": 5.41,
+      "S1": 21.65354330708662,
+      "T1": 1.6,
+      "C1": 1,
+      "C2": 0.6,
+      "C3": 1,
+      "CEr": 3.8,
+      "W2LinkW1Incr": 0.5,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "accessId": "bec55ef4-7f6a-465b-aa95-a39290694578",
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffEdgeCoupledCoatedMicrostrip1B",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 5920.40656946,
+        "dErEff": 3.15024688833,
+        "dImpedance": 104.453374919,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 109,
+      "paramMd5": "61cfb31830441130c49e77d9dd22c1ae",
+      "uuid": "6e726713-a4d8-4f72-8c38-86073f8d304d"
+    }
+  },
+  {
+    "stackup": "2116",
+    "case": "L3_hypothetical_plane",
+    "model": "DiffOffsetStripline1B1A",
+    "parameters_mil_and_Er": {
+      "H1": 3.9370078740157486,
+      "Er1": 4.17,
+      "H2": 17.165354330708663,
+      "Er2": 4.4,
+      "W1": 5.905511811023622,
+      "W2": 5.11,
+      "S1": 5.905511811023622,
+      "T1": 1.2,
+      "W2LinkW1Incr": 0.8,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "accessId": "a9479ca2-36e5-416a-92b9-525fe969ff86",
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffOffsetStripline1B1A",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 6898.6703745,
+        "dErEff": 4.27732565257,
+        "dImpedance": 76.625791967,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 47,
+      "paramMd5": "efb0d190b8ffc26c6d39692c69795c1a",
+      "uuid": "6e726713-a4d8-4f72-8c38-86073f8d304d"
+    }
+  },
+  {
+    "stackup": "2116",
+    "case": "L2_ignore_intervening_signal_copper",
+    "model": "DiffOffsetStripline1B1A",
+    "parameters_mil_and_Er": {
+      "H1": 3.9370078740157486,
+      "Er1": 4.17,
+      "H2": 22.283464566929137,
+      "Er2": 4.32,
+      "W1": 5.905511811023622,
+      "W2": 5.11,
+      "S1": 5.905511811023622,
+      "T1": 1.2,
+      "W2LinkW1Incr": 0.8,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "accessId": "7914ba9b-4ac8-4b7c-99c6-41dc5f6cf534",
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffOffsetStripline1B1A",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 6868.14097762,
+        "dErEff": 4.2395516406,
+        "dImpedance": 77.2701825559,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 47,
+      "paramMd5": "995146a84c27f9d1731a4a7449764589",
+      "uuid": "6e726713-a4d8-4f72-8c38-86073f8d304d"
+    }
+  },
+  {
+    "stackup": "2116A",
+    "case": "outer_gap_0.15",
+    "model": "DiffEdgeCoupledCoatedMicrostrip1B",
+    "parameters_mil_and_Er": {
+      "H1": 4.291338582677166,
+      "Er1": 4.16,
+      "W1": 5.905511811023622,
+      "W2": 5.41,
+      "S1": 5.905511811023622,
+      "T1": 1.6,
+      "C1": 1,
+      "C2": 0.6,
+      "C3": 1,
+      "CEr": 3.8,
+      "W2LinkW1Incr": 0.5,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffEdgeCoupledCoatedMicrostrip1B",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 5751.99705066,
+        "dErEff": 2.97357458989,
+        "dImpedance": 90.4060500278,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 93,
+      "paramMd5": "36979e014812b12cd98551bec9697768",
+      "uuid": "6e726713-a4d8-4f72-8c38-86073f8d304d",
+      "accessId": "e0a029ae-d54f-49de-a23a-16cd56923d52"
+    }
+  },
+  {
+    "stackup": "2116A",
+    "case": "outer_gap_0.25",
+    "model": "DiffEdgeCoupledCoatedMicrostrip1B",
+    "parameters_mil_and_Er": {
+      "H1": 4.291338582677166,
+      "Er1": 4.16,
+      "W1": 5.905511811023622,
+      "W2": 5.41,
+      "S1": 9.84251968503937,
+      "T1": 1.6,
+      "C1": 1,
+      "C2": 0.6,
+      "C3": 1,
+      "CEr": 3.8,
+      "W2LinkW1Incr": 0.5,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffEdgeCoupledCoatedMicrostrip1B",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 5810.76938714,
+        "dErEff": 3.03465138455,
+        "dImpedance": 98.2378515537,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 78,
+      "paramMd5": "723b565549ec13d76ebfab0a38f243dc",
+      "uuid": "6e726713-a4d8-4f72-8c38-86073f8d304d",
+      "accessId": "ce273e5d-b359-4303-bbc8-2ce3aa53b416"
+    }
+  },
+  {
+    "stackup": "2116A",
+    "case": "outer_gap_0.35",
+    "model": "DiffEdgeCoupledCoatedMicrostrip1B",
+    "parameters_mil_and_Er": {
+      "H1": 4.291338582677166,
+      "Er1": 4.16,
+      "W1": 5.905511811023622,
+      "W2": 5.41,
+      "S1": 13.779527559055119,
+      "T1": 1.6,
+      "C1": 1,
+      "C2": 0.6,
+      "C3": 1,
+      "CEr": 3.8,
+      "W2LinkW1Incr": 0.5,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffEdgeCoupledCoatedMicrostrip1B",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 5859.32514232,
+        "dErEff": 3.08557938376,
+        "dImpedance": 101.682406295,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 78,
+      "paramMd5": "457d028276d33f31a86df1be200d8ba3",
+      "uuid": "6e726713-a4d8-4f72-8c38-86073f8d304d",
+      "accessId": "c150f46c-f215-4a04-9bc3-0d4f6de426cb"
+    }
+  },
+  {
+    "stackup": "2116A",
+    "case": "outer_gap_0.55",
+    "model": "DiffEdgeCoupledCoatedMicrostrip1B",
+    "parameters_mil_and_Er": {
+      "H1": 4.291338582677166,
+      "Er1": 4.16,
+      "W1": 5.905511811023622,
+      "W2": 5.41,
+      "S1": 21.65354330708662,
+      "T1": 1.6,
+      "C1": 1,
+      "C2": 0.6,
+      "C3": 1,
+      "CEr": 3.8,
+      "W2LinkW1Incr": 0.5,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffEdgeCoupledCoatedMicrostrip1B",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 5920.40656946,
+        "dErEff": 3.15024688833,
+        "dImpedance": 104.453374919,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 109,
+      "paramMd5": "61cfb31830441130c49e77d9dd22c1ae",
+      "uuid": "6e726713-a4d8-4f72-8c38-86073f8d304d",
+      "accessId": "af3c1e66-d76d-4f94-a411-67c81fe3704c"
+    }
+  },
+  {
+    "stackup": "2116A",
+    "case": "L3_hypothetical_plane",
+    "model": "DiffOffsetStripline1B1A",
+    "parameters_mil_and_Er": {
+      "H1": 5.905511811023622,
+      "Er1": 4.36,
+      "H2": 9.763779527559056,
+      "Er2": 4.16,
+      "W1": 5.905511811023622,
+      "W2": 5.11,
+      "S1": 5.905511811023622,
+      "T1": 1.2,
+      "W2LinkW1Incr": 0.8,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "accessId": "d8c3365b-e202-4fc2-a39d-368b28dd82c6",
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffOffsetStripline1B1A",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 6879.53259049,
+        "dErEff": 4.25362688539,
+        "dImpedance": 82.9719163015,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 31,
+      "paramMd5": "d5c6d3d6fe5c1fdd424bf622f2f1cc2b",
+      "uuid": "6e726713-a4d8-4f72-8c38-86073f8d304d"
+    }
+  },
+  {
+    "stackup": "2116A",
+    "case": "L2_ignore_intervening_signal_copper",
+    "model": "DiffOffsetStripline1B1A",
+    "parameters_mil_and_Er": {
+      "H1": 5.905511811023622,
+      "Er1": 4.36,
+      "H2": 16.850393700787404,
+      "Er2": 4.23,
+      "W1": 5.905511811023622,
+      "W2": 5.11,
+      "S1": 5.905511811023622,
+      "T1": 1.2,
+      "W2LinkW1Incr": 0.8,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "accessId": "02674b34-6c67-4721-b49b-7656ed73e066",
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffOffsetStripline1B1A",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 6911.73477618,
+        "dErEff": 4.29354141868,
+        "dImpedance": 85.5490119141,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 47,
+      "paramMd5": "10eed06761015321bf2c82b0c09cf850",
+      "uuid": "6e726713-a4d8-4f72-8c38-86073f8d304d"
+    }
+  },
+  {
+    "stackup": "1080A",
+    "case": "outer_gap_0.15",
+    "model": "DiffEdgeCoupledCoatedMicrostrip1B",
+    "parameters_mil_and_Er": {
+      "H1": 2.7165354330708666,
+      "Er1": 3.91,
+      "W1": 5.905511811023622,
+      "W2": 5.41,
+      "S1": 5.905511811023622,
+      "T1": 1.6,
+      "C1": 1,
+      "C2": 0.6,
+      "C3": 1,
+      "CEr": 3.8,
+      "W2LinkW1Incr": 0.5,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "accessId": "602d76f8-79cc-489e-9f84-67ef49c5c3ac",
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffEdgeCoupledCoatedMicrostrip1B",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 5776.95259188,
+        "dErEff": 2.99943278825,
+        "dImpedance": 75.9345950143,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 125,
+      "paramMd5": "5abe75fe9bc65c96b5bfb8fa7517bbe1",
+      "uuid": "6e726713-a4d8-4f72-8c38-86073f8d304d"
+    }
+  },
+  {
+    "stackup": "1080A",
+    "case": "outer_gap_0.25",
+    "model": "DiffEdgeCoupledCoatedMicrostrip1B",
+    "parameters_mil_and_Er": {
+      "H1": 2.7165354330708666,
+      "Er1": 3.91,
+      "W1": 5.905511811023622,
+      "W2": 5.41,
+      "S1": 9.84251968503937,
+      "T1": 1.6,
+      "C1": 1,
+      "C2": 0.6,
+      "C3": 1,
+      "CEr": 3.8,
+      "W2LinkW1Incr": 0.5,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "accessId": "ffcdfaa2-d966-40e0-bc61-7538dade8cd2",
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffEdgeCoupledCoatedMicrostrip1B",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 5839.14242901,
+        "dErEff": 3.06435915534,
+        "dImpedance": 80.0863635918,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 110,
+      "paramMd5": "c0a4f5242831da8756f44eb241cd8fdf",
+      "uuid": "6e726713-a4d8-4f72-8c38-86073f8d304d"
+    }
+  },
+  {
+    "stackup": "1080A",
+    "case": "outer_gap_0.35",
+    "model": "DiffEdgeCoupledCoatedMicrostrip1B",
+    "parameters_mil_and_Er": {
+      "H1": 2.7165354330708666,
+      "Er1": 3.91,
+      "W1": 5.905511811023622,
+      "W2": 5.41,
+      "S1": 13.779527559055119,
+      "T1": 1.6,
+      "C1": 1,
+      "C2": 0.6,
+      "C3": 1,
+      "CEr": 3.8,
+      "W2LinkW1Incr": 0.5,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "accessId": "7e633827-2c39-4959-877e-8b951e8209f1",
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffEdgeCoupledCoatedMicrostrip1B",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 5880.83801426,
+        "dErEff": 3.10827876673,
+        "dImpedance": 81.7081102177,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 110,
+      "paramMd5": "5d9478561dc68e55d04b8e9b8c3920a0",
+      "uuid": "6e726713-a4d8-4f72-8c38-86073f8d304d"
+    }
+  },
+  {
+    "stackup": "1080A",
+    "case": "outer_gap_0.55",
+    "model": "DiffEdgeCoupledCoatedMicrostrip1B",
+    "parameters_mil_and_Er": {
+      "H1": 2.7165354330708666,
+      "Er1": 3.91,
+      "W1": 5.905511811023622,
+      "W2": 5.41,
+      "S1": 21.65354330708662,
+      "T1": 1.6,
+      "C1": 1,
+      "C2": 0.6,
+      "C3": 1,
+      "CEr": 3.8,
+      "W2LinkW1Incr": 0.5,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "accessId": "077e5955-04f8-4daf-96c3-6ffab9c78fa6",
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffEdgeCoupledCoatedMicrostrip1B",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 5924.24171121,
+        "dErEff": 3.15432956622,
+        "dImpedance": 82.9550672046,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 125,
+      "paramMd5": "ca8728268db9308f35512440a2c9fd43",
+      "uuid": "6e726713-a4d8-4f72-8c38-86073f8d304d"
+    }
+  },
+  {
+    "stackup": "1080A",
+    "case": "L3_hypothetical_plane",
+    "model": "DiffOffsetStripline1B1A",
+    "parameters_mil_and_Er": {
+      "H1": 3.9370078740157486,
+      "Er1": 4.17,
+      "H2": 17.165354330708663,
+      "Er2": 4.4,
+      "W1": 5.905511811023622,
+      "W2": 5.11,
+      "S1": 5.905511811023622,
+      "T1": 1.2,
+      "W2LinkW1Incr": 0.8,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffOffsetStripline1B1A",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 6898.6703745,
+        "dErEff": 4.27732565257,
+        "dImpedance": 76.625791967,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 47,
+      "paramMd5": "efb0d190b8ffc26c6d39692c69795c1a",
+      "uuid": "6e726713-a4d8-4f72-8c38-86073f8d304d",
+      "accessId": "d4c3fba1-14e0-40c2-9573-2081c6b6c4c3"
+    }
+  },
+  {
+    "stackup": "1080A",
+    "case": "L2_ignore_intervening_signal_copper",
+    "model": "DiffOffsetStripline1B1A",
+    "parameters_mil_and_Er": {
+      "H1": 3.9370078740157486,
+      "Er1": 4.17,
+      "H2": 22.283464566929137,
+      "Er2": 4.32,
+      "W1": 5.905511811023622,
+      "W2": 5.11,
+      "S1": 5.905511811023622,
+      "T1": 1.2,
+      "W2LinkW1Incr": 0.8,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffOffsetStripline1B1A",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 6868.14097762,
+        "dErEff": 4.2395516406,
+        "dImpedance": 77.2701825559,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 47,
+      "paramMd5": "995146a84c27f9d1731a4a7449764589",
+      "uuid": "6e726713-a4d8-4f72-8c38-86073f8d304d",
+      "accessId": "4765ec83-b0cf-4dc2-abf2-f72df2a48bab"
+    }
+  },
+  {
+    "stackup": "1080",
+    "case": "outer_gap_0.15",
+    "model": "DiffEdgeCoupledCoatedMicrostrip1B",
+    "parameters_mil_and_Er": {
+      "H1": 2.7165354330708666,
+      "Er1": 3.91,
+      "W1": 5.905511811023622,
+      "W2": 5.41,
+      "S1": 5.905511811023622,
+      "T1": 1.6,
+      "C1": 1,
+      "C2": 0.6,
+      "C3": 1,
+      "CEr": 3.8,
+      "W2LinkW1Incr": 0.5,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffEdgeCoupledCoatedMicrostrip1B",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 5776.95259188,
+        "dErEff": 2.99943278825,
+        "dImpedance": 75.9345950143,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 125,
+      "paramMd5": "5abe75fe9bc65c96b5bfb8fa7517bbe1",
+      "uuid": "6e726713-a4d8-4f72-8c38-86073f8d304d",
+      "accessId": "d804914a-8371-4334-9a20-9c5c624e9f6e"
+    }
+  },
+  {
+    "stackup": "1080",
+    "case": "outer_gap_0.25",
+    "model": "DiffEdgeCoupledCoatedMicrostrip1B",
+    "parameters_mil_and_Er": {
+      "H1": 2.7165354330708666,
+      "Er1": 3.91,
+      "W1": 5.905511811023622,
+      "W2": 5.41,
+      "S1": 9.84251968503937,
+      "T1": 1.6,
+      "C1": 1,
+      "C2": 0.6,
+      "C3": 1,
+      "CEr": 3.8,
+      "W2LinkW1Incr": 0.5,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffEdgeCoupledCoatedMicrostrip1B",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 5839.14242901,
+        "dErEff": 3.06435915534,
+        "dImpedance": 80.0863635918,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 110,
+      "paramMd5": "c0a4f5242831da8756f44eb241cd8fdf",
+      "uuid": "6e726713-a4d8-4f72-8c38-86073f8d304d",
+      "accessId": "f2957bdf-7652-4558-9efa-0470ac38d3c4"
+    }
+  },
+  {
+    "stackup": "1080",
+    "case": "outer_gap_0.35",
+    "model": "DiffEdgeCoupledCoatedMicrostrip1B",
+    "parameters_mil_and_Er": {
+      "H1": 2.7165354330708666,
+      "Er1": 3.91,
+      "W1": 5.905511811023622,
+      "W2": 5.41,
+      "S1": 13.779527559055119,
+      "T1": 1.6,
+      "C1": 1,
+      "C2": 0.6,
+      "C3": 1,
+      "CEr": 3.8,
+      "W2LinkW1Incr": 0.5,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffEdgeCoupledCoatedMicrostrip1B",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 5880.83801426,
+        "dErEff": 3.10827876673,
+        "dImpedance": 81.7081102177,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 110,
+      "paramMd5": "5d9478561dc68e55d04b8e9b8c3920a0",
+      "uuid": "6e726713-a4d8-4f72-8c38-86073f8d304d",
+      "accessId": "1be3d3c9-93a2-421d-bbf0-e14d9f3cbe85"
+    }
+  },
+  {
+    "stackup": "1080",
+    "case": "outer_gap_0.55",
+    "model": "DiffEdgeCoupledCoatedMicrostrip1B",
+    "parameters_mil_and_Er": {
+      "H1": 2.7165354330708666,
+      "Er1": 3.91,
+      "W1": 5.905511811023622,
+      "W2": 5.41,
+      "S1": 21.65354330708662,
+      "T1": 1.6,
+      "C1": 1,
+      "C2": 0.6,
+      "C3": 1,
+      "CEr": 3.8,
+      "W2LinkW1Incr": 0.5,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffEdgeCoupledCoatedMicrostrip1B",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 5924.24171121,
+        "dErEff": 3.15432956622,
+        "dImpedance": 82.9550672046,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 125,
+      "paramMd5": "ca8728268db9308f35512440a2c9fd43",
+      "uuid": "6e726713-a4d8-4f72-8c38-86073f8d304d",
+      "accessId": "85b8d381-7e47-43bf-b214-b7b4b3456c42"
+    }
+  },
+  {
+    "stackup": "1080",
+    "case": "L3_hypothetical_plane",
+    "model": "DiffOffsetStripline1B1A",
+    "parameters_mil_and_Er": {
+      "H1": 9.84251968503937,
+      "Er1": 4.23,
+      "H2": 6.614173228346457,
+      "Er2": 3.91,
+      "W1": 5.905511811023622,
+      "W2": 5.11,
+      "S1": 5.905511811023622,
+      "T1": 1.2,
+      "W2LinkW1Incr": 0.8,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "accessId": "b250b659-0736-4649-88bb-16141bf539f2",
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffOffsetStripline1B1A",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 6702.74608095,
+        "dErEff": 4.03782099947,
+        "dImpedance": 84.8353342796,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 46,
+      "paramMd5": "0b615a9490e762dd67839502de4f1485",
+      "uuid": "6e726713-a4d8-4f72-8c38-86073f8d304d"
+    }
+  },
+  {
+    "stackup": "1080",
+    "case": "L2_ignore_intervening_signal_copper",
+    "model": "DiffOffsetStripline1B1A",
+    "parameters_mil_and_Er": {
+      "H1": 9.84251968503937,
+      "Er1": 4.23,
+      "H2": 17.637795275590555,
+      "Er2": 4.02,
+      "W1": 5.905511811023622,
+      "W2": 5.11,
+      "S1": 5.905511811023622,
+      "T1": 1.2,
+      "W2LinkW1Incr": 0.8,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "accessId": "244d9511-207f-48c6-9ff9-e5288baa82cc",
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffOffsetStripline1B1A",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 6767.02097499,
+        "dErEff": 4.11563235517,
+        "dImpedance": 94.9702739901,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 46,
+      "paramMd5": "7d7c3080bedce50ef77b637f7717937f",
+      "uuid": "6e726713-a4d8-4f72-8c38-86073f8d304d"
+    }
+  },
+  {
+    "stackup": "7628",
+    "case": "outer_gap_0.15",
+    "model": "DiffEdgeCoupledCoatedMicrostrip1B",
+    "parameters_mil_and_Er": {
+      "H1": 7.992125984251969,
+      "Er1": 4.4,
+      "W1": 5.905511811023622,
+      "W2": 5.41,
+      "S1": 5.905511811023622,
+      "T1": 1.6,
+      "C1": 1,
+      "C2": 0.6,
+      "C3": 1,
+      "CEr": 3.8,
+      "W2LinkW1Incr": 0.5,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "accessId": "1fb14d05-d38f-4c6f-be5a-050e141da665",
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffEdgeCoupledCoatedMicrostrip1B",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 5709.960977,
+        "dErEff": 2.93027114112,
+        "dImpedance": 104.886330731,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 46,
+      "paramMd5": "501aee73f0676e5293aa43ec9eac7485",
+      "uuid": "6e726713-a4d8-4f72-8c38-86073f8d304d"
+    }
+  },
+  {
+    "stackup": "7628",
+    "case": "outer_gap_0.25",
+    "model": "DiffEdgeCoupledCoatedMicrostrip1B",
+    "parameters_mil_and_Er": {
+      "H1": 7.992125984251969,
+      "Er1": 4.4,
+      "W1": 5.905511811023622,
+      "W2": 5.41,
+      "S1": 9.84251968503937,
+      "T1": 1.6,
+      "C1": 1,
+      "C2": 0.6,
+      "C3": 1,
+      "CEr": 3.8,
+      "W2LinkW1Incr": 0.5,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "accessId": "2288438f-4873-42a3-b6f9-ab61f9634db4",
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffEdgeCoupledCoatedMicrostrip1B",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 5739.79869118,
+        "dErEff": 2.96097574139,
+        "dImpedance": 119.381651167,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 78,
+      "paramMd5": "e6287966435b1fac71b63ecd9b692e25",
+      "uuid": "6e726713-a4d8-4f72-8c38-86073f8d304d"
+    }
+  },
+  {
+    "stackup": "7628",
+    "case": "outer_gap_0.35",
+    "model": "DiffEdgeCoupledCoatedMicrostrip1B",
+    "parameters_mil_and_Er": {
+      "H1": 7.992125984251969,
+      "Er1": 4.4,
+      "W1": 5.905511811023622,
+      "W2": 5.41,
+      "S1": 13.779527559055119,
+      "T1": 1.6,
+      "C1": 1,
+      "C2": 0.6,
+      "C3": 1,
+      "CEr": 3.8,
+      "W2LinkW1Incr": 0.5,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "accessId": "be1a1c87-8b14-45bb-bb48-fdf26b5e1d4a",
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffEdgeCoupledCoatedMicrostrip1B",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 5777.1240337,
+        "dErEff": 2.99961081839,
+        "dImpedance": 127.256698236,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 63,
+      "paramMd5": "e2f41e6e7bc28667f87118b929c7e198",
+      "uuid": "6e726713-a4d8-4f72-8c38-86073f8d304d"
+    }
+  },
+  {
+    "stackup": "7628",
+    "case": "outer_gap_0.55",
+    "model": "DiffEdgeCoupledCoatedMicrostrip1B",
+    "parameters_mil_and_Er": {
+      "H1": 7.992125984251969,
+      "Er1": 4.4,
+      "W1": 5.905511811023622,
+      "W2": 5.41,
+      "S1": 21.65354330708662,
+      "T1": 1.6,
+      "C1": 1,
+      "C2": 0.6,
+      "C3": 1,
+      "CEr": 3.8,
+      "W2LinkW1Incr": 0.5,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "accessId": "383f51b8-6e5e-4f3a-827d-6a78bd8afb41",
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffEdgeCoupledCoatedMicrostrip1B",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 5842.41367088,
+        "dErEff": 3.06779358703,
+        "dImpedance": 134.792792709,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 125,
+      "paramMd5": "0a89d6f1c5e79b900e1536ad0d917a87",
+      "uuid": "6e726713-a4d8-4f72-8c38-86073f8d304d"
+    }
+  },
+  {
+    "stackup": "7628",
+    "case": "L3_hypothetical_plane",
+    "model": "DiffOffsetStripline1B1A",
+    "parameters_mil_and_Er": {
+      "H1": 3.9370078740157486,
+      "Er1": 4.17,
+      "H2": 6.614173228346457,
+      "Er2": 3.91,
+      "W1": 5.905511811023622,
+      "W2": 5.11,
+      "S1": 5.905511811023622,
+      "T1": 1.2,
+      "W2LinkW1Incr": 0.8,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "accessId": "7401a4dc-0f83-4111-b04f-e68d111ae52a",
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffOffsetStripline1B1A",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 6700.54261818,
+        "dErEff": 4.03516664684,
+        "dImpedance": 72.3626793046,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 46,
+      "paramMd5": "c7876b2f7bc70474253d04350c04930c",
+      "uuid": "6e726713-a4d8-4f72-8c38-86073f8d304d"
+    }
+  },
+  {
+    "stackup": "7628",
+    "case": "L2_ignore_intervening_signal_copper",
+    "model": "DiffOffsetStripline1B1A",
+    "parameters_mil_and_Er": {
+      "H1": 3.9370078740157486,
+      "Er1": 4.17,
+      "H2": 11.732283464566931,
+      "Er2": 4.0,
+      "W1": 5.905511811023622,
+      "W2": 5.11,
+      "S1": 5.905511811023622,
+      "T1": 1.2,
+      "W2LinkW1Incr": 0.8,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "accessId": "a759f5d8-085b-4405-b48f-880adfc14846",
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffOffsetStripline1B1A",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 6744.93704085,
+        "dErEff": 4.08881374559,
+        "dImpedance": 77.2402870757,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 63,
+      "paramMd5": "39de2825e5d9cbecbf2751f1ee02639e",
+      "uuid": "6e726713-a4d8-4f72-8c38-86073f8d304d"
+    }
+  },
+  {
+    "stackup": "2313",
+    "case": "outer_gap_0.15",
+    "model": "DiffEdgeCoupledCoatedMicrostrip1B",
+    "parameters_mil_and_Er": {
+      "H1": 7.598425196850394,
+      "Er1": 4.27,
+      "W1": 5.905511811023622,
+      "W2": 5.41,
+      "S1": 5.905511811023622,
+      "T1": 1.6,
+      "C1": 1,
+      "C2": 0.6,
+      "C3": 1,
+      "CEr": 3.8,
+      "W2LinkW1Incr": 0.5,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "accessId": "29c2db12-f1b8-48a0-9292-93ff651df4c6",
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffEdgeCoupledCoatedMicrostrip1B",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 5661.65333669,
+        "dErEff": 2.88089928292,
+        "dImpedance": 104.945640857,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 93,
+      "paramMd5": "4df7ef2cc7bcecbded3d23e2dda1ae55",
+      "uuid": "6e726713-a4d8-4f72-8c38-86073f8d304d"
+    }
+  },
+  {
+    "stackup": "2313",
+    "case": "outer_gap_0.25",
+    "model": "DiffEdgeCoupledCoatedMicrostrip1B",
+    "parameters_mil_and_Er": {
+      "H1": 7.598425196850394,
+      "Er1": 4.27,
+      "W1": 5.905511811023622,
+      "W2": 5.41,
+      "S1": 9.84251968503937,
+      "T1": 1.6,
+      "C1": 1,
+      "C2": 0.6,
+      "C3": 1,
+      "CEr": 3.8,
+      "W2LinkW1Incr": 0.5,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "accessId": "b24cbc95-26e9-459c-b98d-e3884ff4776a",
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffEdgeCoupledCoatedMicrostrip1B",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 5691.02005826,
+        "dErEff": 2.91086296201,
+        "dImpedance": 119.064793431,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 109,
+      "paramMd5": "43b2d9eb0670d979a09dcb793cd0b4b5",
+      "uuid": "6e726713-a4d8-4f72-8c38-86073f8d304d"
+    }
+  },
+  {
+    "stackup": "2313",
+    "case": "outer_gap_0.35",
+    "model": "DiffEdgeCoupledCoatedMicrostrip1B",
+    "parameters_mil_and_Er": {
+      "H1": 7.598425196850394,
+      "Er1": 4.27,
+      "W1": 5.905511811023622,
+      "W2": 5.41,
+      "S1": 13.779527559055119,
+      "T1": 1.6,
+      "C1": 1,
+      "C2": 0.6,
+      "C3": 1,
+      "CEr": 3.8,
+      "W2LinkW1Incr": 0.5,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "accessId": "c102c6a5-b649-49df-9b73-5b8d805fa368",
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffEdgeCoupledCoatedMicrostrip1B",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 5728.08514063,
+        "dErEff": 2.94890279232,
+        "dImpedance": 126.61970228,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 78,
+      "paramMd5": "86200eb95900c5142bd7ed35d3f33a4e",
+      "uuid": "6e726713-a4d8-4f72-8c38-86073f8d304d"
+    }
+  },
+  {
+    "stackup": "2313",
+    "case": "outer_gap_0.55",
+    "model": "DiffEdgeCoupledCoatedMicrostrip1B",
+    "parameters_mil_and_Er": {
+      "H1": 7.598425196850394,
+      "Er1": 4.27,
+      "W1": 5.905511811023622,
+      "W2": 5.41,
+      "S1": 21.65354330708662,
+      "T1": 1.6,
+      "C1": 1,
+      "C2": 0.6,
+      "C3": 1,
+      "CEr": 3.8,
+      "W2LinkW1Incr": 0.5,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "accessId": "876962d5-18f4-4e87-8bc0-e58db6bbb590",
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffEdgeCoupledCoatedMicrostrip1B",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 5792.3222863,
+        "dErEff": 3.01541411755,
+        "dImpedance": 133.739395036,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 78,
+      "paramMd5": "fefe43209e51beb0214eb4158eb8e9a3",
+      "uuid": "6e726713-a4d8-4f72-8c38-86073f8d304d"
+    }
+  },
+  {
+    "stackup": "2313",
+    "case": "L3_hypothetical_plane",
+    "model": "DiffOffsetStripline1B1A",
+    "parameters_mil_and_Er": {
+      "H1": 5.118110236220473,
+      "Er1": 4.03,
+      "H2": 8.188976377952756,
+      "Er2": 4.27,
+      "W1": 5.905511811023622,
+      "W2": 5.11,
+      "S1": 5.905511811023622,
+      "T1": 1.2,
+      "W2LinkW1Incr": 0.8,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "accessId": "1ebea481-0e73-42b7-8c03-2c05dbdd1e02",
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffOffsetStripline1B1A",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 6801.00663146,
+        "dErEff": 4.15707561506,
+        "dImpedance": 79.4427596533,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 47,
+      "paramMd5": "8890a45b6203f3086ee22ed14854b942",
+      "uuid": "6e726713-a4d8-4f72-8c38-86073f8d304d"
+    }
+  },
+  {
+    "stackup": "2313",
+    "case": "L2_ignore_intervening_signal_copper",
+    "model": "DiffOffsetStripline1B1A",
+    "parameters_mil_and_Er": {
+      "H1": 5.118110236220473,
+      "Er1": 4.03,
+      "H2": 14.488188976377954,
+      "Er2": 4.19,
+      "W1": 5.905511811023622,
+      "W2": 5.11,
+      "S1": 5.905511811023622,
+      "T1": 1.2,
+      "W2LinkW1Incr": 0.8,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "accessId": "4fe03587-5a76-443d-af12-3365106eac15",
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffOffsetStripline1B1A",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 6762.44643449,
+        "dErEff": 4.11006985925,
+        "dImpedance": 84.0503024809,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 47,
+      "paramMd5": "7e3f713e7d05564ac0012d53828adfc0",
+      "uuid": "6e726713-a4d8-4f72-8c38-86073f8d304d"
+    }
+  },
+  {
+    "stackup": "3313A",
+    "case": "outer_gap_0.15",
+    "model": "DiffEdgeCoupledCoatedMicrostrip1B",
+    "parameters_mil_and_Er": {
+      "H1": 3.6220472440944884,
+      "Er1": 4.1,
+      "W1": 5.905511811023622,
+      "W2": 5.41,
+      "S1": 5.905511811023622,
+      "T1": 1.6,
+      "C1": 1,
+      "C2": 0.6,
+      "C3": 1,
+      "CEr": 3.8,
+      "W2LinkW1Incr": 0.5,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "accessId": "a8b7f7d1-1f50-41de-a3e5-e847067cc7ff",
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffEdgeCoupledCoatedMicrostrip1B",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 5776.99773281,
+        "dErEff": 2.99947966339,
+        "dImpedance": 85.0886000566,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 94,
+      "paramMd5": "18348eb4f51d3d7b1aadb86608cf857f",
+      "uuid": "6e726713-a4d8-4f72-8c38-86073f8d304d"
+    }
+  },
+  {
+    "stackup": "3313A",
+    "case": "outer_gap_0.25",
+    "model": "DiffEdgeCoupledCoatedMicrostrip1B",
+    "parameters_mil_and_Er": {
+      "H1": 3.6220472440944884,
+      "Er1": 4.1,
+      "W1": 5.905511811023622,
+      "W2": 5.41,
+      "S1": 9.84251968503937,
+      "T1": 1.6,
+      "C1": 1,
+      "C2": 0.6,
+      "C3": 1,
+      "CEr": 3.8,
+      "W2LinkW1Incr": 0.5,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "accessId": "377adebe-d1ec-45ab-9bce-a53aafcdeab7",
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffEdgeCoupledCoatedMicrostrip1B",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 5839.91201169,
+        "dErEff": 3.06516695654,
+        "dImpedance": 91.3505235209,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 94,
+      "paramMd5": "202544fbbdf87a5d99cc46f82807274b",
+      "uuid": "6e726713-a4d8-4f72-8c38-86073f8d304d"
+    }
+  },
+  {
+    "stackup": "3313A",
+    "case": "outer_gap_0.35",
+    "model": "DiffEdgeCoupledCoatedMicrostrip1B",
+    "parameters_mil_and_Er": {
+      "H1": 3.6220472440944884,
+      "Er1": 4.1,
+      "W1": 5.905511811023622,
+      "W2": 5.41,
+      "S1": 13.779527559055119,
+      "T1": 1.6,
+      "C1": 1,
+      "C2": 0.6,
+      "C3": 1,
+      "CEr": 3.8,
+      "W2LinkW1Incr": 0.5,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "accessId": "5bb2e9d7-6aa2-4e89-96b7-3be5f47dc4a4",
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffEdgeCoupledCoatedMicrostrip1B",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 5887.66745114,
+        "dErEff": 3.11550226771,
+        "dImpedance": 93.9602429922,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 125,
+      "paramMd5": "e6304d31efec3485fb41cf35918cad7e",
+      "uuid": "6e726713-a4d8-4f72-8c38-86073f8d304d"
+    }
+  },
+  {
+    "stackup": "3313A",
+    "case": "outer_gap_0.55",
+    "model": "DiffEdgeCoupledCoatedMicrostrip1B",
+    "parameters_mil_and_Er": {
+      "H1": 3.6220472440944884,
+      "Er1": 4.1,
+      "W1": 5.905511811023622,
+      "W2": 5.41,
+      "S1": 21.65354330708662,
+      "T1": 1.6,
+      "C1": 1,
+      "C2": 0.6,
+      "C3": 1,
+      "CEr": 3.8,
+      "W2LinkW1Incr": 0.5,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "accessId": "df2f8cdc-0089-4a31-97c8-dd572470e32a",
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffEdgeCoupledCoatedMicrostrip1B",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 5943.03795343,
+        "dErEff": 3.1743772285,
+        "dImpedance": 96.0109555671,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 110,
+      "paramMd5": "f69becff2c9d89d19b61e178d8a01fd4",
+      "uuid": "6e726713-a4d8-4f72-8c38-86073f8d304d"
+    }
+  },
+  {
+    "stackup": "3313A",
+    "case": "L3_hypothetical_plane",
+    "model": "DiffOffsetStripline1B1A",
+    "parameters_mil_and_Er": {
+      "H1": 7.874015748031497,
+      "Er1": 4.36,
+      "H2": 8.425196850393702,
+      "Er2": 4.1,
+      "W1": 5.905511811023622,
+      "W2": 5.11,
+      "S1": 5.905511811023622,
+      "T1": 1.2,
+      "W2LinkW1Incr": 0.8,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "accessId": "de2cd51e-590b-407e-80c0-db6ddb6b1471",
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffOffsetStripline1B1A",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 6846.64293217,
+        "dErEff": 4.21305264131,
+        "dImpedance": 85.6170774698,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 47,
+      "paramMd5": "e59eec54b40e24b1999c7b5c558be142",
+      "uuid": "6e726713-a4d8-4f72-8c38-86073f8d304d"
+    }
+  },
+  {
+    "stackup": "3313A",
+    "case": "L2_ignore_intervening_signal_copper",
+    "model": "DiffOffsetStripline1B1A",
+    "parameters_mil_and_Er": {
+      "H1": 7.874015748031497,
+      "Er1": 4.36,
+      "H2": 17.480314960629926,
+      "Er2": 4.19,
+      "W1": 5.905511811023622,
+      "W2": 5.11,
+      "S1": 5.905511811023622,
+      "T1": 1.2,
+      "W2LinkW1Incr": 0.8,
+      "dCalculateMode": 3,
+      "isLinkComputingMode": false,
+      "ZoTol": 0.5
+    },
+    "result": {
+      "accessId": "0a4e270b-d770-48ed-b4bb-a5437ffb7709",
+      "impedance_calc_error_msg": "",
+      "impedance_calc_mark": "DiffOffsetStripline1B1A",
+      "impedance_calc_result": {
+        "dCer": 0,
+        "dDelay": 6892.33016336,
+        "dErEff": 4.26946712784,
+        "dImpedance": 90.5903864148,
+        "dInductance": 0,
+        "dResultValid": 1
+      },
+      "impedance_calc_status": 0,
+      "impedance_calc_time": 47,
+      "paramMd5": "4a59b000a6328944bc0ce84252b11440",
+      "uuid": "6e726713-a4d8-4f72-8c38-86073f8d304d"
+    }
+  }
+]

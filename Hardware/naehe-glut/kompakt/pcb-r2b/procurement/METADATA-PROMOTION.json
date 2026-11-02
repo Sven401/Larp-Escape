@@ -29,5 +29,6 @@
     "fitted_bom_and_cpl": 101,
     "additional_manufacturer_clearance_violations": 0
   },
-  "manufacturing_material": "NONCONDUCTIVE epoxy resin plus copper cap; explicit filled-via inventory; not a substitute for supplier approval"
+  "manufacturing_material": "NONCONDUCTIVE epoxy resin plus copper cap; explicit filled-via inventory; not a substitute for supplier approval",
+  "historical_scope": "Two-flag promotion preserved in git bad8abfb; current_checks_sha256 are historical at that commit, not current after host routing/stackup promotion."
 }

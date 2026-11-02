@@ -1,0 +1,48 @@
+UNABHAENGIGER NATIVER STACKUP-REVIEW - 2026-11-02
+Empfehlung: Kandidat als ausdruecklich vorgeschlagenen Engineeringstand
+uebernehmen; keine Fertigungs- oder Impedanzfreigabe.
+
+Kandidat SHA256 8b383237c2a90d4270685943619f579258b213815a4f9e6838f9993665eba590.
+Vollstaendiger Vergleich aller nativen Top-Level-Ausdruecke gegen akzeptierten
+Hosttrial 0c2fd71b...: ausschliesslich title_block neu und setup um stackup
+ergaenzt. Alle anderen Objekte identisch. Innerhalb setup bleiben alle vorherigen
+Werte identisch, insbesondere POFV-Flags, Maskenparameter und Auxdatum(0,43).
+Keine Kupfer-, Via-, Pad-, Zonen-, Kontur- oder Maskenartworkaenderung.
+Zweiter gespeicherter nativer Roundtrip byteidentisch unabhaengig bestaetigt.
+Kein eigener erneuter KiCad-Prozess behauptet; nativen Output direkt gelesen.
+
+Stackup von oben nach unten in mm:
+.035/.092/.030/.200/.030/.184/.030/.200/.030/.092/.035.
+Sechs Cu-Lagen, fuenf Dielektrika; .184 entspricht zwei gleichen .092-PP.
+Dk PP4.1 und Core4.36 entsprechen den gebundenen 3313A-Quelldaten.
+Summe .958 mm unabhaengig nachvollzogen; general-Nenndicke1.0 mm bleibt
+unveraendert. Unterschied .042 mm ist offen und nicht durch erfundene Masken
+aufgefuellt. Alle fuenf loss_tangent0.02 klar im jeweiligen Materialnamen und
+Titelkommentar als SOFTWAREDEFAULT UNVERIFIED markiert. Damit keine
+vorgebliche Herstellerangabe; numerische Simulation darf sie nicht als
+qualifizierten Materialwert verwenden. ENIG ist jetzt nativ persistent.
+
+Gerberjob direkt gelesen und Hash gegen EXPORT-INSPECTION abgeglichen:
+ENIG, LayerNumber6, BoardThickness1.0, Revision R2b engineering draft.
+Job fuegt Top/Bottom SolderMask als Typ-/Namenseintraege hinzu, aber KEINE
+Maskendicken oder dielektrischen Zahlen. Das ist keine versteckte Auffuellung
+auf1mm. Native PCB-stackup enthaelt weiterhin keine Maskenschichtdicken.
+Job ist weiterhin lokaler Inspektionsbeleg und kein freigegebenes Bestellpaket.
+
+Gelesene Dokumentation STACKUP-ENTWURF/ROUNDTRIP/EXPORT-INSPECTION trennt
+Nennstufe, publizierte Schichtmasse, Calculator-Prozesswerte und Softwaredefaults
+zutreffend. Gelieferte DRC zeigt4 bekannte NPTH-Fehler,8 Viazentrier- und
+2 Librarywarnungen,0 unverbunden; keine neue Stackupwarnung ist kein
+Nachweis der Pressdicke. Lieferbare Enddicke/Toleranz, fertiges Kupfer,
+Maskenmaterial/-dicke und frequenzbezogener Df bleiben beim Fertiger zu
+bestaetigen. Konkrete USB-SI-Grenzen aus USB-STACKUP-REVIEW bleiben bestehen.
+
+SHA256-Bindungen:
+df55e829d99f65a09bfc3918e7807153f0f34d054247968874e93ccdf9760181  STACKUP-ENTWURF.txt
+846dde25f77f43ca2508ef71f5537f39f2e509a9d70c80bf57104d108f958b3c  jlc-stackups.json
+8b383237c2a90d4270685943619f579258b213815a4f9e6838f9993665eba590  stackup-trial/proposed-3313A-roundtrip.kicad_pcb
+8b383237c2a90d4270685943619f579258b213815a4f9e6838f9993665eba590  stackup-trial/proposed-3313A-roundtrip2.kicad_pcb
+eec9638d3a85db3fe301656be721cd8f14465033fba66064313f642f6045799b  stackup-trial/STACKUP-ROUNDTRIP.json
+4920cf9772af94989f70e6681dd86d57ac4ceb6b2b5442384ff3dfcb8d5b12b0  stackup-trial/EXPORT-INSPECTION.json
+7671b20f432a1b6b7705a7aba9707abf3f2c22e0916f6358987dc3587d97f091  stackup-trial/drc.json
+85bb0e46f3f6251fd9b1aaedc96af18c72e6718b27784a38fa188044b24b65d8  stackup-trial/gerber-inspection/proposed-3313A-roundtrip-job.gbrjob

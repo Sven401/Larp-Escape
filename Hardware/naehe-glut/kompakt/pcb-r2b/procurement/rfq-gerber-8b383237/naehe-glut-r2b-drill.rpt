@@ -1,0 +1,30 @@
+Drill report for naehe-glut-r2b.kicad_pcb
+Created on 2026-11-02T02:50:11
+
+Copper Layer Stackup:
+    =============================================================
+    L1 :  F.Cu                      front
+    L2 :  In1.Cu                    in1
+    L3 :  In2.Cu                    in2
+    L4 :  In3.Cu                    in3
+    L5 :  In4.Cu                    in4
+    L6 :  B.Cu                      back
+
+
+Drill file 'naehe-glut-r2b-PTH.drl' contains
+    plated through holes:
+    =============================================================
+    T1  0.150mm  0.0059"  (131 holes))
+    T2  0.200mm  0.0079"  (99 holes))
+    T3  0.600mm  0.0236"  (4 holes)  (with 4 slots)
+    T4  1.000mm  0.0394"  (2 holes))
+
+    Total plated holes count 236
+
+
+Drill file 'naehe-glut-r2b-NPTH.drl' contains
+    unplated through holes:
+    =============================================================
+    T1  0.650mm  0.0256"  (2 holes))
+
+    Total unplated holes count 2

@@ -33,6 +33,18 @@ def main():
     verify({'procurement/'+p:h for p,h in screen['input_sha256'].items()})
     if screen['frozen_pcb_sha256']!=sha(BASE/'naehe-glut-r2b.kicad_pcb') or screen['new_rule_violations']!=0:
         raise RuntimeError('Manufacturer-distance screen is stale or failed')
+    stackup_sources=read('procurement/usb-stackup/SOURCE-PROVENANCE.json')
+    verify({'procurement/usb-stackup/'+p:h for p,h in stackup_sources['hashes'].items()})
+    promotion=read('procurement/STACKUP-PROMOTION.json')
+    verify(promotion['checks_sha256'])
+    if promotion['pcb_sha256']!=sha(BASE/'naehe-glut-r2b.kicad_pcb'):
+        raise RuntimeError('Stackup promotion does not bind current PCB')
+    gerber_manifests=[read('procurement/'+name) for name in
+                     ['GERBER-EXPORT-MANIFEST.json','GERBER-CURRENT-MANIFEST.json']]
+    for gerber in gerber_manifests:
+        verify({'procurement/'+r['path']:r['sha256'] for r in gerber['files']})
+    if gerber_manifests[1]['pcb_sha256']!=sha(BASE/'naehe-glut-r2b.kicad_pcb'):
+        raise RuntimeError('Current Gerber inspection export is stale')
     files=set('''PLANUNG.txt PLANUNGSREVIEW.json SERVICE-INTERFACE.csv
 UMSETZUNGSSTAND.txt TERMIN-UND-ABNAHME.txt JTAG-PROBE-AUSWAHL.txt
 SCHALTUNGSVERTRAG.txt REPRODUKTION.txt HARDWARE-DATEIEN.txt
@@ -60,6 +72,30 @@ clearance-screen/screen.kicad_dru clearance-screen/positive-control.kicad_dru
 clearance-screen/production-screen-rules.txt clearance-screen/drc-all-layers.json
 clearance-screen/positive-control.json clearance-screen/metadata-candidate.kicad_pcb'''.split()
     files.update('procurement/' + name for name in procurement_files)
+    new_evidence='''JLC-ANFRAGE-ENTWURF.txt TI-ANFRAGE-ENTWURF.txt
+GERBER-EXPORT.txt GERBER-EXPORT-MANIFEST.json GERBER-REVIEW.txt
+GERBER-CURRENT.txt GERBER-CURRENT-MANIFEST.json GERBER-CURRENT-REVIEW.txt
+USB-STACKUP-PRUEFUNG.txt USB-STACKUP-REVIEW.txt STACKUP-NATIV-REVIEW.txt
+STACKUP-PROMOTION.json clearance-screen/HISTORICAL-SCREEN.json
+usb-stackup/SOURCE-PROVENANCE.json usb-stackup/REPRODUKTION.txt usb-stackup/REPRO-PRUEFUNG.txt
+usb-stackup/STACKUP-ENTWURF.txt usb-stackup/ENIG-PRUEFUNG.txt
+usb-stackup/build_host_pair_trial.py usb-stackup/build_stackup_trial.py
+usb-stackup/check_trial_reference.py usb-stackup/extract_geometry.py
+usb-stackup/query_calculator.py usb-stackup/query_host_extra.py
+usb-stackup/host-pair-trial/host-pair.kicad_pcb
+usb-stackup/host-pair-trial/TRIAL.json usb-stackup/host-pair-trial/GEOMETRY-REFERENCE.json
+usb-stackup/host-pair-trial/drc.json usb-stackup/host-pair-trial/pad-contract.json
+usb-stackup/stackup-trial/proposed-3313A-input.kicad_pcb
+usb-stackup/stackup-trial/proposed-3313A-roundtrip.kicad_pcb
+usb-stackup/stackup-trial/STACKUP-ROUNDTRIP.json
+usb-stackup/stackup-trial/EXPORT-INSPECTION.json usb-stackup/stackup-trial/drc.json
+usb-stackup/stackup-trial/gerber-inspection/proposed-3313A-roundtrip-job.gbrjob'''.split()
+    files.update('procurement/'+name for name in new_evidence)
+    files.update('procurement/'+p for p in screen['input_sha256'])
+    files.update('procurement/usb-stackup/'+p for p in stackup_sources['hashes'])
+    for gerber in gerber_manifests:
+        files.update('procurement/'+r['path'] for r in gerber['files'])
+    files.add('tools/apply_proposed_stackup.py')
     files.update(mech['sha256'])
     files.update('sources/r2a-input/'+r['path'] for r in provenance['files'])
     for folder in ['NearGlowR2a.pretty','NearGlowR2b.pretty','footprints']:

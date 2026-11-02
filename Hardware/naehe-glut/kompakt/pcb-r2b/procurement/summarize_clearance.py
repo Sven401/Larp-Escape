@@ -1,6 +1,6 @@
 from pathlib import Path
 import json,hashlib,collections,re
-P=Path(__file__).resolve().parent;D=P/'clearance-screen';B=P.parent
+P=Path(__file__).resolve().parent;D=P/'clearance-screen-8b383237';B=P.parent
 sha=lambda f:hashlib.sha256(f.read_bytes()).hexdigest()
 control=(D/'production-screen-rules.txt').read_text(encoding='utf-8-sig').replace('0.30mm','3.00mm');(D/'positive-control.kicad_dru').write_text(control,encoding='utf8')
 r=json.loads((D/'drc-all-layers.json').read_text());c=json.loads((D/'positive-control.json').read_text());new=[v for v in r['violations'] if v['type']=='hole_clearance' and 'JLC ' in v['description']];positive=[v for v in c['violations'] if v['type']=='hole_clearance' and 'JLC ' in v['description']]

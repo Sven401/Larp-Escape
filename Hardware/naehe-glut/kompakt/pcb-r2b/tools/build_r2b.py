@@ -116,6 +116,8 @@ def main():
  for label,x,y,angle in [('BOOT',4.7,26.4,0),('RESET',27,24.5,0),('USB / GPIO',28.8,37.2,90)]:
   t=pcb.PCB_TEXT(board);t.SetText(label);t.SetPosition(vec(x,y));t.SetTextSize(vec(1.,1.));t.SetTextThickness(pcb.FromMM(.15));t.SetLayer(pcb.F_SilkS);t.SetTextAngle(pcb.EDA_ANGLE(angle,pcb.DEGREES_T));board.Add(t)
  board.SetFileName(str(BASE/'naehe-glut-r2b.kicad_pcb'));pcb.SaveBoard(str(BASE/'naehe-glut-r2b.kicad_pcb'),board)
+ from apply_proposed_stackup import apply as apply_stackup
+ apply_stackup(BASE/'naehe-glut-r2b.kicad_pcb')  # reviewed engineering proposal; Df software default UNVERIFIED
  project=json.loads((OLD/'naehe-glut-r2a.kicad_pro').read_text(encoding='utf-8'));project['meta']['filename']='naehe-glut-r2b.kicad_pro';project.get('board',{}).get('design_settings',{}).pop('drc_exclusions',None)
  severity=project.get('board',{}).get('design_settings',{}).get('rule_severities',{})
  for k in list(severity):

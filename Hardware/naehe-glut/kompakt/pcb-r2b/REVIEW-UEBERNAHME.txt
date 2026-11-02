@@ -23,5 +23,11 @@ Die anschließende P5-Fertigerprüfung ergänzt procurement/ und korrigiert die
 zwei Via-Prozessdefaults mit neu gebundenen Prüf-/Mechanik-/Paketbelegen.
 Die Aussage zur bytegleichen Übernahme oben gilt für den ursprünglichen Transfer,
 nicht als Behauptung, dass die nachfolgende Korrektur unveränderte Dateien lässt.
+Die zweite Fortsetzung nach bad8abfb ergänzt eine begrenzte USB-Host-Paarführung
+und den ausdrücklich vorläufigen3313A-Aufbau mit ENIG. Alle sechs CI-Workflows
+von bad8abfb waren erfolgreich; neue Folgecommits benötigen eigene Nachweise.
+Die laufenden Quell-/Prüfbindungen stehen im unabhängigen Review und Paketmanifest.
+Historische Gerber- und Routingversuche bleiben als solche gekennzeichnet;
+aktuelle Gerberbindung: procurement/GERBER-CURRENT-MANIFEST.json.
 Offen: vier USB-NPTH-DFM-Abstände, dokumentierte Warnungen, bestätigter Stackup,
 Versorgungs-/Probe-Qualifikation, Fertigerangebot und reale Muster-/Geräteabnahme.
