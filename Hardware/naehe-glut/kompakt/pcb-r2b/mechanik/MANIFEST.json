@@ -15,8 +15,8 @@
     "bom.csv": "0da0adbfea16ed33a8b3c14c45c7d27d4b010d42240d7d9a3154b20c285f0a24",
     "SERVICE-INTERFACE.csv": "7b5c7004e9290f34f15b07415e01f8adac1cef7f52c4b40251b45e498c85c6b8",
     "circuit.json": "b8adb47a048849bc23e5384c4230514bd4ba75c0055c0d28544233c209a99fca",
-    "naehe-glut-r2b.kicad_pcb": "ab68d3853f49b9e2c8e70272ec0bde0e7acbaacf18eda1008bd91353b010efac",
-    "mechanical-interface.json": "afb441f1526c103a3fa79965a6f380420c17e36b918f366b60ea559e9754229e"
+    "naehe-glut-r2b.kicad_pcb": "7af39dbe807ed82f905622cce0c6b93f2cd650c61eafb224970e9f49eec15868",
+    "mechanical-interface.json": "700d649c2243e67a296984ab0cf09c74c93ae1cee2512dcdf5c47e75778fee7e"
   },
   "binding_note": "Hashes bind frozen PCB and digitally screened fixture/PCBA; exact MPN tolerance and cross-vendor mating qualification plus physical fit remain open.",
   "connectors": [
@@ -53,12 +53,13 @@
     "mechanik/exploded-draft.png": "ff2abff692fbc3e9fd12dcf2ddda7cc5268aaebc44573f4865c70a4d389515cb",
     "mechanik/underside-draft.png": "f9680fbc744217e36ddf306260a807c1b80836577e5e9e6903f80795b8aa7348",
     "mechanik/DRUCK-UND-MONTAGE.txt": "0869feed1787321db41e57d97e59d7449e36c2e118a65e28aceb19088dd7366d",
-    "mechanik/component-envelope-report.json": "ec6b522e7ed853be26e62d69d68501866c763bdca2036e3a7b6cc12664aff753",
-    "mechanik/pcba-envelope-report.json": "ac9b22f7330cda7305db46a4cf0472f0e3f535a5b5cfa84acb9777f114a32a24",
-    "mechanik/pcb-placement.json": "e48804a9c39e4e691a9f4dc043be7484dce85f02c226c103a3da1962e5a09f03",
+    "mechanik/component-envelope-report.json": "37d39640885a3c2db2d767b4d18bd38c3e3cf9ce2e6b0fdfc17b25e7865489dc",
+    "mechanik/pcba-envelope-report.json": "5ba7aa56209844a4151f637e300a742c49167beec876cfb1a43f10ce78bf6061",
+    "mechanik/pcb-placement.json": "7e042c5dca0da5333ca5c9b80c25eeb35f15f4e7c89add1a0a312a756e8c04c4",
     "mechanik/adapter-mating-report.json": "ba5e1ba99bcfe1e28d6b6af08abcf85de9923be09046c81a8a57312ab9efaa3c",
+    "mechanik/metadata-rebind-report.json": "dd52630620ca0ed82bd4378bb4641c481d752ed087fff0297e5969164d09f756",
     "mechanik-tools/build_fixture.py": "bde17934af669134caa4b3548df475e9b2b0b56417d9b20087063eadda1cce80",
-    "mechanik-tools/build_manifest.py": "d9204ae95fdfcb8f13eae885ea0f34bf2c511481e285d324522cb5002b5871dc",
+    "mechanik-tools/build_manifest.py": "af2c0920b974586f73db29a846ca72023afea256d2b2e5d6a17336654bcb6591",
     "mechanik-tools/component_envelopes.py": "519a337d17db38b7cae2ce80aa2b576a0003c2c30faa3f62169dfd50c99470ad",
     "mechanik-tools/extract_pcba.py": "aba9a44f592e20b88674cba8eb7e72234fa78984efdc1fe56a3ccd787cfb37ca",
     "mechanik-tools/pcba_envelopes.py": "4dc989a861225a209ea0d4ba523baf9c1c6df94512515ab0f6851f1767fb4738",

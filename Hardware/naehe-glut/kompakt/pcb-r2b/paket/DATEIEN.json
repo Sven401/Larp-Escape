@@ -2,7 +2,7 @@
   "status": "reviewed_engineering_draft_NOT_manufacturing_or_operation_release",
   "date": "2026-11-02",
   "entry_point": "UMSETZUNGSSTAND.txt",
-  "pcb_sha256": "ab68d3853f49b9e2c8e70272ec0bde0e7acbaacf18eda1008bd91353b010efac",
+  "pcb_sha256": "7af39dbe807ed82f905622cce0c6b93f2cd650c61eafb224970e9f49eec15868",
   "files": [
     {
       "path": "HARDWARE-DATEIEN.txt",
@@ -81,8 +81,8 @@
     },
     {
       "path": "SCHALTUNGSVERTRAG.txt",
-      "sha256": "21915bb3fa790a842b0fc64eda58bcc6c6e2104f1c87cb36e31ff782c47dfad1",
-      "bytes": 12122
+      "sha256": "126b981ef2372f556f0de0565df2406875bcdbff273d822aa7d96558ab7fa424",
+      "bytes": 12512
     },
     {
       "path": "SERVICE-INTERFACE.csv",
@@ -101,8 +101,8 @@
     },
     {
       "path": "UMSETZUNGSSTAND.txt",
-      "sha256": "dc9cee2599b44107a7e7aa6122e86905189c8a2d0fb76b5782484a36f1a0054a",
-      "bytes": 5546
+      "sha256": "8f96684116ad6b150e545f7cb93da571ad199e3cf456fd5832f78f01868cf6d7",
+      "bytes": 6223
     },
     {
       "path": "bom.csv",
@@ -251,7 +251,7 @@
     },
     {
       "path": "mechanical-interface.json",
-      "sha256": "afb441f1526c103a3fa79965a6f380420c17e36b918f366b60ea559e9754229e",
+      "sha256": "700d649c2243e67a296984ab0cf09c74c93ae1cee2512dcdf5c47e75778fee7e",
       "bytes": 1134
     },
     {
@@ -266,8 +266,8 @@
     },
     {
       "path": "mechanik-tools/build_manifest.py",
-      "sha256": "d9204ae95fdfcb8f13eae885ea0f34bf2c511481e285d324522cb5002b5871dc",
-      "bytes": 2019
+      "sha256": "af2c0920b974586f73db29a846ca72023afea256d2b2e5d6a17336654bcb6591",
+      "bytes": 2049
     },
     {
       "path": "mechanik-tools/component_envelopes.py",
@@ -306,8 +306,8 @@
     },
     {
       "path": "mechanik/MANIFEST.json",
-      "sha256": "ccc40b530e2f5eb564c46bbe49045b79d0b27296cfa5913ad591b318841306c4",
-      "bytes": 5573
+      "sha256": "2d1374231989c40671824f46f29114c3dbdbf207467cc2666feca7561953947d",
+      "bytes": 5686
     },
     {
       "path": "mechanik/R2b-service-P1S-PETG-draft.3mf",
@@ -366,7 +366,7 @@
     },
     {
       "path": "mechanik/component-envelope-report.json",
-      "sha256": "ec6b522e7ed853be26e62d69d68501866c763bdca2036e3a7b6cc12664aff753",
+      "sha256": "37d39640885a3c2db2d767b4d18bd38c3e3cf9ce2e6b0fdfc17b25e7865489dc",
       "bytes": 4422
     },
     {
@@ -400,14 +400,19 @@
       "bytes": 2684
     },
     {
+      "path": "mechanik/metadata-rebind-report.json",
+      "sha256": "dd52630620ca0ed82bd4378bb4641c481d752ed087fff0297e5969164d09f756",
+      "bytes": 3487
+    },
+    {
       "path": "mechanik/pcb-placement.json",
-      "sha256": "e48804a9c39e4e691a9f4dc043be7484dce85f02c226c103a3da1962e5a09f03",
-      "bytes": 85646
+      "sha256": "7e042c5dca0da5333ca5c9b80c25eeb35f15f4e7c89add1a0a312a756e8c04c4",
+      "bytes": 85885
     },
     {
       "path": "mechanik/pcba-envelope-report.json",
-      "sha256": "ac9b22f7330cda7305db46a4cf0472f0e3f535a5b5cfa84acb9777f114a32a24",
-      "bytes": 40739
+      "sha256": "5ba7aa56209844a4151f637e300a742c49167beec876cfb1a43f10ce78bf6061",
+      "bytes": 40978
     },
     {
       "path": "mechanik/slice-report.json",
@@ -456,8 +461,8 @@
     },
     {
       "path": "naehe-glut-r2b.kicad_pcb",
-      "sha256": "ab68d3853f49b9e2c8e70272ec0bde0e7acbaacf18eda1008bd91353b010efac",
-      "bytes": 2134830
+      "sha256": "7af39dbe807ed82f905622cce0c6b93f2cd650c61eafb224970e9f49eec15868",
+      "bytes": 2134832
     },
     {
       "path": "naehe-glut-r2b.kicad_pro",
@@ -475,9 +480,134 @@
       "bytes": 181950
     },
     {
+      "path": "procurement/CLEARANCE-SCREEN.json",
+      "sha256": "938eb1e3dafb2995058cf48ba1da48d349e355e62091b8297f0578e50b1fe107",
+      "bytes": 2157
+    },
+    {
+      "path": "procurement/DFM-ANGEBOT.txt",
+      "sha256": "15e77000b388f35c1a90787c1ad6a6534ff80c451a4e51788b280a37075421ac",
+      "bytes": 8796
+    },
+    {
+      "path": "procurement/FIRMWARE-ABGLEICH.txt",
+      "sha256": "b2c18a1a971ee4e9fc5811ab7027930cc829188dd6d2d6f0878dd849d9b1e908",
+      "bytes": 972
+    },
+    {
+      "path": "procurement/KALKULATOR.txt",
+      "sha256": "2d824344bcda9ad39a86914e05ce04ec1b4248f64a1f490c734889bbeb4e8cb4",
+      "bytes": 2272
+    },
+    {
+      "path": "procurement/METADATA-PROMOTION.json",
+      "sha256": "098335f3cab3e10f1530b29dd7cee9ff99c5558bf93cd79d04d0ed79036f8740",
+      "bytes": 1886
+    },
+    {
+      "path": "procurement/QUALIFIKATION-OFFEN.txt",
+      "sha256": "f84bed81c9d75ba97ed9fe0d0225af5d89f4494aeae8b006838bc2e8447bc185",
+      "bytes": 10853
+    },
+    {
+      "path": "procurement/QUELLEN.txt",
+      "sha256": "522e4ee98c55f854aa7df305922b207a2eb65d96b6a63e199038f1a7a3937b24",
+      "bytes": 2469
+    },
+    {
+      "path": "procurement/REVIEW.txt",
+      "sha256": "1b26ee670f22341ec0769fd74e405b902e54acf058d95aa79b0bb315290dd9b4",
+      "bytes": 7208
+    },
+    {
+      "path": "procurement/RFQ-INPUTS.json",
+      "sha256": "4abc6ebb91b86475c21092dd68634744c8b39f72743d2a7e016e602c72612b82",
+      "bytes": 4107
+    },
+    {
+      "path": "procurement/TECHNISCHE-PRAEZISIERUNG.txt",
+      "sha256": "2fa983917c08f8df1614d353078991dc00f3ba0fdc04b066da502392e8b75f8d",
+      "bytes": 5285
+    },
+    {
+      "path": "procurement/VIA-FILL-INVENTORY.csv",
+      "sha256": "863bc10189c0a6f77cf9eafdb006c1152d6bd326ff69ac85edaa024144f120b3",
+      "bytes": 25555
+    },
+    {
+      "path": "procurement/VIA-METADATA-CANDIDATE.json",
+      "sha256": "b67efb3f0248dd83bc1817531dc5303d7d593a6c3f03653e4061a45e201dbdb2",
+      "bytes": 935
+    },
+    {
+      "path": "procurement/clearance-screen/drc-all-layers.json",
+      "sha256": "3a89a814f6a722ba62d49fc76550a737ac5b06bc1cffe7916a3e9f3275174423",
+      "bytes": 69851
+    },
+    {
+      "path": "procurement/clearance-screen/metadata-candidate.kicad_pcb",
+      "sha256": "7af39dbe807ed82f905622cce0c6b93f2cd650c61eafb224970e9f49eec15868",
+      "bytes": 2134832
+    },
+    {
+      "path": "procurement/clearance-screen/positive-control.json",
+      "sha256": "30d79ae85b1169c89079d16792685d4fa985a2b38159497d37a463d1f13efdc2",
+      "bytes": 92989
+    },
+    {
+      "path": "procurement/clearance-screen/positive-control.kicad_dru",
+      "sha256": "0a80f1a94a48c1506c56c208cebc9ff7ec431852e3fc9345a9c9d26e09096aba",
+      "bytes": 337
+    },
+    {
+      "path": "procurement/clearance-screen/production-screen-rules.txt",
+      "sha256": "eacaf95b9971133a5f3171c48e5b195d43dab3103fd1dc74570041c5c8d4f514",
+      "bytes": 329
+    },
+    {
+      "path": "procurement/clearance-screen/screen.kicad_dru",
+      "sha256": "b1b495d4d618e7c43cc5277c549181b2dad18a99f3c5592f13c77265c2298039",
+      "bytes": 483
+    },
+    {
+      "path": "procurement/clearance-screen/screen.kicad_pcb",
+      "sha256": "7af39dbe807ed82f905622cce0c6b93f2cd650c61eafb224970e9f49eec15868",
+      "bytes": 2134832
+    },
+    {
+      "path": "procurement/clearance-screen/screen.kicad_pro",
+      "sha256": "21edd368db533b1de0727e4b4a2cba077256bfb625adf76d03e70f1da0225098",
+      "bytes": 9689
+    },
+    {
+      "path": "procurement/extract_rfq_inputs.py",
+      "sha256": "8e7a31c415031ed93b7eeb877d8e5b443b053f630f4b56bdbb8e0d936a057b21",
+      "bytes": 2354
+    },
+    {
+      "path": "procurement/prepare_metadata_candidate.py",
+      "sha256": "3c9248e2ed2cd025416a528148eb8bb8c796bc24516ea783f60ac2bb593e3169",
+      "bytes": 1181
+    },
+    {
+      "path": "procurement/record_promotion.py",
+      "sha256": "3423405866cf7ea33b042645cebf5c88a4c8904eda83d4a9f35efa4e990af113",
+      "bytes": 1344
+    },
+    {
+      "path": "procurement/run-clearance-screen.ps1",
+      "sha256": "a38c7bc3ba5637baa5e19b864b494541537174520ca44e1d65ce58f3c2b3ed4e",
+      "bytes": 1801
+    },
+    {
+      "path": "procurement/summarize_clearance.py",
+      "sha256": "e99b8f87c41da8ff2ea55f4ed0d725db5267b55d0a2b74dc9d575c31274068ea",
+      "bytes": 2520
+    },
+    {
       "path": "pruefung/ANALOG-REVIEW.json",
-      "sha256": "cde0cfdab45d1804a5af40650c44b1050c41479df57a9b433bd7fc0db0b13174",
-      "bytes": 10810
+      "sha256": "dcbd890168c4e93f26ffde9496518a0912ef72e8ae1884eb5ab7752803d907b7",
+      "bytes": 10930
     },
     {
       "path": "pruefung/AUSGANGSSTAND.json",
@@ -491,8 +621,8 @@
     },
     {
       "path": "pruefung/UNABHAENGIGES-REVIEW.json",
-      "sha256": "226109a0b4faf26476e372f8c36d68d7f2bb5a6c2d039d33b5a21dc37868b71a",
-      "bytes": 11236
+      "sha256": "2a8259ae001f0392b4f30cd76c7688483f0f8476f5fe5e2e3beb1229a374306a",
+      "bytes": 12366
     },
     {
       "path": "pruefung/USB-KAPAZITAET.txt",
@@ -505,58 +635,58 @@
       "bytes": 3216
     },
     {
-      "path": "pruefung/bestueckung-draft/ab68d3853f49-khnyftxd/ASSEMBLY-DRAFT.json",
-      "sha256": "e5840f99cd504cddc7af58e581d303189a56350a23f4e6b7a14e1e1b88ee359b",
-      "bytes": 5099
+      "path": "pruefung/bestueckung-draft/7af39dbe807e-jq7zjlqp/ASSEMBLY-DRAFT.json",
+      "sha256": "442a71a514bf82dddcaa5a81dc9f7857584c88742f445313c362f425bca8a435",
+      "bytes": 4986
     },
     {
-      "path": "pruefung/bestueckung-draft/ab68d3853f49-khnyftxd/BOM-DRAFT.csv",
+      "path": "pruefung/bestueckung-draft/7af39dbe807e-jq7zjlqp/BOM-DRAFT.csv",
       "sha256": "28556d76715fce22bf83946f89cbec63be1518bd2e7df6973e74a174edf507ad",
       "bytes": 3414
     },
     {
-      "path": "pruefung/bestueckung-draft/ab68d3853f49-khnyftxd/CPL-DRAFT.csv",
+      "path": "pruefung/bestueckung-draft/7af39dbe807e-jq7zjlqp/CPL-DRAFT.csv",
       "sha256": "13ad90a33dd442ffcdabbe74941dc25e172693e7e38a5abd4bf227bb1e4f7fc5",
       "bytes": 4546
     },
     {
-      "path": "pruefung/bestueckung-draft/ab68d3853f49-khnyftxd/positions-kicad-global.csv",
+      "path": "pruefung/bestueckung-draft/7af39dbe807e-jq7zjlqp/positions-kicad-global.csv",
       "sha256": "c2f2efe185b858181de70b2c7dca68e5dbc70f1d442a662ad71e24f7912df504",
       "bytes": 7962
     },
     {
       "path": "pruefung/build-state.json",
-      "sha256": "051edb020fb41d056d91e1a0332b7176ea205eac9ba9e7df10a58dfed3629eb0",
+      "sha256": "abfc4174ae96214391fec87d00c318968764d3f3c8a49ff2d81f6c3904a67004",
       "bytes": 541
     },
     {
       "path": "pruefung/drc.json",
-      "sha256": "69f68714bb58de83a348a16437b5692124978bf138d54af40b770f6b82f254e1",
-      "bytes": 11777
+      "sha256": "b204701c40e262efd993c17efca8a318d8c563044b4ed1a8de7a0f51b71dd586",
+      "bytes": 11784
     },
     {
       "path": "pruefung/erc.json",
-      "sha256": "6f06272eab526eaf011c1a8d6204103649aa5a4332c0e3f98c4f78a234baa3a3",
+      "sha256": "f5357dd9fdb49fff8d19b5ae7efc0e47c304531aab8065ac8c33d39b512c5dd5",
       "bytes": 1023
     },
     {
       "path": "pruefung/layout-freeze.json",
-      "sha256": "2467c6a20276d2ddc5918e50ce5294084c3c4da4e96946a4975f3eddd1c7819e",
+      "sha256": "348f2087ecdc27c007ab2456411a7ea47eff03f6c01b964d4bdd4dc3150a8fe2",
       "bytes": 3288
     },
     {
       "path": "pruefung/pcb-pad-contract.json",
-      "sha256": "79753206fc4d65038c3eab4937ce497c8fe053b57795e4d1683fa10f3c958bb5",
+      "sha256": "6074caca57c06a6efa2155032e387fcb3b5fdf52cda523af81ddec4f33b3fc0c",
       "bytes": 2193
     },
     {
       "path": "pruefung/routing-progress.json",
-      "sha256": "62cf745cca149e288b93bec7b4bf633b37021646320cb99353206264671ec498",
+      "sha256": "6e4252fc18bc863a917f82c6161867018e0d4d3bf991e123ec0d8581239dded0",
       "bytes": 307
     },
     {
       "path": "pruefung/usb-route-final.json",
-      "sha256": "c9516b432a917bf7cf0e6475a98f56a2aa0e0191575108e022ed0b52226261be",
+      "sha256": "7156bc611d905c3bea43433aaba5e231c4988c5edc9bac2f96fe5eacf6f911d4",
       "bytes": 1694
     },
     {
@@ -736,8 +866,8 @@
     },
     {
       "path": "tools/build_r2b.py",
-      "sha256": "8b54e2b6628d873f5cd7f774bb03e8f773089253d849837a72675869b0e9bd19",
-      "bytes": 15297
+      "sha256": "55cec351ac459087332fe7e3f76cb3edac588e8ddd424402dea68f0c158dbbbe",
+      "bytes": 15443
     },
     {
       "path": "tools/build_schematic.py",
@@ -766,14 +896,14 @@
     },
     {
       "path": "tools/package_review_bundle.py",
-      "sha256": "e26a6ca695cf834e74f2183fe125f1ad83ca44b5215c6eedc6891e8d0cb73e60",
-      "bytes": 6342
+      "sha256": "e89620df52f1dc3591165a5d1e27494dd245a09f185cdcfd23005e66d179fc97",
+      "bytes": 7591
     }
   ],
   "checks": {
-    "independent_review_bindings": 21,
-    "mechanical_file_bindings": 39,
-    "python_syntax_files": 17
+    "independent_review_bindings": 22,
+    "mechanical_file_bindings": 40,
+    "python_syntax_files": 21
   },
   "open_gates": "Four USB-NPTH DFM errors, documented warnings, stackup, supply/probe qualification, physical fit and two-device operation/runtime acceptance."
 }

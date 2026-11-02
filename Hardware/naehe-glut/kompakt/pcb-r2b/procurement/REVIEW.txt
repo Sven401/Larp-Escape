@@ -1,0 +1,90 @@
+UNABHÄNGIGE PROCUREMENT-GEGENPRÜFUNG — 02.11.2026
+Kontextcommit909e25653edafb2cd5e60ed6349356c0f905f916, neue lokale Metadatenrevision.
+Status: fachlich geprüfte Angebotsvorbereitung, keine Fertigungs-/Betriebsfreigabe.
+Keine Dateien hochgeladen, keine Anfragen versandt oder Bestellungen ausgeführt.
+
+Umfang: neue Procurement-Texte, Inventar, Hashbindungen, Skripte und native
+Prüfberichte unabhängig gelesen; keine eigene Wiederholung von KiCad oder
+Kalkulator-UI. Berichtsangaben gegen die tatsächlichen Dateien abgeglichen.
+
+Metadaten: Die aktuelle PCB7af39dbe807ed82f905622cce0c6b93f2cd650c61eafb224970e9f49eec15868
+ist bytegenau die zuvor geprüfte ab68d3853f49b9e2c8e70272ec0bde0e7acbaacf18eda1008bd91353b010efac
+mit genau capping/filling no→yes. Keine weitere Text-/Geometrieänderung. Alle230
+Vias ohne individuelle Filling-/Capping-Overrides. Generator setzt beide Defaults.
+Der alte VIA-METADATA-CANDIDATE-Bericht ist als Historie gekennzeichnet;
+METADATA-PROMOTION und aktuelle RFQ-/Screenbelege betreffen den neuen Stand.
+Die Flags definieren kein Harz. Nichtleitendes Epoxid plus Kupferabdeckung und
+Fertigerbestätigung bleiben ausdrücklich erforderlich; Tenting unverändert.
+
+Inventar:230 Vias,131×0,15/0,35mm und99×0,20/0,45mm unabhängig nachgezählt,
+Inventar-UUIDs vollständig.101 CPL-Positionen,34Top/67Bottom. Frische CPL bytegleich
+zur zuvor geprüften Ausgabe; ihre neue Eingangsbindung ist korrekt. Kanonischer
+Padbericht aktuell109Referenzen/373Pads/0Issues. Haupt-DRC4 bekannteNPTH-Fehler,
+10 dokumentierteWarnungen,0unverbunden; ERC0.
+
+Herstellerscreen: Kopie bytegleich zur aktuellenPCB, alle Berichtbindungen stimmen.
+Regelsatz PTH0,28mm auf allen Lagen, innen0,30mm; Via0,20mm auf allen Lagen.
+Keine zusätzlichen entsprechenden Regelverstöße.3-mm-Innen-PTH-Positivkontrolle
+enthält26 zusätzliche Treffer und belegt diese Regelbedingung. Keine Behauptung,
+dass damit jede denkbare CAM-/Toleranzanforderung geprüft wäre.109 fehlende
+Bibliotheksauflösungen der isolierten Kopie sind getrennt von Geometriebefunden
+und den2Bibliotheksabweichungen der Hauptprüfung dargestellt. Vorhandene
+Zonenfüllungen und Fremdnetzregelumfang sind ausdrücklich begrenzt.
+Runner schützt belegtes Verzeichnis und verlangt vollständigeR2b-Arbeitskopie;
+parametrisierter KiCad-Pfad bleibt externe Laufzeitvoraussetzung.
+
+Angebotstexte:±10/±20%-Quellenwiderspruch jetzt sichtbar; kein automatischer
+CAM-Breitenwechsel erlaubt.90Ohm/Stackup/Panel/DFM-Annahme bleiben anzufragen.
+KALKULATOR ist als Root-UI-Beobachtung eingeordnet, nicht von mir erneut bedient.
+Aufschlüsselung addiert sich zu102,02USD; Bare-PCB-Fünferlos ist kein Preis für
+zwei bestückteGeräte. Versandadresse/Bestückung/DFM/90Ohm-Zusage fehlen sichtbar.
+Firmware-Abgleich durch Lesen derselben drei Einstiegspunkte bestätigt; keine
+Vollsuche oder Produkt-S3-Freigabe behauptet. CI-Erfolg ersetzt keine Geräteprüfung.
+
+Paketcode:25 kuratierteProcurement-Dateien, RFQ-/Screen-Eingangs- und Ausgangs-
+bindungen ergänzt; Begrenzung aufProjektpfade und archivinterneHashkontrolle
+bleiben vorhanden. Keine neuen konkreten Parser-/Scopefehler festgestellt.
+Die separat ausgeführte ZIP-Prüfung steht nach diesem Bericht noch aus.
+
+Offen bleiben vier originaleUSB-NPTH-Abstände, verbindlicherStackup/Impedanz,
+Panel/CAM/POFV/Bestückerprozess, vollständigesAngebot und tatsächlicheAnkunft,
+sowie USB-Sonderversorgungen, Probe, realePassung und Abnahme beiderGeräte.
+QUALIFIKATION-OFFEN trennt digitaleGrenzen, Herstellerfragen und Messfälle.
+Kein neues Fertigungsversprechen aus diesen lokalen Prüfungen.
+
+EXAKTE DATEIBINDUNGEN — SHA256, relativ zu pcb-r2b
+15e77000b388f35c1a90787c1ad6a6534ff80c451a4e51788b280a37075421ac  procurement/DFM-ANGEBOT.txt
+522e4ee98c55f854aa7df305922b207a2eb65d96b6a63e199038f1a7a3937b24  procurement/QUELLEN.txt
+4abc6ebb91b86475c21092dd68634744c8b39f72743d2a7e016e602c72612b82  procurement/RFQ-INPUTS.json
+863bc10189c0a6f77cf9eafdb006c1152d6bd326ff69ac85edaa024144f120b3  procurement/VIA-FILL-INVENTORY.csv
+f84bed81c9d75ba97ed9fe0d0225af5d89f4494aeae8b006838bc2e8447bc185  procurement/QUALIFIKATION-OFFEN.txt
+2d824344bcda9ad39a86914e05ce04ec1b4248f64a1f490c734889bbeb4e8cb4  procurement/KALKULATOR.txt
+b2c18a1a971ee4e9fc5811ab7027930cc829188dd6d2d6f0878dd849d9b1e908  procurement/FIRMWARE-ABGLEICH.txt
+2fa983917c08f8df1614d353078991dc00f3ba0fdc04b066da502392e8b75f8d  procurement/TECHNISCHE-PRAEZISIERUNG.txt
+938eb1e3dafb2995058cf48ba1da48d349e355e62091b8297f0578e50b1fe107  procurement/CLEARANCE-SCREEN.json
+b67efb3f0248dd83bc1817531dc5303d7d593a6c3f03653e4061a45e201dbdb2  procurement/VIA-METADATA-CANDIDATE.json
+098335f3cab3e10f1530b29dd7cee9ff99c5558bf93cd79d04d0ed79036f8740  procurement/METADATA-PROMOTION.json
+8e7a31c415031ed93b7eeb877d8e5b443b053f630f4b56bdbb8e0d936a057b21  procurement/extract_rfq_inputs.py
+3c9248e2ed2cd025416a528148eb8bb8c796bc24516ea783f60ac2bb593e3169  procurement/prepare_metadata_candidate.py
+3423405866cf7ea33b042645cebf5c88a4c8904eda83d4a9f35efa4e990af113  procurement/record_promotion.py
+a38c7bc3ba5637baa5e19b864b494541537174520ca44e1d65ce58f3c2b3ed4e  procurement/run-clearance-screen.ps1
+e99b8f87c41da8ff2ea55f4ed0d725db5267b55d0a2b74dc9d575c31274068ea  procurement/summarize_clearance.py
+7af39dbe807ed82f905622cce0c6b93f2cd650c61eafb224970e9f49eec15868  procurement/clearance-screen/screen.kicad_pcb
+21edd368db533b1de0727e4b4a2cba077256bfb625adf76d03e70f1da0225098  procurement/clearance-screen/screen.kicad_pro
+b1b495d4d618e7c43cc5277c549181b2dad18a99f3c5592f13c77265c2298039  procurement/clearance-screen/screen.kicad_dru
+0a80f1a94a48c1506c56c208cebc9ff7ec431852e3fc9345a9c9d26e09096aba  procurement/clearance-screen/positive-control.kicad_dru
+eacaf95b9971133a5f3171c48e5b195d43dab3103fd1dc74570041c5c8d4f514  procurement/clearance-screen/production-screen-rules.txt
+3a89a814f6a722ba62d49fc76550a737ac5b06bc1cffe7916a3e9f3275174423  procurement/clearance-screen/drc-all-layers.json
+30d79ae85b1169c89079d16792685d4fa985a2b38159497d37a463d1f13efdc2  procurement/clearance-screen/positive-control.json
+7af39dbe807ed82f905622cce0c6b93f2cd650c61eafb224970e9f49eec15868  procurement/clearance-screen/metadata-candidate.kicad_pcb
+7af39dbe807ed82f905622cce0c6b93f2cd650c61eafb224970e9f49eec15868  naehe-glut-r2b.kicad_pcb
+55cec351ac459087332fe7e3f76cb3edac588e8ddd424402dea68f0c158dbbbe  tools/build_r2b.py
+e89620df52f1dc3591165a5d1e27494dd245a09f185cdcfd23005e66d179fc97  tools/package_review_bundle.py
+dcbd890168c4e93f26ffde9496518a0912ef72e8ae1884eb5ab7752803d907b7  pruefung/ANALOG-REVIEW.json
+2d1374231989c40671824f46f29114c3dbdbf207467cc2666feca7561953947d  mechanik/MANIFEST.json
+dd52630620ca0ed82bd4378bb4641c481d752ed087fff0297e5969164d09f756  mechanik/metadata-rebind-report.json
+
+Gelesene Firmware-Einstiegspunkte, relativ zum Repository:
+5491ea66dcf751ba064a947a37385778c00e9dcdc3f4a47802b7c1efb35077e6  Firmware/led/platformio.ini
+d877d90b2560d1364004583580946aa4b80eb240952427ef4b83ef685f386d9f  Firmware/idf/main/app_main.cpp
+80d5b63b84c50aa7ba923685768765aa911d157e19867621b58969e47b947cca  Firmware/idf/sdkconfig.defaults

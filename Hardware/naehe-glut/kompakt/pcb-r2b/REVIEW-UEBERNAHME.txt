@@ -16,6 +16,12 @@ Dateiinhalte; dieser Transfer erzeugt keine neue Geräte-/Fertigungsfreigabe.
 
 Einstieg: UMSETZUNGSSTAND.txt.
 Komplettes Entwicklungs-/Druckpaket: paket/R2b-Entwurf.zip.
-Archiv-SHA256:5db40c7e54da26e29543d7a80a6ac97f51912c87f691ad66bcef4ffd6dc6d13a.
+Aktueller Archiv-SHA256: siehe paket/ARCHIV-SHA256.txt.
+Der ursprüngliche Transfer wurde als Commit909e25653edafb2cd5e60ed6349356c0f905f916
+festgehalten; seine sechs CI-Workflows waren am02.11.2026 erfolgreich.
+Die anschließende P5-Fertigerprüfung ergänzt procurement/ und korrigiert die
+zwei Via-Prozessdefaults mit neu gebundenen Prüf-/Mechanik-/Paketbelegen.
+Die Aussage zur bytegleichen Übernahme oben gilt für den ursprünglichen Transfer,
+nicht als Behauptung, dass die nachfolgende Korrektur unveränderte Dateien lässt.
 Offen: vier USB-NPTH-DFM-Abstände, dokumentierte Warnungen, bestätigter Stackup,
 Versorgungs-/Probe-Qualifikation, Fertigerangebot und reale Muster-/Geräteabnahme.

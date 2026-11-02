@@ -78,6 +78,7 @@ def main():
   uri='${KIPRJMOD}/'+(lib+'.pretty' if lib.startswith('NearGlow') else 'footprints/'+lib+'.pretty');entries.append(f'(lib (name "{lib}")(type "KiCad")(uri "{uri}")(options "")(descr "Local library"))')
  write(BASE/'fp-lib-table','(fp_lib_table (version 7) '+''.join(entries)+')')
  board=pcb.LoadBoard(str(OLD/'naehe-glut-r2a.kicad_pcb'));offset=vec(5.1,0)
+ board.GetDesignSettings().m_FillVias=True;board.GetDesignSettings().m_CapVias=True  # nonconductive epoxy + copper cap per fabrication contract
  for o in list(board.GetFootprints())+list(board.GetTracks())+list(board.Zones())+list(board.GetDrawings()):o.Move(offset)
  removed_drawings=list(board.GetDrawings())
  for o in removed_drawings:

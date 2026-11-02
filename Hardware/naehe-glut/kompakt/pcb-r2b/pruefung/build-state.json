@@ -4,6 +4,6 @@
   "unrouted_new_service_nets": false,
   "baseline_routing_preserved": false,
   "baseline_preservation_scope": "See exact per-net track/via delta in layout-freeze.json; selected control routes and Q1 placement deliberately changed. No blanket preservation claim.",
-  "layout_freeze_sha256": "2467c6a20276d2ddc5918e50ce5294084c3c4da4e96946a4975f3eddd1c7819e",
-  "pcb_sha256": "ab68d3853f49b9e2c8e70272ec0bde0e7acbaacf18eda1008bd91353b010efac"
+  "layout_freeze_sha256": "348f2087ecdc27c007ab2456411a7ea47eff03f6c01b964d4bdd4dc3150a8fe2",
+  "pcb_sha256": "7af39dbe807ed82f905622cce0c6b93f2cd650c61eafb224970e9f49eec15868"
 }

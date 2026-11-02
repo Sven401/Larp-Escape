@@ -2,11 +2,11 @@
   "status": "routed_engineering_draft_NOT_manufacturing_release",
   "date": "2026-11-02",
   "hashes": {
-    "naehe-glut-r2b.kicad_pcb": "ab68d3853f49b9e2c8e70272ec0bde0e7acbaacf18eda1008bd91353b010efac",
+    "naehe-glut-r2b.kicad_pcb": "7af39dbe807ed82f905622cce0c6b93f2cd650c61eafb224970e9f49eec15868",
     "circuit.json": "b8adb47a048849bc23e5384c4230514bd4ba75c0055c0d28544233c209a99fca",
     "naehe-glut-r2b.kicad_sch": "91f638ee1d52b9be80695f5e59fd8fa313e136c23fa4e5fbe77f8aa373871bef",
     "bom.csv": "0da0adbfea16ed33a8b3c14c45c7d27d4b010d42240d7d9a3154b20c285f0a24",
-    "pruefung/drc.json": "69f68714bb58de83a348a16437b5692124978bf138d54af40b770f6b82f254e1"
+    "pruefung/drc.json": "b204701c40e262efd993c17efca8a318d8c563044b4ed1a8de7a0f51b71dd586"
   },
   "copper_layers": 6,
   "aux_origin_mm": [

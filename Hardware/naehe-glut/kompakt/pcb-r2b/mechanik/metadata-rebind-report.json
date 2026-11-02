@@ -1,0 +1,42 @@
+{
+  "checked_utc": "2026-11-02T01:23:39.524221+00:00",
+  "status": "metadata_only_rebind_no_CAD_or_slicer_regeneration",
+  "previous_pcb_sha256": "ab68d3853f49b9e2c8e70272ec0bde0e7acbaacf18eda1008bd91353b010efac",
+  "current_pcb_sha256": "7af39dbe807ed82f905622cce0c6b93f2cd650c61eafb224970e9f49eec15868",
+  "exact_changes": [
+    "(capping no) -> (capping yes)",
+    "(filling no) -> (filling yes)"
+  ],
+  "proof": "Reverting exactly these two unique byte strings recovers previous PCB SHA256. All footprint, copper and geometry bytes unchanged. Current interface differs from prior manifest interface only by pcb_sha256.",
+  "previous_manifest_sha256": "ccc40b530e2f5eb564c46bbe49045b79d0b27296cfa5913ad591b318841306c4",
+  "unchanged_payload_sha256": {
+    "mechanik/base.step": "785c70502a4d3d48a3ebbfe475e46422dde6f46866779612df05c5fdd830e86a",
+    "mechanik/base.stl": "62c81989315d8e694adefc1a3c1c62025461cf8fdba6ae0cde0555f12f8166f8",
+    "mechanik/insert_r2b.step": "96bc434c50ff948b1769d71bca4bfa66a08cb970b0624b82af9d6a92438e37f4",
+    "mechanik/insert_r2b.stl": "01e29478424767fb0e7e202360739fb721f9ba3f6ca0d6e31814d230c95f32d0",
+    "mechanik/clamp_left.step": "75b2e3f79f127922c963d33b82b38ce91ad54e29fcbaf486803c5fd8bc8c52b8",
+    "mechanik/clamp_left.stl": "f428aaf7ca186675bdf7ebc37ff7cdaf0f807131aac33a4d83f3487e639f8b9a",
+    "mechanik/clamp_right.step": "6085b39e31d64273f4b46dadc71b71a0d708d9674929ee7a6801df3aeecefe8b",
+    "mechanik/clamp_right.stl": "2a40d2e110641b744c9a55f63470b7475309da2d9f1953e5c9e9793bfb198fc6",
+    "mechanik/usb_tie_bar.step": "baf3d4a029d3af078a720eb3657997a14e51c08e7a453e3afe1b0dfa0734b095",
+    "mechanik/usb_tie_bar.stl": "06c107cd184d4a784fdf92a566b08a44c6a1c9ccf93fd4aebfd7bbc94eb6f5d5",
+    "mechanik/jtag_tie_bar.step": "13a4a0efbc1792e5bb1801642442568c9f80d904c3e2548933c81c43388fc1e6",
+    "mechanik/jtag_tie_bar.stl": "36c1f787a2f2914430d49489faddf538039be702a939c7ab115b7c6fea34346c",
+    "mechanik/R2b-service-draft.FCStd": "0c42ea353000052771b087618298bca04fba21a005c9eca8ec0f1c3a075fb87e",
+    "mechanik/assembly-draft.step": "60f8f1fd19d43847965b79cd807ffcc8eb54e7bf5f3b69b0848bdb8227c56150",
+    "mechanik/R2b-service-P1S-PETG-draft.3mf": "320ad5a7e27d06a0aeaa29452a3df2940b79139ac429dc5809d6c3e07e02337d",
+    "mechanik/assembled-draft.png": "fce4bb94a5b3d7724e6f900fe9dfb69e9b3f07abc7492faefeeaaf134a305766",
+    "mechanik/exploded-draft.png": "ff2abff692fbc3e9fd12dcf2ddda7cc5268aaebc44573f4865c70a4d389515cb",
+    "mechanik/underside-draft.png": "f9680fbc744217e36ddf306260a807c1b80836577e5e9e6903f80795b8aa7348"
+  },
+  "unchanged_geometry_report_sha256": "71b8904c4f8508ec757e5cb569bb17947453cc6ad899bab0c30d4859f2bdcf37",
+  "unchanged_slice_report_sha256": "e4bfb77a99d0fb6e75675b3758adda19be834ceed4202324a1206652bd56195f",
+  "current_interface_sha256": "700d649c2243e67a296984ab0cf09c74c93ae1cee2512dcdf5c47e75778fee7e",
+  "additional_stale_binding_fixed": {
+    "report": "component-envelope-report.json",
+    "previous_contract_sha256": "cea53e07d9ac231d467520f9e3ee712e1d009d5bbcfc42f48482a99773345171",
+    "prior_manifest_contract_sha256": "afb441f1526c103a3fa79965a6f380420c17e36b918f366b60ea559e9754229e",
+    "validation": "Unchanged component generator executed read-only against current contract; all returned dimensions/source notes identical to prior report, excluding contract hash. No CAD/STL/STEP/3MF overwritten."
+  },
+  "physical_test_performed": false
+}

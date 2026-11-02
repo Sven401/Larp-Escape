@@ -1,0 +1,33 @@
+{
+  "status": "two-flag metadata correction promoted after explicit root authorization; independent release review pending",
+  "date": "2026-11-02",
+  "prior_candidate_report": "VIA-METADATA-CANDIDATE.json",
+  "prior_candidate_report_role": "historical test before promotion, not current overall status",
+  "changes": [
+    "capping no to yes",
+    "filling no to yes",
+    "generator defaults retain both flags"
+  ],
+  "unchanged": "all copper/mask/drill/net geometry; no other PCB textual changes",
+  "current_checks_sha256": {
+    "naehe-glut-r2b.kicad_pcb": "7af39dbe807ed82f905622cce0c6b93f2cd650c61eafb224970e9f49eec15868",
+    "tools/build_r2b.py": "55cec351ac459087332fe7e3f76cb3edac588e8ddd424402dea68f0c158dbbbe",
+    "pruefung/drc.json": "b204701c40e262efd993c17efca8a318d8c563044b4ed1a8de7a0f51b71dd586",
+    "pruefung/erc.json": "f5357dd9fdb49fff8d19b5ae7efc0e47c304531aab8065ac8c33d39b512c5dd5",
+    "pruefung/layout-freeze.json": "348f2087ecdc27c007ab2456411a7ea47eff03f6c01b964d4bdd4dc3150a8fe2",
+    "pruefung/pcb-pad-contract.json": "6074caca57c06a6efa2155032e387fcb3b5fdf52cda523af81ddec4f33b3fc0c",
+    "pruefung/usb-route-final.json": "7156bc611d905c3bea43433aaba5e231c4988c5edc9bac2f96fe5eacf6f911d4",
+    "pruefung/bestueckung-draft/7af39dbe807e-jq7zjlqp/ASSEMBLY-DRAFT.json": "442a71a514bf82dddcaa5a81dc9f7857584c88742f445313c362f425bca8a435",
+    "procurement/CLEARANCE-SCREEN.json": "938eb1e3dafb2995058cf48ba1da48d349e355e62091b8297f0578e50b1fe107"
+  },
+  "results": {
+    "erc": 0,
+    "drc_known_npth_errors": 4,
+    "drc_warnings": 10,
+    "unconnected": 0,
+    "pad_contract_issues": 0,
+    "fitted_bom_and_cpl": 101,
+    "additional_manufacturer_clearance_violations": 0
+  },
+  "manufacturing_material": "NONCONDUCTIVE epoxy resin plus copper cap; explicit filled-via inventory; not a substitute for supplier approval"
+}

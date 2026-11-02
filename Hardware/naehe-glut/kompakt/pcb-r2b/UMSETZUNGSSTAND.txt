@@ -5,6 +5,9 @@ Keine Fertigungs-, Kauf- oder Betriebsfreigabe. Gesamtziel noch nicht erreicht.
 Auftrag: PLANUNG.txt; ursprünglicher Plan und sein Review bleiben unverändert.
 
 ARBEITSBASIS
+Aktuelle Fortsetzung: Worktree naehe-glut-r2b-review, Branch
+codex/naehe-glut-r2b-review; Entwurfs-PR137 gegen den Integrationsbranch.
+Die folgenden Angaben zur Entwicklungsquelle bezeichnen die erste Erstellung.
 Worktree: C:/Users/seide/.codex/worktrees/naehe-glut-lieferziel/Larp Escape
 Ausgangsbranch: codex/naehe-glut-hardware-r1
 Eigener R2b-Branch: codex/naehe-glut-r2b-service
@@ -22,7 +25,13 @@ review: unabhängige Gegenprüfung von Hardware, Mechanik und Root-Prüfwerkzeug
 Eigene Umsetzung ersetzt keine unabhängige Gegenprüfung.
 
 EINGEFRORENER DIGITALER STAND
-PCB SHA256 ab68d3853f49b9e2c8e70272ec0bde0e7acbaacf18eda1008bd91353b010efac
+PCB SHA256 7af39dbe807ed82f905622cce0c6b93f2cd650c61eafb224970e9f49eec15868
+Fortsetzung: Boarddefaults filling/capping auf yes korrigiert. Gegenüber dem
+ersten eingefrorenen Stand ändern sich ausschließlich diese zwei Metadatenzeilen;
+Kupfer, Masken, Bohrungen und Netze bleiben gleich. Nichtleitendes Epoxid mit
+Kupferüberdeckung aller230Vias bleibt ausdrücklich gefordert; Flags allein
+legen weder Harzmaterial noch einen bestätigten Fertigungsprozess fest.
+Korrekturbelege und zusätzliche Fertiger-Abstandsprüfung: procurement/.
 Sechs Kupferlagen; bestückte XY-Hülle30x43mm, Host-PCB30x37,8mm, Dicke1mm.
 109 Referenzen, davon101 bestückte Positionen und8 integrale Kontaktplätze.
 Native ERC ohne Fehler. DRC:0 offene Verbindungen, keine offenen Leiterbahnenden;
@@ -44,7 +53,7 @@ pcb-pad-contract.json und UNABHAENGIGES-REVIEW.json.
 
 Vollständige BOM/CPL:101/101 Positionen einschließlich THT-JP1 und Hybrid-J4.
 Koordinatenursprung(0;43), J1- undJP1-Körpermittelpunkte ausdrücklich korrigiert.
-Prüfbarer Entwurf: pruefung/bestueckung-draft/ab68d3853f49-khnyftxd/.
+Prüfbarer Entwurf: pruefung/bestueckung-draft/7af39dbe807e-jq7zjlqp/.
 Kein Gerber-Bestellpaket und keine zugesicherte Bestückerzuordnung daraus.
 
 Mechanik: sechs Druckteile, parametrische FreeCAD-Quelle, Einzel-STEP/STL,

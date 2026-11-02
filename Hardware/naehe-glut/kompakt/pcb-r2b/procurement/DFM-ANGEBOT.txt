@@ -1,0 +1,117 @@
+R2b — DFM- UND ANGEBOTSVORBEREITUNG
+Stand: 02.11.2026; geprüfter Kontext 909e25653edafb2cd5e60ed6349356c0f905f916.
+Verantwortlich: Hardware-Unterauftrag; unabhängige Gegenprüfung durch Root/Reviewer.
+Status: lokal vorbereitet, NICHT versendet, kein Upload, keine Bestellung,
+keine Fertigungsfreigabe. Zwei Via-Prozessmetadaten korrigiert und Prüfbelege
+erneuert; Kupfer-, Masken- und Bohrungsgeometrie bleiben unverändert.
+
+1. Eindeutiger Lieferumfang
+Zwei vollständig bestückte, getrennte Baugruppen für den Einsatz am 04.12.2026.
+Keine Terminzusage: Fertigung, Transport, Eingangskontrolle, Inbetriebnahme und
+Korrekturpuffer müssen getrennt in ein konkretes Angebot eingehen.
+PCB 30 x 37,8 mm (x0..30/y5,2..43), 1,0 mm, sechs Kupferlagen, FR4, ENIG,
+Kupfer nominell 1 oz auf ALLEN sechs Lagen. Antennen-/Modulumriss insgesamt
+30 x 43 mm. Kein automatischer Wechsel auf 0,5 oz innen, andere Dicke oder HASL.
+Quellenhashes und vollständige Eingaben: RFQ-INPUTS.json.
+101 bestückte Referenzen: 34 Top, 67 Bottom. Acht weitere native Referenzen
+sind keine zusätzlichen bestückten BOM-Positionen. Vollständige BOM/CPL:
+../pruefung/bestueckung-draft/7af39dbe807e-jq7zjlqp/BOM-DRAFT.csv und CPL-DRAFT.csv.
+Keine SMD-only-Filterung. CPL-Mitte enthält dokumentierte J1-/JP1-Korrekturen.
+
+2. Aktuelle JLC-Eignung und konkrete Konflikte
+Die folgenden Herstellerangaben wurden am 02.11.2026 online geprüft. Sie sind
+keine Zusage für unsere Dateien, Verfügbarkeit oder Kosten.
+
+A — Vier unveränderte USB-Landkonflikte: BLOCKIERT
+J4 USB4105-GF-A: NPTH Ø0,65 bei (4,61;36,72) und (10,39;36,72) mm.
+A1/B12 liegen am linken, A12/B1 am rechten NPTH. Native DRC misst jeweils
+0,1944 mm Kupfer-zu-Loch, Soll 0,2000 mm; Unterschreitung 0,0056 mm.
+Herstellerland wurde bewusst nicht verändert. JLC veröffentlicht 0,20 mm
+NPTH-to-track. Ein padbezogener Prozessdispens ist damit NICHT belegt.
+Benötigte Antwort: ausdrückliche Annahme genau dieser vier Geometrien ohne
+CAM-Kupferbeschnitt/Lochverschiebung, einschließlich Pass-/Lötgarantie, oder
+Ablehnung. Bei Ablehnung muss ein geprüfter Layout-/Steckerneuentwurf folgen;
+kein globaler DRC-Override und kein automatischer CAM-Fix. Exakte DRC-Paare,
+Positionen und UUIDs stehen in RFQ-INPUTS.json/open_usb_errors.
+
+B — Via-Prozess: Metadatenkonflikt korrigiert, Fertigerbestätigung offen
+230 Durchvias: 131 mit Bohrung/Kupfer Ø0,15/0,35 mm und 99 mit Ø0,20/0,45 mm.
+ALLE müssen nichtleitend mit Epoxid gefüllt und kupferüberdeckt sein, einschließlich
+Via-in-Pad. VIA-FILL-INVENTORY.csv nennt jede UUID und Koordinate.
+Der frühere Stand enthielt filling=no/capping=no. Autorisiert wurde exakt dies auf filling=yes/capping=yes korrigiert; tenting bleibt unverändert.
+Die Metadaten sind jetzt konsistent, ersetzen aber keinen Fertigungsauftrag. Ein Auftrag muss den expliziten
+Füllplan mit nichtleitendem Epoxid verbindlich bezeichnen und die bestätigten
+CAM-Daten vor Fertigung zeigen. JP1/J4-PTH und NPTH bleiben offene Bauteillöcher;
+'durchkontaktierte Löcher alle füllen' wäre falsch.
+JLC beschreibt epoxy-filled/capped als Kupferüberplattung über nichtleitendem
+Harz und verlangt konkrete Via-Zuordnung. Seine allgemeinen Via-Angebote sind
+kein Nachweis für Ebenheit, Lötbarkeit und Füllung unserer 230 Bohrungen.
+Keine Ersatzwahl 'plugged with soldermask' oder bloß 'tented'.
+
+C — Standard-PCBA und Trägerpanel erforderlich
+JLC publiziert doppelseitige SMT/THT-Bestückung nur im Standard-Service; dessen
+Mindestformat ist 70 x 70 mm. Die einzelne Platine ist kleiner. Ein bestückbares
+Trägerpanel mit Rand, Fiduzials und Werkzeugaufnahme ist erforderlich, danach
+vollständiges Trennen vor Lieferung. Panelzeichnung muss Antennenüberhang,
+Ports, linke Verpolkerbe und Halter-Auflageflächen freihalten. Keine Zusatzlöcher
+im Produkt-PCB. Economic-PCBA ist für 67 Bottom/34 Top keine passende Auswahl.
+
+D — Sechs Lagen/1 mm/1 oz und USB 90 Ohm sind noch kein bestätigter Stackup
+JLC bietet verschiedene Innenkupfergewichte, standardmäßig 0,5 oz; die konkrete
+Kombination hängt von Lagenzahl/Dicke ab. Erforderlich ist ein benannter 1-mm-
+Stackup mit 1 oz innen UND außen, fertigen Kupfer-/Dielektrikdicken, Dk und Masken.
+JLCs Stackup-Artikel nennt freie Standard-Impedanzprüfung ±20%; dies entspräche bei
+90 Ohm 72..108 Ohm. Das ist keine automatisch akzeptierte USB-Toleranz.
+Aktuelle Capabilities nennen dagegen ±10%; Root hat die ±10%-Option am 02.11.2026 im Live-Kalkulator nach Stackupwahl JLC061011-2116 bestätigt. Die Quellen widersprechen sich; keine pauschale ±20%-Behauptung für das aktuelle Angebot. Anzufragen: 90 Ohm differentiell, Ziel ±10% (81..99 Ohm), konkret bepreiste
+Prüfung/Testcoupon und Messprotokoll. Diese RFQ-Zieltoleranz ist noch keine
+qualifizierte Boardeigenschaft oder vollständige USB-Konformitätsgrenze.
+MCU-Paar: In3.Cu über In4-GND, Breite 0,15, Mittenabstand 0,30, Kantenabstand
+0,15 mm. Host-/Fanoutteile zusätzlich F.Cu/B.Cu und Lagenwechsel; vollständige
+Topologie siehe ../pruefung/usb-route-final.json. Keine stillschweigende
+Breiten-/Abstandsänderung durch den Fertiger; falls der Stackup damit nicht
+passt, zurück zum Layoutreview. Coupon ersetzt keine Eye-/Hotplug-Prüfung.
+
+E — Zusätzliche DFM-Regeln dürfen nicht aus allgemeiner DRC abgeleitet werden
+JLC veröffentlicht Innenlagen-Via-Bohrung zu Kupfer 0,20 mm und Innenlagen-
+PTH-Bohrung zu Kupfer 0,30 mm. Der aktuelle globale KiCad-Lochabstand ist
+0,20 mm; er belegt keine 0,30-mm-Prüfung sämtlicher JP1/J4-PTH auf Innenlagen.
+Angebot verlangt CAM-Prüfung und konkrete Konfliktliste, insbesondere J4-Schlitze.
+Gleiches gilt für Fertigungspanel und Innenradien der linkseitigen Kerbe.
+Der separate native Screen ist inzwischen bestanden: PTH0,28mm auf allen Lagen, innen0,30mm; Via0,20mm auf allen sechs Lagen. Keine neuen Regelverstöße, positive3,00mm-PTH-Kontrolle erzeugt26 Treffer. Details und Hashes: TECHNISCHE-PRAEZISIERUNG.txt/CLEARANCE-SCREEN.json. Hersteller-CAM/Toleranzen bleiben offen; kein behaupteter
+zusätzlicher Fehler im Layout. Mindest-Signalbreite 0,127 mm bleibt unverändert.
+
+3. Vollständige Bestückfolge als Angebotspflicht (Prozessentwurf)
+(1) PCB-Fertigung mit bestätigtem Stackup, ENIG, Füllplan und Bare-board-E-Test.
+(2) Beidseitige Pasten-/SMT-Bestückung aller einschlägigen BOM-Positionen;
+    Hersteller legt Reihenfolge und Fixierung für den zweiten Reflow fest.
+    ESP-Modul, QFN/UQFN, feinpolige J4-Kontakte und Samtec-J5 gehören dazu.
+    Keine pauschale Reflowtemperatur aus Servicewerbung statt Bauteilprofil.
+(3) J4-Hybridmontage: alle SMD-Kontakte PLUS sämtliche metallisierten Schirm-
+    bzw. Haltefahnen fertig löten. PIP/Reflow oder selektiver Folgeschritt muss
+    für exakte USB4105-GF-A-Geometrie und beidseitige Umgebung bestätigt sein.
+    Kunststoff-NPTH sind Positionierungen und werden weder gelötet noch gefüllt.
+(4) JP1 TSW-102-07-G-S als vollständige THT-Bestückung und Lötung durch Fertiger.
+    Wellen-/Selektiv-/manueller Fabrikprozess mit Schutz der Bottom-SMDs angeben.
+    Eine pauschale Wellenlötannahme ist bei dichter Unterseitenbestückung unzulässig.
+    Samtec J5 FTSH-105-01-L-DV-007-K ist SMT, kein Ersatz durch nackten Pinheader.
+(5) SPI/AOI, optische Prüfung aller Stecker-/THT-Verbindungen und Röntgen der
+    verdeckten Lötstellen nach festgelegtem Plan; Reparatur/Prüfberichte liefern.
+(6) Trennen, Reinigung nach vereinbartem Prozess, Sichtkontrolle und ESD-Verpackung.
+    Keine handzulötenden Restpositionen beim Empfänger, keine Firmware/eFuses.
+    JP1 offen ausliefern; separate Kappe SNT-100-BK-T nur beilegen, nicht aufstecken.
+
+Benötigtes Angebot nennt jede Prozessstufe/Prüfung, Komponentenbeschaffung mit
+exakten MPNs, Mehrmengen/Verlust, sämtliche THT-/Hybridkosten, Panelkosten,
+Prüfcoupon, Versand/Einfuhrkosten sowie Produktions-/Lieferzeit getrennt.
+Keine Bauteilsubstitution ohne unabhängige elektrische/mechanische Bewertung.
+USB-/JTAG-Kabel, Probe, Halter und Akku-Serviceleitung sind separate Lieferteile.
+
+4. Annahmekriterien für den nächsten Schritt
+Schriftliche Antworten auf A-E; ein konkreter Stackup; akzeptierter Füllplan;
+vollständiger MPN-/Bestückplan; konkrete Panel-/Trennzeichnung; überprüfbare
+Kosten/Liefertermine. Erst dann sind Fertigungsdaten und Freigabe bewertbar.
+P5 bleibt bis dahin fachlich vorbereitet, nicht angebotenseitig abgeschlossen.
+
+Aktuelle Präzisierung B: Zwei-Zeilen-Metadatenkorrektur übernommen und frisch geprüft; siehe TECHNISCHE-PRAEZISIERUNG.txt. Root beobachtete beim Live-Impedanzdialog automatische CAM-Breitenanpassung als Standardhinweis. Für diesen Entwurf sind solche Anpassungen ausdrücklich bis zum unabhängigen Layoutreview gesperrt; Produktionsdateibestätigung zwingend.
+
+

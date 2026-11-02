@@ -1,5 +1,5 @@
 {
-  "pcb_sha256": "ab68d3853f49b9e2c8e70272ec0bde0e7acbaacf18eda1008bd91353b010efac",
+  "pcb_sha256": "7af39dbe807ed82f905622cce0c6b93f2cd650c61eafb224970e9f49eec15868",
   "read_only": true,
   "kicad": "10.0.8",
   "footprints": [
@@ -4665,5 +4665,6 @@
         }
       ]
     }
-  ]
+  ],
+  "metadata_rebind_note": "Only board setup capping/filling changed no->yes; reverting those exact bytes recovers previous PCB SHA256. All placement/geometry bytes and prior collision results unchanged; see metadata-rebind-report.json."
 }

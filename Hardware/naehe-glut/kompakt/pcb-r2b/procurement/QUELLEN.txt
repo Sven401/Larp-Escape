@@ -1,0 +1,42 @@
+PRIMÄRQUELLEN — geprüft 02.11.2026
+Keine Drittforen als Fertigungsbeleg. Online-Darstellung ist zeitabhängig;
+URLs/Beobachtungen ersetzen weder konkrete Angebotsantwort noch CAM-Abnahme.
+
+S1 https://jlcpcb.com/capabilities/pcb-capabilities/
+Abschnitte Holes/Traces/Soldermask: NPTH-to-track 0,20 mm; inner via hole to
+copper 0,20 mm; inner PTH hole to copper 0,30 mm. Füll-/Kupferüberdeckprozess
+beschrieben. Diese Aufzählung ist keine allgemeine Fertigerfreigabe.
+
+S2 https://jlcpcb.com/capabilities/pcb-assembly-capabilities
+Standard: beidseitige SMT/THT, Mindestformat70x70 mm, Rand/Fiduzials nötig;
+Economic: einseitig. Gemischte Bestückung angeboten. Konkrete Hybridtechnik
+und Schutz dichter Bottom-SMDs bleiben auftragsspezifisch.
+
+S3 https://jlcpcb.com/help/article/pcb-via-covering
+Epoxidfüllung mit Kupferüberplattung, Zuordnung der zu füllenden Vias nötig;
+Füllung über0,5-mm-Bohrung problematisch. Native Tent-/Plug-Defaults sind
+kein Ersatz für unseren Füllauftrag (eigene Ableitung).
+
+S4 https://jlcpcb.com/help/article/multi-layer-pcb-standard-laminated-structures
+Artikelstand09.09.2026; Standard-Impedanzprüfung ±20%, präzise Prüfung gegen
+Aufpreis. Benannter konkreter Stackup statt lediglich Lagen-/Dickenangabe nötig
+(eigene projektspezifische Ableitung).
+
+S5 https://jlcpcb.com/help/article/jlcpcb-copper-weight
+Innenkupfer0,5oz standardmäßig;1oz/2oz abhängig von Lagenzahl/Gesamtdicke.
+Keine bestätigte Auswahl eines konkreten 6L/1mm/1oz-all-Stackups in diesem Bericht.
+
+Projektbelege unverändert:
+../SCHALTUNGSVERTRAG.txt; ../pruefung/layout-freeze.json;
+../pruefung/USB4105-GEOMETRIE.txt; ../pruefung/drc.json;
+../pruefung/bestueckung-draft/ab68d3853f49-khnyftxd/ASSEMBLY-DRAFT.json;
+../mechanik/component-envelope-report.json (Pfad vor externer Paketbildung prüfen).
+Maschinelle Eingabe-/Ausgabehashes und Via-Inventar: RFQ-INPUTS.json.
+S6 Ergänzung vom02.11.2026: aktuelle rigid capabilities nennt ±10% Impedance
+Tolerance; Widerspruch zum S4-Artikel (±20%). Root-Live-Kalkulator bestätigt nach
+Stackupwahl JLC061011-2116 anwählbare±10% und CAM-Breitenanpassungshinweis.
+Nicht als fertiges Angebot oder Stackup-/USB-Abnahme auslegen. Beide Quellen
+mit konkreter90Ω±10%-Anforderung im Angebot auflösen.
+S7 https://docs.kicad.org/10.0/en/pcbnew/pcbnew.html
+Abschnitte Via protection (IPC-4761), Custom rules/hole_clearance.
+Native10.0.8-API-Kandidat und vollständiger Textdiff sind lokale Primärbelege.

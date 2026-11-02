@@ -38,7 +38,7 @@
       "sha256": "35ee709e548f41ba3aee36bff69eda43ed25bc96906f820ca2a0ba98be2ae4a4"
     }
   },
-  "contract_sha256": "cea53e07d9ac231d467520f9e3ee712e1d009d5bbcfc42f48482a99773345171",
+  "contract_sha256": "700d649c2243e67a296984ab0cf09c74c93ae1cee2512dcdf5c47e75778fee7e",
   "USB4105": {
     "mpn": "USB4105-GF-A",
     "nominal_body_mm": [

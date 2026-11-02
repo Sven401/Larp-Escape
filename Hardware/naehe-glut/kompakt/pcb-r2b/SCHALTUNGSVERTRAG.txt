@@ -177,3 +177,9 @@ LED_QOD wurde gezielt neu gefuehrt; Entladefunktion bleibt Gegenstand der
 Inbetriebnahme. Alle echten abgeschnittenen Enden wurden unter wiederholter
 nativer Konnektivitaetspruefung entfernt; lebende T-Abzweige wurden erhalten.
 
+
+Metadatenkorrektur02.11.2026: native Boarddefaults filling=yes/capping=yes,
+Kupfer-/Maskengeometrie unverändert; Material ausdrücklich NICHTLEITENDES Epoxid
+plus Kupferabdeckung, alle230Vias laut procurement/VIA-FILL-INVENTORY.csv.
+Keine leitende Paste als stillschweigender Ersatz. Frische Hashbindung und
+native Nachweise siehe pruefung/layout-freeze.json und procurement-Unterlagen.

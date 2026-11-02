@@ -3,32 +3,33 @@
   "reviewer": "independent review subagent",
   "status": "reviewed_engineering_draft_NOT_manufacturing_or_operation_release",
   "git": {
-    "branch": "codex/naehe-glut-r2b-service",
-    "base_head": "9c9181a7c22de0be56671bce39e8ece5f072d01d",
-    "review_scope": "uncommitted hash-bound worktree artifacts"
+    "branch": "codex/naehe-glut-r2b-review",
+    "base_head": "909e25653edafb2cd5e60ed6349356c0f905f916",
+    "review_scope": "hash-bound worktree after independent two-flag metadata correction; original electrical review provenance retained in REVIEW-UEBERNAHME.txt"
   },
   "source_hashes": {
     "circuit.json": "b8adb47a048849bc23e5384c4230514bd4ba75c0055c0d28544233c209a99fca",
     "bom.csv": "0da0adbfea16ed33a8b3c14c45c7d27d4b010d42240d7d9a3154b20c285f0a24",
     "naehe-glut-r2b.net.xml": "f926429d1df73826ad1e14570bd48ef497cb7406bdc65ab4a923916446a2ac68",
     "naehe-glut-r2b.kicad_sch": "91f638ee1d52b9be80695f5e59fd8fa313e136c23fa4e5fbe77f8aa373871bef",
-    "naehe-glut-r2b.kicad_pcb": "ab68d3853f49b9e2c8e70272ec0bde0e7acbaacf18eda1008bd91353b010efac",
-    "pruefung/drc.json": "69f68714bb58de83a348a16437b5692124978bf138d54af40b770f6b82f254e1",
-    "pruefung/erc.json": "6f06272eab526eaf011c1a8d6204103649aa5a4332c0e3f98c4f78a234baa3a3",
-    "pruefung/pcb-pad-contract.json": "79753206fc4d65038c3eab4937ce497c8fe053b57795e4d1683fa10f3c958bb5",
-    "pruefung/layout-freeze.json": "2467c6a20276d2ddc5918e50ce5294084c3c4da4e96946a4975f3eddd1c7819e",
-    "pruefung/build-state.json": "051edb020fb41d056d91e1a0332b7176ea205eac9ba9e7df10a58dfed3629eb0",
-    "SCHALTUNGSVERTRAG.txt": "21915bb3fa790a842b0fc64eda58bcc6c6e2104f1c87cb36e31ff782c47dfad1",
-    "mechanik/MANIFEST.json": "ccc40b530e2f5eb564c46bbe49045b79d0b27296cfa5913ad591b318841306c4",
+    "naehe-glut-r2b.kicad_pcb": "7af39dbe807ed82f905622cce0c6b93f2cd650c61eafb224970e9f49eec15868",
+    "pruefung/drc.json": "b204701c40e262efd993c17efca8a318d8c563044b4ed1a8de7a0f51b71dd586",
+    "pruefung/erc.json": "f5357dd9fdb49fff8d19b5ae7efc0e47c304531aab8065ac8c33d39b512c5dd5",
+    "pruefung/pcb-pad-contract.json": "6074caca57c06a6efa2155032e387fcb3b5fdf52cda523af81ddec4f33b3fc0c",
+    "pruefung/layout-freeze.json": "348f2087ecdc27c007ab2456411a7ea47eff03f6c01b964d4bdd4dc3150a8fe2",
+    "pruefung/build-state.json": "abfc4174ae96214391fec87d00c318968764d3f3c8a49ff2d81f6c3904a67004",
+    "SCHALTUNGSVERTRAG.txt": "126b981ef2372f556f0de0565df2406875bcdbff273d822aa7d96558ab7fa424",
+    "mechanik/MANIFEST.json": "2d1374231989c40671824f46f29114c3dbdbf207467cc2666feca7561953947d",
     "mechanik/geometry-report.json": "71b8904c4f8508ec757e5cb569bb17947453cc6ad899bab0c30d4859f2bdcf37",
-    "mechanik/pcba-envelope-report.json": "ac9b22f7330cda7305db46a4cf0472f0e3f535a5b5cfa84acb9777f114a32a24",
+    "mechanik/pcba-envelope-report.json": "5ba7aa56209844a4151f637e300a742c49167beec876cfb1a43f10ce78bf6061",
     "mechanik/slice-report.json": "e4bfb77a99d0fb6e75675b3758adda19be834ceed4202324a1206652bd56195f",
     "mechanik/R2b-service-P1S-PETG-draft.3mf": "320ad5a7e27d06a0aeaa29452a3df2940b79139ac429dc5809d6c3e07e02337d",
-    "pruefung/bestueckung-draft/ab68d3853f49-khnyftxd/ASSEMBLY-DRAFT.json": "e5840f99cd504cddc7af58e581d303189a56350a23f4e6b7a14e1e1b88ee359b",
-    "pruefung/bestueckung-draft/ab68d3853f49-khnyftxd/BOM-DRAFT.csv": "28556d76715fce22bf83946f89cbec63be1518bd2e7df6973e74a174edf507ad",
-    "pruefung/bestueckung-draft/ab68d3853f49-khnyftxd/CPL-DRAFT.csv": "13ad90a33dd442ffcdabbe74941dc25e172693e7e38a5abd4bf227bb1e4f7fc5",
+    "pruefung/bestueckung-draft/7af39dbe807e-jq7zjlqp/ASSEMBLY-DRAFT.json": "442a71a514bf82dddcaa5a81dc9f7857584c88742f445313c362f425bca8a435",
+    "pruefung/bestueckung-draft/7af39dbe807e-jq7zjlqp/BOM-DRAFT.csv": "28556d76715fce22bf83946f89cbec63be1518bd2e7df6973e74a174edf507ad",
+    "pruefung/bestueckung-draft/7af39dbe807e-jq7zjlqp/CPL-DRAFT.csv": "13ad90a33dd442ffcdabbe74941dc25e172693e7e38a5abd4bf227bb1e4f7fc5",
     "tools/export_assembly_draft.py": "2cb3c781415615bca9da0cecec3b020fbcd9a896070d2a13fa9b96c7edfeaf80",
-    "tools/check_pcb_pad_contract.py": "b30a33a8e1cf297ea228d50a50d52e561159d9fff40773af820e15602b8885fd"
+    "tools/check_pcb_pad_contract.py": "b30a33a8e1cf297ea228d50a50d52e561159d9fff40773af820e15602b8885fd",
+    "procurement/REVIEW.txt": "1b26ee670f22341ec0769fd74e405b902e54acf058d95aa79b0bb315290dd9b4"
   },
   "method": "Independent source/XML/BOM/native-PCB-text comparisons and report/hash validation using Python. Native KiCad ERC/DRC/padcheck and CAD/slicer were executed by their owning agents; this reviewer did not rerun those applications. Actual exported G-code independently parsed and current underside render viewed.",
   "verified": {
@@ -64,7 +65,7 @@
         "lib_footprint_mismatch": 2
       },
       "dangling_tracks_or_vias": 0,
-      "binding": "DRC source cleaned.kicad_pcb is byte-identical to frozen main PCB. Library warnings concern U3 inherited land and JP1 silk/Fab modification. No rule weakening or full DRC pass claimed."
+      "binding": "Fresh native DRC names current main PCB; layout-freeze and promotion reports bind its7af39d SHA. No rule weakening or full DRC pass claimed."
     },
     "core_delta": {
       "r2a_circuit_sha256": "347b96f8f0a019422b85f2d742029f3f41c80e5ded2f489096a598f974afc17c",
@@ -143,16 +144,18 @@
         26.7,
         28.5
       ],
-      "corrections": "J1 bottom180 body centroid +1.75mm CPL-Y; JP1 top0 body midpoint -1.27mm CPL-Y. Guards, native FPID/existing MPN checks and fresh output directory reviewed. All output and script hashes match. Native missing MPN fields explicitly listed; circuit/BOM supply authoritative identity. Supplier centroid/rotation preview still required."
+      "corrections": "J1 bottom180 body centroid +1.75mm CPL-Y; JP1 top0 body midpoint -1.27mm CPL-Y. Guards, native FPID/existing MPN checks and fresh output directory reviewed. All output and script hashes match. Native missing MPN fields explicitly listed; circuit/BOM supply authoritative identity. Supplier centroid/rotation preview still required.",
+      "metadata_revision": "New101/101 assembly export binds7af39d; CPL bytes identical to prior independently checked coordinates and sides."
     },
     "mechanical": {
-      "manifest_artifact_hashes_matched": 39,
+      "manifest_artifact_hashes_matched": 40,
       "all_input_bindings_match": true,
       "complete_PCBA_footprints": 109,
       "fixture_mate_access_antenna_collision_reports": "empty at frozen layout",
       "reverse_insert_interference_mm3": 1.26,
       "physical_fit_performed": false,
-      "limits": "Focused manufacturer envelopes plus generic Fab+0.3mm/2mm-height screening for other parts; not complete exact-MPN tolerance qualification."
+      "limits": "Focused manufacturer envelopes plus generic Fab+0.3mm/2mm-height screening for other parts; not complete exact-MPN tolerance qualification.",
+      "metadata_revision": "All40 artifact hashes and6 input bindings independently matched. Geometry/STL/STEP/render/3MF unchanged; component-envelope report changed only stale contract_sha256 to current contract. Dedicated metadata-rebind-report included."
     },
     "slicer": {
       "actual_3MF_gcode_layers": 150,
@@ -169,7 +172,8 @@
     "fasteners": "4xM2x14 and four M2 nuts. Source/guide independently checked: base seatZ6, tipZ-8, nutZ-7.3..-5.7 gives2mm nominal table clearance. Clamp seatZ16, tipZ2, nutZ3.2..4.8. Printed tolerances and engagement remain sample checks.",
     "service_cable": "MEDI101022-07/-08 0.22mm2, <=0.15m each, JSTPHR-2/SPH-002T-P0.5S; incomingOD<=1.3mm and resistance acceptance required, R8/R10 routing. PSU service only, not pack approval or guaranteed2A system current. See J1-KABEL-REVIEW.json.",
     "analog": "Accepted adjustable supervisors/precision dividers, SN74LVC1G14, TPS709 EN intentionallyNC, 2x4.7uF output and10k bleeder all present and fresh XML/BOM parity passed; quantitative assumptions in ANALOG-REVIEW.json.",
-    "deadline": "04.12.2026 fixed two-device use; TERMIN-UND-ABNAHME planning dates are not supplier promises. Physical access/material and firmware S3 migration/qualification are explicit dependencies."
+    "deadline": "04.12.2026 fixed two-device use; TERMIN-UND-ABNAHME planning dates are not supplier promises. Physical access/material and firmware S3 migration/qualification are explicit dependencies.",
+    "process_metadata": "Independent byte comparison with prior reviewed ZIP: only board capping/filling no->yes; all230 vias inherit defaults. Generator corrected. Nonconductive epoxy and copper cap remain explicit supplier requirements, not guaranteed by boolean metadata."
   },
   "open_gates": [
     {
@@ -200,11 +204,14 @@
     "Exporter identity/fresh-output checks and J1/JP1 centroids implemented.",
     "Mechanics rebound to frozen109-footprint PCB.",
     "build-state and circuit status no longer claim unrouted service or blanket baseline preservation.",
-    "External R1 slicer-helper/license dependency removed by vendoring unchanged helper with provenance and using bundled license; 39 manifest files rechecked, actual G-code still150 layers/min23 positive XY-G1 extrusions. PCB/CAD unchanged."
+    "External R1 slicer-helper/license dependency removed by vendoring unchanged helper with provenance and using bundled license; 39 manifest files rechecked, actual G-code still150 layers/min23 positive XY-G1 extrusions. PCB/CAD unchanged.",
+    "Native filling/capping defaults corrected toyes without geometry changes; independent hash-bound procurement review and manufacturer-distance screen added. Analog and40-file mechanical bindings refreshed."
   ],
   "related_reviews": [
     "ANALOG-REVIEW.json",
-    "J1-KABEL-REVIEW.json"
+    "J1-KABEL-REVIEW.json",
+    "../procurement/REVIEW.txt",
+    "../procurement/QUALIFIKATION-OFFEN.txt"
   ],
   "release_claim": false
 }

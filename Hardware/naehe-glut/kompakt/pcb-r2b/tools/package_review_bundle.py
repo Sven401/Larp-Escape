@@ -26,6 +26,13 @@ def main():
     pad=read('pruefung/pcb-pad-contract.json')
     if pad['status']!='pass' or pad['input_sha256']['pcb']!=sha(BASE/'naehe-glut-r2b.kicad_pcb'):
         raise RuntimeError('Pad audit does not bind current PCB')
+    rfq=read('procurement/RFQ-INPUTS.json')
+    verify(rfq['input_sha256'])
+    verify({'procurement/'+p:h for p,h in rfq['outputs_sha256'].items()})
+    screen=read('procurement/CLEARANCE-SCREEN.json')
+    verify({'procurement/'+p:h for p,h in screen['input_sha256'].items()})
+    if screen['frozen_pcb_sha256']!=sha(BASE/'naehe-glut-r2b.kicad_pcb') or screen['new_rule_violations']!=0:
+        raise RuntimeError('Manufacturer-distance screen is stale or failed')
     files=set('''PLANUNG.txt PLANUNGSREVIEW.json SERVICE-INTERFACE.csv
 UMSETZUNGSSTAND.txt TERMIN-UND-ABNAHME.txt JTAG-PROBE-AUSWAHL.txt
 SCHALTUNGSVERTRAG.txt REPRODUKTION.txt HARDWARE-DATEIEN.txt
@@ -42,6 +49,17 @@ pruefung/drc.json pruefung/erc.json pruefung/usb-route-final.json pruefung/pcb-p
 mechanik/MANIFEST.json tools/cad_environment.py tools/build_r2b.py
 tools/build_schematic.py tools/check_pcb_pad_contract.py tools/export_assembly_draft.py
 tools/analyze_usb_route.py tools/freeze_layout.py tools/package_review_bundle.py'''.split())
+    procurement_files = '''DFM-ANGEBOT.txt QUELLEN.txt RFQ-INPUTS.json
+VIA-FILL-INVENTORY.csv QUALIFIKATION-OFFEN.txt KALKULATOR.txt
+FIRMWARE-ABGLEICH.txt TECHNISCHE-PRAEZISIERUNG.txt REVIEW.txt
+CLEARANCE-SCREEN.json VIA-METADATA-CANDIDATE.json METADATA-PROMOTION.json
+extract_rfq_inputs.py prepare_metadata_candidate.py record_promotion.py
+run-clearance-screen.ps1 summarize_clearance.py
+clearance-screen/screen.kicad_pcb clearance-screen/screen.kicad_pro
+clearance-screen/screen.kicad_dru clearance-screen/positive-control.kicad_dru
+clearance-screen/production-screen-rules.txt clearance-screen/drc-all-layers.json
+clearance-screen/positive-control.json clearance-screen/metadata-candidate.kicad_pcb'''.split()
+    files.update('procurement/' + name for name in procurement_files)
     files.update(mech['sha256'])
     files.update('sources/r2a-input/'+r['path'] for r in provenance['files'])
     for folder in ['NearGlowR2a.pretty','NearGlowR2b.pretty','footprints']:

@@ -1,0 +1,6 @@
+from pathlib import Path
+import json,hashlib
+P=Path(__file__).resolve().parent;B=P.parent
+names=['naehe-glut-r2b.kicad_pcb','tools/build_r2b.py','pruefung/drc.json','pruefung/erc.json','pruefung/layout-freeze.json','pruefung/pcb-pad-contract.json','pruefung/usb-route-final.json','pruefung/bestueckung-draft/7af39dbe807e-jq7zjlqp/ASSEMBLY-DRAFT.json','procurement/CLEARANCE-SCREEN.json']
+r={'status':'two-flag metadata correction promoted after explicit root authorization; independent release review pending','date':'2026-11-02','prior_candidate_report':'VIA-METADATA-CANDIDATE.json','prior_candidate_report_role':'historical test before promotion, not current overall status','changes':['capping no to yes','filling no to yes','generator defaults retain both flags'],'unchanged':'all copper/mask/drill/net geometry; no other PCB textual changes','current_checks_sha256':{n:hashlib.sha256((B/n).read_bytes()).hexdigest() for n in names},'results':{'erc':0,'drc_known_npth_errors':4,'drc_warnings':10,'unconnected':0,'pad_contract_issues':0,'fitted_bom_and_cpl':101,'additional_manufacturer_clearance_violations':0},'manufacturing_material':'NONCONDUCTIVE epoxy resin plus copper cap; explicit filled-via inventory; not a substitute for supplier approval'}
+(P/'METADATA-PROMOTION.json').write_text(json.dumps(r,indent=2)+'\n',encoding='utf8')

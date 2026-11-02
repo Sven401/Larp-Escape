@@ -6,7 +6,7 @@ def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
 def main():
     names=['base','insert_r2b','clamp_left','clamp_right','usb_tie_bar','jtag_tie_bar']
     paths=[OUT/(n+'.'+ext) for n in names for ext in ['step','stl']]
-    paths += [OUT/n for n in ['R2b-service-draft.FCStd','assembly-draft.step','R2b-service-P1S-PETG-draft.3mf','geometry-report.json','slice-report.json','assembled-draft.png','exploded-draft.png','underside-draft.png','DRUCK-UND-MONTAGE.txt','component-envelope-report.json','pcba-envelope-report.json','pcb-placement.json','adapter-mating-report.json']]
+    paths += [OUT/n for n in ['R2b-service-draft.FCStd','assembly-draft.step','R2b-service-P1S-PETG-draft.3mf','geometry-report.json','slice-report.json','assembled-draft.png','exploded-draft.png','underside-draft.png','DRUCK-UND-MONTAGE.txt','component-envelope-report.json','pcba-envelope-report.json','pcb-placement.json','adapter-mating-report.json','metadata-rebind-report.json']]
     paths += sorted((BASE/'mechanik-tools').glob('*.py'))+sorted((BASE/'mechanik-tools').glob('*.txt'))+sorted((OUT/'slicer').glob('*'))
     bindings={}
     for n in ['PLANUNG.txt','bom.csv','SERVICE-INTERFACE.csv','circuit.json','naehe-glut-r2b.kicad_pcb','mechanical-interface.json']:
